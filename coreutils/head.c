@@ -47,226 +47,226 @@
 //usage:       "root:x:0:0:root:/root:/bin/bash\n"
 //usage:       "daemon:x:1:1:daemon:/usr/sbin:/bin/sh\n"
 
-#include "libbb.h"
+#अन्तर्भाव "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-#if !ENABLE_FEATURE_FANCY_HEAD
-# define print_first_N(fp,count,bytes) print_first_N(fp,count)
+#यदि !ENABLE_FEATURE_FANCY_HEAD
+# define print_first_N(fp,गिनती,bytes) print_first_N(fp,गिनती)
 #endif
-static void
-print_first_N(FILE *fp, unsigned long count, bool count_bytes)
+स्थिर शून्य
+print_first_N(खाता *fp, अचिन्हित दीर्घ गिनती, bool गिनती_bytes)
 {
-#if !ENABLE_FEATURE_FANCY_HEAD
-	const int count_bytes = 0;
+#यदि !ENABLE_FEATURE_FANCY_HEAD
+	ध्रुव पूर्णाङ्क गिनती_bytes = 0;
 #endif
-	while (count) {
-		int c = getc(fp);
-		if (c == EOF)
-			break;
-		if (count_bytes || (c == '\n'))
-			--count;
-		putchar(c);
+	यावत् (गिनती) {
+		पूर्णाङ्क c = अ_लो(fp);
+		यदि (c == खातापूर्ण)
+			भङ्ग;
+		यदि (गिनती_bytes || (c == '\n'))
+			--गिनती;
+		अक्षर_दो(c);
 	}
 }
 
-#if ENABLE_FEATURE_FANCY_HEAD
-static void
-print_except_N_last_bytes(FILE *fp, unsigned count)
+#यदि ENABLE_FEATURE_FANCY_HEAD
+स्थिर शून्य
+print_except_N_last_bytes(खाता *fp, अचिन्हित गिनती)
 {
-	unsigned char *circle = xmalloc(++count);
-	unsigned head = 0;
-	for (;;) {
-		int c;
-		c = getc(fp);
-		if (c == EOF)
-			goto ret;
+	अचिन्हित वर्ण *circle = xmalloc(++गिनती);
+	अचिन्हित head = 0;
+	प्रति (;;) {
+		पूर्णाङ्क c;
+		c = अ_लो(fp);
+		यदि (c == खातापूर्ण)
+			गच्छ ret;
 		circle[head++] = c;
-		if (head == count)
-			break;
+		यदि (head == गिनती)
+			भङ्ग;
 	}
-	for (;;) {
-		int c;
-		if (head == count)
+	प्रति (;;) {
+		पूर्णाङ्क c;
+		यदि (head == गिनती)
 			head = 0;
-		putchar(circle[head]);
-		c = getc(fp);
-		if (c == EOF)
-			goto ret;
+		अक्षर_दो(circle[head]);
+		c = अ_लो(fp);
+		यदि (c == खातापूर्ण)
+			गच्छ ret;
 		circle[head] = c;
 		head++;
 	}
  ret:
-	free(circle);
+	मुक्त(circle);
 }
 
-static void
-print_except_N_last_lines(FILE *fp, unsigned count)
+स्थिर शून्य
+print_except_N_last_पंक्तियाँ(खाता *fp, अचिन्हित गिनती)
 {
-	char **circle = xzalloc((++count) * sizeof(circle[0]));
-	unsigned head = 0;
-	for (;;) {
-		char *c;
+	वर्ण **circle = xzalloc((++गिनती) * परिमाण(circle[0]));
+	अचिन्हित head = 0;
+	प्रति (;;) {
+		वर्ण *c;
 		c = xmalloc_fgets(fp);
-		if (!c)
-			goto ret;
+		यदि (!c)
+			गच्छ ret;
 		circle[head++] = c;
-		if (head == count)
-			break;
+		यदि (head == गिनती)
+			भङ्ग;
 	}
-	for (;;) {
-		char *c;
-		if (head == count)
+	प्रति (;;) {
+		वर्ण *c;
+		यदि (head == गिनती)
 			head = 0;
 		fputs_stdout(circle[head]);
 		c = xmalloc_fgets(fp);
-		if (!c)
-			goto ret;
-		free(circle[head]);
+		यदि (!c)
+			गच्छ ret;
+		मुक्त(circle[head]);
 		circle[head++] = c;
 	}
  ret:
 	head = 0;
-	for (;;) {
-		free(circle[head++]);
-		if (head == count)
-			break;
+	प्रति (;;) {
+		मुक्त(circle[head++]);
+		यदि (head == गिनती)
+			भङ्ग;
 	}
-	free(circle);
+	मुक्त(circle);
 }
-#else
+#अन्यथा
 /* Must never be called */
-void print_except_N_last_bytes(FILE *fp, unsigned count);
-void print_except_N_last_lines(FILE *fp, unsigned count);
+शून्य print_except_N_last_bytes(खाता *fp, अचिन्हित गिनती);
+शून्य print_except_N_last_पंक्तियाँ(खाता *fp, अचिन्हित गिनती);
 #endif
 
-#if !ENABLE_FEATURE_FANCY_HEAD
-# define eat_num(negative_N,p) eat_num(p)
+#यदि !ENABLE_FEATURE_FANCY_HEAD
+# define eat_अंक(negative_N,p) eat_अंक(p)
 #endif
-static unsigned long
-eat_num(bool *negative_N, const char *p)
+स्थिर अचिन्हित दीर्घ
+eat_अंक(bool *negative_N, ध्रुव वर्ण *p)
 {
-#if ENABLE_FEATURE_FANCY_HEAD
-	if (*p == '-') {
+#यदि ENABLE_FEATURE_FANCY_HEAD
+	यदि (*p == '-') {
 		*negative_N = 1;
 		p++;
 	}
 #endif
-	return xatoul_sfx(p, bkm_suffixes);
+	प्रत्यागम xatoul_sfx(p, bkm_suffixes);
 }
 
-static const char head_opts[] ALIGN1 =
+स्थिर ध्रुव वर्ण head_opts[] ALIGN1 =
 	"n:"
-#if ENABLE_FEATURE_FANCY_HEAD
+#यदि ENABLE_FEATURE_FANCY_HEAD
 	"c:qv"
 #endif
 	;
 
 #define header_fmt_str "\n==> %s <==\n"
 
-int head_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int head_main(int argc, char **argv)
+पूर्णाङ्क head_main(पूर्णाङ्क argc, वर्ण **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णाङ्क head_main(पूर्णाङ्क argc, वर्ण **argv)
 {
-	unsigned long count = 10;
-#if ENABLE_FEATURE_FANCY_HEAD
-	int header_threshhold = 1;
-	bool count_bytes = 0;
+	अचिन्हित दीर्घ गिनती = 10;
+#यदि ENABLE_FEATURE_FANCY_HEAD
+	पूर्णाङ्क header_threshhold = 1;
+	bool गिनती_bytes = 0;
 	bool negative_N = 0;
-#else
+#अन्यथा
 # define header_threshhold 1
-# define count_bytes       0
+# define गिनती_bytes       0
 # define negative_N        0
 #endif
-	FILE *fp;
-	const char *fmt;
-	char *p;
-	int opt;
-	int retval = EXIT_SUCCESS;
+	खाता *fp;
+	ध्रुव वर्ण *fmt;
+	वर्ण *p;
+	पूर्णाङ्क opt;
+	पूर्णाङ्क retval = निकास_सफल;
 
-#if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
+#यदि ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
 	/* Allow legacy syntax of an initial numeric option without -n. */
-	if (argv[1] && argv[1][0] == '-'
-	 && isdigit(argv[1][1])
+	यदि (argv[1] && argv[1][0] == '-'
+	 && है_अंक(argv[1][1])
 	) {
 		--argc;
 		++argv;
 		p = argv[0] + 1;
-		goto GET_COUNT;
+		गच्छ GET_गिनती;
 	}
 #endif
 
 	/* No size benefit in converting this to getopt32 */
-	while ((opt = getopt(argc, argv, head_opts)) > 0) {
-		switch (opt) {
-#if ENABLE_FEATURE_FANCY_HEAD
-		case 'q':
-			header_threshhold = INT_MAX;
-			break;
-		case 'v':
+	यावत् ((opt = getopt(argc, argv, head_opts)) > 0) {
+		विकल्प (opt) {
+#यदि ENABLE_FEATURE_FANCY_HEAD
+		पक्ष 'q':
+			header_threshhold = पूर्णांक_उच्च;
+			भङ्ग;
+		पक्ष 'v':
 			header_threshhold = -1;
-			break;
-		case 'c':
-			count_bytes = 1;
+			भङ्ग;
+		पक्ष 'c':
+			गिनती_bytes = 1;
 			/* fall through */
 #endif
-		case 'n':
+		पक्ष 'n':
 			p = optarg;
-#if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
- GET_COUNT:
+#यदि ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
+ GET_गिनती:
 #endif
-			count = eat_num(&negative_N, p);
-			break;
-		default:
+			गिनती = eat_अंक(&negative_N, p);
+			भङ्ग;
+		स्वभाव:
 			bb_show_usage();
 		}
 	}
 
 	argc -= optind;
 	argv += optind;
-	if (!*argv)
-		*--argv = (char*)"-";
+	यदि (!*argv)
+		*--argv = (वर्ण*)"-";
 
 	fmt = header_fmt_str + 1;
-	if (argc <= header_threshhold) {
-#if ENABLE_FEATURE_FANCY_HEAD
+	यदि (argc <= header_threshhold) {
+#यदि ENABLE_FEATURE_FANCY_HEAD
 		header_threshhold = 0;
-#else
+#अन्यथा
 		fmt += 11; /* "" */
 #endif
 	}
-	if (negative_N) {
-		if (count >= INT_MAX / sizeof(char*))
-			bb_error_msg("count is too big: %lu", count);
+	यदि (negative_N) {
+		यदि (गिनती >= पूर्णांक_उच्च / परिमाण(वर्ण*))
+			bb_error_संदेश("count is too big: %lu", गिनती);
 	}
 
-	do {
+	कुरु {
 		fp = fopen_or_warn_stdin(*argv);
-		if (fp) {
-			if (fp == stdin) {
-				*argv = (char *) bb_msg_standard_input;
+		यदि (fp) {
+			यदि (fp == मानक_निवेश) {
+				*argv = (वर्ण *) bb_संदेश_standard_निवेश;
 			}
-			if (header_threshhold) {
-				printf(fmt, *argv);
+			यदि (header_threshhold) {
+				म_लिखो(fmt, *argv);
 			}
-			if (negative_N) {
-				if (count_bytes) {
-					print_except_N_last_bytes(fp, count);
-				} else {
-					print_except_N_last_lines(fp, count);
+			यदि (negative_N) {
+				यदि (गिनती_bytes) {
+					print_except_N_last_bytes(fp, गिनती);
+				} अन्यथा {
+					print_except_N_last_पंक्तियाँ(fp, गिनती);
 				}
-			} else {
-				print_first_N(fp, count, count_bytes);
+			} अन्यथा {
+				print_first_N(fp, गिनती, गिनती_bytes);
 			}
 			die_if_ferror_stdout();
-			if (fclose_if_not_stdin(fp)) {
-				bb_simple_perror_msg(*argv);
-				retval = EXIT_FAILURE;
+			यदि (fclose_if_not_stdin(fp)) {
+				bb_simple_perror_संदेश(*argv);
+				retval = निकास_त्रुटि;
 			}
-		} else {
-			retval = EXIT_FAILURE;
+		} अन्यथा {
+			retval = निकास_त्रुटि;
 		}
 		fmt = header_fmt_str;
-	} while (*++argv);
+	} यावत् (*++argv);
 
 	fflush_stdout_and_exit(retval);
 }

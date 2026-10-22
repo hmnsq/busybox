@@ -84,60 +84,60 @@
 //usage:     "\n	-a	Show all"
 //usage:     "\n	-H	Print column headers"
 
-#include "libbb.h"
+#अन्तर्भाव "libbb.h"
 
-static void idle_string(char *str6, time_t t)
+स्थिर शून्य idle_string(वर्ण *str6, समय_प्रकार t)
 {
-	t = time(NULL) - t;
+	t = समय(रिक्त) - t;
 
 	/*if (t < 60) {
 		str6[0] = '.';
 		str6[1] = '\0';
 		return;
 	}*/
-	if (t >= 0 && t < (24 * 60 * 60)) {
-		sprintf(str6, "%02d:%02d",
-				(int) (t / (60 * 60)),
-				(int) ((t % (60 * 60)) / 60));
-		return;
+	यदि (t >= 0 && t < (24 * 60 * 60)) {
+		प्र_लिखो(str6, "%02d:%02d",
+				(पूर्णाङ्क) (t / (60 * 60)),
+				(पूर्णाङ्क) ((t % (60 * 60)) / 60));
+		प्रत्यागम;
 	}
-	strcpy(str6, "old");
+	म_नकल(str6, "old");
 }
 
-int who_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int who_main(int argc UNUSED_PARAM, char **argv)
+पूर्णाङ्क who_main(पूर्णाङ्क argc, वर्ण **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णाङ्क who_main(पूर्णाङ्क argc UNUSED_PARAM, वर्ण **argv)
 {
 #define CNT_APPLET (ENABLE_USERS + ENABLE_W + ENABLE_WHO)
-	int do_users = (ENABLE_USERS && (CNT_APPLET == 1 || applet_name[0] == 'u'));
-	int do_w     = (ENABLE_W     && (CNT_APPLET == 1 || applet_name[1] == '\0'));
-	int do_who   = (ENABLE_WHO   && (CNT_APPLET == 1 || applet_name[1] == 'h'));
-	struct utmpx *ut;
-	unsigned opt;
-	const char *fmt = "%s";
+	पूर्णाङ्क do_users = (ENABLE_USERS && (CNT_APPLET == 1 || applet_name[0] == 'u'));
+	पूर्णाङ्क do_w     = (ENABLE_W     && (CNT_APPLET == 1 || applet_name[1] == '\0'));
+	पूर्णाङ्क do_who   = (ENABLE_WHO   && (CNT_APPLET == 1 || applet_name[1] == 'h'));
+	संरचना utmpx *ut;
+	अचिन्हित opt;
+	ध्रुव वर्ण *fmt = "%s";
 
 	opt = getopt32(argv, do_who ? "^" "aH" "\0" "=0": "^" "" "\0" "=0");
-	if ((opt & 2) || do_w) /* -H or we are w */
-		puts("USER\t\tTTY\t\tIDLE\tTIME\t\t HOST");
+	यदि ((opt & 2) || do_w) /* -H or we are w */
+		माला_दो("USER\t\tTTY\t\tIDLE\tTIME\t\t HOST");
 
 	setutxent();
-	while ((ut = getutxent()) != NULL) {
-		if (ut->ut_user[0]
+	यावत् ((ut = getutxent()) != रिक्त) {
+		यदि (ut->ut_user[0]
 		 && ((opt & 1) || ut->ut_type == USER_PROCESS)
 		) {
-			if (!do_users) {
-				char str6[6];
-				char name[sizeof("/dev/") + sizeof(ut->ut_line) + 1];
-				struct stat st;
-				time_t seconds;
+			यदि (!do_users) {
+				वर्ण str6[6];
+				वर्ण name[परिमाण("/dev/") + परिमाण(ut->ut_पंक्ति) + 1];
+				संरचना stat st;
+				समय_प्रकार seconds;
 
 				str6[0] = '?';
 				str6[1] = '\0';
-				strcpy(name, "/dev/");
-				safe_strncpy(ut->ut_line[0] == '/' ? name : name + sizeof("/dev/")-1,
-					ut->ut_line,
-					sizeof(ut->ut_line)+1
+				म_नकल(name, "/dev/");
+				safe_strncpy(ut->ut_पंक्ति[0] == '/' ? name : name + परिमाण("/dev/")-1,
+					ut->ut_पंक्ति,
+					परिमाण(ut->ut_पंक्ति)+1
 				);
-				if (stat(name, &st) == 0)
+				यदि (stat(name, &st) == 0)
 					idle_string(str6, st.st_atime);
 				/* manpages say ut_tv.tv_sec *is* time_t,
 				 * but some systems have it wrong */
@@ -146,25 +146,25 @@ int who_main(int argc UNUSED_PARAM, char **argv)
 				 * "Nov 10 19:33:20": 15 chars
 				 * "2010-11-10 19:33": 16 chars
 				 */
-				printf("%-15.*s %-15.*s %-7s %-16.16s %.*s\n",
-						(int)sizeof(ut->ut_user), ut->ut_user,
-						(int)sizeof(ut->ut_line), ut->ut_line,
+				म_लिखो("%-15.*s %-15.*s %-7s %-16.16s %.*s\n",
+						(पूर्णाङ्क)परिमाण(ut->ut_user), ut->ut_user,
+						(पूर्णाङ्क)परिमाण(ut->ut_पंक्ति), ut->ut_पंक्ति,
 						str6,
 // TODO: with LANG=en_US.UTF-8, who from coreutils 8.25 shows
 // TIME col as "2017-04-06 18:47" (the default format is "Apr  6 18:47").
 // The former format looks saner to me. Switch to it unconditionally?
-						ctime(&seconds) + 4,
-						(int)sizeof(ut->ut_host), ut->ut_host
+						स_समय(&seconds) + 4,
+						(पूर्णाङ्क)परिमाण(ut->ut_host), ut->ut_host
 				);
-			} else {
-				printf(fmt, ut->ut_user);
+			} अन्यथा {
+				म_लिखो(fmt, ut->ut_user);
 				fmt = " %s";
 			}
 		}
 	}
-	if (do_users)
+	यदि (do_users)
 		bb_putchar('\n');
-	if (ENABLE_FEATURE_CLEAN_UP)
+	यदि (ENABLE_FEATURE_CLEAN_UP)
 		endutxent();
-	return EXIT_SUCCESS;
+	प्रत्यागम निकास_सफल;
 }
