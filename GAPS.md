@@ -1,0 +1,567 @@
+# What is still missing
+
+76 languages. Each line says in how many languages it is missing.
+
+## Files in languages BURP cannot read yet
+
+- `.sh`: 1 files
+
+## Keywords with no word in a language's table
+
+- guru:EXIT_FAILURE: 71
+- guru:size_t: 71
+- guru:EXIT_SUCCESS: 71
+- guru:FILE: 71
+- guru:errno: 71
+- guru:strchr: 71
+- guru:EOF: 71
+- guru:fprintf: 71
+- guru:stderr: 71
+- guru:UINT_MAX: 71
+- guru:offsetof: 71
+- guru:close: 71
+- guru:ULONG_MAX: 71
+- guru:stdin: 71
+- guru:stdout: 71
+- guru:time_t: 71
+- guru:BUFSIZ: 71
+- guru:getenv: 71
+- guru:fstat: 71
+- guru:fclose: 71
+- guru:strtod: 71
+- guru:memmove: 71
+- guru:SEEK_CUR: 71
+- guru:getc: 71
+- guru:DBL_DIG: 71
+- guru:dirname: 71
+- guru:time: 71
+- guru:strftime: 71
+- guru:fputc: 71
+- guru:FLT_DIG: 71
+- guru:LDBL_DIG: 71
+- guru:SEEK_SET: 71
+- guru:tm: 71
+- guru:strspn: 71
+- guru:sprintf: 71
+- guru:setlocale: 71
+- guru:fgetc: 71
+- guru:DIR: 71
+- guru:readdir: 71
+- guru:closedir: 71
+- guru:strtol: 71
+- guru:fwrite: 71
+- guru:isxdigit: 71
+- guru:ferror: 71
+- guru:ERANGE: 71
+- guru:memcmp: 71
+- guru:kill: 71
+- guru:strcspn: 71
+- guru:rename: 71
+- guru:localtime: 71
+- guru:ctime: 71
+- guru:SIG_IGN: 71
+- guru:USHRT_MAX: 71
+- guru:UCHAR_MAX: 71
+- guru:setbuf: 71
+- guru:fread: 71
+- guru:atof: 71
+- guru:atoi: 71
+- guru:memchr: 71
+- guru:longjmp: 71
+- guru:isprint: 71
+- guru:clearerr: 71
+- guru:INT_MIN: 71
+- guru:opendir: 71
+- guru:ptrdiff_t: 71
+- guru:rmdir: 71
+- guru:RAND_MAX: 71
+- guru:strtoul: 71
+- guru:va_list: 71
+- guru:va_start: 71
+- guru:va_end: 71
+- guru:SEEK_END: 71
+- guru:SIGINT: 71
+- guru:setvbuf: 71
+- guru:putc: 71
+- guru:jmp_buf: 71
+- guru:setjmp: 71
+- guru:iscntrl: 71
+- guru:fflush: 71
+- guru:strcat: 70
+- guru:strcmp: 70
+- guru:puts: 70
+- guru:memset: 70
+- guru:strcpy: 70
+- guru:open: 70
+- guru:qsort: 70
+- guru:rand: 70
+- guru:srand: 70
+- guru:getchar: 70
+- guru:wait: 70
+- guru:#endif: 66
+- guru:#define: 66
+- guru:#ifndef: 66
+- guru:#ifdef: 66
+- guru:#undef: 66
+- guru:#error: 66
+- guru:unsigned: 62
+- guru:long: 62
+- guru:printf: 62
+- guru:putchar: 62
+- guru:strlen: 62
+- guru:INT_MAX: 62
+- guru:isdigit: 62
+- guru:short: 62
+- guru:isspace: 62
+- guru:memcpy: 62
+- guru:signed: 62
+- guru:strstr: 62
+- guru:isalnum: 62
+- guru:sscanf: 62
+- guru:exit: 62
+- guru:toupper: 62
+- guru:strncmp: 62
+- guru:const: 25
+- guru:static: 25
+- guru:void: 25
+- guru:NULL: 25
+- guru:free: 25
+- guru:goto: 25
+- guru:continue: 25
+- guru:do: 25
+- guru:typedef: 25
+- guru:switch: 25
+- guru:default: 25
+- guru:float: 25
+- guru:assert: 25
+- guru:#elif: 25
+- guru:read: 25
+- guru:extern: 25
+- guru:for: 9
+- guru:char: 9
+- guru:struct: 9
+- guru:break: 9
+- guru:sizeof: 9
+- guru:case: 9
+- guru:enum: 9
+- guru:double: 9
+- guru:union: 9
+- guru:signal: 9
+- guru:if: 1
+- guru:int: 1
+- guru:return: 1
+- guru:#if: 1
+- guru:else: 1
+- guru:while: 1
+- guru:#else: 1
+
+## Names with no dictionary entry (the most common first)
+
+- `argv`: 76
+- `i`: 76
+- `G`: 76
+- `opt`: 76
+- `argc`: 76
+- `s`: 76
+- `p`: 76
+- `arg`: 76
+- `n`: 76
+- `flags`: 76
+- `REV`: 76
+- `statbuf`: 76
+- `c`: 76
+- `define`: 76
+- `opts`: 76
+- `option_mask32`: 76
+- `name`: 76
+- `dn`: 76
+- `fd`: 76
+- `buf`: 76
+- `v`: 76
+- `len`: 76
+- `MAIN_EXTERNALLY_VISIBLE`: 76
+- `optind`: 76
+- `pformat`: 76
+- `r`: 76
+- `m`: 76
+- `SANE_UNSET`: 76
+- `retval`: 76
+- `op`: 76
+- `u`: 76
+- `a`: 76
+- `filename`: 76
+- `l`: 76
+- `output`: 76
+- `cur`: 76
+- `fp`: 76
+- `stat`: 76
+- `format`: 76
+- `getopt32`: 76
+- `str`: 76
+- `OMIT`: 76
+- `res`: 76
+- `ALIGN1`: 76
+- `type`: 76
+- `fmt`: 76
+- `b`: 76
+- `f`: 76
+- `j`: 76
+- `bb_show_usage`: 76
+- `defined`: 76
+- `scontext`: 76
+- `dest`: 76
+- `local`: 76
+- `endif`: 76
+- `val`: 76
+- `FS_TYPE`: 76
+- `off_t`: 76
+- `ENABLE_SELINUX`: 76
+- `nfiles`: 76
+- `combination`: 76
+- `statfsbuf`: 76
+- `ch`: 76
+- `dnode`: 76
+- `pos`: 76
+- `st`: 76
+- `tmp`: 76
+- `fmt_string`: 76
+- `e`: 76
+- `ret`: 76
+- `info`: 76
+- `ENABLE_FEATURE_DD_IBS_OBS`: 76
+- `control`: 76
+- `date_str`: 76
+- `t`: 76
+- `fmt_dt2str`: 76
+- `P`: 76
+- `src`: 76
+- `fputs_stdout`: 76
+- `ns`: 76
+- `file`: 76
+- `UNOP`: 76
+- `STDOUT_FILENO`: 76
+- `uint8_t`: 76
+- `STDIN_FILENO`: 76
+- `ptr`: 76
+- `freev`: 76
+- `dnp`: 76
+- `stty_state`: 76
+- `fullname`: 76
+- `dumper`: 76
+- `numlines`: 76
+- `k`: 76
+- `param`: 76
+- `delim`: 76
+- `N`: 76
+- `TABDLY`: 76
+- `c_cflag`: 76
+- `nodes`: 76
+- `exitcode`: 76
+- `FAST_FUNC`: 76
+- `applet_name`: 76
+- `x`: 76
+- `ENABLE_LONG_OPTS`: 76
+- `nextarg`: 76
+- `IF_SELINUX`: 76
+- `c_oflag`: 76
+- `tailbuf`: 76
+- `BINOP`: 76
+- `val1`: 76
+- `ssize_t`: 76
+- `fflush_stdout_and_exit`: 76
+- `cut_lists`: 76
+- `chp`: 76
+- `c_iflag`: 76
+- `CSIZE`: 76
+- `tbl`: 76
+- `bb_common_bufsiz1`: 76
+- `getopt32long`: 76
+- `tv_nsec`: 76
+- `ibs`: 76
+- `bb_putchar`: 76
+- `dif`: 76
+- `decode_format_string`: 76
+- `l_c_m`: 76
+- `idx`: 76
+- `uname_info`: 76
+- `cl_pos`: 76
+- `globals`: 76
+- `INIT_G`: 76
+- `obs`: 76
+- `groups`: 76
+- `files`: 76
+- `dy`: 76
+- `termios`: 76
+- `c_cc`: 76
+- `argnext`: 76
+- `timebuf`: 76
+- `ut`: 76
+- `xasprintf`: 76
+- `thisline`: 76
+- `ts`: 76
+- `xmalloc`: 76
+- `what`: 76
+- `d`: 76
+- `uni_stat`: 76
+- `pp`: 76
+- `tspec`: 76
+- `OPT_SELINUX`: 76
+- `suffix`: 76
+- `spos`: 76
+- `ibuf`: 76
+- `xopen`: 76
+- `ENABLE_FEATURE_HUMAN_READABLE`: 76
+- `fn`: 76
+- `z`: 76
+- `OPT_l`: 76
+- `range`: 76
+- `y`: 76
+- `ECHOCTL`: 76
+- `CRDLY`: 76
+- `IXANY`: 76
+- `control_info`: 76
+- `bitsp`: 76
+- `reversed`: 76
+- `taillen`: 76
+- `nread`: 76
+- `BASH_TEST2`: 76
+- `OPT_STR`: 76
+- `gid_t`: 76
+- `fname`: 76
+- `xmalloc_fgetline`: 76
+- `nlists`: 76
+- `rr`: 76
+- `df_disp_hr`: 76
+- `OPT_t`: 76
+- `st_dev`: 76
+- `arith_t`: 76
+- `circle`: 76
+- `rgid`: 76
+- `src_fd`: 76
+- `spec`: 76
+- `dx`: 76
+- `printfs`: 76
+- `Control`: 76
+- `VSWTCH`: 76
+- `XCASE`: 76
+- `c_lflag`: 76
+- `mp`: 76
+- `counts`: 76
+- `ENABLE_DESKTOP`: 76
+- `xzalloc`: 76
+- `cur_io`: 76
+- `numstr`: 76
+- `security_context_t`: 76
+- `OPT_d`: 76
+- `OPT_i`: 76
+- `delims`: 76
+- `precision`: 76
+- `VFLUSHO`: 76
+- `ECHOKE`: 76
+- `IUCLC`: 76
+- `OLCUC`: 76
+- `OXTABS`: 76
+- `current`: 76
+- `check_operator`: 76
+- `nodes_len`: 76
+- `cur_compare`: 76
+- `all`: 76
+- `IF_DESKTOP`: 76
+- `st_uid`: 76
+- `st_gid`: 76
+- `OFF_FMT`: 76
+- `fclose_if_not_stdin`: 76
+- `skip`: 76
+- `outfile`: 76
+- `S_ISDIR`: 76
+- `disp_unit`: 76
+- `buflen`: 76
+- `eflag`: 76
+- `username`: 76
+- `OPT_c`: 76
+- `ENABLE_FEATURE_LS_TIMESTAMPS`: 76
+- `OPT_s`: 76
+- `n_skip`: 76
+- `pfx`: 76
+- `linecount`: 76
+- `str_k`: 76
+- `ASCII`: 76
+- `CLO`: 76
+- `encoded_len`: 76
+- `outname`: 76
+- `rem`: 76
+- `smode`: 76
+- `uu`: 76
+- `tv_sec`: 76
+- `make_human_readable_str`: 76
+- `ocount`: 76
+- `Z`: 76
+- `O_RDONLY`: 76
+- `O_WRONLY`: 76
+- `dir`: 76
+- `w`: 76
+- `xrealloc`: 76
+- `euid`: 76
+- `egid`: 76
+- `G_show_color`: 76
+- `st_ino`: 76
+- `dnd`: 76
+- `filename_ptr`: 76
+- `opt_s`: 76
+- `outlines`: 76
+- `opt_i_str`: 76
+- `OPT_TERSE`: 76
+- `VWERASE`: 76
+- `VREPRINT`: 76
+- `BSDLY`: 76
+- `FFDLY`: 76
+- `NLDLY`: 76
+- `VTDLY`: 76
+- `PARENB`: 76
+- `uname_info_t`: 76
+- `dst_buf`: 76
+- `COMMON_BUFSIZE`: 76
+- `IF_NOT_DESKTOP`: 76
+- `fileName`: 76
+- `gid`: 76
+- `lstat`: 76
+- `startpos`: 76
+- `st_mtime`: 76
+- `ofd`: 76
+- `seek`: 76
+- `infile`: 76
+- `xmove_fd`: 76
+- `O_CREAT`: 76
+- `resolved_fn`: 76
+- `OPT_b`: 76
+- `nflag`: 76
+- `fflush_stdout_and_exit_SUCCESS`: 76
+- `STRING`: 76
+- `tostring`: 76
+- `ll`: 76
+- `re_regs`: 76
+- `eval6`: 76
+- `which`: 76
+- `skip_whitespace`: 76
+- `id`: 76
+- `undef`: 76
+- `OPT_a`: 76
+- `ENABLE_FEATURE_LS_FILETYPES`: 76
+- `ENABLE_FEATURE_LS_SORTFILES`: 76
+- `ENABLE_FEATURE_LS_COLOR`: 76
+- `ncols`: 76
+- `dndirs`: 76
+- `context`: 76
+- `dest_exists`: 76
+- `OPT_N`: 76
+- `longdouble_t`: 76
+- `llv`: 76
+- `saved`: 76
+
+## Comments with no translation
+
+- config:	default y: 76
+- config:	help: 76
+- vi: set sw=4 ts=4:: 76
+- config:: 76
+- usage:	): 76
+- usage:: 76
+- This is a NOEXEC applet. Be very careful!: 76
+- BB_AUDIT SUSv3 compliant: 76
+- This is a NOFORK applet. Be very careful!: 76
+- continue;: 76
+- usage:       "$ ls -l /tmp/foo\n": 76
+- usage:	IF_SELINUX(: 76
+- usage:       "": 76
+- usage:     "\n": 76
+- config:	depends on LS: 76
+- BB_AUDIT SUSv3 N/A -- Matches GNU behavior.: 76
+- usage:       "$ echo $?\n": 76
+- undocumented in coreutils 9.1: 76
+- usage:	IF_DESKTOP(: 76
+- usage:     "\n	-v	Verbose": 76
+- usage:	IF_FEATURE_MD5_SHA1_SUM_CHECK( "\n": 76
+- usage:     "\n	-c	Check sums against list in FILEs": 76
+- usage:     "\n	-s	Don't output anything, status code shows success": 76
+- usage:     "\n	-w	Warn about improperly formatted checksum lines": 76
+- usage:     "\n	-R	Recurse": 76
+- usage:       "[OPTIONS] [FILE]...": 76
+- for compiler: 76
+- usage:     "\n	-Z	Set security context": 76
+- usage:	IF_FEATURE_MD5_SHA1_SUM_CHECK("[-c[sw]] ")"[FILE]...": 76
+- 1 arg max: 76
+- FEATURE_STAT_FORMAT: 76
+- '+': stop at first non-option: 76
+- usage:#endif: 76
+- next 4 options are the same for chmod/chown/chgrp:: 76
+- usage:     "\n	-c	List changed files": 76
+- usage:     "\n	-f	Hide errors": 76
+- config:	bool "Enable long options": 76
+- usage:     "\n	-H	Follow symlinks on command line": 76
+- error other than ENOENT: 76
+- argc -= optind;: 76
+- config:	depends on DATE: 76
+- config:	depends on DD: 76
+- usage:	IF_FEATURE_DD_IBS_OBS(: 76
+- usage:	IF_FEATURE_HUMAN_READABLE(: 76
+- usage:       "1\n": 76
+- usage:	IF_LONG_OPTS(: 76
+- unused:: 76
+- switch: 76
+- usage:	IF_FEATURE_SORT_BIG(: 76
+- usage:       "a\n": 76
+- usage:       "b\n": 76
+- usage:       "c\n": 76
+- called for the side effect of xfunc death only: 76
+- coreutils-6.9 compat: 76
+- usage:       "0\n": 76
+- config:	depends on FEATURE_UTMP: 76
+- config:	Print users currently logged on.: 76
+- config:	depends on CAT: 76
+- usage:#define cat_trivial_usage: 76
+- BB_AUDIT SUSv3 defects - none?: 76
+- BB_AUDIT GNU defects - unsupported long options.: 76
+- usage:     "\n	-h	Affect symlinks instead of symlink targets": 76
+- usage:     "\n	-L	Traverse all symlinks to directories": 76
+- usage:     "\n	-H	Traverse symlinks on command line only": 76
+- usage:     "\n	-P	Don't traverse symlinks (default)": 76
+- usage:       "-r--r--r--    1 andersen andersen        0 Apr 12 18:25 /tmp/foo\n": 76
+- usage:       "-r--r--r--    1 root     root            0 Apr 12 18:25 /tmp/foo\n": 76
+- Ok, ready to do the deed now: 76
+- file action: 76
+- dir action: 76
+- user data: 76
+- bb_common_bufsiz1 usage here is safe wrt NOEXEC: not expecting it to be zeroed.: 76
+- usage:       "FILE...": 76
+- Mar 16, 2003      Manuel Novoa III   (mjn3@codepoet.org)
+ *
+ * Size reduction.: 76
+- usage:     "\n	-R,-r	Recurse": 76
+- usage:     "\n	-L	Follow all symlinks": 76
+- argc == 2: 76
+- else: last is DIR from "-t DIR": 76
+- usage:       "Hello\n": 76
+- usage:	IF_FEATURE_DATE_ISOFMT(: 76
+- Correct any day of week and day of year etc. fields: 76
+- we have to zero it out because of NOEXEC: 76
+- show fractional digit, use suffixes: 76
+- config:	depends on DF: 76
+- usage:       "Filesystem           1K-blocks      Used Available Use% Mounted on\n": 76
+- usage:       "/dev/sda3              8690864   8553540    137324  98% /\n": 76
+- TODO - a new libbb function?: 76
+- usage:       "/tmp\n": 76
+- usage:       "[-ud] [FILE]": 76
+- usage:       "When no file is given, use stdin/stdout.\n": 76
+- usage:     "\n	-u	dos2unix": 76
+- usage:     "\n	-d	unix2dos": 76
+- mutually exclusive: 76
+- 1 -- print '\n': 76
+- If it appears that we are handling options, then make sure
+		 * that all of the options specified ar: 76
+- optimization for very common case: 76
+- This is an "\x" sequence: 76
+- "\c" means cancel newline and
+					 * ignore all subsequent chars.: 76
+- Since SUSv3 mandates a first digit of 0, 4-digit octals
+				* of the form \0### are accepted.: 76
+- 2nd char is 0..7: skip leading '0': 76
