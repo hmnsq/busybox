@@ -163,15 +163,15 @@
 //usage:     "\n	--color[={always,never,auto}]"
 //usage:	)
 
-#include "libbb.h"
-#include "common_bufsiz.h"
-#include "unicode.h"
+#ضمن "libbb.h"
+#ضمن "common_bufsiz.h"
+#ضمن "unicode.h"
 
 
 /* This is a NOEXEC applet. Be very careful! */
 
 
-#if ENABLE_FTPD
+#إذا ENABLE_FTPD
 /* ftpd uses ls, and without timestamps Mozilla won't understand
  * ftpd's LIST output.
  */
@@ -183,15 +183,15 @@
 # define ENABLE_FEATURE_LS_TIMESTAMPS 1
 # define IF_FEATURE_LS_TIMESTAMPS(...) __VA_ARGS__
 # define IF_NOT_FEATURE_LS_TIMESTAMPS(...)
-#endif
+#پایان_اگر
 
 
-enum {
-TERMINAL_WIDTH  = 80, /* use 79 if terminal has linefold bug */
+تعداد {
+TERMINAL_عرض  = 80, /* use 79 if terminal has linefold bug */
 
-SPLIT_FILE      = 0,
-SPLIT_DIR       = 1,
-SPLIT_SUBDIR    = 2,
+تقسیم_FILE      = 0,
+تقسیم_DIR       = 1,
+تقسیم_SUBDIR    = 2,
 };
 
 /* -Cadi1l  Std options, busybox always supports */
@@ -206,7 +206,7 @@ SPLIT_SUBDIR    = 2,
 /* -SXvhTw  GNU options, busybox optionally supports */
 /* -T WIDTH Ignored (we don't use tabs on output) */
 /* -Z       SELinux mandated option, busybox optionally supports */
-#define ls_options \
+#تعریف_کن ls_options \
 	"Cadi1lgnsxAk"       /* 12 opts, total 12 */ \
 	IF_FEATURE_LS_FILETYPES("Fp")    /* 2, 14 */ \
 	IF_FEATURE_LS_RECURSIVE("R")     /* 1, 15 */ \
@@ -216,9 +216,9 @@ SPLIT_SUBDIR    = 2,
 	IF_FEATURE_LS_SORTFILES("SXrv")  /* 4, 24 */ \
 	IF_FEATURE_LS_FOLLOWLINKS("LH")  /* 2, 26 */ \
 	IF_FEATURE_HUMAN_READABLE("h")   /* 1, 27 */ \
-	IF_FEATURE_LS_WIDTH("T:w:")      /* 2, 29 */
+	IF_FEATURE_LS_عرض("T:w:")      /* 2, 29 */
 
-enum {
+تعداد {
 	OPT_C = (1 << 0),
 	OPT_a = (1 << 1),
 	OPT_d = (1 << 2),
@@ -249,8 +249,8 @@ enum {
 	OPTBIT_h = OPTBIT_L + 2 * ENABLE_FEATURE_LS_FOLLOWLINKS,
 	OPTBIT_T = OPTBIT_h + 1 * ENABLE_FEATURE_HUMAN_READABLE,
 	OPTBIT_w, /* 28 */
-	OPTBIT_full_time = OPTBIT_T + 2 * ENABLE_FEATURE_LS_WIDTH,
-	OPTBIT_dirs_first,
+	OPTBIT_پر_زمان = OPTBIT_T + 2 * ENABLE_FEATURE_LS_عرض,
+	OPTBIT_dirs_اولی,
 	OPTBIT_color, /* 31 */
 	/* with long opts, we use all 32 bits */
 
@@ -269,28 +269,28 @@ enum {
 	OPT_L = (1 << OPTBIT_L) * ENABLE_FEATURE_LS_FOLLOWLINKS,
 	OPT_H = (1 << OPTBIT_H) * ENABLE_FEATURE_LS_FOLLOWLINKS,
 	OPT_h = (1 << OPTBIT_h) * ENABLE_FEATURE_HUMAN_READABLE,
-	OPT_T = (1 << OPTBIT_T) * ENABLE_FEATURE_LS_WIDTH,
-	OPT_w = (1 << OPTBIT_w) * ENABLE_FEATURE_LS_WIDTH,
-	OPT_full_time  = (1 << OPTBIT_full_time ) * ENABLE_LONG_OPTS,
-	OPT_dirs_first = (1 << OPTBIT_dirs_first) * ENABLE_LONG_OPTS,
+	OPT_T = (1 << OPTBIT_T) * ENABLE_FEATURE_LS_عرض,
+	OPT_w = (1 << OPTBIT_w) * ENABLE_FEATURE_LS_عرض,
+	OPT_پر_زمان  = (1 << OPTBIT_پر_زمان ) * ENABLE_LONG_OPTS,
+	OPT_dirs_اولی = (1 << OPTBIT_dirs_اولی) * ENABLE_LONG_OPTS,
 	OPT_color      = (1 << OPTBIT_color     ) * ENABLE_FEATURE_LS_COLOR,
 };
 
 /*
  * a directory entry and its stat info
  */
-struct dnode {
-	const char *name;       /* usually basename, but think "ls -l dir/file" */
-	const char *fullname;   /* full name (usable for stat etc) */
-	struct dnode *dn_next;  /* for linked list */
+بنية dnode {
+	ثابت حرف *name;       /* usually basename, but think "ls -l dir/file" */
+	ثابت حرف *fullname;   /* full name (usable for stat etc) */
+	بنية dnode *dn_بعدی;  /* for linked list */
 	IF_SELINUX(security_context_t sid;)
 	smallint fname_allocated;
 
 	/* Used to avoid re-doing [l]stat at printout stage
 	 * if we already collected needed data in scan stage:
 	 */
-	mode_t    dn_mode_lstat;   /* obtained with lstat, or 0 */
-	mode_t    dn_mode_stat;    /* obtained with stat, or 0 */
+	نما_t    dn_نما_lstat;   /* obtained with lstat, or 0 */
+	نما_t    dn_نما_stat;    /* obtained with stat, or 0 */
 
 //	struct stat dstat;
 // struct stat is huge. We don't need it in full.
@@ -302,52 +302,52 @@ struct dnode {
 // On 32-bit uclibc: dnode size went from 112 to 84 bytes.
 //
 	/* Same names as in struct stat, but with dn_ instead of st_ pfx: */
-	mode_t    dn_mode; /* obtained with lstat OR stat, depending on -L etc */
-	off_t     dn_size;
-#if ENABLE_FEATURE_LS_TIMESTAMPS || ENABLE_FEATURE_LS_SORTFILES
-	time_t    dn_time;
-#endif
+	نما_t    dn_نما; /* obtained with lstat OR stat, depending on -L etc */
+	off_t     dn_اندازه;
+#إذا ENABLE_FEATURE_LS_TIMESTAMPS || ENABLE_FEATURE_LS_SORTFILES
+	زمان_t    dn_زمان;
+#پایان_اگر
 	ino_t     dn_ino;
-	blkcnt_t  dn_blocks;
+	blkcnt_t  dn_بلوکها;
 	nlink_t   dn_nlink;
 	uid_t     dn_uid;
 	gid_t     dn_gid;
-	int       dn_rdev_maj;
-	int       dn_rdev_min;
+	صحيح       dn_rdev_maj;
+	صحيح       dn_rdev_min;
 //	dev_t     dn_dev;
 //	blksize_t dn_blksize;
 };
 
-struct globals {
-#if ENABLE_FEATURE_LS_COLOR
+بنية globals {
+#إذا ENABLE_FEATURE_LS_COLOR
 	smallint show_color;
 # define G_show_color (G.show_color)
-#else
+#وإلا
 # define G_show_color 0
-#endif
-	smallint exit_code;
+#پایان_اگر
+	smallint exit_کد;
 	smallint show_dirname;
-#if ENABLE_FEATURE_LS_WIDTH
-	unsigned terminal_width;
-# define G_terminal_width (G.terminal_width)
-#else
-# define G_terminal_width TERMINAL_WIDTH
-#endif
-#if ENABLE_FEATURE_LS_TIMESTAMPS
+#إذا ENABLE_FEATURE_LS_عرض
+	بیعلامت terminal_عرض;
+# define G_terminal_عرض (G.terminal_عرض)
+#وإلا
+# define G_terminal_عرض TERMINAL_عرض
+#پایان_اگر
+#إذا ENABLE_FEATURE_LS_TIMESTAMPS
 	/* Do time() just once. Saves one syscall per file for "ls -l" */
-	time_t current_time_t;
-#endif
+	زمان_t current_زمان_t;
+#پایان_اگر
 } FIX_ALIASING;
-#define G (*(struct globals*)bb_common_bufsiz1)
-#define INIT_G() do { \
-	setup_common_bufsiz(); \
+#تعریف_کن G (*(بنية globals*)bb_common_bufsiz1)
+#تعریف_کن INIT_G() افعل { \
+	راهاندازی_common_bufsiz(); \
 	/* we have to zero it out because of NOEXEC */ \
-	memset(&G, 0, sizeof(G)); \
-	IF_FEATURE_LS_WIDTH(G_terminal_width = TERMINAL_WIDTH;) \
-	IF_FEATURE_LS_TIMESTAMPS(time(&G.current_time_t);) \
-} while (0)
+	memset(&G, 0, حجم(G)); \
+	IF_FEATURE_LS_عرض(G_terminal_عرض = TERMINAL_عرض;) \
+	IF_FEATURE_LS_TIMESTAMPS(زمان(&G.current_زمان_t);) \
+} طالما (0)
 
-#define ESC "\033"
+#تعریف_کن ESC "\033"
 
 
 /*** Output code ***/
@@ -357,9 +357,9 @@ struct globals {
  * (various wacky OSes: 13:Sun door 14:BSD whiteout 5:XENIX named file
  *  3/7:multiplexed char/block device)
  * and we use 0 for unknown and 15 for executables (see below) */
-#define TYPEINDEX(mode) (((mode) >> 12) & 0x0f)
+#تعریف_کن TYPEINDEX(نما) (((نما) >> 12) & 0x0f)
 /*                       un  fi chr -   dir -  blk  -  file -  link - sock -   - exe */
-#define APPCHAR(mode)   ("\0""|""\0""\0""/""\0""\0""\0""\0""\0""@""\0""=""\0""\0""\0" [TYPEINDEX(mode)])
+#تعریف_کن APPCHAR(نما)   ("\0""|""\0""\0""/""\0""\0""\0""\0""\0""@""\0""=""\0""\0""\0" [TYPEINDEX(نما)])
 /* 036 black foreground              050 black background
    037 red foreground                051 red background
    040 green foreground              052 green background
@@ -369,72 +369,72 @@ struct globals {
    044 cyan (light blue) foreground  056 cyan background
    045 gray foreground               057 white background
 */
-#define COLOR(mode) ( \
+#تعریف_کن COLOR(نما) ( \
 	/*un  fi  chr  -  dir  -  blk  -  file -  link -  sock -   -  exe */ \
 	"\037\043\043\045\042\045\043\043\000\045\044\045\043\045\045\040" \
-	[TYPEINDEX(mode)])
+	[TYPEINDEX(نما)])
 /* Select normal (0) [actually "reset all"] or bold (1)
  * (other attributes are 2:dim 4:underline 5:blink 7:reverse,
  *  let's use 7 for "impossible" types, just for fun)
  * Note: coreutils 6.9 uses inverted red for setuid binaries.
  */
-#define ATTR(mode) ( \
+#تعریف_کن ATTR(نما) ( \
 	/*un fi chr - dir - blk - file- link- sock- -  exe */ \
 	"\01\00\01\07\01\07\01\07\00\07\01\07\01\07\07\01" \
-	[TYPEINDEX(mode)])
+	[TYPEINDEX(نما)])
 
-#if ENABLE_FEATURE_LS_COLOR
+#إذا ENABLE_FEATURE_LS_COLOR
 /* mode of zero is interpreted as "unknown" (stat failed) */
-static char fgcolor(mode_t mode)
+ساكن حرف fgcolor(نما_t نما)
 {
-	if (S_ISREG(mode) && (mode & (S_IXUSR | S_IXGRP | S_IXOTH)))
-		return COLOR(0xF000);	/* File is executable ... */
-	return COLOR(mode);
+	إذا (S_ISREG(نما) && (نما & (S_IXUSR | S_IXGRP | S_IXOTH)))
+		أرجع COLOR(0xF000);	/* File is executable ... */
+	أرجع COLOR(نما);
 }
-static char bold(mode_t mode)
+ساكن حرف bold(نما_t نما)
 {
-	if (S_ISREG(mode) && (mode & (S_IXUSR | S_IXGRP | S_IXOTH)))
-		return ATTR(0xF000);	/* File is executable ... */
-	return ATTR(mode);
+	إذا (S_ISREG(نما) && (نما & (S_IXUSR | S_IXGRP | S_IXOTH)))
+		أرجع ATTR(0xF000);	/* File is executable ... */
+	أرجع ATTR(نما);
 }
-#endif
+#پایان_اگر
 
-#if ENABLE_FEATURE_LS_FILETYPES
-static char append_char(mode_t mode)
+#إذا ENABLE_FEATURE_LS_FILETYPES
+ساكن حرف append_char(نما_t نما)
 {
-	if (!(option_mask32 & (OPT_F|OPT_p)))
-		return '\0';
+	إذا (!(option_mask32 & (OPT_F|OPT_p)))
+		أرجع '\0';
 
-	if (S_ISDIR(mode))
-		return '/';
-	if (!(option_mask32 & OPT_F))
-		return '\0';
-	if (S_ISREG(mode) && (mode & (S_IXUSR | S_IXGRP | S_IXOTH)))
-		return '*';
-	return APPCHAR(mode);
+	إذا (S_ISDIR(نما))
+		أرجع '/';
+	إذا (!(option_mask32 & OPT_F))
+		أرجع '\0';
+	إذا (S_ISREG(نما) && (نما & (S_IXUSR | S_IXGRP | S_IXOTH)))
+		أرجع '*';
+	أرجع APPCHAR(نما);
 }
-#endif
+#پایان_اگر
 
-static unsigned calc_name_len(const char *name)
+ساكن بیعلامت calc_name_len(ثابت حرف *name)
 {
-	unsigned len;
+	بیعلامت len;
 	uni_stat_t uni_stat;
 
 	// TODO: quote tab as \t, etc, if -Q
 	name = printable_string2(&uni_stat, name);
 
-	if (!(option_mask32 & OPT_Q)) {
-		return uni_stat.unicode_width;
+	إذا (!(option_mask32 & OPT_Q)) {
+		أرجع uni_stat.unicode_عرض;
 	}
 
-	len = 2 + uni_stat.unicode_width;
-	while (*name) {
-		if (*name == '"' || *name == '\\') {
+	len = 2 + uni_stat.unicode_عرض;
+	طالما (*name) {
+		إذا (*name == '"' || *name == '\\') {
 			len++;
 		}
 		name++;
 	}
-	return len;
+	أرجع len;
 }
 
 /* Return the number of used columns.
@@ -444,338 +444,338 @@ static unsigned calc_name_len(const char *name)
  * ls -b (--escape) = octal escapes (although it doesn't look like working)
  * ls -N (--literal) = not escape at all
  */
-static unsigned print_name(const char *name)
+ساكن بیعلامت print_name(ثابت حرف *name)
 {
-	unsigned len;
+	بیعلامت len;
 	uni_stat_t uni_stat;
 
 	// TODO: quote tab as \t, etc, if -Q
 	name = printable_string2(&uni_stat, name);
 
-	if (!(option_mask32 & OPT_Q)) {
+	إذا (!(option_mask32 & OPT_Q)) {
 		fputs_stdout(name);
-		return uni_stat.unicode_width;
+		أرجع uni_stat.unicode_عرض;
 	}
 
-	len = 2 + uni_stat.unicode_width;
-	putchar('"');
-	while (*name) {
-		if (*name == '"' || *name == '\\') {
-			putchar('\\');
+	len = 2 + uni_stat.unicode_عرض;
+	حرف_چاپ_کن('"');
+	طالما (*name) {
+		إذا (*name == '"' || *name == '\\') {
+			حرف_چاپ_کن('\\');
 			len++;
 		}
-		putchar(*name);
+		حرف_چاپ_کن(*name);
 		name++;
 	}
-	putchar('"');
-	return len;
+	حرف_چاپ_کن('"');
+	أرجع len;
 }
 
 /* Return the number of used columns.
  * Note that only columnar output uses return value,
  * -l and -1 modes don't care.
  */
-static NOINLINE unsigned display_single(const struct dnode *dn)
+ساكن NOINLINE بیعلامت display_single(ثابت بنية dnode *dn)
 {
-	unsigned column = 0;
-	char *lpath;
-	int opt;
-#if ENABLE_FEATURE_LS_FILETYPES || ENABLE_FEATURE_LS_COLOR
-	struct stat statbuf;
-#endif
-#if ENABLE_FEATURE_LS_FILETYPES
-	char append = append_char(dn->dn_mode);
-#endif
+	بیعلامت ستونی = 0;
+	حرف *lpath;
+	صحيح opt;
+#إذا ENABLE_FEATURE_LS_FILETYPES || ENABLE_FEATURE_LS_COLOR
+	بنية stat statbuf;
+#پایان_اگر
+#إذا ENABLE_FEATURE_LS_FILETYPES
+	حرف append = append_char(dn->dn_نما);
+#پایان_اگر
 
 	opt = option_mask32;
 
 	/* Do readlink early, so that if it fails, error message
 	 * does not appear *inside* the "ls -l" line */
-	lpath = NULL;
-	if (opt & OPT_l)
-		if (S_ISLNK(dn->dn_mode))
+	lpath = عدم;
+	إذا (opt & OPT_l)
+		إذا (S_ISLNK(dn->dn_نما))
 			lpath = xmalloc_readlink_or_warn(dn->fullname);
 
-	if (opt & OPT_i) /* show inode# */
-		column += printf("%7llu ", (long long) dn->dn_ino);
-	if (opt & OPT_s) { /* show allocated blocks */
-		if (opt & OPT_h) {
-			column += printf("%"HUMAN_READABLE_MAX_WIDTH_STR"s ",
+	إذا (opt & OPT_i) /* show inode# */
+		ستونی += چاپ_کن("%7llu ", (دراز دراز) dn->dn_ino);
+	إذا (opt & OPT_s) { /* show allocated blocks */
+		إذا (opt & OPT_h) {
+			ستونی += چاپ_کن("%"HUMAN_READABLE_MAX_عرض_STR"s ",
 				/* print size, show one fractional, use suffixes */
-				make_human_readable_str((off_t)dn->dn_blocks << 9, 1, 0)
+				make_human_readable_str((off_t)dn->dn_بلوکها << 9, 1, 0)
 			);
-		} else {
-			column += printf("%6"OFF_FMT"u ", (off_t)(dn->dn_blocks >> 1));
+		} وإلا {
+			ستونی += چاپ_کن("%6"OFF_FMT"u ", (off_t)(dn->dn_بلوکها >> 1));
 		}
 	}
-	if (opt & OPT_l) {
+	إذا (opt & OPT_l) {
 		/* long listing: show mode */
-		char modestr[12];
-		column += printf("%-10s ", bb_mode_string(modestr, dn->dn_mode));
+		حرف modestr[12];
+		ستونی += چاپ_کن("%-10s ", bb_نما_string(modestr, dn->dn_نما));
 		/* long listing: show number of links */
-		column += printf("%4lu ", (long) dn->dn_nlink);
+		ستونی += چاپ_کن("%4lu ", (دراز) dn->dn_nlink);
 		/* long listing: show user/group */
-		if (opt & OPT_n) {
-			if (opt & OPT_g)
-				column += printf("%-8u ", (int) dn->dn_gid);
-			else
-				column += printf("%-8u %-8u ",
-						(int) dn->dn_uid,
-						(int) dn->dn_gid);
+		إذا (opt & OPT_n) {
+			إذا (opt & OPT_g)
+				ستونی += چاپ_کن("%-8u ", (صحيح) dn->dn_gid);
+			وإلا
+				ستونی += چاپ_کن("%-8u %-8u ",
+						(صحيح) dn->dn_uid,
+						(صحيح) dn->dn_gid);
 		}
-#if ENABLE_FEATURE_LS_USERNAME
-		else {
-			if (opt & OPT_g) {
-				column += printf("%-8s ",
+#إذا ENABLE_FEATURE_LS_USERNAME
+		وإلا {
+			إذا (opt & OPT_g) {
+				ستونی += چاپ_کن("%-8s ",
 					get_cached_groupname(dn->dn_gid));
-			} else {
-				column += printf("%-8s %-8s ",
+			} وإلا {
+				ستونی += چاپ_کن("%-8s %-8s ",
 					get_cached_username(dn->dn_uid),
 					get_cached_groupname(dn->dn_gid));
 			}
 		}
-#endif
-#if ENABLE_SELINUX
+#پایان_اگر
+#إذا ENABLE_SELINUX
 	}
-	if (opt & OPT_Z) {
-		column += printf("%-32s ", dn->sid ? dn->sid : "?");
+	إذا (opt & OPT_Z) {
+		ستونی += چاپ_کن("%-32s ", dn->sid ? dn->sid : "?");
 		freecon(dn->sid);
 	}
-	if (opt & OPT_l) {
-#endif
+	إذا (opt & OPT_l) {
+#پایان_اگر
 		/* long listing: show size */
-		if (S_ISBLK(dn->dn_mode) || S_ISCHR(dn->dn_mode)) {
-			column += printf("%4u, %3u ",
+		إذا (S_ISBLK(dn->dn_نما) || S_ISCHR(dn->dn_نما)) {
+			ستونی += چاپ_کن("%4u, %3u ",
 					dn->dn_rdev_maj,
 					dn->dn_rdev_min);
-		} else {
-			if (opt & OPT_h) {
-				column += printf("%"HUMAN_READABLE_MAX_WIDTH_STR"s ",
+		} وإلا {
+			إذا (opt & OPT_h) {
+				ستونی += چاپ_کن("%"HUMAN_READABLE_MAX_عرض_STR"s ",
 					/* print size, show one fractional, use suffixes */
-					make_human_readable_str(dn->dn_size, 1, 0)
+					make_human_readable_str(dn->dn_اندازه, 1, 0)
 				);
-			} else {
-				column += printf("%9"OFF_FMT"u ", dn->dn_size);
+			} وإلا {
+				ستونی += چاپ_کن("%9"OFF_FMT"u ", dn->dn_اندازه);
 			}
 		}
-#if ENABLE_FEATURE_LS_TIMESTAMPS
+#إذا ENABLE_FEATURE_LS_TIMESTAMPS
 		/* long listing: show {m,c,a}time */
-		if (opt & OPT_full_time) { /* --full-time */
+		إذا (opt & OPT_پر_زمان) { /* --full-time */
 			/* coreutils 8.4 ls --full-time prints:
 			 * 2009-07-13 17:49:27.000000000 +0200
 			 * we don't show fractional seconds.
 			 */
-			char buf[sizeof("YYYY-mm-dd HH:MM:SS TIMEZONE")];
-			strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S %z",
-					localtime(&dn->dn_time));
-			column += printf("%s ", buf);
-		} else { /* ordinary time format */
+			حرف buf[حجم("YYYY-mm-dd HH:MM:SS TIMEZONE")];
+			strftime(buf, حجم(buf), "%Y-%m-%d %H:%M:%S %z",
+					localtime(&dn->dn_زمان));
+			ستونی += چاپ_کن("%s ", buf);
+		} وإلا { /* ordinary time format */
 			/* G.current_time_t is ~== time(NULL) */
-			char *filetime = ctime(&dn->dn_time);
+			حرف *filetime = ctime(&dn->dn_زمان);
 			/* filetime's format: "Wed Jun 30 21:49:08 1993\n" */
-			time_t age = G.current_time_t - dn->dn_time;
-			if (age < 3600L * 24 * 365 / 2 && age > -15 * 60) {
+			زمان_t age = G.current_زمان_t - dn->dn_زمان;
+			إذا (age < 3600L * 24 * 365 / 2 && age > -15 * 60) {
 				/* less than 6 months old */
 				/* "mmm dd hh:mm " */
-				printf("%.12s ", filetime + 4);
-			} else {
+				چاپ_کن("%.12s ", filetime + 4);
+			} وإلا {
 				/* "mmm dd  yyyy " */
 				/* "mmm dd yyyyy " after year 9999 :) */
 				strchr(filetime + 20, '\n')[0] = ' ';
-				printf("%.7s%6s", filetime + 4, filetime + 20);
+				چاپ_کن("%.7s%6s", filetime + 4, filetime + 20);
 			}
-			column += 13;
+			ستونی += 13;
 		}
-#endif
+#پایان_اگر
 	}
 
-#if ENABLE_FEATURE_LS_COLOR
-	if (G_show_color) {
-		mode_t mode = dn->dn_mode_lstat;
-		if (!mode)
-			if (lstat(dn->fullname, &statbuf) == 0)
-				mode = statbuf.st_mode;
-		printf(ESC"[%u;%um", bold(mode), fgcolor(mode));
+#إذا ENABLE_FEATURE_LS_COLOR
+	إذا (G_show_color) {
+		نما_t نما = dn->dn_نما_lstat;
+		إذا (!نما)
+			إذا (lstat(dn->fullname, &statbuf) == 0)
+				نما = statbuf.st_نما;
+		چاپ_کن(ESC"[%u;%um", bold(نما), fgcolor(نما));
 	}
-#endif
-	column += print_name(dn->name);
-	if (G_show_color) {
-		printf(ESC"[m");
+#پایان_اگر
+	ستونی += print_name(dn->name);
+	إذا (G_show_color) {
+		چاپ_کن(ESC"[m");
 	}
 
-	if (lpath) {
-		printf(" -> ");
-#if ENABLE_FEATURE_LS_FILETYPES || ENABLE_FEATURE_LS_COLOR
-		if ((opt & (OPT_F|OPT_p))
+	إذا (lpath) {
+		چاپ_کن(" -> ");
+#إذا ENABLE_FEATURE_LS_FILETYPES || ENABLE_FEATURE_LS_COLOR
+		إذا ((opt & (OPT_F|OPT_p))
 		 || G_show_color
 		) {
-			mode_t mode = dn->dn_mode_stat;
-			if (!mode)
-				if (stat(dn->fullname, &statbuf) == 0)
-					mode = statbuf.st_mode;
-# if ENABLE_FEATURE_LS_FILETYPES
-			append = append_char(mode);
+			نما_t نما = dn->dn_نما_stat;
+			إذا (!نما)
+				إذا (stat(dn->fullname, &statbuf) == 0)
+					نما = statbuf.st_نما;
+# إذا ENABLE_FEATURE_LS_FILETYPES
+			append = append_char(نما);
 # endif
-# if ENABLE_FEATURE_LS_COLOR
-			if (G_show_color) {
-				printf(ESC"[%u;%um", bold(mode), fgcolor(mode));
+# إذا ENABLE_FEATURE_LS_COLOR
+			إذا (G_show_color) {
+				چاپ_کن(ESC"[%u;%um", bold(نما), fgcolor(نما));
 			}
 # endif
 		}
-#endif
-		column += print_name(lpath) + 4;
-		free(lpath);
-		if (G_show_color) {
-			printf(ESC"[m");
+#پایان_اگر
+		ستونی += print_name(lpath) + 4;
+		حرر(lpath);
+		إذا (G_show_color) {
+			چاپ_کن(ESC"[m");
 		}
 	}
-#if ENABLE_FEATURE_LS_FILETYPES
-	if (opt & (OPT_F|OPT_p)) {
-		if (append) {
-			putchar(append);
-			column++;
+#إذا ENABLE_FEATURE_LS_FILETYPES
+	إذا (opt & (OPT_F|OPT_p)) {
+		إذا (append) {
+			حرف_چاپ_کن(append);
+			ستونی++;
 		}
 	}
-#endif
+#پایان_اگر
 
-	return column;
+	أرجع ستونی;
 }
 
-static void display_files(struct dnode **dn, unsigned nfiles)
+ساكن فراغ display_files(بنية dnode **dn, بیعلامت nfiles)
 {
-	unsigned i, ncols, nrows, row, nc;
-	unsigned column;
-	unsigned nexttab;
-	unsigned column_width = 0; /* used only by coulmnal output */
+	بیعلامت i, ncols, nrows, ردیف, nc;
+	بیعلامت ستونی;
+	بیعلامت nexttab;
+	بیعلامت ستونی_عرض = 0; /* used only by coulmnal output */
 
-	if (option_mask32 & (OPT_l|OPT_1)) {
+	إذا (option_mask32 & (OPT_l|OPT_1)) {
 		ncols = 1;
-	} else {
+	} وإلا {
 		/* find the longest file name, use that as the column width */
-		for (i = 0; dn[i]; i++) {
-			int len = calc_name_len(dn[i]->name);
-			if (column_width < len)
-				column_width = len;
+		لكل (i = 0; dn[i]; i++) {
+			صحيح len = calc_name_len(dn[i]->name);
+			إذا (ستونی_عرض < len)
+				ستونی_عرض = len;
 		}
-		column_width += 2
+		ستونی_عرض += 2
 			+ ((option_mask32 & OPT_Z) ? 33 : 0) /* context width */
 			+ ((option_mask32 & OPT_i) ? 8 : 0) /* inode# width */
 			+ ((option_mask32 & OPT_s) ? 5 : 0) /* "alloc block" width */
 		;
-		ncols = (unsigned)G_terminal_width / column_width;
+		ncols = (بیعلامت)G_terminal_عرض / ستونی_عرض;
 	}
 
-	if (ncols > 1) {
+	إذا (ncols > 1) {
 		nrows = nfiles / ncols;
-		if (nrows * ncols < nfiles)
+		إذا (nrows * ncols < nfiles)
 			nrows++;                /* round up fractionals */
-	} else {
+	} وإلا {
 		nrows = nfiles;
 		ncols = 1;
 	}
 
-	column = 0;
+	ستونی = 0;
 	nexttab = 0;
-	for (row = 0; row < nrows; row++) {
-		for (nc = 0; nc < ncols; nc++) {
+	لكل (ردیف = 0; ردیف < nrows; ردیف++) {
+		لكل (nc = 0; nc < ncols; nc++) {
 			/* reach into the array based on the column and row */
-			if (option_mask32 & OPT_x)
-				i = (row * ncols) + nc;	/* display across row */
-			else
-				i = (nc * nrows) + row;	/* display by column */
-			if (i < nfiles) {
-				if (column > 0) {
-					nexttab -= column;
-					printf("%*s", nexttab, "");
-					column += nexttab;
+			إذا (option_mask32 & OPT_x)
+				i = (ردیف * ncols) + nc;	/* display across row */
+			وإلا
+				i = (nc * nrows) + ردیف;	/* display by column */
+			إذا (i < nfiles) {
+				إذا (ستونی > 0) {
+					nexttab -= ستونی;
+					چاپ_کن("%*s", nexttab, "");
+					ستونی += nexttab;
 				}
-				nexttab = column + column_width;
-				column += display_single(dn[i]);
+				nexttab = ستونی + ستونی_عرض;
+				ستونی += display_single(dn[i]);
 			}
 		}
-		putchar('\n');
-		column = 0;
+		حرف_چاپ_کن('\n');
+		ستونی = 0;
 	}
 }
 
 
 /*** Dir scanning code ***/
 
-static struct dnode *my_stat(const char *fullname, const char *name, int force_follow)
+ساكن بنية dnode *my_stat(ثابت حرف *fullname, ثابت حرف *name, صحيح force_follow)
 {
-	struct stat statbuf;
-	struct dnode *cur;
+	بنية stat statbuf;
+	بنية dnode *cur;
 
-	cur = xzalloc(sizeof(*cur));
+	cur = xzalloc(حجم(*cur));
 	cur->fullname = fullname;
 	cur->name = name;
 
-	if ((option_mask32 & OPT_L) || force_follow) {
-#if ENABLE_SELINUX
-		if (option_mask32 & OPT_Z) {
+	إذا ((option_mask32 & OPT_L) || force_follow) {
+#إذا ENABLE_SELINUX
+		إذا (option_mask32 & OPT_Z) {
 			getfilecon(fullname, &cur->sid);
 		}
-#endif
-		if (stat(fullname, &statbuf)) {
-			bb_simple_perror_msg(fullname);
-			G.exit_code = EXIT_FAILURE;
-			free(cur);
-			return NULL;
+#پایان_اگر
+		إذا (stat(fullname, &statbuf)) {
+			bb_simple_perror_پیام(fullname);
+			G.exit_کد = EXIT_FAILURE;
+			حرر(cur);
+			أرجع عدم;
 		}
-		cur->dn_mode_stat = statbuf.st_mode;
-	} else {
-#if ENABLE_SELINUX
-		if (option_mask32 & OPT_Z) {
+		cur->dn_نما_stat = statbuf.st_نما;
+	} وإلا {
+#إذا ENABLE_SELINUX
+		إذا (option_mask32 & OPT_Z) {
 			lgetfilecon(fullname, &cur->sid);
 		}
-#endif
-		if (lstat(fullname, &statbuf)) {
-			bb_simple_perror_msg(fullname);
-			G.exit_code = EXIT_FAILURE;
-			free(cur);
-			return NULL;
+#پایان_اگر
+		إذا (lstat(fullname, &statbuf)) {
+			bb_simple_perror_پیام(fullname);
+			G.exit_کد = EXIT_FAILURE;
+			حرر(cur);
+			أرجع عدم;
 		}
-		cur->dn_mode_lstat = statbuf.st_mode;
+		cur->dn_نما_lstat = statbuf.st_نما;
 	}
 
 	/* cur->dstat = statbuf: */
-	cur->dn_mode   = statbuf.st_mode  ;
-	cur->dn_size   = statbuf.st_size  ;
-#if ENABLE_FEATURE_LS_TIMESTAMPS || ENABLE_FEATURE_LS_SORTFILES
-	cur->dn_time   = statbuf.st_mtime ;
-	if (option_mask32 & OPT_u)
-		cur->dn_time = statbuf.st_atime;
-	if (option_mask32 & OPT_c)
-		cur->dn_time = statbuf.st_ctime;
-#endif
+	cur->dn_نما   = statbuf.st_نما  ;
+	cur->dn_اندازه   = statbuf.st_اندازه  ;
+#إذا ENABLE_FEATURE_LS_TIMESTAMPS || ENABLE_FEATURE_LS_SORTFILES
+	cur->dn_زمان   = statbuf.st_mtime ;
+	إذا (option_mask32 & OPT_u)
+		cur->dn_زمان = statbuf.st_atime;
+	إذا (option_mask32 & OPT_c)
+		cur->dn_زمان = statbuf.st_ctime;
+#پایان_اگر
 	cur->dn_ino    = statbuf.st_ino   ;
-	cur->dn_blocks = statbuf.st_blocks;
+	cur->dn_بلوکها = statbuf.st_بلوکها;
 	cur->dn_nlink  = statbuf.st_nlink ;
 	cur->dn_uid    = statbuf.st_uid   ;
 	cur->dn_gid    = statbuf.st_gid   ;
 	cur->dn_rdev_maj = major(statbuf.st_rdev);
 	cur->dn_rdev_min = minor(statbuf.st_rdev);
 
-	return cur;
+	أرجع cur;
 }
 
-static unsigned count_dirs(struct dnode **dn, int which)
+ساكن بیعلامت شمار_dirs(بنية dnode **dn, صحيح which)
 {
-	unsigned dirs, all;
+	بیعلامت dirs, all;
 
-	if (!dn)
-		return 0;
+	إذا (!dn)
+		أرجع 0;
 
 	dirs = all = 0;
-	for (; *dn; dn++) {
-		const char *name;
+	لكل (; *dn; dn++) {
+		ثابت حرف *name;
 
 		all++;
-		if (!S_ISDIR((*dn)->dn_mode))
-			continue;
+		إذا (!S_ISDIR((*dn)->dn_نما))
+			استمر;
 
 		name = (*dn)->name;
-		if (which != SPLIT_SUBDIR /* if not requested to skip . / .. */
+		إذا (which != تقسیم_SUBDIR /* if not requested to skip . / .. */
 		 /* or if it's not . or .. */
 		 || name[0] != '.'
 		 || (name[1] && (name[1] != '.' || name[2]))
@@ -783,204 +783,204 @@ static unsigned count_dirs(struct dnode **dn, int which)
 			dirs++;
 		}
 	}
-	return which != SPLIT_FILE ? dirs : all - dirs;
+	أرجع which != تقسیم_FILE ? dirs : all - dirs;
 }
 
 /* get memory to hold an array of pointers */
-static struct dnode **dnalloc(unsigned num)
+ساكن بنية dnode **dnalloc(بیعلامت رقم)
 {
-	if (num < 1)
-		return NULL;
+	إذا (رقم < 1)
+		أرجع عدم;
 
-	num++; /* so that we have terminating NULL */
-	return xzalloc(num * sizeof(struct dnode *));
+	رقم++; /* so that we have terminating NULL */
+	أرجع xzalloc(رقم * حجم(بنية dnode *));
 }
 
-#if ENABLE_FEATURE_LS_RECURSIVE
-static void dfree(struct dnode **dnp)
+#إذا ENABLE_FEATURE_LS_RECURSIVE
+ساكن فراغ dfree(بنية dnode **dnp)
 {
-	unsigned i;
+	بیعلامت i;
 
-	if (dnp == NULL)
-		return;
+	إذا (dnp == عدم)
+		أرجع;
 
-	for (i = 0; dnp[i]; i++) {
-		struct dnode *cur = dnp[i];
-		if (cur->fname_allocated)
-			free((char*)cur->fullname);
-		free(cur);
+	لكل (i = 0; dnp[i]; i++) {
+		بنية dnode *cur = dnp[i];
+		إذا (cur->fname_allocated)
+			حرر((حرف*)cur->fullname);
+		حرر(cur);
 	}
-	free(dnp);
+	حرر(dnp);
 }
-#else
-#define dfree(...) ((void)0)
-#endif
+#وإلا
+#تعریف_کن dfree(...) ((فراغ)0)
+#پایان_اگر
 
 /* Returns NULL-terminated malloced vector of pointers (or NULL) */
-static struct dnode **splitdnarray(struct dnode **dn, int which)
+ساكن بنية dnode **splitdnarray(بنية dnode **dn, صحيح which)
 {
-	unsigned dncnt, d;
-	struct dnode **dnp;
+	بیعلامت dncnt, d;
+	بنية dnode **dnp;
 
-	if (dn == NULL)
-		return NULL;
+	إذا (dn == عدم)
+		أرجع عدم;
 
 	/* count how many dirs or files there are */
-	dncnt = count_dirs(dn, which);
+	dncnt = شمار_dirs(dn, which);
 
 	/* allocate a file array and a dir array */
 	dnp = dnalloc(dncnt);
 
 	/* copy the entrys into the file or dir array */
-	for (d = 0; *dn; dn++) {
-		if (S_ISDIR((*dn)->dn_mode)) {
-			const char *name;
+	لكل (d = 0; *dn; dn++) {
+		إذا (S_ISDIR((*dn)->dn_نما)) {
+			ثابت حرف *name;
 
-			if (which == SPLIT_FILE)
-				continue;
+			إذا (which == تقسیم_FILE)
+				استمر;
 
 			name = (*dn)->name;
-			if ((which & SPLIT_DIR) /* any dir... */
+			إذا ((which & تقسیم_DIR) /* any dir... */
 			/* ... or not . or .. */
 			 || name[0] != '.'
 			 || (name[1] && (name[1] != '.' || name[2]))
 			) {
 				dnp[d++] = *dn;
 			}
-		} else
-		if (which == SPLIT_FILE) {
+		} وإلا
+		إذا (which == تقسیم_FILE) {
 			dnp[d++] = *dn;
 		}
 	}
-	return dnp;
+	أرجع dnp;
 }
 
-#if ENABLE_FEATURE_LS_SORTFILES
-static int sortcmp(const void *a, const void *b)
+#إذا ENABLE_FEATURE_LS_SORTFILES
+ساكن صحيح sortcmp(ثابت فراغ *a, ثابت فراغ *b)
 {
-	struct dnode *d1 = *(struct dnode **)a;
-	struct dnode *d2 = *(struct dnode **)b;
-	unsigned opt = option_mask32;
+	بنية dnode *d1 = *(بنية dnode **)a;
+	بنية dnode *d2 = *(بنية dnode **)b;
+	بیعلامت opt = option_mask32;
 	off_t dif;
 
 	dif = 0; /* assume sort by name */
 	// TODO: use pre-initialized function pointer
 	// instead of branch forest
-	if (opt & OPT_dirs_first) {
-		dif = S_ISDIR(d2->dn_mode) - S_ISDIR(d1->dn_mode);
-		if (dif != 0)
-			goto maybe_invert_and_ret;
+	إذا (opt & OPT_dirs_اولی) {
+		dif = S_ISDIR(d2->dn_نما) - S_ISDIR(d1->dn_نما);
+		إذا (dif != 0)
+			اذهب maybe_invert_and_ret;
 	}
 
-	if (opt & OPT_S) { /* sort by size */
-		dif = (d2->dn_size - d1->dn_size);
-	} else
-	if (opt & OPT_t) { /* sort by time */
-		dif = (d2->dn_time - d1->dn_time);
-	} else
-#if defined(HAVE_STRVERSCMP) && HAVE_STRVERSCMP == 1
-	if (opt & OPT_v) { /* sort by version */
+	إذا (opt & OPT_S) { /* sort by size */
+		dif = (d2->dn_اندازه - d1->dn_اندازه);
+	} وإلا
+	إذا (opt & OPT_t) { /* sort by time */
+		dif = (d2->dn_زمان - d1->dn_زمان);
+	} وإلا
+#إذا defined(HAVE_STRVERSCMP) && HAVE_STRVERSCMP == 1
+	إذا (opt & OPT_v) { /* sort by version */
 		dif = strverscmp(d1->name, d2->name);
-	} else
-#endif
-	if (opt & OPT_X) { /* sort by extension */
+	} وإلا
+#پایان_اگر
+	إذا (opt & OPT_X) { /* sort by extension */
 		dif = strcmp(strchrnul(d1->name, '.'), strchrnul(d2->name, '.'));
 	}
-	if (dif == 0) {
+	إذا (dif == 0) {
 		/* sort by name, use as tie breaker for other sorts */
-		if (ENABLE_LOCALE_SUPPORT)
+		إذا (ENABLE_LOCALE_SUPPORT)
 			dif = strcoll(d1->name, d2->name);
-		else
+		وإلا
 			dif = strcmp(d1->name, d2->name);
-	} else {
+	} وإلا {
 		/* Make dif fit into an int */
-		if (sizeof(dif) > sizeof(int)) {
-			enum { BITS_TO_SHIFT = 8 * (sizeof(dif) - sizeof(int)) };
+		إذا (حجم(dif) > حجم(صحيح)) {
+			تعداد { بیتها_مقصد_لغزش = 8 * (حجم(dif) - حجم(صحيح)) };
 			/* shift leaving only "int" worth of bits */
 			/* (this requires dif != 0, and here it is nonzero) */
-			dif = 1 | (int)((uoff_t)dif >> BITS_TO_SHIFT);
+			dif = 1 | (صحيح)((uoff_t)dif >> بیتها_مقصد_لغزش);
 		}
 	}
  maybe_invert_and_ret:
-	return (opt & OPT_r) ? -(int)dif : (int)dif;
+	أرجع (opt & OPT_r) ? -(صحيح)dif : (صحيح)dif;
 }
 
-static void dnsort(struct dnode **dn, int size)
+ساكن فراغ dnsort(بنية dnode **dn, صحيح اندازه)
 {
-	qsort(dn, size, sizeof(*dn), sortcmp);
+	qsort(dn, اندازه, حجم(*dn), sortcmp);
 }
 
-static void sort_and_display_files(struct dnode **dn, unsigned nfiles)
+ساكن فراغ مرتب_سازی_and_display_files(بنية dnode **dn, بیعلامت nfiles)
 {
 	dnsort(dn, nfiles);
 	display_files(dn, nfiles);
 }
-#else
-# define dnsort(dn, size) ((void)0)
-# define sort_and_display_files(dn, nfiles) display_files(dn, nfiles)
-#endif
+#وإلا
+# define dnsort(dn, اندازه) ((فراغ)0)
+# define مرتب_سازی_and_display_files(dn, nfiles) display_files(dn, nfiles)
+#پایان_اگر
 
 /* Returns NULL-terminated malloced vector of pointers (or NULL) */
-static struct dnode **scan_one_dir(const char *path, unsigned *nfiles_p)
+ساكن بنية dnode **پیمایش_one_dir(ثابت حرف *مسیر, بیعلامت *nfiles_p)
 {
-	struct dnode *dn, *cur, **dnp;
-	struct dirent *entry;
+	بنية dnode *dn, *cur, **dnp;
+	بنية dirent *مدخل;
 	DIR *dir;
-	unsigned i, nfiles;
+	بیعلامت i, nfiles;
 
 	*nfiles_p = 0;
-	dir = warn_opendir(path);
-	if (dir == NULL) {
-		G.exit_code = EXIT_FAILURE;
-		return NULL;	/* could not open the dir */
+	dir = warn_opendir(مسیر);
+	إذا (dir == عدم) {
+		G.exit_کد = EXIT_FAILURE;
+		أرجع عدم;	/* could not open the dir */
 	}
-	dn = NULL;
+	dn = عدم;
 	nfiles = 0;
-	while ((entry = readdir(dir)) != NULL) {
-		char *fullname;
+	طالما ((مدخل = readdir(dir)) != عدم) {
+		حرف *fullname;
 
 		/* are we going to list the file- it may be . or .. or a hidden file */
-		if (entry->d_name[0] == '.') {
-			if (!(option_mask32 & (OPT_a|OPT_A)))
-				continue; /* skip all dotfiles if no -a/-A */
-			if (!(option_mask32 & OPT_a)
-			 && (!entry->d_name[1] || (entry->d_name[1] == '.' && !entry->d_name[2]))
+		إذا (مدخل->d_name[0] == '.') {
+			إذا (!(option_mask32 & (OPT_a|OPT_A)))
+				استمر; /* skip all dotfiles if no -a/-A */
+			إذا (!(option_mask32 & OPT_a)
+			 && (!مدخل->d_name[1] || (مدخل->d_name[1] == '.' && !مدخل->d_name[2]))
 			) {
-				continue; /* if only -A, skip . and .. but show other dotfiles */
+				استمر; /* if only -A, skip . and .. but show other dotfiles */
 			}
 		}
-		fullname = concat_path_file(path, entry->d_name);
+		fullname = concat_مسیر_file(مسیر, مدخل->d_name);
 		cur = my_stat(fullname, bb_basename(fullname), 0);
-		if (!cur) {
-			free(fullname);
-			continue;
+		إذا (!cur) {
+			حرر(fullname);
+			استمر;
 		}
 		cur->fname_allocated = 1;
-		cur->dn_next = dn;
+		cur->dn_بعدی = dn;
 		dn = cur;
 		nfiles++;
 	}
 	closedir(dir);
 
-	if (dn == NULL)
-		return NULL;
+	إذا (dn == عدم)
+		أرجع عدم;
 
 	/* now that we know how many files there are
 	 * allocate memory for an array to hold dnode pointers
 	 */
 	*nfiles_p = nfiles;
 	dnp = dnalloc(nfiles);
-	for (i = 0; /* i < nfiles - detected via !dn below */; i++) {
+	لكل (i = 0; /* i < nfiles - detected via !dn below */; i++) {
 		dnp[i] = dn;	/* save pointer to node in array */
-		dn = dn->dn_next;
-		if (!dn)
-			break;
+		dn = dn->dn_بعدی;
+		إذا (!dn)
+			اكسر;
 	}
 
-	return dnp;
+	أرجع dnp;
 }
 
-#if ENABLE_DESKTOP
+#إذا ENABLE_DESKTOP
 /* http://www.opengroup.org/onlinepubs/9699919799/utilities/ls.html
  * If any of the -l, -n, -s options is specified, each list
  * of files within the directory shall be preceded by a
@@ -991,13 +991,13 @@ static struct dnode **scan_one_dir(const char *path, unsigned *nfiles_p)
  * number of units.
  */
 /* by Jorgen Overgaard (jorgen AT antistaten.se) */
-static off_t calculate_blocks(struct dnode **dn)
+ساكن off_t calculate_بلوکها(بنية dnode **dn)
 {
-	uoff_t blocks = 1;
-	if (dn) {
-		while (*dn) {
+	uoff_t بلوکها = 1;
+	إذا (dn) {
+		طالما (*dn) {
 			/* st_blocks is in 512 byte blocks */
-			blocks += (*dn)->dn_blocks;
+			بلوکها += (*dn)->dn_بلوکها;
 			dn++;
 		}
 	}
@@ -1005,53 +1005,53 @@ static off_t calculate_blocks(struct dnode **dn)
 	/* Even though standard says use 512 byte blocks, coreutils use 1k */
 	/* Actually, we round up by calculating (blocks + 1) / 2,
 	 * "+ 1" was done when we initialized blocks to 1 */
-	return blocks >> 1;
+	أرجع بلوکها >> 1;
 }
-#endif
+#پایان_اگر
 
-static void scan_and_display_dirs_recur(struct dnode **dn, int first)
+ساكن فراغ پیمایش_and_display_dirs_recur(بنية dnode **dn, صحيح اولی)
 {
-	unsigned nfiles;
-	struct dnode **subdnp;
+	بیعلامت nfiles;
+	بنية dnode **subdnp;
 
-	for (; *dn; dn++) {
-		if (G.show_dirname || (option_mask32 & OPT_R)) {
-			if (!first)
+	لكل (; *dn; dn++) {
+		إذا (G.show_dirname || (option_mask32 & OPT_R)) {
+			إذا (!اولی)
 				bb_putchar('\n');
-			first = 0;
-			printf("%s:\n", (*dn)->fullname);
+			اولی = 0;
+			چاپ_کن("%s:\n", (*dn)->fullname);
 		}
-		subdnp = scan_one_dir((*dn)->fullname, &nfiles);
-#if ENABLE_DESKTOP
-		if (option_mask32 & (OPT_s|OPT_l)) {
-			if (option_mask32 & OPT_h) {
-				printf("total %-"HUMAN_READABLE_MAX_WIDTH_STR"s\n",
+		subdnp = پیمایش_one_dir((*dn)->fullname, &nfiles);
+#إذا ENABLE_DESKTOP
+		إذا (option_mask32 & (OPT_s|OPT_l)) {
+			إذا (option_mask32 & OPT_h) {
+				چاپ_کن("total %-"HUMAN_READABLE_MAX_عرض_STR"s\n",
 					/* print size, no fractions, use suffixes */
-					make_human_readable_str(calculate_blocks(subdnp) * 1024,
+					make_human_readable_str(calculate_بلوکها(subdnp) * 1024,
 								0, 0)
 				);
-			} else {
-				printf("total %"OFF_FMT"u\n", calculate_blocks(subdnp));
+			} وإلا {
+				چاپ_کن("total %"OFF_FMT"u\n", calculate_بلوکها(subdnp));
 			}
 		}
-#endif
-		if (nfiles > 0) {
+#پایان_اگر
+		إذا (nfiles > 0) {
 			/* list all files at this level */
-			sort_and_display_files(subdnp, nfiles);
+			مرتب_سازی_and_display_files(subdnp, nfiles);
 
-			if (ENABLE_FEATURE_LS_RECURSIVE
+			إذا (ENABLE_FEATURE_LS_RECURSIVE
 			 && (option_mask32 & OPT_R)
 			) {
-				struct dnode **dnd;
-				unsigned dndirs;
+				بنية dnode **dnd;
+				بیعلامت dndirs;
 				/* recursive - list the sub-dirs */
-				dnd = splitdnarray(subdnp, SPLIT_SUBDIR);
-				dndirs = count_dirs(subdnp, SPLIT_SUBDIR);
-				if (dndirs > 0) {
+				dnd = splitdnarray(subdnp, تقسیم_SUBDIR);
+				dndirs = شمار_dirs(subdnp, تقسیم_SUBDIR);
+				إذا (dndirs > 0) {
 					dnsort(dnd, dndirs);
-					scan_and_display_dirs_recur(dnd, 0);
+					پیمایش_and_display_dirs_recur(dnd, 0);
 					/* free the array of dnode pointers to the dirs */
-					free(dnd);
+					حرر(dnd);
 				}
 			}
 			/* free the dnodes and the fullname mem */
@@ -1061,19 +1061,19 @@ static void scan_and_display_dirs_recur(struct dnode **dn, int first)
 }
 
 
-int ls_main(int argc UNUSED_PARAM, char **argv)
+صحيح ls_main(صحيح argc استفادهنشده_PARAM, حرف **argv)
 {	/*      ^^^^^^^^^^^^^^^^^ note: if FTPD, argc can be wrong, see ftpd.c */
-	struct dnode **dnd;
-	struct dnode **dnf;
-	struct dnode **dnp;
-	struct dnode *dn;
-	struct dnode *cur;
-	unsigned opt;
-	unsigned nfiles;
-	unsigned dnfiles;
-	unsigned dndirs;
-	unsigned i;
-#if ENABLE_FEATURE_LS_COLOR
+	بنية dnode **dnd;
+	بنية dnode **dnf;
+	بنية dnode **dnp;
+	بنية dnode *dn;
+	بنية dnode *cur;
+	بیعلامت opt;
+	بیعلامت nfiles;
+	بیعلامت dnfiles;
+	بیعلامت dndirs;
+	بیعلامت i;
+#إذا ENABLE_FEATURE_LS_COLOR
 	/* colored LS support by JaWi, janwillem.janssen@lxtreme.nl */
 	/* coreutils 6.10:
 	 * # ls --color=BOGUS
@@ -1084,30 +1084,30 @@ int ls_main(int argc UNUSED_PARAM, char **argv)
 	 * 'auto', 'tty', 'if-tty'
 	 * (and substrings: "--color=alwa" work too)
 	 */
-	static const char color_str[] ALIGN1 =
+	ساكن ثابت حرف color_str[] ALIGN1 =
 		"always\0""yes\0""force\0"
 		"auto\0""tty\0""if-tty\0";
 	/* need to initialize since --color has _an optional_ argument */
-	const char *color_opt = color_str; /* "always" */
-#endif
-#if ENABLE_LONG_OPTS
-	static const char ls_longopts[] ALIGN1 =
-		"full-time\0" No_argument "\xff"
-		"group-directories-first\0" No_argument "\xfe"
-		IF_FEATURE_LS_COLOR("color\0" Optional_argument "\xfd")
+	ثابت حرف *color_opt = color_str; /* "always" */
+#پایان_اگر
+#إذا ENABLE_LONG_OPTS
+	ساكن ثابت حرف ls_longopts[] ALIGN1 =
+		"full-time\0" No_آرگومان "\xff"
+		"group-directories-first\0" No_آرگومان "\xfe"
+		IF_FEATURE_LS_COLOR("color\0" Optional_آرگومان "\xfd")
 	;
-#endif
+#پایان_اگر
 
 	INIT_G();
 
 	init_unicode();
 
-#if ENABLE_FEATURE_LS_WIDTH
+#إذا ENABLE_FEATURE_LS_عرض
 	/* obtain the terminal width */
-	G_terminal_width = get_terminal_width(STDIN_FILENO);
+	G_terminal_عرض = get_terminal_عرض(STDIN_FILENO);
 	/* go one less... */
-	G_terminal_width--;
-#endif
+	G_terminal_عرض--;
+#پایان_اگر
 
 	/* process options */
 	opt = getopt32long(argv, "^"
@@ -1128,93 +1128,93 @@ int ls_main(int argc UNUSED_PARAM, char **argv)
 			":x-1:1-x" /* bylines/oneline (not in SuS, but in GNU coreutils 8.4) */
 			IF_FEATURE_LS_TIMESTAMPS(":c-u:u-c") /* mtime/atime */
 			/* -w NUM: */
-			IF_FEATURE_LS_WIDTH(":w+")
+			IF_FEATURE_LS_عرض(":w+")
 		, ls_longopts
-		IF_FEATURE_LS_WIDTH(, /*-T*/ NULL, /*-w*/ &G_terminal_width)
+		IF_FEATURE_LS_عرض(, /*-T*/ عدم, /*-w*/ &G_terminal_عرض)
 		IF_FEATURE_LS_COLOR(, &color_opt)
 	);
-#if 0 /* option bits debug */
-	bb_error_msg("opt:0x%08x l:%x H:%x color:%x dirs:%x", opt, OPT_l, OPT_H, OPT_color, OPT_dirs_first);
-	if (opt & OPT_c         ) bb_error_msg("-c");
-	if (opt & OPT_l         ) bb_error_msg("-l");
-	if (opt & OPT_H         ) bb_error_msg("-H");
-	if (opt & OPT_color     ) bb_error_msg("--color");
-	if (opt & OPT_dirs_first) bb_error_msg("--group-directories-first");
-	if (opt & OPT_full_time ) bb_error_msg("--full-time");
-	exit(0);
-#endif
+#إذا 0 /* option bits debug */
+	bb_error_پیام("opt:0x%08x l:%x H:%x color:%x dirs:%x", opt, OPT_l, OPT_H, OPT_color, OPT_dirs_اولی);
+	إذا (opt & OPT_c         ) bb_error_پیام("-c");
+	إذا (opt & OPT_l         ) bb_error_پیام("-l");
+	إذا (opt & OPT_H         ) bb_error_پیام("-H");
+	إذا (opt & OPT_color     ) bb_error_پیام("--color");
+	إذا (opt & OPT_dirs_اولی) bb_error_پیام("--group-directories-first");
+	إذا (opt & OPT_پر_زمان ) bb_error_پیام("--full-time");
+	خروج(0);
+#پایان_اگر
 
-#if ENABLE_SELINUX
-	if (opt & OPT_Z) {
-		if (!is_selinux_enabled())
+#إذا ENABLE_SELINUX
+	إذا (opt & OPT_Z) {
+		إذا (!is_selinux_enabled())
 			option_mask32 &= ~OPT_Z;
 	}
-#endif
+#پایان_اگر
 
-#if ENABLE_FEATURE_LS_COLOR
+#إذا ENABLE_FEATURE_LS_COLOR
 	/* set G_show_color = 1/0 */
-	if (ENABLE_FEATURE_LS_COLOR_IS_DEFAULT && !is_TERM_dumb()) {
-		char *p = getenv("LS_COLORS");
+	إذا (ENABLE_FEATURE_LS_COLOR_IS_DEFAULT && !is_جمله_dumb()) {
+		حرف *p = getenv("LS_COLORS");
 		/* LS_COLORS is unset, or (not empty && not "none") ? */
-		if (!p || (p[0] && strcmp(p, "none") != 0)) {
-			if (isatty(STDOUT_FILENO)) {
+		إذا (!p || (p[0] && strcmp(p, "none") != 0)) {
+			إذا (isatty(STDOUT_FILENO)) {
 				/* check isatty() last because it's expensive (syscall) */
 				G_show_color = 1;
 			}
 		}
 	}
-	if (opt & OPT_color) {
-		if (color_opt[0] == 'n')
+	إذا (opt & OPT_color) {
+		إذا (color_opt[0] == 'n')
 			G_show_color = 0;
-		else switch (index_in_substrings(color_str, color_opt)) {
-		case 3:
-		case 4:
-		case 5:
-			if (!is_TERM_dumb() && isatty(STDOUT_FILENO)) {
-		case 0:
-		case 1:
-		case 2:
+		وإلا بدل (شاخص_درون_substrings(color_str, color_opt)) {
+		حالة 3:
+		حالة 4:
+		حالة 5:
+			إذا (!is_جمله_dumb() && isatty(STDOUT_FILENO)) {
+		حالة 0:
+		حالة 1:
+		حالة 2:
 				G_show_color = 1;
 			}
 		}
 	}
-#endif
+#پایان_اگر
 
 	/* sort out which command line options take precedence */
-	if (ENABLE_FEATURE_LS_RECURSIVE && (opt & OPT_d))
+	إذا (ENABLE_FEATURE_LS_RECURSIVE && (opt & OPT_d))
 		option_mask32 &= ~OPT_R;	/* no recurse if listing only dir */
-	if (!(opt & OPT_l)) { /* not -l? */
-		if (ENABLE_FEATURE_LS_TIMESTAMPS && ENABLE_FEATURE_LS_SORTFILES) {
+	إذا (!(opt & OPT_l)) { /* not -l? */
+		إذا (ENABLE_FEATURE_LS_TIMESTAMPS && ENABLE_FEATURE_LS_SORTFILES) {
 			/* when to sort by time? -t[cu] sorts by time even with -l */
 			/* (this is achieved by opt_flags[] element for -t) */
 			/* without -l, bare -c or -u enable sort too */
 			/* (with -l, bare -c or -u just select which time to show) */
-			if (opt & (OPT_c|OPT_u)) {
+			إذا (opt & (OPT_c|OPT_u)) {
 				option_mask32 |= OPT_t;
 			}
 		}
 	}
 
 	/* choose a display format if one was not already specified by an option */
-	if (!(option_mask32 & (OPT_l|OPT_1|OPT_x|OPT_C)))
+	إذا (!(option_mask32 & (OPT_l|OPT_1|OPT_x|OPT_C)))
 		option_mask32 |= (isatty(STDOUT_FILENO) ? OPT_C : OPT_1);
 
-	if (ENABLE_FTPD && applet_name[0] == 'f') {
+	إذا (ENABLE_FTPD && applet_name[0] == 'f') {
 		/* ftpd secret backdoor. dirs first are much nicer */
-		option_mask32 |= OPT_dirs_first;
+		option_mask32 |= OPT_dirs_اولی;
 	}
 
 	argv += optind;
-	if (!argv[0])
-		*--argv = (char*)".";
+	إذا (!argv[0])
+		*--argv = (حرف*)".";
 
-	if (argv[1])
+	إذا (argv[1])
 		G.show_dirname = 1; /* 2 or more items? label directories */
 
 	/* stuff the command line file names into a dnode array */
-	dn = NULL;
+	dn = عدم;
 	nfiles = 0;
-	do {
+	افعل {
 		cur = my_stat(*argv, *argv,
 			/* follow links on command line unless -l, -i, -s or -F: */
 			!(option_mask32 & (OPT_l|OPT_i|OPT_s|OPT_F))
@@ -1223,50 +1223,50 @@ int ls_main(int argc UNUSED_PARAM, char **argv)
 			/* ... or if -L, but my_stat always follows links if -L */
 		);
 		argv++;
-		if (!cur)
-			continue;
+		إذا (!cur)
+			استمر;
 		/*cur->fname_allocated = 0; - already is */
-		cur->dn_next = dn;
+		cur->dn_بعدی = dn;
 		dn = cur;
 		nfiles++;
-	} while (*argv);
+	} طالما (*argv);
 
 	/* nfiles _may_ be 0 here - try "ls doesnt_exist" */
-	if (nfiles == 0)
-		return G.exit_code;
+	إذا (nfiles == 0)
+		أرجع G.exit_کد;
 
 	/* now that we know how many files there are
 	 * allocate memory for an array to hold dnode pointers
 	 */
 	dnp = dnalloc(nfiles);
-	for (i = 0; /* i < nfiles - detected via !dn below */; i++) {
+	لكل (i = 0; /* i < nfiles - detected via !dn below */; i++) {
 		dnp[i] = dn;	/* save pointer to node in array */
-		dn = dn->dn_next;
-		if (!dn)
-			break;
+		dn = dn->dn_بعدی;
+		إذا (!dn)
+			اكسر;
 	}
 
-	if (option_mask32 & OPT_d) {
-		sort_and_display_files(dnp, nfiles);
-	} else {
-		dnd = splitdnarray(dnp, SPLIT_DIR);
-		dnf = splitdnarray(dnp, SPLIT_FILE);
-		dndirs = count_dirs(dnp, SPLIT_DIR);
+	إذا (option_mask32 & OPT_d) {
+		مرتب_سازی_and_display_files(dnp, nfiles);
+	} وإلا {
+		dnd = splitdnarray(dnp, تقسیم_DIR);
+		dnf = splitdnarray(dnp, تقسیم_FILE);
+		dndirs = شمار_dirs(dnp, تقسیم_DIR);
 		dnfiles = nfiles - dndirs;
-		if (dnfiles > 0) {
-			sort_and_display_files(dnf, dnfiles);
-			if (ENABLE_FEATURE_CLEAN_UP)
-				free(dnf);
+		إذا (dnfiles > 0) {
+			مرتب_سازی_and_display_files(dnf, dnfiles);
+			إذا (ENABLE_FEATURE_CLEAN_به_بالا)
+				حرر(dnf);
 		}
-		if (dndirs > 0) {
+		إذا (dndirs > 0) {
 			dnsort(dnd, dndirs);
-			scan_and_display_dirs_recur(dnd, dnfiles == 0);
-			if (ENABLE_FEATURE_CLEAN_UP)
-				free(dnd);
+			پیمایش_and_display_dirs_recur(dnd, dnfiles == 0);
+			إذا (ENABLE_FEATURE_CLEAN_به_بالا)
+				حرر(dnd);
 		}
 	}
 
-	if (ENABLE_FEATURE_CLEAN_UP)
+	إذا (ENABLE_FEATURE_CLEAN_به_بالا)
 		dfree(dnp);
-	return G.exit_code;
+	أرجع G.exit_کد;
 }

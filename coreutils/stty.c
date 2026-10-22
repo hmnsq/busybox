@@ -34,267 +34,267 @@
  * are done on the specified device, or stdin if none was specified.
  */
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#ضمن "libbb.h"
+#ضمن "common_bufsiz.h"
 
-#ifndef _POSIX_VDISABLE
-# define _POSIX_VDISABLE ((unsigned char) 0)
-#endif
+#اگر_تعریف_نشده _POSIX_VDISABLE
+# define _POSIX_VDISABLE ((بیعلامت حرف) 0)
+#پایان_اگر
 
-#define Control(c) ((c) & 0x1f)
+#تعریف_کن Control(c) ((c) & 0x1f)
 /* Canonical values for control characters */
-#ifndef CINTR
+#اگر_تعریف_نشده CINTR
 # define CINTR Control('c')
-#endif
-#ifndef CQUIT
+#پایان_اگر
+#اگر_تعریف_نشده CQUIT
 # define CQUIT 28
-#endif
-#ifndef CERASE
+#پایان_اگر
+#اگر_تعریف_نشده CERASE
 # define CERASE 127
-#endif
-#ifndef CKILL
+#پایان_اگر
+#اگر_تعریف_نشده CKILL
 # define CKILL Control('u')
-#endif
-#ifndef CEOF
+#پایان_اگر
+#اگر_تعریف_نشده CEOF
 # define CEOF Control('d')
-#endif
-#ifndef CEOL
+#پایان_اگر
+#اگر_تعریف_نشده CEOL
 # define CEOL _POSIX_VDISABLE
-#endif
-#ifndef CSTART
+#پایان_اگر
+#اگر_تعریف_نشده CSTART
 # define CSTART Control('q')
-#endif
-#ifndef CSTOP
+#پایان_اگر
+#اگر_تعریف_نشده CSTOP
 # define CSTOP Control('s')
-#endif
-#ifndef CSUSP
+#پایان_اگر
+#اگر_تعریف_نشده CSUSP
 # define CSUSP Control('z')
-#endif
-#if defined(VEOL2) && !defined(CEOL2)
+#پایان_اگر
+#إذا defined(VEOL2) && !defined(CEOL2)
 # define CEOL2 _POSIX_VDISABLE
-#endif
+#پایان_اگر
 /* glibc-2.12.1 uses only VSWTC name */
-#if defined(VSWTC) && !defined(VSWTCH)
+#إذا defined(VSWTC) && !defined(VSWTCH)
 # define VSWTCH VSWTC
-#endif
+#پایان_اگر
 /* ISC renamed swtch to susp for termios, but we'll accept either name */
-#if defined(VSUSP) && !defined(VSWTCH)
+#إذا defined(VSUSP) && !defined(VSWTCH)
 # define VSWTCH VSUSP
 # define CSWTCH CSUSP
-#endif
-#if defined(VSWTCH) && !defined(CSWTCH)
+#پایان_اگر
+#إذا defined(VSWTCH) && !defined(CSWTCH)
 # define CSWTCH _POSIX_VDISABLE
-#endif
+#پایان_اگر
 
 /* SunOS 5.3 loses (^Z doesn't work) if 'swtch' is the same as 'susp'.
    So the default is to disable 'swtch.'  */
-#if defined(__sparc__) && defined(__svr4__)
+#إذا defined(__sparc__) && defined(__svr4__)
 # undef CSWTCH
 # define CSWTCH _POSIX_VDISABLE
-#endif
+#پایان_اگر
 
-#if defined(VWERSE) && !defined(VWERASE)       /* AIX-3.2.5 */
+#إذا defined(VWERSE) && !defined(VWERASE)       /* AIX-3.2.5 */
 # define VWERASE VWERSE
-#endif
-#if defined(VDSUSP) && !defined(CDSUSP)
+#پایان_اگر
+#إذا defined(VDSUSP) && !defined(CDSUSP)
 # define CDSUSP Control('y')
-#endif
-#if !defined(VREPRINT) && defined(VRPRNT)       /* Irix 4.0.5 */
+#پایان_اگر
+#إذا !defined(VREPRINT) && defined(VRPRNT)       /* Irix 4.0.5 */
 # define VREPRINT VRPRNT
-#endif
-#if defined(VREPRINT) && !defined(CRPRNT)
+#پایان_اگر
+#إذا defined(VREPRINT) && !defined(CRPRNT)
 # define CRPRNT Control('r')
-#endif
-#if defined(VWERASE) && !defined(CWERASE)
+#پایان_اگر
+#إذا defined(VWERASE) && !defined(CWERASE)
 # define CWERASE Control('w')
-#endif
-#if defined(VLNEXT) && !defined(CLNEXT)
+#پایان_اگر
+#إذا defined(VLNEXT) && !defined(CLNEXT)
 # define CLNEXT Control('v')
-#endif
-#if defined(VDISCARD) && !defined(VFLUSHO)
+#پایان_اگر
+#إذا defined(VDISCARD) && !defined(VFLUSHO)
 # define VFLUSHO VDISCARD
-#endif
-#if defined(VFLUSH) && !defined(VFLUSHO)        /* Ultrix 4.2 */
+#پایان_اگر
+#إذا defined(VFLUSH) && !defined(VFLUSHO)        /* Ultrix 4.2 */
 # define VFLUSHO VFLUSH
-#endif
-#if defined(CTLECH) && !defined(ECHOCTL)        /* Ultrix 4.3 */
+#پایان_اگر
+#إذا defined(CTLECH) && !defined(ECHOCTL)        /* Ultrix 4.3 */
 # define ECHOCTL CTLECH
-#endif
-#if defined(TCTLECH) && !defined(ECHOCTL)       /* Ultrix 4.2 */
+#پایان_اگر
+#إذا defined(TCTLECH) && !defined(ECHOCTL)       /* Ultrix 4.2 */
 # define ECHOCTL TCTLECH
-#endif
-#if defined(CRTKIL) && !defined(ECHOKE)         /* Ultrix 4.2 and 4.3 */
+#پایان_اگر
+#إذا defined(CRTKIL) && !defined(ECHOKE)         /* Ultrix 4.2 and 4.3 */
 # define ECHOKE CRTKIL
-#endif
-#if defined(VFLUSHO) && !defined(CFLUSHO)
+#پایان_اگر
+#إذا defined(VFLUSHO) && !defined(CFLUSHO)
 # define CFLUSHO Control('o')
-#endif
-#if defined(VSTATUS) && !defined(CSTATUS)
+#پایان_اگر
+#إذا defined(VSTATUS) && !defined(CSTATUS)
 # define CSTATUS Control('t')
-#endif
+#پایان_اگر
 
 /* Save us from #ifdef forest plague */
-#ifndef BSDLY
+#اگر_تعریف_نشده BSDLY
 # define BSDLY 0
-#endif
-#ifndef CIBAUD
+#پایان_اگر
+#اگر_تعریف_نشده CIBAUD
 # define CIBAUD 0
-#endif
-#ifndef CRDLY
+#پایان_اگر
+#اگر_تعریف_نشده CRDLY
 # define CRDLY 0
-#endif
-#ifndef CMSPAR
+#پایان_اگر
+#اگر_تعریف_نشده CMSPAR
 # define CMSPAR 0
-#endif
-#ifndef CRTSCTS
+#پایان_اگر
+#اگر_تعریف_نشده CRTSCTS
 # define CRTSCTS 0
-#endif
-#ifndef ECHOCTL
+#پایان_اگر
+#اگر_تعریف_نشده ECHOCTL
 # define ECHOCTL 0
-#endif
-#ifndef ECHOKE
+#پایان_اگر
+#اگر_تعریف_نشده ECHOKE
 # define ECHOKE 0
-#endif
-#ifndef ECHOPRT
+#پایان_اگر
+#اگر_تعریف_نشده ECHOPRT
 # define ECHOPRT 0
-#endif
-#ifndef FFDLY
+#پایان_اگر
+#اگر_تعریف_نشده FFDLY
 # define FFDLY 0
-#endif
-#ifndef IEXTEN
+#پایان_اگر
+#اگر_تعریف_نشده IEXTEN
 # define IEXTEN 0
-#endif
-#ifndef IMAXBEL
+#پایان_اگر
+#اگر_تعریف_نشده IMAXBEL
 # define IMAXBEL 0
-#endif
-#ifndef IUCLC
+#پایان_اگر
+#اگر_تعریف_نشده IUCLC
 # define IUCLC 0
-#endif
-#ifndef IXANY
+#پایان_اگر
+#اگر_تعریف_نشده IXANY
 # define IXANY 0
-#endif
-#ifndef NLDLY
+#پایان_اگر
+#اگر_تعریف_نشده NLDLY
 # define NLDLY 0
-#endif
-#ifndef OCRNL
+#پایان_اگر
+#اگر_تعریف_نشده OCRNL
 # define OCRNL 0
-#endif
-#ifndef OFDEL
+#پایان_اگر
+#اگر_تعریف_نشده OFDEL
 # define OFDEL 0
-#endif
-#ifndef OFILL
+#پایان_اگر
+#اگر_تعریف_نشده OFILL
 # define OFILL 0
-#endif
-#ifndef OLCUC
+#پایان_اگر
+#اگر_تعریف_نشده OLCUC
 # define OLCUC 0
-#endif
-#ifndef ONLCR
+#پایان_اگر
+#اگر_تعریف_نشده ONLCR
 # define ONLCR 0
-#endif
-#ifndef ONLRET
+#پایان_اگر
+#اگر_تعریف_نشده ONLRET
 # define ONLRET 0
-#endif
-#ifndef ONOCR
+#پایان_اگر
+#اگر_تعریف_نشده ONOCR
 # define ONOCR 0
-#endif
-#ifndef OXTABS
+#پایان_اگر
+#اگر_تعریف_نشده OXTABS
 # define OXTABS 0
-#endif
-#ifndef TABDLY
+#پایان_اگر
+#اگر_تعریف_نشده TABDLY
 # define TABDLY 0
-#endif
-#ifndef TAB1
+#پایان_اگر
+#اگر_تعریف_نشده TAB1
 # define TAB1 0
-#endif
-#ifndef TAB2
+#پایان_اگر
+#اگر_تعریف_نشده TAB2
 # define TAB2 0
-#endif
-#ifndef TOSTOP
+#پایان_اگر
+#اگر_تعریف_نشده TOSTOP
 # define TOSTOP 0
-#endif
-#ifndef VDSUSP
+#پایان_اگر
+#اگر_تعریف_نشده VDSUSP
 # define VDSUSP 0
-#endif
-#ifndef VEOL2
+#پایان_اگر
+#اگر_تعریف_نشده VEOL2
 # define VEOL2 0
-#endif
-#ifndef VFLUSHO
+#پایان_اگر
+#اگر_تعریف_نشده VFLUSHO
 # define VFLUSHO 0
-#endif
-#ifndef VLNEXT
+#پایان_اگر
+#اگر_تعریف_نشده VLNEXT
 # define VLNEXT 0
-#endif
-#ifndef VREPRINT
+#پایان_اگر
+#اگر_تعریف_نشده VREPRINT
 # define VREPRINT 0
-#endif
-#ifndef VSTATUS
+#پایان_اگر
+#اگر_تعریف_نشده VSTATUS
 # define VSTATUS 0
-#endif
-#ifndef VSWTCH
+#پایان_اگر
+#اگر_تعریف_نشده VSWTCH
 # define VSWTCH 0
-#endif
-#ifndef VTDLY
+#پایان_اگر
+#اگر_تعریف_نشده VTDLY
 # define VTDLY 0
-#endif
-#ifndef VWERASE
+#پایان_اگر
+#اگر_تعریف_نشده VWERASE
 # define VWERASE 0
-#endif
-#ifndef XCASE
+#پایان_اگر
+#اگر_تعریف_نشده XCASE
 # define XCASE 0
-#endif
-#ifndef IUTF8
+#پایان_اگر
+#اگر_تعریف_نشده IUTF8
 # define IUTF8 0
-#endif
+#پایان_اگر
 
 /* Which speeds to set */
-enum speed_setting {
-	input_speed, output_speed, both_speeds
+تعداد سرعت_setting {
+	درون_داد_سرعت, output_سرعت, both_speeds
 };
 
 /* Which member(s) of 'struct termios' a mode uses */
-enum {
-	control, input, output, local, combination
+تعداد {
+	control, درون_داد, output, local, combination
 };
-static tcflag_t *get_ptr_to_tcflag(unsigned type, const struct termios *mode)
+ساكن tcflag_t *get_ptr_مقصد_tcflag(بیعلامت type, ثابت بنية termios *نما)
 {
-	static const uint8_t tcflag_offsets[] ALIGN1 = {
-		offsetof(struct termios, c_cflag), /* control */
-		offsetof(struct termios, c_iflag), /* input */
-		offsetof(struct termios, c_oflag), /* output */
-		offsetof(struct termios, c_lflag)  /* local */
+	ساكن ثابت uint8_t tcflag_offsets[] ALIGN1 = {
+		offsetof(بنية termios, c_cflag), /* control */
+		offsetof(بنية termios, c_iflag), /*درون داد*/
+		offsetof(بنية termios, c_oflag), /* output */
+		offsetof(بنية termios, c_lflag)  /* local */
 	};
-	if (type <= local) {
-		return (tcflag_t*) (((char*)mode) + tcflag_offsets[type]);
+	إذا (type <= local) {
+		أرجع (tcflag_t*) (((حرف*)نما) + tcflag_offsets[type]);
 	}
-	return NULL;
+	أرجع عدم;
 }
 
 /* Flags for 'struct mode_info' */
-#define SANE_SET 1              /* Set in 'sane' mode                  */
-#define SANE_UNSET 2            /* Unset in 'sane' mode                */
-#define REV 4                   /* Can be turned off by prepending '-' */
-#define OMIT 8                  /* Don't display value                 */
+#تعریف_کن SANE_مجموعه 1              /* Set in 'sane' mode                  */
+#تعریف_کن SANE_UNSET 2            /* Unset in 'sane' mode                */
+#تعریف_کن REV 4                   /* Can be turned off by prepending '-' */
+#تعریف_کن OMIT 8                  /* Don't display value                 */
 
 
 /* Each mode.
  * This structure should be kept as small as humanly possible.
  */
-struct mode_info {
-	const uint8_t type;           /* Which structure element to change    */
-	const uint8_t flags;          /* Setting and display options          */
+بنية نما_info {
+	ثابت uint8_t type;           /* Which structure element to change    */
+	ثابت uint8_t flags;          /* Setting and display options          */
 	/* only these values are ever used, so... */
-#if   (CSIZE | NLDLY | CRDLY | TABDLY | BSDLY | VTDLY | FFDLY) < 0x100
-	const uint8_t mask;
-#elif (CSIZE | NLDLY | CRDLY | TABDLY | BSDLY | VTDLY | FFDLY) < 0x10000
-	const uint16_t mask;
-#else
-	const tcflag_t mask;          /* Other bits to turn off for this mode */
-#endif
+#إذا   (CSIZE | NLDLY | CRDLY | TABDLY | BSDLY | VTDLY | FFDLY) < 0x100
+	ثابت uint8_t ماسک;
+#وإلاإذا (CSIZE | NLDLY | CRDLY | TABDLY | BSDLY | VTDLY | FFDLY) < 0x10000
+	ثابت uint16_t ماسک;
+#وإلا
+	ثابت tcflag_t ماسک;          /* Other bits to turn off for this mode */
+#پایان_اگر
 	/* was using short here, but ppc32 was unhappy */
-	const tcflag_t bits;          /* Bits to set for this mode            */
+	ثابت tcflag_t بیتها;          /* Bits to set for this mode            */
 };
 
-enum {
+تعداد {
 	/* Must match mode_name[] and mode_info[] order! */
 	IDX_evenp = 0,
 	IDX_parity,
@@ -309,357 +309,357 @@ enum {
 	IDX_cbreak,
 	IDX_crt,
 	IDX_dec,
-#if IXANY
+#إذا IXANY
 	IDX_decctlq,
-#endif
-#if TABDLY || OXTABS
+#پایان_اگر
+#إذا TABDLY || OXTABS
 	IDX_tabs,
-#endif
-#if XCASE && IUCLC && OLCUC
+#پایان_اگر
+#إذا XCASE && IUCLC && OLCUC
 	IDX_lcase,
 	IDX_LCASE,
-#endif
+#پایان_اگر
 };
 
-#define MI_ENTRY(N,T,F,B,M) N "\0"
+#تعریف_کن MI_مدخل(N,T,F,B,M) N "\0"
 
 /* Mode names given on command line */
-static const char mode_name[] ALIGN1 =
-	MI_ENTRY("evenp",    combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("parity",   combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("oddp",     combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("nl",       combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("ek",       combination, OMIT,              0,          0 )
-	MI_ENTRY("sane",     combination, OMIT,              0,          0 )
-	MI_ENTRY("cooked",   combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("raw",      combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("pass8",    combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("litout",   combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("cbreak",   combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("crt",      combination, OMIT,              0,          0 )
-	MI_ENTRY("dec",      combination, OMIT,              0,          0 )
-#if IXANY
-	MI_ENTRY("decctlq",  combination, REV        | OMIT, 0,          0 )
-#endif
-#if TABDLY || OXTABS
-	MI_ENTRY("tabs",     combination, REV        | OMIT, 0,          0 )
-#endif
-#if XCASE && IUCLC && OLCUC
-	MI_ENTRY("lcase",    combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("LCASE",    combination, REV        | OMIT, 0,          0 )
-#endif
-	MI_ENTRY("parenb",   control,     REV,               PARENB,     0 )
-	MI_ENTRY("parodd",   control,     REV,               PARODD,     0 )
-#if CMSPAR
-	MI_ENTRY("cmspar",   control,     REV,               CMSPAR,     0 )
-#endif
-	MI_ENTRY("cs5",      control,     0,                 CS5,     CSIZE)
-	MI_ENTRY("cs6",      control,     0,                 CS6,     CSIZE)
-	MI_ENTRY("cs7",      control,     0,                 CS7,     CSIZE)
-	MI_ENTRY("cs8",      control,     0,                 CS8,     CSIZE)
-	MI_ENTRY("hupcl",    control,     REV,               HUPCL,      0 )
-	MI_ENTRY("hup",      control,     REV        | OMIT, HUPCL,      0 )
-	MI_ENTRY("cstopb",   control,     REV,               CSTOPB,     0 )
-	MI_ENTRY("cread",    control,     SANE_SET   | REV,  CREAD,      0 )
-	MI_ENTRY("clocal",   control,     REV,               CLOCAL,     0 )
-#if CRTSCTS
-	MI_ENTRY("crtscts",  control,     REV,               CRTSCTS,    0 )
-#endif
-	MI_ENTRY("ignbrk",   input,       SANE_UNSET | REV,  IGNBRK,     0 )
-	MI_ENTRY("brkint",   input,       SANE_SET   | REV,  BRKINT,     0 )
-	MI_ENTRY("ignpar",   input,       REV,               IGNPAR,     0 )
-	MI_ENTRY("parmrk",   input,       REV,               PARMRK,     0 )
-	MI_ENTRY("inpck",    input,       REV,               INPCK,      0 )
-	MI_ENTRY("istrip",   input,       REV,               ISTRIP,     0 )
-	MI_ENTRY("inlcr",    input,       SANE_UNSET | REV,  INLCR,      0 )
-	MI_ENTRY("igncr",    input,       SANE_UNSET | REV,  IGNCR,      0 )
-	MI_ENTRY("icrnl",    input,       SANE_SET   | REV,  ICRNL,      0 )
-	MI_ENTRY("ixon",     input,       REV,               IXON,       0 )
-	MI_ENTRY("ixoff",    input,       SANE_UNSET | REV,  IXOFF,      0 )
-	MI_ENTRY("tandem",   input,       OMIT       | REV,  IXOFF,      0 )
-#if IUCLC
-	MI_ENTRY("iuclc",    input,       SANE_UNSET | REV,  IUCLC,      0 )
-#endif
-#if IXANY
-	MI_ENTRY("ixany",    input,       SANE_UNSET | REV,  IXANY,      0 )
-#endif
-#if IMAXBEL
-	MI_ENTRY("imaxbel",  input,       SANE_SET   | REV,  IMAXBEL,    0 )
-#endif
-#if IUTF8
-	MI_ENTRY("iutf8",    input,       SANE_UNSET | REV,  IUTF8,      0 )
-#endif
-	MI_ENTRY("opost",    output,      SANE_SET   | REV,  OPOST,      0 )
-#if OLCUC
-	MI_ENTRY("olcuc",    output,      SANE_UNSET | REV,  OLCUC,      0 )
-#endif
-#if OCRNL
-	MI_ENTRY("ocrnl",    output,      SANE_UNSET | REV,  OCRNL,      0 )
-#endif
-#if ONLCR
-	MI_ENTRY("onlcr",    output,      SANE_SET   | REV,  ONLCR,      0 )
-#endif
-#if ONOCR
-	MI_ENTRY("onocr",    output,      SANE_UNSET | REV,  ONOCR,      0 )
-#endif
-#if ONLRET
-	MI_ENTRY("onlret",   output,      SANE_UNSET | REV,  ONLRET,     0 )
-#endif
-#if OFILL
-	MI_ENTRY("ofill",    output,      SANE_UNSET | REV,  OFILL,      0 )
-#endif
-#if OFDEL
-	MI_ENTRY("ofdel",    output,      SANE_UNSET | REV,  OFDEL,      0 )
-#endif
-#if NLDLY
-	MI_ENTRY("nl1",      output,      SANE_UNSET,        NL1,     NLDLY)
-	MI_ENTRY("nl0",      output,      SANE_SET,          NL0,     NLDLY)
-#endif
-#if CRDLY
-	MI_ENTRY("cr3",      output,      SANE_UNSET,        CR3,     CRDLY)
-	MI_ENTRY("cr2",      output,      SANE_UNSET,        CR2,     CRDLY)
-	MI_ENTRY("cr1",      output,      SANE_UNSET,        CR1,     CRDLY)
-	MI_ENTRY("cr0",      output,      SANE_SET,          CR0,     CRDLY)
-#endif
+ساكن ثابت حرف نما_name[] ALIGN1 =
+	MI_مدخل("evenp",    combination, REV        | OMIT, 0,          0 )
+	MI_مدخل("parity",   combination, REV        | OMIT, 0,          0 )
+	MI_مدخل("oddp",     combination, REV        | OMIT, 0,          0 )
+	MI_مدخل("nl",       combination, REV        | OMIT, 0,          0 )
+	MI_مدخل("ek",       combination, OMIT,              0,          0 )
+	MI_مدخل("sane",     combination, OMIT,              0,          0 )
+	MI_مدخل("cooked",   combination, REV        | OMIT, 0,          0 )
+	MI_مدخل("raw",      combination, REV        | OMIT, 0,          0 )
+	MI_مدخل("pass8",    combination, REV        | OMIT, 0,          0 )
+	MI_مدخل("litout",   combination, REV        | OMIT, 0,          0 )
+	MI_مدخل("cbreak",   combination, REV        | OMIT, 0,          0 )
+	MI_مدخل("crt",      combination, OMIT,              0,          0 )
+	MI_مدخل("dec",      combination, OMIT,              0,          0 )
+#إذا IXANY
+	MI_مدخل("decctlq",  combination, REV        | OMIT, 0,          0 )
+#پایان_اگر
+#إذا TABDLY || OXTABS
+	MI_مدخل("tabs",     combination, REV        | OMIT, 0,          0 )
+#پایان_اگر
+#إذا XCASE && IUCLC && OLCUC
+	MI_مدخل("lcase",    combination, REV        | OMIT, 0,          0 )
+	MI_مدخل("LCASE",    combination, REV        | OMIT, 0,          0 )
+#پایان_اگر
+	MI_مدخل("parenb",   control,     REV,               PARENB,     0 )
+	MI_مدخل("parodd",   control,     REV,               PARODD,     0 )
+#إذا CMSPAR
+	MI_مدخل("cmspar",   control,     REV,               CMSPAR,     0 )
+#پایان_اگر
+	MI_مدخل("cs5",      control,     0,                 CS5,     CSIZE)
+	MI_مدخل("cs6",      control,     0,                 CS6,     CSIZE)
+	MI_مدخل("cs7",      control,     0,                 CS7,     CSIZE)
+	MI_مدخل("cs8",      control,     0,                 CS8,     CSIZE)
+	MI_مدخل("hupcl",    control,     REV,               HUPCL,      0 )
+	MI_مدخل("hup",      control,     REV        | OMIT, HUPCL,      0 )
+	MI_مدخل("cstopb",   control,     REV,               CSTOPB,     0 )
+	MI_مدخل("cread",    control,     SANE_مجموعه   | REV,  CREAD,      0 )
+	MI_مدخل("clocal",   control,     REV,               CLOCAL,     0 )
+#إذا CRTSCTS
+	MI_مدخل("crtscts",  control,     REV,               CRTSCTS,    0 )
+#پایان_اگر
+	MI_مدخل("ignbrk",   درون_داد,       SANE_UNSET | REV,  IGNBRK,     0 )
+	MI_مدخل("brkint",   درون_داد,       SANE_مجموعه   | REV,  BRKINT,     0 )
+	MI_مدخل("ignpar",   درون_داد,       REV,               IGNPAR,     0 )
+	MI_مدخل("parmrk",   درون_داد,       REV,               PARMRK,     0 )
+	MI_مدخل("inpck",    درون_داد,       REV,               INPCK,      0 )
+	MI_مدخل("istrip",   درون_داد,       REV,               ISTRIP,     0 )
+	MI_مدخل("inlcr",    درون_داد,       SANE_UNSET | REV,  INLCR,      0 )
+	MI_مدخل("igncr",    درون_داد,       SANE_UNSET | REV,  IGNCR,      0 )
+	MI_مدخل("icrnl",    درون_داد,       SANE_مجموعه   | REV,  ICRNL,      0 )
+	MI_مدخل("ixon",     درون_داد,       REV,               IXON,       0 )
+	MI_مدخل("ixoff",    درون_داد,       SANE_UNSET | REV,  IXOFF,      0 )
+	MI_مدخل("tandem",   درون_داد,       OMIT       | REV,  IXOFF,      0 )
+#إذا IUCLC
+	MI_مدخل("iuclc",    درون_داد,       SANE_UNSET | REV,  IUCLC,      0 )
+#پایان_اگر
+#إذا IXANY
+	MI_مدخل("ixany",    درون_داد,       SANE_UNSET | REV,  IXANY,      0 )
+#پایان_اگر
+#إذا IMAXBEL
+	MI_مدخل("imaxbel",  درون_داد,       SANE_مجموعه   | REV,  IMAXBEL,    0 )
+#پایان_اگر
+#إذا IUTF8
+	MI_مدخل("iutf8",    درون_داد,       SANE_UNSET | REV,  IUTF8,      0 )
+#پایان_اگر
+	MI_مدخل("opost",    output,      SANE_مجموعه   | REV,  OPOST,      0 )
+#إذا OLCUC
+	MI_مدخل("olcuc",    output,      SANE_UNSET | REV,  OLCUC,      0 )
+#پایان_اگر
+#إذا OCRNL
+	MI_مدخل("ocrnl",    output,      SANE_UNSET | REV,  OCRNL,      0 )
+#پایان_اگر
+#إذا ONLCR
+	MI_مدخل("onlcr",    output,      SANE_مجموعه   | REV,  ONLCR,      0 )
+#پایان_اگر
+#إذا ONOCR
+	MI_مدخل("onocr",    output,      SANE_UNSET | REV,  ONOCR,      0 )
+#پایان_اگر
+#إذا ONLRET
+	MI_مدخل("onlret",   output,      SANE_UNSET | REV,  ONLRET,     0 )
+#پایان_اگر
+#إذا OFILL
+	MI_مدخل("ofill",    output,      SANE_UNSET | REV,  OFILL,      0 )
+#پایان_اگر
+#إذا OFDEL
+	MI_مدخل("ofdel",    output,      SANE_UNSET | REV,  OFDEL,      0 )
+#پایان_اگر
+#إذا NLDLY
+	MI_مدخل("nl1",      output,      SANE_UNSET,        NL1,     NLDLY)
+	MI_مدخل("nl0",      output,      SANE_مجموعه,          NL0,     NLDLY)
+#پایان_اگر
+#إذا CRDLY
+	MI_مدخل("cr3",      output,      SANE_UNSET,        CR3,     CRDLY)
+	MI_مدخل("cr2",      output,      SANE_UNSET,        CR2,     CRDLY)
+	MI_مدخل("cr1",      output,      SANE_UNSET,        CR1,     CRDLY)
+	MI_مدخل("cr0",      output,      SANE_مجموعه,          CR0,     CRDLY)
+#پایان_اگر
 
-#if TABDLY
-	MI_ENTRY("tab3",     output,      SANE_UNSET,        TAB3,   TABDLY)
-# if TAB2
-	MI_ENTRY("tab2",     output,      SANE_UNSET,        TAB2,   TABDLY)
+#إذا TABDLY
+	MI_مدخل("tab3",     output,      SANE_UNSET,        TAB3,   TABDLY)
+# إذا TAB2
+	MI_مدخل("tab2",     output,      SANE_UNSET,        TAB2,   TABDLY)
 # endif
-# if TAB1
-	MI_ENTRY("tab1",     output,      SANE_UNSET,        TAB1,   TABDLY)
+# إذا TAB1
+	MI_مدخل("tab1",     output,      SANE_UNSET,        TAB1,   TABDLY)
 # endif
-	MI_ENTRY("tab0",     output,      SANE_SET,          TAB0,   TABDLY)
-#else
-# if OXTABS
-	MI_ENTRY("tab3",     output,      SANE_UNSET,        OXTABS,     0 )
+	MI_مدخل("tab0",     output,      SANE_مجموعه,          TAB0,   TABDLY)
+#وإلا
+# إذا OXTABS
+	MI_مدخل("tab3",     output,      SANE_UNSET,        OXTABS,     0 )
 # endif
-#endif
+#پایان_اگر
 
-#if BSDLY
-	MI_ENTRY("bs1",      output,      SANE_UNSET,        BS1,     BSDLY)
-	MI_ENTRY("bs0",      output,      SANE_SET,          BS0,     BSDLY)
-#endif
-#if VTDLY
-	MI_ENTRY("vt1",      output,      SANE_UNSET,        VT1,     VTDLY)
-	MI_ENTRY("vt0",      output,      SANE_SET,          VT0,     VTDLY)
-#endif
-#if FFDLY
-	MI_ENTRY("ff1",      output,      SANE_UNSET,        FF1,     FFDLY)
-	MI_ENTRY("ff0",      output,      SANE_SET,          FF0,     FFDLY)
-#endif
-	MI_ENTRY("isig",     local,       SANE_SET   | REV,  ISIG,       0 )
-	MI_ENTRY("icanon",   local,       SANE_SET   | REV,  ICANON,     0 )
-#if IEXTEN
-	MI_ENTRY("iexten",   local,       SANE_SET   | REV,  IEXTEN,     0 )
-#endif
-	MI_ENTRY("echo",     local,       SANE_SET   | REV,  ECHO,       0 )
-	MI_ENTRY("echoe",    local,       SANE_SET   | REV,  ECHOE,      0 )
-	MI_ENTRY("crterase", local,       OMIT       | REV,  ECHOE,      0 )
-	MI_ENTRY("echok",    local,       SANE_SET   | REV,  ECHOK,      0 )
-	MI_ENTRY("echonl",   local,       SANE_UNSET | REV,  ECHONL,     0 )
-	MI_ENTRY("noflsh",   local,       SANE_UNSET | REV,  NOFLSH,     0 )
-#if XCASE
-	MI_ENTRY("xcase",    local,       SANE_UNSET | REV,  XCASE,      0 )
-#endif
-#if TOSTOP
-	MI_ENTRY("tostop",   local,       SANE_UNSET | REV,  TOSTOP,     0 )
-#endif
-#if ECHOPRT
-	MI_ENTRY("echoprt",  local,       SANE_UNSET | REV,  ECHOPRT,    0 )
-	MI_ENTRY("prterase", local,       OMIT       | REV,  ECHOPRT,    0 )
-#endif
-#if ECHOCTL
-	MI_ENTRY("echoctl",  local,       SANE_SET   | REV,  ECHOCTL,    0 )
-	MI_ENTRY("ctlecho",  local,       OMIT       | REV,  ECHOCTL,    0 )
-#endif
-#if ECHOKE
-	MI_ENTRY("echoke",   local,       SANE_SET   | REV,  ECHOKE,     0 )
-	MI_ENTRY("crtkill",  local,       OMIT       | REV,  ECHOKE,     0 )
-#endif
-	MI_ENTRY("flusho",   local,       SANE_UNSET | REV,  FLUSHO,     0 )
-#ifdef EXTPROC
-	MI_ENTRY("extproc",  local,       SANE_UNSET | REV,  EXTPROC,    0 )
-#endif
+#إذا BSDLY
+	MI_مدخل("bs1",      output,      SANE_UNSET,        BS1,     BSDLY)
+	MI_مدخل("bs0",      output,      SANE_مجموعه,          BS0,     BSDLY)
+#پایان_اگر
+#إذا VTDLY
+	MI_مدخل("vt1",      output,      SANE_UNSET,        VT1,     VTDLY)
+	MI_مدخل("vt0",      output,      SANE_مجموعه,          VT0,     VTDLY)
+#پایان_اگر
+#إذا FFDLY
+	MI_مدخل("ff1",      output,      SANE_UNSET,        FF1,     FFDLY)
+	MI_مدخل("ff0",      output,      SANE_مجموعه,          FF0,     FFDLY)
+#پایان_اگر
+	MI_مدخل("isig",     local,       SANE_مجموعه   | REV,  ISIG,       0 )
+	MI_مدخل("icanon",   local,       SANE_مجموعه   | REV,  ICANON,     0 )
+#إذا IEXTEN
+	MI_مدخل("iexten",   local,       SANE_مجموعه   | REV,  IEXTEN,     0 )
+#پایان_اگر
+	MI_مدخل("echo",     local,       SANE_مجموعه   | REV,  ECHO,       0 )
+	MI_مدخل("echoe",    local,       SANE_مجموعه   | REV,  ECHOE,      0 )
+	MI_مدخل("crterase", local,       OMIT       | REV,  ECHOE,      0 )
+	MI_مدخل("echok",    local,       SANE_مجموعه   | REV,  ECHOK,      0 )
+	MI_مدخل("echonl",   local,       SANE_UNSET | REV,  ECHONL,     0 )
+	MI_مدخل("noflsh",   local,       SANE_UNSET | REV,  NOFLSH,     0 )
+#إذا XCASE
+	MI_مدخل("xcase",    local,       SANE_UNSET | REV,  XCASE,      0 )
+#پایان_اگر
+#إذا TOSTOP
+	MI_مدخل("tostop",   local,       SANE_UNSET | REV,  TOSTOP,     0 )
+#پایان_اگر
+#إذا ECHOPRT
+	MI_مدخل("echoprt",  local,       SANE_UNSET | REV,  ECHOPRT,    0 )
+	MI_مدخل("prterase", local,       OMIT       | REV,  ECHOPRT,    0 )
+#پایان_اگر
+#إذا ECHOCTL
+	MI_مدخل("echoctl",  local,       SANE_مجموعه   | REV,  ECHOCTL,    0 )
+	MI_مدخل("ctlecho",  local,       OMIT       | REV,  ECHOCTL,    0 )
+#پایان_اگر
+#إذا ECHOKE
+	MI_مدخل("echoke",   local,       SANE_مجموعه   | REV,  ECHOKE,     0 )
+	MI_مدخل("crtkill",  local,       OMIT       | REV,  ECHOKE,     0 )
+#پایان_اگر
+	MI_مدخل("flusho",   local,       SANE_UNSET | REV,  FLUSHO,     0 )
+#اگر_تعریف_شده EXTPROC
+	MI_مدخل("extproc",  local,       SANE_UNSET | REV,  EXTPROC,    0 )
+#پایان_اگر
 	;
 
-#undef MI_ENTRY
-#define MI_ENTRY(N,T,F,B,M) { T, F, M, B },
+#لغو_تعریف MI_مدخل
+#تعریف_کن MI_مدخل(N,T,F,B,M) { T, F, M, B },
 
-static const struct mode_info mode_info[] ALIGN4 = {
+ساكن ثابت بنية نما_info نما_info[] ALIGN4 = {
 	/* This should be verbatim cut-n-paste copy of the above MI_ENTRYs */
-	MI_ENTRY("evenp",    combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("parity",   combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("oddp",     combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("nl",       combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("ek",       combination, OMIT,              0,          0 )
-	MI_ENTRY("sane",     combination, OMIT,              0,          0 )
-	MI_ENTRY("cooked",   combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("raw",      combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("pass8",    combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("litout",   combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("cbreak",   combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("crt",      combination, OMIT,              0,          0 )
-	MI_ENTRY("dec",      combination, OMIT,              0,          0 )
-#if IXANY
-	MI_ENTRY("decctlq",  combination, REV        | OMIT, 0,          0 )
-#endif
-#if TABDLY || OXTABS
-	MI_ENTRY("tabs",     combination, REV        | OMIT, 0,          0 )
-#endif
-#if XCASE && IUCLC && OLCUC
-	MI_ENTRY("lcase",    combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("LCASE",    combination, REV        | OMIT, 0,          0 )
-#endif
-	MI_ENTRY("parenb",   control,     REV,               PARENB,     0 )
-	MI_ENTRY("parodd",   control,     REV,               PARODD,     0 )
-#if CMSPAR
-	MI_ENTRY("cmspar",   control,     REV,               CMSPAR,     0 )
-#endif
-	MI_ENTRY("cs5",      control,     0,                 CS5,     CSIZE)
-	MI_ENTRY("cs6",      control,     0,                 CS6,     CSIZE)
-	MI_ENTRY("cs7",      control,     0,                 CS7,     CSIZE)
-	MI_ENTRY("cs8",      control,     0,                 CS8,     CSIZE)
-	MI_ENTRY("hupcl",    control,     REV,               HUPCL,      0 )
-	MI_ENTRY("hup",      control,     REV        | OMIT, HUPCL,      0 )
-	MI_ENTRY("cstopb",   control,     REV,               CSTOPB,     0 )
-	MI_ENTRY("cread",    control,     SANE_SET   | REV,  CREAD,      0 )
-	MI_ENTRY("clocal",   control,     REV,               CLOCAL,     0 )
-#if CRTSCTS
-	MI_ENTRY("crtscts",  control,     REV,               CRTSCTS,    0 )
-#endif
-	MI_ENTRY("ignbrk",   input,       SANE_UNSET | REV,  IGNBRK,     0 )
-	MI_ENTRY("brkint",   input,       SANE_SET   | REV,  BRKINT,     0 )
-	MI_ENTRY("ignpar",   input,       REV,               IGNPAR,     0 )
-	MI_ENTRY("parmrk",   input,       REV,               PARMRK,     0 )
-	MI_ENTRY("inpck",    input,       REV,               INPCK,      0 )
-	MI_ENTRY("istrip",   input,       REV,               ISTRIP,     0 )
-	MI_ENTRY("inlcr",    input,       SANE_UNSET | REV,  INLCR,      0 )
-	MI_ENTRY("igncr",    input,       SANE_UNSET | REV,  IGNCR,      0 )
-	MI_ENTRY("icrnl",    input,       SANE_SET   | REV,  ICRNL,      0 )
-	MI_ENTRY("ixon",     input,       REV,               IXON,       0 )
-	MI_ENTRY("ixoff",    input,       SANE_UNSET | REV,  IXOFF,      0 )
-	MI_ENTRY("tandem",   input,       OMIT       | REV,  IXOFF,      0 )
-#if IUCLC
-	MI_ENTRY("iuclc",    input,       SANE_UNSET | REV,  IUCLC,      0 )
-#endif
-#if IXANY
-	MI_ENTRY("ixany",    input,       SANE_UNSET | REV,  IXANY,      0 )
-#endif
-#if IMAXBEL
-	MI_ENTRY("imaxbel",  input,       SANE_SET   | REV,  IMAXBEL,    0 )
-#endif
-#if IUTF8
-	MI_ENTRY("iutf8",    input,       SANE_UNSET | REV,  IUTF8,      0 )
-#endif
-	MI_ENTRY("opost",    output,      SANE_SET   | REV,  OPOST,      0 )
-#if OLCUC
-	MI_ENTRY("olcuc",    output,      SANE_UNSET | REV,  OLCUC,      0 )
-#endif
-#if OCRNL
-	MI_ENTRY("ocrnl",    output,      SANE_UNSET | REV,  OCRNL,      0 )
-#endif
-#if ONLCR
-	MI_ENTRY("onlcr",    output,      SANE_SET   | REV,  ONLCR,      0 )
-#endif
-#if ONOCR
-	MI_ENTRY("onocr",    output,      SANE_UNSET | REV,  ONOCR,      0 )
-#endif
-#if ONLRET
-	MI_ENTRY("onlret",   output,      SANE_UNSET | REV,  ONLRET,     0 )
-#endif
-#if OFILL
-	MI_ENTRY("ofill",    output,      SANE_UNSET | REV,  OFILL,      0 )
-#endif
-#if OFDEL
-	MI_ENTRY("ofdel",    output,      SANE_UNSET | REV,  OFDEL,      0 )
-#endif
-#if NLDLY
-	MI_ENTRY("nl1",      output,      SANE_UNSET,        NL1,     NLDLY)
-	MI_ENTRY("nl0",      output,      SANE_SET,          NL0,     NLDLY)
-#endif
-#if CRDLY
-	MI_ENTRY("cr3",      output,      SANE_UNSET,        CR3,     CRDLY)
-	MI_ENTRY("cr2",      output,      SANE_UNSET,        CR2,     CRDLY)
-	MI_ENTRY("cr1",      output,      SANE_UNSET,        CR1,     CRDLY)
-	MI_ENTRY("cr0",      output,      SANE_SET,          CR0,     CRDLY)
-#endif
+	MI_مدخل("evenp",    combination, REV        | OMIT, 0,          0 )
+	MI_مدخل("parity",   combination, REV        | OMIT, 0,          0 )
+	MI_مدخل("oddp",     combination, REV        | OMIT, 0,          0 )
+	MI_مدخل("nl",       combination, REV        | OMIT, 0,          0 )
+	MI_مدخل("ek",       combination, OMIT,              0,          0 )
+	MI_مدخل("sane",     combination, OMIT,              0,          0 )
+	MI_مدخل("cooked",   combination, REV        | OMIT, 0,          0 )
+	MI_مدخل("raw",      combination, REV        | OMIT, 0,          0 )
+	MI_مدخل("pass8",    combination, REV        | OMIT, 0,          0 )
+	MI_مدخل("litout",   combination, REV        | OMIT, 0,          0 )
+	MI_مدخل("cbreak",   combination, REV        | OMIT, 0,          0 )
+	MI_مدخل("crt",      combination, OMIT,              0,          0 )
+	MI_مدخل("dec",      combination, OMIT,              0,          0 )
+#إذا IXANY
+	MI_مدخل("decctlq",  combination, REV        | OMIT, 0,          0 )
+#پایان_اگر
+#إذا TABDLY || OXTABS
+	MI_مدخل("tabs",     combination, REV        | OMIT, 0,          0 )
+#پایان_اگر
+#إذا XCASE && IUCLC && OLCUC
+	MI_مدخل("lcase",    combination, REV        | OMIT, 0,          0 )
+	MI_مدخل("LCASE",    combination, REV        | OMIT, 0,          0 )
+#پایان_اگر
+	MI_مدخل("parenb",   control,     REV,               PARENB,     0 )
+	MI_مدخل("parodd",   control,     REV,               PARODD,     0 )
+#إذا CMSPAR
+	MI_مدخل("cmspar",   control,     REV,               CMSPAR,     0 )
+#پایان_اگر
+	MI_مدخل("cs5",      control,     0,                 CS5,     CSIZE)
+	MI_مدخل("cs6",      control,     0,                 CS6,     CSIZE)
+	MI_مدخل("cs7",      control,     0,                 CS7,     CSIZE)
+	MI_مدخل("cs8",      control,     0,                 CS8,     CSIZE)
+	MI_مدخل("hupcl",    control,     REV,               HUPCL,      0 )
+	MI_مدخل("hup",      control,     REV        | OMIT, HUPCL,      0 )
+	MI_مدخل("cstopb",   control,     REV,               CSTOPB,     0 )
+	MI_مدخل("cread",    control,     SANE_مجموعه   | REV,  CREAD,      0 )
+	MI_مدخل("clocal",   control,     REV,               CLOCAL,     0 )
+#إذا CRTSCTS
+	MI_مدخل("crtscts",  control,     REV,               CRTSCTS,    0 )
+#پایان_اگر
+	MI_مدخل("ignbrk",   درون_داد,       SANE_UNSET | REV,  IGNBRK,     0 )
+	MI_مدخل("brkint",   درون_داد,       SANE_مجموعه   | REV,  BRKINT,     0 )
+	MI_مدخل("ignpar",   درون_داد,       REV,               IGNPAR,     0 )
+	MI_مدخل("parmrk",   درون_داد,       REV,               PARMRK,     0 )
+	MI_مدخل("inpck",    درون_داد,       REV,               INPCK,      0 )
+	MI_مدخل("istrip",   درون_داد,       REV,               ISTRIP,     0 )
+	MI_مدخل("inlcr",    درون_داد,       SANE_UNSET | REV,  INLCR,      0 )
+	MI_مدخل("igncr",    درون_داد,       SANE_UNSET | REV,  IGNCR,      0 )
+	MI_مدخل("icrnl",    درون_داد,       SANE_مجموعه   | REV,  ICRNL,      0 )
+	MI_مدخل("ixon",     درون_داد,       REV,               IXON,       0 )
+	MI_مدخل("ixoff",    درون_داد,       SANE_UNSET | REV,  IXOFF,      0 )
+	MI_مدخل("tandem",   درون_داد,       OMIT       | REV,  IXOFF,      0 )
+#إذا IUCLC
+	MI_مدخل("iuclc",    درون_داد,       SANE_UNSET | REV,  IUCLC,      0 )
+#پایان_اگر
+#إذا IXANY
+	MI_مدخل("ixany",    درون_داد,       SANE_UNSET | REV,  IXANY,      0 )
+#پایان_اگر
+#إذا IMAXBEL
+	MI_مدخل("imaxbel",  درون_داد,       SANE_مجموعه   | REV,  IMAXBEL,    0 )
+#پایان_اگر
+#إذا IUTF8
+	MI_مدخل("iutf8",    درون_داد,       SANE_UNSET | REV,  IUTF8,      0 )
+#پایان_اگر
+	MI_مدخل("opost",    output,      SANE_مجموعه   | REV,  OPOST,      0 )
+#إذا OLCUC
+	MI_مدخل("olcuc",    output,      SANE_UNSET | REV,  OLCUC,      0 )
+#پایان_اگر
+#إذا OCRNL
+	MI_مدخل("ocrnl",    output,      SANE_UNSET | REV,  OCRNL,      0 )
+#پایان_اگر
+#إذا ONLCR
+	MI_مدخل("onlcr",    output,      SANE_مجموعه   | REV,  ONLCR,      0 )
+#پایان_اگر
+#إذا ONOCR
+	MI_مدخل("onocr",    output,      SANE_UNSET | REV,  ONOCR,      0 )
+#پایان_اگر
+#إذا ONLRET
+	MI_مدخل("onlret",   output,      SANE_UNSET | REV,  ONLRET,     0 )
+#پایان_اگر
+#إذا OFILL
+	MI_مدخل("ofill",    output,      SANE_UNSET | REV,  OFILL,      0 )
+#پایان_اگر
+#إذا OFDEL
+	MI_مدخل("ofdel",    output,      SANE_UNSET | REV,  OFDEL,      0 )
+#پایان_اگر
+#إذا NLDLY
+	MI_مدخل("nl1",      output,      SANE_UNSET,        NL1,     NLDLY)
+	MI_مدخل("nl0",      output,      SANE_مجموعه,          NL0,     NLDLY)
+#پایان_اگر
+#إذا CRDLY
+	MI_مدخل("cr3",      output,      SANE_UNSET,        CR3,     CRDLY)
+	MI_مدخل("cr2",      output,      SANE_UNSET,        CR2,     CRDLY)
+	MI_مدخل("cr1",      output,      SANE_UNSET,        CR1,     CRDLY)
+	MI_مدخل("cr0",      output,      SANE_مجموعه,          CR0,     CRDLY)
+#پایان_اگر
 
-#if TABDLY
-	MI_ENTRY("tab3",     output,      SANE_UNSET,        TAB3,   TABDLY)
-# if TAB2
-	MI_ENTRY("tab2",     output,      SANE_UNSET,        TAB2,   TABDLY)
+#إذا TABDLY
+	MI_مدخل("tab3",     output,      SANE_UNSET,        TAB3,   TABDLY)
+# إذا TAB2
+	MI_مدخل("tab2",     output,      SANE_UNSET,        TAB2,   TABDLY)
 # endif
-# if TAB1
-	MI_ENTRY("tab1",     output,      SANE_UNSET,        TAB1,   TABDLY)
+# إذا TAB1
+	MI_مدخل("tab1",     output,      SANE_UNSET,        TAB1,   TABDLY)
 # endif
-	MI_ENTRY("tab0",     output,      SANE_SET,          TAB0,   TABDLY)
-#else
-# if OXTABS
-	MI_ENTRY("tab3",     output,      SANE_UNSET,        OXTABS,     0 )
+	MI_مدخل("tab0",     output,      SANE_مجموعه,          TAB0,   TABDLY)
+#وإلا
+# إذا OXTABS
+	MI_مدخل("tab3",     output,      SANE_UNSET,        OXTABS,     0 )
 # endif
-#endif
+#پایان_اگر
 
-#if BSDLY
-	MI_ENTRY("bs1",      output,      SANE_UNSET,        BS1,     BSDLY)
-	MI_ENTRY("bs0",      output,      SANE_SET,          BS0,     BSDLY)
-#endif
-#if VTDLY
-	MI_ENTRY("vt1",      output,      SANE_UNSET,        VT1,     VTDLY)
-	MI_ENTRY("vt0",      output,      SANE_SET,          VT0,     VTDLY)
-#endif
-#if FFDLY
-	MI_ENTRY("ff1",      output,      SANE_UNSET,        FF1,     FFDLY)
-	MI_ENTRY("ff0",      output,      SANE_SET,          FF0,     FFDLY)
-#endif
-	MI_ENTRY("isig",     local,       SANE_SET   | REV,  ISIG,       0 )
-	MI_ENTRY("icanon",   local,       SANE_SET   | REV,  ICANON,     0 )
-#if IEXTEN
-	MI_ENTRY("iexten",   local,       SANE_SET   | REV,  IEXTEN,     0 )
-#endif
-	MI_ENTRY("echo",     local,       SANE_SET   | REV,  ECHO,       0 )
-	MI_ENTRY("echoe",    local,       SANE_SET   | REV,  ECHOE,      0 )
-	MI_ENTRY("crterase", local,       OMIT       | REV,  ECHOE,      0 )
-	MI_ENTRY("echok",    local,       SANE_SET   | REV,  ECHOK,      0 )
-	MI_ENTRY("echonl",   local,       SANE_UNSET | REV,  ECHONL,     0 )
-	MI_ENTRY("noflsh",   local,       SANE_UNSET | REV,  NOFLSH,     0 )
-#if XCASE
-	MI_ENTRY("xcase",    local,       SANE_UNSET | REV,  XCASE,      0 )
-#endif
-#if TOSTOP
-	MI_ENTRY("tostop",   local,       SANE_UNSET | REV,  TOSTOP,     0 )
-#endif
-#if ECHOPRT
-	MI_ENTRY("echoprt",  local,       SANE_UNSET | REV,  ECHOPRT,    0 )
-	MI_ENTRY("prterase", local,       OMIT       | REV,  ECHOPRT,    0 )
-#endif
-#if ECHOCTL
-	MI_ENTRY("echoctl",  local,       SANE_SET   | REV,  ECHOCTL,    0 )
-	MI_ENTRY("ctlecho",  local,       OMIT       | REV,  ECHOCTL,    0 )
-#endif
-#if ECHOKE
-	MI_ENTRY("echoke",   local,       SANE_SET   | REV,  ECHOKE,     0 )
-	MI_ENTRY("crtkill",  local,       OMIT       | REV,  ECHOKE,     0 )
-#endif
-	MI_ENTRY("flusho",   local,       SANE_UNSET | REV,  FLUSHO,     0 )
-#ifdef EXTPROC
-	MI_ENTRY("extproc",  local,       SANE_UNSET | REV,  EXTPROC,    0 )
-#endif
+#إذا BSDLY
+	MI_مدخل("bs1",      output,      SANE_UNSET,        BS1,     BSDLY)
+	MI_مدخل("bs0",      output,      SANE_مجموعه,          BS0,     BSDLY)
+#پایان_اگر
+#إذا VTDLY
+	MI_مدخل("vt1",      output,      SANE_UNSET,        VT1,     VTDLY)
+	MI_مدخل("vt0",      output,      SANE_مجموعه,          VT0,     VTDLY)
+#پایان_اگر
+#إذا FFDLY
+	MI_مدخل("ff1",      output,      SANE_UNSET,        FF1,     FFDLY)
+	MI_مدخل("ff0",      output,      SANE_مجموعه,          FF0,     FFDLY)
+#پایان_اگر
+	MI_مدخل("isig",     local,       SANE_مجموعه   | REV,  ISIG,       0 )
+	MI_مدخل("icanon",   local,       SANE_مجموعه   | REV,  ICANON,     0 )
+#إذا IEXTEN
+	MI_مدخل("iexten",   local,       SANE_مجموعه   | REV,  IEXTEN,     0 )
+#پایان_اگر
+	MI_مدخل("echo",     local,       SANE_مجموعه   | REV,  ECHO,       0 )
+	MI_مدخل("echoe",    local,       SANE_مجموعه   | REV,  ECHOE,      0 )
+	MI_مدخل("crterase", local,       OMIT       | REV,  ECHOE,      0 )
+	MI_مدخل("echok",    local,       SANE_مجموعه   | REV,  ECHOK,      0 )
+	MI_مدخل("echonl",   local,       SANE_UNSET | REV,  ECHONL,     0 )
+	MI_مدخل("noflsh",   local,       SANE_UNSET | REV,  NOFLSH,     0 )
+#إذا XCASE
+	MI_مدخل("xcase",    local,       SANE_UNSET | REV,  XCASE,      0 )
+#پایان_اگر
+#إذا TOSTOP
+	MI_مدخل("tostop",   local,       SANE_UNSET | REV,  TOSTOP,     0 )
+#پایان_اگر
+#إذا ECHOPRT
+	MI_مدخل("echoprt",  local,       SANE_UNSET | REV,  ECHOPRT,    0 )
+	MI_مدخل("prterase", local,       OMIT       | REV,  ECHOPRT,    0 )
+#پایان_اگر
+#إذا ECHOCTL
+	MI_مدخل("echoctl",  local,       SANE_مجموعه   | REV,  ECHOCTL,    0 )
+	MI_مدخل("ctlecho",  local,       OMIT       | REV,  ECHOCTL,    0 )
+#پایان_اگر
+#إذا ECHOKE
+	MI_مدخل("echoke",   local,       SANE_مجموعه   | REV,  ECHOKE,     0 )
+	MI_مدخل("crtkill",  local,       OMIT       | REV,  ECHOKE,     0 )
+#پایان_اگر
+	MI_مدخل("flusho",   local,       SANE_UNSET | REV,  FLUSHO,     0 )
+#اگر_تعریف_شده EXTPROC
+	MI_مدخل("extproc",  local,       SANE_UNSET | REV,  EXTPROC,    0 )
+#پایان_اگر
 };
 
-enum {
-	NUM_mode_info = ARRAY_SIZE(mode_info)
+تعداد {
+	رقم_نما_info = ARRAY_اندازه(نما_info)
 };
 
 
 /* Control characters */
-struct control_info {
-	const uint8_t saneval;  /* Value to set for 'stty sane' */
-	const uint8_t offset;   /* Offset in c_cc */
+بنية control_info {
+	ثابت uint8_t saneval;  /* Value to set for 'stty sane' */
+	ثابت uint8_t جابه_جایی;   /* Offset in c_cc */
 };
 
-enum {
+تعداد {
 	/* Must match control_name[] and control_info[] order! */
 	CIDX_intr = 0,
 	CIDX_quit,
@@ -667,278 +667,278 @@ enum {
 	CIDX_kill,
 	CIDX_eof,
 	CIDX_eol,
-#if VEOL2
+#إذا VEOL2
 	CIDX_eol2,
-#endif
-#if VSWTCH
+#پایان_اگر
+#إذا VSWTCH
 	CIDX_swtch,
-#endif
-	CIDX_start,
+#پایان_اگر
+	CIDX_شروع,
 	CIDX_stop,
 	CIDX_susp,
-#if VDSUSP
+#إذا VDSUSP
 	CIDX_dsusp,
-#endif
-#if VREPRINT
+#پایان_اگر
+#إذا VREPRINT
 	CIDX_rprnt,
-#endif
-#if VWERASE
+#پایان_اگر
+#إذا VWERASE
 	CIDX_werase,
-#endif
-#if VLNEXT
+#پایان_اگر
+#إذا VLNEXT
 	CIDX_lnext,
-#endif
-#if VFLUSHO
+#پایان_اگر
+#إذا VFLUSHO
 	CIDX_flush,
-#endif
-#if VSTATUS
-	CIDX_status,
-#endif
+#پایان_اگر
+#إذا VSTATUS
+	CIDX_وضعیت,
+#پایان_اگر
 	CIDX_min,
-	CIDX_time,
+	CIDX_زمان,
 };
 
-#define CI_ENTRY(n,s,o) n "\0"
+#تعریف_کن CI_مدخل(n,s,o) n "\0"
 
 /* Name given on command line */
-static const char control_name[] ALIGN1 =
-	CI_ENTRY("intr",     CINTR,   VINTR   )
-	CI_ENTRY("quit",     CQUIT,   VQUIT   )
-	CI_ENTRY("erase",    CERASE,  VERASE  )
-	CI_ENTRY("kill",     CKILL,   VKILL   )
-	CI_ENTRY("eof",      CEOF,    VEOF    )
-	CI_ENTRY("eol",      CEOL,    VEOL    )
-#if VEOL2
-	CI_ENTRY("eol2",     CEOL2,   VEOL2   )
-#endif
-#if VSWTCH
-	CI_ENTRY("swtch",    CSWTCH,  VSWTCH  )
-#endif
-	CI_ENTRY("start",    CSTART,  VSTART  )
-	CI_ENTRY("stop",     CSTOP,   VSTOP   )
-	CI_ENTRY("susp",     CSUSP,   VSUSP   )
-#if VDSUSP
-	CI_ENTRY("dsusp",    CDSUSP,  VDSUSP  )
-#endif
-#if VREPRINT
-	CI_ENTRY("rprnt",    CRPRNT,  VREPRINT)
-#endif
-#if VWERASE
-	CI_ENTRY("werase",   CWERASE, VWERASE )
-#endif
-#if VLNEXT
-	CI_ENTRY("lnext",    CLNEXT,  VLNEXT  )
-#endif
-#if VFLUSHO
-	CI_ENTRY("flush",    CFLUSHO, VFLUSHO )
-#endif
-#if VSTATUS
-	CI_ENTRY("status",   CSTATUS, VSTATUS )
-#endif
+ساكن ثابت حرف control_name[] ALIGN1 =
+	CI_مدخل("intr",     CINTR,   VINTR   )
+	CI_مدخل("quit",     CQUIT,   VQUIT   )
+	CI_مدخل("erase",    CERASE,  VERASE  )
+	CI_مدخل("kill",     CKILL,   VKILL   )
+	CI_مدخل("eof",      CEOF,    VEOF    )
+	CI_مدخل("eol",      CEOL,    VEOL    )
+#إذا VEOL2
+	CI_مدخل("eol2",     CEOL2,   VEOL2   )
+#پایان_اگر
+#إذا VSWTCH
+	CI_مدخل("swtch",    CSWTCH,  VSWTCH  )
+#پایان_اگر
+	CI_مدخل("start",    CSTART,  VSTART  )
+	CI_مدخل("stop",     CSTOP,   VSTOP   )
+	CI_مدخل("susp",     CSUSP,   VSUSP   )
+#إذا VDSUSP
+	CI_مدخل("dsusp",    CDSUSP,  VDSUSP  )
+#پایان_اگر
+#إذا VREPRINT
+	CI_مدخل("rprnt",    CRPRNT,  VREPRINT)
+#پایان_اگر
+#إذا VWERASE
+	CI_مدخل("werase",   CWERASE, VWERASE )
+#پایان_اگر
+#إذا VLNEXT
+	CI_مدخل("lnext",    CLNEXT,  VLNEXT  )
+#پایان_اگر
+#إذا VFLUSHO
+	CI_مدخل("flush",    CFLUSHO, VFLUSHO )
+#پایان_اگر
+#إذا VSTATUS
+	CI_مدخل("status",   CSTATUS, VSTATUS )
+#پایان_اگر
 	/* These must be last because of the display routines */
-	CI_ENTRY("min",      1,       VMIN    )
-	CI_ENTRY("time",     0,       VTIME   )
+	CI_مدخل("min",      1,       VMIN    )
+	CI_مدخل("time",     0,       VTIME   )
 	;
 
-#undef CI_ENTRY
-#define CI_ENTRY(n,s,o) { s, o },
+#لغو_تعریف CI_مدخل
+#تعریف_کن CI_مدخل(n,s,o) { s, o },
 
-static const struct control_info control_info[] ALIGN2 = {
+ساكن ثابت بنية control_info control_info[] ALIGN2 = {
 	/* This should be verbatim cut-n-paste copy of the above CI_ENTRYs */
-	CI_ENTRY("intr",     CINTR,   VINTR   )
-	CI_ENTRY("quit",     CQUIT,   VQUIT   )
-	CI_ENTRY("erase",    CERASE,  VERASE  )
-	CI_ENTRY("kill",     CKILL,   VKILL   )
-	CI_ENTRY("eof",      CEOF,    VEOF    )
-	CI_ENTRY("eol",      CEOL,    VEOL    )
-#if VEOL2
-	CI_ENTRY("eol2",     CEOL2,   VEOL2   )
-#endif
-#if VSWTCH
-	CI_ENTRY("swtch",    CSWTCH,  VSWTCH  )
-#endif
-	CI_ENTRY("start",    CSTART,  VSTART  )
-	CI_ENTRY("stop",     CSTOP,   VSTOP   )
-	CI_ENTRY("susp",     CSUSP,   VSUSP   )
-#if VDSUSP
-	CI_ENTRY("dsusp",    CDSUSP,  VDSUSP  )
-#endif
-#if VREPRINT
-	CI_ENTRY("rprnt",    CRPRNT,  VREPRINT)
-#endif
-#if VWERASE
-	CI_ENTRY("werase",   CWERASE, VWERASE )
-#endif
-#if VLNEXT
-	CI_ENTRY("lnext",    CLNEXT,  VLNEXT  )
-#endif
-#if VFLUSHO
-	CI_ENTRY("flush",    CFLUSHO, VFLUSHO )
-#endif
-#if VSTATUS
-	CI_ENTRY("status",   CSTATUS, VSTATUS )
-#endif
+	CI_مدخل("intr",     CINTR,   VINTR   )
+	CI_مدخل("quit",     CQUIT,   VQUIT   )
+	CI_مدخل("erase",    CERASE,  VERASE  )
+	CI_مدخل("kill",     CKILL,   VKILL   )
+	CI_مدخل("eof",      CEOF,    VEOF    )
+	CI_مدخل("eol",      CEOL,    VEOL    )
+#إذا VEOL2
+	CI_مدخل("eol2",     CEOL2,   VEOL2   )
+#پایان_اگر
+#إذا VSWTCH
+	CI_مدخل("swtch",    CSWTCH,  VSWTCH  )
+#پایان_اگر
+	CI_مدخل("start",    CSTART,  VSTART  )
+	CI_مدخل("stop",     CSTOP,   VSTOP   )
+	CI_مدخل("susp",     CSUSP,   VSUSP   )
+#إذا VDSUSP
+	CI_مدخل("dsusp",    CDSUSP,  VDSUSP  )
+#پایان_اگر
+#إذا VREPRINT
+	CI_مدخل("rprnt",    CRPRNT,  VREPRINT)
+#پایان_اگر
+#إذا VWERASE
+	CI_مدخل("werase",   CWERASE, VWERASE )
+#پایان_اگر
+#إذا VLNEXT
+	CI_مدخل("lnext",    CLNEXT,  VLNEXT  )
+#پایان_اگر
+#إذا VFLUSHO
+	CI_مدخل("flush",    CFLUSHO, VFLUSHO )
+#پایان_اگر
+#إذا VSTATUS
+	CI_مدخل("status",   CSTATUS, VSTATUS )
+#پایان_اگر
 	/* These must be last because of the display routines */
-	CI_ENTRY("min",      1,       VMIN    )
-	CI_ENTRY("time",     0,       VTIME   )
+	CI_مدخل("min",      1,       VMIN    )
+	CI_مدخل("time",     0,       VTIME   )
 };
 
-enum {
-	NUM_control_info = ARRAY_SIZE(control_info)
+تعداد {
+	رقم_control_info = ARRAY_اندازه(control_info)
 };
 
 
-struct globals {
-	const char *device_name;
+بنية globals {
+	ثابت حرف *device_name;
 	/* The width of the screen, for output wrapping */
-	unsigned max_col;
+	بیعلامت max_ستون;
 	/* Current position, to know when to wrap */
-	unsigned current_col;
+	بیعلامت current_ستون;
 } FIX_ALIASING;
-#define G (*(struct globals*)bb_common_bufsiz1)
-#define INIT_G() do { \
-	setup_common_bufsiz(); \
-	G.device_name = bb_msg_standard_input; \
-	G.max_col = 80; \
-	G.current_col = 0; /* we are noexec, must clear */ \
-} while (0)
+#تعریف_کن G (*(بنية globals*)bb_common_bufsiz1)
+#تعریف_کن INIT_G() افعل { \
+	راهاندازی_common_bufsiz(); \
+	G.device_name = bb_پیام_standard_درون_داد; \
+	G.max_ستون = 80; \
+	G.current_ستون = 0; /* we are noexec, must clear */ \
+} طالما (0)
 
-static void set_speed_or_die(enum speed_setting type, const char *arg,
-					struct termios *mode)
+ساكن فراغ مجموعه_سرعت_or_die(تعداد سرعت_setting type, ثابت حرف *arg,
+					بنية termios *نما)
 {
-	speed_t baud;
+	سرعت_t baud;
 
-	baud = tty_value_to_baud(xatou(arg));
+	baud = tty_مقدار_مقصد_baud(xatou(arg));
 
-	if (type != output_speed) {     /* either input or both */
-		cfsetispeed(mode, baud);
+	إذا (type != output_سرعت) {     /* either input or both */
+		cfsetispeed(نما, baud);
 	}
-	if (type != input_speed) {      /* either output or both */
-		cfsetospeed(mode, baud);
+	إذا (type != درون_داد_سرعت) {      /* either output or both */
+		cfsetospeed(نما, baud);
 	}
 }
 
-static NORETURN void perror_on_device_and_die(const char *fmt)
+ساكن NORETURN فراغ perror_on_device_and_die(ثابت حرف *fmt)
 {
-	bb_perror_msg_and_die(fmt, G.device_name);
+	bb_perror_پیام_and_die(fmt, G.device_name);
 }
 
-static void perror_on_device(const char *fmt)
+ساكن فراغ perror_on_device(ثابت حرف *fmt)
 {
-	bb_perror_msg(fmt, G.device_name);
+	bb_perror_پیام(fmt, G.device_name);
 }
 
 /* Print format string MESSAGE and optional args.
    Wrap to next line first if it won't fit.
    Print a space first unless MESSAGE will start a new line */
-static void wrapf(const char *message, ...)
+ساكن فراغ wrapf(ثابت حرف *پیام_2, ...)
 {
-	char buf[128];
-	va_list args;
-	unsigned buflen;
+	حرف buf[128];
+	va_list آرگومانها;
+	بیعلامت buflen;
 
-	va_start(args, message);
-	buflen = vsnprintf(buf, sizeof(buf), message, args);
-	va_end(args);
+	va_شروع(آرگومانها, پیام_2);
+	buflen = vsnprintf(buf, حجم(buf), پیام_2, آرگومانها);
+	va_انتها(آرگومانها);
 	/* We seem to be called only with suitable lengths, but check if
 	   somebody failed to adhere to this assumption just to be sure.  */
-	if (!buflen || buflen >= sizeof(buf)) return;
+	إذا (!buflen || buflen >= حجم(buf)) أرجع;
 
-	if (G.current_col > 0) {
-		G.current_col++;
-		if (buf[0] != '\n') {
-			if (G.current_col + buflen >= G.max_col) {
-				G.current_col = 0;
+	إذا (G.current_ستون > 0) {
+		G.current_ستون++;
+		إذا (buf[0] != '\n') {
+			إذا (G.current_ستون + buflen >= G.max_ستون) {
+				G.current_ستون = 0;
 				bb_putchar('\n');
-			} else {
+			} وإلا {
 				bb_putchar(' ');
 			}
 		}
 	}
 	fputs_stdout(buf);
-	G.current_col += buflen;
-	if (buf[buflen-1] == '\n')
-		G.current_col = 0;
+	G.current_ستون += buflen;
+	إذا (buf[buflen-1] == '\n')
+		G.current_ستون = 0;
 }
 
-static void newline(void)
+ساكن فراغ newline(فراغ)
 {
-	if (G.current_col != 0)
+	إذا (G.current_ستون != 0)
 		wrapf("\n");
 }
 
-#ifdef TIOCGWINSZ
-static void set_window_size(int rows, int cols)
+#اگر_تعریف_شده TIOCGWINSZ
+ساكن فراغ مجموعه_پنجره_اندازه(صحيح ردیفها, صحيح تعداد_ستون)
 {
-	struct winsize win = { 0, 0, 0, 0 };
+	بنية winsize win = { 0, 0, 0, 0 };
 
-	if (ioctl(STDIN_FILENO, TIOCGWINSZ, &win)) {
-		if (errno != EINVAL) {
-			goto bail;
+	إذا (ioctl(STDIN_FILENO, TIOCGWINSZ, &win)) {
+		إذا (errno != EINVAL) {
+			اذهب bail;
 		}
-		memset(&win, 0, sizeof(win));
+		memset(&win, 0, حجم(win));
 	}
 
-	if (rows >= 0)
-		win.ws_row = rows;
-	if (cols >= 0)
-		win.ws_col = cols;
+	إذا (ردیفها >= 0)
+		win.ws_ردیف = ردیفها;
+	إذا (تعداد_ستون >= 0)
+		win.ws_ستون = تعداد_ستون;
 
-	if (ioctl(STDIN_FILENO, TIOCSWINSZ, (char *) &win))
+	إذا (ioctl(STDIN_FILENO, TIOCSWINSZ, (حرف *) &win))
 bail:
 		perror_on_device("%s");
 }
-#endif
+#پایان_اگر
 
-static void display_window_size(int fancy)
+ساكن فراغ display_پنجره_اندازه(صحيح fancy)
 {
-	const char *fmt_str = "%s\0%s: no size information for this device";
-	unsigned width, height;
+	ثابت حرف *fmt_str = "%s\0%s: no size information for this device";
+	بیعلامت عرض, ارتفاع;
 
-	if (get_terminal_width_height(STDIN_FILENO, &width, &height)) {
-		if ((errno != EINVAL) || ((fmt_str += 2), !fancy)) {
+	إذا (get_terminal_عرض_ارتفاع(STDIN_FILENO, &عرض, &ارتفاع)) {
+		إذا ((errno != EINVAL) || ((fmt_str += 2), !fancy)) {
 			perror_on_device(fmt_str);
 		}
-	} else {
+	} وإلا {
 		wrapf(fancy ? "rows %u; columns %u;" : "%u %u\n",
-				height, width);
+				ارتفاع, عرض);
 	}
 }
 
-static const struct suffix_mult stty_suffixes[] ALIGN_SUFFIX = {
+ساكن ثابت بنية suffix_mult stty_suffixes[] ALIGN_SUFFIX = {
 	{ "b",  512 },
 	{ "k", 1024 },
 	{ "B", 1024 },
 	{ "", 0 }
 };
 
-static const struct mode_info *find_mode(const char *name)
+ساكن ثابت بنية نما_info *پیدا_کن_نما(ثابت حرف *name)
 {
-	int i = index_in_strings(mode_name, name);
-	return i >= 0 ? &mode_info[i] : NULL;
+	صحيح i = شاخص_درون_رشتهها(نما_name, name);
+	أرجع i >= 0 ? &نما_info[i] : عدم;
 }
 
-static const struct control_info *find_control(const char *name)
+ساكن ثابت بنية control_info *پیدا_کن_control(ثابت حرف *name)
 {
-	int i = index_in_strings(control_name, name);
-	return i >= 0 ? &control_info[i] : NULL;
+	صحيح i = شاخص_درون_رشتهها(control_name, name);
+	أرجع i >= 0 ? &control_info[i] : عدم;
 }
 
-enum {
+تعداد {
 	param_need_arg = 0x80,
-	param_line    = 1 | 0x80,
-	param_rows    = 2 | 0x80,
-	param_cols    = 3 | 0x80,
+	param_سطر    = 1 | 0x80,
+	param_ردیفها    = 2 | 0x80,
+	param_تعداد_ستون    = 3 | 0x80,
 	param_columns = 4 | 0x80,
-	param_size    = 5,
-	param_speed   = 6,
+	param_اندازه    = 5,
+	param_سرعت   = 6,
 	param_ispeed  = 7 | 0x80,
 	param_ospeed  = 8 | 0x80,
 };
 
-static int find_param(const char *name)
+ساكن صحيح پیدا_کن_param(ثابت حرف *name)
 {
-	static const char params[] ALIGN1 =
+	ساكن ثابت حرف params[] ALIGN1 =
 		"line\0"    /* 1 */
 		"rows\0"    /* 2 */
 		"cols\0"    /* 3 */
@@ -947,340 +947,340 @@ static int find_param(const char *name)
 		"speed\0"   /* 6 */
 		"ispeed\0"
 		"ospeed\0";
-	int i = index_in_strings(params, name) + 1;
-	if (i == 0)
-		return 0;
-	if (i != 5 && i != 6)
+	صحيح i = شاخص_درون_رشتهها(params, name) + 1;
+	إذا (i == 0)
+		أرجع 0;
+	إذا (i != 5 && i != 6)
 		i |= 0x80;
-	return i;
+	أرجع i;
 }
 
-static int recover_mode(const char *arg, struct termios *mode)
+ساكن صحيح recover_نما(ثابت حرف *arg, بنية termios *نما)
 {
-	int i, n;
-	unsigned chr;
-	unsigned long iflag, oflag, cflag, lflag;
+	صحيح i, n;
+	بیعلامت chr;
+	بیعلامت دراز iflag, oflag, cflag, lflag;
 
 	/* Scan into temporaries since it is too much trouble to figure out
 	   the right format for 'tcflag_t' */
-	if (sscanf(arg, "%lx:%lx:%lx:%lx%n",
+	إذا (از_رشته_بخوان(arg, "%lx:%lx:%lx:%lx%n",
 			   &iflag, &oflag, &cflag, &lflag, &n) != 4)
-		return 0;
-	mode->c_iflag = iflag;
-	mode->c_oflag = oflag;
-	mode->c_cflag = cflag;
-	mode->c_lflag = lflag;
+		أرجع 0;
+	نما->c_iflag = iflag;
+	نما->c_oflag = oflag;
+	نما->c_cflag = cflag;
+	نما->c_lflag = lflag;
 	arg += n;
-	for (i = 0; i < NCCS; ++i) {
-		if (sscanf(arg, ":%x%n", &chr, &n) != 1)
-			return 0;
-		mode->c_cc[i] = chr;
+	لكل (i = 0; i < NCCS; ++i) {
+		إذا (از_رشته_بخوان(arg, ":%x%n", &chr, &n) != 1)
+			أرجع 0;
+		نما->c_cc[i] = chr;
 		arg += n;
 	}
 
 	/* Fail if there are too many fields */
-	if (*arg != '\0')
-		return 0;
+	إذا (*arg != '\0')
+		أرجع 0;
 
-	return 1;
+	أرجع 1;
 }
 
-static void display_recoverable(const struct termios *mode,
-				int UNUSED_PARAM dummy)
+ساكن فراغ display_recoverable(ثابت بنية termios *نما,
+				صحيح استفادهنشده_PARAM dummy)
 {
-	int i;
-	printf("%lx:%lx:%lx:%lx",
-		   (unsigned long) mode->c_iflag, (unsigned long) mode->c_oflag,
-		   (unsigned long) mode->c_cflag, (unsigned long) mode->c_lflag);
-	for (i = 0; i < NCCS; ++i)
-		printf(":%x", (unsigned int) mode->c_cc[i]);
+	صحيح i;
+	چاپ_کن("%lx:%lx:%lx:%lx",
+		   (بیعلامت دراز) نما->c_iflag, (بیعلامت دراز) نما->c_oflag,
+		   (بیعلامت دراز) نما->c_cflag, (بیعلامت دراز) نما->c_lflag);
+	لكل (i = 0; i < NCCS; ++i)
+		چاپ_کن(":%x", (بیعلامت صحيح) نما->c_cc[i]);
 	bb_putchar('\n');
 }
 
-static void display_speed(const struct termios *mode, int fancy)
+ساكن فراغ display_سرعت(ثابت بنية termios *نما, صحيح fancy)
 {
 	//____________________ 01234567 8 9
-	const char *fmt_str = "%lu %lu\n\0ispeed %lu baud; ospeed %lu baud;";
-	unsigned long ispeed, ospeed;
+	ثابت حرف *fmt_str = "%lu %lu\n\0ispeed %lu baud; ospeed %lu baud;";
+	بیعلامت دراز ispeed, ospeed;
 
-	ispeed = cfgetispeed(mode);
-	ospeed = cfgetospeed(mode);
-	if (ispeed == 0 || ispeed == ospeed) {
+	ispeed = cfgetispeed(نما);
+	ospeed = cfgetospeed(نما);
+	إذا (ispeed == 0 || ispeed == ospeed) {
 		ispeed = ospeed;                /* in case ispeed was 0 */
 		//________ 0123 4 5 6 7 8 9
 		fmt_str = "%lu\n\0\0\0\0\0speed %lu baud;";
 	}
-	if (fancy) fmt_str += 9;
-	wrapf(fmt_str, tty_baud_to_value(ispeed), tty_baud_to_value(ospeed));
+	إذا (fancy) fmt_str += 9;
+	wrapf(fmt_str, tty_baud_مقصد_مقدار(ispeed), tty_baud_مقصد_مقدار(ospeed));
 }
 
-static void do_display(const struct termios *mode, int all)
+ساكن فراغ do_display(ثابت بنية termios *نما, صحيح all)
 {
-	int i;
+	صحيح i;
 	tcflag_t *bitsp;
-	unsigned long mask;
-	int prev_type = control;
+	بیعلامت دراز ماسک;
+	صحيح prev_type = control;
 
-	display_speed(mode, 1);
-	if (all)
-		display_window_size(1);
-#ifdef __linux__
-	wrapf("line = %u;\n", mode->c_line);
-#else
+	display_سرعت(نما, 1);
+	إذا (all)
+		display_پنجره_اندازه(1);
+#اگر_تعریف_شده __linux__
+	wrapf("line = %u;\n", نما->c_سطر);
+#وإلا
 	newline();
-#endif
+#پایان_اگر
 
-	for (i = 0; i != CIDX_min; ++i) {
-		char ch;
-		char buf10[10];
+	لكل (i = 0; i != CIDX_min; ++i) {
+		حرف ch;
+		حرف buf10[10];
 
 		/* If swtch is the same as susp, don't print both */
-#if VSWTCH == VSUSP
-		if (i == CIDX_swtch)
-			continue;
-#endif
+#إذا VSWTCH == VSUSP
+		إذا (i == CIDX_swtch)
+			استمر;
+#پایان_اگر
 		/* If eof uses the same slot as min, only print whichever applies */
-#if VEOF == VMIN
-		if (!(mode->c_lflag & ICANON)
+#إذا VEOF == VMIN
+		إذا (!(نما->c_lflag & ICANON)
 		 && (i == CIDX_eof || i == CIDX_eol)
 		) {
-			continue;
+			استمر;
 		}
-#endif
-		ch = mode->c_cc[control_info[i].offset];
-		if (ch == _POSIX_VDISABLE)
+#پایان_اگر
+		ch = نما->c_cc[control_info[i].جابه_جایی];
+		إذا (ch == _POSIX_VDISABLE)
 			strcpy(buf10, "<undef>");
-		else
+		وإلا
 			visible(ch, buf10, 0);
 		wrapf("%s = %s;", nth_string(control_name, i), buf10);
 	}
-#if VEOF == VMIN
-	if ((mode->c_lflag & ICANON) == 0)
-#endif
-		wrapf("min = %u; time = %u;", mode->c_cc[VMIN], mode->c_cc[VTIME]);
+#إذا VEOF == VMIN
+	إذا ((نما->c_lflag & ICANON) == 0)
+#پایان_اگر
+		wrapf("min = %u; time = %u;", نما->c_cc[VMIN], نما->c_cc[VTIME]);
 	newline();
 
-	for (i = 0; i < NUM_mode_info; ++i) {
-		if (mode_info[i].flags & OMIT)
-			continue;
-		if (mode_info[i].type != prev_type) {
+	لكل (i = 0; i < رقم_نما_info; ++i) {
+		إذا (نما_info[i].flags & OMIT)
+			استمر;
+		إذا (نما_info[i].type != prev_type) {
 			newline();
-			prev_type = mode_info[i].type;
+			prev_type = نما_info[i].type;
 		}
 
-		bitsp = get_ptr_to_tcflag(mode_info[i].type, mode);
-		mask = mode_info[i].mask ? mode_info[i].mask : mode_info[i].bits;
-		if ((*bitsp & mask) == mode_info[i].bits) {
-			if (all || (mode_info[i].flags & SANE_UNSET))
-				wrapf("-%s"+1, nth_string(mode_name, i));
-		} else {
-			if ((all && mode_info[i].flags & REV)
-			 || (!all && (mode_info[i].flags & (SANE_SET | REV)) == (SANE_SET | REV))
+		bitsp = get_ptr_مقصد_tcflag(نما_info[i].type, نما);
+		ماسک = نما_info[i].ماسک ? نما_info[i].ماسک : نما_info[i].بیتها;
+		إذا ((*bitsp & ماسک) == نما_info[i].بیتها) {
+			إذا (all || (نما_info[i].flags & SANE_UNSET))
+				wrapf("-%s"+1, nth_string(نما_name, i));
+		} وإلا {
+			إذا ((all && نما_info[i].flags & REV)
+			 || (!all && (نما_info[i].flags & (SANE_مجموعه | REV)) == (SANE_مجموعه | REV))
 			) {
-				wrapf("-%s", nth_string(mode_name, i));
+				wrapf("-%s", nth_string(نما_name, i));
 			}
 		}
 	}
 	newline();
 }
 
-static void sane_mode(struct termios *mode)
+ساكن فراغ sane_نما(بنية termios *نما)
 {
-	int i;
+	صحيح i;
 
-	for (i = 0; i < NUM_control_info; ++i) {
-#if VMIN == VEOF
-		if (i == CIDX_min)
-			break;
-#endif
-		mode->c_cc[control_info[i].offset] = control_info[i].saneval;
+	لكل (i = 0; i < رقم_control_info; ++i) {
+#إذا VMIN == VEOF
+		إذا (i == CIDX_min)
+			اكسر;
+#پایان_اگر
+		نما->c_cc[control_info[i].جابه_جایی] = control_info[i].saneval;
 	}
 
-	for (i = 0; i < NUM_mode_info; ++i) {
+	لكل (i = 0; i < رقم_نما_info; ++i) {
 		tcflag_t val;
-		tcflag_t *bitsp = get_ptr_to_tcflag(mode_info[i].type, mode);
+		tcflag_t *bitsp = get_ptr_مقصد_tcflag(نما_info[i].type, نما);
 
-		if (!bitsp)
-			continue;
-		val = *bitsp & ~((unsigned long)mode_info[i].mask);
-		if (mode_info[i].flags & SANE_SET) {
-			*bitsp = val | mode_info[i].bits;
-		} else
-		if (mode_info[i].flags & SANE_UNSET) {
-			*bitsp = val & ~mode_info[i].bits;
+		إذا (!bitsp)
+			استمر;
+		val = *bitsp & ~((بیعلامت دراز)نما_info[i].ماسک);
+		إذا (نما_info[i].flags & SANE_مجموعه) {
+			*bitsp = val | نما_info[i].بیتها;
+		} وإلا
+		إذا (نما_info[i].flags & SANE_UNSET) {
+			*bitsp = val & ~نما_info[i].بیتها;
 		}
 	}
 }
 
-static void set_mode(const struct mode_info *info, int reversed,
-					struct termios *mode)
+ساكن فراغ مجموعه_نما(ثابت بنية نما_info *info, صحيح reversed,
+					بنية termios *نما)
 {
 	tcflag_t *bitsp;
 
-	bitsp = get_ptr_to_tcflag(info->type, mode);
+	bitsp = get_ptr_مقصد_tcflag(info->type, نما);
 
-	if (bitsp) {
-		tcflag_t val = *bitsp & ~info->mask;
-		if (reversed)
-			*bitsp = val & ~info->bits;
-		else
-			*bitsp = val | info->bits;
-		return;
+	إذا (bitsp) {
+		tcflag_t val = *bitsp & ~info->ماسک;
+		إذا (reversed)
+			*bitsp = val & ~info->بیتها;
+		وإلا
+			*bitsp = val | info->بیتها;
+		أرجع;
 	}
 
 	/* !bitsp - it's a "combination" mode */
-	if (info == &mode_info[IDX_evenp] || info == &mode_info[IDX_parity]) {
-		if (reversed)
-			mode->c_cflag = (mode->c_cflag & ~PARENB & ~CSIZE) | CS8;
-		else
-			mode->c_cflag = (mode->c_cflag & ~PARODD & ~CSIZE) | PARENB | CS7;
-	} else if (info == &mode_info[IDX_oddp]) {
-		if (reversed)
-			mode->c_cflag = (mode->c_cflag & ~PARENB & ~CSIZE) | CS8;
-		else
-			mode->c_cflag = (mode->c_cflag & ~CSIZE) | CS7 | PARODD | PARENB;
-	} else if (info == &mode_info[IDX_nl]) {
-		if (reversed) {
-			mode->c_iflag = (mode->c_iflag | ICRNL) & ~INLCR & ~IGNCR;
-			mode->c_oflag = (mode->c_oflag | ONLCR) & ~OCRNL & ~ONLRET;
-		} else {
-			mode->c_iflag = mode->c_iflag & ~ICRNL;
-			if (ONLCR) mode->c_oflag = mode->c_oflag & ~ONLCR;
+	إذا (info == &نما_info[IDX_evenp] || info == &نما_info[IDX_parity]) {
+		إذا (reversed)
+			نما->c_cflag = (نما->c_cflag & ~PARENB & ~CSIZE) | CS8;
+		وإلا
+			نما->c_cflag = (نما->c_cflag & ~PARODD & ~CSIZE) | PARENB | CS7;
+	} وإلا إذا (info == &نما_info[IDX_oddp]) {
+		إذا (reversed)
+			نما->c_cflag = (نما->c_cflag & ~PARENB & ~CSIZE) | CS8;
+		وإلا
+			نما->c_cflag = (نما->c_cflag & ~CSIZE) | CS7 | PARODD | PARENB;
+	} وإلا إذا (info == &نما_info[IDX_nl]) {
+		إذا (reversed) {
+			نما->c_iflag = (نما->c_iflag | ICRNL) & ~INLCR & ~IGNCR;
+			نما->c_oflag = (نما->c_oflag | ONLCR) & ~OCRNL & ~ONLRET;
+		} وإلا {
+			نما->c_iflag = نما->c_iflag & ~ICRNL;
+			إذا (ONLCR) نما->c_oflag = نما->c_oflag & ~ONLCR;
 		}
-	} else if (info == &mode_info[IDX_ek]) {
-		mode->c_cc[VERASE] = CERASE;
-		mode->c_cc[VKILL] = CKILL;
-	} else if (info == &mode_info[IDX_sane]) {
-		sane_mode(mode);
-	} else if (info == &mode_info[IDX_cbreak]) {
-		if (reversed)
-			mode->c_lflag |= ICANON;
-		else
-			mode->c_lflag &= ~ICANON;
-	} else if (info == &mode_info[IDX_pass8]) {
-		if (reversed) {
-			mode->c_cflag = (mode->c_cflag & ~CSIZE) | CS7 | PARENB;
-			mode->c_iflag |= ISTRIP;
-		} else {
-			mode->c_cflag = (mode->c_cflag & ~PARENB & ~CSIZE) | CS8;
-			mode->c_iflag &= ~ISTRIP;
+	} وإلا إذا (info == &نما_info[IDX_ek]) {
+		نما->c_cc[VERASE] = CERASE;
+		نما->c_cc[VKILL] = CKILL;
+	} وإلا إذا (info == &نما_info[IDX_sane]) {
+		sane_نما(نما);
+	} وإلا إذا (info == &نما_info[IDX_cbreak]) {
+		إذا (reversed)
+			نما->c_lflag |= ICANON;
+		وإلا
+			نما->c_lflag &= ~ICANON;
+	} وإلا إذا (info == &نما_info[IDX_pass8]) {
+		إذا (reversed) {
+			نما->c_cflag = (نما->c_cflag & ~CSIZE) | CS7 | PARENB;
+			نما->c_iflag |= ISTRIP;
+		} وإلا {
+			نما->c_cflag = (نما->c_cflag & ~PARENB & ~CSIZE) | CS8;
+			نما->c_iflag &= ~ISTRIP;
 		}
-	} else if (info == &mode_info[IDX_litout]) {
-		if (reversed) {
-			mode->c_cflag = (mode->c_cflag & ~CSIZE) | CS7 | PARENB;
-			mode->c_iflag |= ISTRIP;
-			mode->c_oflag |= OPOST;
-		} else {
-			mode->c_cflag = (mode->c_cflag & ~PARENB & ~CSIZE) | CS8;
-			mode->c_iflag &= ~ISTRIP;
-			mode->c_oflag &= ~OPOST;
+	} وإلا إذا (info == &نما_info[IDX_litout]) {
+		إذا (reversed) {
+			نما->c_cflag = (نما->c_cflag & ~CSIZE) | CS7 | PARENB;
+			نما->c_iflag |= ISTRIP;
+			نما->c_oflag |= OPOST;
+		} وإلا {
+			نما->c_cflag = (نما->c_cflag & ~PARENB & ~CSIZE) | CS8;
+			نما->c_iflag &= ~ISTRIP;
+			نما->c_oflag &= ~OPOST;
 		}
-	} else if (info == &mode_info[IDX_raw] || info == &mode_info[IDX_cooked]) {
-		if ((info == &mode_info[IDX_raw] && reversed)
-		 || (info == &mode_info[IDX_cooked] && !reversed)
+	} وإلا إذا (info == &نما_info[IDX_raw] || info == &نما_info[IDX_cooked]) {
+		إذا ((info == &نما_info[IDX_raw] && reversed)
+		 || (info == &نما_info[IDX_cooked] && !reversed)
 		) {
 			/* Cooked mode */
-			mode->c_iflag |= BRKINT | IGNPAR | ISTRIP | ICRNL | IXON;
-			mode->c_oflag |= OPOST;
-			mode->c_lflag |= ISIG | ICANON;
-#if VMIN == VEOF
-			mode->c_cc[VEOF] = CEOF;
-#endif
-#if VTIME == VEOL
-			mode->c_cc[VEOL] = CEOL;
-#endif
-		} else {
+			نما->c_iflag |= BRKINT | IGNPAR | ISTRIP | ICRNL | IXON;
+			نما->c_oflag |= OPOST;
+			نما->c_lflag |= ISIG | ICANON;
+#إذا VMIN == VEOF
+			نما->c_cc[VEOF] = CEOF;
+#پایان_اگر
+#إذا VTIME == VEOL
+			نما->c_cc[VEOL] = CEOL;
+#پایان_اگر
+		} وإلا {
 			/* Raw mode */
-			mode->c_iflag = 0;
-			mode->c_oflag &= ~OPOST;
-			mode->c_lflag &= ~(ISIG | ICANON | XCASE);
-			mode->c_cc[VMIN] = 1;
-			mode->c_cc[VTIME] = 0;
+			نما->c_iflag = 0;
+			نما->c_oflag &= ~OPOST;
+			نما->c_lflag &= ~(ISIG | ICANON | XCASE);
+			نما->c_cc[VMIN] = 1;
+			نما->c_cc[VTIME] = 0;
 		}
 	}
-#if IXANY
-	else if (info == &mode_info[IDX_decctlq]) {
-		if (reversed)
-			mode->c_iflag |= IXANY;
-		else
-			mode->c_iflag &= ~IXANY;
+#إذا IXANY
+	وإلا إذا (info == &نما_info[IDX_decctlq]) {
+		إذا (reversed)
+			نما->c_iflag |= IXANY;
+		وإلا
+			نما->c_iflag &= ~IXANY;
 	}
-#endif
-#if TABDLY
-	else if (info == &mode_info[IDX_tabs]) {
-		if (reversed)
-			mode->c_oflag = (mode->c_oflag & ~TABDLY) | TAB3;
-		else
-			mode->c_oflag = (mode->c_oflag & ~TABDLY) | TAB0;
+#پایان_اگر
+#إذا TABDLY
+	وإلا إذا (info == &نما_info[IDX_tabs]) {
+		إذا (reversed)
+			نما->c_oflag = (نما->c_oflag & ~TABDLY) | TAB3;
+		وإلا
+			نما->c_oflag = (نما->c_oflag & ~TABDLY) | TAB0;
 	}
-#endif
-#if OXTABS
-	else if (info == &mode_info[IDX_tabs]) {
-		if (reversed)
-			mode->c_oflag |= OXTABS;
-		else
-			mode->c_oflag &= ~OXTABS;
+#پایان_اگر
+#إذا OXTABS
+	وإلا إذا (info == &نما_info[IDX_tabs]) {
+		إذا (reversed)
+			نما->c_oflag |= OXTABS;
+		وإلا
+			نما->c_oflag &= ~OXTABS;
 	}
-#endif
-#if XCASE && IUCLC && OLCUC
-	else if (info==&mode_info[IDX_lcase] || info==&mode_info[IDX_LCASE]) {
-		if (reversed) {
-			mode->c_lflag &= ~XCASE;
-			mode->c_iflag &= ~IUCLC;
-			mode->c_oflag &= ~OLCUC;
-		} else {
-			mode->c_lflag |= XCASE;
-			mode->c_iflag |= IUCLC;
-			mode->c_oflag |= OLCUC;
+#پایان_اگر
+#إذا XCASE && IUCLC && OLCUC
+	وإلا إذا (info==&نما_info[IDX_lcase] || info==&نما_info[IDX_LCASE]) {
+		إذا (reversed) {
+			نما->c_lflag &= ~XCASE;
+			نما->c_iflag &= ~IUCLC;
+			نما->c_oflag &= ~OLCUC;
+		} وإلا {
+			نما->c_lflag |= XCASE;
+			نما->c_iflag |= IUCLC;
+			نما->c_oflag |= OLCUC;
 		}
 	}
-#endif
-	else if (info == &mode_info[IDX_crt]) {
-		mode->c_lflag |= ECHOE | ECHOCTL | ECHOKE;
-	} else if (info == &mode_info[IDX_dec]) {
-		mode->c_cc[VINTR] = 3; /* ^C */
-		mode->c_cc[VERASE] = 127; /* DEL */
-		mode->c_cc[VKILL] = 21; /* ^U */
-		mode->c_lflag |= ECHOE | ECHOCTL | ECHOKE;
-		if (IXANY) mode->c_iflag &= ~IXANY;
+#پایان_اگر
+	وإلا إذا (info == &نما_info[IDX_crt]) {
+		نما->c_lflag |= ECHOE | ECHOCTL | ECHOKE;
+	} وإلا إذا (info == &نما_info[IDX_dec]) {
+		نما->c_cc[VINTR] = 3; /* ^C */
+		نما->c_cc[VERASE] = 127; /* DEL */
+		نما->c_cc[VKILL] = 21; /* ^U */
+		نما->c_lflag |= ECHOE | ECHOCTL | ECHOKE;
+		إذا (IXANY) نما->c_iflag &= ~IXANY;
 	}
 }
 
-static void set_control_char_or_die(const struct control_info *info,
-			const char *arg, struct termios *mode)
+ساكن فراغ مجموعه_control_char_or_die(ثابت بنية control_info *info,
+			ثابت حرف *arg, بنية termios *نما)
 {
-	unsigned char value;
+	بیعلامت حرف مقدار_2;
 
-	if (info == &control_info[CIDX_min] || info == &control_info[CIDX_time])
-		value = xatoul_range_sfx(arg, 0, 0xff, stty_suffixes);
-	else if (arg[0] == '\0' || arg[1] == '\0')
-		value = arg[0];
-	else if (strcmp(arg, "^-") == 0 || strcmp(arg, "undef") == 0)
-		value = _POSIX_VDISABLE;
-	else if (arg[0] == '^') { /* Ignore any trailing junk (^Cjunk) */
-		value = arg[1] & 0x1f; /* Non-letters get weird results */
-		if (arg[1] == '?')
-			value = 127;
-	} else
-		value = xatoul_range_sfx(arg, 0, 0xff, stty_suffixes);
-	mode->c_cc[info->offset] = value;
+	إذا (info == &control_info[CIDX_min] || info == &control_info[CIDX_زمان])
+		مقدار_2 = xatoul_range_sfx(arg, 0, 0xff, stty_suffixes);
+	وإلا إذا (arg[0] == '\0' || arg[1] == '\0')
+		مقدار_2 = arg[0];
+	وإلا إذا (strcmp(arg, "^-") == 0 || strcmp(arg, "undef") == 0)
+		مقدار_2 = _POSIX_VDISABLE;
+	وإلا إذا (arg[0] == '^') { /* Ignore any trailing junk (^Cjunk) */
+		مقدار_2 = arg[1] & 0x1f; /* Non-letters get weird results */
+		إذا (arg[1] == '?')
+			مقدار_2 = 127;
+	} وإلا
+		مقدار_2 = xatoul_range_sfx(arg, 0, 0xff, stty_suffixes);
+	نما->c_cc[info->جابه_جایی] = مقدار_2;
 }
 
-#define STTY_require_set_attr   (1 << 0)
-#define STTY_speed_was_set      (1 << 1)
-#define STTY_verbose_output     (1 << 2)
-#define STTY_recoverable_output (1 << 3)
-#define STTY_noargs             (1 << 4)
+#تعریف_کن STTY_require_مجموعه_attr   (1 << 0)
+#تعریف_کن STTY_سرعت_was_مجموعه      (1 << 1)
+#تعریف_کن STTY_verbose_output     (1 << 2)
+#تعریف_کن STTY_recoverable_output (1 << 3)
+#تعریف_کن STTY_noargs             (1 << 4)
 
-int stty_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int stty_main(int argc UNUSED_PARAM, char **argv)
+صحيح stty_main(صحيح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحيح stty_main(صحيح argc استفادهنشده_PARAM, حرف **argv)
 {
-	struct termios mode;
-	void (*output_func)(const struct termios *, int);
-	const char *file_name = NULL;
-	int display_all = 0;
-	int stty_state;
-	int k;
+	بنية termios نما;
+	فراغ (*output_func)(ثابت بنية termios *, صحيح);
+	ثابت حرف *file_name = عدم;
+	صحيح display_all = 0;
+	صحيح stty_state;
+	صحيح k;
 
 	INIT_G();
 
@@ -1289,133 +1289,133 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 
 	/* First pass: only parse/verify command line params */
 	k = 0;
-	while (argv[++k]) {
-		const struct mode_info *mp;
-		const struct control_info *cp;
-		const char *arg = argv[k];
-		const char *argnext = argv[k+1];
-		int param;
+	طالما (argv[++k]) {
+		ثابت بنية نما_info *mp;
+		ثابت بنية control_info *cp;
+		ثابت حرف *arg = argv[k];
+		ثابت حرف *argnext = argv[k+1];
+		صحيح param;
 
-		if (arg[0] == '-') {
-			int i;
-			mp = find_mode(arg+1);
-			if (mp) {
-				if (!(mp->flags & REV))
-					goto invalid_argument;
+		إذا (arg[0] == '-') {
+			صحيح i;
+			mp = پیدا_کن_نما(arg+1);
+			إذا (mp) {
+				إذا (!(mp->flags & REV))
+					اذهب invalid_آرگومان;
 				stty_state &= ~STTY_noargs;
-				continue;
+				استمر;
 			}
 			/* It is an option - parse it */
 			i = 0;
-			while (arg[++i]) {
-				switch (arg[i]) {
-				case 'a':
+			طالما (arg[++i]) {
+				بدل (arg[i]) {
+				حالة 'a':
 					stty_state |= STTY_verbose_output;
 					output_func = do_display;
 					display_all = 1;
-					break;
-				case 'g':
+					اكسر;
+				حالة 'g':
 					stty_state |= STTY_recoverable_output;
 					output_func = display_recoverable;
-					break;
-				case 'F':
-					if (file_name)
-						bb_simple_error_msg_and_die("only one device may be specified");
+					اكسر;
+				حالة 'F':
+					إذا (file_name)
+						bb_simple_error_پیام_and_die("only one device may be specified");
 					file_name = &arg[i+1]; /* "-Fdevice" ? */
-					if (!file_name[0]) { /* nope, "-F device" */
-						int p = k+1; /* argv[p] is argnext */
+					إذا (!file_name[0]) { /* nope, "-F device" */
+						صحيح p = k+1; /* argv[p] is argnext */
 						file_name = argnext;
-						if (!file_name)
-							bb_error_msg_and_die(bb_msg_requires_arg, "-F");
+						إذا (!file_name)
+							bb_error_پیام_and_die(bb_پیام_requires_arg, "-F");
 						/* remove -F param from arg[vc] */
-						while (argv[p]) {
+						طالما (argv[p]) {
 							argv[p] = argv[p+1];
 							++p;
 						}
 					}
-					goto end_option;
-				default:
-					goto invalid_argument;
+					اذهب انتها_option;
+				افتراضي:
+					اذهب invalid_آرگومان;
 				}
 			}
- end_option:
-			continue;
+ انتها_option:
+			استمر;
 		}
 
-		mp = find_mode(arg);
-		if (mp) {
+		mp = پیدا_کن_نما(arg);
+		إذا (mp) {
 			stty_state &= ~STTY_noargs;
-			continue;
+			استمر;
 		}
 
-		cp = find_control(arg);
-		if (cp) {
-			if (!argnext)
-				bb_error_msg_and_die(bb_msg_requires_arg, arg);
+		cp = پیدا_کن_control(arg);
+		إذا (cp) {
+			إذا (!argnext)
+				bb_error_پیام_and_die(bb_پیام_requires_arg, arg);
 			/* called for the side effect of xfunc death only */
-			set_control_char_or_die(cp, argnext, &mode);
+			مجموعه_control_char_or_die(cp, argnext, &نما);
 			stty_state &= ~STTY_noargs;
 			++k;
-			continue;
+			استمر;
 		}
 
-		param = find_param(arg);
-		if (param & param_need_arg) {
-			if (!argnext)
-				bb_error_msg_and_die(bb_msg_requires_arg, arg);
+		param = پیدا_کن_param(arg);
+		إذا (param & param_need_arg) {
+			إذا (!argnext)
+				bb_error_پیام_and_die(bb_پیام_requires_arg, arg);
 			++k;
 		}
 
-		switch (param) {
-#ifdef __linux__
-		case param_line:
+		بدل (param) {
+#اگر_تعریف_شده __linux__
+		حالة param_سطر:
 # ifndef TIOCGWINSZ
-			xatoul_range_sfx(argnext, 1, INT_MAX, stty_suffixes);
-			break;
+			xatoul_range_sfx(argnext, 1, بیشترین_صحیح, stty_suffixes);
+			اكسر;
 # endif /* else fall-through */
-#endif
-#ifdef TIOCGWINSZ
-		case param_rows:
-		case param_cols:
-		case param_columns:
-			xatoul_range_sfx(argnext, 1, INT_MAX, stty_suffixes);
-			break;
-		case param_size:
-#endif
-		case param_speed:
-			break;
-		case param_ispeed:
+#پایان_اگر
+#اگر_تعریف_شده TIOCGWINSZ
+		حالة param_ردیفها:
+		حالة param_تعداد_ستون:
+		حالة param_columns:
+			xatoul_range_sfx(argnext, 1, بیشترین_صحیح, stty_suffixes);
+			اكسر;
+		حالة param_اندازه:
+#پایان_اگر
+		حالة param_سرعت:
+			اكسر;
+		حالة param_ispeed:
 			/* called for the side effect of xfunc death only */
-			set_speed_or_die(input_speed, argnext, &mode);
-			break;
-		case param_ospeed:
+			مجموعه_سرعت_or_die(درون_داد_سرعت, argnext, &نما);
+			اكسر;
+		حالة param_ospeed:
 			/* called for the side effect of xfunc death only */
-			set_speed_or_die(output_speed, argnext, &mode);
-			break;
-		default:
-			if (recover_mode(arg, &mode) == 1) break;
-			if (tty_value_to_baud(xatou(arg)) != (speed_t) -1) break;
- invalid_argument:
-			bb_error_msg_and_die("invalid argument '%s'", arg);
+			مجموعه_سرعت_or_die(output_سرعت, argnext, &نما);
+			اكسر;
+		افتراضي:
+			إذا (recover_نما(arg, &نما) == 1) اكسر;
+			إذا (tty_مقدار_مقصد_baud(xatou(arg)) != (سرعت_t) -1) اكسر;
+ invalid_آرگومان:
+			bb_error_پیام_and_die("invalid argument '%s'", arg);
 		}
 		stty_state &= ~STTY_noargs;
 	}
 
 	/* Specifying both -a and -g is an error */
-	if ((stty_state & (STTY_verbose_output | STTY_recoverable_output)) ==
+	إذا ((stty_state & (STTY_verbose_output | STTY_recoverable_output)) ==
 		(STTY_verbose_output | STTY_recoverable_output)
 	) {
-		bb_simple_error_msg_and_die("-a and -g are mutually exclusive");
+		bb_simple_error_پیام_and_die("-a and -g are mutually exclusive");
 	}
 	/* Specifying -a or -g with non-options is an error */
-	if ((stty_state & (STTY_verbose_output | STTY_recoverable_output))
+	إذا ((stty_state & (STTY_verbose_output | STTY_recoverable_output))
 	 && !(stty_state & STTY_noargs)
 	) {
-		bb_simple_error_msg_and_die("modes may not be set when -a or -g is used");
+		bb_simple_error_پیام_and_die("modes may not be set when -a or -g is used");
 	}
 
 	/* Now it is safe to start doing things */
-	if (file_name) {
+	إذا (file_name) {
 		G.device_name = file_name;
 		xmove_fd(xopen_nonblocking(G.device_name), STDIN_FILENO);
 		ndelay_off(STDIN_FILENO);
@@ -1423,100 +1423,100 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 
 	/* Initialize to all zeroes so there is no risk memcmp will report a
 	   spurious difference in an uninitialized portion of the structure */
-	memset(&mode, 0, sizeof(mode));
-	if (tcgetattr(STDIN_FILENO, &mode))
+	memset(&نما, 0, حجم(نما));
+	إذا (tcgetattr(STDIN_FILENO, &نما))
 		perror_on_device_and_die("%s");
 
-	if (stty_state & (STTY_verbose_output | STTY_recoverable_output | STTY_noargs)) {
-		G.max_col = get_terminal_width(STDOUT_FILENO);
-		output_func(&mode, display_all);
-		return EXIT_SUCCESS;
+	إذا (stty_state & (STTY_verbose_output | STTY_recoverable_output | STTY_noargs)) {
+		G.max_ستون = get_terminal_عرض(STDOUT_FILENO);
+		output_func(&نما, display_all);
+		أرجع EXIT_SUCCESS;
 	}
 
 	/* Second pass: perform actions */
 	k = 0;
-	while (argv[++k]) {
-		const struct mode_info *mp;
-		const struct control_info *cp;
-		const char *arg = argv[k];
-		const char *argnext = argv[k+1];
-		int param;
+	طالما (argv[++k]) {
+		ثابت بنية نما_info *mp;
+		ثابت بنية control_info *cp;
+		ثابت حرف *arg = argv[k];
+		ثابت حرف *argnext = argv[k+1];
+		صحيح param;
 
-		if (arg[0] == '-') {
-			mp = find_mode(arg+1);
-			if (mp) {
-				set_mode(mp, 1 /* reversed */, &mode);
-				stty_state |= STTY_require_set_attr;
+		إذا (arg[0] == '-') {
+			mp = پیدا_کن_نما(arg+1);
+			إذا (mp) {
+				مجموعه_نما(mp, 1 /* reversed */, &نما);
+				stty_state |= STTY_require_مجموعه_attr;
 			}
 			/* It is an option - already parsed. Skip it */
-			continue;
+			استمر;
 		}
 
-		mp = find_mode(arg);
-		if (mp) {
-			set_mode(mp, 0 /* non-reversed */, &mode);
-			stty_state |= STTY_require_set_attr;
-			continue;
+		mp = پیدا_کن_نما(arg);
+		إذا (mp) {
+			مجموعه_نما(mp, 0 /* non-reversed */, &نما);
+			stty_state |= STTY_require_مجموعه_attr;
+			استمر;
 		}
 
-		cp = find_control(arg);
-		if (cp) {
+		cp = پیدا_کن_control(arg);
+		إذا (cp) {
 			++k;
-			set_control_char_or_die(cp, argnext, &mode);
-			stty_state |= STTY_require_set_attr;
-			continue;
+			مجموعه_control_char_or_die(cp, argnext, &نما);
+			stty_state |= STTY_require_مجموعه_attr;
+			استمر;
 		}
 
-		param = find_param(arg);
-		if (param & param_need_arg) {
+		param = پیدا_کن_param(arg);
+		إذا (param & param_need_arg) {
 			++k;
 		}
 
-		switch (param) {
-#ifdef __linux__
-		case param_line:
-			mode.c_line = xatoul_sfx(argnext, stty_suffixes);
-			stty_state |= STTY_require_set_attr;
-			break;
-#endif
-#ifdef TIOCGWINSZ
-		case param_cols:
-		case param_columns:
-			set_window_size(-1, xatoul_sfx(argnext, stty_suffixes));
-			break;
-		case param_size:
-			display_window_size(0);
-			break;
-		case param_rows:
-			set_window_size(xatoul_sfx(argnext, stty_suffixes), -1);
-			break;
-#endif
-		case param_speed:
-			display_speed(&mode, 0);
-			break;
-		case param_ispeed:
-			set_speed_or_die(input_speed, argnext, &mode);
-			stty_state |= (STTY_require_set_attr | STTY_speed_was_set);
-			break;
-		case param_ospeed:
-			set_speed_or_die(output_speed, argnext, &mode);
-			stty_state |= (STTY_require_set_attr | STTY_speed_was_set);
-			break;
-		default:
-			if (recover_mode(arg, &mode) == 1)
-				stty_state |= STTY_require_set_attr;
-			else /* true: if (tty_value_to_baud(xatou(arg)) != (speed_t) -1) */{
-				set_speed_or_die(both_speeds, arg, &mode);
-				stty_state |= (STTY_require_set_attr | STTY_speed_was_set);
+		بدل (param) {
+#اگر_تعریف_شده __linux__
+		حالة param_سطر:
+			نما.c_سطر = xatoul_sfx(argnext, stty_suffixes);
+			stty_state |= STTY_require_مجموعه_attr;
+			اكسر;
+#پایان_اگر
+#اگر_تعریف_شده TIOCGWINSZ
+		حالة param_تعداد_ستون:
+		حالة param_columns:
+			مجموعه_پنجره_اندازه(-1, xatoul_sfx(argnext, stty_suffixes));
+			اكسر;
+		حالة param_اندازه:
+			display_پنجره_اندازه(0);
+			اكسر;
+		حالة param_ردیفها:
+			مجموعه_پنجره_اندازه(xatoul_sfx(argnext, stty_suffixes), -1);
+			اكسر;
+#پایان_اگر
+		حالة param_سرعت:
+			display_سرعت(&نما, 0);
+			اكسر;
+		حالة param_ispeed:
+			مجموعه_سرعت_or_die(درون_داد_سرعت, argnext, &نما);
+			stty_state |= (STTY_require_مجموعه_attr | STTY_سرعت_was_مجموعه);
+			اكسر;
+		حالة param_ospeed:
+			مجموعه_سرعت_or_die(output_سرعت, argnext, &نما);
+			stty_state |= (STTY_require_مجموعه_attr | STTY_سرعت_was_مجموعه);
+			اكسر;
+		افتراضي:
+			إذا (recover_نما(arg, &نما) == 1)
+				stty_state |= STTY_require_مجموعه_attr;
+			وإلا /* true: if (tty_value_to_baud(xatou(arg)) != (speed_t) -1) */{
+				مجموعه_سرعت_or_die(both_speeds, arg, &نما);
+				stty_state |= (STTY_require_مجموعه_attr | STTY_سرعت_was_مجموعه);
 			} /* else - impossible (caught in the first pass):
 				bb_error_msg_and_die("invalid argument '%s'", arg); */
 		}
 	}
 
-	if (stty_state & STTY_require_set_attr) {
-		struct termios new_mode;
+	إذا (stty_state & STTY_require_مجموعه_attr) {
+		بنية termios new_نما;
 
-		if (tcsetattr(STDIN_FILENO, TCSADRAIN, &mode))
+		إذا (tcsetattr(STDIN_FILENO, TCSADRAIN, &نما))
 			perror_on_device_and_die("%s");
 
 		/* POSIX (according to Zlotnick's book) tcsetattr returns zero if
@@ -1528,17 +1528,17 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 
 		/* Initialize to all zeroes so there is no risk memcmp will report a
 		   spurious difference in an uninitialized portion of the structure */
-		memset(&new_mode, 0, sizeof(new_mode));
-		if (tcgetattr(STDIN_FILENO, &new_mode))
+		memset(&new_نما, 0, حجم(new_نما));
+		إذا (tcgetattr(STDIN_FILENO, &new_نما))
 			perror_on_device_and_die("%s");
 
-		if (memcmp(&mode, &new_mode, sizeof(mode)) != 0) {
+		إذا (memcmp(&نما, &new_نما, حجم(نما)) != 0) {
 /*
  * I think the below chunk is not necessary on Linux.
  * If you are deleting it, also delete STTY_speed_was_set bit -
  * it is only ever checked here.
  */
-#if 0 /* was "if CIBAUD" */
+#إذا 0 /* was "if CIBAUD" */
 			/* SunOS 4.1.3 (at least) has the problem that after this sequence,
 			   tcgetattr (&m1); tcsetattr (&m1); tcgetattr (&m2);
 			   sometimes (m1 != m2).  The only difference is in the four bits
@@ -1548,13 +1548,13 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 			   set the baud rate explicitly -- otherwise we'd never give an
 			   error for a true failure to set the baud rate */
 
-			new_mode.c_cflag &= (~CIBAUD);
-			if ((stty_state & STTY_speed_was_set)
-			 || memcmp(&mode, &new_mode, sizeof(mode)) != 0)
-#endif
+			new_نما.c_cflag &= (~CIBAUD);
+			إذا ((stty_state & STTY_سرعت_was_مجموعه)
+			 || memcmp(&نما, &new_نما, حجم(نما)) != 0)
+#پایان_اگر
 				perror_on_device_and_die("%s: cannot perform all requested operations");
 		}
 	}
 
-	return EXIT_SUCCESS;
+	أرجع EXIT_SUCCESS;
 }

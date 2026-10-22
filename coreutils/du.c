@@ -72,45 +72,45 @@
 //usage:       "104     ./docs\n"
 //usage:       "2417    .\n"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#ضمن "libbb.h"
+#ضمن "common_bufsiz.h"
 
-enum {
+تعداد {
 	OPT_a_files_too    = (1 << 0),
 	OPT_H_follow_links = (1 << 1),
 	OPT_k_kbytes       = (1 << 2),
 	OPT_L_follow_links = (1 << 3),
-	OPT_s_total_norecurse = (1 << 4),
+	OPT_s_مجموع_norecurse = (1 << 4),
 	OPT_x_one_FS       = (1 << 5),
 	OPT_d_maxdepth     = (1 << 6),
 	OPT_l_hardlinks    = (1 << 7),
-	OPT_c_total        = (1 << 8),
+	OPT_c_مجموع        = (1 << 8),
 	OPT_b              = (1 << 9),
 	OPT_h_for_humans   = (1 << 10),
 	OPT_m_mbytes       = (1 << 11),
 };
 
-struct globals {
-#if ENABLE_FEATURE_HUMAN_READABLE
-	unsigned long disp_unit;
-#else
-	unsigned disp_k;
-#endif
-	int max_print_depth;
-	bool status;
-	int slink_depth;
-	int du_depth;
+بنية globals {
+#إذا ENABLE_FEATURE_HUMAN_READABLE
+	بیعلامت دراز disp_unit;
+#وإلا
+	بیعلامت disp_k;
+#پایان_اگر
+	صحيح max_print_عمق;
+	bool وضعیت;
+	صحيح slink_عمق;
+	صحيح du_عمق;
 	dev_t dir_dev;
 } FIX_ALIASING;
-#define G (*(struct globals*)bb_common_bufsiz1)
-#define INIT_G() do { setup_common_bufsiz(); } while (0)
+#تعریف_کن G (*(بنية globals*)bb_common_bufsiz1)
+#تعریف_کن INIT_G() افعل { راهاندازی_common_bufsiz(); } طالما (0)
 
 
-static void print(unsigned long long size, const char *filename)
+ساكن فراغ print(بیعلامت دراز دراز اندازه, ثابت حرف *filename)
 {
 	/* TODO - May not want to defer error checking here. */
-#if ENABLE_FEATURE_HUMAN_READABLE
-# if ENABLE_DESKTOP
+#إذا ENABLE_FEATURE_HUMAN_READABLE
+# إذا ENABLE_DESKTOP
 	/* ~30 bytes of code for extra compat:
 	 * coreutils' du rounds sizes up:
 	 * for example,  1025k file is shown as "2" by du -m.
@@ -118,126 +118,126 @@ static void print(unsigned long long size, const char *filename)
 	 * else (fixed scale such as -m), we round up. To that end,
 	 * add yet another half of the unit before displaying:
 	 */
-	if (G.disp_unit)
-		size += (G.disp_unit-1) / (unsigned)(512 * 2);
+	إذا (G.disp_unit)
+		اندازه += (G.disp_unit-1) / (بیعلامت)(512 * 2);
 # endif
-	printf("%s\t%s\n",
+	چاپ_کن("%s\t%s\n",
 			/* size x 512 / G.disp_unit.
 			 * If G.disp_unit == 0, show one fractional
 			 * and use suffixes
 			 */
-			make_human_readable_str(size, (option_mask32 & OPT_b) ? 1 : 512, G.disp_unit),
+			make_human_readable_str(اندازه, (option_mask32 & OPT_b) ? 1 : 512, G.disp_unit),
 			filename);
-#else
-	if (G.disp_k) {
-		if (!(option_mask32 & OPT_b)) {
-			size++;
-			size >>= 1;
-		} else {
-			size >>= 10;
+#وإلا
+	إذا (G.disp_k) {
+		إذا (!(option_mask32 & OPT_b)) {
+			اندازه++;
+			اندازه >>= 1;
+		} وإلا {
+			اندازه >>= 10;
 		}
 	}
-	printf("%llu\t%s\n", size, filename);
-#endif
+	چاپ_کن("%llu\t%s\n", اندازه, filename);
+#پایان_اگر
 }
 
 /* tiny recursive du */
-static unsigned long long du(const char *filename)
+ساكن بیعلامت دراز دراز du(ثابت حرف *filename)
 {
-	struct stat statbuf;
-	unsigned long long sum;
+	بنية stat statbuf;
+	بیعلامت دراز دراز جمع;
 
-	if (lstat(filename, &statbuf) != 0) {
-		bb_simple_perror_msg(filename);
-		G.status = EXIT_FAILURE;
-		return 0;
+	إذا (lstat(filename, &statbuf) != 0) {
+		bb_simple_perror_پیام(filename);
+		G.وضعیت = EXIT_FAILURE;
+		أرجع 0;
 	}
 
-	if (option_mask32 & OPT_x_one_FS) {
-		if (G.du_depth == 0) {
+	إذا (option_mask32 & OPT_x_one_FS) {
+		إذا (G.du_عمق == 0) {
 			G.dir_dev = statbuf.st_dev;
-		} else if (G.dir_dev != statbuf.st_dev) {
-			return 0;
+		} وإلا إذا (G.dir_dev != statbuf.st_dev) {
+			أرجع 0;
 		}
 	}
 
-	sum = ((option_mask32 & OPT_b) ? statbuf.st_size : statbuf.st_blocks);
+	جمع = ((option_mask32 & OPT_b) ? statbuf.st_اندازه : statbuf.st_بلوکها);
 
-	if (S_ISLNK(statbuf.st_mode)) {
-		if (G.slink_depth > G.du_depth) { /* -H or -L */
-			if (stat(filename, &statbuf) != 0) {
-				bb_simple_perror_msg(filename);
-				G.status = EXIT_FAILURE;
-				return 0;
+	إذا (S_ISLNK(statbuf.st_نما)) {
+		إذا (G.slink_عمق > G.du_عمق) { /* -H or -L */
+			إذا (stat(filename, &statbuf) != 0) {
+				bb_simple_perror_پیام(filename);
+				G.وضعیت = EXIT_FAILURE;
+				أرجع 0;
 			}
-			sum = ((option_mask32 & OPT_b) ? statbuf.st_size : statbuf.st_blocks);
-			if (G.slink_depth == 1) {
+			جمع = ((option_mask32 & OPT_b) ? statbuf.st_اندازه : statbuf.st_بلوکها);
+			إذا (G.slink_عمق == 1) {
 				/* Convert -H to -L */
-				G.slink_depth = INT_MAX;
+				G.slink_عمق = بیشترین_صحیح;
 			}
 		}
 	}
 
-	if (!(option_mask32 & OPT_l_hardlinks)
+	إذا (!(option_mask32 & OPT_l_hardlinks)
 	 && statbuf.st_nlink > 1
 	) {
 		/* Add files/directories with links only once */
-		if (is_in_ino_dev_hashtable(&statbuf)) {
-			return 0;
+		إذا (is_درون_ino_dev_hashtable(&statbuf)) {
+			أرجع 0;
 		}
-		add_to_ino_dev_hashtable(&statbuf, NULL);
+		جمع_کن_مقصد_ino_dev_hashtable(&statbuf, عدم);
 	}
 
-	if (S_ISDIR(statbuf.st_mode)) {
+	إذا (S_ISDIR(statbuf.st_نما)) {
 		DIR *dir;
-		struct dirent *entry;
-		char *newfile;
+		بنية dirent *مدخل;
+		حرف *newfile;
 
 		dir = warn_opendir(filename);
-		if (!dir) {
-			G.status = EXIT_FAILURE;
-			return sum;
+		إذا (!dir) {
+			G.وضعیت = EXIT_FAILURE;
+			أرجع جمع;
 		}
 
-		while ((entry = readdir(dir))) {
-			newfile = concat_subpath_file(filename, entry->d_name);
-			if (newfile == NULL)
-				continue;
-			++G.du_depth;
-			sum += du(newfile);
-			--G.du_depth;
-			free(newfile);
+		طالما ((مدخل = readdir(dir))) {
+			newfile = concat_subpath_file(filename, مدخل->d_name);
+			إذا (newfile == عدم)
+				استمر;
+			++G.du_عمق;
+			جمع += du(newfile);
+			--G.du_عمق;
+			حرر(newfile);
 		}
 		closedir(dir);
-	} else {
-		if (!(option_mask32 & OPT_a_files_too) && G.du_depth != 0)
-			return sum;
+	} وإلا {
+		إذا (!(option_mask32 & OPT_a_files_too) && G.du_عمق != 0)
+			أرجع جمع;
 	}
-	if (G.du_depth <= G.max_print_depth) {
-		print(sum, filename);
+	إذا (G.du_عمق <= G.max_print_عمق) {
+		print(جمع, filename);
 	}
-	return sum;
+	أرجع جمع;
 }
 
-int du_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int du_main(int argc UNUSED_PARAM, char **argv)
+صحيح du_main(صحيح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحيح du_main(صحيح argc استفادهنشده_PARAM, حرف **argv)
 {
-	unsigned long long total;
-	int slink_depth_save;
-	unsigned opt;
+	بیعلامت دراز دراز مجموع;
+	صحيح slink_عمق_save;
+	بیعلامت opt;
 
 	INIT_G();
 
-#if ENABLE_FEATURE_HUMAN_READABLE
+#إذا ENABLE_FEATURE_HUMAN_READABLE
 	IF_FEATURE_DU_DEFAULT_BLOCKSIZE_1K(G.disp_unit = 1024;)
 	IF_NOT_FEATURE_DU_DEFAULT_BLOCKSIZE_1K(G.disp_unit = 512;)
-	if (getenv("POSIXLY_CORRECT"))  /* TODO - a new libbb function? */
+	إذا (getenv("POSIXLY_CORRECT"))  /* TODO - a new libbb function? */
 		G.disp_unit = 512;
-#else
+#وإلا
 	IF_FEATURE_DU_DEFAULT_BLOCKSIZE_1K(G.disp_k = 1;)
 	/* IF_NOT_FEATURE_DU_DEFAULT_BLOCKSIZE_1K(G.disp_k = 0;) - G is pre-zeroed */
-#endif
-	G.max_print_depth = INT_MAX;
+#پایان_اگر
+	G.max_print_عمق = بیشترین_صحیح;
 
 	/* Note: SUSv3 specifies that -a and -s options cannot be used together
 	 * in strictly conforming applications.  However, it also says that some
@@ -245,67 +245,67 @@ int du_main(int argc UNUSED_PARAM, char **argv)
 	 * gnu du exits with an error code in this case.  We choose to simply
 	 * ignore -a.  This is consistent with -s being equivalent to -d 0.
 	 */
-#if ENABLE_FEATURE_HUMAN_READABLE
+#إذا ENABLE_FEATURE_HUMAN_READABLE
 	opt = getopt32(argv, "^"
 			"aHkLsxd:+lcbhm"
 			"\0" "h-km:k-hm:m-hk:H-L:L-H:s-d:d-s",
-			&G.max_print_depth
+			&G.max_print_عمق
 	);
 	argv += optind;
-	if (opt & OPT_b) {
+	إذا (opt & OPT_b) {
 		G.disp_unit = 1;
 	}
-	if (opt & OPT_h_for_humans) {
+	إذا (opt & OPT_h_for_humans) {
 		G.disp_unit = 0;
 	}
-	if (opt & OPT_m_mbytes) {
+	إذا (opt & OPT_m_mbytes) {
 		G.disp_unit = 1024*1024;
 	}
-	if (opt & OPT_k_kbytes) {
+	إذا (opt & OPT_k_kbytes) {
 		G.disp_unit = 1024;
 	}
-#else
+#وإلا
 	opt = getopt32(argv, "^"
 			"aHkLsxd:+lcb"
 			"\0" "H-L:L-H:s-d:d-s",
-			&G.max_print_depth
+			&G.max_print_عمق
 	);
 	argv += optind;
-# if !ENABLE_FEATURE_DU_DEFAULT_BLOCKSIZE_1K
-	if (opt & OPT_k_kbytes) {
+# إذا !ENABLE_FEATURE_DU_DEFAULT_BLOCKSIZE_1K
+	إذا (opt & OPT_k_kbytes) {
 		G.disp_k = 1;
 	}
 # endif
-#endif
-	if (opt & OPT_H_follow_links) {
-		G.slink_depth = 1;
+#پایان_اگر
+	إذا (opt & OPT_H_follow_links) {
+		G.slink_عمق = 1;
 	}
-	if (opt & OPT_L_follow_links) {
-		G.slink_depth = INT_MAX;
+	إذا (opt & OPT_L_follow_links) {
+		G.slink_عمق = بیشترین_صحیح;
 	}
-	if (opt & OPT_s_total_norecurse) {
-		G.max_print_depth = 0;
+	إذا (opt & OPT_s_مجموع_norecurse) {
+		G.max_print_عمق = 0;
 	}
 
 	/* go through remaining args (if any) */
-	if (!*argv) {
-		*--argv = (char*)".";
-		if (G.slink_depth == 1) {
-			G.slink_depth = 0;
+	إذا (!*argv) {
+		*--argv = (حرف*)".";
+		إذا (G.slink_عمق == 1) {
+			G.slink_عمق = 0;
 		}
 	}
 
-	slink_depth_save = G.slink_depth;
-	total = 0;
-	do {
-		total += du(*argv);
-		G.slink_depth = slink_depth_save;
-	} while (*++argv);
+	slink_عمق_save = G.slink_عمق;
+	مجموع = 0;
+	افعل {
+		مجموع += du(*argv);
+		G.slink_عمق = slink_عمق_save;
+	} طالما (*++argv);
 
-	if (ENABLE_FEATURE_CLEAN_UP)
+	إذا (ENABLE_FEATURE_CLEAN_به_بالا)
 		reset_ino_dev_hashtable();
-	if (opt & OPT_c_total)
-		print(total, "total");
+	إذا (opt & OPT_c_مجموع)
+		print(مجموع, "total");
 
-	fflush_stdout_and_exit(G.status);
+	fflush_stdout_and_exit(G.وضعیت);
 }

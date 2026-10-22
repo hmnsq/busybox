@@ -40,140 +40,140 @@
 //usage:       "$ split TODO foo\n"
 //usage:       "$ cat TODO | split -a 2 -l 2 TODO_\n"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#ضمن "libbb.h"
+#ضمن "common_bufsiz.h"
 
-#if ENABLE_FEATURE_SPLIT_FANCY
-static const struct suffix_mult split_suffixes[] ALIGN_SUFFIX = {
+#إذا ENABLE_FEATURE_تقسیم_FANCY
+ساكن ثابت بنية suffix_mult تقسیم_suffixes[] ALIGN_SUFFIX = {
 	{ "b", 512 },
 	{ "k", 1024 },
 	{ "m", 1024*1024 },
 	{ "g", 1024*1024*1024 },
 	{ "", 0 }
 };
-#endif
+#پایان_اگر
 
 /* Increment the suffix part of the filename.
  * Returns NULL if we are out of filenames.
  */
-static char *next_file(char *old, unsigned suffix_len)
+ساكن حرف *بعدی_file(حرف *old, بیعلامت suffix_len)
 {
-	size_t end = strlen(old);
-	unsigned i = 1;
-	char *curr;
+	اندازه_t انتها = طول_رشته(old);
+	بیعلامت i = 1;
+	حرف *curr;
 
-	while (1) {
-		curr = old + end - i;
-		if (*curr < 'z') {
+	طالما (1) {
+		curr = old + انتها - i;
+		إذا (*curr < 'z') {
 			*curr += 1;
-			break;
+			اكسر;
 		}
 		i++;
-		if (i > suffix_len) {
-			return NULL;
+		إذا (i > suffix_len) {
+			أرجع عدم;
 		}
 		*curr = 'a';
 	}
 
-	return old;
+	أرجع old;
 }
 
-#define read_buffer bb_common_bufsiz1
-enum { READ_BUFFER_SIZE = COMMON_BUFSIZE - 1 };
+#تعریف_کن read_میانگیر bb_common_bufsiz1
+تعداد { READ_میانگیر_اندازه = COMMON_BUFSIZE - 1 };
 
-#define SPLIT_OPT_l (1<<0)
-#define SPLIT_OPT_b (1<<1)
-#define SPLIT_OPT_a (1<<2)
+#تعریف_کن تقسیم_OPT_l (1<<0)
+#تعریف_کن تقسیم_OPT_b (1<<1)
+#تعریف_کن تقسیم_OPT_a (1<<2)
 
-int split_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int split_main(int argc UNUSED_PARAM, char **argv)
+صحيح تقسیم_main(صحيح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحيح تقسیم_main(صحيح argc استفادهنشده_PARAM, حرف **argv)
 {
-	unsigned suffix_len = 2;
-	char *pfx;
-	char *count_p;
-	const char *sfx;
+	بیعلامت suffix_len = 2;
+	حرف *pfx;
+	حرف *شمار_p;
+	ثابت حرف *sfx;
 	off_t cnt = 1000;
-	off_t remaining = 0;
-	unsigned opt;
-	ssize_t bytes_read, to_write;
-	char *src;
+	off_t مانده = 0;
+	بیعلامت opt;
+	ssize_t بایتها_read, مقصد_write;
+	حرف *src;
 
-	setup_common_bufsiz();
+	راهاندازی_common_bufsiz();
 
 	opt = getopt32(argv, "^"
 			"l:b:a:+" /* -a N */
 			"\0" "?2"/*max 2 args*/,
-			&count_p, &count_p, &suffix_len
+			&شمار_p, &شمار_p, &suffix_len
 	);
 
-	if (opt & SPLIT_OPT_l)
-		cnt = XATOOFF(count_p);
-	if (opt & SPLIT_OPT_b) // FIXME: also needs XATOOFF
-		cnt = xatoull_sfx(count_p,
-				IF_FEATURE_SPLIT_FANCY(split_suffixes)
-				IF_NOT_FEATURE_SPLIT_FANCY(km_suffixes)
+	إذا (opt & تقسیم_OPT_l)
+		cnt = XATOOFF(شمار_p);
+	إذا (opt & تقسیم_OPT_b) // FIXME: also needs XATOOFF
+		cnt = xatoull_sfx(شمار_p,
+				IF_FEATURE_تقسیم_FANCY(تقسیم_suffixes)
+				IF_NOT_FEATURE_تقسیم_FANCY(km_suffixes)
 		);
 	sfx = "x";
 
 	argv += optind;
-	if (argv[0]) {
-		int fd;
-		if (argv[1])
+	إذا (argv[0]) {
+		صحيح fd;
+		إذا (argv[1])
 			sfx = argv[1];
 		fd = xopen_stdin(argv[0]);
 		xmove_fd(fd, STDIN_FILENO);
-	} else {
-		argv[0] = (char *) bb_msg_standard_input;
+	} وإلا {
+		argv[0] = (حرف *) bb_پیام_standard_درون_داد;
 	}
 
-	if (NAME_MAX < strlen(sfx) + suffix_len)
-		bb_simple_error_msg_and_die("suffix too long");
+	إذا (NAME_MAX < طول_رشته(sfx) + suffix_len)
+		bb_simple_error_پیام_and_die("suffix too long");
 
 	{
-		char *char_p = xzalloc(suffix_len + 1);
+		حرف *char_p = xzalloc(suffix_len + 1);
 		memset(char_p, 'a', suffix_len);
 		pfx = xasprintf("%s%s", sfx, char_p);
-		if (ENABLE_FEATURE_CLEAN_UP)
-			free(char_p);
+		إذا (ENABLE_FEATURE_CLEAN_به_بالا)
+			حرر(char_p);
 	}
 
-	while (1) {
-		bytes_read = safe_read(STDIN_FILENO, read_buffer, READ_BUFFER_SIZE);
-		if (!bytes_read)
-			break;
-		if (bytes_read < 0)
-			bb_simple_perror_msg_and_die(argv[0]);
-		src = read_buffer;
-		do {
-			if (!remaining) {
-				if (!pfx)
-					bb_simple_error_msg_and_die("suffixes exhausted");
+	طالما (1) {
+		بایتها_read = امن_read(STDIN_FILENO, read_میانگیر, READ_میانگیر_اندازه);
+		إذا (!بایتها_read)
+			اكسر;
+		إذا (بایتها_read < 0)
+			bb_simple_perror_پیام_and_die(argv[0]);
+		src = read_میانگیر;
+		افعل {
+			إذا (!مانده) {
+				إذا (!pfx)
+					bb_simple_error_پیام_and_die("suffixes exhausted");
 				xmove_fd(xopen(pfx, O_WRONLY | O_CREAT | O_TRUNC), 1);
-				pfx = next_file(pfx, suffix_len);
-				remaining = cnt;
+				pfx = بعدی_file(pfx, suffix_len);
+				مانده = cnt;
 			}
 
-			if (opt & SPLIT_OPT_b) {
+			إذا (opt & تقسیم_OPT_b) {
 				/* split by bytes */
-				to_write = (bytes_read < remaining) ? bytes_read : remaining;
-				remaining -= to_write;
-			} else {
+				مقصد_write = (بایتها_read < مانده) ? بایتها_read : مانده;
+				مانده -= مقصد_write;
+			} وإلا {
 				/* split by lines */
 				/* can be sped up by using _memrchr_
 				 * and writing many lines at once... */
-				char *end = memchr(src, '\n', bytes_read);
-				if (end) {
-					--remaining;
-					to_write = end - src + 1;
-				} else {
-					to_write = bytes_read;
+				حرف *انتها = memchr(src, '\n', بایتها_read);
+				إذا (انتها) {
+					--مانده;
+					مقصد_write = انتها - src + 1;
+				} وإلا {
+					مقصد_write = بایتها_read;
 				}
 			}
 
-			xwrite(STDOUT_FILENO, src, to_write);
-			bytes_read -= to_write;
-			src += to_write;
-		} while (bytes_read);
+			xwrite(STDOUT_FILENO, src, مقصد_write);
+			بایتها_read -= مقصد_write;
+			src += مقصد_write;
+		} طالما (بایتها_read);
 	}
-	return EXIT_SUCCESS;
+	أرجع EXIT_SUCCESS;
 }

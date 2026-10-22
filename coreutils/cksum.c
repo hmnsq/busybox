@@ -27,80 +27,80 @@
 //usage:#define cksum_full_usage "\n\n"
 //usage:       "Calculate CRC32 checksum of FILEs"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#ضمن "libbb.h"
+#ضمن "common_bufsiz.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-#define IS_CKSUM (ENABLE_CKSUM && (!ENABLE_CRC32 || applet_name[1] == 'k'))
-#define IS_CRC32 (ENABLE_CRC32 && (!ENABLE_CKSUM || applet_name[1] == 'r'))
+#تعریف_کن IS_CKSUM (ENABLE_CKSUM && (!ENABLE_بررسی_چرخهای_32 || applet_name[1] == 'k'))
+#تعریف_کن IS_بررسی_چرخهای_32 (ENABLE_بررسی_چرخهای_32 && (!ENABLE_CKSUM || applet_name[1] == 'r'))
 
-int cksum_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int cksum_main(int argc UNUSED_PARAM, char **argv)
+صحيح cksum_main(صحيح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحيح cksum_main(صحيح argc استفادهنشده_PARAM, حرف **argv)
 {
-	uint32_t *crc32_table = crc32_filltable(NULL, IS_CKSUM);
-	exitcode_t exit_code = EXIT_SUCCESS;
+	uint32_t *بررسی_چرخهای_32_جدول = بررسی_چرخهای_32_filltable(عدم, IS_CKSUM);
+	exitcode_t exit_کد = EXIT_SUCCESS;
 
-#if ENABLE_DESKTOP
+#إذا ENABLE_DESKTOP
 	getopt32(argv, ""); /* cksum coreutils 6.9 compat */
 	argv += optind;
-#else
+#وإلا
 	argv++;
-#endif
+#پایان_اگر
 
-	setup_common_bufsiz();
-	do {
-		uint32_t crc;
+	راهاندازی_common_bufsiz();
+	افعل {
+		uint32_t بررسی_چرخهای;
 		IF_CKSUM(off_t filesize;)
-		const char *fname = *argv ? *argv : bb_msg_standard_input;
-		int fd = open_or_warn_stdin(fname);
+		ثابت حرف *fname = *argv ? *argv : bb_پیام_standard_درون_داد;
+		صحيح fd = open_or_warn_stdin(fname);
 
-		if (fd < 0) {
-			exit_code = EXIT_FAILURE;
-			continue;
+		إذا (fd < 0) {
+			exit_کد = EXIT_FAILURE;
+			استمر;
 		}
 
-		crc = IS_CKSUM ? 0 : 0xffffffff;
+		بررسی_چرخهای = IS_CKSUM ? 0 : 0xffffffff;
 		IF_CKSUM(filesize = 0;)
-#define read_buf bb_common_bufsiz1
-		for (;;) {
-			int bytes_read = safe_read(fd, read_buf, COMMON_BUFSIZE);
-			if (bytes_read < 0)
-				bb_simple_perror_msg_and_die(fname);
-			if (bytes_read > 0) {
-				IF_CKSUM(filesize += bytes_read;)
-			} else {
+#تعریف_کن read_buf bb_common_bufsiz1
+		لكل (;;) {
+			صحيح بایتها_read = امن_read(fd, read_buf, COMMON_BUFSIZE);
+			إذا (بایتها_read < 0)
+				bb_simple_perror_پیام_and_die(fname);
+			إذا (بایتها_read > 0) {
+				IF_CKSUM(filesize += بایتها_read;)
+			} وإلا {
 				IF_CKSUM(uoff_t t;)
 
 				close(fd);
-				if (IS_CRC32)
-					break;
-#if ENABLE_CKSUM
+				إذا (IS_بررسی_چرخهای_32)
+					اكسر;
+#إذا ENABLE_CKSUM
 				fd = -1; /* break flag */
 				/* Checksum filesize bytes, LSB first */
 				t = filesize;
 				/*bytes_read = 0; - already is */
-				while (t != 0) {
-					read_buf[bytes_read++] = (uint8_t)t;
+				طالما (t != 0) {
+					read_buf[بایتها_read++] = (uint8_t)t;
 					t >>= 8;
 				}
-#endif
+#پایان_اگر
 			}
-			crc = (IS_CKSUM ? crc32_block_endian1 : crc32_block_endian0)(crc, read_buf, bytes_read, crc32_table);
-			if (ENABLE_CKSUM && fd < 0)
-				break;
+			بررسی_چرخهای = (IS_CKSUM ? بررسی_چرخهای_32_بلوک_endian1 : بررسی_چرخهای_32_بلوک_endian0)(بررسی_چرخهای, read_buf, بایتها_read, بررسی_چرخهای_32_جدول);
+			إذا (ENABLE_CKSUM && fd < 0)
+				اكسر;
 		}
 
-		crc = ~crc;
-#if ENABLE_CKSUM
-		if (IS_CKSUM)
-			printf((*argv ? "%u %"OFF_FMT"u %s\n" : "%u %"OFF_FMT"u\n"),
-				(unsigned)crc, filesize, *argv);
-		else
-#endif
-			printf((*argv ? "%08x %s\n" : "%08x\n"),
-				(unsigned)crc, *argv);
-	} while (*argv && *++argv);
+		بررسی_چرخهای = ~بررسی_چرخهای;
+#إذا ENABLE_CKSUM
+		إذا (IS_CKSUM)
+			چاپ_کن((*argv ? "%u %"OFF_FMT"u %s\n" : "%u %"OFF_FMT"u\n"),
+				(بیعلامت)بررسی_چرخهای, filesize, *argv);
+		وإلا
+#پایان_اگر
+			چاپ_کن((*argv ? "%08x %s\n" : "%08x\n"),
+				(بیعلامت)بررسی_چرخهای, *argv);
+	} طالما (*argv && *++argv);
 
-	fflush_stdout_and_exit(exit_code);
+	fflush_stdout_and_exit(exit_کد);
 }
