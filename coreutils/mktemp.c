@@ -60,13 +60,13 @@
 
 #include "libbb.h"
 
-int mktemp_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int mktemp_main(int argc UNUSED_PARAM, char **argv)
+ཧྲིལ mktemp_main(ཧྲིལ argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+ཧྲིལ mktemp_main(ཧྲིལ argc UNUSED_PARAM, var_na **argv)
 {
-	const char *path;
-	char *chp;
+	const var_na *path;
+	var_na *chp;
 	unsigned opts;
-	enum {
+	ga_nanaa {
 		OPT_d = 1 << 0,
 		OPT_q = 1 << 1,
 		OPT_t = 1 << 2,
@@ -76,10 +76,10 @@ int mktemp_main(int argc UNUSED_PARAM, char **argv)
 	};
 
 	path = getenv("TMPDIR");
-	if (!path || path[0] == '\0')
+	གལ་སྲིད (!path || path[0] == '\0')
 		path = "/tmp";
 
-#if ENABLE_LONG_OPTS
+#གལ་སྲིད ENABLE_LONG_OPTS
 	opts = getopt32long(argv, "^"
 		"dqtp:u"
 		"\0"
@@ -90,44 +90,44 @@ int mktemp_main(int argc UNUSED_PARAM, char **argv)
 		"tmpdir\0"    Optional_argument "\xff"
 		, &path, &path
 	);
-#else
+#དེ་མིན
 	opts = getopt32(argv, "^" "dqtp:u" "\0" "?1"/*1 arg max*/, &path);
 #endif
 
 	chp = argv[optind];
-	if (!chp) {
+	གལ་སྲིད (!chp) {
 		/* GNU coreutils 8.4:
 		 * bare "mktemp" -> "mktemp -t tmp.XXXXXX"
 		 */
 		chp = xstrdup("tmp.XXXXXX");
 		opts |= OPT_t;
 	}
-#if 0
+#གལ་སྲིད 0
 	/* Don't allow directory separator in template */
-	if ((opts & OPT_t) && bb_basename(chp) != chp) {
+	གལ་སྲིད ((opts & OPT_t) && bb_basename(chp) != chp) {
 		errno = EINVAL;
 		goto error;
 	}
 #endif
-	if (opts & (OPT_t|OPT_p|OPT_tmpdir))
+	གལ་སྲིད (opts & (OPT_t|OPT_p|OPT_tmpdir))
 		chp = concat_path_file(path, chp);
 
-	if (opts & OPT_u) {
+	གལ་སྲིད (opts & OPT_u) {
 		chp = mktemp(chp);
-		if (chp[0] == '\0')
+		གལ་སྲིད (chp[0] == '\0')
 			goto error;
-	} else if (opts & OPT_d) {
-		if (mkdtemp(chp) == NULL)
+	} དེ་མིན གལ་སྲིད (opts & OPT_d) {
+		གལ་སྲིད (mkdtemp(chp) == NULL)
 			goto error;
-	} else {
-		if (mkstemp(chp) < 0)
+	} དེ་མིན {
+		གལ་སྲིད (mkstemp(chp) < 0)
 			goto error;
 	}
 	puts(chp);
-	return EXIT_SUCCESS;
+	ལོག EXIT_SUCCESS;
  error:
-	if (opts & OPT_q)
-		return EXIT_FAILURE;
+	གལ་སྲིད (opts & OPT_q)
+		ལོག EXIT_FAILURE;
 	/* don't use chp as it gets mangled in case of error */
 	bb_perror_nomsg_and_die();
 }

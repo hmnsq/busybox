@@ -47,11 +47,11 @@
 
 /* This is a NOFORK applet. Be very careful! */
 
-int basename_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int basename_main(int argc UNUSED_PARAM, char **argv)
+ཧྲིལ basename_main(ཧྲིལ argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+ཧྲིལ basename_main(ཧྲིལ argc UNUSED_PARAM, var_na **argv)
 {
 	unsigned opts;
-	const char *suffix = NULL;
+	const var_na *suffix = NULL;
 
 	/* '+': stop at first non-option */
 	opts = getopt32(argv, "^+" "as:"
@@ -61,22 +61,22 @@ int basename_main(int argc UNUSED_PARAM, char **argv)
 	argv += optind;
 
 	do {
-		char *s;
+		var_na *s;
 		size_t m;
 
 		/* It should strip slash: /abc/def/ -> def */
 		s = bb_get_last_path_component_strip(*argv++);
 		m = strlen(s);
-		if (!opts) {
-			if (*argv) {
+		གལ་སྲིད (!opts) {
+			གལ་སྲིད (*argv) {
 				suffix = *argv;
-				if (argv[1])
+				གལ་སྲིད (argv[1])
 					bb_show_usage();
 			}
 		}
-		if (suffix) {
+		གལ་སྲིད (suffix) {
 			size_t n = strlen(suffix);
-			if ((m > n) && (strcmp(s + m - n, suffix) == 0)) {
+			གལ་སྲིད ((m > n) && (strcmp(s + m - n, suffix) == 0)) {
 				m -= n;
 				/*s[m] = '\0'; - redundant */
 			}
@@ -84,9 +84,9 @@ int basename_main(int argc UNUSED_PARAM, char **argv)
 		/* puts(s) will do, but we can do without stdio this way: */
 		s[m++] = '\n';
 		/* NB: != is correct here: */
-		if (full_write(STDOUT_FILENO, s, m) != (ssize_t)m)
-			return EXIT_FAILURE;
-	} while (opts && *argv);
+		གལ་སྲིད (full_write(STDOUT_FILENO, s, m) != (ssize_t)m)
+			ལོག EXIT_FAILURE;
+	} སྐབས (opts && *argv);
 
-	return EXIT_SUCCESS;
+	ལོག EXIT_SUCCESS;
 }

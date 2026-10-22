@@ -66,64 +66,64 @@
  * symbolic links encountered during recursive directory traversals.
  */
 
-static int FAST_FUNC fileAction(struct recursive_state *state,
-		const char *fileName,
-		struct stat *statbuf)
+static ཧྲིལ FAST_FUNC fileAction(sa_nracanaa recursive_state *state,
+		const var_na *fileName,
+		sa_nracanaa stat *statbuf)
 {
 	mode_t newmode;
 
 	/* match coreutils behavior */
-	if (state->depth == 0) {
+	གལ་སྲིད (state->depth == 0) {
 		/* statbuf holds lstat result, but we need stat (follow link) */
-		if (stat(fileName, statbuf))
+		གལ་སྲིད (stat(fileName, statbuf))
 			goto err;
-	} else { /* depth > 0: skip links */
-		if (S_ISLNK(statbuf->st_mode))
-			return TRUE;
+	} དེ་མིན { /* depth > 0: skip links */
+		གལ་སྲིད (S_ISLNK(statbuf->st_mode))
+			ལོག TRUE;
 	}
 
-	newmode = bb_parse_mode((char *)state->userData, statbuf->st_mode);
-	if (newmode == (mode_t)-1)
-		bb_error_msg_and_die("invalid mode '%s'", (char *)state->userData);
+	newmode = bb_parse_mode((var_na *)state->userData, statbuf->st_mode);
+	གལ་སྲིད (newmode == (mode_t)-1)
+		bb_error_msg_and_die("invalid mode '%s'", (var_na *)state->userData);
 
-	if (chmod(fileName, newmode) == 0) {
-		if (OPT_VERBOSE
+	གལ་སྲིད (chmod(fileName, newmode) == 0) {
+		གལ་སྲིད (OPT_VERBOSE
 		 || (OPT_CHANGED
 		     && (statbuf->st_mode & 07777) != (newmode & 07777))
 		) {
-			char modestr[12];
+			var_na modestr[12];
 			printf("mode of '%s' changed to %04o (%s)\n", fileName,
 				newmode & 07777, bb_mode_string(modestr, newmode)+1);
 		}
-		return TRUE;
+		ལོག TRUE;
 	}
  err:
-	if (!OPT_QUIET)
+	གལ་སྲིད (!OPT_QUIET)
 		bb_simple_perror_msg(fileName);
-	return FALSE;
+	ལོག FALSE;
 }
 
-int chmod_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int chmod_main(int argc UNUSED_PARAM, char **argv)
+ཧྲིལ chmod_main(ཧྲིལ argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+ཧྲིལ chmod_main(ཧྲིལ argc UNUSED_PARAM, var_na **argv)
 {
-	int retval = EXIT_SUCCESS;
-	char *arg, **argp;
-	char *smode;
+	ཧྲིལ retval = EXIT_SUCCESS;
+	var_na *arg, **argp;
+	var_na *smode;
 
 	/* Convert first encountered -r into ar, -w into aw etc
 	 * so that getopt would not eat it */
 	argp = argv;
-	while ((arg = *++argp)) {
+	སྐབས ((arg = *++argp)) {
 		/* Mode spec must be the first arg (sans -R etc) */
 		/* (protect against mishandling e.g. "chmod 644 -r") */
-		if (arg[0] != '-') {
+		གལ་སྲིད (arg[0] != '-') {
 			arg = NULL;
-			break;
+			bha_nga;
 		}
 		/* An option. Not a -- or valid option? */
-		if (arg[1] && !strchr("-"OPT_STR, arg[1])) {
+		གལ་སྲིད (arg[1] && !strchr("-"OPT_STR, arg[1])) {
 			arg[0] = 'a';
-			break;
+			bha_nga;
 		}
 	}
 
@@ -132,12 +132,12 @@ int chmod_main(int argc UNUSED_PARAM, char **argv)
 	argv += optind;
 
 	/* Restore option-like mode if needed */
-	if (arg) arg[0] = '-';
+	གལ་སྲིད (arg) arg[0] = '-';
 
 	/* Ok, ready to do the deed now */
 	smode = *argv++;
 	do {
-		if (!recursive_action(*argv,
+		གལ་སྲིད (!recursive_action(*argv,
 			OPT_RECURSE,    // recurse
 			fileAction,     // file action
 			fileAction,     // dir action
@@ -145,9 +145,9 @@ int chmod_main(int argc UNUSED_PARAM, char **argv)
 		) {
 			retval = EXIT_FAILURE;
 		}
-	} while (*++argv);
+	} སྐབས (*++argv);
 
-	return retval;
+	ལོག retval;
 }
 
 /*

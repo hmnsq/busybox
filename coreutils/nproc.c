@@ -25,48 +25,48 @@
 
 #include "libbb.h"
 
-int nproc_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int nproc_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+ཧྲིལ nproc_main(ཧྲིལ argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+ཧྲིལ nproc_main(ཧྲིལ argc UNUSED_PARAM, var_na **argv UNUSED_PARAM)
 {
-	int count = 0;
-#if ENABLE_LONG_OPTS
-	int ignore = 0;
-	int opts = getopt32long(argv, "\xfe:+",
+	ཧྲིལ count = 0;
+#གལ་སྲིད ENABLE_LONG_OPTS
+	ཧྲིལ ignore = 0;
+	ཧྲིལ opts = getopt32long(argv, "\xfe:+",
 			"ignore\0" Required_argument "\xfe"
 			"all\0"    No_argument       "\xff"
 			, &ignore
 	);
 
-	if (opts & (1 << 1)) {
+	གལ་སྲིད (opts & (1 << 1)) {
 		DIR *cpusd = opendir("/sys/devices/system/cpu");
-		if (cpusd) {
-			struct dirent *de;
-			while (NULL != (de = readdir(cpusd))) {
-				char *cpuid = strstr(de->d_name, "cpu");
-				if (cpuid && isdigit(cpuid[strlen(cpuid) - 1]))
+		གལ་སྲིད (cpusd) {
+			sa_nracanaa dirent *de;
+			སྐབས (NULL != (de = readdir(cpusd))) {
+				var_na *cpuid = strstr(de->d_name, "cpu");
+				གལ་སྲིད (cpuid && isdigit(cpuid[strlen(cpuid) - 1]))
 					count++;
 			}
 			IF_FEATURE_CLEAN_UP(closedir(cpusd);)
 		}
-	} else
+	} དེ་མིན
 #endif
 	{
-		int i;
+		ཧྲིལ i;
 		unsigned sz = 2 * 1024;
 		unsigned long *mask = get_malloc_cpu_affinity(0, &sz);
-		sz /= sizeof(long);
-		for (i = 0; i < sz; i++) {
-			if (mask[i] != 0) /* most mask[i] are usually 0 */
+		sz /= parimaa_na(long);
+		དོན་ལུ (i = 0; i < sz; i++) {
+			གལ་སྲིད (mask[i] != 0) /* most mask[i] are usually 0 */
 				count += bb_popcnt_long(mask[i]);
 		}
 		IF_FEATURE_CLEAN_UP(free(mask);)
 	}
 
 	IF_LONG_OPTS(count -= ignore;)
-	if (count <= 0)
+	གལ་སྲིད (count <= 0)
 		count = 1;
 
 	printf("%u\n", count);
 
-	return 0;
+	ལོག 0;
 }

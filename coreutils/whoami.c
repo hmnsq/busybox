@@ -26,14 +26,14 @@
 
 #include "libbb.h"
 
-int whoami_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int whoami_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+ཧྲིལ whoami_main(ཧྲིལ argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+ཧྲིལ whoami_main(ཧྲིལ argc UNUSED_PARAM, var_na **argv UNUSED_PARAM)
 {
-	if (argv[1])
+	གལ་སྲིད (argv[1])
 		bb_show_usage();
 
 	/* Will complain and die if username not found */
 	puts(xuid2uname(geteuid()));
 
-	return fflush_all();
+	ལོག fflush_all();
 }
