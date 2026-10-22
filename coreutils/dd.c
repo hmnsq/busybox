@@ -101,33 +101,33 @@
 //usage:       "4+0 records in\n"
 //usage:       "4+0 records out\n"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#অন্তর্ভাব "libbb.h"
+#অন্তর্ভাব "common_bufsiz.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
 
-enum {
+গণনা {
 	ifd = STDIN_FILENO,
 	ofd = STDOUT_FILENO,
 };
 
-struct globals {
+কাঠামো globals {
 	off_t out_full, out_part, in_full, in_part;
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
-	unsigned long long total_bytes;
+#যদি ENABLE_FEATURE_DD_THIRD_STATUS_সারি
+	unsigned long long যোগ_bytes;
 	unsigned long long begin_time_us;
 #endif
-	int flags;
+	পূর্ণসংখ্যা flags;
 } FIX_ALIASING;
-#define G (*(struct globals*)bb_common_bufsiz1)
-#define INIT_G() do { \
+#define G (*(কাঠামো globals*)bb_common_bufsiz1)
+#define INIT_G() করো { \
 	setup_common_bufsiz(); \
 	/* we have to zero it out because of NOEXEC */ \
-	memset(&G, 0, sizeof(G)); \
-} while (0)
+	memset(&G, 0, আকার(G)); \
+} যখন (0)
 
-enum {
+গণনা {
 	/* Must be in the same order as OP_conv_XXX! */
 	/* (see "flags |= (1 << what)" below) */
 	FLAG_NOTRUNC = (1 << 0) * ENABLE_FEATURE_DD_IBS_OBS,
@@ -139,7 +139,7 @@ enum {
 	/* start of input flags */
 	FLAG_IFLAG_SHIFT   = 5,
 	FLAG_SKIP_BYTES    = (1 << 5) * ENABLE_FEATURE_DD_IBS_OBS,
-	FLAG_COUNT_BYTES   = (1 << 6) * ENABLE_FEATURE_DD_IBS_OBS,
+	FLAG_গুনতি_BYTES   = (1 << 6) * ENABLE_FEATURE_DD_IBS_OBS,
 	FLAG_FULLBLOCK     = (1 << 7) * ENABLE_FEATURE_DD_IBS_OBS,
 	FLAG_IDIRECT       = (1 << 8) * ENABLE_FEATURE_DD_IBS_OBS,
 	/* end of input flags */
@@ -150,15 +150,15 @@ enum {
 	FLAG_ODIRECT       = (1 << 11) * ENABLE_FEATURE_DD_IBS_OBS,
 	/* end of output flags */
 	FLAG_TWOBUFS       = (1 << 12) * ENABLE_FEATURE_DD_IBS_OBS,
-	FLAG_COUNT         = 1 << 13,
+	FLAG_গুনতি         = 1 << 13,
 	FLAG_STATUS_NONE   = 1 << 14,
 	FLAG_STATUS_NOXFER = 1 << 15,
 };
 
-static void dd_output_status(int UNUSED_PARAM cur_signal)
+স্থির শূন্য dd_output_status(পূর্ণসংখ্যা UNUSED_PARAM cur_signal)
 {
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
-	double seconds;
+#যদি ENABLE_FEATURE_DD_THIRD_STATUS_সারি
+	দ্বিগুণ seconds;
 	unsigned long long bytes_sec;
 	unsigned long long now_us = monotonic_us(); /* before fprintf */
 #endif
@@ -169,19 +169,19 @@ static void dd_output_status(int UNUSED_PARAM cur_signal)
 			G.in_full, G.in_part,
 			G.out_full, G.out_part);
 
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
-# if ENABLE_FEATURE_DD_STATUS
-	if (G.flags & FLAG_STATUS_NOXFER) /* status=noxfer active? */
-		return;
+#যদি ENABLE_FEATURE_DD_THIRD_STATUS_সারি
+# যদি ENABLE_FEATURE_DD_STATUS
+	যদি (G.flags & FLAG_STATUS_NOXFER) /* status=noxfer active? */
+		ফেরত;
 	//TODO: should status=none make dd stop reacting to USR1 entirely?
 	//So far we react to it (we print the stats),
 	//status=none only suppresses final, non-USR1 generated status message.
 # endif
 	fprintf(stderr, /*G.total_bytes < 1024
 				? "%llu bytes copied, " : */ "%llu bytes (%sB) copied, "
-			, G.total_bytes,
+			, G.যোগ_bytes,
 			/* show fractional digit, use suffixes */
-			make_human_readable_str(G.total_bytes, 1, 0)
+			make_human_readable_str(G.যোগ_bytes, 1, 0)
 	);
 	/* Corner cases:
 	 * ./busybox dd </dev/null >/dev/null
@@ -190,7 +190,7 @@ static void dd_output_status(int UNUSED_PARAM cur_signal)
 	 * (sleep 1; echo DONE) | ./busybox dd >/dev/null
 	 */
 	seconds = (now_us - G.begin_time_us) / 1000000.0;
-	bytes_sec = G.total_bytes / seconds;
+	bytes_sec = G.যোগ_bytes / seconds;
 	fprintf(stderr, "%f seconds, %sB/s\n",
 			seconds,
 			/* show fractional digit, use suffixes */
@@ -199,67 +199,67 @@ static void dd_output_status(int UNUSED_PARAM cur_signal)
 #endif
 }
 
-#if ENABLE_FEATURE_DD_IBS_OBS
+#যদি ENABLE_FEATURE_DD_IBS_OBS
 # ifdef O_DIRECT
-static int clear_O_DIRECT(int fd)
+স্থির পূর্ণসংখ্যা clear_O_DIRECT(পূর্ণসংখ্যা fd)
 {
-	if (errno == EINVAL) {
-		int fl = fcntl(fd, F_GETFL);
-		if (fl & O_DIRECT) {
+	যদি (errno == EINVAL) {
+		পূর্ণসংখ্যা fl = fcntl(fd, F_GETFL);
+		যদি (fl & O_DIRECT) {
 			fcntl(fd, F_SETFL, fl & ~O_DIRECT);
-			return 1;
+			ফেরত 1;
 		}
 	}
-	return 0;
+	ফেরত 0;
 }
 # endif
 #endif
 
-static ssize_t dd_read(void *ibuf, size_t ibs)
+স্থির ssize_t dd_read(শূন্য *ibuf, আকার_t ibs)
 {
 	ssize_t n;
 
-#if ENABLE_FEATURE_DD_IBS_OBS
+#যদি ENABLE_FEATURE_DD_IBS_OBS
  read_again:
-	if (G.flags & FLAG_FULLBLOCK)
+	যদি (G.flags & FLAG_FULLBLOCK)
 		n = full_read(ifd, ibuf, ibs);
-	else
+	অন্যথা
 #endif
 		n = safe_read(ifd, ibuf, ibs);
-#if ENABLE_FEATURE_DD_IBS_OBS
+#যদি ENABLE_FEATURE_DD_IBS_OBS
 # ifdef O_DIRECT
-	if (n < 0 && (G.flags & FLAG_IDIRECT) && clear_O_DIRECT(ifd))
-		goto read_again;
+	যদি (n < 0 && (G.flags & FLAG_IDIRECT) && clear_O_DIRECT(ifd))
+		যাও read_again;
 # endif
 #endif
-	return n;
+	ফেরত n;
 }
 
-static bool write_and_stats(const void *buf, size_t len, size_t obs,
-	const char *filename)
+স্থির bool write_and_stats(ধ্রুবক শূন্য *buf, আকার_t len, আকার_t obs,
+	ধ্রুবক অক্ষর *filename)
 {
 	ssize_t n;
 
  IF_FEATURE_DD_IBS_OBS(write_again:)
 	n = full_write(ofd, buf, len);
-#if ENABLE_FEATURE_DD_IBS_OBS
+#যদি ENABLE_FEATURE_DD_IBS_OBS
 # ifdef O_DIRECT
-	if (n < 0 && (G.flags & FLAG_ODIRECT) && clear_O_DIRECT(ofd))
-		goto write_again;
+	যদি (n < 0 && (G.flags & FLAG_ODIRECT) && clear_O_DIRECT(ofd))
+		যাও write_again;
 # endif
 #endif
 
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
-	if (n > 0)
-		G.total_bytes += n;
+#যদি ENABLE_FEATURE_DD_THIRD_STATUS_সারি
+	যদি (n > 0)
+		G.যোগ_bytes += n;
 #endif
-	if ((size_t)n == obs) {
+	যদি ((আকার_t)n == obs) {
 		G.out_full++;
-		return 0;
+		ফেরত 0;
 	}
-	if ((size_t)n == len) {
+	যদি ((আকার_t)n == len) {
 		G.out_part++;
-		return 0;
+		ফেরত 0;
 	}
 	/* n is < len (and possibly is -1).
 	 * Even if n >= 0, errno is usually set correctly.
@@ -268,81 +268,81 @@ static bool write_and_stats(const void *buf, size_t len, size_t obs,
 	 * the remainder and gets errno set to ENOSPC.
 	 * It returns n > 0 (the amount which it did write).
 	 */
-	bb_perror_msg("error writing '%s'", filename);
-	return 1;
+	bb_perror_বার্তা("error writing '%s'", filename);
+	ফেরত 1;
 }
 
-#if ENABLE_LFS
+#যদি ENABLE_LFS
 # define XATOU_SFX xatoull_sfx
-#else
+#অন্যথা
 # define XATOU_SFX xatoul_sfx
 #endif
 
-#if ENABLE_FEATURE_DD_IBS_OBS
-static int parse_comma_flags(char *val, const char *words, const char *error_in)
+#যদি ENABLE_FEATURE_DD_IBS_OBS
+স্থির পূর্ণসংখ্যা parse_comma_flags(অক্ষর *val, ধ্রুবক অক্ষর *শব্দগুলি, ধ্রুবক অক্ষর *error_in)
 {
-	int flags = 0;
-	while (1) {
-		int n;
-		char *arg;
+	পূর্ণসংখ্যা flags = 0;
+	যখন (1) {
+		পূর্ণসংখ্যা n;
+		অক্ষর *arg;
 		/* find ',', replace them with NUL so we can use val for
 		 * index_in_strings() without copying.
 		 * We rely on val being non-null, else strchr would fault.
 		 */
 		arg = strchr(val, ',');
-		if (arg)
+		যদি (arg)
 			*arg = '\0';
-		n = index_in_strings(words, val);
-		if (n < 0)
-			bb_error_msg_and_die(bb_msg_invalid_arg_to, val, error_in);
+		n = সূচক_in_strings(শব্দগুলি, val);
+		যদি (n < 0)
+			bb_error_বার্তা_and_die(bb_বার্তা_invalid_arg_to, val, error_in);
 		flags |= (1 << n);
-		if (!arg) /* no ',' left, so this was the last specifier */
-			break;
+		যদি (!arg) /* no ',' left, so this was the last specifier */
+			বিরতি;
 		*arg = ','; /* to preserve ps listing */
 		val = arg + 1; /* skip this keyword and ',' */
 	}
-	return flags;
+	ফেরত flags;
 }
 #endif
 
-static void *alloc_buf(size_t size)
+স্থির শূন্য *alloc_buf(আকার_t আকার_2)
 {
 	/* Important for "{i,o}flag=direct" - buffers must be page aligned */
-	if (size >= bb_getpagesize())
-		return xmmap_anon(size);
-	return xmalloc(size);
+	যদি (আকার_2 >= bb_getpagesize())
+		ফেরত xmmap_anon(আকার_2);
+	ফেরত xmalloc(আকার_2);
 }
 
-int dd_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int dd_main(int argc UNUSED_PARAM, char **argv)
+পূর্ণসংখ্যা dd_main(পূর্ণসংখ্যা argc, অক্ষর **argv) MAIN_EXTERNALLY_VISIBLE;
+পূর্ণসংখ্যা dd_main(পূর্ণসংখ্যা argc UNUSED_PARAM, অক্ষর **argv)
 {
-	static const char keywords[] ALIGN1 =
+	স্থির ধ্রুবক অক্ষর keywords[] ALIGN1 =
 		"bs\0""count\0""seek\0""skip\0""if\0""of\0"IF_FEATURE_DD_STATUS("status\0")
-#if ENABLE_FEATURE_DD_IBS_OBS
+#যদি ENABLE_FEATURE_DD_IBS_OBS
 		"ibs\0""obs\0""conv\0""iflag\0""oflag\0"
 #endif
 		;
-#if ENABLE_FEATURE_DD_IBS_OBS
-	static const char conv_words[] ALIGN1 =
+#যদি ENABLE_FEATURE_DD_IBS_OBS
+	স্থির ধ্রুবক অক্ষর conv_শব্দগুলি[] ALIGN1 =
 		"notrunc\0""sync\0""noerror\0""fsync\0""swab\0";
-	static const char iflag_words[] ALIGN1 =
+	স্থির ধ্রুবক অক্ষর iflag_শব্দগুলি[] ALIGN1 =
 		"skip_bytes\0""count_bytes\0""fullblock\0""direct\0";
-	static const char oflag_words[] ALIGN1 =
+	স্থির ধ্রুবক অক্ষর oflag_শব্দগুলি[] ALIGN1 =
 		"seek_bytes\0append\0""direct\0";
 #endif
-#if ENABLE_FEATURE_DD_STATUS
-	static const char status_words[] ALIGN1 =
+#যদি ENABLE_FEATURE_DD_STATUS
+	স্থির ধ্রুবক অক্ষর status_শব্দগুলি[] ALIGN1 =
 		"none\0""noxfer\0";
 #endif
-	enum {
+	গণনা {
 		OP_bs = 0,
-		OP_count,
+		OP_গুনতি,
 		OP_seek,
 		OP_skip,
 		OP_if,
 		OP_of,
 		IF_FEATURE_DD_STATUS(OP_status,)
-#if ENABLE_FEATURE_DD_IBS_OBS
+#যদি ENABLE_FEATURE_DD_IBS_OBS
 		OP_ibs,
 		OP_obs,
 		OP_conv,
@@ -368,7 +368,7 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 	/* Partially implemented: */
 	//swab          swap every pair of input bytes: will abort on non-even reads
 		OP_iflag_skip_bytes,
-		OP_iflag_count_bytes,
+		OP_iflag_গুনতি_bytes,
 		OP_iflag_fullblock,
 		OP_iflag_direct,
 		OP_oflag_seek_bytes,
@@ -376,112 +376,112 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 #endif
 	};
 	exitcode_t exitcode = EXIT_FAILURE;
-	int i;
-	size_t ibs = 512;
-	char *ibuf;
-#if ENABLE_FEATURE_DD_IBS_OBS
-	size_t obs = 512;
-	char *obuf;
-#else
+	পূর্ণসংখ্যা i;
+	আকার_t ibs = 512;
+	অক্ষর *ibuf;
+#যদি ENABLE_FEATURE_DD_IBS_OBS
+	আকার_t obs = 512;
+	অক্ষর *obuf;
+#অন্যথা
 # define obs  ibs
 # define obuf ibuf
 #endif
 	/* These are all zeroed at once! */
-	struct {
-		IF_FEATURE_DD_IBS_OBS(size_t ocount;)
-		ssize_t prev_read_size; /* for detecting swab failure */
-		off_t count;
+	কাঠামো {
+		IF_FEATURE_DD_IBS_OBS(আকার_t ocount;)
+		ssize_t পূর্ব_read_আকার; /* for detecting swab failure */
+		off_t গুনতি;
 		off_t seek, skip;
-		const char *infile, *outfile;
+		ধ্রুবক অক্ষর *infile, *outfile;
 	} Z;
 #define ocount  (Z.ocount )
-#define prev_read_size (Z.prev_read_size)
-#define count   (Z.count  )
+#define পূর্ব_read_আকার (Z.পূর্ব_read_আকার)
+#define গুনতি   (Z.গুনতি  )
 #define seek    (Z.seek   )
 #define skip    (Z.skip   )
 #define infile  (Z.infile )
 #define outfile (Z.outfile)
 
-	memset(&Z, 0, sizeof(Z));
+	memset(&Z, 0, আকার(Z));
 	INIT_G();
 	//fflush_all(); - is this needed because of NOEXEC?
 
-	for (i = 1; argv[i]; i++) {
-		int what;
-		char *val;
-		char *arg = argv[i];
+	জন্য (i = 1; argv[i]; i++) {
+		পূর্ণসংখ্যা what;
+		অক্ষর *val;
+		অক্ষর *arg = argv[i];
 
-#if ENABLE_DESKTOP
+#যদি ENABLE_DESKTOP
 		/* "dd --". NB: coreutils 6.9 will complain if they see
 		 * more than one of them. We wouldn't. */
-		if (arg[0] == '-' && arg[1] == '-' && arg[2] == '\0')
-			continue;
+		যদি (arg[0] == '-' && arg[1] == '-' && arg[2] == '\0')
+			চালু;
 #endif
 		val = strchr(arg, '=');
-		if (val == NULL)
+		যদি (val == ফাঁকা)
 			bb_show_usage();
 		*val = '\0';
-		what = index_in_strings(keywords, arg);
-		if (what < 0)
+		what = সূচক_in_strings(keywords, arg);
+		যদি (what < 0)
 			bb_show_usage();
 		/* *val = '='; - to preserve ps listing? */
 		val++;
-#if ENABLE_FEATURE_DD_IBS_OBS
-		if (what == OP_ibs) {
+#যদি ENABLE_FEATURE_DD_IBS_OBS
+		যদি (what == OP_ibs) {
 			/* Must fit into positive ssize_t */
-			ibs = xatoul_range_sfx(val, 1, ((size_t)-1L)/2, cwbkMG_suffixes);
+			ibs = xatoul_range_sfx(val, 1, ((আকার_t)-1L)/2, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_obs) {
-			obs = xatoul_range_sfx(val, 1, ((size_t)-1L)/2, cwbkMG_suffixes);
+		যদি (what == OP_obs) {
+			obs = xatoul_range_sfx(val, 1, ((আকার_t)-1L)/2, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_conv) {
-			G.flags |= parse_comma_flags(val, conv_words, "conv");
+		যদি (what == OP_conv) {
+			G.flags |= parse_comma_flags(val, conv_শব্দগুলি, "conv");
 			/*continue;*/
 		}
-		if (what == OP_iflag) {
-			G.flags |= parse_comma_flags(val, iflag_words, "iflag") << FLAG_IFLAG_SHIFT;
+		যদি (what == OP_iflag) {
+			G.flags |= parse_comma_flags(val, iflag_শব্দগুলি, "iflag") << FLAG_IFLAG_SHIFT;
 			/*continue;*/
 		}
-		if (what == OP_oflag) {
-			G.flags |= parse_comma_flags(val, oflag_words, "oflag") << FLAG_OFLAG_SHIFT;
+		যদি (what == OP_oflag) {
+			G.flags |= parse_comma_flags(val, oflag_শব্দগুলি, "oflag") << FLAG_OFLAG_SHIFT;
 			/*continue;*/
 		}
 #endif
-		if (what == OP_bs) {
-			ibs = xatoul_range_sfx(val, 1, ((size_t)-1L)/2, cwbkMG_suffixes);
+		যদি (what == OP_bs) {
+			ibs = xatoul_range_sfx(val, 1, ((আকার_t)-1L)/2, cwbkMG_suffixes);
 			obs = ibs;
 			/*continue;*/
 		}
 		/* These can be large: */
-		if (what == OP_count) {
-			G.flags |= FLAG_COUNT;
-			count = XATOU_SFX(val, cwbkMG_suffixes);
+		যদি (what == OP_গুনতি) {
+			G.flags |= FLAG_গুনতি;
+			গুনতি = XATOU_SFX(val, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_seek) {
+		যদি (what == OP_seek) {
 			seek = XATOU_SFX(val, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_skip) {
+		যদি (what == OP_skip) {
 			skip = XATOU_SFX(val, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_if) {
+		যদি (what == OP_if) {
 			infile = val;
 			/*continue;*/
 		}
-		if (what == OP_of) {
+		যদি (what == OP_of) {
 			outfile = val;
 			/*continue;*/
 		}
-#if ENABLE_FEATURE_DD_STATUS
-		if (what == OP_status) {
-			int n;
-			n = index_in_strings(status_words, val);
-			if (n < 0)
-				bb_error_msg_and_die(bb_msg_invalid_arg_to, val, "status");
+#যদি ENABLE_FEATURE_DD_STATUS
+		যদি (what == OP_status) {
+			পূর্ণসংখ্যা n;
+			n = সূচক_in_strings(status_শব্দগুলি, val);
+			যদি (n < 0)
+				bb_error_বার্তা_and_die(bb_বার্তা_invalid_arg_to, val, "status");
 			G.flags |= FLAG_STATUS_NONE << n;
 			/*continue;*/
 		}
@@ -490,200 +490,200 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 
 	ibuf = alloc_buf(ibs);
 	obuf = ibuf;
-#if ENABLE_FEATURE_DD_IBS_OBS
-	if (ibs != obs) {
+#যদি ENABLE_FEATURE_DD_IBS_OBS
+	যদি (ibs != obs) {
 		G.flags |= FLAG_TWOBUFS;
 		obuf = alloc_buf(obs);
 	}
 #endif
 
-#if ENABLE_FEATURE_DD_SIGNAL_HANDLING
+#যদি ENABLE_FEATURE_DD_SIGNAL_HANDLING
 	signal_SA_RESTART_empty_mask(SIGUSR1, dd_output_status);
 #endif
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
+#যদি ENABLE_FEATURE_DD_THIRD_STATUS_সারি
 	G.begin_time_us = monotonic_us();
 #endif
 
-	if (infile) {
-		int iflag = O_RDONLY;
-#if ENABLE_FEATURE_DD_IBS_OBS
-		if (G.flags & FLAG_IDIRECT) {
+	যদি (infile) {
+		পূর্ণসংখ্যা iflag = O_RDONLY;
+#যদি ENABLE_FEATURE_DD_IBS_OBS
+		যদি (G.flags & FLAG_IDIRECT) {
 # ifdef O_DIRECT
 			iflag |= O_DIRECT;
-# else
-			bb_error_msg_and_die("O_DIRECT not supported on this platform");
+# অন্যথা
+			bb_error_বার্তা_and_die("O_DIRECT not supported on this platform");
 # endif
 		}
 #endif
 		xmove_fd(xopen(infile, iflag), ifd);
-	} else {
-		infile = bb_msg_standard_input;
+	} অন্যথা {
+		infile = bb_বার্তা_standard_প্রবেশ;
 	}
-	if (outfile) {
-		int oflag = O_WRONLY | O_CREAT;
+	যদি (outfile) {
+		পূর্ণসংখ্যা oflag = O_WRONLY | O_CREAT;
 
-		if (!seek && !(G.flags & FLAG_NOTRUNC))
+		যদি (!seek && !(G.flags & FLAG_NOTRUNC))
 			oflag |= O_TRUNC;
-		if (G.flags & FLAG_APPEND)
+		যদি (G.flags & FLAG_APPEND)
 			oflag |= O_APPEND;
-#if ENABLE_FEATURE_DD_IBS_OBS
-		if (G.flags & FLAG_ODIRECT) {
+#যদি ENABLE_FEATURE_DD_IBS_OBS
+		যদি (G.flags & FLAG_ODIRECT) {
 # ifdef O_DIRECT
 			oflag |= O_DIRECT;
-# else
-			bb_error_msg_and_die("O_DIRECT not supported on this platform");
+# অন্যথা
+			bb_error_বার্তা_and_die("O_DIRECT not supported on this platform");
 # endif
 		}
 #endif
 		xmove_fd(xopen(outfile, oflag), ofd);
 
-		if (seek && !(G.flags & FLAG_NOTRUNC)) {
-			size_t blocksz = (G.flags & FLAG_SEEK_BYTES) ? 1 : obs;
-			if (ftruncate(ofd, seek * blocksz) < 0) {
-				struct stat st;
+		যদি (seek && !(G.flags & FLAG_NOTRUNC)) {
+			আকার_t blocksz = (G.flags & FLAG_SEEK_BYTES) ? 1 : obs;
+			যদি (ftruncate(ofd, seek * blocksz) < 0) {
+				কাঠামো stat st;
 
-				if (fstat(ofd, &st) < 0
+				যদি (fstat(ofd, &st) < 0
 				 || S_ISREG(st.st_mode)
 				 || S_ISDIR(st.st_mode)
 				) {
-					goto die_outfile;
+					যাও die_outfile;
 				}
 			}
 		}
-	} else {
-		outfile = bb_msg_standard_output;
+	} অন্যথা {
+		outfile = bb_বার্তা_standard_output;
 	}
-	if (skip) {
-		size_t blocksz = (G.flags & FLAG_SKIP_BYTES) ? 1 : ibs;
-		if (lseek(ifd, skip * blocksz, SEEK_CUR) < 0) {
-			do {
+	যদি (skip) {
+		আকার_t blocksz = (G.flags & FLAG_SKIP_BYTES) ? 1 : ibs;
+		যদি (lseek(ifd, skip * blocksz, SEEK_CUR) < 0) {
+			করো {
 				ssize_t n = dd_read(ibuf, blocksz);
-				if (n < 0)
-					goto die_infile;
-				if (n == 0)
-					break;
-			} while (--skip != 0);
+				যদি (n < 0)
+					যাও die_infile;
+				যদি (n == 0)
+					বিরতি;
+			} যখন (--skip != 0);
 		}
 	}
-	if (seek) {
-		size_t blocksz = (G.flags & FLAG_SEEK_BYTES) ? 1 : obs;
-		if (lseek(ofd, seek * blocksz, SEEK_CUR) < 0)
-			goto die_outfile;
+	যদি (seek) {
+		আকার_t blocksz = (G.flags & FLAG_SEEK_BYTES) ? 1 : obs;
+		যদি (lseek(ofd, seek * blocksz, SEEK_CUR) < 0)
+			যাও die_outfile;
 	}
 
-	while (1) {
+	যখন (1) {
 		ssize_t n = ibs;
 
-		if (G.flags & FLAG_COUNT) {
-			if (count == 0)
-				break;
-			if ((G.flags & FLAG_COUNT_BYTES) && count < ibs)
-				n = count;
+		যদি (G.flags & FLAG_গুনতি) {
+			যদি (গুনতি == 0)
+				বিরতি;
+			যদি ((G.flags & FLAG_গুনতি_BYTES) && গুনতি < ibs)
+				n = গুনতি;
 		}
 
 		n = dd_read(ibuf, n);
-		if (n == 0)
-			break;
-		if (n < 0) {
+		যদি (n == 0)
+			বিরতি;
+		যদি (n < 0) {
 			/* "Bad block" */
-			if (!(G.flags & FLAG_NOERROR))
-				goto die_infile;
-			bb_simple_perror_msg(infile);
+			যদি (!(G.flags & FLAG_NOERROR))
+				যাও die_infile;
+			bb_simple_perror_বার্তা(infile);
 			/* GNU dd with conv=noerror skips over bad blocks */
 			xlseek(ifd, ibs, SEEK_CUR);
 			/* conv=noerror,sync writes NULs,
 			 * conv=noerror just ignores input bad blocks */
 			n = 0;
 		}
-		if (G.flags & FLAG_SWAB) {
+		যদি (G.flags & FLAG_SWAB) {
 			uint16_t *p16;
 			ssize_t n2;
 
 			/* Our code allows only last read to be odd-sized */
-			if (prev_read_size & 1)
-				bb_error_msg_and_die("can't swab %lu byte buffer",
-						(unsigned long)prev_read_size);
-			prev_read_size = n;
+			যদি (পূর্ব_read_আকার & 1)
+				bb_error_বার্তা_and_die("can't swab %lu byte buffer",
+						(unsigned long)পূর্ব_read_আকার);
+			পূর্ব_read_আকার = n;
 
 			/* If n is odd, last byte is not swapped:
 			 *  echo -n "qwe" | dd conv=swab
 			 * prints "wqe".
 			 */
-			p16 = (void*) ibuf;
+			p16 = (শূন্য*) ibuf;
 			n2 = (n >> 1);
-			while (--n2 >= 0) {
+			যখন (--n2 >= 0) {
 				*p16 = bswap_16(*p16);
 				p16++;
 			}
 		}
-		count -= (G.flags & FLAG_COUNT_BYTES) ? n : 1;
-		if ((size_t)n == ibs)
+		গুনতি -= (G.flags & FLAG_গুনতি_BYTES) ? n : 1;
+		যদি ((আকার_t)n == ibs)
 			G.in_full++;
-		else {
+		অন্যথা {
 			G.in_part++;
-			if (G.flags & FLAG_SYNC) {
+			যদি (G.flags & FLAG_SYNC) {
 				memset(ibuf + n, 0, ibs - n);
 				n = ibs;
 			}
 		}
-#if ENABLE_FEATURE_DD_IBS_OBS
-		if (G.flags & FLAG_TWOBUFS) {
-			char *tmp = ibuf;
-			while (n) {
-				size_t d = obs - ocount;
-				if (d > (size_t)n)
+#যদি ENABLE_FEATURE_DD_IBS_OBS
+		যদি (G.flags & FLAG_TWOBUFS) {
+			অক্ষর *tmp = ibuf;
+			যখন (n) {
+				আকার_t d = obs - ocount;
+				যদি (d > (আকার_t)n)
 					d = n;
 				memcpy(obuf + ocount, tmp, d);
 				n -= d;
 				tmp += d;
 				ocount += d;
-				if (ocount == obs) {
-					if (write_and_stats(obuf, obs, obs, outfile))
-						goto out_status;
+				যদি (ocount == obs) {
+					যদি (write_and_stats(obuf, obs, obs, outfile))
+						যাও out_status;
 					ocount = 0;
 				}
 			}
-		} else
+		} অন্যথা
 #endif
 		{
-			if (write_and_stats(ibuf, n, obs, outfile))
-				goto out_status;
+			যদি (write_and_stats(ibuf, n, obs, outfile))
+				যাও out_status;
 		}
 	}
 
-	if (G.flags & FLAG_FSYNC) {
-		if (fsync(ofd) < 0)
-			goto die_outfile;
+	যদি (G.flags & FLAG_FSYNC) {
+		যদি (fsync(ofd) < 0)
+			যাও die_outfile;
 	}
 
-#if ENABLE_FEATURE_DD_IBS_OBS
-	if (ocount != 0) {
-		if (write_and_stats(obuf, ocount, obs, outfile))
-			goto out_status;
+#যদি ENABLE_FEATURE_DD_IBS_OBS
+	যদি (ocount != 0) {
+		যদি (write_and_stats(obuf, ocount, obs, outfile))
+			যাও out_status;
 	}
 #endif
-	if (close(ifd) < 0) {
+	যদি (close(ifd) < 0) {
  die_infile:
-		bb_simple_perror_msg_and_die(infile);
+		bb_simple_perror_বার্তা_and_die(infile);
 	}
 
-	if (close(ofd) < 0) {
+	যদি (close(ofd) < 0) {
  die_outfile:
-		bb_simple_perror_msg_and_die(outfile);
+		bb_simple_perror_বার্তা_and_die(outfile);
 	}
 
 	exitcode = EXIT_SUCCESS;
  out_status:
-	if (!ENABLE_FEATURE_DD_STATUS || !(G.flags & FLAG_STATUS_NONE))
+	যদি (!ENABLE_FEATURE_DD_STATUS || !(G.flags & FLAG_STATUS_NONE))
 		dd_output_status(0);
 
-#if 0 /* can't just free(), they can be mmap()ed */
-	if (ENABLE_FEATURE_CLEAN_UP) {
-		free(obuf);
-		if (G.flags & FLAG_TWOBUFS)
-			free(ibuf);
+#যদি 0 /* can't just free(), they can be mmap()ed */
+	যদি (ENABLE_FEATURE_CLEAN_UP) {
+		মুক্ত(obuf);
+		যদি (G.flags & FLAG_TWOBUFS)
+			মুক্ত(ibuf);
 	}
 #endif
 
-	return exitcode;
+	ফেরত exitcode;
 }

@@ -29,26 +29,26 @@
 //usage:#define yes_full_usage "\n\n"
 //usage:       "Repeatedly print a line with STRING, or 'y'"
 
-#include "libbb.h"
+#অন্তর্ভাব "libbb.h"
 
-int yes_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int yes_main(int argc UNUSED_PARAM, char **argv)
+পূর্ণসংখ্যা yes_main(পূর্ণসংখ্যা argc, অক্ষর **argv) MAIN_EXTERNALLY_VISIBLE;
+পূর্ণসংখ্যা yes_main(পূর্ণসংখ্যা argc UNUSED_PARAM, অক্ষর **argv)
 {
-	char **pp;
+	অক্ষর **pp;
 
-	argv[0] = (char*)"y";
-	if (argv[1])
+	argv[0] = (অক্ষর*)"y";
+	যদি (argv[1])
 		++argv;
 
-	do {
+	করো {
 		pp = argv;
-		while (1) {
+		যখন (1) {
 			fputs_stdout(*pp);
-			if (!*++pp)
-				break;
+			যদি (!*++pp)
+				বিরতি;
 			putchar(' ');
 		}
-	} while (putchar('\n') != EOF);
+	} যখন (putchar('\n') != EOF);
 
 	bb_perror_nomsg_and_die();
 }

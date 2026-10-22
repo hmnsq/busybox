@@ -26,55 +26,55 @@
 //usage:#define truncate_example_usage
 //usage:	"$ truncate -s 1G foo"
 
-#include "libbb.h"
+#অন্তর্ভাব "libbb.h"
 
-#if ENABLE_LFS
+#যদি ENABLE_LFS
 # define XATOU_SFX xatoull_sfx
-#else
+#অন্যথা
 # define XATOU_SFX xatoul_sfx
 #endif
 
 /* This is a NOFORK applet. Be very careful! */
 
-int truncate_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int truncate_main(int argc UNUSED_PARAM, char **argv)
+পূর্ণসংখ্যা truncate_main(পূর্ণসংখ্যা argc, অক্ষর **argv) MAIN_EXTERNALLY_VISIBLE;
+পূর্ণসংখ্যা truncate_main(পূর্ণসংখ্যা argc UNUSED_PARAM, অক্ষর **argv)
 {
 	unsigned opts;
-	int flags = O_WRONLY | O_NONBLOCK;
-	int ret = EXIT_SUCCESS;
-	char *size_str;
-	off_t size;
+	পূর্ণসংখ্যা flags = O_WRONLY | O_NONBLOCK;
+	পূর্ণসংখ্যা ret = EXIT_SUCCESS;
+	অক্ষর *আকার_str;
+	off_t আকার_2;
 
-	enum {
+	গণনা {
 		OPT_NOCREATE  = (1 << 0),
-		OPT_SIZE = (1 << 1),
+		OPT_আকার = (1 << 1),
 	};
 
-	opts = getopt32(argv, "^" "cs:" "\0" "s:-1", &size_str);
+	opts = getopt32(argv, "^" "cs:" "\0" "s:-1", &আকার_str);
 
-	if (!(opts & OPT_NOCREATE))
+	যদি (!(opts & OPT_NOCREATE))
 		flags |= O_CREAT;
 
 	// TODO: coreutils 8.17 also support "m" (lowercase) suffix
 	// with truncate, but not with dd!
 	// We share kMG_suffixes[], so we can't make both tools
 	// compatible at once...
-	size = XATOU_SFX(size_str, kMG_suffixes);
+	আকার_2 = XATOU_SFX(আকার_str, kMG_suffixes);
 
 	argv += optind;
-	while (*argv) {
-		int fd = open(*argv, flags, 0666);
-		if (fd < 0) {
-			if (errno != ENOENT || !(opts & OPT_NOCREATE)) {
-				bb_perror_msg("%s: open", *argv);
+	যখন (*argv) {
+		পূর্ণসংখ্যা fd = open(*argv, flags, 0666);
+		যদি (fd < 0) {
+			যদি (errno != ENOENT || !(opts & OPT_NOCREATE)) {
+				bb_perror_বার্তা("%s: open", *argv);
 				ret = EXIT_FAILURE;
 			}
 			/* else: ENOENT && OPT_NOCREATE:
 			 * do not report error, exitcode is also 0.
 			 */
-		} else {
-			if (ftruncate(fd, size) == -1) {
-				bb_perror_msg("%s: truncate", *argv);
+		} অন্যথা {
+			যদি (ftruncate(fd, আকার_2) == -1) {
+				bb_perror_বার্তা("%s: truncate", *argv);
 				ret = EXIT_FAILURE;
 			}
 			xclose(fd);
@@ -82,5 +82,5 @@ int truncate_main(int argc UNUSED_PARAM, char **argv)
 		++argv;
 	}
 
-	return ret;
+	ফেরত ret;
 }

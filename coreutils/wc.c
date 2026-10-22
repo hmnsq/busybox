@@ -53,22 +53,22 @@
 /* BB_AUDIT SUSv3 compliant. */
 /* http://www.opengroup.org/onlinepubs/007904975/utilities/wc.html */
 
-#include "libbb.h"
-#include "unicode.h"
+#অন্তর্ভাব "libbb.h"
+#অন্তর্ভাব "unicode.h"
 
-#if !ENABLE_LOCALE_SUPPORT
+#যদি !ENABLE_LOCALE_SUPPORT
 # undef isprint
 # undef isspace
 # define isprint(c) ((unsigned)((c) - 0x20) <= (0x7e - 0x20))
 # define isspace(c) ((c) == ' ')
 #endif
 
-#if ENABLE_FEATURE_WC_LARGE
-# define COUNT_T unsigned long long
-# define COUNT_FMT "llu"
-#else
-# define COUNT_T unsigned
-# define COUNT_FMT "u"
+#যদি ENABLE_FEATURE_WC_LARGE
+# define গুনতি_T unsigned long long
+# define গুনতি_FMT "llu"
+#অন্যথা
+# define গুনতি_T unsigned
+# define গুনতি_FMT "u"
 #endif
 
 /* We support -m even when UNICODE_SUPPORT is off,
@@ -96,25 +96,25 @@
 /* Order is important if we want to be compatible with
  * column order in "wc -cmlwL" output:
  */
-enum {
-	WC_LINES    = 0, /* -l */
-	WC_WORDS    = 1, /* -w */
+গণনা {
+	WC_সারিগুলি    = 0, /* -l */
+	WC_শব্দগুলি    = 1, /* -w */
 	WC_UNICHARS = 2, /* -m */
 	WC_BYTES    = 3, /* -c */
-	WC_LENGTH   = 4, /* -L */
-	NUM_WCS     = 5,
+	WC_দৈর্ঘ্য   = 4, /* -L */
+	অঙ্ক_WCS     = 5,
 };
 
-int wc_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int wc_main(int argc UNUSED_PARAM, char **argv)
+পূর্ণসংখ্যা wc_main(পূর্ণসংখ্যা argc, অক্ষর **argv) MAIN_EXTERNALLY_VISIBLE;
+পূর্ণসংখ্যা wc_main(পূর্ণসংখ্যা argc UNUSED_PARAM, অক্ষর **argv)
 {
-	const char *arg;
-	const char *start_fmt = " %9"COUNT_FMT + 1;
-	const char *fname_fmt = " %s\n";
-	COUNT_T *pcounts;
-	COUNT_T counts[NUM_WCS];
-	COUNT_T totals[NUM_WCS];
-	int num_files;
+	ধ্রুবক অক্ষর *arg;
+	ধ্রুবক অক্ষর *start_fmt = " %9"গুনতি_FMT + 1;
+	ধ্রুবক অক্ষর *fname_fmt = " %s\n";
+	গুনতি_T *pcounts;
+	গুনতি_T counts[অঙ্ক_WCS];
+	গুনতি_T totals[অঙ্ক_WCS];
+	পূর্ণসংখ্যা অঙ্ক_files;
 	smallint status = EXIT_SUCCESS;
 	unsigned print_type;
 
@@ -122,108 +122,108 @@ int wc_main(int argc UNUSED_PARAM, char **argv)
 
 	print_type = getopt32(argv, "lwmcL");
 
-	if (print_type == 0) {
-		print_type = (1 << WC_LINES) | (1 << WC_WORDS) | (1 << WC_BYTES);
+	যদি (print_type == 0) {
+		print_type = (1 << WC_সারিগুলি) | (1 << WC_শব্দগুলি) | (1 << WC_BYTES);
 	}
 
 	argv += optind;
-	if (!argv[0]) {
-		*--argv = (char *) bb_msg_standard_input;
+	যদি (!argv[0]) {
+		*--argv = (অক্ষর *) bb_বার্তা_standard_প্রবেশ;
 		fname_fmt = "\n";
 	}
-	if (!argv[1]) { /* zero or one filename? */
-		if (!((print_type-1) & print_type)) /* exactly one option? */
-			start_fmt = "%"COUNT_FMT;
+	যদি (!argv[1]) { /* zero or one filename? */
+		যদি (!((print_type-1) & print_type)) /* exactly one option? */
+			start_fmt = "%"গুনতি_FMT;
 	}
 
-	memset(totals, 0, sizeof(totals));
+	memset(totals, 0, আকার(totals));
 
 	pcounts = counts;
 
-	num_files = 0;
-	while ((arg = *argv++) != NULL) {
+	অঙ্ক_files = 0;
+	যখন ((arg = *argv++) != ফাঁকা) {
 		FILE *fp;
-		const char *s;
+		ধ্রুবক অক্ষর *s;
 		unsigned u;
 		unsigned linepos;
 		smallint in_word;
 
-		++num_files;
+		++অঙ্ক_files;
 		fp = fopen_or_warn_stdin(arg);
-		if (!fp) {
+		যদি (!fp) {
 			status = EXIT_FAILURE;
-			continue;
+			চালু;
 		}
 
-		memset(counts, 0, sizeof(counts));
+		memset(counts, 0, আকার(counts));
 		linepos = 0;
 		in_word = 0;
 
-		while (1) {
-			int c;
+		যখন (1) {
+			পূর্ণসংখ্যা c;
 			/* Our -w doesn't match GNU wc exactly... oh well */
 
 			c = getc(fp);
-			if (c == EOF) {
-				if (ferror(fp)) {
-					bb_simple_perror_msg(arg);
+			যদি (c == EOF) {
+				যদি (ferror(fp)) {
+					bb_simple_perror_বার্তা(arg);
 					status = EXIT_FAILURE;
 				}
-				goto DO_EOF;  /* Treat an EOF as '\r'. */
+				যাও DO_EOF;  /* Treat an EOF as '\r'. */
 			}
 
 			/* Cater for -c and -m */
 			++counts[WC_BYTES];
-			if (unicode_status != UNICODE_ON /* every byte is a new char */
+			যদি (unicode_status != UNICODE_ON /* every byte is a new char */
 			 || (c & 0xc0) != 0x80 /* it isn't a 2nd+ byte of a Unicode char */
 			) {
 				++counts[WC_UNICHARS];
 			}
 
-			if (isprint_asciionly(c)) { /* FIXME: not unicode-aware */
+			যদি (isprint_asciionly(c)) { /* FIXME: not unicode-aware */
 				++linepos;
-				if (!isspace(c)) {
+				যদি (!isspace(c)) {
 					in_word = 1;
-					continue;
+					চালু;
 				}
-			} else if ((unsigned)(c - 9) <= 4) {
+			} অন্যথা যদি ((unsigned)(c - 9) <= 4) {
 				/* \t  9
 				 * \n 10
 				 * \v 11
 				 * \f 12
 				 * \r 13
 				 */
-				if (c == '\t') {
+				যদি (c == '\t') {
 					linepos = (linepos | 7) + 1;
-				} else {  /* '\n', '\r', '\f', or '\v' */
+				} অন্যথা {  /* '\n', '\r', '\f', or '\v' */
  DO_EOF:
-					if (linepos > counts[WC_LENGTH]) {
-						counts[WC_LENGTH] = linepos;
+					যদি (linepos > counts[WC_দৈর্ঘ্য]) {
+						counts[WC_দৈর্ঘ্য] = linepos;
 					}
-					if (c == '\n') {
-						++counts[WC_LINES];
+					যদি (c == '\n') {
+						++counts[WC_সারিগুলি];
 					}
-					if (c != '\v') {
+					যদি (c != '\v') {
 						linepos = 0;
 					}
 				}
-			} else {
-				continue;
+			} অন্যথা {
+				চালু;
 			}
 
-			counts[WC_WORDS] += in_word;
+			counts[WC_শব্দগুলি] += in_word;
 			in_word = 0;
-			if (c == EOF) {
-				break;
+			যদি (c == EOF) {
+				বিরতি;
 			}
 		}
 
 		fclose_if_not_stdin(fp);
 
-		if (totals[WC_LENGTH] < counts[WC_LENGTH]) {
-			totals[WC_LENGTH] = counts[WC_LENGTH];
+		যদি (totals[WC_দৈর্ঘ্য] < counts[WC_দৈর্ঘ্য]) {
+			totals[WC_দৈর্ঘ্য] = counts[WC_দৈর্ঘ্য];
 		}
-		totals[WC_LENGTH] -= counts[WC_LENGTH];
+		totals[WC_দৈর্ঘ্য] -= counts[WC_দৈর্ঘ্য];
 
  OUTPUT:
 		/* coreutils wc tries hard to print pretty columns
@@ -231,13 +231,13 @@ int wc_main(int argc UNUSED_PARAM, char **argv)
 		 * we won't try that hard, it will bloat us too much */
 		s = start_fmt;
 		u = 0;
-		do {
-			if (print_type & (1 << u)) {
+		করো {
+			যদি (print_type & (1 << u)) {
 				printf(s, pcounts[u]);
-				s = " %9"COUNT_FMT; /* Ok... restore the leading space. */
+				s = " %9"গুনতি_FMT; /* Ok... restore the leading space. */
 			}
 			totals[u] += pcounts[u];
-		} while (++u < NUM_WCS);
+		} যখন (++u < অঙ্ক_WCS);
 		printf(fname_fmt, arg);
 	}
 
@@ -245,12 +245,12 @@ int wc_main(int argc UNUSED_PARAM, char **argv)
 	 * space, we set the pcounts ptr to the totals array.  This has the side
 	 * effect of trashing the totals array after outputting it, but that's
 	 * irrelavent since we no longer need it. */
-	if (num_files > 1) {
-		num_files = 0;  /* Make sure we don't get here again. */
+	যদি (অঙ্ক_files > 1) {
+		অঙ্ক_files = 0;  /* Make sure we don't get here again. */
 		arg = "total";
 		pcounts = totals;
 		--argv;
-		goto OUTPUT;
+		যাও OUTPUT;
 	}
 
 	fflush_stdout_and_exit(status);

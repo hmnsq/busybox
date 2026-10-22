@@ -60,9 +60,9 @@
 //usage:       "$ echo \"gdkkn vnqkc\" | tr [a-y] [b-z]\n"
 //usage:       "hello world\n"
 
-#include "libbb.h"
+#অন্তর্ভাব "libbb.h"
 
-enum {
+গণনা {
 	ASCII = 256,
 	/* string buffer needs to be at least as big as the whole "alphabet".
 	 * BUFSIZ == ASCII is ok, but we will realloc in expand
@@ -71,18 +71,18 @@ enum {
 	TR_BUFSIZ = (BUFSIZ > ASCII*2) ? BUFSIZ : ASCII*2,
 };
 
-static void map(char *pvector,
-		char *string1, unsigned string1_len,
-		char *string2, unsigned string2_len)
+স্থির শূন্য map(অক্ষর *pvector,
+		অক্ষর *string1, unsigned string1_len,
+		অক্ষর *string2, unsigned string2_len)
 {
-	char last = '0';
+	অক্ষর last = '0';
 	unsigned i, j;
 
-	for (j = 0, i = 0; i < string1_len; i++) {
-		if (string2_len <= j)
-			pvector[(unsigned char)(string1[i])] = last;
-		else
-			pvector[(unsigned char)(string1[i])] = last = string2[j++];
+	জন্য (j = 0, i = 0; i < string1_len; i++) {
+		যদি (string2_len <= j)
+			pvector[(unsigned অক্ষর)(string1[i])] = last;
+		অন্যথা
+			pvector[(unsigned অক্ষর)(string1[i])] = last = string2[j++];
 	}
 }
 
@@ -99,25 +99,25 @@ static void map(char *pvector,
  * # echo qwe123 | /usr/bin/tr 123456789 '[d*]'
  * qweddd
  */
-static unsigned expand(char *arg, char **buffer_p)
+স্থির unsigned expand(অক্ষর *arg, অক্ষর **বাফার_p)
 {
-	char *buffer = *buffer_p;
+	অক্ষর *বাফার = *বাফার_p;
 	unsigned pos = 0;
-	unsigned size = TR_BUFSIZ;
+	unsigned আকার_2 = TR_BUFSIZ;
 	unsigned i; /* can't be unsigned char: must be able to hold 256 */
-	unsigned char ac;
+	unsigned অক্ষর ac;
 
-	while (*arg) {
-		if (pos + ASCII > size) {
-			size += ASCII;
-			*buffer_p = buffer = xrealloc(buffer, size);
+	যখন (*arg) {
+		যদি (pos + ASCII > আকার_2) {
+			আকার_2 += ASCII;
+			*বাফার_p = বাফার = xrealloc(বাফার, আকার_2);
 		}
-		if (*arg == '\\') {
-			const char *z;
+		যদি (*arg == '\\') {
+			ধ্রুবক অক্ষর *z;
 			arg++;
 			z = arg;
 			ac = bb_process_escape_sequence(&z);
-			arg = (char *)z;
+			arg = (অক্ষর *)z;
 			arg--;
 			*arg = ac;
 			/*
@@ -125,38 +125,38 @@ static unsigned expand(char *arg, char **buffer_p)
 			 * If not, current char will be treated anyway.
 			 */
 		}
-		if (arg[1] == '-') { /* "0-9..." */
+		যদি (arg[1] == '-') { /* "0-9..." */
 			ac = arg[2];
-			if (ac == '\0') { /* "0-": copy verbatim */
-				buffer[pos++] = *arg++; /* copy '0' */
-				continue; /* next iter will copy '-' and stop */
+			যদি (ac == '\0') { /* "0-": copy verbatim */
+				বাফার[pos++] = *arg++; /* copy '0' */
+				চালু; /* next iter will copy '-' and stop */
 			}
-			i = (unsigned char) *arg;
+			i = (unsigned অক্ষর) *arg;
 			arg += 3; /* skip 0-9 or 0-\ */
-			if (ac == '\\') {
-				const char *z;
+			যদি (ac == '\\') {
+				ধ্রুবক অক্ষর *z;
 				z = arg;
 				ac = bb_process_escape_sequence(&z);
-				arg = (char *)z;
+				arg = (অক্ষর *)z;
 			}
-			while (i <= ac) /* ok: i is unsigned _int_ */
-				buffer[pos++] = i++;
-			continue;
+			যখন (i <= ac) /* ok: i is unsigned _int_ */
+				বাফার[pos++] = i++;
+			চালু;
 		}
-		if ((ENABLE_FEATURE_TR_CLASSES || ENABLE_FEATURE_TR_EQUIV)
+		যদি ((ENABLE_FEATURE_TR_CLASSES || ENABLE_FEATURE_TR_EQUIV)
 		 && *arg == '['
 		) {
 			arg++;
-			i = (unsigned char) *arg++;
+			i = (unsigned অক্ষর) *arg++;
 			/* "[xyz...". i=x, arg points to y */
-			if (ENABLE_FEATURE_TR_CLASSES && i == ':') { /* [:class:] */
+			যদি (ENABLE_FEATURE_TR_CLASSES && i == ':') { /* [:class:] */
 #define CLO ":]\0"
-				static const char classes[] ALIGN1 =
+				স্থির ধ্রুবক অক্ষর classes[] ALIGN1 =
 					"alpha"CLO "alnum"CLO "digit"CLO
 					"lower"CLO "upper"CLO "space"CLO
 					"blank"CLO "punct"CLO "cntrl"CLO
 					"xdigit"CLO;
-				enum {
+				গণনা {
 					CLASS_invalid = 0, /* we increment the retval */
 					CLASS_alpha = 1,
 					CLASS_alnum = 2,
@@ -172,65 +172,65 @@ static unsigned expand(char *arg, char **buffer_p)
 					//CLASS_print = 12,
 				};
 				smalluint j;
-				char *tmp;
+				অক্ষর *tmp;
 
 				/* xdigit needs 8, not 7 */
 				i = 7 + (arg[0] == 'x');
 				tmp = xstrndup(arg, i);
-				j = index_in_strings(classes, tmp) + 1;
-				free(tmp);
+				j = সূচক_in_strings(classes, tmp) + 1;
+				মুক্ত(tmp);
 
-				if (j == CLASS_invalid)
-					goto skip_bracket;
+				যদি (j == CLASS_invalid)
+					যাও skip_bracket;
 
 				arg += i;
-				if (j == CLASS_alnum || j == CLASS_digit || j == CLASS_xdigit) {
-					for (i = '0'; i <= '9'; i++)
-						buffer[pos++] = i;
+				যদি (j == CLASS_alnum || j == CLASS_digit || j == CLASS_xdigit) {
+					জন্য (i = '0'; i <= '9'; i++)
+						বাফার[pos++] = i;
 				}
-				if (j == CLASS_alpha || j == CLASS_alnum || j == CLASS_upper) {
-					for (i = 'A'; i <= 'Z'; i++)
-						buffer[pos++] = i;
+				যদি (j == CLASS_alpha || j == CLASS_alnum || j == CLASS_upper) {
+					জন্য (i = 'A'; i <= 'Z'; i++)
+						বাফার[pos++] = i;
 				}
-				if (j == CLASS_alpha || j == CLASS_alnum || j == CLASS_lower) {
-					for (i = 'a'; i <= 'z'; i++)
-						buffer[pos++] = i;
+				যদি (j == CLASS_alpha || j == CLASS_alnum || j == CLASS_lower) {
+					জন্য (i = 'a'; i <= 'z'; i++)
+						বাফার[pos++] = i;
 				}
-				if (j == CLASS_space || j == CLASS_blank) {
-					buffer[pos++] = '\t';
-					if (j == CLASS_space) {
-						buffer[pos++] = '\n';
-						buffer[pos++] = '\v';
-						buffer[pos++] = '\f';
-						buffer[pos++] = '\r';
+				যদি (j == CLASS_space || j == CLASS_blank) {
+					বাফার[pos++] = '\t';
+					যদি (j == CLASS_space) {
+						বাফার[pos++] = '\n';
+						বাফার[pos++] = '\v';
+						বাফার[pos++] = '\f';
+						বাফার[pos++] = '\r';
 					}
-					buffer[pos++] = ' ';
+					বাফার[pos++] = ' ';
 				}
-				if (j == CLASS_punct || j == CLASS_cntrl) {
-					for (i = '\0'; i < ASCII; i++) {
-						if ((j == CLASS_punct && isprint_asciionly(i) && !isalnum(i) && !isspace(i))
+				যদি (j == CLASS_punct || j == CLASS_cntrl) {
+					জন্য (i = '\0'; i < ASCII; i++) {
+						যদি ((j == CLASS_punct && isprint_asciionly(i) && !isalnum(i) && !isspace(i))
 						 || (j == CLASS_cntrl && iscntrl(i))
 						) {
-							buffer[pos++] = i;
+							বাফার[pos++] = i;
 						}
 					}
 				}
-				if (j == CLASS_xdigit) {
-					for (i = 'A'; i <= 'F'; i++) {
-						buffer[pos + 6] = i | 0x20;
-						buffer[pos++] = i;
+				যদি (j == CLASS_xdigit) {
+					জন্য (i = 'A'; i <= 'F'; i++) {
+						বাফার[pos + 6] = i | 0x20;
+						বাফার[pos++] = i;
 					}
 					pos += 6;
 				}
-				continue;
+				চালু;
 			}
 			/* "[xyz...", i=x, arg points to y */
-			if (ENABLE_FEATURE_TR_EQUIV && i == '=') { /* [=CHAR=] */
-				buffer[pos++] = *arg; /* copy CHAR */
-				if (!arg[0] || arg[1] != '=' || arg[2] != ']')
+			যদি (ENABLE_FEATURE_TR_EQUIV && i == '=') { /* [=CHAR=] */
+				বাফার[pos++] = *arg; /* copy CHAR */
+				যদি (!arg[0] || arg[1] != '=' || arg[2] != ']')
 					bb_show_usage();
 				arg += 3;  /* skip CHAR=] */
-				continue;
+				চালু;
 			}
 			/* The rest of "[xyz..." cases is treated as normal
 			 * string, "[" has no special meaning here:
@@ -241,54 +241,54 @@ static unsigned expand(char *arg, char **buffer_p)
  skip_bracket:
 			arg -= 2; /* points to "[" in "[xyz..." */
 		}
-		buffer[pos++] = *arg++;
+		বাফার[pos++] = *arg++;
 	}
-	return pos;
+	ফেরত pos;
 }
 
 /* NB: buffer is guaranteed to be at least TR_BUFSIZE
  * (which is >= ASCII) big.
  */
-static int complement(char *buffer, int buffer_len)
+স্থির পূর্ণসংখ্যা complement(অক্ষর *বাফার, পূর্ণসংখ্যা বাফার_len)
 {
-	int len;
-	char conv[ASCII];
-	unsigned char ch;
+	পূর্ণসংখ্যা len;
+	অক্ষর conv[ASCII];
+	unsigned অক্ষর ch;
 
 	len = 0;
 	ch = '\0';
-	while (1) {
-		if (memchr(buffer, ch, buffer_len) == NULL)
+	যখন (1) {
+		যদি (memchr(বাফার, ch, বাফার_len) == ফাঁকা)
 			conv[len++] = ch;
-		if (++ch == '\0')
-			break;
+		যদি (++ch == '\0')
+			বিরতি;
 	}
-	memcpy(buffer, conv, len);
-	return len;
+	memcpy(বাফার, conv, len);
+	ফেরত len;
 }
 
-int tr_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int tr_main(int argc UNUSED_PARAM, char **argv)
+পূর্ণসংখ্যা tr_main(পূর্ণসংখ্যা argc, অক্ষর **argv) MAIN_EXTERNALLY_VISIBLE;
+পূর্ণসংখ্যা tr_main(পূর্ণসংখ্যা argc UNUSED_PARAM, অক্ষর **argv)
 {
-	int i;
+	পূর্ণসংখ্যা i;
 	smalluint opts;
 	ssize_t read_chars;
-	size_t in_index, out_index;
+	আকার_t in_সূচক, out_সূচক;
 	unsigned last = UCHAR_MAX + 1; /* not equal to any char */
-	unsigned char coded, c;
-	char *str1 = xmalloc(TR_BUFSIZ);
-	char *str2 = xmalloc(TR_BUFSIZ);
-	int str2_length;
-	int str1_length;
-	char *vector = xzalloc(ASCII * 3);
-	char *invec  = vector + ASCII;
-	char *outvec = vector + ASCII * 2;
+	unsigned অক্ষর coded, c;
+	অক্ষর *str1 = xmalloc(TR_BUFSIZ);
+	অক্ষর *str2 = xmalloc(TR_BUFSIZ);
+	পূর্ণসংখ্যা str2_দৈর্ঘ্য;
+	পূর্ণসংখ্যা str1_দৈর্ঘ্য;
+	অক্ষর *vector = xzalloc(ASCII * 3);
+	অক্ষর *invec  = vector + ASCII;
+	অক্ষর *outvec = vector + ASCII * 2;
 
 #define TR_OPT_complement   (3 << 0)
 #define TR_OPT_delete       (1 << 2)
 #define TR_OPT_squeeze_reps (1 << 3)
 
-	for (i = 0; i < ASCII; i++) {
+	জন্য (i = 0; i < ASCII; i++) {
 		vector[i] = i;
 		/*invec[i] = outvec[i] = FALSE; - done by xzalloc */
 	}
@@ -302,59 +302,59 @@ int tr_main(int argc UNUSED_PARAM, char **argv)
 	opts = getopt32(argv, "^+" "Ccds" "\0" "-1:?2");
 	argv += optind;
 
-	str1_length = expand(*argv++, &str1);
-	str2_length = 0;
-	if (opts & TR_OPT_complement)
-		str1_length = complement(str1, str1_length);
-	if (*argv) {
-		if (argv[0][0] == '\0')
-			bb_simple_error_msg_and_die("STRING2 cannot be empty");
-		str2_length = expand(*argv, &str2);
-		map(vector, str1, str1_length,
-				str2, str2_length);
+	str1_দৈর্ঘ্য = expand(*argv++, &str1);
+	str2_দৈর্ঘ্য = 0;
+	যদি (opts & TR_OPT_complement)
+		str1_দৈর্ঘ্য = complement(str1, str1_দৈর্ঘ্য);
+	যদি (*argv) {
+		যদি (argv[0][0] == '\0')
+			bb_simple_error_বার্তা_and_die("STRING2 cannot be empty");
+		str2_দৈর্ঘ্য = expand(*argv, &str2);
+		map(vector, str1, str1_দৈর্ঘ্য,
+				str2, str2_দৈর্ঘ্য);
 	}
-	for (i = 0; i < str1_length; i++)
-		invec[(unsigned char)(str1[i])] = TRUE;
-	for (i = 0; i < str2_length; i++)
-		outvec[(unsigned char)(str2[i])] = TRUE;
+	জন্য (i = 0; i < str1_দৈর্ঘ্য; i++)
+		invec[(unsigned অক্ষর)(str1[i])] = TRUE;
+	জন্য (i = 0; i < str2_দৈর্ঘ্য; i++)
+		outvec[(unsigned অক্ষর)(str2[i])] = TRUE;
 
-	goto start_from;
+	যাও start_from;
 
 	/* In this loop, str1 space is reused as input buffer,
 	 * str2 - as output one. */
-	for (;;) {
+	জন্য (;;) {
 		/* If we're out of input, flush output and read more input. */
-		if ((ssize_t)in_index == read_chars) {
-			if (out_index) {
-				xwrite(STDOUT_FILENO, str2, out_index);
+		যদি ((ssize_t)in_সূচক == read_chars) {
+			যদি (out_সূচক) {
+				xwrite(STDOUT_FILENO, str2, out_সূচক);
  start_from:
-				out_index = 0;
+				out_সূচক = 0;
 			}
 			read_chars = safe_read(STDIN_FILENO, str1, TR_BUFSIZ);
-			if (read_chars <= 0) {
-				if (read_chars < 0)
-					bb_simple_perror_msg_and_die(bb_msg_read_error);
-				break;
+			যদি (read_chars <= 0) {
+				যদি (read_chars < 0)
+					bb_simple_perror_বার্তা_and_die(bb_বার্তা_read_error);
+				বিরতি;
 			}
-			in_index = 0;
+			in_সূচক = 0;
 		}
-		c = str1[in_index++];
-		if ((opts & TR_OPT_delete) && invec[c])
-			continue;
+		c = str1[in_সূচক++];
+		যদি ((opts & TR_OPT_delete) && invec[c])
+			চালু;
 		coded = vector[c];
-		if ((opts & TR_OPT_squeeze_reps) && last == coded
+		যদি ((opts & TR_OPT_squeeze_reps) && last == coded
 		 && (invec[c] || outvec[coded])
 		) {
-			continue;
+			চালু;
 		}
-		str2[out_index++] = last = coded;
+		str2[out_সূচক++] = last = coded;
 	}
 
-	if (ENABLE_FEATURE_CLEAN_UP) {
-		free(vector);
-		free(str2);
-		free(str1);
+	যদি (ENABLE_FEATURE_CLEAN_UP) {
+		মুক্ত(vector);
+		মুক্ত(str2);
+		মুক্ত(str1);
 	}
 
-	return EXIT_SUCCESS;
+	ফেরত EXIT_SUCCESS;
 }

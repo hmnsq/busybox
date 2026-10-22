@@ -84,60 +84,60 @@
 //usage:     "\n	-a	Show all"
 //usage:     "\n	-H	Print column headers"
 
-#include "libbb.h"
+#অন্তর্ভাব "libbb.h"
 
-static void idle_string(char *str6, time_t t)
+স্থির শূন্য idle_string(অক্ষর *str6, time_t t)
 {
-	t = time(NULL) - t;
+	t = time(ফাঁকা) - t;
 
 	/*if (t < 60) {
 		str6[0] = '.';
 		str6[1] = '\0';
 		return;
 	}*/
-	if (t >= 0 && t < (24 * 60 * 60)) {
+	যদি (t >= 0 && t < (24 * 60 * 60)) {
 		sprintf(str6, "%02d:%02d",
-				(int) (t / (60 * 60)),
-				(int) ((t % (60 * 60)) / 60));
-		return;
+				(পূর্ণসংখ্যা) (t / (60 * 60)),
+				(পূর্ণসংখ্যা) ((t % (60 * 60)) / 60));
+		ফেরত;
 	}
 	strcpy(str6, "old");
 }
 
-int who_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int who_main(int argc UNUSED_PARAM, char **argv)
+পূর্ণসংখ্যা who_main(পূর্ণসংখ্যা argc, অক্ষর **argv) MAIN_EXTERNALLY_VISIBLE;
+পূর্ণসংখ্যা who_main(পূর্ণসংখ্যা argc UNUSED_PARAM, অক্ষর **argv)
 {
 #define CNT_APPLET (ENABLE_USERS + ENABLE_W + ENABLE_WHO)
-	int do_users = (ENABLE_USERS && (CNT_APPLET == 1 || applet_name[0] == 'u'));
-	int do_w     = (ENABLE_W     && (CNT_APPLET == 1 || applet_name[1] == '\0'));
-	int do_who   = (ENABLE_WHO   && (CNT_APPLET == 1 || applet_name[1] == 'h'));
-	struct utmpx *ut;
+	পূর্ণসংখ্যা do_users = (ENABLE_USERS && (CNT_APPLET == 1 || applet_name[0] == 'u'));
+	পূর্ণসংখ্যা do_w     = (ENABLE_W     && (CNT_APPLET == 1 || applet_name[1] == '\0'));
+	পূর্ণসংখ্যা do_who   = (ENABLE_WHO   && (CNT_APPLET == 1 || applet_name[1] == 'h'));
+	কাঠামো utmpx *ut;
 	unsigned opt;
-	const char *fmt = "%s";
+	ধ্রুবক অক্ষর *fmt = "%s";
 
 	opt = getopt32(argv, do_who ? "^" "aH" "\0" "=0": "^" "" "\0" "=0");
-	if ((opt & 2) || do_w) /* -H or we are w */
+	যদি ((opt & 2) || do_w) /* -H or we are w */
 		puts("USER\t\tTTY\t\tIDLE\tTIME\t\t HOST");
 
 	setutxent();
-	while ((ut = getutxent()) != NULL) {
-		if (ut->ut_user[0]
+	যখন ((ut = getutxent()) != ফাঁকা) {
+		যদি (ut->ut_user[0]
 		 && ((opt & 1) || ut->ut_type == USER_PROCESS)
 		) {
-			if (!do_users) {
-				char str6[6];
-				char name[sizeof("/dev/") + sizeof(ut->ut_line) + 1];
-				struct stat st;
+			যদি (!do_users) {
+				অক্ষর str6[6];
+				অক্ষর name[আকার("/dev/") + আকার(ut->ut_সারি) + 1];
+				কাঠামো stat st;
 				time_t seconds;
 
 				str6[0] = '?';
 				str6[1] = '\0';
 				strcpy(name, "/dev/");
-				safe_strncpy(ut->ut_line[0] == '/' ? name : name + sizeof("/dev/")-1,
-					ut->ut_line,
-					sizeof(ut->ut_line)+1
+				safe_strncpy(ut->ut_সারি[0] == '/' ? name : name + আকার("/dev/")-1,
+					ut->ut_সারি,
+					আকার(ut->ut_সারি)+1
 				);
-				if (stat(name, &st) == 0)
+				যদি (stat(name, &st) == 0)
 					idle_string(str6, st.st_atime);
 				/* manpages say ut_tv.tv_sec *is* time_t,
 				 * but some systems have it wrong */
@@ -147,24 +147,24 @@ int who_main(int argc UNUSED_PARAM, char **argv)
 				 * "2010-11-10 19:33": 16 chars
 				 */
 				printf("%-15.*s %-15.*s %-7s %-16.16s %.*s\n",
-						(int)sizeof(ut->ut_user), ut->ut_user,
-						(int)sizeof(ut->ut_line), ut->ut_line,
+						(পূর্ণসংখ্যা)আকার(ut->ut_user), ut->ut_user,
+						(পূর্ণসংখ্যা)আকার(ut->ut_সারি), ut->ut_সারি,
 						str6,
 // TODO: with LANG=en_US.UTF-8, who from coreutils 8.25 shows
 // TIME col as "2017-04-06 18:47" (the default format is "Apr  6 18:47").
 // The former format looks saner to me. Switch to it unconditionally?
 						ctime(&seconds) + 4,
-						(int)sizeof(ut->ut_host), ut->ut_host
+						(পূর্ণসংখ্যা)আকার(ut->ut_host), ut->ut_host
 				);
-			} else {
+			} অন্যথা {
 				printf(fmt, ut->ut_user);
 				fmt = " %s";
 			}
 		}
 	}
-	if (do_users)
+	যদি (do_users)
 		bb_putchar('\n');
-	if (ENABLE_FEATURE_CLEAN_UP)
+	যদি (ENABLE_FEATURE_CLEAN_UP)
 		endutxent();
-	return EXIT_SUCCESS;
+	ফেরত EXIT_SUCCESS;
 }
