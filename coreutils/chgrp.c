@@ -51,16 +51,16 @@
 /* This is a NOEXEC applet. Be very careful! */
 
 
-int chgrp_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int chgrp_main(int argc, char **argv)
+จำนวนเต็ม chgrp_main(จำนวนเต็ม argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+จำนวนเต็ม chgrp_main(จำนวนเต็ม argc, var_na **argv)
 {
 	/* "chgrp [opts] abc file(s)" == "chown [opts] :abc file(s)" */
-	char **p = argv;
-	while (*++p) {
-		if (p[0][0] != '-') {
+	var_na **p = argv;
+	ขณะ (*++p) {
+		ถ้า (p[0][0] != '-') {
 			p[0] = xasprintf(":%s", p[0]);
-			break;
+			bha_nga;
 		}
 	}
-	return chown_main(argc, argv);
+	คืน chown_main(argc, argv);
 }

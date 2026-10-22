@@ -51,8 +51,8 @@
 
 #include "libbb.h"
 
-int env_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int env_main(int argc UNUSED_PARAM, char **argv)
+จำนวนเต็ม env_main(จำนวนเต็ม argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+จำนวนเต็ม env_main(จำนวนเต็ม argc UNUSED_PARAM, var_na **argv)
 {
 	unsigned opts;
 	llist_t *unset_env = NULL;
@@ -64,15 +64,15 @@ int env_main(int argc UNUSED_PARAM, char **argv)
 			, &unset_env
 	);
 	argv += optind;
-	if (argv[0] && LONE_DASH(argv[0])) {
+	ถ้า (argv[0] && LONE_DASH(argv[0])) {
 		opts |= 1;
 		++argv;
 	}
-	if (opts & 1) {
+	ถ้า (opts & 1) {
 		clearenv();
 	}
-	while (unset_env) {
-		char *var = llist_pop(&unset_env);
+	ขณะ (unset_env) {
+		var_na *var = llist_pop(&unset_env);
 		/* This does not handle -uVAR=VAL
 		 * (coreutils _sets_ the variable in that case): */
 		/*unsetenv(var);*/
@@ -81,21 +81,21 @@ int env_main(int argc UNUSED_PARAM, char **argv)
 		putenv(var);
 	}
 
-	while (*argv && (strchr(*argv, '=') != NULL)) {
-		if (putenv(*argv) < 0) {
+	ขณะ (*argv && (strchr(*argv, '=') != NULL)) {
+		ถ้า (putenv(*argv) < 0) {
 			bb_simple_perror_msg_and_die("putenv");
 		}
 		++argv;
 	}
 
-	if (argv[0]) {
+	ถ้า (argv[0]) {
 		BB_EXECVP_or_die(argv);
 	}
 
-	if (environ) { /* clearenv() may set environ == NULL! */
-		char **ep;
+	ถ้า (environ) { /* clearenv() may set environ == NULL! */
+		var_na **ep;
 		opts = (opts & 2) ? 0 : '\n';
-		for (ep = environ; *ep; ep++) {
+		สำหรับ (ep = environ; *ep; ep++) {
 			printf("%s%c", *ep, opts);
 		}
 	}

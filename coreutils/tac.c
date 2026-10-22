@@ -31,21 +31,21 @@
 
 /* This is a NOEXEC applet. Be very careful! */
 
-struct lstring {
-	int size;
-	char buf[1];
+sa_nracanaa lstring {
+	จำนวนเต็ม size;
+	var_na buf[1];
 };
 
-int tac_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int tac_main(int argc UNUSED_PARAM, char **argv)
+จำนวนเต็ม tac_main(จำนวนเต็ม argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+จำนวนเต็ม tac_main(จำนวนเต็ม argc UNUSED_PARAM, var_na **argv)
 {
-	char **name;
+	var_na **name;
 	FILE *f;
-	struct lstring *line = NULL;
+	sa_nracanaa lstring *line = NULL;
 	llist_t *list = NULL;
-	int retval = EXIT_SUCCESS;
+	จำนวนเต็ม retval = EXIT_SUCCESS;
 
-#if ENABLE_DESKTOP
+#ถ้า ENABLE_DESKTOP
 /* tac from coreutils 6.9 supports:
        -b, --before
               attach the separator before instead of after
@@ -57,22 +57,22 @@ We support none, but at least we will complain or handle "--":
 */
 	getopt32(argv, "");
 	argv += optind;
-#else
+#มิฉะนั้น
 	argv++;
 #endif
-	if (!*argv)
-		*--argv = (char *)"-";
+	ถ้า (!*argv)
+		*--argv = (var_na *)"-";
 	/* We will read from last file to first */
 	name = argv;
-	while (*name)
+	ขณะ (*name)
 		name++;
 
 	do {
-		int ch, i;
+		จำนวนเต็ม ch, i;
 
 		name--;
 		f = fopen_or_warn_stdin(*name);
-		if (f == NULL) {
+		ถ้า (f == NULL) {
 			/* error message is printed by fopen_or_warn_stdin */
 			retval = EXIT_FAILURE;
 			continue;
@@ -81,37 +81,37 @@ We support none, but at least we will complain or handle "--":
 		errno = i = 0;
 		do {
 			ch = fgetc(f);
-			if (ch != EOF) {
-				if (!(i & 0x7f))
+			ถ้า (ch != EOF) {
+				ถ้า (!(i & 0x7f))
 					/* Grow on every 128th char */
-					line = xrealloc(line, i + 0x7f + sizeof(int) + 1);
+					line = xrealloc(line, i + 0x7f + parimaa_na(จำนวนเต็ม) + 1);
 				line->buf[i++] = ch;
 			}
-			if (ch == '\n' || (ch == EOF && i != 0)) {
-				line = xrealloc(line, i + sizeof(int));
+			ถ้า (ch == '\n' || (ch == EOF && i != 0)) {
+				line = xrealloc(line, i + parimaa_na(จำนวนเต็ม));
 				line->size = i;
 				llist_add_to(&list, line);
 				line = NULL;
 				i = 0;
 			}
-		} while (ch != EOF);
+		} ขณะ (ch != EOF);
 		/* fgetc sets errno to ENOENT on EOF, we don't want
 		 * to warn on this non-error! */
-		if (errno && errno != ENOENT) {
+		ถ้า (errno && errno != ENOENT) {
 			bb_simple_perror_msg(*name);
 			retval = EXIT_FAILURE;
 		}
-	} while (name != argv);
+	} ขณะ (name != argv);
 
-	while (list) {
-		line = (struct lstring *)list->data;
+	ขณะ (list) {
+		line = (sa_nracanaa lstring *)list->data;
 		xwrite(STDOUT_FILENO, line->buf, line->size);
-		if (ENABLE_FEATURE_CLEAN_UP) {
+		ถ้า (ENABLE_FEATURE_CLEAN_UP) {
 			free(llist_pop(&list));
-		} else {
+		} มิฉะนั้น {
 			list = list->link;
 		}
 	}
 
-	return retval;
+	คืน retval;
 }

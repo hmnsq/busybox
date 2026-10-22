@@ -34,12 +34,12 @@
 
 #include "libbb.h"
 
-int tty_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int tty_main(int argc UNUSED_PARAM, char **argv)
+จำนวนเต็ม tty_main(จำนวนเต็ม argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+จำนวนเต็ม tty_main(จำนวนเต็ม argc UNUSED_PARAM, var_na **argv)
 {
-	const char *s;
-	IF_INCLUDE_SUSv2(int silent;)  /* Note: No longer relevant in SUSv3. */
-	int retval;
+	const var_na *s;
+	IF_INCLUDE_SUSv2(จำนวนเต็ม silent;)  /* Note: No longer relevant in SUSv3. */
+	จำนวนเต็ม retval;
 
 	xfunc_error_retval = 2;  /* SUSv3 requires > 1 for error. */
 
@@ -53,13 +53,13 @@ int tty_main(int argc UNUSED_PARAM, char **argv)
 	retval = EXIT_SUCCESS;
 
 	s = xmalloc_ttyname(STDIN_FILENO);
-	if (s == NULL) {
+	ถ้า (s == NULL) {
 	/* According to SUSv3, ttyname can fail with EBADF or ENOTTY.
 	 * We know the file descriptor is good, so failure means not a tty. */
 		s = "not a tty";
 		retval = EXIT_FAILURE;
 	}
-	IF_INCLUDE_SUSv2(if (!silent) puts(s);)
+	IF_INCLUDE_SUSv2(ถ้า (!silent) puts(s);)
 	IF_NOT_INCLUDE_SUSv2(puts(s);)
 
 	fflush_stdout_and_exit(retval);

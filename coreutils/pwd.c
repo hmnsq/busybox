@@ -27,67 +27,67 @@
 
 #include "libbb.h"
 
-static int logical_getcwd(void)
+static จำนวนเต็ม logical_getcwd(void)
 {
-	struct stat st1;
-	struct stat st2;
-	char *wd;
-	char *p;
+	sa_nracanaa stat st1;
+	sa_nracanaa stat st2;
+	var_na *wd;
+	var_na *p;
 
 	wd = getenv("PWD");
-	if (!wd || wd[0] != '/')
-		return 0;
+	ถ้า (!wd || wd[0] != '/')
+		คืน 0;
 
 	p = wd;
-	while (*p) {
+	ขณะ (*p) {
 		/* doing strstr(p, "/.") by hand is smaller and faster... */
-		if (*p++ != '/')
+		ถ้า (*p++ != '/')
 			continue;
-		if (*p != '.')
+		ถ้า (*p != '.')
 			continue;
 		/* we found "/.", skip to next char */
 		p++;
-		if (*p == '.')
+		ถ้า (*p == '.')
 			p++; /* we found "/.." */
-		if (*p == '\0' || *p == '/')
-			return 0; /* "/./" or "/../" component: bad */
+		ถ้า (*p == '\0' || *p == '/')
+			คืน 0; /* "/./" or "/../" component: bad */
 	}
 
-	if (stat(wd, &st1) != 0)
-		return 0;
-	if (stat(".", &st2) != 0)
-		return 0;
-	if (st1.st_ino != st2.st_ino)
-		return 0;
-	if (st1.st_dev != st2.st_dev)
-		return 0;
+	ถ้า (stat(wd, &st1) != 0)
+		คืน 0;
+	ถ้า (stat(".", &st2) != 0)
+		คืน 0;
+	ถ้า (st1.st_ino != st2.st_ino)
+		คืน 0;
+	ถ้า (st1.st_dev != st2.st_dev)
+		คืน 0;
 
 	puts(wd);
-	return 1;
+	คืน 1;
 }
 
-int pwd_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int pwd_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+จำนวนเต็ม pwd_main(จำนวนเต็ม argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+จำนวนเต็ม pwd_main(จำนวนเต็ม argc UNUSED_PARAM, var_na **argv UNUSED_PARAM)
 {
-	char *buf;
+	var_na *buf;
 
-	if (ENABLE_DESKTOP) {
+	ถ้า (ENABLE_DESKTOP) {
 		/* TODO: assume -L if $POSIXLY_CORRECT? (coreutils does that)
 		 * Rationale:
 		 * POSIX requires a default of -L, but most scripts expect -P
 		 */
 		unsigned opt = getopt32(argv, "LP");
-		if ((opt & 1) && logical_getcwd())
-			return fflush_all();
+		ถ้า ((opt & 1) && logical_getcwd())
+			คืน fflush_all();
 	}
 
 	buf = xrealloc_getcwd_or_warn(NULL);
 
-	if (buf) {
+	ถ้า (buf) {
 		puts(buf);
 		free(buf);
-		return fflush_all();
+		คืน fflush_all();
 	}
 
-	return EXIT_FAILURE;
+	คืน EXIT_FAILURE;
 }

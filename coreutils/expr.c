@@ -81,13 +81,13 @@
 #include "common_bufsiz.h"
 #include "xregex.h"
 
-#if ENABLE_EXPR_MATH_SUPPORT_64
+#ถ้า ENABLE_EXPR_MATH_SUPPORT_64
 typedef int64_t arith_t;
 
 #define PF_REZ      "ll"
 #define PF_REZ_TYPE (long long)
 #define STRTOL(s, e, b) strtoll(s, e, b)
-#else
+#มิฉะนั้น
 typedef long arith_t;
 
 #define PF_REZ      "l"
@@ -98,30 +98,30 @@ typedef long arith_t;
 /* TODO: use bb_strtol[l]? It's easier to check for errors... */
 
 /* The kinds of value we can have.  */
-enum {
+ga_nanaa {
 	INTEGER,
 	STRING
 };
 
 /* A value is.... */
-struct valinfo {
+sa_nracanaa valinfo {
 	smallint type;                  /* Which kind. */
-	union {                         /* The value itself. */
+	sa_ngha {                         /* The value itself. */
 		arith_t i;
-		char *s;
+		var_na *s;
 	} u;
 };
-typedef struct valinfo VALUE;
+typedef sa_nracanaa valinfo VALUE;
 
 /* The arguments given to the program, minus the program name.  */
-struct globals {
-	char **args;
+sa_nracanaa globals {
+	var_na **args;
 } FIX_ALIASING;
-#define G (*(struct globals*)bb_common_bufsiz1)
+#define G (*(sa_nracanaa globals*)bb_common_bufsiz1)
 #define INIT_G() do { \
 	setup_common_bufsiz(); \
 	/* NB: noexec applet - globals not zeroed */ \
-} while (0)
+} ขณะ (0)
 
 /* forward declarations */
 static VALUE *eval(void);
@@ -133,50 +133,50 @@ static VALUE *int_value(arith_t i)
 {
 	VALUE *v;
 
-	v = xzalloc(sizeof(VALUE));
-	if (INTEGER) /* otherwise xzalloc did it already */
+	v = xzalloc(parimaa_na(VALUE));
+	ถ้า (INTEGER) /* otherwise xzalloc did it already */
 		v->type = INTEGER;
 	v->u.i = i;
-	return v;
+	คืน v;
 }
 
 /* Return a VALUE for S.  */
 
-static VALUE *str_value(const char *s)
+static VALUE *str_value(const var_na *s)
 {
 	VALUE *v;
 
-	v = xzalloc(sizeof(VALUE));
-	if (STRING) /* otherwise xzalloc did it already */
+	v = xzalloc(parimaa_na(VALUE));
+	ถ้า (STRING) /* otherwise xzalloc did it already */
 		v->type = STRING;
 	v->u.s = xstrdup(s);
-	return v;
+	คืน v;
 }
 
 /* Free VALUE V, including structure components.  */
 
 static void freev(VALUE *v)
 {
-	if (v->type == STRING)
+	ถ้า (v->type == STRING)
 		free(v->u.s);
 	free(v);
 }
 
 /* Return nonzero if V is a null-string or zero-number.  */
 
-static int null(VALUE *v)
+static จำนวนเต็ม null(VALUE *v)
 {
-	if (v->type == INTEGER)
-		return v->u.i == 0;
+	ถ้า (v->type == INTEGER)
+		คืน v->u.i == 0;
 	/* STRING: */
-	return v->u.s[0] == '\0' || LONE_CHAR(v->u.s, '0');
+	คืน v->u.s[0] == '\0' || LONE_CHAR(v->u.s, '0');
 }
 
 /* Coerce V to a STRING value (can't fail).  */
 
 static void tostring(VALUE *v)
 {
-	if (v->type == INTEGER) {
+	ถ้า (v->type == INTEGER) {
 		v->u.s = xasprintf("%" PF_REZ "d", PF_REZ_TYPE v->u.i);
 		v->type = STRING;
 	}
@@ -186,41 +186,41 @@ static void tostring(VALUE *v)
 
 static bool toarith(VALUE *v)
 {
-	if (v->type == STRING) {
+	ถ้า (v->type == STRING) {
 		arith_t i;
-		char *e;
+		var_na *e;
 
 		/* Don't interpret the empty string as an integer.  */
 		/* Currently does not worry about overflow or int/long differences. */
 		i = STRTOL(v->u.s, &e, 10);
-		if ((v->u.s == e) || *e)
-			return 0;
+		ถ้า ((v->u.s == e) || *e)
+			คืน 0;
 		free(v->u.s);
 		v->u.i = i;
 		v->type = INTEGER;
 	}
-	return 1;
+	คืน 1;
 }
 
 /* Return str[0]+str[1] if the next token matches STR exactly.
    STR must not be NULL.  */
 
-static int nextarg(const char *str)
+static จำนวนเต็ม nextarg(const var_na *str)
 {
-	if (*G.args == NULL || strcmp(*G.args, str) != 0)
-		return 0;
-	return (unsigned char)str[0] + (unsigned char)str[1];
+	ถ้า (*G.args == NULL || strcmp(*G.args, str) != 0)
+		คืน 0;
+	คืน (unsigned var_na)str[0] + (unsigned var_na)str[1];
 }
 
 /* The comparison operator handling functions.  */
 
-static int cmp_common(VALUE *l, VALUE *r, int op)
+static จำนวนเต็ม cmp_common(VALUE *l, VALUE *r, จำนวนเต็ม op)
 {
 	arith_t ll, rr;
 
 	ll = l->u.i;
 	rr = r->u.i;
-	if (l->type == STRING || r->type == STRING) {
+	ถ้า (l->type == STRING || r->type == STRING) {
 		tostring(l);
 		tostring(r);
 		ll = strcmp(l->u.s, r->u.s);
@@ -228,41 +228,41 @@ static int cmp_common(VALUE *l, VALUE *r, int op)
 	}
 	/* calculating ll - rr and checking the result is prone to overflows.
 	 * We'll do it differently: */
-	if (op == '<')
-		return ll < rr;
-	if (op == ('<' + '='))
-		return ll <= rr;
-	if (op == '=' || (op == '=' + '='))
-		return ll == rr;
-	if (op == '!' + '=')
-		return ll != rr;
-	if (op == '>')
-		return ll > rr;
+	ถ้า (op == '<')
+		คืน ll < rr;
+	ถ้า (op == ('<' + '='))
+		คืน ll <= rr;
+	ถ้า (op == '=' || (op == '=' + '='))
+		คืน ll == rr;
+	ถ้า (op == '!' + '=')
+		คืน ll != rr;
+	ถ้า (op == '>')
+		คืน ll > rr;
 	/* >= */
-	return ll >= rr;
+	คืน ll >= rr;
 }
 
 /* The arithmetic operator handling functions.  */
 
-static arith_t arithmetic_common(VALUE *l, VALUE *r, int op)
+static arith_t arithmetic_common(VALUE *l, VALUE *r, จำนวนเต็ม op)
 {
 	arith_t li, ri;
 
-	if (!toarith(l) || !toarith(r))
+	ถ้า (!toarith(l) || !toarith(r))
 		bb_simple_error_msg_and_die("non-numeric argument");
 	li = l->u.i;
 	ri = r->u.i;
-	if (op == '+')
-		return li + ri;
-	if (op == '-')
-		return li - ri;
-	if (op == '*')
-		return li * ri;
-	if (ri == 0)
+	ถ้า (op == '+')
+		คืน li + ri;
+	ถ้า (op == '-')
+		คืน li - ri;
+	ถ้า (op == '*')
+		คืน li * ri;
+	ถ้า (ri == 0)
 		bb_simple_error_msg_and_die("division by zero");
-	if (op == '/')
-		return li / ri;
-	return li % ri;
+	ถ้า (op == '/')
+		คืน li / ri;
+	คืน li % ri;
 }
 
 /* Do the : operator.
@@ -271,7 +271,7 @@ static arith_t arithmetic_common(VALUE *l, VALUE *r, int op)
 
 static VALUE *docolon(VALUE *sv, VALUE *pv)
 {
-	enum { NMATCH = 2 };
+	ga_nanaa { NMATCH = 2 };
 	VALUE *v;
 	regex_t re_buffer;
 	regmatch_t re_regs[NMATCH];
@@ -279,37 +279,37 @@ static VALUE *docolon(VALUE *sv, VALUE *pv)
 	tostring(sv);
 	tostring(pv);
 
-	if (pv->u.s[0] == '^') {
+	ถ้า (pv->u.s[0] == '^') {
 		bb_error_msg(
 "warning: '%s': using '^' as the first character\n"
 "of a basic regular expression is not portable; it is ignored", pv->u.s);
 	}
 
-	memset(&re_buffer, 0, sizeof(re_buffer));
-	memset(re_regs, 0, sizeof(re_regs));
+	memset(&re_buffer, 0, parimaa_na(re_buffer));
+	memset(re_regs, 0, parimaa_na(re_regs));
 	xregcomp(&re_buffer, pv->u.s, 0);
 
 	/* expr uses an anchored pattern match, so check that there was a
 	 * match and that the match starts at offset 0. */
-	if (regexec(&re_buffer, sv->u.s, NMATCH, re_regs, 0) != REG_NOMATCH
+	ถ้า (regexec(&re_buffer, sv->u.s, NMATCH, re_regs, 0) != REG_NOMATCH
 	 && re_regs[0].rm_so == 0
 	) {
 		/* Were \(...\) used? */
-		if (re_buffer.re_nsub > 0 && re_regs[1].rm_so >= 0) {
+		ถ้า (re_buffer.re_nsub > 0 && re_regs[1].rm_so >= 0) {
 			sv->u.s[re_regs[1].rm_eo] = '\0';
 			v = str_value(sv->u.s + re_regs[1].rm_so);
-		} else {
+		} มิฉะนั้น {
 			v = int_value(re_regs[0].rm_eo);
 		}
-	} else {
+	} มิฉะนั้น {
 		/* Match failed -- return the right kind of null.  */
-		if (re_buffer.re_nsub > 0)
+		ถ้า (re_buffer.re_nsub > 0)
 			v = str_value("");
-		else
+		มิฉะนั้น
 			v = int_value(0);
 	}
 	regfree(&re_buffer);
-	return v;
+	คืน v;
 }
 
 /* Handle bare operands and ( expr ) syntax.  */
@@ -318,78 +318,78 @@ static VALUE *eval7(void)
 {
 	VALUE *v;
 
-	if (!*G.args)
+	ถ้า (!*G.args)
 		bb_simple_error_msg_and_die("syntax error");
 
-	if (nextarg("(")) {
+	ถ้า (nextarg("(")) {
 		G.args++;
 		v = eval();
-		if (!nextarg(")"))
+		ถ้า (!nextarg(")"))
 			bb_simple_error_msg_and_die("syntax error");
 		G.args++;
-		return v;
+		คืน v;
 	}
 
-	if (nextarg(")"))
+	ถ้า (nextarg(")"))
 		bb_simple_error_msg_and_die("syntax error");
 
-	return str_value(*G.args++);
+	คืน str_value(*G.args++);
 }
 
 /* Handle match, substr, index, length, and quote keywords.  */
 
 static VALUE *eval6(void)
 {
-	static const char keywords[] ALIGN1 =
+	static const var_na keywords[] ALIGN1 =
 		"quote\0""length\0""match\0""index\0""substr\0";
 
 	VALUE *r, *i1, *i2;
 	VALUE *l = l; /* silence gcc */
 	VALUE *v = v; /* silence gcc */
-	int key = *G.args ? index_in_strings(keywords, *G.args) + 1 : 0;
+	จำนวนเต็ม key = *G.args ? index_in_strings(keywords, *G.args) + 1 : 0;
 
-	if (key == 0) /* not a keyword */
-		return eval7();
+	ถ้า (key == 0) /* not a keyword */
+		คืน eval7();
 	G.args++; /* We have a valid token, so get the next argument.  */
-	if (key == 1) { /* quote */
-		if (!*G.args)
+	ถ้า (key == 1) { /* quote */
+		ถ้า (!*G.args)
 			bb_simple_error_msg_and_die("syntax error");
-		return str_value(*G.args++);
+		คืน str_value(*G.args++);
 	}
-	if (key == 2) { /* length */
+	ถ้า (key == 2) { /* length */
 		r = eval6();
 		tostring(r);
 		v = int_value(strlen(r->u.s));
 		freev(r);
-	} else
+	} มิฉะนั้น
 		l = eval6();
 
-	if (key == 3) { /* match */
+	ถ้า (key == 3) { /* match */
 		r = eval6();
 		v = docolon(l, r);
 		freev(l);
 		freev(r);
 	}
-	if (key == 4) { /* index */
+	ถ้า (key == 4) { /* index */
 		r = eval6();
 		tostring(l);
 		tostring(r);
 		v = int_value(strcspn(l->u.s, r->u.s) + 1);
-		if (v->u.i == (arith_t) strlen(l->u.s) + 1)
+		ถ้า (v->u.i == (arith_t) strlen(l->u.s) + 1)
 			v->u.i = 0;
 		freev(l);
 		freev(r);
 	}
-	if (key == 5) { /* substr */
+	ถ้า (key == 5) { /* substr */
 		i1 = eval6();
 		i2 = eval6();
 		tostring(l);
-		if (!toarith(i1) || !toarith(i2)
+		ถ้า (!toarith(i1) || !toarith(i2)
 		 || i1->u.i > (arith_t) strlen(l->u.s)
 		 || i1->u.i <= 0 || i2->u.i <= 0)
 			v = str_value("");
-		else {
-			v = xmalloc(sizeof(VALUE));
+		มิฉะนั้น {
+			v = xmalloc(parimaa_na(VALUE));
 			v->type = STRING;
 			v->u.s = xstrndup(l->u.s + i1->u.i - 1, i2->u.i);
 		}
@@ -397,7 +397,7 @@ static VALUE *eval6(void)
 		freev(i1);
 		freev(i2);
 	}
-	return v;
+	คืน v;
 }
 
 /* Handle : operator (pattern matching).
@@ -408,7 +408,7 @@ static VALUE *eval5(void)
 	VALUE *l, *r, *v;
 
 	l = eval6();
-	while (nextarg(":")) {
+	ขณะ (nextarg(":")) {
 		G.args++;
 		r = eval6();
 		v = docolon(l, r);
@@ -416,7 +416,7 @@ static VALUE *eval5(void)
 		freev(r);
 		l = v;
 	}
-	return l;
+	คืน l;
 }
 
 /* Handle *, /, % operators.  */
@@ -424,15 +424,15 @@ static VALUE *eval5(void)
 static VALUE *eval4(void)
 {
 	VALUE *l, *r;
-	int op;
+	จำนวนเต็ม op;
 	arith_t val;
 
 	l = eval5();
-	while (1) {
+	ขณะ (1) {
 		op = nextarg("*");
-		if (!op) { op = nextarg("/");
-		 if (!op) { op = nextarg("%");
-		  if (!op) return l;
+		ถ้า (!op) { op = nextarg("/");
+		 ถ้า (!op) { op = nextarg("%");
+		  ถ้า (!op) คืน l;
 		}}
 		G.args++;
 		r = eval5();
@@ -448,15 +448,15 @@ static VALUE *eval4(void)
 static VALUE *eval3(void)
 {
 	VALUE *l, *r;
-	int op;
+	จำนวนเต็ม op;
 	arith_t val;
 
 	l = eval4();
-	while (1) {
+	ขณะ (1) {
 		op = nextarg("+");
-		if (!op) {
+		ถ้า (!op) {
 			op = nextarg("-");
-			if (!op) return l;
+			ถ้า (!op) คืน l;
 		}
 		G.args++;
 		r = eval4();
@@ -472,19 +472,19 @@ static VALUE *eval3(void)
 static VALUE *eval2(void)
 {
 	VALUE *l, *r;
-	int op;
+	จำนวนเต็ม op;
 	arith_t val;
 
 	l = eval3();
-	while (1) {
+	ขณะ (1) {
 		op = nextarg("<");
-		if (!op) { op = nextarg("<=");
-		 if (!op) { op = nextarg("=");
-		  if (!op) { op = nextarg("==");
-		   if (!op) { op = nextarg("!=");
-		    if (!op) { op = nextarg(">=");
-		     if (!op) { op = nextarg(">");
-		      if (!op) return l;
+		ถ้า (!op) { op = nextarg("<=");
+		 ถ้า (!op) { op = nextarg("=");
+		  ถ้า (!op) { op = nextarg("==");
+		   ถ้า (!op) { op = nextarg("!=");
+		    ถ้า (!op) { op = nextarg(">=");
+		     ถ้า (!op) { op = nextarg(">");
+		      ถ้า (!op) คืน l;
 		}}}}}}
 		G.args++;
 		r = eval3();
@@ -504,17 +504,17 @@ static VALUE *eval1(void)
 	VALUE *l, *r;
 
 	l = eval2();
-	while (nextarg("&")) {
+	ขณะ (nextarg("&")) {
 		G.args++;
 		r = eval2();
-		if (null(l) || null(r)) {
+		ถ้า (null(l) || null(r)) {
 			freev(l);
 			freev(r);
 			l = int_value(0);
-		} else
+		} มิฉะนั้น
 			freev(r);
 	}
-	return l;
+	คืน l;
 }
 
 /* Handle |.  */
@@ -524,20 +524,20 @@ static VALUE *eval(void)
 	VALUE *l, *r;
 
 	l = eval1();
-	while (nextarg("|")) {
+	ขณะ (nextarg("|")) {
 		G.args++;
 		r = eval1();
-		if (null(l)) {
+		ถ้า (null(l)) {
 			freev(l);
 			l = r;
-		} else
+		} มิฉะนั้น
 			freev(r);
 	}
-	return l;
+	คืน l;
 }
 
-int expr_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int expr_main(int argc UNUSED_PARAM, char **argv)
+จำนวนเต็ม expr_main(จำนวนเต็ม argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+จำนวนเต็ม expr_main(จำนวนเต็ม argc UNUSED_PARAM, var_na **argv)
 {
 	VALUE *v;
 
@@ -545,15 +545,15 @@ int expr_main(int argc UNUSED_PARAM, char **argv)
 
 	xfunc_error_retval = 2; /* coreutils compat */
 	G.args = argv + 1;
-	if (*G.args == NULL) {
+	ถ้า (*G.args == NULL) {
 		bb_simple_error_msg_and_die("too few arguments");
 	}
 	v = eval();
-	if (*G.args)
+	ถ้า (*G.args)
 		bb_simple_error_msg_and_die("syntax error");
-	if (v->type == INTEGER)
+	ถ้า (v->type == INTEGER)
 		printf("%" PF_REZ "d\n", PF_REZ_TYPE v->u.i);
-	else
+	มิฉะนั้น
 		puts(v->u.s);
 	fflush_stdout_and_exit(null(v));
 }

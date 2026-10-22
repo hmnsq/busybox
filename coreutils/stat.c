@@ -107,51 +107,51 @@
 #include "libbb.h"
 #include "common_bufsiz.h"
 
-enum {
+ga_nanaa {
 	OPT_TERSE       = (1 << 0),
 	OPT_DEREFERENCE = (1 << 1),
 	OPT_FILESYS     = (1 << 2) * ENABLE_FEATURE_STAT_FILESYSTEM,
 	OPT_SELINUX     = (1 << (2+ENABLE_FEATURE_STAT_FILESYSTEM)) * ENABLE_SELINUX,
 };
 
-#if ENABLE_FEATURE_STAT_FORMAT
-typedef bool (*statfunc_ptr)(const char *, const char *);
-#else
-typedef bool (*statfunc_ptr)(const char *);
+#ถ้า ENABLE_FEATURE_STAT_FORMAT
+typedef bool (*statfunc_ptr)(const var_na *, const var_na *);
+#มิฉะนั้น
+typedef bool (*statfunc_ptr)(const var_na *);
 #endif
 
-static const char *file_type(const struct stat *st)
+static const var_na *file_type(const sa_nracanaa stat *st)
 {
 	/* See POSIX 1003.1-2001 XCU Table 4-8 lines 17093-17107
 	 * for some of these formats.
 	 * To keep diagnostics grammatical in English, the
 	 * returned string must start with a consonant.
 	 */
-	if (S_ISREG(st->st_mode))  return st->st_size == 0 ? "regular empty file" : "regular file";
-	if (S_ISDIR(st->st_mode))  return "directory";
-	if (S_ISBLK(st->st_mode))  return "block special file";
-	if (S_ISCHR(st->st_mode))  return "character special file";
-	if (S_ISFIFO(st->st_mode)) return "fifo";
-	if (S_ISLNK(st->st_mode))  return "symbolic link";
-	if (S_ISSOCK(st->st_mode)) return "socket";
+	ถ้า (S_ISREG(st->st_mode))  คืน st->st_size == 0 ? "regular empty file" : "regular file";
+	ถ้า (S_ISDIR(st->st_mode))  คืน "directory";
+	ถ้า (S_ISBLK(st->st_mode))  คืน "block special file";
+	ถ้า (S_ISCHR(st->st_mode))  คืน "character special file";
+	ถ้า (S_ISFIFO(st->st_mode)) คืน "fifo";
+	ถ้า (S_ISLNK(st->st_mode))  คืน "symbolic link";
+	ถ้า (S_ISSOCK(st->st_mode)) คืน "socket";
 #ifdef S_TYPEISMQ
-	if (S_TYPEISMQ(st))        return "message queue";
+	ถ้า (S_TYPEISMQ(st))        คืน "message queue";
 #endif
 #ifdef S_TYPEISSEM
-	if (S_TYPEISSEM(st))       return "semaphore";
+	ถ้า (S_TYPEISSEM(st))       คืน "semaphore";
 #endif
 #ifdef S_TYPEISSHM
-	if (S_TYPEISSHM(st))       return "shared memory object";
+	ถ้า (S_TYPEISSHM(st))       คืน "shared memory object";
 #endif
 #ifdef S_TYPEISTMO
-	if (S_TYPEISTMO(st))       return "typed memory object";
+	ถ้า (S_TYPEISTMO(st))       คืน "typed memory object";
 #endif
-	return "weird file";
+	คืน "weird file";
 }
 
-static const char *human_time(struct timespec *ts)
+static const var_na *human_time(sa_nracanaa timespec *ts)
 {
-	char fmt[sizeof("%Y-%m-%d %H:%M:%S.123456789 %z") + /*paranoia*/ 8];
+	var_na fmt[parimaa_na("%Y-%m-%d %H:%M:%S.123456789 %z") + /*paranoia*/ 8];
 
 	/* coreutils 6.3 compat */
 #define buf bb_common_bufsiz1
@@ -159,11 +159,11 @@ static const char *human_time(struct timespec *ts)
 
 	sprintf(stpcpy(fmt, "%Y-%m-%d %H:%M:%S"), ".%09u %%z", (unsigned)ts->tv_nsec);
 	strftime(buf, COMMON_BUFSIZE, fmt, localtime(&ts->tv_sec));
-	return buf;
+	คืน buf;
 #undef buf
 }
 
-#if ENABLE_FEATURE_STAT_FILESYSTEM
+#ถ้า ENABLE_FEATURE_STAT_FILESYSTEM
 #define FS_TYPE_LIST \
 FS_TYPE(0xADFF,     "affs") \
 FS_TYPE(0x1CD1,     "devpts") \
@@ -205,7 +205,7 @@ FS_TYPE(0x62656572, "sysfs")
  * Others have statfs.f_fstypename[MFSNAMELEN]. (NetBSD 1.5.2)
  * Still others have neither and have to get by with f_type (Linux).
  */
-static const char *human_fstype(uint32_t f_type)
+static const var_na *human_fstype(uint32_t f_type)
 {
 # define FS_TYPE(type, name) type,
 	static const uint32_t fstype[] ALIGN4 = {
@@ -213,90 +213,90 @@ static const char *human_fstype(uint32_t f_type)
 	};
 # undef FS_TYPE
 # define FS_TYPE(type, name) name"\0"
-	static const char humanname[] ALIGN1 =
+	static const var_na humanname[] ALIGN1 =
 		FS_TYPE_LIST
 		"UNKNOWN";
 # undef FS_TYPE
-	int i;
+	จำนวนเต็ม i;
 
-	for (i = 0; i < ARRAY_SIZE(fstype); ++i)
-		if (fstype[i] == f_type)
-			break;
-	return nth_string(humanname, i);
+	สำหรับ (i = 0; i < ARRAY_SIZE(fstype); ++i)
+		ถ้า (fstype[i] == f_type)
+			bha_nga;
+	คืน nth_string(humanname, i);
 }
 
 /* "man statfs" says that statfsbuf->f_fsid is a mess */
 /* coreutils treats it as an array of ints, most significant first */
-static unsigned long long get_f_fsid(const struct statfs *statfsbuf)
+static unsigned long long get_f_fsid(const sa_nracanaa statfs *statfsbuf)
 {
 	const unsigned *p = (const void*) &statfsbuf->f_fsid;
-	unsigned sz = sizeof(statfsbuf->f_fsid) / sizeof(unsigned);
+	unsigned sz = parimaa_na(statfsbuf->f_fsid) / parimaa_na(unsigned);
 	unsigned long long r = 0;
 
 	do
-		r = (r << (sizeof(unsigned)*8)) | *p++;
-	while (--sz > 0);
-	return r;
+		r = (r << (parimaa_na(unsigned)*8)) | *p++;
+	ขณะ (--sz > 0);
+	คืน r;
 }
 #endif  /* FEATURE_STAT_FILESYSTEM */
 
-#if ENABLE_FEATURE_STAT_FORMAT
-static void strcatc(char *str, char c)
+#ถ้า ENABLE_FEATURE_STAT_FORMAT
+static void strcatc(var_na *str, var_na c)
 {
-	int len = strlen(str);
+	จำนวนเต็ม len = strlen(str);
 	str[len++] = c;
 	str[len] = '\0';
 }
 
-static void printfs(char *pformat, const char *msg)
+static void printfs(var_na *pformat, const var_na *msg)
 {
 	strcatc(pformat, 's');
 	printf(pformat, msg);
 }
 
-#if ENABLE_FEATURE_STAT_FILESYSTEM
+#ถ้า ENABLE_FEATURE_STAT_FILESYSTEM
 /* print statfs info */
-static void FAST_FUNC print_statfs(char *pformat, const char m,
-		const char *const filename, const void *data
+static void FAST_FUNC print_statfs(var_na *pformat, const var_na m,
+		const var_na *const filename, const void *data
 		IF_SELINUX(, security_context_t scontext))
 {
-	const struct statfs *statfsbuf = data;
-	if (m == 'n') {
+	const sa_nracanaa statfs *statfsbuf = data;
+	ถ้า (m == 'n') {
 		printfs(pformat, filename);
-	} else if (m == 'i') {
+	} มิฉะนั้น ถ้า (m == 'i') {
 		strcat(pformat, "llx");
 		printf(pformat, get_f_fsid(statfsbuf));
-	} else if (m == 'l') {
+	} มิฉะนั้น ถ้า (m == 'l') {
 		strcat(pformat, "lu");
 		printf(pformat, (unsigned long) statfsbuf->f_namelen);
-	} else if (m == 't') {
+	} มิฉะนั้น ถ้า (m == 't') {
 		strcat(pformat, "lx");
 		printf(pformat, (unsigned long) statfsbuf->f_type); /* no equiv */
-	} else if (m == 'T') {
+	} มิฉะนั้น ถ้า (m == 'T') {
 		printfs(pformat, human_fstype(statfsbuf->f_type));
-	} else if (m == 'b') {
+	} มิฉะนั้น ถ้า (m == 'b') {
 		strcat(pformat, "llu");
 		printf(pformat, (unsigned long long) statfsbuf->f_blocks);
-	} else if (m == 'f') {
+	} มิฉะนั้น ถ้า (m == 'f') {
 		strcat(pformat, "llu");
 		printf(pformat, (unsigned long long) statfsbuf->f_bfree);
-	} else if (m == 'a') {
+	} มิฉะนั้น ถ้า (m == 'a') {
 		strcat(pformat, "llu");
 		printf(pformat, (unsigned long long) statfsbuf->f_bavail);
-	} else if (m == 's' || m == 'S') {
+	} มิฉะนั้น ถ้า (m == 's' || m == 'S') {
 		strcat(pformat, "lu");
 		printf(pformat, (unsigned long) statfsbuf->f_bsize);
-	} else if (m == 'c') {
+	} มิฉะนั้น ถ้า (m == 'c') {
 		strcat(pformat, "llu");
 		printf(pformat, (unsigned long long) statfsbuf->f_files);
-	} else if (m == 'd') {
+	} มิฉะนั้น ถ้า (m == 'd') {
 		strcat(pformat, "llu");
 		printf(pformat, (unsigned long long) statfsbuf->f_ffree);
-# if ENABLE_SELINUX
-	} else if (m == 'C' && (option_mask32 & OPT_SELINUX)) {
+# ถ้า ENABLE_SELINUX
+	} มิฉะนั้น ถ้า (m == 'C' && (option_mask32 & OPT_SELINUX)) {
 		printfs(pformat, scontext);
 # endif
-	} else {
+	} มิฉะนั้น {
 		strcatc(pformat, 'c');
 		printf(pformat, m);
 	}
@@ -304,133 +304,133 @@ static void FAST_FUNC print_statfs(char *pformat, const char m,
 #endif
 
 /* print stat info */
-static void FAST_FUNC print_stat(char *pformat, const char m,
-		const char *const filename, const void *data
+static void FAST_FUNC print_stat(var_na *pformat, const var_na m,
+		const var_na *const filename, const void *data
 		IF_SELINUX(, security_context_t scontext))
 {
 #define TYPE_SIGNED(t) (! ((t) 0 < (t) -1))
-	struct stat *statbuf = (struct stat *) data;
-	struct passwd *pw_ent;
-	struct group *gw_ent;
+	sa_nracanaa stat *statbuf = (sa_nracanaa stat *) data;
+	sa_nracanaa passwd *pw_ent;
+	sa_nracanaa group *gw_ent;
 
-	if (m == 'n') {
+	ถ้า (m == 'n') {
 		printfs(pformat, filename);
-	} else if (m == 'N') {
+	} มิฉะนั้น ถ้า (m == 'N') {
 		strcatc(pformat, 's');
-		if (S_ISLNK(statbuf->st_mode)) {
-			char *linkname = xmalloc_readlink_or_warn(filename);
-			if (linkname == NULL)
-				return;
+		ถ้า (S_ISLNK(statbuf->st_mode)) {
+			var_na *linkname = xmalloc_readlink_or_warn(filename);
+			ถ้า (linkname == NULL)
+				คืน;
 			printf("'%s' -> '%s'", filename, linkname);
 			free(linkname);
-		} else {
+		} มิฉะนั้น {
 			printf(pformat, filename);
 		}
-	} else if (m == 'd') {
+	} มิฉะนั้น ถ้า (m == 'd') {
 		strcat(pformat, "llu");
 		printf(pformat, (unsigned long long) statbuf->st_dev);
-	} else if (m == 'D') {
+	} มิฉะนั้น ถ้า (m == 'D') {
 		strcat(pformat, "llx");
 		printf(pformat, (unsigned long long) statbuf->st_dev);
-	} else if (m == 'i') {
+	} มิฉะนั้น ถ้า (m == 'i') {
 		strcat(pformat, "llu");
 		printf(pformat, (unsigned long long) statbuf->st_ino);
-	} else if (m == 'a') {
+	} มิฉะนั้น ถ้า (m == 'a') {
 		strcat(pformat, "lo");
 		printf(pformat, (unsigned long) (statbuf->st_mode & (S_ISUID|S_ISGID|S_ISVTX|S_IRWXU|S_IRWXG|S_IRWXO)));
-	} else if (m == 'A') {
-		char modestr[12];
+	} มิฉะนั้น ถ้า (m == 'A') {
+		var_na modestr[12];
 		printfs(pformat, bb_mode_string(modestr, statbuf->st_mode));
-	} else if (m == 'f') {
+	} มิฉะนั้น ถ้า (m == 'f') {
 		strcat(pformat, "lx");
 		printf(pformat, (unsigned long) statbuf->st_mode);
-	} else if (m == 'F') {
+	} มิฉะนั้น ถ้า (m == 'F') {
 		printfs(pformat, file_type(statbuf));
-	} else if (m == 'h') {
+	} มิฉะนั้น ถ้า (m == 'h') {
 		strcat(pformat, "lu");
 		printf(pformat, (unsigned long) statbuf->st_nlink);
-	} else if (m == 'u') {
+	} มิฉะนั้น ถ้า (m == 'u') {
 		strcat(pformat, "lu");
 		printf(pformat, (unsigned long) statbuf->st_uid);
-	} else if (m == 'U') {
+	} มิฉะนั้น ถ้า (m == 'U') {
 		pw_ent = getpwuid(statbuf->st_uid);
 		printfs(pformat, (pw_ent != NULL) ? pw_ent->pw_name : "UNKNOWN");
-	} else if (m == 'g') {
+	} มิฉะนั้น ถ้า (m == 'g') {
 		strcat(pformat, "lu");
 		printf(pformat, (unsigned long) statbuf->st_gid);
-	} else if (m == 'G') {
+	} มิฉะนั้น ถ้า (m == 'G') {
 		gw_ent = getgrgid(statbuf->st_gid);
 		printfs(pformat, (gw_ent != NULL) ? gw_ent->gr_name : "UNKNOWN");
-	} else if (m == 't') {
+	} มิฉะนั้น ถ้า (m == 't') {
 		strcat(pformat, "lx");
 		printf(pformat, (unsigned long) major(statbuf->st_rdev));
-	} else if (m == 'T') {
+	} มิฉะนั้น ถ้า (m == 'T') {
 		strcat(pformat, "lx");
 		printf(pformat, (unsigned long) minor(statbuf->st_rdev));
-	} else if (m == 's') {
+	} มิฉะนั้น ถ้า (m == 's') {
 		strcat(pformat, "llu");
 		printf(pformat, (unsigned long long) statbuf->st_size);
-	} else if (m == 'B') {
+	} มิฉะนั้น ถ้า (m == 'B') {
 		strcat(pformat, "lu");
 		printf(pformat, (unsigned long) 512); //ST_NBLOCKSIZE
-	} else if (m == 'b') {
+	} มิฉะนั้น ถ้า (m == 'b') {
 		strcat(pformat, "llu");
 		printf(pformat, (unsigned long long) statbuf->st_blocks);
-	} else if (m == 'o') {
+	} มิฉะนั้น ถ้า (m == 'o') {
 		strcat(pformat, "lu");
 		printf(pformat, (unsigned long) statbuf->st_blksize);
-	} else if (m == 'x') {
+	} มิฉะนั้น ถ้า (m == 'x') {
 		printfs(pformat, human_time(&statbuf->st_atim));
-	} else if (m == 'X') {
+	} มิฉะนั้น ถ้า (m == 'X') {
 		strcat(pformat, TYPE_SIGNED(time_t) ? "ld" : "lu");
 		/* note: (unsigned long) would be wrong:
 		 * imagine (unsigned long64)int32 */
 		printf(pformat, (long) statbuf->st_atime);
-	} else if (m == 'y') {
+	} มิฉะนั้น ถ้า (m == 'y') {
 		printfs(pformat, human_time(&statbuf->st_mtim));
-	} else if (m == 'Y') {
+	} มิฉะนั้น ถ้า (m == 'Y') {
 		strcat(pformat, TYPE_SIGNED(time_t) ? "ld" : "lu");
 		printf(pformat, (long) statbuf->st_mtime);
-	} else if (m == 'z') {
+	} มิฉะนั้น ถ้า (m == 'z') {
 		printfs(pformat, human_time(&statbuf->st_ctim));
-	} else if (m == 'Z') {
+	} มิฉะนั้น ถ้า (m == 'Z') {
 		strcat(pformat, TYPE_SIGNED(time_t) ? "ld" : "lu");
 		printf(pformat, (long) statbuf->st_ctime);
-# if ENABLE_SELINUX
-	} else if (m == 'C' && (option_mask32 & OPT_SELINUX)) {
+# ถ้า ENABLE_SELINUX
+	} มิฉะนั้น ถ้า (m == 'C' && (option_mask32 & OPT_SELINUX)) {
 		printfs(pformat, scontext);
 # endif
-	} else {
+	} มิฉะนั้น {
 		strcatc(pformat, 'c');
 		printf(pformat, m);
 	}
 }
 
-static void print_it(const char *masterformat,
-		const char *filename,
-		void FAST_FUNC (*print_func)(char*, char, const char*, const void* IF_SELINUX(, security_context_t scontext)),
+static void print_it(const var_na *masterformat,
+		const var_na *filename,
+		void FAST_FUNC (*print_func)(var_na*, var_na, const var_na*, const void* IF_SELINUX(, security_context_t scontext)),
 		const void *data
 		IF_SELINUX(, security_context_t scontext))
 {
 	/* Create a working copy of the format string */
-	char *format = xstrdup(masterformat);
+	var_na *format = xstrdup(masterformat);
 	/* Add 2 to accommodate our conversion of the stat '%s' format string
 	 * to the printf '%llu' one.  */
-	char *dest = xmalloc(strlen(format) + 2 + 1);
-	char *b;
+	var_na *dest = xmalloc(strlen(format) + 2 + 1);
+	var_na *b;
 
 	b = format;
-	while (b) {
+	ขณะ (b) {
 		/* Each iteration finds next %spec,
 		 * prints preceding string and handles found %spec
 		 */
 		size_t len;
-		char *p = strchr(b, '%');
-		if (!p) {
+		var_na *p = strchr(b, '%');
+		ถ้า (!p) {
 			/* coreutils 6.3 always prints newline at the end */
 			/*fputs(b, stdout);*/
 			puts(b);
-			break;
+			bha_nga;
 		}
 
 		/* dest = "%<modifiers>" */
@@ -445,16 +445,16 @@ static void print_it(const char *masterformat,
 		p += len;
 		b = p + 1;
 		switch (*p) {
-		case '\0':
+		pak_sa '\0':
 			b = NULL;
 			/* fall through */
-		case '%':
+		pak_sa '%':
 			bb_putchar('%');
-			break;
+			bha_nga;
 		default:
 			/* Completes "%<modifiers>" with specifier and printfs */
 			print_func(dest, *p, filename, data IF_SELINUX(,scontext));
-			break;
+			bha_nga;
 		}
 	}
 
@@ -463,39 +463,39 @@ static void print_it(const char *masterformat,
 }
 #endif  /* FEATURE_STAT_FORMAT */
 
-#if ENABLE_FEATURE_STAT_FILESYSTEM
+#ถ้า ENABLE_FEATURE_STAT_FILESYSTEM
 /* Stat the file system and print what we find.  */
-#if !ENABLE_FEATURE_STAT_FORMAT
+#ถ้า !ENABLE_FEATURE_STAT_FORMAT
 #define do_statfs(filename, format) do_statfs(filename)
 #endif
-static bool do_statfs(const char *filename, const char *format)
+static bool do_statfs(const var_na *filename, const var_na *format)
 {
-	struct statfs statfsbuf;
-#if !ENABLE_FEATURE_STAT_FORMAT
-	const char *format;
+	sa_nracanaa statfs statfsbuf;
+#ถ้า !ENABLE_FEATURE_STAT_FORMAT
+	const var_na *format;
 #endif
-#if ENABLE_SELINUX
+#ถ้า ENABLE_SELINUX
 	security_context_t scontext = NULL;
 
-	if (option_mask32 & OPT_SELINUX) {
-		if ((option_mask32 & OPT_DEREFERENCE
+	ถ้า (option_mask32 & OPT_SELINUX) {
+		ถ้า ((option_mask32 & OPT_DEREFERENCE
 		     ? lgetfilecon(filename, &scontext)
 		     : getfilecon(filename, &scontext)
 		    ) < 0
 		) {
 			bb_simple_perror_msg(filename);
-			return 0;
+			คืน 0;
 		}
 	}
 #endif
-	if (statfs(filename, &statfsbuf) != 0) {
+	ถ้า (statfs(filename, &statfsbuf) != 0) {
 		bb_perror_msg("can't read file system information for '%s'", filename);
-		return 0;
+		คืน 0;
 	}
 
-#if ENABLE_FEATURE_STAT_FORMAT
-	if (format == NULL) {
-# if !ENABLE_SELINUX
+#ถ้า ENABLE_FEATURE_STAT_FORMAT
+	ถ้า (format == NULL) {
+# ถ้า !ENABLE_SELINUX
 		format = (option_mask32 & OPT_TERSE
 			? "%n %i %l %t %s %b %f %a %c %d"
 			: "  File: \"%n\"\n"
@@ -503,7 +503,7 @@ static bool do_statfs(const char *filename, const char *format)
 			  "Block size: %-10s\n"
 			  "Blocks: Total: %-10b Free: %-10f Available: %a\n"
 			  "Inodes: Total: %-10c Free: %d");
-# else
+# มิฉะนั้น
 		format = (option_mask32 & OPT_TERSE
 			? (option_mask32 & OPT_SELINUX
 				? "%n %i %l %t %s %b %f %a %c %d %C"
@@ -524,7 +524,7 @@ static bool do_statfs(const char *filename, const char *format)
 # endif /* SELINUX */
 	}
 	print_it(format, filename, print_statfs, &statfsbuf IF_SELINUX(, scontext));
-#else /* !FEATURE_STAT_FORMAT */
+#มิฉะนั้น /* !FEATURE_STAT_FORMAT */
 	format = (option_mask32 & OPT_TERSE
 		? "%s %llx %lu "
 		: "  File: \"%s\"\n"
@@ -534,12 +534,12 @@ static bool do_statfs(const char *filename, const char *format)
 	       get_f_fsid(&statfsbuf),
 	       statfsbuf.f_namelen);
 
-	if (option_mask32 & OPT_TERSE)
+	ถ้า (option_mask32 & OPT_TERSE)
 		printf("%lx ", (unsigned long) statfsbuf.f_type);
-	else
+	มิฉะนั้น
 		printf("Type: %s\n", human_fstype(statfsbuf.f_type));
 
-# if !ENABLE_SELINUX
+# ถ้า !ENABLE_SELINUX
 	format = (option_mask32 & OPT_TERSE
 		? "%lu %llu %llu %llu %llu %llu\n"
 		: "Block size: %-10lu\n"
@@ -552,7 +552,7 @@ static bool do_statfs(const char *filename, const char *format)
 	       (unsigned long long) statfsbuf.f_bavail,
 	       (unsigned long long) statfsbuf.f_files,
 	       (unsigned long long) statfsbuf.f_ffree);
-# else
+# มิฉะนั้น
 	format = (option_mask32 & OPT_TERSE
 		? (option_mask32 & OPT_SELINUX ? "%lu %llu %llu %llu %llu %llu %C\n" : "%lu %llu %llu %llu %llu %llu\n")
 		: (option_mask32 & OPT_SELINUX
@@ -574,47 +574,47 @@ static bool do_statfs(const char *filename, const char *format)
 		(unsigned long long) statfsbuf.f_ffree,
 		scontext);
 
-	if (scontext)
+	ถ้า (scontext)
 		freecon(scontext);
 # endif
 #endif  /* FEATURE_STAT_FORMAT */
-	return 1;
+	คืน 1;
 }
 #endif  /* FEATURE_STAT_FILESYSTEM */
 
 /* stat the file and print what we find */
-#if !ENABLE_FEATURE_STAT_FORMAT
+#ถ้า !ENABLE_FEATURE_STAT_FORMAT
 #define do_stat(filename, format) do_stat(filename)
 #endif
-static bool do_stat(const char *filename, const char *format)
+static bool do_stat(const var_na *filename, const var_na *format)
 {
-	struct stat statbuf;
-#if ENABLE_SELINUX
+	sa_nracanaa stat statbuf;
+#ถ้า ENABLE_SELINUX
 	security_context_t scontext = NULL;
 
-	if (option_mask32 & OPT_SELINUX) {
-		if ((option_mask32 & OPT_DEREFERENCE
+	ถ้า (option_mask32 & OPT_SELINUX) {
+		ถ้า ((option_mask32 & OPT_DEREFERENCE
 		     ? lgetfilecon(filename, &scontext)
 		     : getfilecon(filename, &scontext)
 		    ) < 0
 		) {
 			bb_simple_perror_msg(filename);
-			return 0;
+			คืน 0;
 		}
 	}
 #endif
-	if ((option_mask32 & OPT_DEREFERENCE ? stat : lstat) (filename, &statbuf) != 0) {
+	ถ้า ((option_mask32 & OPT_DEREFERENCE ? stat : lstat) (filename, &statbuf) != 0) {
 		bb_perror_msg("can't stat '%s'", filename);
-		return 0;
+		คืน 0;
 	}
 
-#if ENABLE_FEATURE_STAT_FORMAT
-	if (format == NULL) {
-# if !ENABLE_SELINUX
-		if (option_mask32 & OPT_TERSE) {
+#ถ้า ENABLE_FEATURE_STAT_FORMAT
+	ถ้า (format == NULL) {
+# ถ้า !ENABLE_SELINUX
+		ถ้า (option_mask32 & OPT_TERSE) {
 			format = "%n %s %b %f %u %g %D %i %h %t %T %X %Y %Z %o";
-		} else {
-			if (S_ISBLK(statbuf.st_mode) || S_ISCHR(statbuf.st_mode)) {
+		} มิฉะนั้น {
+			ถ้า (S_ISBLK(statbuf.st_mode) || S_ISCHR(statbuf.st_mode)) {
 				format =
 					"  File: %N\n"
 					"  Size: %-10s\tBlocks: %-10b IO Block: %-6o %F\n"
@@ -622,7 +622,7 @@ static bool do_stat(const char *filename, const char *format)
 					" Device type: %t,%T\n"
 					"Access: (%04a/%10.10A)  Uid: (%5u/%8U)   Gid: (%5g/%8G)\n"
 					"Access: %x\n" "Modify: %y\n" "Change: %z";
-			} else {
+			} มิฉะนั้น {
 				format =
 					"  File: %N\n"
 					"  Size: %-10s\tBlocks: %-10b IO Block: %-6o %F\n"
@@ -631,15 +631,15 @@ static bool do_stat(const char *filename, const char *format)
 					"Access: %x\n" "Modify: %y\n" "Change: %z";
 			}
 		}
-# else
-		if (option_mask32 & OPT_TERSE) {
+# มิฉะนั้น
+		ถ้า (option_mask32 & OPT_TERSE) {
 			format = (option_mask32 & OPT_SELINUX ?
 				"%n %s %b %f %u %g %D %i %h %t %T %X %Y %Z %o %C\n"
 				:
 				"%n %s %b %f %u %g %D %i %h %t %T %X %Y %Z %o\n"
 				);
-		} else {
-			if (S_ISBLK(statbuf.st_mode) || S_ISCHR(statbuf.st_mode)) {
+		} มิฉะนั้น {
+			ถ้า (S_ISBLK(statbuf.st_mode) || S_ISCHR(statbuf.st_mode)) {
 				format = (option_mask32 & OPT_SELINUX ?
 					"  File: %N\n"
 					"  Size: %-10s\tBlocks: %-10b IO Block: %-6o %F\n"
@@ -656,7 +656,7 @@ static bool do_stat(const char *filename, const char *format)
 					"Access: (%04a/%10.10A)  Uid: (%5u/%8U)   Gid: (%5g/%8G)\n"
 					"Access: %x\n" "Modify: %y\n" "Change: %z"
 					);
-			} else {
+			} มิฉะนั้น {
 				format = (option_mask32 & OPT_SELINUX ?
 					"  File: %N\n"
 					"  Size: %-10s\tBlocks: %-10b IO Block: %-6o %F\n"
@@ -676,8 +676,8 @@ static bool do_stat(const char *filename, const char *format)
 # endif
 	}
 	print_it(format, filename, print_stat, &statbuf IF_SELINUX(, scontext));
-#else	/* FEATURE_STAT_FORMAT */
-	if (option_mask32 & OPT_TERSE) {
+#มิฉะนั้น	/* FEATURE_STAT_FORMAT */
+	ถ้า (option_mask32 & OPT_TERSE) {
 		printf("%s %llu %llu %lx %lu %lu %llx %llu %lu %lx %lx %lu %lu %lu %lu"
 		       IF_NOT_SELINUX("\n"),
 		       filename,
@@ -696,27 +696,27 @@ static bool do_stat(const char *filename, const char *format)
 		       (unsigned long) statbuf.st_ctime,
 		       (unsigned long) statbuf.st_blksize
 		);
-# if ENABLE_SELINUX
-		if (option_mask32 & OPT_SELINUX)
+# ถ้า ENABLE_SELINUX
+		ถ้า (option_mask32 & OPT_SELINUX)
 			printf(" %s\n", scontext);
-		else
+		มิฉะนั้น
 			bb_putchar('\n');
 # endif
-	} else {
-		char modestr[12];
-		char *linkname = NULL;
-		struct passwd *pw_ent;
-		struct group *gw_ent;
+	} มิฉะนั้น {
+		var_na modestr[12];
+		var_na *linkname = NULL;
+		sa_nracanaa passwd *pw_ent;
+		sa_nracanaa group *gw_ent;
 
 		gw_ent = getgrgid(statbuf.st_gid);
 		pw_ent = getpwuid(statbuf.st_uid);
 
-		if (S_ISLNK(statbuf.st_mode))
+		ถ้า (S_ISLNK(statbuf.st_mode))
 			linkname = xmalloc_readlink_or_warn(filename);
-		if (linkname) {
+		ถ้า (linkname) {
 			printf("  File: '%s' -> '%s'\n", filename, linkname);
 			free(linkname);
-		} else {
+		} มิฉะนั้น {
 			printf("  File: '%s'\n", filename);
 		}
 
@@ -730,11 +730,11 @@ static bool do_stat(const char *filename, const char *format)
 		       (unsigned long long) statbuf.st_dev,
 		       (unsigned long long) statbuf.st_ino,
 		       (unsigned long) statbuf.st_nlink);
-		if (S_ISBLK(statbuf.st_mode) || S_ISCHR(statbuf.st_mode))
+		ถ้า (S_ISBLK(statbuf.st_mode) || S_ISCHR(statbuf.st_mode))
 			printf(" Device type: %lx,%lx\n",
 			       (unsigned long) major(statbuf.st_rdev),
 			       (unsigned long) minor(statbuf.st_rdev));
-		else
+		มิฉะนั้น
 			bb_putchar('\n');
 		printf("Access: (%04lo/%10.10s)  Uid: (%5lu/%8s)   Gid: (%5lu/%8s)\n",
 		       (unsigned long) (statbuf.st_mode & (S_ISUID|S_ISGID|S_ISVTX|S_IRWXU|S_IRWXG|S_IRWXO)),
@@ -743,8 +743,8 @@ static bool do_stat(const char *filename, const char *format)
 		       (pw_ent != NULL) ? pw_ent->pw_name : "UNKNOWN",
 		       (unsigned long) statbuf.st_gid,
 		       (gw_ent != NULL) ? gw_ent->gr_name : "UNKNOWN");
-# if ENABLE_SELINUX
-		if (option_mask32 & OPT_SELINUX)
+# ถ้า ENABLE_SELINUX
+		ถ้า (option_mask32 & OPT_SELINUX)
 			printf("   S_Context: %s\n", scontext);
 # endif
 		printf("Access: %s\n", human_time(&statbuf.st_atim));
@@ -752,17 +752,17 @@ static bool do_stat(const char *filename, const char *format)
 		printf("Change: %s\n", human_time(&statbuf.st_ctim));
 	}
 #endif  /* FEATURE_STAT_FORMAT */
-	return 1;
+	คืน 1;
 }
 
-int stat_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int stat_main(int argc UNUSED_PARAM, char **argv)
+จำนวนเต็ม stat_main(จำนวนเต็ม argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+จำนวนเต็ม stat_main(จำนวนเต็ม argc UNUSED_PARAM, var_na **argv)
 {
-	IF_FEATURE_STAT_FORMAT(char *format = NULL;)
-	int i;
-	int ok;
+	IF_FEATURE_STAT_FORMAT(var_na *format = NULL;)
+	จำนวนเต็ม i;
+	จำนวนเต็ม ok;
 	statfunc_ptr statfunc = do_stat;
-#if ENABLE_FEATURE_STAT_FILESYSTEM || ENABLE_SELINUX
+#ถ้า ENABLE_FEATURE_STAT_FILESYSTEM || ENABLE_SELINUX
 	unsigned opts;
 
 	opts =
@@ -775,19 +775,19 @@ int stat_main(int argc UNUSED_PARAM, char **argv)
 		"\0" "-1" /* min one arg */
 		IF_FEATURE_STAT_FORMAT(,&format)
 	);
-#if ENABLE_FEATURE_STAT_FILESYSTEM
-	if (opts & OPT_FILESYS) /* -f */
+#ถ้า ENABLE_FEATURE_STAT_FILESYSTEM
+	ถ้า (opts & OPT_FILESYS) /* -f */
 		statfunc = do_statfs;
 #endif
-#if ENABLE_SELINUX
-	if (opts & OPT_SELINUX) {
+#ถ้า ENABLE_SELINUX
+	ถ้า (opts & OPT_SELINUX) {
 		selinux_or_die();
 	}
 #endif
 	ok = 1;
 	argv += optind;
-	for (i = 0; argv[i]; ++i)
+	สำหรับ (i = 0; argv[i]; ++i)
 		ok &= statfunc(argv[i] IF_FEATURE_STAT_FORMAT(, format));
 
-	return (ok ? EXIT_SUCCESS : EXIT_FAILURE);
+	คืน (ok ? EXIT_SUCCESS : EXIT_FAILURE);
 }

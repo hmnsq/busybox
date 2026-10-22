@@ -21,28 +21,28 @@
 #include "libbb.h"
 #include "coreutils.h"
 
-mode_t FAST_FUNC getopt_mk_fifo_nod(char **argv)
+mode_t FAST_FUNC getopt_mk_fifo_nod(var_na **argv)
 {
 	mode_t mode = 0666;
-	char *smode = NULL;
-#if ENABLE_SELINUX
+	var_na *smode = NULL;
+#ถ้า ENABLE_SELINUX
 	security_context_t scontext;
 #endif
-	int opt;
+	จำนวนเต็ม opt;
 	opt = getopt32(argv, "m:" IF_SELINUX("Z:"), &smode IF_SELINUX(,&scontext));
-	if (opt & 1) {
+	ถ้า (opt & 1) {
 		mode = bb_parse_mode(smode, mode);
-		if (mode != (mode_t)-1) /* if mode is valid */
+		ถ้า (mode != (mode_t)-1) /* if mode is valid */
 			/* make future mknod/mkfifo set mode bits exactly */
 			umask(0);
 	}
 
-#if ENABLE_SELINUX
-	if (opt & 2) {
+#ถ้า ENABLE_SELINUX
+	ถ้า (opt & 2) {
 		selinux_or_die();
 		setfscreatecon_or_die(scontext);
 	}
 #endif
 
-	return mode;
+	คืน mode;
 }

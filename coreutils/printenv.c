@@ -27,30 +27,30 @@
 
 /* This is a NOFORK applet. Be very careful! */
 
-int printenv_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int printenv_main(int argc UNUSED_PARAM, char **argv)
+จำนวนเต็ม printenv_main(จำนวนเต็ม argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+จำนวนเต็ม printenv_main(จำนวนเต็ม argc UNUSED_PARAM, var_na **argv)
 {
-	int exit_code = EXIT_SUCCESS;
+	จำนวนเต็ม exit_code = EXIT_SUCCESS;
 
 	/* no variables specified, show whole env */
-	if (!argv[1]) {
-		char **e = environ;
+	ถ้า (!argv[1]) {
+		var_na **e = environ;
 
 		/* environ can be NULL! (for example, after clearenv())
 		 * Check for that:
 		 */
-		if (e)
-			while (*e)
+		ถ้า (e)
+			ขณะ (*e)
 				puts(*e++);
-	} else {
+	} มิฉะนั้น {
 		/* search for specified variables and print them out if found */
-		char *arg, *env;
+		var_na *arg, *env;
 
-		while ((arg = *++argv) != NULL) {
+		ขณะ ((arg = *++argv) != NULL) {
 			env = getenv(arg);
-			if (env)
+			ถ้า (env)
 				puts(env);
-			else
+			มิฉะนั้น
 				exit_code = EXIT_FAILURE;
 		}
 	}

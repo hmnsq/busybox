@@ -34,25 +34,25 @@
 
 /* This is a NOEXEC applet. Be very careful! */
 
-int mkfifo_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int mkfifo_main(int argc UNUSED_PARAM, char **argv)
+จำนวนเต็ม mkfifo_main(จำนวนเต็ม argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+จำนวนเต็ม mkfifo_main(จำนวนเต็ม argc UNUSED_PARAM, var_na **argv)
 {
 	mode_t mode;
-	int retval = EXIT_SUCCESS;
+	จำนวนเต็ม retval = EXIT_SUCCESS;
 
 	mode = getopt_mk_fifo_nod(argv);
 
 	argv += optind;
-	if (!*argv) {
+	ถ้า (!*argv) {
 		bb_show_usage();
 	}
 
 	do {
-		if (mkfifo(*argv, mode) < 0) {
+		ถ้า (mkfifo(*argv, mode) < 0) {
 			bb_simple_perror_msg(*argv);  /* Avoid multibyte problems. */
 			retval = EXIT_FAILURE;
 		}
-	} while (*++argv);
+	} ขณะ (*++argv);
 
-	return retval;
+	คืน retval;
 }

@@ -32,22 +32,22 @@
 
 #include "libbb.h"
 
-static void paste_files(FILE** files, int file_cnt, char* delims, int del_cnt)
+static void paste_files(FILE** files, จำนวนเต็ม file_cnt, var_na* delims, จำนวนเต็ม del_cnt)
 {
-	char *line;
-	char delim;
-	int active_files = file_cnt;
-	int i;
+	var_na *line;
+	var_na delim;
+	จำนวนเต็ม active_files = file_cnt;
+	จำนวนเต็ม i;
 
-	while (active_files > 0) {
-		int del_idx = 0;
+	ขณะ (active_files > 0) {
+		จำนวนเต็ม del_idx = 0;
 
-		for (i = 0; i < file_cnt; ++i) {
-			if (files[i] == NULL)
+		สำหรับ (i = 0; i < file_cnt; ++i) {
+			ถ้า (files[i] == NULL)
 				continue;
 
 			line = xmalloc_fgetline(files[i]);
-			if (!line) {
+			ถ้า (!line) {
 				fclose_if_not_stdin(files[i]);
 				files[i] = NULL;
 				--active_files;
@@ -56,40 +56,40 @@ static void paste_files(FILE** files, int file_cnt, char* delims, int del_cnt)
 			fputs_stdout(line);
 			free(line);
 			delim = '\n';
-			if (i != file_cnt - 1) {
+			ถ้า (i != file_cnt - 1) {
 				delim = delims[del_idx++];
-				if (del_idx == del_cnt)
+				ถ้า (del_idx == del_cnt)
 					del_idx = 0;
 			}
-			if (delim != '\0')
+			ถ้า (delim != '\0')
 				fputc(delim, stdout);
 		}
 	}
 }
 
-static void paste_files_separate(FILE** files, char* delims, int del_cnt)
+static void paste_files_separate(FILE** files, var_na* delims, จำนวนเต็ม del_cnt)
 {
-	char *line, *next_line;
-	char delim;
-	int i;
+	var_na *line, *next_line;
+	var_na delim;
+	จำนวนเต็ม i;
 
-	for (i = 0; files[i]; ++i) {
-		int del_idx = 0;
+	สำหรับ (i = 0; files[i]; ++i) {
+		จำนวนเต็ม del_idx = 0;
 
 		line = NULL;
-		while ((next_line = xmalloc_fgetline(files[i])) != NULL) {
-			if (line) {
+		ขณะ ((next_line = xmalloc_fgetline(files[i])) != NULL) {
+			ถ้า (line) {
 				fputs_stdout(line);
 				free(line);
 				delim = delims[del_idx++];
-				if (del_idx == del_cnt)
+				ถ้า (del_idx == del_cnt)
 					del_idx = 0;
-				if (delim != '\0')
+				ถ้า (delim != '\0')
 					fputc(delim, stdout);
 			}
 			line = next_line;
 		}
-		if (line) {
+		ถ้า (line) {
 			/* coreutils adds \n even if this is a final line
 			 * of the last file and it was not \n-terminated.
 			 */
@@ -103,19 +103,19 @@ static void paste_files_separate(FILE** files, char* delims, int del_cnt)
 #define PASTE_OPT_DELIMITERS (1 << 0)
 #define PASTE_OPT_SEPARATE   (1 << 1)
 
-int paste_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int paste_main(int argc UNUSED_PARAM, char **argv)
+จำนวนเต็ม paste_main(จำนวนเต็ม argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+จำนวนเต็ม paste_main(จำนวนเต็ม argc UNUSED_PARAM, var_na **argv)
 {
-	char *delims = (char*)"\t";
-	int del_cnt = 1;
+	var_na *delims = (var_na*)"\t";
+	จำนวนเต็ม del_cnt = 1;
 	unsigned opt;
-	int i;
+	จำนวนเต็ม i;
 
 	opt = getopt32(argv, "d:s", &delims);
 	argv += optind;
 
-	if (opt & PASTE_OPT_DELIMITERS) {
-		if (!delims[0])
+	ถ้า (opt & PASTE_OPT_DELIMITERS) {
+		ถ้า (!delims[0])
 			bb_simple_error_msg_and_die("-d '' is not supported");
 		/* unknown mappings are not changed: "\z" -> '\\' 'z' */
 		/* trailing backslash, if any, is preserved */
@@ -123,17 +123,17 @@ int paste_main(int argc UNUSED_PARAM, char **argv)
 		/* note: handle NUL properly (do not stop at it!): try -d'\t\0\t' */
 	}
 
-	if (!argv[0])
-		(--argv)[0] = (char*) "-";
-	for (i = 0; argv[i]; ++i) {
+	ถ้า (!argv[0])
+		(--argv)[0] = (var_na*) "-";
+	สำหรับ (i = 0; argv[i]; ++i) {
 		argv[i] = (void*) fopen_or_warn_stdin(argv[i]);
-		if (!argv[i])
+		ถ้า (!argv[i])
 			xfunc_die();
 	}
 
-	if (opt & PASTE_OPT_SEPARATE)
+	ถ้า (opt & PASTE_OPT_SEPARATE)
 		paste_files_separate((FILE**)argv, delims, del_cnt);
-	else
+	มิฉะนั้น
 		paste_files((FILE**)argv, i, delims, del_cnt);
 
 	fflush_stdout_and_exit(0);
