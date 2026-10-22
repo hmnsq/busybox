@@ -27,127 +27,127 @@
 //usage:       "b\n"
 //usage:       "c\n"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#अन्तर्भाव "libbb.h"
+#अन्तर्भाव "common_bufsiz.h"
 
-struct node {
-	unsigned in_count;
-	unsigned out_count;
-	struct node **out;
-	char name[1];
+संरचना गाठ {
+	unsigned in_मोजणी;
+	unsigned out_मोजणी;
+	संरचना गाठ **out;
+	वर्ण name[1];
 };
 
-struct globals {
-	struct node **nodes;
+संरचना globals {
+	संरचना गाठ **nodes;
 	unsigned nodes_len;
 };
-#define G (*(struct globals*)bb_common_bufsiz1)
-#define INIT_G() do { \
+#define G (*(संरचना globals*)bb_common_bufsiz1)
+#define INIT_G() कुरु { \
 	setup_common_bufsiz(); \
-	BUILD_BUG_ON(sizeof(G) > COMMON_BUFSIZE); \
-	G.nodes = NULL; \
+	BUILD_BUG_ON(परिमाण(G) > COMMON_BUFSIZE); \
+	G.nodes = रिक्त; \
 	G.nodes_len = 0; \
-} while (0)
+} यावत् (0)
 
-static struct node *
-get_node(const char *name)
+स्थिर संरचना गाठ *
+get_गाठ(ध्रुव वर्ण *name)
 {
-	struct node *n;
+	संरचना गाठ *n;
 	unsigned a = 0;
 	unsigned b = G.nodes_len;
 
 	/* Binary search for name */
-	while (a != b) {
+	यावत् (a != b) {
 		unsigned m = (a + b) / 2;
-		int cmp = strcmp(name, G.nodes[m]->name);
-		if (cmp == 0)
-			return G.nodes[m]; /* found */
-		if (cmp < 0) {
+		पूर्णाङ्क cmp = strcmp(name, G.nodes[m]->name);
+		यदि (cmp == 0)
+			प्रत्यागम G.nodes[m]; /* found */
+		यदि (cmp < 0) {
 			b = m;
-		} else {
+		} अन्यथा {
 			a = m + 1;
 		}
 	}
 
 	/* Allocate new node */
-	n = xzalloc(sizeof(*n) + strlen(name));
+	n = xzalloc(परिमाण(*n) + strlen(name));
 	//n->in_count = 0;
 	//n->out_count = 0;
 	//n->out = NULL;
 	strcpy(n->name, name);
 
 	/* Insert to maintain sort */
-	G.nodes = xrealloc(G.nodes, (G.nodes_len + 1) * sizeof(*G.nodes));
+	G.nodes = xrealloc(G.nodes, (G.nodes_len + 1) * परिमाण(*G.nodes));
 	memmove(&G.nodes[a + 1], &G.nodes[a],
-		(G.nodes_len - a) * sizeof(*G.nodes));
+		(G.nodes_len - a) * परिमाण(*G.nodes));
 	G.nodes[a] = n;
 	G.nodes_len++;
-	return n;
+	प्रत्यागम n;
 }
 
-static void
-add_edge(struct node *a, struct node *b)
+स्थिर शून्य
+add_edge(संरचना गाठ *a, संरचना गाठ *b)
 {
-	a->out = xrealloc_vector(a->out, 6, a->out_count);
-	a->out[a->out_count++] = b;
-	b->in_count++;
+	a->out = xrealloc_vector(a->out, 6, a->out_मोजणी);
+	a->out[a->out_मोजणी++] = b;
+	b->in_मोजणी++;
 }
 
-int tsort_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int tsort_main(int argc UNUSED_PARAM, char **argv)
+पूर्णाङ्क tsort_main(पूर्णाङ्क argc, वर्ण **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णाङ्क tsort_main(पूर्णाङ्क argc UNUSED_PARAM, वर्ण **argv)
 {
-	char *line;
+	वर्ण *ओळ;
 	size_t linesz;
 	ssize_t len;
-	struct node *a;
-	int cycles;
+	संरचना गाठ *a;
+	पूर्णाङ्क cycles;
 	unsigned i;
-#if ENABLE_FEATURE_CLEAN_UP
+#यदि ENABLE_FEATURE_CLEAN_UP
 	unsigned max_len;
 #endif
 
 	INIT_G();
 
-	if (argv[1]) {
-		if (argv[2])
+	यदि (argv[1]) {
+		यदि (argv[2])
 			bb_show_usage();
-		if (NOT_LONE_DASH(argv[1])) {
+		यदि (NOT_LONE_DASH(argv[1])) {
 			close(STDIN_FILENO); /* == 0 */
 			xopen(argv[1], O_RDONLY); /* fd will be 0 */
 		}
 	}
 
 	/* Read in words separated by <blank>s */
-	a = NULL;
-	line = NULL;
+	a = रिक्त;
+	ओळ = रिक्त;
 	linesz = 0;
-	while ((len = getline(&line, &linesz, stdin)) != -1) {
-		char *s = line;
-		while (*(s = skip_whitespace(s)) != '\0') {
-			struct node *b;
-			char *word;
+	यावत् ((len = getline(&ओळ, &linesz, stdin)) != -1) {
+		वर्ण *s = ओळ;
+		यावत् (*(s = skip_whitespace(s)) != '\0') {
+			संरचना गाठ *b;
+			वर्ण *word;
 
 			word = s;
 			s = skip_non_whitespace(s);
-			if (*s)
+			यदि (*s)
 				*s++ = '\0';
 
 			/* Create nodes and edges for each word pair */
-			b = get_node(word);
-			if (!a) {
+			b = get_गाठ(word);
+			यदि (!a) {
 				a = b;
-			} else {
-				if (a != b)
+			} अन्यथा {
+				यदि (a != b)
 					add_edge(a, b);
-				a = NULL;
+				a = रिक्त;
 			}
 		}
 	}
 // Most other tools do not check for input read error (treat them as EOF)
 //	die_if_ferror(in, input_filename);
-	if (a)
-		bb_simple_error_msg_and_die("odd input");
-	free(line);
+	यदि (a)
+		bb_simple_error_संदेश_and_die("odd input");
+	मुक्त(ओळ);
 
 	/*
 	 * Kahn's algorithm:
@@ -156,46 +156,46 @@ int tsort_main(int argc UNUSED_PARAM, char **argv)
 	 *   - if any nodes are left, they form cycles.
 	 */
 	cycles = 0;
-#if ENABLE_FEATURE_CLEAN_UP
+#यदि ENABLE_FEATURE_CLEAN_UP
 	max_len = G.nodes_len;
 #endif
-	while (G.nodes_len) {
-		struct node *n;
+	यावत् (G.nodes_len) {
+		संरचना गाठ *n;
 
 		/* Search for first node with no incoming edges */
-		for (i = 0; i < G.nodes_len; i++) {
-			if (!G.nodes[i]->in_count)
-				break;
+		प्रति (i = 0; i < G.nodes_len; i++) {
+			यदि (!G.nodes[i]->in_मोजणी)
+				भङ्ग;
 		}
-		if (i == G.nodes_len) {
+		यदि (i == G.nodes_len) {
 			/* Must be a cycle; arbitraily break it at node 0 */
 			cycles++;
 			i = 0;
 #ifndef TINY
-			bb_error_msg("cycle at %s", G.nodes[i]->name);
+			bb_error_संदेश("cycle at %s", G.nodes[i]->name);
 #endif
 		}
 
 		/* Remove the node (need no longer maintain sort) */
 		n = G.nodes[i];
 		G.nodes[i] = G.nodes[--G.nodes_len];
-#if ENABLE_FEATURE_CLEAN_UP
+#यदि ENABLE_FEATURE_CLEAN_UP
 		/* Keep reference to removed node so it can be freed */
 		G.nodes[G.nodes_len] = n;
 #endif
 
 		/* And remove its outgoing edges */
-		for (i = 0; i < n->out_count; i++)
-			n->out[i]->in_count--;
+		प्रति (i = 0; i < n->out_मोजणी; i++)
+			n->out[i]->in_मोजणी--;
 
 		puts(n->name);
 	}
-#if ENABLE_FEATURE_CLEAN_UP
-	for (i = 0; i < max_len; i++) {
-		free(G.nodes[i]->out);
-		free(G.nodes[i]);
+#यदि ENABLE_FEATURE_CLEAN_UP
+	प्रति (i = 0; i < max_len; i++) {
+		मुक्त(G.nodes[i]->out);
+		मुक्त(G.nodes[i]);
 	}
-	free(G.nodes);
+	मुक्त(G.nodes);
 #endif
 
 	fflush_stdout_and_exit(cycles ? 1 : 0);

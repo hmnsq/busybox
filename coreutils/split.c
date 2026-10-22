@@ -40,11 +40,11 @@
 //usage:       "$ split TODO foo\n"
 //usage:       "$ cat TODO | split -a 2 -l 2 TODO_\n"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#अन्तर्भाव "libbb.h"
+#अन्तर्भाव "common_bufsiz.h"
 
-#if ENABLE_FEATURE_SPLIT_FANCY
-static const struct suffix_mult split_suffixes[] ALIGN_SUFFIX = {
+#यदि ENABLE_FEATURE_SPLIT_FANCY
+स्थिर ध्रुव संरचना suffix_mult split_suffixes[] ALIGN_SUFFIX = {
 	{ "b", 512 },
 	{ "k", 1024 },
 	{ "m", 1024*1024 },
@@ -56,116 +56,116 @@ static const struct suffix_mult split_suffixes[] ALIGN_SUFFIX = {
 /* Increment the suffix part of the filename.
  * Returns NULL if we are out of filenames.
  */
-static char *next_file(char *old, unsigned suffix_len)
+स्थिर वर्ण *next_file(वर्ण *old, unsigned suffix_len)
 {
 	size_t end = strlen(old);
 	unsigned i = 1;
-	char *curr;
+	वर्ण *curr;
 
-	while (1) {
+	यावत् (1) {
 		curr = old + end - i;
-		if (*curr < 'z') {
+		यदि (*curr < 'z') {
 			*curr += 1;
-			break;
+			भङ्ग;
 		}
 		i++;
-		if (i > suffix_len) {
-			return NULL;
+		यदि (i > suffix_len) {
+			प्रत्यागम रिक्त;
 		}
 		*curr = 'a';
 	}
 
-	return old;
+	प्रत्यागम old;
 }
 
 #define read_buffer bb_common_bufsiz1
-enum { READ_BUFFER_SIZE = COMMON_BUFSIZE - 1 };
+गणना { READ_BUFFER_SIZE = COMMON_BUFSIZE - 1 };
 
 #define SPLIT_OPT_l (1<<0)
 #define SPLIT_OPT_b (1<<1)
 #define SPLIT_OPT_a (1<<2)
 
-int split_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int split_main(int argc UNUSED_PARAM, char **argv)
+पूर्णाङ्क split_main(पूर्णाङ्क argc, वर्ण **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णाङ्क split_main(पूर्णाङ्क argc UNUSED_PARAM, वर्ण **argv)
 {
 	unsigned suffix_len = 2;
-	char *pfx;
-	char *count_p;
-	const char *sfx;
+	वर्ण *pfx;
+	वर्ण *मोजणी_p;
+	ध्रुव वर्ण *sfx;
 	off_t cnt = 1000;
 	off_t remaining = 0;
 	unsigned opt;
 	ssize_t bytes_read, to_write;
-	char *src;
+	वर्ण *src;
 
 	setup_common_bufsiz();
 
 	opt = getopt32(argv, "^"
 			"l:b:a:+" /* -a N */
 			"\0" "?2"/*max 2 args*/,
-			&count_p, &count_p, &suffix_len
+			&मोजणी_p, &मोजणी_p, &suffix_len
 	);
 
-	if (opt & SPLIT_OPT_l)
-		cnt = XATOOFF(count_p);
-	if (opt & SPLIT_OPT_b) // FIXME: also needs XATOOFF
-		cnt = xatoull_sfx(count_p,
+	यदि (opt & SPLIT_OPT_l)
+		cnt = XATOOFF(मोजणी_p);
+	यदि (opt & SPLIT_OPT_b) // FIXME: also needs XATOOFF
+		cnt = xatoull_sfx(मोजणी_p,
 				IF_FEATURE_SPLIT_FANCY(split_suffixes)
 				IF_NOT_FEATURE_SPLIT_FANCY(km_suffixes)
 		);
 	sfx = "x";
 
 	argv += optind;
-	if (argv[0]) {
-		int fd;
-		if (argv[1])
+	यदि (argv[0]) {
+		पूर्णाङ्क fd;
+		यदि (argv[1])
 			sfx = argv[1];
 		fd = xopen_stdin(argv[0]);
 		xmove_fd(fd, STDIN_FILENO);
-	} else {
-		argv[0] = (char *) bb_msg_standard_input;
+	} अन्यथा {
+		argv[0] = (वर्ण *) bb_संदेश_standard_आदान;
 	}
 
-	if (NAME_MAX < strlen(sfx) + suffix_len)
-		bb_simple_error_msg_and_die("suffix too long");
+	यदि (NAME_MAX < strlen(sfx) + suffix_len)
+		bb_simple_error_संदेश_and_die("suffix too long");
 
 	{
-		char *char_p = xzalloc(suffix_len + 1);
+		वर्ण *char_p = xzalloc(suffix_len + 1);
 		memset(char_p, 'a', suffix_len);
 		pfx = xasprintf("%s%s", sfx, char_p);
-		if (ENABLE_FEATURE_CLEAN_UP)
-			free(char_p);
+		यदि (ENABLE_FEATURE_CLEAN_UP)
+			मुक्त(char_p);
 	}
 
-	while (1) {
+	यावत् (1) {
 		bytes_read = safe_read(STDIN_FILENO, read_buffer, READ_BUFFER_SIZE);
-		if (!bytes_read)
-			break;
-		if (bytes_read < 0)
-			bb_simple_perror_msg_and_die(argv[0]);
+		यदि (!bytes_read)
+			भङ्ग;
+		यदि (bytes_read < 0)
+			bb_simple_perror_संदेश_and_die(argv[0]);
 		src = read_buffer;
-		do {
-			if (!remaining) {
-				if (!pfx)
-					bb_simple_error_msg_and_die("suffixes exhausted");
+		कुरु {
+			यदि (!remaining) {
+				यदि (!pfx)
+					bb_simple_error_संदेश_and_die("suffixes exhausted");
 				xmove_fd(xopen(pfx, O_WRONLY | O_CREAT | O_TRUNC), 1);
 				pfx = next_file(pfx, suffix_len);
 				remaining = cnt;
 			}
 
-			if (opt & SPLIT_OPT_b) {
+			यदि (opt & SPLIT_OPT_b) {
 				/* split by bytes */
 				to_write = (bytes_read < remaining) ? bytes_read : remaining;
 				remaining -= to_write;
-			} else {
+			} अन्यथा {
 				/* split by lines */
 				/* can be sped up by using _memrchr_
 				 * and writing many lines at once... */
-				char *end = memchr(src, '\n', bytes_read);
-				if (end) {
+				वर्ण *end = memchr(src, '\n', bytes_read);
+				यदि (end) {
 					--remaining;
 					to_write = end - src + 1;
-				} else {
+				} अन्यथा {
 					to_write = bytes_read;
 				}
 			}
@@ -173,7 +173,7 @@ int split_main(int argc UNUSED_PARAM, char **argv)
 			xwrite(STDOUT_FILENO, src, to_write);
 			bytes_read -= to_write;
 			src += to_write;
-		} while (bytes_read);
+		} यावत् (bytes_read);
 	}
-	return EXIT_SUCCESS;
+	प्रत्यागम EXIT_SUCCESS;
 }
