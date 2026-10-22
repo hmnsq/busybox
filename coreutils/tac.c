@@ -31,21 +31,21 @@
 
 /* This is a NOEXEC applet. Be very careful! */
 
-struct lstring {
-	int size;
-	char buf[1];
+sa_nracanaa lstring {
+	ຈຳນວນເຕັມ size;
+	var_na buf[1];
 };
 
-int tac_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int tac_main(int argc UNUSED_PARAM, char **argv)
+ຈຳນວນເຕັມ tac_main(ຈຳນວນເຕັມ argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+ຈຳນວນເຕັມ tac_main(ຈຳນວນເຕັມ argc UNUSED_PARAM, var_na **argv)
 {
-	char **name;
+	var_na **name;
 	FILE *f;
-	struct lstring *line = NULL;
+	sa_nracanaa lstring *line = NULL;
 	llist_t *list = NULL;
-	int retval = EXIT_SUCCESS;
+	ຈຳນວນເຕັມ retval = EXIT_SUCCESS;
 
-#if ENABLE_DESKTOP
+#ຖ້າ ENABLE_DESKTOP
 /* tac from coreutils 6.9 supports:
        -b, --before
               attach the separator before instead of after
@@ -57,22 +57,22 @@ We support none, but at least we will complain or handle "--":
 */
 	getopt32(argv, "");
 	argv += optind;
-#else
+#ບໍ່ດັ່ງນັ້ນ
 	argv++;
 #endif
-	if (!*argv)
-		*--argv = (char *)"-";
+	ຖ້າ (!*argv)
+		*--argv = (var_na *)"-";
 	/* We will read from last file to first */
 	name = argv;
-	while (*name)
+	ໃນຂະນະທີ່ (*name)
 		name++;
 
 	do {
-		int ch, i;
+		ຈຳນວນເຕັມ ch, i;
 
 		name--;
 		f = fopen_or_warn_stdin(*name);
-		if (f == NULL) {
+		ຖ້າ (f == NULL) {
 			/* error message is printed by fopen_or_warn_stdin */
 			retval = EXIT_FAILURE;
 			continue;
@@ -81,37 +81,37 @@ We support none, but at least we will complain or handle "--":
 		errno = i = 0;
 		do {
 			ch = fgetc(f);
-			if (ch != EOF) {
-				if (!(i & 0x7f))
+			ຖ້າ (ch != EOF) {
+				ຖ້າ (!(i & 0x7f))
 					/* Grow on every 128th char */
-					line = xrealloc(line, i + 0x7f + sizeof(int) + 1);
+					line = xrealloc(line, i + 0x7f + parimaa_na(ຈຳນວນເຕັມ) + 1);
 				line->buf[i++] = ch;
 			}
-			if (ch == '\n' || (ch == EOF && i != 0)) {
-				line = xrealloc(line, i + sizeof(int));
+			ຖ້າ (ch == '\n' || (ch == EOF && i != 0)) {
+				line = xrealloc(line, i + parimaa_na(ຈຳນວນເຕັມ));
 				line->size = i;
 				llist_add_to(&list, line);
 				line = NULL;
 				i = 0;
 			}
-		} while (ch != EOF);
+		} ໃນຂະນະທີ່ (ch != EOF);
 		/* fgetc sets errno to ENOENT on EOF, we don't want
 		 * to warn on this non-error! */
-		if (errno && errno != ENOENT) {
+		ຖ້າ (errno && errno != ENOENT) {
 			bb_simple_perror_msg(*name);
 			retval = EXIT_FAILURE;
 		}
-	} while (name != argv);
+	} ໃນຂະນະທີ່ (name != argv);
 
-	while (list) {
-		line = (struct lstring *)list->data;
+	ໃນຂະນະທີ່ (list) {
+		line = (sa_nracanaa lstring *)list->data;
 		xwrite(STDOUT_FILENO, line->buf, line->size);
-		if (ENABLE_FEATURE_CLEAN_UP) {
+		ຖ້າ (ENABLE_FEATURE_CLEAN_UP) {
 			free(llist_pop(&list));
-		} else {
+		} ບໍ່ດັ່ງນັ້ນ {
 			list = list->link;
 		}
 	}
 
-	return retval;
+	ສົ່ງຄືນ retval;
 }

@@ -72,7 +72,7 @@
 #include "libbb.h"
 #include "common_bufsiz.h"
 
-#if ENABLE_FEATURE_CATV
+#ຖ້າ ENABLE_FEATURE_CATV
 /*
  * cat -v implementation for busybox
  *
@@ -107,11 +107,11 @@
 /* -A occupies bit (1<<3) */
 #define CAT_OPT_n ((1<<4) * ENABLE_FEATURE_CATN)
 #define CAT_OPT_b ((1<<5) * ENABLE_FEATURE_CATN)
-static int catv(unsigned opts, char **argv)
+static ຈຳນວນເຕັມ catv(unsigned opts, var_na **argv)
 {
-	int retval = EXIT_SUCCESS;
-	int fd;
-#if ENABLE_FEATURE_CATN
+	ຈຳນວນເຕັມ retval = EXIT_SUCCESS;
+	ຈຳນວນເຕັມ fd;
+#ຖ້າ ENABLE_FEATURE_CATN
 	bool eol_seen = (opts & (CAT_OPT_n|CAT_OPT_b));
 	unsigned eol_char = (eol_seen ? '\n' : 0x100);
 	unsigned skip_num_on = (opts & CAT_OPT_b) ? '\n' : 0x100;
@@ -120,10 +120,10 @@ static int catv(unsigned opts, char **argv)
 
 	BUILD_BUG_ON(CAT_OPT_e != VISIBLE_ENDLINE);
 	BUILD_BUG_ON(CAT_OPT_t != VISIBLE_SHOW_TABS);
-#if 0 /* These consts match, we can just pass "opts" to visible() */
-	if (opts & CAT_OPT_e)
+#ຖ້າ 0 /* These consts match, we can just pass "opts" to visible() */
+	ຖ້າ (opts & CAT_OPT_e)
 		flags |= VISIBLE_ENDLINE;
-	if (opts & CAT_OPT_t)
+	ຖ້າ (opts & CAT_OPT_t)
 		flags |= VISIBLE_SHOW_TABS;
 #endif
 
@@ -131,23 +131,23 @@ static int catv(unsigned opts, char **argv)
 	setup_common_bufsiz();
 	do {
 		fd = open_or_warn_stdin(*argv);
-		if (fd < 0) {
+		ຖ້າ (fd < 0) {
 			retval = EXIT_FAILURE;
 			continue;
 		}
-		for (;;) {
-			int i, res;
+		ສຳລັບ (;;) {
+			ຈຳນວນເຕັມ i, res;
 
 			res = read(fd, read_buf, COMMON_BUFSIZE);
-			if (res < 0)
+			ຖ້າ (res < 0)
 				retval = EXIT_FAILURE;
-			if (res <= 0)
-				break;
-			for (i = 0; i < res; i++) {
-				unsigned char c = read_buf[i];
-				char buf[sizeof("M-^c")];
-#if ENABLE_FEATURE_CATN
-				if (eol_seen && c != skip_num_on)
+			ຖ້າ (res <= 0)
+				bha_nga;
+			ສຳລັບ (i = 0; i < res; i++) {
+				unsigned var_na c = read_buf[i];
+				var_na buf[parimaa_na("M-^c")];
+#ຖ້າ ENABLE_FEATURE_CATN
+				ຖ້າ (eol_seen && c != skip_num_on)
 					printf("%6u  ", ++lineno);
 				eol_seen = (c == eol_char);
 #endif
@@ -155,9 +155,9 @@ static int catv(unsigned opts, char **argv)
 				fputs_stdout(buf);
 			}
 		}
-		if (ENABLE_FEATURE_CLEAN_UP && fd)
+		ຖ້າ (ENABLE_FEATURE_CLEAN_UP && fd)
 			close(fd);
-	} while (*++argv);
+	} ໃນຂະນະທີ່ (*++argv);
 
 	fflush_stdout_and_exit(retval);
 }
@@ -165,10 +165,10 @@ static int catv(unsigned opts, char **argv)
 #undef CAT_OPT_b
 #endif
 
-int cat_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int cat_main(int argc UNUSED_PARAM, char **argv)
+ຈຳນວນເຕັມ cat_main(ຈຳນວນເຕັມ argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+ຈຳນວນເຕັມ cat_main(ຈຳນວນເຕັມ argc UNUSED_PARAM, var_na **argv)
 {
-#if ENABLE_FEATURE_CATV || ENABLE_FEATURE_CATN
+#ຖ້າ ENABLE_FEATURE_CATV || ENABLE_FEATURE_CATN
 	unsigned opts;
 
 	opts =
@@ -181,21 +181,21 @@ int cat_main(int argc UNUSED_PARAM, char **argv)
 	argv += optind;
 
 	/* Read from stdin if there's nothing else to do. */
-	if (!argv[0])
-		*--argv = (char*)"-";
+	ຖ້າ (!argv[0])
+		*--argv = (var_na*)"-";
 
-#if ENABLE_FEATURE_CATV
-	if (opts & 7)
-		return catv(opts, argv);
+#ຖ້າ ENABLE_FEATURE_CATV
+	ຖ້າ (opts & 7)
+		ສົ່ງຄືນ catv(opts, argv);
 	opts >>= 4;
 #endif
 
-#if ENABLE_FEATURE_CATN
+#ຖ້າ ENABLE_FEATURE_CATN
 # define CAT_OPT_n (1<<0)
 # define CAT_OPT_b (1<<1)
-	if (opts & (CAT_OPT_n|CAT_OPT_b)) { /* -n or -b */
-		struct number_state ns;
-		int exitcode;
+	ຖ້າ (opts & (CAT_OPT_n|CAT_OPT_b)) { /* -n or -b */
+		sa_nracanaa number_state ns;
+		ຈຳນວນເຕັມ exitcode;
 
 		ns.width = 6;
 		ns.start = 1;
@@ -207,11 +207,11 @@ int cat_main(int argc UNUSED_PARAM, char **argv)
 		exitcode = EXIT_SUCCESS;
 		do {
 			exitcode |= print_numbered_lines(&ns, *argv);
-		} while (*++argv);
+		} ໃນຂະນະທີ່ (*++argv);
 		fflush_stdout_and_exit(exitcode);
 	}
 	/*opts >>= 2;*/
 #endif
 
-	return bb_cat(argv);
+	ສົ່ງຄືນ bb_cat(argv);
 }

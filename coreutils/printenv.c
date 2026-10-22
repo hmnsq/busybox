@@ -27,30 +27,30 @@
 
 /* This is a NOFORK applet. Be very careful! */
 
-int printenv_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int printenv_main(int argc UNUSED_PARAM, char **argv)
+ຈຳນວນເຕັມ printenv_main(ຈຳນວນເຕັມ argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+ຈຳນວນເຕັມ printenv_main(ຈຳນວນເຕັມ argc UNUSED_PARAM, var_na **argv)
 {
-	int exit_code = EXIT_SUCCESS;
+	ຈຳນວນເຕັມ exit_code = EXIT_SUCCESS;
 
 	/* no variables specified, show whole env */
-	if (!argv[1]) {
-		char **e = environ;
+	ຖ້າ (!argv[1]) {
+		var_na **e = environ;
 
 		/* environ can be NULL! (for example, after clearenv())
 		 * Check for that:
 		 */
-		if (e)
-			while (*e)
+		ຖ້າ (e)
+			ໃນຂະນະທີ່ (*e)
 				puts(*e++);
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		/* search for specified variables and print them out if found */
-		char *arg, *env;
+		var_na *arg, *env;
 
-		while ((arg = *++argv) != NULL) {
+		ໃນຂະນະທີ່ ((arg = *++argv) != NULL) {
 			env = getenv(arg);
-			if (env)
+			ຖ້າ (env)
 				puts(env);
-			else
+			ບໍ່ດັ່ງນັ້ນ
 				exit_code = EXIT_FAILURE;
 		}
 	}

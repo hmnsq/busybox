@@ -31,8 +31,8 @@
 
 /* This is a NOFORK applet. Be very careful! */
 
-int true_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int true_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+ຈຳນວນເຕັມ true_main(ຈຳນວນເຕັມ argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+ຈຳນວນເຕັມ true_main(ຈຳນວນເຕັມ argc UNUSED_PARAM, var_na **argv UNUSED_PARAM)
 {
-	return EXIT_SUCCESS;
+	ສົ່ງຄືນ EXIT_SUCCESS;
 }

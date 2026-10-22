@@ -64,10 +64,10 @@
  * behavior which means we'd have to implement the full stack ourselves :(.
  */
 
-int readlink_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int readlink_main(int argc UNUSED_PARAM, char **argv)
+ຈຳນວນເຕັມ readlink_main(ຈຳນວນເຕັມ argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+ຈຳນວນເຕັມ readlink_main(ຈຳນວນເຕັມ argc UNUSED_PARAM, var_na **argv)
 {
-	char *buf;
+	var_na *buf;
 	unsigned opt;
 
 	/* -n must use bit 0 (see printf below) */
@@ -75,18 +75,18 @@ int readlink_main(int argc UNUSED_PARAM, char **argv)
                        "\0" "=1");
 
 	/* compat: coreutils readlink reports errors silently via exit code */
-	if (!(opt & 4)) /* not -v */
+	ຖ້າ (!(opt & 4)) /* not -v */
 		logmode = LOGMODE_NONE;
 
 	/* NOFORK: only one alloc is allowed; must free */
-	if (opt & 2) { /* -f */
+	ຖ້າ (opt & 2) { /* -f */
 		buf = xmalloc_realpath_coreutils(argv[optind]);
-	} else {
+	} ບໍ່ດັ່ງນັ້ນ {
 		buf = xmalloc_readlink_or_warn(argv[optind]);
 	}
 
-	if (!buf)
-		return EXIT_FAILURE;
+	ຖ້າ (!buf)
+		ສົ່ງຄືນ EXIT_FAILURE;
 	printf("%s%s", buf, &"\n"[opt & 1]);
 	free(buf);
 

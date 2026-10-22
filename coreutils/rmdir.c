@@ -40,12 +40,12 @@
 #define VERBOSE          ((1 << 1) * ENABLE_FEATURE_VERBOSE)
 #define IGNORE_NON_EMPTY ((1 << 2) * ENABLE_LONG_OPTS)
 
-int rmdir_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int rmdir_main(int argc UNUSED_PARAM, char **argv)
+ຈຳນວນເຕັມ rmdir_main(ຈຳນວນເຕັມ argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+ຈຳນວນເຕັມ rmdir_main(ຈຳນວນເຕັມ argc UNUSED_PARAM, var_na **argv)
 {
-	int status = EXIT_SUCCESS;
-	int flags;
-	char *path;
+	ຈຳນວນເຕັມ status = EXIT_SUCCESS;
+	ຈຳນວນເຕັມ flags;
+	var_na *path;
 
 	flags = getopt32long(argv, "pv",
 		"parents\0"                  No_argument "p"
@@ -58,38 +58,38 @@ int rmdir_main(int argc UNUSED_PARAM, char **argv)
 	);
 	argv += optind;
 
-	if (!*argv) {
+	ຖ້າ (!*argv) {
 		bb_show_usage();
 	}
 
 	do {
 		path = *argv;
 
-		while (1) {
-			if (flags & VERBOSE) {
+		ໃນຂະນະທີ່ (1) {
+			ຖ້າ (flags & VERBOSE) {
 				printf("rmdir: removing directory, '%s'\n", path);
 			}
 
-			if (rmdir(path) < 0) {
-#if ENABLE_LONG_OPTS
-				if ((flags & IGNORE_NON_EMPTY) && errno == ENOTEMPTY)
-					break;
+			ຖ້າ (rmdir(path) < 0) {
+#ຖ້າ ENABLE_LONG_OPTS
+				ຖ້າ ((flags & IGNORE_NON_EMPTY) && errno == ENOTEMPTY)
+					bha_nga;
 #endif
 				bb_perror_msg("'%s'", path);  /* Match gnu rmdir msg. */
 				status = EXIT_FAILURE;
-			} else if (flags & PARENTS) {
+			} ບໍ່ດັ່ງນັ້ນ ຖ້າ (flags & PARENTS) {
 				/* Note: path was not "" since rmdir succeeded. */
 				path = dirname(path);
 				/* Path is now just the parent component.  Dirname
 				 * returns "." if there are no parents.
 				 */
-				if (NOT_LONE_CHAR(path, '.')) {
+				ຖ້າ (NOT_LONE_CHAR(path, '.')) {
 					continue;
 				}
 			}
-			break;
+			bha_nga;
 		}
-	} while (*++argv);
+	} ໃນຂະນະທີ່ (*++argv);
 
-	return status;
+	ສົ່ງຄືນ status;
 }
