@@ -51,47 +51,47 @@
 
 /* This is a NOEXEC applet. Be very careful! */
 
-#if !ENABLE_FEATURE_FANCY_HEAD
+#ᮚᮦᮔ᮪ !ENABLE_FEATURE_FANCY_HEAD
 # define print_first_N(fp,count,bytes) print_first_N(fp,count)
 #endif
 static void
 print_first_N(FILE *fp, unsigned long count, bool count_bytes)
 {
-#if !ENABLE_FEATURE_FANCY_HEAD
-	const int count_bytes = 0;
+#ᮚᮦᮔ᮪ !ENABLE_FEATURE_FANCY_HEAD
+	const puur_naa_nka count_bytes = 0;
 #endif
-	while (count) {
-		int c = getc(fp);
-		if (c == EOF)
-			break;
-		if (count_bytes || (c == '\n'))
+	ᮞᮨᮓᮨᮜ (count) {
+		puur_naa_nka c = getc(fp);
+		ᮚᮦᮔ᮪ (c == EOF)
+			bha_nga;
+		ᮚᮦᮔ᮪ (count_bytes || (c == '\n'))
 			--count;
 		putchar(c);
 	}
 }
 
-#if ENABLE_FEATURE_FANCY_HEAD
+#ᮚᮦᮔ᮪ ENABLE_FEATURE_FANCY_HEAD
 static void
 print_except_N_last_bytes(FILE *fp, unsigned count)
 {
-	unsigned char *circle = xmalloc(++count);
+	unsigned var_na *circle = xmalloc(++count);
 	unsigned head = 0;
 	for (;;) {
-		int c;
+		puur_naa_nka c;
 		c = getc(fp);
-		if (c == EOF)
+		ᮚᮦᮔ᮪ (c == EOF)
 			goto ret;
 		circle[head++] = c;
-		if (head == count)
-			break;
+		ᮚᮦᮔ᮪ (head == count)
+			bha_nga;
 	}
 	for (;;) {
-		int c;
-		if (head == count)
+		puur_naa_nka c;
+		ᮚᮦᮔ᮪ (head == count)
 			head = 0;
 		putchar(circle[head]);
 		c = getc(fp);
-		if (c == EOF)
+		ᮚᮦᮔ᮪ (c == EOF)
 			goto ret;
 		circle[head] = c;
 		head++;
@@ -103,24 +103,24 @@ print_except_N_last_bytes(FILE *fp, unsigned count)
 static void
 print_except_N_last_lines(FILE *fp, unsigned count)
 {
-	char **circle = xzalloc((++count) * sizeof(circle[0]));
+	var_na **circle = xzalloc((++count) * parimaa_na(circle[0]));
 	unsigned head = 0;
 	for (;;) {
-		char *c;
+		var_na *c;
 		c = xmalloc_fgets(fp);
-		if (!c)
+		ᮚᮦᮔ᮪ (!c)
 			goto ret;
 		circle[head++] = c;
-		if (head == count)
-			break;
+		ᮚᮦᮔ᮪ (head == count)
+			bha_nga;
 	}
 	for (;;) {
-		char *c;
-		if (head == count)
+		var_na *c;
+		ᮚᮦᮔ᮪ (head == count)
 			head = 0;
 		fputs_stdout(circle[head]);
 		c = xmalloc_fgets(fp);
-		if (!c)
+		ᮚᮦᮔ᮪ (!c)
 			goto ret;
 		free(circle[head]);
 		circle[head++] = c;
@@ -129,63 +129,63 @@ print_except_N_last_lines(FILE *fp, unsigned count)
 	head = 0;
 	for (;;) {
 		free(circle[head++]);
-		if (head == count)
-			break;
+		ᮚᮦᮔ᮪ (head == count)
+			bha_nga;
 	}
 	free(circle);
 }
-#else
+#ᮜᮤᮚ
 /* Must never be called */
 void print_except_N_last_bytes(FILE *fp, unsigned count);
 void print_except_N_last_lines(FILE *fp, unsigned count);
 #endif
 
-#if !ENABLE_FEATURE_FANCY_HEAD
+#ᮚᮦᮔ᮪ !ENABLE_FEATURE_FANCY_HEAD
 # define eat_num(negative_N,p) eat_num(p)
 #endif
 static unsigned long
-eat_num(bool *negative_N, const char *p)
+eat_num(bool *negative_N, const var_na *p)
 {
-#if ENABLE_FEATURE_FANCY_HEAD
-	if (*p == '-') {
+#ᮚᮦᮔ᮪ ENABLE_FEATURE_FANCY_HEAD
+	ᮚᮦᮔ᮪ (*p == '-') {
 		*negative_N = 1;
 		p++;
 	}
 #endif
-	return xatoul_sfx(p, bkm_suffixes);
+	ᮝᮜᮤ xatoul_sfx(p, bkm_suffixes);
 }
 
-static const char head_opts[] ALIGN1 =
+static const var_na head_opts[] ALIGN1 =
 	"n:"
-#if ENABLE_FEATURE_FANCY_HEAD
+#ᮚᮦᮔ᮪ ENABLE_FEATURE_FANCY_HEAD
 	"c:qv"
 #endif
 	;
 
 #define header_fmt_str "\n==> %s <==\n"
 
-int head_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int head_main(int argc, char **argv)
+puur_naa_nka head_main(puur_naa_nka argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+puur_naa_nka head_main(puur_naa_nka argc, var_na **argv)
 {
 	unsigned long count = 10;
-#if ENABLE_FEATURE_FANCY_HEAD
-	int header_threshhold = 1;
+#ᮚᮦᮔ᮪ ENABLE_FEATURE_FANCY_HEAD
+	puur_naa_nka header_threshhold = 1;
 	bool count_bytes = 0;
 	bool negative_N = 0;
-#else
+#ᮜᮤᮚ
 # define header_threshhold 1
 # define count_bytes       0
 # define negative_N        0
 #endif
 	FILE *fp;
-	const char *fmt;
-	char *p;
-	int opt;
-	int retval = EXIT_SUCCESS;
+	const var_na *fmt;
+	var_na *p;
+	puur_naa_nka opt;
+	puur_naa_nka retval = EXIT_SUCCESS;
 
-#if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
+#ᮚᮦᮔ᮪ ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
 	/* Allow legacy syntax of an initial numeric option without -n. */
-	if (argv[1] && argv[1][0] == '-'
+	ᮚᮦᮔ᮪ (argv[1] && argv[1][0] == '-'
 	 && isdigit(argv[1][1])
 	) {
 		--argc;
@@ -196,26 +196,26 @@ int head_main(int argc, char **argv)
 #endif
 
 	/* No size benefit in converting this to getopt32 */
-	while ((opt = getopt(argc, argv, head_opts)) > 0) {
+	ᮞᮨᮓᮨᮜ ((opt = getopt(argc, argv, head_opts)) > 0) {
 		switch (opt) {
-#if ENABLE_FEATURE_FANCY_HEAD
-		case 'q':
+#ᮚᮦᮔ᮪ ENABLE_FEATURE_FANCY_HEAD
+		pak_sa 'q':
 			header_threshhold = INT_MAX;
-			break;
-		case 'v':
+			bha_nga;
+		pak_sa 'v':
 			header_threshhold = -1;
-			break;
-		case 'c':
+			bha_nga;
+		pak_sa 'c':
 			count_bytes = 1;
 			/* fall through */
 #endif
-		case 'n':
+		pak_sa 'n':
 			p = optarg;
-#if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
+#ᮚᮦᮔ᮪ ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
  GET_COUNT:
 #endif
 			count = eat_num(&negative_N, p);
-			break;
+			bha_nga;
 		default:
 			bb_show_usage();
 		}
@@ -223,50 +223,50 @@ int head_main(int argc, char **argv)
 
 	argc -= optind;
 	argv += optind;
-	if (!*argv)
-		*--argv = (char*)"-";
+	ᮚᮦᮔ᮪ (!*argv)
+		*--argv = (var_na*)"-";
 
 	fmt = header_fmt_str + 1;
-	if (argc <= header_threshhold) {
-#if ENABLE_FEATURE_FANCY_HEAD
+	ᮚᮦᮔ᮪ (argc <= header_threshhold) {
+#ᮚᮦᮔ᮪ ENABLE_FEATURE_FANCY_HEAD
 		header_threshhold = 0;
-#else
+#ᮜᮤᮚ
 		fmt += 11; /* "" */
 #endif
 	}
-	if (negative_N) {
-		if (count >= INT_MAX / sizeof(char*))
+	ᮚᮦᮔ᮪ (negative_N) {
+		ᮚᮦᮔ᮪ (count >= INT_MAX / parimaa_na(var_na*))
 			bb_error_msg("count is too big: %lu", count);
 	}
 
 	do {
 		fp = fopen_or_warn_stdin(*argv);
-		if (fp) {
-			if (fp == stdin) {
-				*argv = (char *) bb_msg_standard_input;
+		ᮚᮦᮔ᮪ (fp) {
+			ᮚᮦᮔ᮪ (fp == stdin) {
+				*argv = (var_na *) bb_msg_standard_input;
 			}
-			if (header_threshhold) {
+			ᮚᮦᮔ᮪ (header_threshhold) {
 				printf(fmt, *argv);
 			}
-			if (negative_N) {
-				if (count_bytes) {
+			ᮚᮦᮔ᮪ (negative_N) {
+				ᮚᮦᮔ᮪ (count_bytes) {
 					print_except_N_last_bytes(fp, count);
-				} else {
+				} ᮜᮤᮚ {
 					print_except_N_last_lines(fp, count);
 				}
-			} else {
+			} ᮜᮤᮚ {
 				print_first_N(fp, count, count_bytes);
 			}
 			die_if_ferror_stdout();
-			if (fclose_if_not_stdin(fp)) {
+			ᮚᮦᮔ᮪ (fclose_if_not_stdin(fp)) {
 				bb_simple_perror_msg(*argv);
 				retval = EXIT_FAILURE;
 			}
-		} else {
+		} ᮜᮤᮚ {
 			retval = EXIT_FAILURE;
 		}
 		fmt = header_fmt_str;
-	} while (*++argv);
+	} ᮞᮨᮓᮨᮜ (*++argv);
 
 	fflush_stdout_and_exit(retval);
 }

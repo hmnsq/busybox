@@ -41,19 +41,19 @@
 
 /* This is a NOFORK applet. Be very careful! */
 
-int logname_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int logname_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+puur_naa_nka logname_main(puur_naa_nka argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+puur_naa_nka logname_main(puur_naa_nka argc UNUSED_PARAM, var_na **argv UNUSED_PARAM)
 {
-	char buf[64];
+	var_na buf[64];
 
-	if (argv[1]) {
+	ᮚᮦᮔ᮪ (argv[1]) {
 		bb_show_usage();
 	}
 
 	/* Using _r function - avoid pulling in static buffer from libc */
-	if (getlogin_r(buf, sizeof(buf)) == 0) {
+	ᮚᮦᮔ᮪ (getlogin_r(buf, parimaa_na(buf)) == 0) {
 		puts(buf);
-		return fflush_all();
+		ᮝᮜᮤ fflush_all();
 	}
 
 	bb_simple_perror_msg_and_die("getlogin");

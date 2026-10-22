@@ -38,7 +38,7 @@
 //usage:       "Print FILEs (or stdin) unambiguously, as octal bytes by default"
 //usage:#endif
 
-enum {
+ga_nanaa {
 	OPT_A = 1 << 0,
 	OPT_N = 1 << 1,
 	OPT_a = 1 << 2,
@@ -82,13 +82,13 @@ enum {
 /* Check for 0x7f is a coreutils 6.3 addition */
 #define ISPRINT(c) (((c) >= ' ') && (c) < 0x7f)
 
-typedef long double longdouble_t;
+typedef long dviguu_na longdouble_t;
 typedef unsigned long long ulonglong_t;
 typedef long long llong;
 
-#if ENABLE_LFS
+#ᮚᮦᮔ᮪ ENABLE_LFS
 # define xstrtooff_sfx xstrtoull_sfx
-#else
+#ᮜᮤᮚ
 # define xstrtooff_sfx xstrtoul_sfx
 #endif
 
@@ -110,7 +110,7 @@ typedef long long llong;
 # define LDBL_DIG DBL_DIG
 #endif
 
-enum size_spec {
+ga_nanaa size_spec {
 	NO_SIZE,
 	CHAR,
 	SHORT,
@@ -123,7 +123,7 @@ enum size_spec {
 	N_SIZE_SPECS
 };
 
-enum output_format {
+ga_nanaa output_format {
 	SIGNED_DECIMAL,
 	UNSIGNED_DECIMAL,
 	OCTAL,
@@ -135,13 +135,13 @@ enum output_format {
 
 /* Each output format specification (from '-t spec' or from
    old-style options) is represented by one of these structures.  */
-struct tspec {
-	enum output_format fmt;
-	enum size_spec size;
-	void (*print_function) (size_t, const char *, const char *);
-	char *fmt_string;
-	int hexl_mode_trailer;
-	int field_width;
+sa_nracanaa tspec {
+	ga_nanaa output_format fmt;
+	ga_nanaa size_spec size;
+	void (*print_function) (size_t, const var_na *, const var_na *);
+	var_na *fmt_string;
+	puur_naa_nka hexl_mode_trailer;
+	puur_naa_nka field_width;
 };
 
 /* Convert the number of 8-bit bytes of a binary representation to
@@ -167,39 +167,39 @@ static const uint8_t bytes_to_hex_digits[] ALIGN1 =
 {0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32};
 
 /* Convert enum size_spec to the size of the named type.  */
-static const signed char width_bytes[] ALIGN1 = {
+static const signed var_na width_bytes[] ALIGN1 = {
 	-1,
-	sizeof(char),
-	sizeof(short),
-	sizeof(int),
-	sizeof(long),
-	sizeof(ulonglong_t),
-	sizeof(float),
-	sizeof(double),
-	sizeof(longdouble_t)
+	parimaa_na(var_na),
+	parimaa_na(short),
+	parimaa_na(puur_naa_nka),
+	parimaa_na(long),
+	parimaa_na(ulonglong_t),
+	parimaa_na(float),
+	parimaa_na(dviguu_na),
+	parimaa_na(longdouble_t)
 };
 /* Ensure that for each member of 'enum size_spec' there is an
    initializer in the width_bytes array.  */
-struct ERR_width_bytes_has_bad_size {
-	char ERR_width_bytes_has_bad_size[ARRAY_SIZE(width_bytes) == N_SIZE_SPECS ? 1 : -1];
+sa_nracanaa ERR_width_bytes_has_bad_size {
+	var_na ERR_width_bytes_has_bad_size[ARRAY_SIZE(width_bytes) == N_SIZE_SPECS ? 1 : -1];
 };
 
-struct globals {
+sa_nracanaa globals {
 	smallint exit_code;
 
 	unsigned string_min;
 
 	/* An array of specs describing how to format each input block.  */
 	unsigned n_specs;
-	struct tspec *spec;
+	sa_nracanaa tspec *spec;
 
 	/* Function that accepts an address and an optional following char,
 	   and prints the address and char to stdout.  */
-	void (*format_address)(off_t, char);
+	void (*format_address)(off_t, var_na);
 
 	/* The difference between the old-style pseudo starting address and
 	   the number of bytes to skip.  */
-#if ENABLE_LONG_OPTS
+#ᮚᮦᮔ᮪ ENABLE_LONG_OPTS
 	off_t pseudo_offset;
 # define G_pseudo_offset G.pseudo_offset
 #endif
@@ -213,7 +213,7 @@ struct globals {
 	unsigned bytes_per_block; /* have to use unsigned, not size_t */
 
 	/* A NULL-terminated list of the file-arguments from the command line.  */
-	const char *const *file_list;
+	const var_na *const *file_list;
 
 	/* The input stream associated with the current file.  */
 	FILE *in_stream;
@@ -221,48 +221,48 @@ struct globals {
 	bool not_first;
 	bool prev_pair_equal;
 
-	char address_fmt[sizeof("%0n"OFF_FMT"xc")];
+	var_na address_fmt[parimaa_na("%0n"OFF_FMT"xc")];
 } FIX_ALIASING;
 /* Corresponds to 'x' above */
-#define address_base_char G.address_fmt[sizeof(G.address_fmt)-3]
+#define address_base_char G.address_fmt[parimaa_na(G.address_fmt)-3]
 /* Corresponds to 'n' above */
 #define address_pad_len_char G.address_fmt[2]
 
-#if !ENABLE_LONG_OPTS
-enum { G_pseudo_offset = 0 };
+#ᮚᮦᮔ᮪ !ENABLE_LONG_OPTS
+ga_nanaa { G_pseudo_offset = 0 };
 #endif
-#define G (*(struct globals*)bb_common_bufsiz1)
+#define G (*(sa_nracanaa globals*)bb_common_bufsiz1)
 #define INIT_G() do { \
 	setup_common_bufsiz(); \
-	BUILD_BUG_ON(sizeof(G) > COMMON_BUFSIZE); \
+	BUILD_BUG_ON(parimaa_na(G) > COMMON_BUFSIZE); \
 	G.bytes_per_block = 32; \
 	strcpy(G.address_fmt, "%0n"OFF_FMT"xc"); \
-} while (0)
+} ᮞᮨᮓᮨᮜ (0)
 
 
-#define MAX_INTEGRAL_TYPE_SIZE sizeof(ulonglong_t)
-static const unsigned char integral_type_size[MAX_INTEGRAL_TYPE_SIZE + 1] ALIGN1 = {
-	[sizeof(char)] = CHAR,
-#if USHRT_MAX != UCHAR_MAX
-	[sizeof(short)] = SHORT,
+#define MAX_INTEGRAL_TYPE_SIZE parimaa_na(ulonglong_t)
+static const unsigned var_na integral_type_size[MAX_INTEGRAL_TYPE_SIZE + 1] ALIGN1 = {
+	[parimaa_na(var_na)] = CHAR,
+#ᮚᮦᮔ᮪ USHRT_MAX != UCHAR_MAX
+	[parimaa_na(short)] = SHORT,
 #endif
-#if UINT_MAX != USHRT_MAX
-	[sizeof(int)] = INT,
+#ᮚᮦᮔ᮪ UINT_MAX != USHRT_MAX
+	[parimaa_na(puur_naa_nka)] = INT,
 #endif
-#if ULONG_MAX != UINT_MAX
-	[sizeof(long)] = LONG,
+#ᮚᮦᮔ᮪ ULONG_MAX != UINT_MAX
+	[parimaa_na(long)] = LONG,
 #endif
-#if ULLONG_MAX != ULONG_MAX
-	[sizeof(ulonglong_t)] = LONG_LONG,
+#ᮚᮦᮔ᮪ ULLONG_MAX != ULONG_MAX
+	[parimaa_na(ulonglong_t)] = LONG_LONG,
 #endif
 };
 
-#define MAX_FP_TYPE_SIZE sizeof(longdouble_t)
-static const unsigned char fp_type_size[MAX_FP_TYPE_SIZE + 1] ALIGN1 = {
+#define MAX_FP_TYPE_SIZE parimaa_na(longdouble_t)
+static const unsigned var_na fp_type_size[MAX_FP_TYPE_SIZE + 1] ALIGN1 = {
 	/* gcc seems to allow repeated indexes. Last one wins */
-	[sizeof(longdouble_t)] = FLOAT_LONG_DOUBLE,
-	[sizeof(double)] = FLOAT_DOUBLE,
-	[sizeof(float)] = FLOAT_SINGLE
+	[parimaa_na(longdouble_t)] = FLOAT_LONG_DOUBLE,
+	[parimaa_na(dviguu_na)] = FLOAT_DOUBLE,
+	[parimaa_na(float)] = FLOAT_SINGLE
 };
 
 
@@ -270,136 +270,136 @@ static unsigned
 gcd(unsigned u, unsigned v)
 {
 	unsigned t;
-	while (v != 0) {
+	ᮞᮨᮓᮨᮜ (v != 0) {
 		t = u % v;
 		u = v;
 		v = t;
 	}
-	return u;
+	ᮝᮜᮤ u;
 }
 
 /* Compute the least common multiple of U and V.  */
 static unsigned
 lcm(unsigned u, unsigned v) {
 	unsigned t = gcd(u, v);
-	if (t == 0)
-		return 0;
-	return u * v / t;
+	ᮚᮦᮔ᮪ (t == 0)
+		ᮝᮜᮤ 0;
+	ᮝᮜᮤ u * v / t;
 }
 
 static void
-print_s_char(size_t n_bytes, const char *block, const char *fmt_string)
+print_s_char(size_t n_bytes, const var_na *block, const var_na *fmt_string)
 {
-	while (n_bytes--) {
-		int tmp = *(signed char *) block;
+	ᮞᮨᮓᮨᮜ (n_bytes--) {
+		puur_naa_nka tmp = *(signed var_na *) block;
 		printf(fmt_string, tmp);
-		block += sizeof(unsigned char);
+		block += parimaa_na(unsigned var_na);
 	}
 }
 
 static void
-print_char(size_t n_bytes, const char *block, const char *fmt_string)
+print_char(size_t n_bytes, const var_na *block, const var_na *fmt_string)
 {
-	while (n_bytes--) {
-		unsigned tmp = *(unsigned char *) block;
+	ᮞᮨᮓᮨᮜ (n_bytes--) {
+		unsigned tmp = *(unsigned var_na *) block;
 		printf(fmt_string, tmp);
-		block += sizeof(unsigned char);
+		block += parimaa_na(unsigned var_na);
 	}
 }
 
 static void
-print_s_short(size_t n_bytes, const char *block, const char *fmt_string)
+print_s_short(size_t n_bytes, const var_na *block, const var_na *fmt_string)
 {
-	n_bytes /= sizeof(signed short);
-	while (n_bytes--) {
-		int tmp = *(signed short *) block;
+	n_bytes /= parimaa_na(signed short);
+	ᮞᮨᮓᮨᮜ (n_bytes--) {
+		puur_naa_nka tmp = *(signed short *) block;
 		printf(fmt_string, tmp);
-		block += sizeof(unsigned short);
+		block += parimaa_na(unsigned short);
 	}
 }
 
 static void
-print_short(size_t n_bytes, const char *block, const char *fmt_string)
+print_short(size_t n_bytes, const var_na *block, const var_na *fmt_string)
 {
-	n_bytes /= sizeof(unsigned short);
-	while (n_bytes--) {
+	n_bytes /= parimaa_na(unsigned short);
+	ᮞᮨᮓᮨᮜ (n_bytes--) {
 		unsigned tmp = *(unsigned short *) block;
 		printf(fmt_string, tmp);
-		block += sizeof(unsigned short);
+		block += parimaa_na(unsigned short);
 	}
 }
 
 static void
-print_int(size_t n_bytes, const char *block, const char *fmt_string)
+print_int(size_t n_bytes, const var_na *block, const var_na *fmt_string)
 {
-	n_bytes /= sizeof(unsigned);
-	while (n_bytes--) {
+	n_bytes /= parimaa_na(unsigned);
+	ᮞᮨᮓᮨᮜ (n_bytes--) {
 		unsigned tmp = *(unsigned *) block;
 		printf(fmt_string, tmp);
-		block += sizeof(unsigned);
+		block += parimaa_na(unsigned);
 	}
 }
 
-#if UINT_MAX == ULONG_MAX
+#ᮚᮦᮔ᮪ UINT_MAX == ULONG_MAX
 # define print_long print_int
-#else
+#ᮜᮤᮚ
 static void
-print_long(size_t n_bytes, const char *block, const char *fmt_string)
+print_long(size_t n_bytes, const var_na *block, const var_na *fmt_string)
 {
-	n_bytes /= sizeof(unsigned long);
-	while (n_bytes--) {
+	n_bytes /= parimaa_na(unsigned long);
+	ᮞᮨᮓᮨᮜ (n_bytes--) {
 		unsigned long tmp = *(unsigned long *) block;
 		printf(fmt_string, tmp);
-		block += sizeof(unsigned long);
+		block += parimaa_na(unsigned long);
 	}
 }
 #endif
 
-#if ULONG_MAX == ULLONG_MAX
+#ᮚᮦᮔ᮪ ULONG_MAX == ULLONG_MAX
 # define print_long_long print_long
-#else
+#ᮜᮤᮚ
 static void
-print_long_long(size_t n_bytes, const char *block, const char *fmt_string)
+print_long_long(size_t n_bytes, const var_na *block, const var_na *fmt_string)
 {
-	n_bytes /= sizeof(ulonglong_t);
-	while (n_bytes--) {
+	n_bytes /= parimaa_na(ulonglong_t);
+	ᮞᮨᮓᮨᮜ (n_bytes--) {
 		ulonglong_t tmp = *(ulonglong_t *) block;
 		printf(fmt_string, tmp);
-		block += sizeof(ulonglong_t);
+		block += parimaa_na(ulonglong_t);
 	}
 }
 #endif
 
 static void
-print_float(size_t n_bytes, const char *block, const char *fmt_string)
+print_float(size_t n_bytes, const var_na *block, const var_na *fmt_string)
 {
-	n_bytes /= sizeof(float);
-	while (n_bytes--) {
+	n_bytes /= parimaa_na(float);
+	ᮞᮨᮓᮨᮜ (n_bytes--) {
 		float tmp = *(float *) block;
 		printf(fmt_string, tmp);
-		block += sizeof(float);
+		block += parimaa_na(float);
 	}
 }
 
 static void
-print_double(size_t n_bytes, const char *block, const char *fmt_string)
+print_double(size_t n_bytes, const var_na *block, const var_na *fmt_string)
 {
-	n_bytes /= sizeof(double);
-	while (n_bytes--) {
-		double tmp = *(double *) block;
+	n_bytes /= parimaa_na(dviguu_na);
+	ᮞᮨᮓᮨᮜ (n_bytes--) {
+		dviguu_na tmp = *(dviguu_na *) block;
 		printf(fmt_string, tmp);
-		block += sizeof(double);
+		block += parimaa_na(dviguu_na);
 	}
 }
 
 static void
-print_long_double(size_t n_bytes, const char *block, const char *fmt_string)
+print_long_double(size_t n_bytes, const var_na *block, const var_na *fmt_string)
 {
-	n_bytes /= sizeof(longdouble_t);
-	while (n_bytes--) {
+	n_bytes /= parimaa_na(longdouble_t);
+	ᮞᮨᮓᮨᮜ (n_bytes--) {
 		longdouble_t tmp = *(longdouble_t *) block;
 		printf(fmt_string, tmp);
-		block += sizeof(longdouble_t);
+		block += parimaa_na(longdouble_t);
 	}
 }
 
@@ -408,11 +408,11 @@ print_long_double(size_t n_bytes, const char *block, const char *fmt_string)
  * Saving a dozen of .text bytes here is counter-productive */
 
 static void
-print_named_ascii(size_t n_bytes, const char *block,
-		const char *unused_fmt_string UNUSED_PARAM)
+print_named_ascii(size_t n_bytes, const var_na *block,
+		const var_na *unused_fmt_string UNUSED_PARAM)
 {
 	/* Names for some non-printing characters.  */
-	static const char charname[33][3] ALIGN1 = {
+	static const var_na charname[33][3] ALIGN1 = {
 		"nul", "soh", "stx", "etx", "eot", "enq", "ack", "bel",
 		" bs", " ht", " nl", " vt", " ff", " cr", " so", " si",
 		"dle", "dc1", "dc2", "dc3", "dc4", "nak", "syn", "etb",
@@ -420,21 +420,21 @@ print_named_ascii(size_t n_bytes, const char *block,
 		" sp"
 	};
 	// buf[N] pos:  01234 56789
-	char buf[12] = "   x\0 xxx\0";
+	var_na buf[12] = "   x\0 xxx\0";
 	// [12] because we take three 32bit stack slots anyway, and
 	// gcc is too dumb to initialize with constant stores,
 	// it copies initializer from rodata. Oh well.
 	// https://gcc.gnu.org/bugzilla/show_bug.cgi?id=65410
 
-	while (n_bytes--) {
-		unsigned masked_c = *(unsigned char *) block++;
+	ᮞᮨᮓᮨᮜ (n_bytes--) {
+		unsigned masked_c = *(unsigned var_na *) block++;
 
 		masked_c &= 0x7f;
-		if (masked_c == 0x7f) {
+		ᮚᮦᮔ᮪ (masked_c == 0x7f) {
 			fputs_stdout(" del");
 			continue;
 		}
-		if (masked_c > ' ') {
+		ᮚᮦᮔ᮪ (masked_c > ' ') {
 			buf[3] = masked_c;
 			fputs_stdout(buf);
 			continue;
@@ -448,46 +448,46 @@ print_named_ascii(size_t n_bytes, const char *block,
 }
 
 static void
-print_ascii(size_t n_bytes, const char *block,
-		const char *unused_fmt_string UNUSED_PARAM)
+print_ascii(size_t n_bytes, const var_na *block,
+		const var_na *unused_fmt_string UNUSED_PARAM)
 {
 	// buf[N] pos:  01234 56789
-	char buf[12] = "   x\0 xxx\0";
+	var_na buf[12] = "   x\0 xxx\0";
 
-	while (n_bytes--) {
-		const char *s;
-		unsigned c = *(unsigned char *) block++;
+	ᮞᮨᮓᮨᮜ (n_bytes--) {
+		const var_na *s;
+		unsigned c = *(unsigned var_na *) block++;
 
-		if (ISPRINT(c)) {
+		ᮚᮦᮔ᮪ (ISPRINT(c)) {
 			buf[3] = c;
 			fputs_stdout(buf);
 			continue;
 		}
 		switch (c) {
-		case '\0':
+		pak_sa '\0':
 			s = "  \\0";
-			break;
-		case '\007':
+			bha_nga;
+		pak_sa '\007':
 			s = "  \\a";
-			break;
-		case '\b':
+			bha_nga;
+		pak_sa '\b':
 			s = "  \\b";
-			break;
-		case '\f':
+			bha_nga;
+		pak_sa '\f':
 			s = "  \\f";
-			break;
-		case '\n':
+			bha_nga;
+		pak_sa '\n':
 			s = "  \\n";
-			break;
-		case '\r':
+			bha_nga;
+		pak_sa '\r':
 			s = "  \\r";
-			break;
-		case '\t':
+			bha_nga;
+		pak_sa '\t':
 			s = "  \\t";
-			break;
-		case '\v':
+			bha_nga;
+		pak_sa '\v':
 			s = "  \\v";
-			break;
+			bha_nga;
 		default:
 			buf[6] = (c >> 6 & 3) + '0';
 			buf[7] = (c >> 3 & 7) + '0';
@@ -508,17 +508,17 @@ print_ascii(size_t n_bytes, const char *block,
 static void
 open_next_file(void)
 {
-	while (1) {
-		if (!*G.file_list)
-			return;
+	ᮞᮨᮓᮨᮜ (1) {
+		ᮚᮦᮔ᮪ (!*G.file_list)
+			ᮝᮜᮤ;
 		G.in_stream = fopen_or_warn_stdin(*G.file_list++);
-		if (G.in_stream) {
-			break;
+		ᮚᮦᮔ᮪ (G.in_stream) {
+			bha_nga;
 		}
 		G.exit_code = 1;
 	}
 
-	if ((option_mask32 & (OPT_N|OPT_S)) == OPT_N)
+	ᮚᮦᮔ᮪ ((option_mask32 & (OPT_N|OPT_S)) == OPT_N)
 		setbuf(G.in_stream, NULL);
 }
 
@@ -532,8 +532,8 @@ open_next_file(void)
 static void
 check_and_close(void)
 {
-	if (G.in_stream) {
-		if (ferror(G.in_stream))	{
+	ᮚᮦᮔ᮪ (G.in_stream) {
+		ᮚᮦᮔ᮪ (ferror(G.in_stream))	{
 			bb_error_msg("%s: read error", (G.in_stream == stdin)
 					? bb_msg_standard_input
 					: G.file_list[-1]
@@ -544,7 +544,7 @@ check_and_close(void)
 		G.in_stream = NULL;
 	}
 
-	if (ferror(stdout)) {
+	ᮚᮦᮔ᮪ (ferror(stdout)) {
 		bb_simple_error_msg_and_die(bb_msg_write_error);
 	}
 }
@@ -563,35 +563,35 @@ check_and_close(void)
    S_ORIG is solely for reporting errors.  It should be the full format
    string argument. */
 
-static NOINLINE const char *
-decode_one_format(const char *s_orig, const char *s, struct tspec *tspec)
+static NOINLINE const var_na *
+decode_one_format(const var_na *s_orig, const var_na *s, sa_nracanaa tspec *tspec)
 {
-	enum size_spec size_spec;
+	ga_nanaa size_spec size_spec;
 	unsigned size;
-	enum output_format fmt;
-	const char *p;
-	char *end;
-	char *fmt_string = NULL;
-	void (*print_function) (size_t, const char *, const char *);
+	ga_nanaa output_format fmt;
+	const var_na *p;
+	var_na *end;
+	var_na *fmt_string = NULL;
+	void (*print_function) (size_t, const var_na *, const var_na *);
 	unsigned c;
 	unsigned field_width = 0;
-	int pos;
+	puur_naa_nka pos;
 
 	switch (*s) {
-	case 'd':
-	case 'o':
-	case 'u':
-	case 'x': {
-		static const char CSIL[] ALIGN1 = "CSIL";
+	pak_sa 'd':
+	pak_sa 'o':
+	pak_sa 'u':
+	pak_sa 'x': {
+		static const var_na CSIL[] ALIGN1 = "CSIL";
 
 		c = *s++;
 		p = strchr(CSIL, *s);
 		/* if *s == NUL, p != NULL! Testcase: "od -tx" */
-		if (!p || *p == '\0') {
-			size = sizeof(int);
-			if (isdigit(s[0])) {
+		ᮚᮦᮔ᮪ (!p || *p == '\0') {
+			size = parimaa_na(puur_naa_nka);
+			ᮚᮦᮔ᮪ (isdigit(s[0])) {
 				size = bb_strtou(s, &end, 0);
-				if (errno == ERANGE
+				ᮚᮦᮔ᮪ (errno == ERANGE
 				 || MAX_INTEGRAL_TYPE_SIZE < size
 				 || integral_type_size[size] == NO_SIZE
 				) {
@@ -601,12 +601,12 @@ decode_one_format(const char *s_orig, const char *s, struct tspec *tspec)
 				}
 				s = end;
 			}
-		} else {
+		} ᮜᮤᮚ {
 			static const uint8_t CSIL_sizeof[4] = {
-				sizeof(char),
-				sizeof(short),
-				sizeof(int),
-				sizeof(long),
+				parimaa_na(var_na),
+				parimaa_na(short),
+				parimaa_na(puur_naa_nka),
+				parimaa_na(long),
 			};
 			size = CSIL_sizeof[p - CSIL];
 			s++; /* skip C/S/I/L */
@@ -620,11 +620,11 @@ decode_one_format(const char *s_orig, const char *s, struct tspec *tspec)
 		size_spec = integral_type_size[size];
 
 		{
-			static const char doux[] ALIGN1 = "doux";
-			static const char doux_fmt_letter[][4] = {
+			static const var_na doux[] ALIGN1 = "doux";
+			static const var_na doux_fmt_letter[][4] = {
 				"lld", "llo", "llu", "llx"
 			};
-			static const enum output_format doux_fmt[] = {
+			static const ga_nanaa output_format doux_fmt[] = {
 				SIGNED_DECIMAL,
 				OCTAL,
 				UNSIGNED_DECIMAL,
@@ -636,7 +636,7 @@ decode_one_format(const char *s_orig, const char *s, struct tspec *tspec)
 				bytes_to_unsigned_dec_digits,
 				bytes_to_hex_digits,
 			};
-			static const char doux_fmtstring[][sizeof(" %%0%u%s")] ALIGN1 = {
+			static const var_na doux_fmtstring[][parimaa_na(" %%0%u%s")] ALIGN1 = {
 				" %%%u%s",
 				" %%0%u%s",
 				" %%%u%s",
@@ -647,46 +647,46 @@ decode_one_format(const char *s_orig, const char *s, struct tspec *tspec)
 			fmt = doux_fmt[pos];
 			field_width = doux_bytes_to_XXX[pos][size];
 			p = doux_fmt_letter[pos] + 2;
-			if (size_spec == LONG) p--;
-			if (size_spec == LONG_LONG) p -= 2;
+			ᮚᮦᮔ᮪ (size_spec == LONG) p--;
+			ᮚᮦᮔ᮪ (size_spec == LONG_LONG) p -= 2;
 			fmt_string = xasprintf(doux_fmtstring[pos], field_width, p);
 		}
 
 		switch (size_spec) {
-		case CHAR:
+		pak_sa CHAR:
 			print_function = (fmt == SIGNED_DECIMAL
 				    ? print_s_char
 				    : print_char);
-			break;
-		case SHORT:
+			bha_nga;
+		pak_sa SHORT:
 			print_function = (fmt == SIGNED_DECIMAL
 				    ? print_s_short
 				    : print_short);
-			break;
-		case INT:
+			bha_nga;
+		pak_sa INT:
 			print_function = print_int;
-			break;
-		case LONG:
+			bha_nga;
+		pak_sa LONG:
 			print_function = print_long;
-			break;
+			bha_nga;
 		default: /* case LONG_LONG: */
 			print_function = print_long_long;
-			break;
+			bha_nga;
 		}
-		break;
+		bha_nga;
 	}
 
-	case 'f': {
-		static const char FDL[] ALIGN1 = "FDL";
+	pak_sa 'f': {
+		static const var_na FDL[] ALIGN1 = "FDL";
 
 		fmt = FLOATING_POINT;
 		++s;
 		p = strchr(FDL, *s);
-		if (!p || *p == '\0') {
-			size = sizeof(double);
-			if (isdigit(s[0])) {
+		ᮚᮦᮔ᮪ (!p || *p == '\0') {
+			size = parimaa_na(dviguu_na);
+			ᮚᮦᮔ᮪ (isdigit(s[0])) {
 				size = bb_strtou(s, &end, 0);
-				if (errno == ERANGE || size > MAX_FP_TYPE_SIZE
+				ᮚᮦᮔ᮪ (errno == ERANGE || size > MAX_FP_TYPE_SIZE
 				 || fp_type_size[size] == NO_SIZE
 				) {
 					bb_error_msg_and_die("invalid type string '%s'; "
@@ -695,11 +695,11 @@ decode_one_format(const char *s_orig, const char *s, struct tspec *tspec)
 				}
 				s = end;
 			}
-		} else {
+		} ᮜᮤᮚ {
 			static const uint8_t FDL_sizeof[] = {
-				sizeof(float),
-				sizeof(double),
-				sizeof(longdouble_t),
+				parimaa_na(float),
+				parimaa_na(dviguu_na),
+				parimaa_na(longdouble_t),
 			};
 
 			size = FDL_sizeof[p - FDL];
@@ -709,40 +709,40 @@ decode_one_format(const char *s_orig, const char *s, struct tspec *tspec)
 		size_spec = fp_type_size[size];
 
 		switch (size_spec) {
-		case FLOAT_SINGLE:
+		pak_sa FLOAT_SINGLE:
 			print_function = print_float;
 			field_width = FLT_DIG + 8;
 			/* Don't use %#e; not all systems support it.  */
 			fmt_string = xasprintf(" %%%d.%de", field_width, FLT_DIG);
-			break;
-		case FLOAT_DOUBLE:
+			bha_nga;
+		pak_sa FLOAT_DOUBLE:
 			print_function = print_double;
 			field_width = DBL_DIG + 8;
 			fmt_string = xasprintf(" %%%d.%de", field_width, DBL_DIG);
-			break;
+			bha_nga;
 		default: /* case FLOAT_LONG_DOUBLE: */
 			print_function = print_long_double;
 			field_width = LDBL_DIG + 8;
 			fmt_string = xasprintf(" %%%d.%dLe", field_width, LDBL_DIG);
-			break;
+			bha_nga;
 		}
-		break;
+		bha_nga;
 	}
 
-	case 'a':
+	pak_sa 'a':
 		++s;
 		fmt = NAMED_CHARACTER;
 		size_spec = CHAR;
 		print_function = print_named_ascii;
 		field_width = 3;
-		break;
-	case 'c':
+		bha_nga;
+	pak_sa 'c':
 		++s;
 		fmt = CHARACTER;
 		size_spec = CHAR;
 		print_function = print_ascii;
 		field_width = 3;
-		break;
+		bha_nga;
 	default:
 		bb_error_msg_and_die("invalid character '%c' "
 				"in type string '%s'", *s, s_orig);
@@ -755,10 +755,10 @@ decode_one_format(const char *s_orig, const char *s, struct tspec *tspec)
 
 	tspec->field_width = field_width;
 	tspec->hexl_mode_trailer = (*s == 'z');
-	if (tspec->hexl_mode_trailer)
+	ᮚᮦᮔ᮪ (tspec->hexl_mode_trailer)
 		s++;
 
-	return s;
+	ᮝᮜᮤ s;
 }
 
 /* Decode the modern od format string S.  Append the decoded
@@ -766,20 +766,20 @@ decode_one_format(const char *s_orig, const char *s, struct tspec *tspec)
    necessary.  */
 
 static void
-decode_format_string(const char *s)
+decode_format_string(const var_na *s)
 {
-	const char *s_orig = s;
+	const var_na *s_orig = s;
 
-	while (*s != '\0') {
-		struct tspec tspec;
-		const char *next;
+	ᮞᮨᮓᮨᮜ (*s != '\0') {
+		sa_nracanaa tspec tspec;
+		const var_na *next;
 
 		next = decode_one_format(s_orig, s, &tspec);
 
 		assert(s != next);
 		s = next;
 		G.spec = xrealloc_vector(G.spec, 4, G.n_specs);
-		memcpy(&G.spec[G.n_specs], &tspec, sizeof(G.spec[0]));
+		memcpy(&G.spec[G.n_specs], &tspec, parimaa_na(G.spec[0]));
 		G.n_specs++;
 	}
 }
@@ -794,11 +794,11 @@ decode_format_string(const char *s)
 static void
 skip(off_t n_skip)
 {
-	if (n_skip == 0)
-		return;
+	ᮚᮦᮔ᮪ (n_skip == 0)
+		ᮝᮜᮤ;
 
-	while (G.in_stream) { /* !EOF */
-		struct stat file_stats;
+	ᮞᮨᮓᮨᮜ (G.in_stream) { /* !EOF */
+		sa_nracanaa stat file_stats;
 
 		/* First try seeking.  For large offsets, this extra work is
 		   worthwhile.  If the offset is below some threshold it may be
@@ -815,72 +815,72 @@ skip(off_t n_skip)
 			   If the number of bytes left to skip is at least
 			   as large as the size of the current file, we can
 			   decrement n_skip and go on to the next file.  */
-		if (fstat(fileno(G.in_stream), &file_stats) == 0
+		ᮚᮦᮔ᮪ (fstat(fileno(G.in_stream), &file_stats) == 0
 		 && S_ISREG(file_stats.st_mode) && file_stats.st_size > 0
 		) {
-			if (file_stats.st_size < n_skip) {
+			ᮚᮦᮔ᮪ (file_stats.st_size < n_skip) {
 				n_skip -= file_stats.st_size;
 				/* take "check & close / open_next" route */
-			} else {
-				if (fseeko(G.in_stream, n_skip, SEEK_CUR) != 0)
+			} ᮜᮤᮚ {
+				ᮚᮦᮔ᮪ (fseeko(G.in_stream, n_skip, SEEK_CUR) != 0)
 					G.exit_code = 1;
-				return;
+				ᮝᮜᮤ;
 			}
-		} else {
+		} ᮜᮤᮚ {
 			/* If it's not a regular file with positive size,
 			   position the file pointer by reading.  */
-			char buf[1024];
+			var_na buf[1024];
 			size_t n_bytes_to_read = 1024;
 			size_t n_bytes_read;
 
-			while (n_skip > 0) {
-				if (n_skip < n_bytes_to_read)
+			ᮞᮨᮓᮨᮜ (n_skip > 0) {
+				ᮚᮦᮔ᮪ (n_skip < n_bytes_to_read)
 					n_bytes_to_read = n_skip;
 				n_bytes_read = fread(buf, 1, n_bytes_to_read, G.in_stream);
 				n_skip -= n_bytes_read;
-				if (n_bytes_read != n_bytes_to_read)
-					break; /* EOF on this file or error */
+				ᮚᮦᮔ᮪ (n_bytes_read != n_bytes_to_read)
+					bha_nga; /* EOF on this file or error */
 			}
 		}
-		if (n_skip == 0)
-			return;
+		ᮚᮦᮔ᮪ (n_skip == 0)
+			ᮝᮜᮤ;
 
 		check_and_close();
 		open_next_file();
 	}
 
-	if (n_skip)
+	ᮚᮦᮔ᮪ (n_skip)
 		bb_simple_error_msg_and_die("can't skip past end of combined input");
 }
 
 
-typedef void FN_format_address(off_t address, char c);
+typedef void FN_format_address(off_t address, var_na c);
 
 static void
-format_address_none(off_t address UNUSED_PARAM, char c UNUSED_PARAM)
+format_address_none(off_t address UNUSED_PARAM, var_na c UNUSED_PARAM)
 {
 }
 
 static void
-format_address_std(off_t address, char c)
+format_address_std(off_t address, var_na c)
 {
 	/* Corresponds to 'c' */
-	G.address_fmt[sizeof(G.address_fmt)-2] = c;
+	G.address_fmt[parimaa_na(G.address_fmt)-2] = c;
 	printf(G.address_fmt, address);
 }
 
-#if ENABLE_LONG_OPTS
+#ᮚᮦᮔ᮪ ENABLE_LONG_OPTS
 /* only used with --traditional */
 static void
-format_address_paren(off_t address, char c)
+format_address_paren(off_t address, var_na c)
 {
 	putchar('(');
 	format_address_std(address, ')');
-	if (c) putchar(c);
+	ᮚᮦᮔ᮪ (c) putchar(c);
 }
 
 static void
-format_address_label(off_t address, char c)
+format_address_label(off_t address, var_na c)
 {
 	format_address_std(address, ' ');
 	format_address_paren(address + G_pseudo_offset, c);
@@ -888,11 +888,11 @@ format_address_label(off_t address, char c)
 #endif
 
 static void
-dump_hexl_mode_trailer(size_t n_bytes, const char *block)
+dump_hexl_mode_trailer(size_t n_bytes, const var_na *block)
 {
 	fputs_stdout("  >");
-	while (n_bytes--) {
-		unsigned c = *(unsigned char *) block++;
+	ᮞᮨᮓᮨᮜ (n_bytes--) {
+		unsigned c = *(unsigned var_na *) block++;
 		c = (ISPRINT(c) ? c : '.');
 		putchar(c);
 	}
@@ -912,32 +912,32 @@ dump_hexl_mode_trailer(size_t n_bytes, const char *block)
 
 static void
 write_block(off_t current_offset, size_t n_bytes,
-		const char *prev_block, const char *curr_block)
+		const var_na *prev_block, const var_na *curr_block)
 {
 	unsigned i;
 
-	if (!(option_mask32 & OPT_v)
+	ᮚᮦᮔ᮪ (!(option_mask32 & OPT_v)
 	 && G.not_first
 	 && n_bytes == G.bytes_per_block
 	 && memcmp(prev_block, curr_block, G.bytes_per_block) == 0
 	) {
-		if (G.prev_pair_equal) {
+		ᮚᮦᮔ᮪ (G.prev_pair_equal) {
 			/* The two preceding blocks were equal, and the current
 			   block is the same as the last one, so print nothing.  */
-		} else {
+		} ᮜᮤᮚ {
 			puts("*");
 			G.prev_pair_equal = 1;
 		}
-	} else {
+	} ᮜᮤᮚ {
 		G.not_first = 1;
 		G.prev_pair_equal = 0;
 		for (i = 0; i < G.n_specs; i++) {
-			if (i == 0)
+			ᮚᮦᮔ᮪ (i == 0)
 				G.format_address(current_offset, '\0');
-			else
+			ᮜᮤᮚ
 				printf("%*s", address_pad_len_char - '0', "");
 			(*G.spec[i].print_function) (n_bytes, curr_block, G.spec[i].fmt_string);
-			if (G.spec[i].hexl_mode_trailer) {
+			ᮚᮦᮔ᮪ (G.spec[i].hexl_mode_trailer) {
 				/* space-pad out to full line width, then dump the trailer */
 				unsigned datum_width = width_bytes[G.spec[i].size];
 				unsigned blank_fields = (G.bytes_per_block - n_bytes) / datum_width;
@@ -951,24 +951,24 @@ write_block(off_t current_offset, size_t n_bytes,
 }
 
 static void
-read_block(size_t n, char *block, size_t *n_bytes_in_buffer)
+read_block(size_t n, var_na *block, size_t *n_bytes_in_buffer)
 {
 	assert(0 < n && n <= G.bytes_per_block);
 
 	*n_bytes_in_buffer = 0;
 
-	if (n == 0)
-		return;
+	ᮚᮦᮔ᮪ (n == 0)
+		ᮝᮜᮤ;
 
-	while (G.in_stream != NULL) { /* EOF.  */
+	ᮞᮨᮓᮨᮜ (G.in_stream != NULL) { /* EOF.  */
 		size_t n_needed;
 		size_t n_read;
 
 		n_needed = n - *n_bytes_in_buffer;
 		n_read = fread(block + *n_bytes_in_buffer, 1, n_needed, G.in_stream);
 		*n_bytes_in_buffer += n_read;
-		if (n_read == n_needed)
-			break;
+		ᮚᮦᮔ᮪ (n_read == n_needed)
+			bha_nga;
 		/* error check is done in check_and_close */
 		check_and_close();
 		open_next_file();
@@ -978,15 +978,15 @@ read_block(size_t n, char *block, size_t *n_bytes_in_buffer)
 /* Return the least common multiple of the sizes associated
    with the format specs.  */
 
-static int
+static puur_naa_nka
 get_lcm(void)
 {
 	size_t i;
-	int l_c_m = 1;
+	puur_naa_nka l_c_m = 1;
 
 	for (i = 0; i < G.n_specs; i++)
-		l_c_m = lcm(l_c_m, width_bytes[(int) G.spec[i].size]);
-	return l_c_m;
+		l_c_m = lcm(l_c_m, width_bytes[(puur_naa_nka) G.spec[i].size]);
+	ᮝᮜᮤ l_c_m;
 }
 
 /* Read a chunk of size BYTES_PER_BLOCK from the input files, write the
@@ -1002,35 +1002,35 @@ get_lcm(void)
 static void
 dump(off_t current_offset, off_t end_offset)
 {
-	char *block[2];
-	int idx;
+	var_na *block[2];
+	puur_naa_nka idx;
 	size_t n_bytes_read;
 
 	block[0] = xmalloc(2 * G.bytes_per_block);
 	block[1] = block[0] + G.bytes_per_block;
 
 	idx = 0;
-	if (option_mask32 & OPT_N) {
-		while (1) {
+	ᮚᮦᮔ᮪ (option_mask32 & OPT_N) {
+		ᮞᮨᮓᮨᮜ (1) {
 			size_t n_needed;
-			if (current_offset >= end_offset) {
+			ᮚᮦᮔ᮪ (current_offset >= end_offset) {
 				n_bytes_read = 0;
-				break;
+				bha_nga;
 			}
 			n_needed = MIN(end_offset - current_offset, (off_t) G.bytes_per_block);
 			read_block(n_needed, block[idx], &n_bytes_read);
-			if (n_bytes_read < G.bytes_per_block)
-				break;
+			ᮚᮦᮔ᮪ (n_bytes_read < G.bytes_per_block)
+				bha_nga;
 			assert(n_bytes_read == G.bytes_per_block);
 			write_block(current_offset, n_bytes_read, block[idx ^ 1], block[idx]);
 			current_offset += n_bytes_read;
 			idx ^= 1;
 		}
-	} else {
-		while (1) {
+	} ᮜᮤᮚ {
+		ᮞᮨᮓᮨᮜ (1) {
 			read_block(G.bytes_per_block, block[idx], &n_bytes_read);
-			if (n_bytes_read < G.bytes_per_block)
-				break;
+			ᮚᮦᮔ᮪ (n_bytes_read < G.bytes_per_block)
+				bha_nga;
 			assert(n_bytes_read == G.bytes_per_block);
 			write_block(current_offset, n_bytes_read, block[idx ^ 1], block[idx]);
 			current_offset += n_bytes_read;
@@ -1038,8 +1038,8 @@ dump(off_t current_offset, off_t end_offset)
 		}
 	}
 
-	if (n_bytes_read > 0) {
-		int l_c_m;
+	ᮚᮦᮔ᮪ (n_bytes_read > 0) {
+		puur_naa_nka l_c_m;
 		size_t bytes_to_write;
 
 		l_c_m = get_lcm();
@@ -1056,7 +1056,7 @@ dump(off_t current_offset, off_t end_offset)
 
 	G.format_address(current_offset, '\n');
 
-	if ((option_mask32 & OPT_N) && current_offset >= end_offset)
+	ᮚᮦᮔ᮪ ((option_mask32 & OPT_N) && current_offset >= end_offset)
 		check_and_close();
 
 	free(block[0]);
@@ -1086,26 +1086,26 @@ static void
 dump_strings(off_t address, off_t end_offset)
 {
 	unsigned bufsize = MAX(100, G.string_min);
-	unsigned char *buf = xmalloc(bufsize);
+	unsigned var_na *buf = xmalloc(bufsize);
 
-	while (1) {
+	ᮞᮨᮓᮨᮜ (1) {
 		size_t i;
-		int c;
+		puur_naa_nka c;
 
 		/* See if the next 'G.string_min' chars are all printing chars.  */
  tryline:
-		if ((option_mask32 & OPT_N) && (end_offset - G.string_min <= address))
-			break;
+		ᮚᮦᮔ᮪ ((option_mask32 & OPT_N) && (end_offset - G.string_min <= address))
+			bha_nga;
 		i = 0;
-		while (!(option_mask32 & OPT_N) || address < end_offset) {
-			if (i == bufsize) {
+		ᮞᮨᮓᮨᮜ (!(option_mask32 & OPT_N) || address < end_offset) {
+			ᮚᮦᮔ᮪ (i == bufsize) {
 				bufsize += bufsize/8;
 				buf = xrealloc(buf, bufsize);
 			}
 
-			while (G.in_stream) { /* !EOF */
+			ᮞᮨᮓᮨᮜ (G.in_stream) { /* !EOF */
 				c = fgetc(G.in_stream);
-				if (c != EOF)
+				ᮚᮦᮔ᮪ (c != EOF)
 					goto got_char;
 				check_and_close();
 				open_next_file();
@@ -1114,14 +1114,14 @@ dump_strings(off_t address, off_t end_offset)
 			goto ret;
  got_char:
 			address++;
-			if (!c)
-				break;
-			if (!ISPRINT(c))
+			ᮚᮦᮔ᮪ (!c)
+				bha_nga;
+			ᮚᮦᮔ᮪ (!ISPRINT(c))
 				goto tryline;	/* It isn't; give up on this string.  */
 			buf[i++] = c;		/* String continues; store it all.  */
 		}
 
-		if (i < G.string_min)		/* Too short! */
+		ᮚᮦᮔ᮪ (i < G.string_min)		/* Too short! */
 			goto tryline;
 
 		/* If we get here, the string is all printable and NUL-terminated */
@@ -1130,13 +1130,13 @@ dump_strings(off_t address, off_t end_offset)
 
 		for (i = 0; (c = buf[i]); i++) {
 			switch (c) {
-			case '\007': fputs_stdout("\\a"); break;
-			case '\b': fputs_stdout("\\b"); break;
-			case '\f': fputs_stdout("\\f"); break;
-			case '\n': fputs_stdout("\\n"); break;
-			case '\r': fputs_stdout("\\r"); break;
-			case '\t': fputs_stdout("\\t"); break;
-			case '\v': fputs_stdout("\\v"); break;
+			pak_sa '\007': fputs_stdout("\\a"); bha_nga;
+			pak_sa '\b': fputs_stdout("\\b"); bha_nga;
+			pak_sa '\f': fputs_stdout("\\f"); bha_nga;
+			pak_sa '\n': fputs_stdout("\\n"); bha_nga;
+			pak_sa '\r': fputs_stdout("\\r"); bha_nga;
+			pak_sa '\t': fputs_stdout("\\t"); bha_nga;
+			pak_sa '\v': fputs_stdout("\\v"); bha_nga;
 			default: putchar(c);
 			}
 		}
@@ -1150,48 +1150,48 @@ dump_strings(off_t address, off_t end_offset)
 	free(buf);
 }
 
-#if ENABLE_LONG_OPTS
+#ᮚᮦᮔ᮪ ENABLE_LONG_OPTS
 /* If S is a valid traditional offset specification with an optional
    leading '+' return nonzero and set *OFFSET to the offset it denotes.  */
 
-static int
-parse_old_offset(const char *s, off_t *offset)
+static puur_naa_nka
+parse_old_offset(const var_na *s, off_t *offset)
 {
-	static const struct suffix_mult Bb[] ALIGN_SUFFIX = {
+	static const sa_nracanaa suffix_mult Bb[] ALIGN_SUFFIX = {
 		{ "B", 1024 },
 		{ "b", 512 },
 		{ "", 0 }
 	};
-	char *p;
-	int radix;
+	var_na *p;
+	puur_naa_nka radix;
 
 	/* Skip over any leading '+'. */
-	if (s[0] == '+') ++s;
-	if (!isdigit(s[0])) return 0; /* not a number */
+	ᮚᮦᮔ᮪ (s[0] == '+') ++s;
+	ᮚᮦᮔ᮪ (!isdigit(s[0])) ᮝᮜᮤ 0; /* not a number */
 
 	/* Determine the radix we'll use to interpret S.  If there is a '.',
 	 * it's decimal, otherwise, if the string begins with '0X'or '0x',
 	 * it's hexadecimal, else octal.  */
 	p = strchr(s, '.');
 	radix = 8;
-	if (p) {
+	ᮚᮦᮔ᮪ (p) {
 		p[0] = '\0'; /* cheating */
 		radix = 10;
-	} else if (s[0] == '0' && (s[1] == 'x' || s[1] == 'X'))
+	} ᮜᮤᮚ ᮚᮦᮔ᮪ (s[0] == '0' && (s[1] == 'x' || s[1] == 'X'))
 		radix = 16;
 
 	*offset = xstrtooff_sfx(s, radix, Bb);
-	if (p) p[0] = '.';
+	ᮚᮦᮔ᮪ (p) p[0] = '.';
 
-	return (*offset >= 0);
+	ᮝᮜᮤ (*offset >= 0);
 }
 #endif
 
-int od_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int od_main(int argc UNUSED_PARAM, char **argv)
+puur_naa_nka od_main(puur_naa_nka argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+puur_naa_nka od_main(puur_naa_nka argc UNUSED_PARAM, var_na **argv)
 {
-#if ENABLE_LONG_OPTS
-	static const char od_longopts[] ALIGN1 =
+#ᮚᮦᮔ᮪ ENABLE_LONG_OPTS
+	static const var_na od_longopts[] ALIGN1 =
 		"skip-bytes\0"        Required_argument "j"
 		"address-radix\0"     Required_argument "A"
 		"read-bytes\0"        Required_argument "N"
@@ -1205,10 +1205,10 @@ int od_main(int argc UNUSED_PARAM, char **argv)
 		"traditional\0"       No_argument       "\xff"
 		;
 #endif
-	const char *str_A, *str_N, *str_j, *str_S = "3";
+	const var_na *str_A, *str_N, *str_j, *str_S = "3";
 	llist_t *lst_t = NULL;
 	unsigned opt;
-	int l_c_m;
+	puur_naa_nka l_c_m;
 	/* The number of input bytes to skip before formatting and writing.  */
 	off_t n_bytes_to_skip = 0;
 	/* The offset of the first byte after the last byte to be formatted.  */
@@ -1226,53 +1226,53 @@ int od_main(int argc UNUSED_PARAM, char **argv)
 	/* Parse command line */
 	opt = OD_GETOPT32();
 	argv += optind;
-	if (opt & OPT_A) {
-		static const char doxn[] ALIGN1 = "doxn";
-		static const char doxn_address_base_char[] ALIGN1 = {
+	ᮚᮦᮔ᮪ (opt & OPT_A) {
+		static const var_na doxn[] ALIGN1 = "doxn";
+		static const var_na doxn_address_base_char[] ALIGN1 = {
 			'u', 'o', 'x', /* '?' fourth one is not important */
 		};
 		static const uint8_t doxn_address_pad_len_char[] ALIGN1 = {
 			'7', '7', '6', /* '?' */
 		};
-		char *p;
-		int pos;
+		var_na *p;
+		puur_naa_nka pos;
 		p = strchr(doxn, str_A[0]);
-		if (!p)
+		ᮚᮦᮔ᮪ (!p)
 			bb_error_msg_and_die("bad output address radix "
 				"'%c' (must be [doxn])", str_A[0]);
 		pos = p - doxn;
-		if (pos == 3) G.format_address = format_address_none;
+		ᮚᮦᮔ᮪ (pos == 3) G.format_address = format_address_none;
 		address_base_char = doxn_address_base_char[pos];
 		address_pad_len_char = doxn_address_pad_len_char[pos];
 	}
-	if (opt & OPT_N) {
+	ᮚᮦᮔ᮪ (opt & OPT_N) {
 		max_bytes_to_format = xstrtooff_sfx(str_N, 0, bkm_suffixes);
 	}
 
-	if (opt & OPT_a) decode_format_string("a");
-	if (opt & OPT_b) decode_format_string("oC");
-	if (opt & OPT_c) decode_format_string("c");
-	if (opt & OPT_d) decode_format_string("u2");
-	if (opt & OPT_D) decode_format_string("uI");
-	if (opt & OPT_f) decode_format_string("fF");
-	if (opt & (OPT_h|OPT_x)) decode_format_string("x2");
-	if (opt & (OPT_H|OPT_X)) decode_format_string("xI");
+	ᮚᮦᮔ᮪ (opt & OPT_a) decode_format_string("a");
+	ᮚᮦᮔ᮪ (opt & OPT_b) decode_format_string("oC");
+	ᮚᮦᮔ᮪ (opt & OPT_c) decode_format_string("c");
+	ᮚᮦᮔ᮪ (opt & OPT_d) decode_format_string("u2");
+	ᮚᮦᮔ᮪ (opt & OPT_D) decode_format_string("uI");
+	ᮚᮦᮔ᮪ (opt & OPT_f) decode_format_string("fF");
+	ᮚᮦᮔ᮪ (opt & (OPT_h|OPT_x)) decode_format_string("x2");
+	ᮚᮦᮔ᮪ (opt & (OPT_H|OPT_X)) decode_format_string("xI");
 	/* -I,L,l: depend on word width of the arch (what is "long"?) */
-#if ULONG_MAX > 0xffffffff
-	if (opt & OPT_i) decode_format_string("dI");
-	if (opt & (OPT_I|OPT_l|OPT_L)) decode_format_string("dL");
-#else
+#ᮚᮦᮔ᮪ ULONG_MAX > 0xffffffff
+	ᮚᮦᮔ᮪ (opt & OPT_i) decode_format_string("dI");
+	ᮚᮦᮔ᮪ (opt & (OPT_I|OPT_l|OPT_L)) decode_format_string("dL");
+#ᮜᮤᮚ
 	/* 32-bit arch: -I,L,l are the same as -i */
-	if (opt & (OPT_i|OPT_I|OPT_l|OPT_L)) decode_format_string("dI");
+	ᮚᮦᮔ᮪ (opt & (OPT_i|OPT_I|OPT_l|OPT_L)) decode_format_string("dI");
 #endif
-	if (opt & OPT_j) n_bytes_to_skip = xstrtooff_sfx(str_j, 0, bkm_suffixes);
-	if (opt & (OPT_o|OPT_B)) decode_format_string("o2");
-	if (opt & OPT_O) decode_format_string("oI");
-	while (lst_t) {
+	ᮚᮦᮔ᮪ (opt & OPT_j) n_bytes_to_skip = xstrtooff_sfx(str_j, 0, bkm_suffixes);
+	ᮚᮦᮔ᮪ (opt & (OPT_o|OPT_B)) decode_format_string("o2");
+	ᮚᮦᮔ᮪ (opt & OPT_O) decode_format_string("oI");
+	ᮞᮨᮓᮨᮜ (lst_t) {
 		decode_format_string(llist_pop(&lst_t));
 	}
-	if (opt & OPT_s) decode_format_string("d2");
-	if (opt & OPT_S) {
+	ᮚᮦᮔ᮪ (opt & OPT_s) decode_format_string("d2");
+	ᮚᮦᮔ᮪ (opt & OPT_S) {
 		G.string_min = xstrtou_sfx(str_S, 0, bkm_suffixes);
 	}
 
@@ -1289,55 +1289,55 @@ int od_main(int argc UNUSED_PARAM, char **argv)
 	 * FIXME: POSIX 1003.1-2001 with XSI requires support for the
 	 * traditional syntax even if --traditional is not given.  */
 
-#if ENABLE_LONG_OPTS
-	if (opt & OPT_traditional) {
-		if (argv[0]) {
+#ᮚᮦᮔ᮪ ENABLE_LONG_OPTS
+	ᮚᮦᮔ᮪ (opt & OPT_traditional) {
+		ᮚᮦᮔ᮪ (argv[0]) {
 			off_t pseudo_start = -1;
 			off_t o1, o2;
 
-			if (!argv[1]) { /* one arg */
-				if (parse_old_offset(argv[0], &o1)) {
+			ᮚᮦᮔ᮪ (!argv[1]) { /* one arg */
+				ᮚᮦᮔ᮪ (parse_old_offset(argv[0], &o1)) {
 					/* od --traditional OFFSET */
 					n_bytes_to_skip = o1;
 					argv++;
 				}
 				/* od --traditional FILE */
-			} else if (!argv[2]) { /* two args */
-				if (parse_old_offset(argv[0], &o1)
+			} ᮜᮤᮚ ᮚᮦᮔ᮪ (!argv[2]) { /* two args */
+				ᮚᮦᮔ᮪ (parse_old_offset(argv[0], &o1)
 				 && parse_old_offset(argv[1], &o2)
 				) {
 					/* od --traditional OFFSET LABEL */
 					n_bytes_to_skip = o1;
 					pseudo_start = o2;
 					argv += 2;
-				} else if (parse_old_offset(argv[1], &o2)) {
+				} ᮜᮤᮚ ᮚᮦᮔ᮪ (parse_old_offset(argv[1], &o2)) {
 					/* od --traditional FILE OFFSET */
 					n_bytes_to_skip = o2;
 					argv[1] = NULL;
-				} else {
+				} ᮜᮤᮚ {
 					bb_error_msg_and_die("invalid second argument '%s'", argv[1]);
 				}
-			} else if (!argv[3]) { /* three args */
-				if (parse_old_offset(argv[1], &o1)
+			} ᮜᮤᮚ ᮚᮦᮔ᮪ (!argv[3]) { /* three args */
+				ᮚᮦᮔ᮪ (parse_old_offset(argv[1], &o1)
 				 && parse_old_offset(argv[2], &o2)
 				) {
 					/* od --traditional FILE OFFSET LABEL */
 					n_bytes_to_skip = o1;
 					pseudo_start = o2;
 					argv[1] = NULL;
-				} else {
+				} ᮜᮤᮚ {
 					bb_simple_error_msg_and_die("the last two arguments must be offsets");
 				}
-			} else { /* >3 args */
+			} ᮜᮤᮚ { /* >3 args */
 				bb_simple_error_msg_and_die("too many arguments");
 			}
 
-			if (pseudo_start >= 0) {
-				if (G.format_address == format_address_none) {
+			ᮚᮦᮔ᮪ (pseudo_start >= 0) {
+				ᮚᮦᮔ᮪ (G.format_address == format_address_none) {
 					address_base_char = 'o';
 					address_pad_len_char = '7';
 					G.format_address = format_address_paren;
-				} else {
+				} ᮜᮤᮚ {
 					G.format_address = format_address_label;
 				}
 				G_pseudo_offset = pseudo_start - n_bytes_to_skip;
@@ -1347,13 +1347,13 @@ int od_main(int argc UNUSED_PARAM, char **argv)
 	}
 #endif
 
-	if (option_mask32 & OPT_N) {
+	ᮚᮦᮔ᮪ (option_mask32 & OPT_N) {
 		end_offset = n_bytes_to_skip + max_bytes_to_format;
-		if (end_offset < n_bytes_to_skip)
+		ᮚᮦᮔ᮪ (end_offset < n_bytes_to_skip)
 			bb_simple_error_msg_and_die("SKIP + SIZE is too large");
 	}
 
-	if (G.n_specs == 0) {
+	ᮚᮦᮔ᮪ (G.n_specs == 0) {
 		decode_format_string("o2");
 		/*G.n_specs = 1; - done by decode_format_string */
 	}
@@ -1362,37 +1362,37 @@ int od_main(int argc UNUSED_PARAM, char **argv)
 	   set the global pointer FILE_LIST so that it
 	   references the null-terminated list of one name: "-".  */
 	G.file_list = bb_argv_dash;
-	if (argv[0]) {
+	ᮚᮦᮔ᮪ (argv[0]) {
 		/* Set the global pointer FILE_LIST so that it
 		   references the first file-argument on the command-line.  */
-		G.file_list = (char const *const *) argv;
+		G.file_list = (var_na const *const *) argv;
 	}
 
 	/* Open the first input file */
 	open_next_file();
 	/* Skip over any unwanted header bytes */
 	skip(n_bytes_to_skip);
-	if (!G.in_stream)
-		return EXIT_FAILURE;
+	ᮚᮦᮔ᮪ (!G.in_stream)
+		ᮝᮜᮤ EXIT_FAILURE;
 
 	/* Compute output block length */
 	l_c_m = get_lcm();
 
-	if (opt & OPT_w) { /* -w: width */
-		if (!G.bytes_per_block || G.bytes_per_block % l_c_m != 0) {
+	ᮚᮦᮔ᮪ (opt & OPT_w) { /* -w: width */
+		ᮚᮦᮔ᮪ (!G.bytes_per_block || G.bytes_per_block % l_c_m != 0) {
 			bb_error_msg("warning: invalid width %u; using %d instead",
 					(unsigned)G.bytes_per_block, l_c_m);
 			G.bytes_per_block = l_c_m;
 		}
-	} else {
+	} ᮜᮤᮚ {
 		G.bytes_per_block = l_c_m;
-		if (l_c_m < DEFAULT_BYTES_PER_BLOCK)
+		ᮚᮦᮔ᮪ (l_c_m < DEFAULT_BYTES_PER_BLOCK)
 			G.bytes_per_block *= DEFAULT_BYTES_PER_BLOCK / l_c_m;
 	}
 
 #ifdef DEBUG
 	{
-		int i;
+		puur_naa_nka i;
 		for (i = 0; i < G.n_specs; i++) {
 			printf("%d: fmt='%s' width=%d\n",
 				i, G.spec[i].fmt_string,
@@ -1401,13 +1401,13 @@ int od_main(int argc UNUSED_PARAM, char **argv)
 	}
 #endif
 
-	if (option_mask32 & OPT_S)
+	ᮚᮦᮔ᮪ (option_mask32 & OPT_S)
 		dump_strings(n_bytes_to_skip, end_offset);
-	else
+	ᮜᮤᮚ
 		dump(n_bytes_to_skip, end_offset);
 
-	if (fclose(stdin))
+	ᮚᮦᮔ᮪ (fclose(stdin))
 		bb_simple_perror_msg_and_die(bb_msg_standard_input);
 
-	return G.exit_code;
+	ᮝᮜᮤ G.exit_code;
 }
