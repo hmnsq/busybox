@@ -105,30 +105,30 @@
 //usage:     "\n	-t DIR	Copy all SOURCEs into DIR"
 //usage:     "\n	-u	Copy only newer files"
 
-#include "libbb.h"
-#include "libcoreutils/coreutils.h"
+#अन्तर्भाव "libbb.h"
+#अन्तर्भाव "libcoreutils/coreutils.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-int cp_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int cp_main(int argc, char **argv)
+पूर्णाङ्क cp_main(पूर्णाङ्क argc, वर्ण **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णाङ्क cp_main(पूर्णाङ्क argc, वर्ण **argv)
 {
-	struct stat source_stat;
-	struct stat dest_stat;
-	const char *last;
-	const char *dest;
-	int s_flags;
-	int d_flags;
-	int flags;
-	int status;
-#if ENABLE_FEATURE_CP_LONG_OPTIONS
-	enum {
+	संरचना stat source_stat;
+	संरचना stat dest_stat;
+	ध्रुव वर्ण *चरमः;
+	ध्रुव वर्ण *dest;
+	पूर्णाङ्क s_flags;
+	पूर्णाङ्क d_flags;
+	पूर्णाङ्क flags;
+	पूर्णाङ्क स्थितिः;
+#यदि ENABLE_FEATURE_CP_LONG_OPTIONS
+	गणना {
 		/*OPT_rmdest  = FILEUTILS_RMDEST = 1 << FILEUTILS_CP_OPTBITS */
 		OPT_parents = 1 << (FILEUTILS_CP_OPTBITS+1),
 		OPT_reflink = 1 << (FILEUTILS_CP_OPTBITS+2),
 	};
-# if ENABLE_FEATURE_CP_REFLINK
-	char *reflink = NULL;
+# यदि ENABLE_FEATURE_CP_REFLINK
+	वर्ण *reflink = रिक्त;
 # endif
 	flags = getopt32long(argv, "^"
 		FILEUTILS_CP_OPTSTR
@@ -141,48 +141,48 @@ int cp_main(int argc, char **argv)
 		// -a = -pdR
 		// -i overrides -n and vice versa (last wins)
 		"-1:l--s:s--l:Pd:rRd:Rd:apdR:i-n:n-i",
-		"archive\0"        No_argument "a"
-		"force\0"          No_argument "f"
-		"interactive\0"    No_argument "i"
-		"no-clobber\0"     No_argument "n"
-		"link\0"           No_argument "l"
-		"dereference\0"    No_argument "L"
-		"no-dereference\0" No_argument "P"
-		"recursive\0"      No_argument "R"
-		"symbolic-link\0"  No_argument "s"
-		"no-target-directory\0" No_argument "T"
-		"target-directory\0" Required_argument "t"
-		"verbose\0"        No_argument "v"
-		"update\0"         No_argument "u"
-		"remove-destination\0" No_argument "\xff"
-		"parents\0"        No_argument "\xfe"
-# if ENABLE_FEATURE_CP_REFLINK
-		"reflink\0"        Optional_argument "\xfd"
+		"archive\0"        No_तर्कः "a"
+		"force\0"          No_तर्कः "f"
+		"interactive\0"    No_तर्कः "i"
+		"no-clobber\0"     No_तर्कः "n"
+		"link\0"           No_तर्कः "l"
+		"dereference\0"    No_तर्कः "L"
+		"no-dereference\0" No_तर्कः "P"
+		"recursive\0"      No_तर्कः "R"
+		"symbolic-link\0"  No_तर्कः "s"
+		"no-target-directory\0" No_तर्कः "T"
+		"target-directory\0" Required_तर्कः "t"
+		"verbose\0"        No_तर्कः "v"
+		"update\0"         No_तर्कः "u"
+		"remove-destination\0" No_तर्कः "\xff"
+		"parents\0"        No_तर्कः "\xfe"
+# यदि ENABLE_FEATURE_CP_REFLINK
+		"reflink\0"        Optional_तर्कः "\xfd"
 # endif
-		, &last
-# if ENABLE_FEATURE_CP_REFLINK
+		, &चरमः
+# यदि ENABLE_FEATURE_CP_REFLINK
 		, &reflink
 # endif
 	);
-# if ENABLE_FEATURE_CP_REFLINK
-	BUILD_BUG_ON((int)OPT_reflink != (int)FILEUTILS_REFLINK);
-	if (flags & FILEUTILS_REFLINK) {
-		if (!reflink)
+# यदि ENABLE_FEATURE_CP_REFLINK
+	BUILD_BUG_ON((पूर्णाङ्क)OPT_reflink != (पूर्णाङ्क)FILEUTILS_REFLINK);
+	यदि (flags & FILEUTILS_REFLINK) {
+		यदि (!reflink)
 			flags |= FILEUTILS_REFLINK_ALWAYS;
-		else if (strcmp(reflink, "always") == 0)
+		अन्यथा यदि (वाक्यं_तुलय(reflink, "always") == 0)
 			flags |= FILEUTILS_REFLINK_ALWAYS;
-		else if (strcmp(reflink, "auto") != 0)
+		अन्यथा यदि (वाक्यं_तुलय(reflink, "auto") != 0)
 			bb_show_usage();
 	}
 # endif
-#else
+#अन्यथा
 	flags = getopt32(argv, "^"
 		FILEUTILS_CP_OPTSTR
 		"\0"
 		"-1:l--s:s--l:Pd:rRd:Rd:apdR"
-		, &last
+		, &चरमः
 	);
-#endif
+#यदि_अन्तः
 	argc -= optind;
 	argv += optind;
 	/* Reverse this bit. If there is -d, bit is not set: */
@@ -191,95 +191,95 @@ int cp_main(int argc, char **argv)
 	 * by default, "cp" derefs symlinks (creates regular dest files),
 	 * but "cp -R" does not. We switch off deref if -r or -R (see above).
 	 * However, "cp -RL" must still deref symlinks: */
-	if (flags & FILEUTILS_DEREF_SOFTLINK) /* -L */
+	यदि (flags & FILEUTILS_DEREF_SOFTLINK) /* -L */
 		flags |= FILEUTILS_DEREFERENCE;
 
-#if ENABLE_SELINUX
-	if (flags & FILEUTILS_PRESERVE_SECURITY_CONTEXT) {
+#यदि ENABLE_SELINUX
+	यदि (flags & FILEUTILS_PRESERVE_SECURITY_CONTEXT) {
 		selinux_or_die();
 	}
-#endif
+#यदि_अन्तः
 
-	status = EXIT_SUCCESS;
-	if (!(flags & FILEUTILS_TARGET_DIR)) {
-		last = argv[argc - 1];
-		if (argc < 2)
+	स्थितिः = EXIT_SUCCESS;
+	यदि (!(flags & FILEUTILS_TARGET_DIR)) {
+		चरमः = argv[argc - 1];
+		यदि (argc < 2)
 			bb_show_usage();
-		if (argc != 2) {
-			if (flags & FILEUTILS_NO_TARGET_DIR)
+		यदि (argc != 2) {
+			यदि (flags & FILEUTILS_NO_TARGET_DIR)
 				bb_show_usage();
 			/* "cp A B C... DIR" - target must be dir */
-		} else /* argc == 2 */ {
+		} अन्यथा /* argc == 2 */ {
 			/* "cp A B" - only case where target can be not a dir */
 			s_flags = cp_mv_stat2(*argv, &source_stat,
 					(flags & FILEUTILS_DEREFERENCE) ? stat : lstat);
-			if (s_flags < 0) /* error other than ENOENT */
-				return EXIT_FAILURE;
-			d_flags = cp_mv_stat(last, &dest_stat);
-			if (d_flags < 0) /* error other than ENOENT */
-				return EXIT_FAILURE;
+			यदि (s_flags < 0) /* error other than ENOENT */
+				प्रत्यागम EXIT_FAILURE;
+			d_flags = cp_mv_stat(चरमः, &dest_stat);
+			यदि (d_flags < 0) /* error other than ENOENT */
+				प्रत्यागम EXIT_FAILURE;
 
-			if (flags & FILEUTILS_NO_TARGET_DIR) { /* -T */
-				if (!(s_flags & 2) && (d_flags & 2))
+			यदि (flags & FILEUTILS_NO_TARGET_DIR) { /* -T */
+				यदि (!(s_flags & 2) && (d_flags & 2))
 					/* cp -T NOTDIR DIR */
-					bb_error_msg_and_die("'%s' is a directory", last);
+					bb_error_सन्देशः_and_die("'%s' is a directory", चरमः);
 			}
 
-#if ENABLE_FEATURE_CP_LONG_OPTIONS
+#यदि ENABLE_FEATURE_CP_LONG_OPTIONS
 			//bb_error_msg("flags:%x FILEUTILS_RMDEST:%x OPT_parents:%x",
 			//	flags, FILEUTILS_RMDEST, OPT_parents);
-			if (flags & OPT_parents) {
-				if (!(d_flags & 2)) {
-					bb_simple_error_msg_and_die("with --parents, the destination must be a directory");
+			यदि (flags & OPT_parents) {
+				यदि (!(d_flags & 2)) {
+					bb_simple_error_सन्देशः_and_die("with --parents, the destination must be a directory");
 				}
 			}
-			if (flags & FILEUTILS_RMDEST) {
+			यदि (flags & FILEUTILS_RMDEST) {
 				flags |= FILEUTILS_FORCE;
 			}
-#endif
+#यदि_अन्तः
 
 			/* ...if neither is a directory...  */
-			if (!((s_flags | d_flags) & 2)
+			यदि (!((s_flags | d_flags) & 2)
 			    /* ...or: recursing, the 1st is a directory, and the 2nd doesn't exist... */
 			 || ((flags & FILEUTILS_RECUR) && (s_flags & 2) && !d_flags)
 			 || (flags & FILEUTILS_NO_TARGET_DIR)
 			) {
 				/* Do a simple copy */
-				dest = last;
-				goto DO_COPY; /* NB: argc==2 -> *++argv==last */
+				dest = चरमः;
+				गच्छ DO_COPY; /* NB: argc==2 -> *++argv==last */
 			}
 		}
 	}
 	/* else: last is DIR from "-t DIR" */
 
-	while (1) {
-#if ENABLE_FEATURE_CP_LONG_OPTIONS
-		if (flags & OPT_parents) {
-			char *dest_dup;
-			char *dest_dir;
-			dest = concat_path_file(last, *argv);
+	यावत् (1) {
+#यदि ENABLE_FEATURE_CP_LONG_OPTIONS
+		यदि (flags & OPT_parents) {
+			वर्ण *dest_dup;
+			वर्ण *dest_dir;
+			dest = concat_मार्गः_file(चरमः, *argv);
 			dest_dup = xstrdup(dest);
 			dest_dir = dirname(dest_dup);
-			if (bb_make_directory(dest_dir, -1, FILEUTILS_RECUR)) {
-				return EXIT_FAILURE;
+			यदि (bb_make_directory(dest_dir, -1, FILEUTILS_RECUR)) {
+				प्रत्यागम EXIT_FAILURE;
 			}
-			free(dest_dup);
-			goto DO_COPY;
+			मुक्त(dest_dup);
+			गच्छ DO_COPY;
 		}
-#endif
-		dest = concat_path_file(last, bb_get_last_path_component_strip(*argv));
+#यदि_अन्तः
+		dest = concat_मार्गः_file(चरमः, bb_get_चरमः_मार्गः_component_strip(*argv));
  DO_COPY:
-		if (copy_file(*argv, dest, flags) < 0) {
-			status = EXIT_FAILURE;
+		यदि (copy_file(*argv, dest, flags) < 0) {
+			स्थितिः = EXIT_FAILURE;
 		}
-		if (!*++argv || *argv == last) {
+		यदि (!*++argv || *argv == चरमः) {
 			/* possibly leaking dest... */
-			break;
+			भङ्ग;
 		}
 		/* don't move up: dest may be == last and not malloced! */
-		free((void*)dest);
+		मुक्त((शून्य*)dest);
 	}
 
 	/* Exit. We are NOEXEC, not NOFORK. We do exit at the end of main() */
-	return status;
+	प्रत्यागम स्थितिः;
 }

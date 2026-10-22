@@ -58,15 +58,15 @@
 //usage:       "$ ls -la /tmp/temp.mWiLjM\n"
 //usage:       "-rw-------    1 andersen andersen        0 Apr 25 17:10 /tmp/temp.mWiLjM\n"
 
-#include "libbb.h"
+#अन्तर्भाव "libbb.h"
 
-int mktemp_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int mktemp_main(int argc UNUSED_PARAM, char **argv)
+पूर्णाङ्क mktemp_main(पूर्णाङ्क argc, वर्ण **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णाङ्क mktemp_main(पूर्णाङ्क argc अप्रयुक्तम्_PARAM, वर्ण **argv)
 {
-	const char *path;
-	char *chp;
-	unsigned opts;
-	enum {
+	ध्रुव वर्ण *मार्गः;
+	वर्ण *chp;
+	अचिह्नित opts;
+	गणना {
 		OPT_d = 1 << 0,
 		OPT_q = 1 << 1,
 		OPT_t = 1 << 2,
@@ -75,59 +75,59 @@ int mktemp_main(int argc UNUSED_PARAM, char **argv)
 		OPT_tmpdir = (1 << 5) * ENABLE_LONG_OPTS,
 	};
 
-	path = getenv("TMPDIR");
-	if (!path || path[0] == '\0')
-		path = "/tmp";
+	मार्गः = getenv("TMPDIR");
+	यदि (!मार्गः || मार्गः[0] == '\0')
+		मार्गः = "/tmp";
 
-#if ENABLE_LONG_OPTS
+#यदि ENABLE_LONG_OPTS
 	opts = getopt32long(argv, "^"
 		"dqtp:u"
 		"\0"
 		"?1" /* 1 arg max */,
-		"directory\0" No_argument       "d"
-		"quiet\0"     No_argument       "q"
-		"dry-run\0"   No_argument       "u"
-		"tmpdir\0"    Optional_argument "\xff"
-		, &path, &path
+		"directory\0" No_तर्कः       "d"
+		"quiet\0"     No_तर्कः       "q"
+		"dry-run\0"   No_तर्कः       "u"
+		"tmpdir\0"    Optional_तर्कः "\xff"
+		, &मार्गः, &मार्गः
 	);
-#else
-	opts = getopt32(argv, "^" "dqtp:u" "\0" "?1"/*1 arg max*/, &path);
-#endif
+#अन्यथा
+	opts = getopt32(argv, "^" "dqtp:u" "\0" "?1"/*1 arg max*/, &मार्गः);
+#यदि_अन्तः
 
 	chp = argv[optind];
-	if (!chp) {
+	यदि (!chp) {
 		/* GNU coreutils 8.4:
 		 * bare "mktemp" -> "mktemp -t tmp.XXXXXX"
 		 */
 		chp = xstrdup("tmp.XXXXXX");
 		opts |= OPT_t;
 	}
-#if 0
+#यदि 0
 	/* Don't allow directory separator in template */
-	if ((opts & OPT_t) && bb_basename(chp) != chp) {
+	यदि ((opts & OPT_t) && bb_basename(chp) != chp) {
 		errno = EINVAL;
-		goto error;
+		गच्छ error;
 	}
-#endif
-	if (opts & (OPT_t|OPT_p|OPT_tmpdir))
-		chp = concat_path_file(path, chp);
+#यदि_अन्तः
+	यदि (opts & (OPT_t|OPT_p|OPT_tmpdir))
+		chp = concat_मार्गः_file(मार्गः, chp);
 
-	if (opts & OPT_u) {
+	यदि (opts & OPT_u) {
 		chp = mktemp(chp);
-		if (chp[0] == '\0')
-			goto error;
-	} else if (opts & OPT_d) {
-		if (mkdtemp(chp) == NULL)
-			goto error;
-	} else {
-		if (mkstemp(chp) < 0)
-			goto error;
+		यदि (chp[0] == '\0')
+			गच्छ error;
+	} अन्यथा यदि (opts & OPT_d) {
+		यदि (mkdtemp(chp) == रिक्त)
+			गच्छ error;
+	} अन्यथा {
+		यदि (mkstemp(chp) < 0)
+			गच्छ error;
 	}
-	puts(chp);
-	return EXIT_SUCCESS;
+	पङ्क्तिं_लिख(chp);
+	प्रत्यागम EXIT_SUCCESS;
  error:
-	if (opts & OPT_q)
-		return EXIT_FAILURE;
+	यदि (opts & OPT_q)
+		प्रत्यागम EXIT_FAILURE;
 	/* don't use chp as it gets mangled in case of error */
 	bb_perror_nomsg_and_die();
 }

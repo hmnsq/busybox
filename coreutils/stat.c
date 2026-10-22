@@ -104,67 +104,67 @@
 //usage:	)
 //usage:	)
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#अन्तर्भाव "libbb.h"
+#अन्तर्भाव "common_bufsiz.h"
 
-enum {
+गणना {
 	OPT_TERSE       = (1 << 0),
 	OPT_DEREFERENCE = (1 << 1),
 	OPT_FILESYS     = (1 << 2) * ENABLE_FEATURE_STAT_FILESYSTEM,
 	OPT_SELINUX     = (1 << (2+ENABLE_FEATURE_STAT_FILESYSTEM)) * ENABLE_SELINUX,
 };
 
-#if ENABLE_FEATURE_STAT_FORMAT
-typedef bool (*statfunc_ptr)(const char *, const char *);
-#else
-typedef bool (*statfunc_ptr)(const char *);
-#endif
+#यदि ENABLE_FEATURE_STAT_FORMAT
+प्रकारनिर्देश bool (*statfunc_ptr)(ध्रुव वर्ण *, ध्रुव वर्ण *);
+#अन्यथा
+प्रकारनिर्देश bool (*statfunc_ptr)(ध्रुव वर्ण *);
+#यदि_अन्तः
 
-static const char *file_type(const struct stat *st)
+स्थिर ध्रुव वर्ण *file_type(ध्रुव संरचना stat *st)
 {
 	/* See POSIX 1003.1-2001 XCU Table 4-8 lines 17093-17107
 	 * for some of these formats.
 	 * To keep diagnostics grammatical in English, the
 	 * returned string must start with a consonant.
 	 */
-	if (S_ISREG(st->st_mode))  return st->st_size == 0 ? "regular empty file" : "regular file";
-	if (S_ISDIR(st->st_mode))  return "directory";
-	if (S_ISBLK(st->st_mode))  return "block special file";
-	if (S_ISCHR(st->st_mode))  return "character special file";
-	if (S_ISFIFO(st->st_mode)) return "fifo";
-	if (S_ISLNK(st->st_mode))  return "symbolic link";
-	if (S_ISSOCK(st->st_mode)) return "socket";
-#ifdef S_TYPEISMQ
-	if (S_TYPEISMQ(st))        return "message queue";
-#endif
-#ifdef S_TYPEISSEM
-	if (S_TYPEISSEM(st))       return "semaphore";
-#endif
-#ifdef S_TYPEISSHM
-	if (S_TYPEISSHM(st))       return "shared memory object";
-#endif
-#ifdef S_TYPEISTMO
-	if (S_TYPEISTMO(st))       return "typed memory object";
-#endif
-	return "weird file";
+	यदि (S_ISREG(st->st_बहुलकम्))  प्रत्यागम st->st_आकार == 0 ? "regular empty file" : "regular file";
+	यदि (S_ISDIR(st->st_बहुलकम्))  प्रत्यागम "directory";
+	यदि (S_ISBLK(st->st_बहुलकम्))  प्रत्यागम "block special file";
+	यदि (S_ISCHR(st->st_बहुलकम्))  प्रत्यागम "character special file";
+	यदि (S_ISFIFO(st->st_बहुलकम्)) प्रत्यागम "fifo";
+	यदि (S_ISLNK(st->st_बहुलकम्))  प्रत्यागम "symbolic link";
+	यदि (S_ISSOCK(st->st_बहुलकम्)) प्रत्यागम "socket";
+#यदि_परिभाषितम् S_TYPEISMQ
+	यदि (S_TYPEISMQ(st))        प्रत्यागम "message queue";
+#यदि_अन्तः
+#यदि_परिभाषितम् S_TYPEISSEM
+	यदि (S_TYPEISSEM(st))       प्रत्यागम "semaphore";
+#यदि_अन्तः
+#यदि_परिभाषितम् S_TYPEISSHM
+	यदि (S_TYPEISSHM(st))       प्रत्यागम "shared memory object";
+#यदि_अन्तः
+#यदि_परिभाषितम् S_TYPEISTMO
+	यदि (S_TYPEISTMO(st))       प्रत्यागम "typed memory object";
+#यदि_अन्तः
+	प्रत्यागम "weird file";
 }
 
-static const char *human_time(struct timespec *ts)
+स्थिर ध्रुव वर्ण *human_time(संरचना timespec *ts)
 {
-	char fmt[sizeof("%Y-%m-%d %H:%M:%S.123456789 %z") + /*paranoia*/ 8];
+	वर्ण fmt[परिमाण("%Y-%m-%d %H:%M:%S.123456789 %z") + /*paranoia*/ 8];
 
 	/* coreutils 6.3 compat */
-#define buf bb_common_bufsiz1
-	setup_common_bufsiz();
+#परिभाषय buf bb_common_bufsiz1
+	सज्जता_common_bufsiz();
 
-	sprintf(stpcpy(fmt, "%Y-%m-%d %H:%M:%S"), ".%09u %%z", (unsigned)ts->tv_nsec);
+	sprintf(stpcpy(fmt, "%Y-%m-%d %H:%M:%S"), ".%09u %%z", (अचिह्नित)ts->tv_nsec);
 	strftime(buf, COMMON_BUFSIZE, fmt, localtime(&ts->tv_sec));
-	return buf;
-#undef buf
+	प्रत्यागम buf;
+#अपरिभाषय buf
 }
 
-#if ENABLE_FEATURE_STAT_FILESYSTEM
-#define FS_TYPE_LIST \
+#यदि ENABLE_FEATURE_STAT_FILESYSTEM
+#परिभाषय FS_TYPE_LIST \
 FS_TYPE(0xADFF,     "affs") \
 FS_TYPE(0x1CD1,     "devpts") \
 FS_TYPE(0x137D,     "ext") \
@@ -205,237 +205,237 @@ FS_TYPE(0x62656572, "sysfs")
  * Others have statfs.f_fstypename[MFSNAMELEN]. (NetBSD 1.5.2)
  * Still others have neither and have to get by with f_type (Linux).
  */
-static const char *human_fstype(uint32_t f_type)
+स्थिर ध्रुव वर्ण *human_fstype(uint32_t f_type)
 {
 # define FS_TYPE(type, name) type,
-	static const uint32_t fstype[] ALIGN4 = {
+	स्थिर ध्रुव uint32_t fstype[] ALIGN4 = {
 		FS_TYPE_LIST
 	};
 # undef FS_TYPE
 # define FS_TYPE(type, name) name"\0"
-	static const char humanname[] ALIGN1 =
+	स्थिर ध्रुव वर्ण humanname[] ALIGN1 =
 		FS_TYPE_LIST
 		"UNKNOWN";
 # undef FS_TYPE
-	int i;
+	पूर्णाङ्क i;
 
-	for (i = 0; i < ARRAY_SIZE(fstype); ++i)
-		if (fstype[i] == f_type)
-			break;
-	return nth_string(humanname, i);
+	प्रति (i = 0; i < ARRAY_आकार(fstype); ++i)
+		यदि (fstype[i] == f_type)
+			भङ्ग;
+	प्रत्यागम nth_string(humanname, i);
 }
 
 /* "man statfs" says that statfsbuf->f_fsid is a mess */
 /* coreutils treats it as an array of ints, most significant first */
-static unsigned long long get_f_fsid(const struct statfs *statfsbuf)
+स्थिर अचिह्नित दीर्घ दीर्घ get_f_fsid(ध्रुव संरचना statfs *statfsbuf)
 {
-	const unsigned *p = (const void*) &statfsbuf->f_fsid;
-	unsigned sz = sizeof(statfsbuf->f_fsid) / sizeof(unsigned);
-	unsigned long long r = 0;
+	ध्रुव अचिह्नित *p = (ध्रुव शून्य*) &statfsbuf->f_fsid;
+	अचिह्नित sz = परिमाण(statfsbuf->f_fsid) / परिमाण(अचिह्नित);
+	अचिह्नित दीर्घ दीर्घ r = 0;
 
-	do
-		r = (r << (sizeof(unsigned)*8)) | *p++;
-	while (--sz > 0);
-	return r;
+	कुरु
+		r = (r << (परिमाण(अचिह्नित)*8)) | *p++;
+	यावत् (--sz > 0);
+	प्रत्यागम r;
 }
-#endif  /* FEATURE_STAT_FILESYSTEM */
+#यदि_अन्तः  /* FEATURE_STAT_FILESYSTEM */
 
-#if ENABLE_FEATURE_STAT_FORMAT
-static void strcatc(char *str, char c)
+#यदि ENABLE_FEATURE_STAT_FORMAT
+स्थिर शून्य strcatc(वर्ण *str, वर्ण c)
 {
-	int len = strlen(str);
+	पूर्णाङ्क len = वाक्यदैर्घ्यम्(str);
 	str[len++] = c;
 	str[len] = '\0';
 }
 
-static void printfs(char *pformat, const char *msg)
+स्थिर शून्य printfs(वर्ण *pformat, ध्रुव वर्ण *सन्देशः)
 {
 	strcatc(pformat, 's');
-	printf(pformat, msg);
+	प्रारूप_लिख(pformat, सन्देशः);
 }
 
-#if ENABLE_FEATURE_STAT_FILESYSTEM
+#यदि ENABLE_FEATURE_STAT_FILESYSTEM
 /* print statfs info */
-static void FAST_FUNC print_statfs(char *pformat, const char m,
-		const char *const filename, const void *data
+स्थिर शून्य FAST_FUNC print_statfs(वर्ण *pformat, ध्रुव वर्ण m,
+		ध्रुव वर्ण *ध्रुव filename, ध्रुव शून्य *दत्त
 		IF_SELINUX(, security_context_t scontext))
 {
-	const struct statfs *statfsbuf = data;
-	if (m == 'n') {
+	ध्रुव संरचना statfs *statfsbuf = दत्त;
+	यदि (m == 'n') {
 		printfs(pformat, filename);
-	} else if (m == 'i') {
-		strcat(pformat, "llx");
-		printf(pformat, get_f_fsid(statfsbuf));
-	} else if (m == 'l') {
-		strcat(pformat, "lu");
-		printf(pformat, (unsigned long) statfsbuf->f_namelen);
-	} else if (m == 't') {
-		strcat(pformat, "lx");
-		printf(pformat, (unsigned long) statfsbuf->f_type); /* no equiv */
-	} else if (m == 'T') {
+	} अन्यथा यदि (m == 'i') {
+		वाक्यं_योजय(pformat, "llx");
+		प्रारूप_लिख(pformat, get_f_fsid(statfsbuf));
+	} अन्यथा यदि (m == 'l') {
+		वाक्यं_योजय(pformat, "lu");
+		प्रारूप_लिख(pformat, (अचिह्नित दीर्घ) statfsbuf->f_namelen);
+	} अन्यथा यदि (m == 't') {
+		वाक्यं_योजय(pformat, "lx");
+		प्रारूप_लिख(pformat, (अचिह्नित दीर्घ) statfsbuf->f_type); /* no equiv */
+	} अन्यथा यदि (m == 'T') {
 		printfs(pformat, human_fstype(statfsbuf->f_type));
-	} else if (m == 'b') {
-		strcat(pformat, "llu");
-		printf(pformat, (unsigned long long) statfsbuf->f_blocks);
-	} else if (m == 'f') {
-		strcat(pformat, "llu");
-		printf(pformat, (unsigned long long) statfsbuf->f_bfree);
-	} else if (m == 'a') {
-		strcat(pformat, "llu");
-		printf(pformat, (unsigned long long) statfsbuf->f_bavail);
-	} else if (m == 's' || m == 'S') {
-		strcat(pformat, "lu");
-		printf(pformat, (unsigned long) statfsbuf->f_bsize);
-	} else if (m == 'c') {
-		strcat(pformat, "llu");
-		printf(pformat, (unsigned long long) statfsbuf->f_files);
-	} else if (m == 'd') {
-		strcat(pformat, "llu");
-		printf(pformat, (unsigned long long) statfsbuf->f_ffree);
-# if ENABLE_SELINUX
-	} else if (m == 'C' && (option_mask32 & OPT_SELINUX)) {
+	} अन्यथा यदि (m == 'b') {
+		वाक्यं_योजय(pformat, "llu");
+		प्रारूप_लिख(pformat, (अचिह्नित दीर्घ दीर्घ) statfsbuf->f_blocks);
+	} अन्यथा यदि (m == 'f') {
+		वाक्यं_योजय(pformat, "llu");
+		प्रारूप_लिख(pformat, (अचिह्नित दीर्घ दीर्घ) statfsbuf->f_bfree);
+	} अन्यथा यदि (m == 'a') {
+		वाक्यं_योजय(pformat, "llu");
+		प्रारूप_लिख(pformat, (अचिह्नित दीर्घ दीर्घ) statfsbuf->f_bavail);
+	} अन्यथा यदि (m == 's' || m == 'S') {
+		वाक्यं_योजय(pformat, "lu");
+		प्रारूप_लिख(pformat, (अचिह्नित दीर्घ) statfsbuf->f_bsize);
+	} अन्यथा यदि (m == 'c') {
+		वाक्यं_योजय(pformat, "llu");
+		प्रारूप_लिख(pformat, (अचिह्नित दीर्घ दीर्घ) statfsbuf->f_files);
+	} अन्यथा यदि (m == 'd') {
+		वाक्यं_योजय(pformat, "llu");
+		प्रारूप_लिख(pformat, (अचिह्नित दीर्घ दीर्घ) statfsbuf->f_ffree);
+# यदि ENABLE_SELINUX
+	} अन्यथा यदि (m == 'C' && (option_mask32 & OPT_SELINUX)) {
 		printfs(pformat, scontext);
 # endif
-	} else {
+	} अन्यथा {
 		strcatc(pformat, 'c');
-		printf(pformat, m);
+		प्रारूप_लिख(pformat, m);
 	}
 }
-#endif
+#यदि_अन्तः
 
 /* print stat info */
-static void FAST_FUNC print_stat(char *pformat, const char m,
-		const char *const filename, const void *data
+स्थिर शून्य FAST_FUNC print_stat(वर्ण *pformat, ध्रुव वर्ण m,
+		ध्रुव वर्ण *ध्रुव filename, ध्रुव शून्य *दत्त
 		IF_SELINUX(, security_context_t scontext))
 {
-#define TYPE_SIGNED(t) (! ((t) 0 < (t) -1))
-	struct stat *statbuf = (struct stat *) data;
-	struct passwd *pw_ent;
-	struct group *gw_ent;
+#परिभाषय TYPE_SIGNED(t) (! ((t) 0 < (t) -1))
+	संरचना stat *statbuf = (संरचना stat *) दत्त;
+	संरचना passwd *pw_ent;
+	संरचना गणः *gw_ent;
 
-	if (m == 'n') {
+	यदि (m == 'n') {
 		printfs(pformat, filename);
-	} else if (m == 'N') {
+	} अन्यथा यदि (m == 'N') {
 		strcatc(pformat, 's');
-		if (S_ISLNK(statbuf->st_mode)) {
-			char *linkname = xmalloc_readlink_or_warn(filename);
-			if (linkname == NULL)
-				return;
-			printf("'%s' -> '%s'", filename, linkname);
-			free(linkname);
-		} else {
-			printf(pformat, filename);
+		यदि (S_ISLNK(statbuf->st_बहुलकम्)) {
+			वर्ण *linkname = xmalloc_readlink_or_warn(filename);
+			यदि (linkname == रिक्त)
+				प्रत्यागम;
+			प्रारूप_लिख("'%s' -> '%s'", filename, linkname);
+			मुक्त(linkname);
+		} अन्यथा {
+			प्रारूप_लिख(pformat, filename);
 		}
-	} else if (m == 'd') {
-		strcat(pformat, "llu");
-		printf(pformat, (unsigned long long) statbuf->st_dev);
-	} else if (m == 'D') {
-		strcat(pformat, "llx");
-		printf(pformat, (unsigned long long) statbuf->st_dev);
-	} else if (m == 'i') {
-		strcat(pformat, "llu");
-		printf(pformat, (unsigned long long) statbuf->st_ino);
-	} else if (m == 'a') {
-		strcat(pformat, "lo");
-		printf(pformat, (unsigned long) (statbuf->st_mode & (S_ISUID|S_ISGID|S_ISVTX|S_IRWXU|S_IRWXG|S_IRWXO)));
-	} else if (m == 'A') {
-		char modestr[12];
-		printfs(pformat, bb_mode_string(modestr, statbuf->st_mode));
-	} else if (m == 'f') {
-		strcat(pformat, "lx");
-		printf(pformat, (unsigned long) statbuf->st_mode);
-	} else if (m == 'F') {
+	} अन्यथा यदि (m == 'd') {
+		वाक्यं_योजय(pformat, "llu");
+		प्रारूप_लिख(pformat, (अचिह्नित दीर्घ दीर्घ) statbuf->st_dev);
+	} अन्यथा यदि (m == 'D') {
+		वाक्यं_योजय(pformat, "llx");
+		प्रारूप_लिख(pformat, (अचिह्नित दीर्घ दीर्घ) statbuf->st_dev);
+	} अन्यथा यदि (m == 'i') {
+		वाक्यं_योजय(pformat, "llu");
+		प्रारूप_लिख(pformat, (अचिह्नित दीर्घ दीर्घ) statbuf->st_ino);
+	} अन्यथा यदि (m == 'a') {
+		वाक्यं_योजय(pformat, "lo");
+		प्रारूप_लिख(pformat, (अचिह्नित दीर्घ) (statbuf->st_बहुलकम् & (S_ISUID|S_ISGID|S_ISVTX|S_IRWXU|S_IRWXG|S_IRWXO)));
+	} अन्यथा यदि (m == 'A') {
+		वर्ण modestr[12];
+		printfs(pformat, bb_बहुलकम्_string(modestr, statbuf->st_बहुलकम्));
+	} अन्यथा यदि (m == 'f') {
+		वाक्यं_योजय(pformat, "lx");
+		प्रारूप_लिख(pformat, (अचिह्नित दीर्घ) statbuf->st_बहुलकम्);
+	} अन्यथा यदि (m == 'F') {
 		printfs(pformat, file_type(statbuf));
-	} else if (m == 'h') {
-		strcat(pformat, "lu");
-		printf(pformat, (unsigned long) statbuf->st_nlink);
-	} else if (m == 'u') {
-		strcat(pformat, "lu");
-		printf(pformat, (unsigned long) statbuf->st_uid);
-	} else if (m == 'U') {
+	} अन्यथा यदि (m == 'h') {
+		वाक्यं_योजय(pformat, "lu");
+		प्रारूप_लिख(pformat, (अचिह्नित दीर्घ) statbuf->st_nlink);
+	} अन्यथा यदि (m == 'u') {
+		वाक्यं_योजय(pformat, "lu");
+		प्रारूप_लिख(pformat, (अचिह्नित दीर्घ) statbuf->st_uid);
+	} अन्यथा यदि (m == 'U') {
 		pw_ent = getpwuid(statbuf->st_uid);
-		printfs(pformat, (pw_ent != NULL) ? pw_ent->pw_name : "UNKNOWN");
-	} else if (m == 'g') {
-		strcat(pformat, "lu");
-		printf(pformat, (unsigned long) statbuf->st_gid);
-	} else if (m == 'G') {
+		printfs(pformat, (pw_ent != रिक्त) ? pw_ent->pw_name : "UNKNOWN");
+	} अन्यथा यदि (m == 'g') {
+		वाक्यं_योजय(pformat, "lu");
+		प्रारूप_लिख(pformat, (अचिह्नित दीर्घ) statbuf->st_gid);
+	} अन्यथा यदि (m == 'G') {
 		gw_ent = getgrgid(statbuf->st_gid);
-		printfs(pformat, (gw_ent != NULL) ? gw_ent->gr_name : "UNKNOWN");
-	} else if (m == 't') {
-		strcat(pformat, "lx");
-		printf(pformat, (unsigned long) major(statbuf->st_rdev));
-	} else if (m == 'T') {
-		strcat(pformat, "lx");
-		printf(pformat, (unsigned long) minor(statbuf->st_rdev));
-	} else if (m == 's') {
-		strcat(pformat, "llu");
-		printf(pformat, (unsigned long long) statbuf->st_size);
-	} else if (m == 'B') {
-		strcat(pformat, "lu");
-		printf(pformat, (unsigned long) 512); //ST_NBLOCKSIZE
-	} else if (m == 'b') {
-		strcat(pformat, "llu");
-		printf(pformat, (unsigned long long) statbuf->st_blocks);
-	} else if (m == 'o') {
-		strcat(pformat, "lu");
-		printf(pformat, (unsigned long) statbuf->st_blksize);
-	} else if (m == 'x') {
+		printfs(pformat, (gw_ent != रिक्त) ? gw_ent->gr_name : "UNKNOWN");
+	} अन्यथा यदि (m == 't') {
+		वाक्यं_योजय(pformat, "lx");
+		प्रारूप_लिख(pformat, (अचिह्नित दीर्घ) major(statbuf->st_rdev));
+	} अन्यथा यदि (m == 'T') {
+		वाक्यं_योजय(pformat, "lx");
+		प्रारूप_लिख(pformat, (अचिह्नित दीर्घ) minor(statbuf->st_rdev));
+	} अन्यथा यदि (m == 's') {
+		वाक्यं_योजय(pformat, "llu");
+		प्रारूप_लिख(pformat, (अचिह्नित दीर्घ दीर्घ) statbuf->st_आकार);
+	} अन्यथा यदि (m == 'B') {
+		वाक्यं_योजय(pformat, "lu");
+		प्रारूप_लिख(pformat, (अचिह्नित दीर्घ) 512); //ST_NBLOCKSIZE
+	} अन्यथा यदि (m == 'b') {
+		वाक्यं_योजय(pformat, "llu");
+		प्रारूप_लिख(pformat, (अचिह्नित दीर्घ दीर्घ) statbuf->st_खण्डानि);
+	} अन्यथा यदि (m == 'o') {
+		वाक्यं_योजय(pformat, "lu");
+		प्रारूप_लिख(pformat, (अचिह्नित दीर्घ) statbuf->st_blksize);
+	} अन्यथा यदि (m == 'x') {
 		printfs(pformat, human_time(&statbuf->st_atim));
-	} else if (m == 'X') {
-		strcat(pformat, TYPE_SIGNED(time_t) ? "ld" : "lu");
+	} अन्यथा यदि (m == 'X') {
+		वाक्यं_योजय(pformat, TYPE_SIGNED(time_t) ? "ld" : "lu");
 		/* note: (unsigned long) would be wrong:
 		 * imagine (unsigned long64)int32 */
-		printf(pformat, (long) statbuf->st_atime);
-	} else if (m == 'y') {
+		प्रारूप_लिख(pformat, (दीर्घ) statbuf->st_atime);
+	} अन्यथा यदि (m == 'y') {
 		printfs(pformat, human_time(&statbuf->st_mtim));
-	} else if (m == 'Y') {
-		strcat(pformat, TYPE_SIGNED(time_t) ? "ld" : "lu");
-		printf(pformat, (long) statbuf->st_mtime);
-	} else if (m == 'z') {
+	} अन्यथा यदि (m == 'Y') {
+		वाक्यं_योजय(pformat, TYPE_SIGNED(time_t) ? "ld" : "lu");
+		प्रारूप_लिख(pformat, (दीर्घ) statbuf->st_mtime);
+	} अन्यथा यदि (m == 'z') {
 		printfs(pformat, human_time(&statbuf->st_ctim));
-	} else if (m == 'Z') {
-		strcat(pformat, TYPE_SIGNED(time_t) ? "ld" : "lu");
-		printf(pformat, (long) statbuf->st_ctime);
-# if ENABLE_SELINUX
-	} else if (m == 'C' && (option_mask32 & OPT_SELINUX)) {
+	} अन्यथा यदि (m == 'Z') {
+		वाक्यं_योजय(pformat, TYPE_SIGNED(time_t) ? "ld" : "lu");
+		प्रारूप_लिख(pformat, (दीर्घ) statbuf->st_ctime);
+# यदि ENABLE_SELINUX
+	} अन्यथा यदि (m == 'C' && (option_mask32 & OPT_SELINUX)) {
 		printfs(pformat, scontext);
 # endif
-	} else {
+	} अन्यथा {
 		strcatc(pformat, 'c');
-		printf(pformat, m);
+		प्रारूप_लिख(pformat, m);
 	}
 }
 
-static void print_it(const char *masterformat,
-		const char *filename,
-		void FAST_FUNC (*print_func)(char*, char, const char*, const void* IF_SELINUX(, security_context_t scontext)),
-		const void *data
+स्थिर शून्य print_it(ध्रुव वर्ण *masterformat,
+		ध्रुव वर्ण *filename,
+		शून्य FAST_FUNC (*print_func)(वर्ण*, वर्ण, ध्रुव वर्ण*, ध्रुव शून्य* IF_SELINUX(, security_context_t scontext)),
+		ध्रुव शून्य *दत्त
 		IF_SELINUX(, security_context_t scontext))
 {
 	/* Create a working copy of the format string */
-	char *format = xstrdup(masterformat);
+	वर्ण *format = xstrdup(masterformat);
 	/* Add 2 to accommodate our conversion of the stat '%s' format string
 	 * to the printf '%llu' one.  */
-	char *dest = xmalloc(strlen(format) + 2 + 1);
-	char *b;
+	वर्ण *dest = xmalloc(वाक्यदैर्घ्यम्(format) + 2 + 1);
+	वर्ण *b;
 
 	b = format;
-	while (b) {
+	यावत् (b) {
 		/* Each iteration finds next %spec,
 		 * prints preceding string and handles found %spec
 		 */
-		size_t len;
-		char *p = strchr(b, '%');
-		if (!p) {
+		आकार_t len;
+		वर्ण *p = strchr(b, '%');
+		यदि (!p) {
 			/* coreutils 6.3 always prints newline at the end */
 			/*fputs(b, stdout);*/
-			puts(b);
-			break;
+			पङ्क्तिं_लिख(b);
+			भङ्ग;
 		}
 
 		/* dest = "%<modifiers>" */
 		len = 1 + strspn(p + 1, "#-+.I 0123456789");
-		memcpy(dest, p, len);
+		स्मृतिं_प्रतिलिख(dest, p, len);
 		dest[len] = '\0';
 
 		/* print preceding string */
@@ -444,58 +444,58 @@ static void print_it(const char *masterformat,
 
 		p += len;
 		b = p + 1;
-		switch (*p) {
-		case '\0':
-			b = NULL;
+		विकल्प (*p) {
+		पक्ष '\0':
+			b = रिक्त;
 			/* fall through */
-		case '%':
+		पक्ष '%':
 			bb_putchar('%');
-			break;
-		default:
+			भङ्ग;
+		स्वभाव:
 			/* Completes "%<modifiers>" with specifier and printfs */
-			print_func(dest, *p, filename, data IF_SELINUX(,scontext));
-			break;
+			print_func(dest, *p, filename, दत्त IF_SELINUX(,scontext));
+			भङ्ग;
 		}
 	}
 
-	free(format);
-	free(dest);
+	मुक्त(format);
+	मुक्त(dest);
 }
-#endif  /* FEATURE_STAT_FORMAT */
+#यदि_अन्तः  /* FEATURE_STAT_FORMAT */
 
-#if ENABLE_FEATURE_STAT_FILESYSTEM
+#यदि ENABLE_FEATURE_STAT_FILESYSTEM
 /* Stat the file system and print what we find.  */
-#if !ENABLE_FEATURE_STAT_FORMAT
-#define do_statfs(filename, format) do_statfs(filename)
-#endif
-static bool do_statfs(const char *filename, const char *format)
+#यदि !ENABLE_FEATURE_STAT_FORMAT
+#परिभाषय do_statfs(filename, format) do_statfs(filename)
+#यदि_अन्तः
+स्थिर bool do_statfs(ध्रुव वर्ण *filename, ध्रुव वर्ण *format)
 {
-	struct statfs statfsbuf;
-#if !ENABLE_FEATURE_STAT_FORMAT
-	const char *format;
-#endif
-#if ENABLE_SELINUX
-	security_context_t scontext = NULL;
+	संरचना statfs statfsbuf;
+#यदि !ENABLE_FEATURE_STAT_FORMAT
+	ध्रुव वर्ण *format;
+#यदि_अन्तः
+#यदि ENABLE_SELINUX
+	security_context_t scontext = रिक्त;
 
-	if (option_mask32 & OPT_SELINUX) {
-		if ((option_mask32 & OPT_DEREFERENCE
+	यदि (option_mask32 & OPT_SELINUX) {
+		यदि ((option_mask32 & OPT_DEREFERENCE
 		     ? lgetfilecon(filename, &scontext)
 		     : getfilecon(filename, &scontext)
 		    ) < 0
 		) {
-			bb_simple_perror_msg(filename);
-			return 0;
+			bb_simple_perror_सन्देशः(filename);
+			प्रत्यागम 0;
 		}
 	}
-#endif
-	if (statfs(filename, &statfsbuf) != 0) {
-		bb_perror_msg("can't read file system information for '%s'", filename);
-		return 0;
+#यदि_अन्तः
+	यदि (statfs(filename, &statfsbuf) != 0) {
+		bb_perror_सन्देशः("can't read file system information for '%s'", filename);
+		प्रत्यागम 0;
 	}
 
-#if ENABLE_FEATURE_STAT_FORMAT
-	if (format == NULL) {
-# if !ENABLE_SELINUX
+#यदि ENABLE_FEATURE_STAT_FORMAT
+	यदि (format == रिक्त) {
+# यदि !ENABLE_SELINUX
 		format = (option_mask32 & OPT_TERSE
 			? "%n %i %l %t %s %b %f %a %c %d"
 			: "  File: \"%n\"\n"
@@ -503,7 +503,7 @@ static bool do_statfs(const char *filename, const char *format)
 			  "Block size: %-10s\n"
 			  "Blocks: Total: %-10b Free: %-10f Available: %a\n"
 			  "Inodes: Total: %-10c Free: %d");
-# else
+# अन्यथा
 		format = (option_mask32 & OPT_TERSE
 			? (option_mask32 & OPT_SELINUX
 				? "%n %i %l %t %s %b %f %a %c %d %C"
@@ -524,35 +524,35 @@ static bool do_statfs(const char *filename, const char *format)
 # endif /* SELINUX */
 	}
 	print_it(format, filename, print_statfs, &statfsbuf IF_SELINUX(, scontext));
-#else /* !FEATURE_STAT_FORMAT */
+#अन्यथा /* !FEATURE_STAT_FORMAT */
 	format = (option_mask32 & OPT_TERSE
 		? "%s %llx %lu "
 		: "  File: \"%s\"\n"
 		  "    ID: %-8llx Namelen: %-7lu ");
-	printf(format,
+	प्रारूप_लिख(format,
 	       filename,
 	       get_f_fsid(&statfsbuf),
 	       statfsbuf.f_namelen);
 
-	if (option_mask32 & OPT_TERSE)
-		printf("%lx ", (unsigned long) statfsbuf.f_type);
-	else
-		printf("Type: %s\n", human_fstype(statfsbuf.f_type));
+	यदि (option_mask32 & OPT_TERSE)
+		प्रारूप_लिख("%lx ", (अचिह्नित दीर्घ) statfsbuf.f_type);
+	अन्यथा
+		प्रारूप_लिख("Type: %s\n", human_fstype(statfsbuf.f_type));
 
-# if !ENABLE_SELINUX
+# यदि !ENABLE_SELINUX
 	format = (option_mask32 & OPT_TERSE
 		? "%lu %llu %llu %llu %llu %llu\n"
 		: "Block size: %-10lu\n"
 		  "Blocks: Total: %-10llu Free: %-10llu Available: %llu\n"
 		  "Inodes: Total: %-10llu Free: %llu\n");
-	printf(format,
-	       (unsigned long) statfsbuf.f_bsize,
-	       (unsigned long long) statfsbuf.f_blocks,
-	       (unsigned long long) statfsbuf.f_bfree,
-	       (unsigned long long) statfsbuf.f_bavail,
-	       (unsigned long long) statfsbuf.f_files,
-	       (unsigned long long) statfsbuf.f_ffree);
-# else
+	प्रारूप_लिख(format,
+	       (अचिह्नित दीर्घ) statfsbuf.f_bsize,
+	       (अचिह्नित दीर्घ दीर्घ) statfsbuf.f_blocks,
+	       (अचिह्नित दीर्घ दीर्घ) statfsbuf.f_bfree,
+	       (अचिह्नित दीर्घ दीर्घ) statfsbuf.f_bavail,
+	       (अचिह्नित दीर्घ दीर्घ) statfsbuf.f_files,
+	       (अचिह्नित दीर्घ दीर्घ) statfsbuf.f_ffree);
+# अन्यथा
 	format = (option_mask32 & OPT_TERSE
 		? (option_mask32 & OPT_SELINUX ? "%lu %llu %llu %llu %llu %llu %C\n" : "%lu %llu %llu %llu %llu %llu\n")
 		: (option_mask32 & OPT_SELINUX
@@ -565,56 +565,56 @@ static bool do_statfs(const char *filename, const char *format)
 				"Inodes: Total: %-10llu Free: %llu\n"
 			)
 		);
-	printf(format,
-		(unsigned long) statfsbuf.f_bsize,
-		(unsigned long long) statfsbuf.f_blocks,
-		(unsigned long long) statfsbuf.f_bfree,
-		(unsigned long long) statfsbuf.f_bavail,
-		(unsigned long long) statfsbuf.f_files,
-		(unsigned long long) statfsbuf.f_ffree,
+	प्रारूप_लिख(format,
+		(अचिह्नित दीर्घ) statfsbuf.f_bsize,
+		(अचिह्नित दीर्घ दीर्घ) statfsbuf.f_blocks,
+		(अचिह्नित दीर्घ दीर्घ) statfsbuf.f_bfree,
+		(अचिह्नित दीर्घ दीर्घ) statfsbuf.f_bavail,
+		(अचिह्नित दीर्घ दीर्घ) statfsbuf.f_files,
+		(अचिह्नित दीर्घ दीर्घ) statfsbuf.f_ffree,
 		scontext);
 
-	if (scontext)
+	यदि (scontext)
 		freecon(scontext);
 # endif
-#endif  /* FEATURE_STAT_FORMAT */
-	return 1;
+#यदि_अन्तः  /* FEATURE_STAT_FORMAT */
+	प्रत्यागम 1;
 }
-#endif  /* FEATURE_STAT_FILESYSTEM */
+#यदि_अन्तः  /* FEATURE_STAT_FILESYSTEM */
 
 /* stat the file and print what we find */
-#if !ENABLE_FEATURE_STAT_FORMAT
-#define do_stat(filename, format) do_stat(filename)
-#endif
-static bool do_stat(const char *filename, const char *format)
+#यदि !ENABLE_FEATURE_STAT_FORMAT
+#परिभाषय do_stat(filename, format) do_stat(filename)
+#यदि_अन्तः
+स्थिर bool do_stat(ध्रुव वर्ण *filename, ध्रुव वर्ण *format)
 {
-	struct stat statbuf;
-#if ENABLE_SELINUX
-	security_context_t scontext = NULL;
+	संरचना stat statbuf;
+#यदि ENABLE_SELINUX
+	security_context_t scontext = रिक्त;
 
-	if (option_mask32 & OPT_SELINUX) {
-		if ((option_mask32 & OPT_DEREFERENCE
+	यदि (option_mask32 & OPT_SELINUX) {
+		यदि ((option_mask32 & OPT_DEREFERENCE
 		     ? lgetfilecon(filename, &scontext)
 		     : getfilecon(filename, &scontext)
 		    ) < 0
 		) {
-			bb_simple_perror_msg(filename);
-			return 0;
+			bb_simple_perror_सन्देशः(filename);
+			प्रत्यागम 0;
 		}
 	}
-#endif
-	if ((option_mask32 & OPT_DEREFERENCE ? stat : lstat) (filename, &statbuf) != 0) {
-		bb_perror_msg("can't stat '%s'", filename);
-		return 0;
+#यदि_अन्तः
+	यदि ((option_mask32 & OPT_DEREFERENCE ? stat : lstat) (filename, &statbuf) != 0) {
+		bb_perror_सन्देशः("can't stat '%s'", filename);
+		प्रत्यागम 0;
 	}
 
-#if ENABLE_FEATURE_STAT_FORMAT
-	if (format == NULL) {
-# if !ENABLE_SELINUX
-		if (option_mask32 & OPT_TERSE) {
+#यदि ENABLE_FEATURE_STAT_FORMAT
+	यदि (format == रिक्त) {
+# यदि !ENABLE_SELINUX
+		यदि (option_mask32 & OPT_TERSE) {
 			format = "%n %s %b %f %u %g %D %i %h %t %T %X %Y %Z %o";
-		} else {
-			if (S_ISBLK(statbuf.st_mode) || S_ISCHR(statbuf.st_mode)) {
+		} अन्यथा {
+			यदि (S_ISBLK(statbuf.st_बहुलकम्) || S_ISCHR(statbuf.st_बहुलकम्)) {
 				format =
 					"  File: %N\n"
 					"  Size: %-10s\tBlocks: %-10b IO Block: %-6o %F\n"
@@ -622,7 +622,7 @@ static bool do_stat(const char *filename, const char *format)
 					" Device type: %t,%T\n"
 					"Access: (%04a/%10.10A)  Uid: (%5u/%8U)   Gid: (%5g/%8G)\n"
 					"Access: %x\n" "Modify: %y\n" "Change: %z";
-			} else {
+			} अन्यथा {
 				format =
 					"  File: %N\n"
 					"  Size: %-10s\tBlocks: %-10b IO Block: %-6o %F\n"
@@ -631,15 +631,15 @@ static bool do_stat(const char *filename, const char *format)
 					"Access: %x\n" "Modify: %y\n" "Change: %z";
 			}
 		}
-# else
-		if (option_mask32 & OPT_TERSE) {
+# अन्यथा
+		यदि (option_mask32 & OPT_TERSE) {
 			format = (option_mask32 & OPT_SELINUX ?
 				"%n %s %b %f %u %g %D %i %h %t %T %X %Y %Z %o %C\n"
 				:
 				"%n %s %b %f %u %g %D %i %h %t %T %X %Y %Z %o\n"
 				);
-		} else {
-			if (S_ISBLK(statbuf.st_mode) || S_ISCHR(statbuf.st_mode)) {
+		} अन्यथा {
+			यदि (S_ISBLK(statbuf.st_बहुलकम्) || S_ISCHR(statbuf.st_बहुलकम्)) {
 				format = (option_mask32 & OPT_SELINUX ?
 					"  File: %N\n"
 					"  Size: %-10s\tBlocks: %-10b IO Block: %-6o %F\n"
@@ -656,7 +656,7 @@ static bool do_stat(const char *filename, const char *format)
 					"Access: (%04a/%10.10A)  Uid: (%5u/%8U)   Gid: (%5g/%8G)\n"
 					"Access: %x\n" "Modify: %y\n" "Change: %z"
 					);
-			} else {
+			} अन्यथा {
 				format = (option_mask32 & OPT_SELINUX ?
 					"  File: %N\n"
 					"  Size: %-10s\tBlocks: %-10b IO Block: %-6o %F\n"
@@ -676,97 +676,97 @@ static bool do_stat(const char *filename, const char *format)
 # endif
 	}
 	print_it(format, filename, print_stat, &statbuf IF_SELINUX(, scontext));
-#else	/* FEATURE_STAT_FORMAT */
-	if (option_mask32 & OPT_TERSE) {
-		printf("%s %llu %llu %lx %lu %lu %llx %llu %lu %lx %lx %lu %lu %lu %lu"
+#अन्यथा	/* FEATURE_STAT_FORMAT */
+	यदि (option_mask32 & OPT_TERSE) {
+		प्रारूप_लिख("%s %llu %llu %lx %lu %lu %llx %llu %lu %lx %lx %lu %lu %lu %lu"
 		       IF_NOT_SELINUX("\n"),
 		       filename,
-		       (unsigned long long) statbuf.st_size,
-		       (unsigned long long) statbuf.st_blocks,
-		       (unsigned long) statbuf.st_mode,
-		       (unsigned long) statbuf.st_uid,
-		       (unsigned long) statbuf.st_gid,
-		       (unsigned long long) statbuf.st_dev,
-		       (unsigned long long) statbuf.st_ino,
-		       (unsigned long) statbuf.st_nlink,
-		       (unsigned long) major(statbuf.st_rdev),
-		       (unsigned long) minor(statbuf.st_rdev),
-		       (unsigned long) statbuf.st_atime,
-		       (unsigned long) statbuf.st_mtime,
-		       (unsigned long) statbuf.st_ctime,
-		       (unsigned long) statbuf.st_blksize
+		       (अचिह्नित दीर्घ दीर्घ) statbuf.st_आकार,
+		       (अचिह्नित दीर्घ दीर्घ) statbuf.st_खण्डानि,
+		       (अचिह्नित दीर्घ) statbuf.st_बहुलकम्,
+		       (अचिह्नित दीर्घ) statbuf.st_uid,
+		       (अचिह्नित दीर्घ) statbuf.st_gid,
+		       (अचिह्नित दीर्घ दीर्घ) statbuf.st_dev,
+		       (अचिह्नित दीर्घ दीर्घ) statbuf.st_ino,
+		       (अचिह्नित दीर्घ) statbuf.st_nlink,
+		       (अचिह्नित दीर्घ) major(statbuf.st_rdev),
+		       (अचिह्नित दीर्घ) minor(statbuf.st_rdev),
+		       (अचिह्नित दीर्घ) statbuf.st_atime,
+		       (अचिह्नित दीर्घ) statbuf.st_mtime,
+		       (अचिह्नित दीर्घ) statbuf.st_ctime,
+		       (अचिह्नित दीर्घ) statbuf.st_blksize
 		);
-# if ENABLE_SELINUX
-		if (option_mask32 & OPT_SELINUX)
-			printf(" %s\n", scontext);
-		else
+# यदि ENABLE_SELINUX
+		यदि (option_mask32 & OPT_SELINUX)
+			प्रारूप_लिख(" %s\n", scontext);
+		अन्यथा
 			bb_putchar('\n');
 # endif
-	} else {
-		char modestr[12];
-		char *linkname = NULL;
-		struct passwd *pw_ent;
-		struct group *gw_ent;
+	} अन्यथा {
+		वर्ण modestr[12];
+		वर्ण *linkname = रिक्त;
+		संरचना passwd *pw_ent;
+		संरचना गणः *gw_ent;
 
 		gw_ent = getgrgid(statbuf.st_gid);
 		pw_ent = getpwuid(statbuf.st_uid);
 
-		if (S_ISLNK(statbuf.st_mode))
+		यदि (S_ISLNK(statbuf.st_बहुलकम्))
 			linkname = xmalloc_readlink_or_warn(filename);
-		if (linkname) {
-			printf("  File: '%s' -> '%s'\n", filename, linkname);
-			free(linkname);
-		} else {
-			printf("  File: '%s'\n", filename);
+		यदि (linkname) {
+			प्रारूप_लिख("  File: '%s' -> '%s'\n", filename, linkname);
+			मुक्त(linkname);
+		} अन्यथा {
+			प्रारूप_लिख("  File: '%s'\n", filename);
 		}
 
-		printf("  Size: %-10llu\tBlocks: %-10llu IO Block: %-6lu %s\n"
+		प्रारूप_लिख("  Size: %-10llu\tBlocks: %-10llu IO Block: %-6lu %s\n"
 		       "Device: %llxh/%llud\tInode: %-10llu  Links: %-5lu",
-		       (unsigned long long) statbuf.st_size,
-		       (unsigned long long) statbuf.st_blocks,
-		       (unsigned long) statbuf.st_blksize,
+		       (अचिह्नित दीर्घ दीर्घ) statbuf.st_आकार,
+		       (अचिह्नित दीर्घ दीर्घ) statbuf.st_खण्डानि,
+		       (अचिह्नित दीर्घ) statbuf.st_blksize,
 		       file_type(&statbuf),
-		       (unsigned long long) statbuf.st_dev,
-		       (unsigned long long) statbuf.st_dev,
-		       (unsigned long long) statbuf.st_ino,
-		       (unsigned long) statbuf.st_nlink);
-		if (S_ISBLK(statbuf.st_mode) || S_ISCHR(statbuf.st_mode))
-			printf(" Device type: %lx,%lx\n",
-			       (unsigned long) major(statbuf.st_rdev),
-			       (unsigned long) minor(statbuf.st_rdev));
-		else
+		       (अचिह्नित दीर्घ दीर्घ) statbuf.st_dev,
+		       (अचिह्नित दीर्घ दीर्घ) statbuf.st_dev,
+		       (अचिह्नित दीर्घ दीर्घ) statbuf.st_ino,
+		       (अचिह्नित दीर्घ) statbuf.st_nlink);
+		यदि (S_ISBLK(statbuf.st_बहुलकम्) || S_ISCHR(statbuf.st_बहुलकम्))
+			प्रारूप_लिख(" Device type: %lx,%lx\n",
+			       (अचिह्नित दीर्घ) major(statbuf.st_rdev),
+			       (अचिह्नित दीर्घ) minor(statbuf.st_rdev));
+		अन्यथा
 			bb_putchar('\n');
-		printf("Access: (%04lo/%10.10s)  Uid: (%5lu/%8s)   Gid: (%5lu/%8s)\n",
-		       (unsigned long) (statbuf.st_mode & (S_ISUID|S_ISGID|S_ISVTX|S_IRWXU|S_IRWXG|S_IRWXO)),
-		       bb_mode_string(modestr, statbuf.st_mode),
-		       (unsigned long) statbuf.st_uid,
-		       (pw_ent != NULL) ? pw_ent->pw_name : "UNKNOWN",
-		       (unsigned long) statbuf.st_gid,
-		       (gw_ent != NULL) ? gw_ent->gr_name : "UNKNOWN");
-# if ENABLE_SELINUX
-		if (option_mask32 & OPT_SELINUX)
-			printf("   S_Context: %s\n", scontext);
+		प्रारूप_लिख("Access: (%04lo/%10.10s)  Uid: (%5lu/%8s)   Gid: (%5lu/%8s)\n",
+		       (अचिह्नित दीर्घ) (statbuf.st_बहुलकम् & (S_ISUID|S_ISGID|S_ISVTX|S_IRWXU|S_IRWXG|S_IRWXO)),
+		       bb_बहुलकम्_string(modestr, statbuf.st_बहुलकम्),
+		       (अचिह्नित दीर्घ) statbuf.st_uid,
+		       (pw_ent != रिक्त) ? pw_ent->pw_name : "UNKNOWN",
+		       (अचिह्नित दीर्घ) statbuf.st_gid,
+		       (gw_ent != रिक्त) ? gw_ent->gr_name : "UNKNOWN");
+# यदि ENABLE_SELINUX
+		यदि (option_mask32 & OPT_SELINUX)
+			प्रारूप_लिख("   S_Context: %s\n", scontext);
 # endif
-		printf("Access: %s\n", human_time(&statbuf.st_atim));
-		printf("Modify: %s\n", human_time(&statbuf.st_mtim));
-		printf("Change: %s\n", human_time(&statbuf.st_ctim));
+		प्रारूप_लिख("Access: %s\n", human_time(&statbuf.st_atim));
+		प्रारूप_लिख("Modify: %s\n", human_time(&statbuf.st_mtim));
+		प्रारूप_लिख("Change: %s\n", human_time(&statbuf.st_ctim));
 	}
-#endif  /* FEATURE_STAT_FORMAT */
-	return 1;
+#यदि_अन्तः  /* FEATURE_STAT_FORMAT */
+	प्रत्यागम 1;
 }
 
-int stat_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int stat_main(int argc UNUSED_PARAM, char **argv)
+पूर्णाङ्क stat_main(पूर्णाङ्क argc, वर्ण **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णाङ्क stat_main(पूर्णाङ्क argc अप्रयुक्तम्_PARAM, वर्ण **argv)
 {
-	IF_FEATURE_STAT_FORMAT(char *format = NULL;)
-	int i;
-	int ok;
+	IF_FEATURE_STAT_FORMAT(वर्ण *format = रिक्त;)
+	पूर्णाङ्क i;
+	पूर्णाङ्क ok;
 	statfunc_ptr statfunc = do_stat;
-#if ENABLE_FEATURE_STAT_FILESYSTEM || ENABLE_SELINUX
-	unsigned opts;
+#यदि ENABLE_FEATURE_STAT_FILESYSTEM || ENABLE_SELINUX
+	अचिह्नित opts;
 
 	opts =
-#endif
+#यदि_अन्तः
 	getopt32(argv, "^"
 		"tL"
 		IF_FEATURE_STAT_FILESYSTEM("f")
@@ -775,19 +775,19 @@ int stat_main(int argc UNUSED_PARAM, char **argv)
 		"\0" "-1" /* min one arg */
 		IF_FEATURE_STAT_FORMAT(,&format)
 	);
-#if ENABLE_FEATURE_STAT_FILESYSTEM
-	if (opts & OPT_FILESYS) /* -f */
+#यदि ENABLE_FEATURE_STAT_FILESYSTEM
+	यदि (opts & OPT_FILESYS) /* -f */
 		statfunc = do_statfs;
-#endif
-#if ENABLE_SELINUX
-	if (opts & OPT_SELINUX) {
+#यदि_अन्तः
+#यदि ENABLE_SELINUX
+	यदि (opts & OPT_SELINUX) {
 		selinux_or_die();
 	}
-#endif
+#यदि_अन्तः
 	ok = 1;
 	argv += optind;
-	for (i = 0; argv[i]; ++i)
+	प्रति (i = 0; argv[i]; ++i)
 		ok &= statfunc(argv[i] IF_FEATURE_STAT_FORMAT(, format));
 
-	return (ok ? EXIT_SUCCESS : EXIT_FAILURE);
+	प्रत्यागम (ok ? EXIT_SUCCESS : EXIT_FAILURE);
 }

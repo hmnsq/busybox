@@ -43,15 +43,15 @@
 //usage:       "$ basename /foo/bar.txt .txt\n"
 //usage:       "bar"
 
-#include "libbb.h"
+#अन्तर्भाव "libbb.h"
 
 /* This is a NOFORK applet. Be very careful! */
 
-int basename_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int basename_main(int argc UNUSED_PARAM, char **argv)
+पूर्णाङ्क basename_main(पूर्णाङ्क argc, वर्ण **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णाङ्क basename_main(पूर्णाङ्क argc अप्रयुक्तम्_PARAM, वर्ण **argv)
 {
-	unsigned opts;
-	const char *suffix = NULL;
+	अचिह्नित opts;
+	ध्रुव वर्ण *suffix = रिक्त;
 
 	/* '+': stop at first non-option */
 	opts = getopt32(argv, "^+" "as:"
@@ -60,23 +60,23 @@ int basename_main(int argc UNUSED_PARAM, char **argv)
 	);
 	argv += optind;
 
-	do {
-		char *s;
-		size_t m;
+	कुरु {
+		वर्ण *s;
+		आकार_t m;
 
 		/* It should strip slash: /abc/def/ -> def */
-		s = bb_get_last_path_component_strip(*argv++);
-		m = strlen(s);
-		if (!opts) {
-			if (*argv) {
+		s = bb_get_चरमः_मार्गः_component_strip(*argv++);
+		m = वाक्यदैर्घ्यम्(s);
+		यदि (!opts) {
+			यदि (*argv) {
 				suffix = *argv;
-				if (argv[1])
+				यदि (argv[1])
 					bb_show_usage();
 			}
 		}
-		if (suffix) {
-			size_t n = strlen(suffix);
-			if ((m > n) && (strcmp(s + m - n, suffix) == 0)) {
+		यदि (suffix) {
+			आकार_t n = वाक्यदैर्घ्यम्(suffix);
+			यदि ((m > n) && (वाक्यं_तुलय(s + m - n, suffix) == 0)) {
 				m -= n;
 				/*s[m] = '\0'; - redundant */
 			}
@@ -84,9 +84,9 @@ int basename_main(int argc UNUSED_PARAM, char **argv)
 		/* puts(s) will do, but we can do without stdio this way: */
 		s[m++] = '\n';
 		/* NB: != is correct here: */
-		if (full_write(STDOUT_FILENO, s, m) != (ssize_t)m)
-			return EXIT_FAILURE;
-	} while (opts && *argv);
+		यदि (पूर्णम्_write(STDOUT_FILENO, s, m) != (ssize_t)m)
+			प्रत्यागम EXIT_FAILURE;
+	} यावत् (opts && *argv);
 
-	return EXIT_SUCCESS;
+	प्रत्यागम EXIT_SUCCESS;
 }

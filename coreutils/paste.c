@@ -30,110 +30,110 @@
 //usage:       "# combine pairs of lines from a file into single lines\n"
 //usage:       "$ paste -s -d '\\t\\n' file\n"
 
-#include "libbb.h"
+#अन्तर्भाव "libbb.h"
 
-static void paste_files(FILE** files, int file_cnt, char* delims, int del_cnt)
+स्थिर शून्य paste_files(FILE** files, पूर्णाङ्क file_cnt, वर्ण* delims, पूर्णाङ्क del_cnt)
 {
-	char *line;
-	char delim;
-	int active_files = file_cnt;
-	int i;
+	वर्ण *पङ्क्तिः;
+	वर्ण delim;
+	पूर्णाङ्क सक्रिय_files = file_cnt;
+	पूर्णाङ्क i;
 
-	while (active_files > 0) {
-		int del_idx = 0;
+	यावत् (सक्रिय_files > 0) {
+		पूर्णाङ्क del_idx = 0;
 
-		for (i = 0; i < file_cnt; ++i) {
-			if (files[i] == NULL)
-				continue;
+		प्रति (i = 0; i < file_cnt; ++i) {
+			यदि (files[i] == रिक्त)
+				अनुवर्त;
 
-			line = xmalloc_fgetline(files[i]);
-			if (!line) {
+			पङ्क्तिः = xmalloc_fgetline(files[i]);
+			यदि (!पङ्क्तिः) {
 				fclose_if_not_stdin(files[i]);
-				files[i] = NULL;
-				--active_files;
-				continue;
+				files[i] = रिक्त;
+				--सक्रिय_files;
+				अनुवर्त;
 			}
-			fputs_stdout(line);
-			free(line);
+			fputs_stdout(पङ्क्तिः);
+			मुक्त(पङ्क्तिः);
 			delim = '\n';
-			if (i != file_cnt - 1) {
+			यदि (i != file_cnt - 1) {
 				delim = delims[del_idx++];
-				if (del_idx == del_cnt)
+				यदि (del_idx == del_cnt)
 					del_idx = 0;
 			}
-			if (delim != '\0')
+			यदि (delim != '\0')
 				fputc(delim, stdout);
 		}
 	}
 }
 
-static void paste_files_separate(FILE** files, char* delims, int del_cnt)
+स्थिर शून्य paste_files_separate(FILE** files, वर्ण* delims, पूर्णाङ्क del_cnt)
 {
-	char *line, *next_line;
-	char delim;
-	int i;
+	वर्ण *पङ्क्तिः, *अग्र_पङ्क्तिः;
+	वर्ण delim;
+	पूर्णाङ्क i;
 
-	for (i = 0; files[i]; ++i) {
-		int del_idx = 0;
+	प्रति (i = 0; files[i]; ++i) {
+		पूर्णाङ्क del_idx = 0;
 
-		line = NULL;
-		while ((next_line = xmalloc_fgetline(files[i])) != NULL) {
-			if (line) {
-				fputs_stdout(line);
-				free(line);
+		पङ्क्तिः = रिक्त;
+		यावत् ((अग्र_पङ्क्तिः = xmalloc_fgetline(files[i])) != रिक्त) {
+			यदि (पङ्क्तिः) {
+				fputs_stdout(पङ्क्तिः);
+				मुक्त(पङ्क्तिः);
 				delim = delims[del_idx++];
-				if (del_idx == del_cnt)
+				यदि (del_idx == del_cnt)
 					del_idx = 0;
-				if (delim != '\0')
+				यदि (delim != '\0')
 					fputc(delim, stdout);
 			}
-			line = next_line;
+			पङ्क्तिः = अग्र_पङ्क्तिः;
 		}
-		if (line) {
+		यदि (पङ्क्तिः) {
 			/* coreutils adds \n even if this is a final line
 			 * of the last file and it was not \n-terminated.
 			 */
-			printf("%s\n", line);
-			free(line);
+			प्रारूप_लिख("%s\n", पङ्क्तिः);
+			मुक्त(पङ्क्तिः);
 		}
 		fclose_if_not_stdin(files[i]);
 	}
 }
 
-#define PASTE_OPT_DELIMITERS (1 << 0)
-#define PASTE_OPT_SEPARATE   (1 << 1)
+#परिभाषय PASTE_OPT_DELIMITERS (1 << 0)
+#परिभाषय PASTE_OPT_SEPARATE   (1 << 1)
 
-int paste_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int paste_main(int argc UNUSED_PARAM, char **argv)
+पूर्णाङ्क paste_main(पूर्णाङ्क argc, वर्ण **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णाङ्क paste_main(पूर्णाङ्क argc अप्रयुक्तम्_PARAM, वर्ण **argv)
 {
-	char *delims = (char*)"\t";
-	int del_cnt = 1;
-	unsigned opt;
-	int i;
+	वर्ण *delims = (वर्ण*)"\t";
+	पूर्णाङ्क del_cnt = 1;
+	अचिह्नित opt;
+	पूर्णाङ्क i;
 
 	opt = getopt32(argv, "d:s", &delims);
 	argv += optind;
 
-	if (opt & PASTE_OPT_DELIMITERS) {
-		if (!delims[0])
-			bb_simple_error_msg_and_die("-d '' is not supported");
+	यदि (opt & PASTE_OPT_DELIMITERS) {
+		यदि (!delims[0])
+			bb_simple_error_सन्देशः_and_die("-d '' is not supported");
 		/* unknown mappings are not changed: "\z" -> '\\' 'z' */
 		/* trailing backslash, if any, is preserved */
 		del_cnt = strcpy_and_process_escape_sequences(delims, delims) - delims;
 		/* note: handle NUL properly (do not stop at it!): try -d'\t\0\t' */
 	}
 
-	if (!argv[0])
-		(--argv)[0] = (char*) "-";
-	for (i = 0; argv[i]; ++i) {
-		argv[i] = (void*) fopen_or_warn_stdin(argv[i]);
-		if (!argv[i])
+	यदि (!argv[0])
+		(--argv)[0] = (वर्ण*) "-";
+	प्रति (i = 0; argv[i]; ++i) {
+		argv[i] = (शून्य*) fopen_or_warn_stdin(argv[i]);
+		यदि (!argv[i])
 			xfunc_die();
 	}
 
-	if (opt & PASTE_OPT_SEPARATE)
+	यदि (opt & PASTE_OPT_SEPARATE)
 		paste_files_separate((FILE**)argv, delims, del_cnt);
-	else
+	अन्यथा
 		paste_files((FILE**)argv, i, delims, del_cnt);
 
 	fflush_stdout_and_exit(0);

@@ -44,60 +44,60 @@
 //usage:       "/tmp/foo/bar/baz: No such file or directory\n"
 //usage:       "$ mkdir -p /tmp/foo/bar/baz\n"
 
-#include "libbb.h"
+#अन्तर्भाव "libbb.h"
 
 /* This is a NOFORK applet. Be very careful! */
 
-int mkdir_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int mkdir_main(int argc UNUSED_PARAM, char **argv)
+पूर्णाङ्क mkdir_main(पूर्णाङ्क argc, वर्ण **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णाङ्क mkdir_main(पूर्णाङ्क argc अप्रयुक्तम्_PARAM, वर्ण **argv)
 {
-	long mode = -1;
-	int status = EXIT_SUCCESS;
-	int flags = 0;
-	unsigned opt;
-	char *smode;
-#if ENABLE_SELINUX
+	दीर्घ बहुलकम् = -1;
+	पूर्णाङ्क स्थितिः = EXIT_SUCCESS;
+	पूर्णाङ्क flags = 0;
+	अचिह्नित opt;
+	वर्ण *smode;
+#यदि ENABLE_SELINUX
 	security_context_t scontext;
-#endif
+#यदि_अन्तः
 
 	opt = getopt32long(argv, "m:pv" IF_SELINUX("Z:"),
-			"mode\0"    Required_argument "m"
-			"parents\0" No_argument       "p"
-# if ENABLE_SELINUX
-			"context\0" Required_argument "Z"
+			"mode\0"    Required_तर्कः "m"
+			"parents\0" No_तर्कः       "p"
+# यदि ENABLE_SELINUX
+			"context\0" Required_तर्कः "Z"
 # endif
-# if ENABLE_FEATURE_VERBOSE
-			"verbose\0" No_argument       "v"
+# यदि ENABLE_FEATURE_VERBOSE
+			"verbose\0" No_तर्कः       "v"
 # endif
 			, &smode IF_SELINUX(,&scontext)
 	);
-	if (opt & 1) {
-		mode_t mmode = bb_parse_mode(smode, 0777);
-		if (mmode == (mode_t)-1) {
-			bb_error_msg_and_die("invalid mode '%s'", smode);
+	यदि (opt & 1) {
+		बहुलकम्_t mmode = bb_parse_बहुलकम्(smode, 0777);
+		यदि (mmode == (बहुलकम्_t)-1) {
+			bb_error_सन्देशः_and_die("invalid mode '%s'", smode);
 		}
-		mode = mmode;
+		बहुलकम् = mmode;
 	}
-	if (opt & 2)
+	यदि (opt & 2)
 		flags |= FILEUTILS_RECUR;
-	if ((opt & 4) && FILEUTILS_VERBOSE)
+	यदि ((opt & 4) && FILEUTILS_VERBOSE)
 		flags |= FILEUTILS_VERBOSE;
-#if ENABLE_SELINUX
-	if (opt & 8) {
+#यदि ENABLE_SELINUX
+	यदि (opt & 8) {
 		selinux_or_die();
 		setfscreatecon_or_die(scontext);
 	}
-#endif
+#यदि_अन्तः
 
 	argv += optind;
-	if (!argv[0])
+	यदि (!argv[0])
 		bb_show_usage();
 
-	do {
-		if (bb_make_directory(*argv, mode, flags)) {
-			status = EXIT_FAILURE;
+	कुरु {
+		यदि (bb_make_directory(*argv, बहुलकम्, flags)) {
+			स्थितिः = EXIT_FAILURE;
 		}
-	} while (*++argv);
+	} यावत् (*++argv);
 
-	return status;
+	प्रत्यागम स्थितिः;
 }

@@ -60,9 +60,9 @@
 //usage:       "$ echo \"gdkkn vnqkc\" | tr [a-y] [b-z]\n"
 //usage:       "hello world\n"
 
-#include "libbb.h"
+#अन्तर्भाव "libbb.h"
 
-enum {
+गणना {
 	ASCII = 256,
 	/* string buffer needs to be at least as big as the whole "alphabet".
 	 * BUFSIZ == ASCII is ok, but we will realloc in expand
@@ -71,18 +71,18 @@ enum {
 	TR_BUFSIZ = (BUFSIZ > ASCII*2) ? BUFSIZ : ASCII*2,
 };
 
-static void map(char *pvector,
-		char *string1, unsigned string1_len,
-		char *string2, unsigned string2_len)
+स्थिर शून्य map(वर्ण *pvector,
+		वर्ण *string1, अचिह्नित string1_len,
+		वर्ण *string2, अचिह्नित string2_len)
 {
-	char last = '0';
-	unsigned i, j;
+	वर्ण चरमः = '0';
+	अचिह्नित i, j;
 
-	for (j = 0, i = 0; i < string1_len; i++) {
-		if (string2_len <= j)
-			pvector[(unsigned char)(string1[i])] = last;
-		else
-			pvector[(unsigned char)(string1[i])] = last = string2[j++];
+	प्रति (j = 0, i = 0; i < string1_len; i++) {
+		यदि (string2_len <= j)
+			pvector[(अचिह्नित वर्ण)(string1[i])] = चरमः;
+		अन्यथा
+			pvector[(अचिह्नित वर्ण)(string1[i])] = चरमः = string2[j++];
 	}
 }
 
@@ -99,25 +99,25 @@ static void map(char *pvector,
  * # echo qwe123 | /usr/bin/tr 123456789 '[d*]'
  * qweddd
  */
-static unsigned expand(char *arg, char **buffer_p)
+स्थिर अचिह्नित expand(वर्ण *arg, वर्ण **बफर_p)
 {
-	char *buffer = *buffer_p;
-	unsigned pos = 0;
-	unsigned size = TR_BUFSIZ;
-	unsigned i; /* can't be unsigned char: must be able to hold 256 */
-	unsigned char ac;
+	वर्ण *बफर = *बफर_p;
+	अचिह्नित pos = 0;
+	अचिह्नित आकार = TR_BUFSIZ;
+	अचिह्नित i; /* can't be unsigned char: must be able to hold 256 */
+	अचिह्नित वर्ण ac;
 
-	while (*arg) {
-		if (pos + ASCII > size) {
-			size += ASCII;
-			*buffer_p = buffer = xrealloc(buffer, size);
+	यावत् (*arg) {
+		यदि (pos + ASCII > आकार) {
+			आकार += ASCII;
+			*बफर_p = बफर = xrealloc(बफर, आकार);
 		}
-		if (*arg == '\\') {
-			const char *z;
+		यदि (*arg == '\\') {
+			ध्रुव वर्ण *z;
 			arg++;
 			z = arg;
 			ac = bb_process_escape_sequence(&z);
-			arg = (char *)z;
+			arg = (वर्ण *)z;
 			arg--;
 			*arg = ac;
 			/*
@@ -125,44 +125,44 @@ static unsigned expand(char *arg, char **buffer_p)
 			 * If not, current char will be treated anyway.
 			 */
 		}
-		if (arg[1] == '-') { /* "0-9..." */
+		यदि (arg[1] == '-') { /* "0-9..." */
 			ac = arg[2];
-			if (ac == '\0') { /* "0-": copy verbatim */
-				buffer[pos++] = *arg++; /* copy '0' */
-				continue; /* next iter will copy '-' and stop */
+			यदि (ac == '\0') { /* "0-": copy verbatim */
+				बफर[pos++] = *arg++; /* copy '0' */
+				अनुवर्त; /* next iter will copy '-' and stop */
 			}
-			i = (unsigned char) *arg;
+			i = (अचिह्नित वर्ण) *arg;
 			arg += 3; /* skip 0-9 or 0-\ */
-			if (ac == '\\') {
-				const char *z;
+			यदि (ac == '\\') {
+				ध्रुव वर्ण *z;
 				z = arg;
 				ac = bb_process_escape_sequence(&z);
-				arg = (char *)z;
+				arg = (वर्ण *)z;
 			}
-			while (i <= ac) /* ok: i is unsigned _int_ */
-				buffer[pos++] = i++;
-			continue;
+			यावत् (i <= ac) /* ok: i is unsigned _int_ */
+				बफर[pos++] = i++;
+			अनुवर्त;
 		}
-		if ((ENABLE_FEATURE_TR_CLASSES || ENABLE_FEATURE_TR_EQUIV)
+		यदि ((ENABLE_FEATURE_TR_CLASSES || ENABLE_FEATURE_TR_EQUIV)
 		 && *arg == '['
 		) {
 			arg++;
-			i = (unsigned char) *arg++;
+			i = (अचिह्नित वर्ण) *arg++;
 			/* "[xyz...". i=x, arg points to y */
-			if (ENABLE_FEATURE_TR_CLASSES && i == ':') { /* [:class:] */
-#define CLO ":]\0"
-				static const char classes[] ALIGN1 =
+			यदि (ENABLE_FEATURE_TR_CLASSES && i == ':') { /* [:class:] */
+#परिभाषय CLO ":]\0"
+				स्थिर ध्रुव वर्ण classes[] ALIGN1 =
 					"alpha"CLO "alnum"CLO "digit"CLO
 					"lower"CLO "upper"CLO "space"CLO
 					"blank"CLO "punct"CLO "cntrl"CLO
 					"xdigit"CLO;
-				enum {
+				गणना {
 					CLASS_invalid = 0, /* we increment the retval */
 					CLASS_alpha = 1,
 					CLASS_alnum = 2,
 					CLASS_digit = 3,
-					CLASS_lower = 4,
-					CLASS_upper = 5,
+					CLASS_अधस्तनम् = 4,
+					CLASS_ऊर्ध्वस्थम् = 5,
 					CLASS_space = 6,
 					CLASS_blank = 7,
 					CLASS_punct = 8,
@@ -172,65 +172,65 @@ static unsigned expand(char *arg, char **buffer_p)
 					//CLASS_print = 12,
 				};
 				smalluint j;
-				char *tmp;
+				वर्ण *tmp;
 
 				/* xdigit needs 8, not 7 */
 				i = 7 + (arg[0] == 'x');
 				tmp = xstrndup(arg, i);
-				j = index_in_strings(classes, tmp) + 1;
-				free(tmp);
+				j = सूचकांक_अन्तर्_वाक्यानि(classes, tmp) + 1;
+				मुक्त(tmp);
 
-				if (j == CLASS_invalid)
-					goto skip_bracket;
+				यदि (j == CLASS_invalid)
+					गच्छ skip_bracket;
 
 				arg += i;
-				if (j == CLASS_alnum || j == CLASS_digit || j == CLASS_xdigit) {
-					for (i = '0'; i <= '9'; i++)
-						buffer[pos++] = i;
+				यदि (j == CLASS_alnum || j == CLASS_digit || j == CLASS_xdigit) {
+					प्रति (i = '0'; i <= '9'; i++)
+						बफर[pos++] = i;
 				}
-				if (j == CLASS_alpha || j == CLASS_alnum || j == CLASS_upper) {
-					for (i = 'A'; i <= 'Z'; i++)
-						buffer[pos++] = i;
+				यदि (j == CLASS_alpha || j == CLASS_alnum || j == CLASS_ऊर्ध्वस्थम्) {
+					प्रति (i = 'A'; i <= 'Z'; i++)
+						बफर[pos++] = i;
 				}
-				if (j == CLASS_alpha || j == CLASS_alnum || j == CLASS_lower) {
-					for (i = 'a'; i <= 'z'; i++)
-						buffer[pos++] = i;
+				यदि (j == CLASS_alpha || j == CLASS_alnum || j == CLASS_अधस्तनम्) {
+					प्रति (i = 'a'; i <= 'z'; i++)
+						बफर[pos++] = i;
 				}
-				if (j == CLASS_space || j == CLASS_blank) {
-					buffer[pos++] = '\t';
-					if (j == CLASS_space) {
-						buffer[pos++] = '\n';
-						buffer[pos++] = '\v';
-						buffer[pos++] = '\f';
-						buffer[pos++] = '\r';
+				यदि (j == CLASS_space || j == CLASS_blank) {
+					बफर[pos++] = '\t';
+					यदि (j == CLASS_space) {
+						बफर[pos++] = '\n';
+						बफर[pos++] = '\v';
+						बफर[pos++] = '\f';
+						बफर[pos++] = '\r';
 					}
-					buffer[pos++] = ' ';
+					बफर[pos++] = ' ';
 				}
-				if (j == CLASS_punct || j == CLASS_cntrl) {
-					for (i = '\0'; i < ASCII; i++) {
-						if ((j == CLASS_punct && isprint_asciionly(i) && !isalnum(i) && !isspace(i))
+				यदि (j == CLASS_punct || j == CLASS_cntrl) {
+					प्रति (i = '\0'; i < ASCII; i++) {
+						यदि ((j == CLASS_punct && isprint_asciionly(i) && !अक्षरम्_अङ्कः_वा(i) && !रिक्तम्_वा(i))
 						 || (j == CLASS_cntrl && iscntrl(i))
 						) {
-							buffer[pos++] = i;
+							बफर[pos++] = i;
 						}
 					}
 				}
-				if (j == CLASS_xdigit) {
-					for (i = 'A'; i <= 'F'; i++) {
-						buffer[pos + 6] = i | 0x20;
-						buffer[pos++] = i;
+				यदि (j == CLASS_xdigit) {
+					प्रति (i = 'A'; i <= 'F'; i++) {
+						बफर[pos + 6] = i | 0x20;
+						बफर[pos++] = i;
 					}
 					pos += 6;
 				}
-				continue;
+				अनुवर्त;
 			}
 			/* "[xyz...", i=x, arg points to y */
-			if (ENABLE_FEATURE_TR_EQUIV && i == '=') { /* [=CHAR=] */
-				buffer[pos++] = *arg; /* copy CHAR */
-				if (!arg[0] || arg[1] != '=' || arg[2] != ']')
+			यदि (ENABLE_FEATURE_TR_EQUIV && i == '=') { /* [=CHAR=] */
+				बफर[pos++] = *arg; /* copy CHAR */
+				यदि (!arg[0] || arg[1] != '=' || arg[2] != ']')
 					bb_show_usage();
 				arg += 3;  /* skip CHAR=] */
-				continue;
+				अनुवर्त;
 			}
 			/* The rest of "[xyz..." cases is treated as normal
 			 * string, "[" has no special meaning here:
@@ -241,55 +241,55 @@ static unsigned expand(char *arg, char **buffer_p)
  skip_bracket:
 			arg -= 2; /* points to "[" in "[xyz..." */
 		}
-		buffer[pos++] = *arg++;
+		बफर[pos++] = *arg++;
 	}
-	return pos;
+	प्रत्यागम pos;
 }
 
 /* NB: buffer is guaranteed to be at least TR_BUFSIZE
  * (which is >= ASCII) big.
  */
-static int complement(char *buffer, int buffer_len)
+स्थिर पूर्णाङ्क complement(वर्ण *बफर, पूर्णाङ्क बफर_len)
 {
-	int len;
-	char conv[ASCII];
-	unsigned char ch;
+	पूर्णाङ्क len;
+	वर्ण conv[ASCII];
+	अचिह्नित वर्ण ch;
 
 	len = 0;
 	ch = '\0';
-	while (1) {
-		if (memchr(buffer, ch, buffer_len) == NULL)
+	यावत् (1) {
+		यदि (memchr(बफर, ch, बफर_len) == रिक्त)
 			conv[len++] = ch;
-		if (++ch == '\0')
-			break;
+		यदि (++ch == '\0')
+			भङ्ग;
 	}
-	memcpy(buffer, conv, len);
-	return len;
+	स्मृतिं_प्रतिलिख(बफर, conv, len);
+	प्रत्यागम len;
 }
 
-int tr_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int tr_main(int argc UNUSED_PARAM, char **argv)
+पूर्णाङ्क tr_main(पूर्णाङ्क argc, वर्ण **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णाङ्क tr_main(पूर्णाङ्क argc अप्रयुक्तम्_PARAM, वर्ण **argv)
 {
-	int i;
+	पूर्णाङ्क i;
 	smalluint opts;
 	ssize_t read_chars;
-	size_t in_index, out_index;
-	unsigned last = UCHAR_MAX + 1; /* not equal to any char */
-	unsigned char coded, c;
-	char *str1 = xmalloc(TR_BUFSIZ);
-	char *str2 = xmalloc(TR_BUFSIZ);
-	int str2_length;
-	int str1_length;
-	char *vector = xzalloc(ASCII * 3);
-	char *invec  = vector + ASCII;
-	char *outvec = vector + ASCII * 2;
+	आकार_t अन्तर्_सूचकांक, बहिर्गमनम्_सूचकांक;
+	अचिह्नित चरमः = UCHAR_MAX + 1; /* not equal to any char */
+	अचिह्नित वर्ण coded, c;
+	वर्ण *str1 = xmalloc(TR_BUFSIZ);
+	वर्ण *str2 = xmalloc(TR_BUFSIZ);
+	पूर्णाङ्क str2_दीर्घता;
+	पूर्णाङ्क str1_दीर्घता;
+	वर्ण *सदिशम् = xzalloc(ASCII * 3);
+	वर्ण *invec  = सदिशम् + ASCII;
+	वर्ण *outvec = सदिशम् + ASCII * 2;
 
-#define TR_OPT_complement   (3 << 0)
-#define TR_OPT_delete       (1 << 2)
-#define TR_OPT_squeeze_reps (1 << 3)
+#परिभाषय TR_OPT_complement   (3 << 0)
+#परिभाषय TR_OPT_delete       (1 << 2)
+#परिभाषय TR_OPT_squeeze_reps (1 << 3)
 
-	for (i = 0; i < ASCII; i++) {
-		vector[i] = i;
+	प्रति (i = 0; i < ASCII; i++) {
+		सदिशम्[i] = i;
 		/*invec[i] = outvec[i] = FALSE; - done by xzalloc */
 	}
 
@@ -302,59 +302,59 @@ int tr_main(int argc UNUSED_PARAM, char **argv)
 	opts = getopt32(argv, "^+" "Ccds" "\0" "-1:?2");
 	argv += optind;
 
-	str1_length = expand(*argv++, &str1);
-	str2_length = 0;
-	if (opts & TR_OPT_complement)
-		str1_length = complement(str1, str1_length);
-	if (*argv) {
-		if (argv[0][0] == '\0')
-			bb_simple_error_msg_and_die("STRING2 cannot be empty");
-		str2_length = expand(*argv, &str2);
-		map(vector, str1, str1_length,
-				str2, str2_length);
+	str1_दीर्घता = expand(*argv++, &str1);
+	str2_दीर्घता = 0;
+	यदि (opts & TR_OPT_complement)
+		str1_दीर्घता = complement(str1, str1_दीर्घता);
+	यदि (*argv) {
+		यदि (argv[0][0] == '\0')
+			bb_simple_error_सन्देशः_and_die("STRING2 cannot be empty");
+		str2_दीर्घता = expand(*argv, &str2);
+		map(सदिशम्, str1, str1_दीर्घता,
+				str2, str2_दीर्घता);
 	}
-	for (i = 0; i < str1_length; i++)
-		invec[(unsigned char)(str1[i])] = TRUE;
-	for (i = 0; i < str2_length; i++)
-		outvec[(unsigned char)(str2[i])] = TRUE;
+	प्रति (i = 0; i < str1_दीर्घता; i++)
+		invec[(अचिह्नित वर्ण)(str1[i])] = TRUE;
+	प्रति (i = 0; i < str2_दीर्घता; i++)
+		outvec[(अचिह्नित वर्ण)(str2[i])] = TRUE;
 
-	goto start_from;
+	गच्छ start_from;
 
 	/* In this loop, str1 space is reused as input buffer,
 	 * str2 - as output one. */
-	for (;;) {
+	प्रति (;;) {
 		/* If we're out of input, flush output and read more input. */
-		if ((ssize_t)in_index == read_chars) {
-			if (out_index) {
-				xwrite(STDOUT_FILENO, str2, out_index);
+		यदि ((ssize_t)अन्तर्_सूचकांक == read_chars) {
+			यदि (बहिर्गमनम्_सूचकांक) {
+				xwrite(STDOUT_FILENO, str2, बहिर्गमनम्_सूचकांक);
  start_from:
-				out_index = 0;
+				बहिर्गमनम्_सूचकांक = 0;
 			}
 			read_chars = safe_read(STDIN_FILENO, str1, TR_BUFSIZ);
-			if (read_chars <= 0) {
-				if (read_chars < 0)
-					bb_simple_perror_msg_and_die(bb_msg_read_error);
-				break;
+			यदि (read_chars <= 0) {
+				यदि (read_chars < 0)
+					bb_simple_perror_सन्देशः_and_die(bb_सन्देशः_read_error);
+				भङ्ग;
 			}
-			in_index = 0;
+			अन्तर्_सूचकांक = 0;
 		}
-		c = str1[in_index++];
-		if ((opts & TR_OPT_delete) && invec[c])
-			continue;
-		coded = vector[c];
-		if ((opts & TR_OPT_squeeze_reps) && last == coded
+		c = str1[अन्तर्_सूचकांक++];
+		यदि ((opts & TR_OPT_delete) && invec[c])
+			अनुवर्त;
+		coded = सदिशम्[c];
+		यदि ((opts & TR_OPT_squeeze_reps) && चरमः == coded
 		 && (invec[c] || outvec[coded])
 		) {
-			continue;
+			अनुवर्त;
 		}
-		str2[out_index++] = last = coded;
+		str2[बहिर्गमनम्_सूचकांक++] = चरमः = coded;
 	}
 
-	if (ENABLE_FEATURE_CLEAN_UP) {
-		free(vector);
-		free(str2);
-		free(str1);
+	यदि (ENABLE_FEATURE_CLEAN_ऊर्ध्वम्) {
+		मुक्त(सदिशम्);
+		मुक्त(str2);
+		मुक्त(str1);
 	}
 
-	return EXIT_SUCCESS;
+	प्रत्यागम EXIT_SUCCESS;
 }

@@ -26,32 +26,32 @@
 //usage:     "\n	-e	Treat ARGs as lines"
 //usage:     "\n	-i L-H	Treat numbers L-H as lines"
 
-#include "libbb.h"
+#अन्तर्भाव "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-#define OPT_e		(1 << 0)
-#define OPT_i		(1 << 1)
-#define OPT_n		(1 << 2)
-#define OPT_o		(1 << 3)
-#define OPT_z		(1 << 4)
-#define OPT_STR		"ei:n:o:z"
+#परिभाषय OPT_e		(1 << 0)
+#परिभाषय OPT_i		(1 << 1)
+#परिभाषय OPT_n		(1 << 2)
+#परिभाषय OPT_o		(1 << 3)
+#परिभाषय OPT_z		(1 << 4)
+#परिभाषय OPT_STR		"ei:n:o:z"
 
 /*
  * Use the Fisher-Yates shuffle algorithm on an array of lines.
  * If the required number of output lines is less than the total
  * we can stop shuffling early.
  */
-static void shuffle_lines(char **lines, unsigned numlines, unsigned outlines)
+स्थिर शून्य shuffle_पङ्क्तयः(वर्ण **पङ्क्तयः, अचिह्नित numlines, अचिह्नित outlines)
 {
-	srand(monotonic_us());
+	बीजं_रोपय(monotonic_us());
 
-	while (outlines != 0) {
-		char *tmp;
-		unsigned r = rand();
+	यावत् (outlines != 0) {
+		वर्ण *tmp;
+		अचिह्नित r = यादृच्छिकम्();
 		/* RAND_MAX can be as small as 32767 */
-		if (numlines > RAND_MAX)
-			r ^= rand() << 15;
+		यदि (numlines > RAND_MAX)
+			r ^= यादृच्छिकम्() << 15;
 		r %= numlines;
 //TODO: the above method is seriously non-uniform when numlines is very large.
 //For example, with numlines of   0xf0000000,
@@ -59,9 +59,9 @@ static void shuffle_lines(char **lines, unsigned numlines, unsigned outlines)
 //are more likely: e.g. r=1 and r=0xf0000001 both map to 1,
 //whereas only one value, r=0xefffffff, maps to 0xefffffff.
 		numlines--;
-		tmp = lines[numlines];
-		lines[numlines] = lines[r];
-		lines[r] = tmp;
+		tmp = पङ्क्तयः[numlines];
+		पङ्क्तयः[numlines] = पङ्क्तयः[r];
+		पङ्क्तयः[r] = tmp;
 		outlines--;
 	}
 }
@@ -70,23 +70,23 @@ static void shuffle_lines(char **lines, unsigned numlines, unsigned outlines)
  * shuf -i 333333333333333333333333333333001-333333333333333333333333333333019
  * but do we want to have +200 bytes of code (~40% code growth)?
  */
-#define COMMON_PREFIX_HACK 0
+#परिभाषय COMMON_उपसर्गः_HACK 0
 
-int shuf_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int shuf_main(int argc, char **argv)
+पूर्णाङ्क shuf_main(पूर्णाङ्क argc, वर्ण **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णाङ्क shuf_main(पूर्णाङ्क argc, वर्ण **argv)
 {
-	unsigned opts;
-	char *opt_i_str, *opt_n_str, *opt_o_str;
-	char **lines;
-	unsigned long long lo = lo;
-	unsigned numlines, outlines;
-	unsigned i;
-	char eol;
-#if COMMON_PREFIX_HACK
-	unsigned pfx_len = 0;
-	unsigned padding_width = padding_width;
-	const char *pfx = pfx;
-#endif
+	अचिह्नित opts;
+	वर्ण *opt_i_str, *opt_n_str, *opt_o_str;
+	वर्ण **पङ्क्तयः;
+	अचिह्नित दीर्घ दीर्घ lo = lo;
+	अचिह्नित numlines, outlines;
+	अचिह्नित i;
+	वर्ण eol;
+#यदि COMMON_उपसर्गः_HACK
+	अचिह्नित pfx_len = 0;
+	अचिह्नित padding_विस्तारः = padding_विस्तारः;
+	ध्रुव वर्ण *pfx = pfx;
+#यदि_अन्तः
 
 	opts = getopt32(argv, "^"
 			OPT_STR
@@ -98,45 +98,45 @@ int shuf_main(int argc, char **argv)
 	argv += optind;
 
 	/* Prepare lines for shuffling - either: */
-	if (opts & OPT_e) {
+	यदि (opts & OPT_e) {
 		/* make lines from command-line arguments */
 		numlines = argc;
-		lines = argv;
-	} else
-	if (opts & OPT_i) {
+		पङ्क्तयः = argv;
+	} अन्यथा
+	यदि (opts & OPT_i) {
 		/* create a range of numbers */
-		unsigned long long hi;
-		char *dash;
+		अचिह्नित दीर्घ दीर्घ hi;
+		वर्ण *dash;
 
-		if (argv[0])
+		यदि (argv[0])
 			bb_show_usage();
 
 		dash = strchr(opt_i_str, '-');
-		if (!dash) {
-			bb_error_msg_and_die("bad range '%s'", opt_i_str);
+		यदि (!dash) {
+			bb_error_सन्देशः_and_die("bad range '%s'", opt_i_str);
 		}
 		*dash++ = '\0';
-#if COMMON_PREFIX_HACK
+#यदि COMMON_उपसर्गः_HACK
 		{
-			const char *a = opt_i_str;
-			const char *b = dash;
+			ध्रुव वर्ण *a = opt_i_str;
+			ध्रुव वर्ण *b = dash;
 			/* Skip leading zeros (they may mask that common prefix does exist) */
-			while (*a == '0') a++;
-			while (*b == '0') b++;
+			यावत् (*a == '0') a++;
+			यावत् (*b == '0') b++;
 			/* Do we have a common prefix (long enough to bother)? */
-			padding_width = strlen(a);
-			if (padding_width > 5 && padding_width == strlen(b)) {
+			padding_विस्तारः = वाक्यदैर्घ्यम्(a);
+			यदि (padding_विस्तारः > 5 && padding_विस्तारः == वाक्यदैर्घ्यम्(b)) {
 				/* How long is it? */
 				pfx = a;
-				while (isdigit(*a) && *a == *b
+				यावत् (अङ्कः_वा(*a) && *a == *b
 				 && a[1] /* "111111-111111" case: avoid xatoull("") */
 				) {
 					a++;
 					b++;
 				}
 				pfx_len = a - pfx; /* can end up being 0 */
-				padding_width -= pfx_len;
-			} else {
+				padding_विस्तारः -= pfx_len;
+			} अन्यथा {
 				/* Undo leading zero 'eating' (think "0-9") */
 				a = opt_i_str;
 				b = dash;
@@ -144,77 +144,77 @@ int shuf_main(int argc, char **argv)
 			lo = xatoull(a);
 			hi = xatoull(b);
 		}
-#else
+#अन्यथा
 		lo = xatoull(opt_i_str);
 		hi = xatoull(dash);
-#endif
+#यदि_अन्तः
 		dash[-1] = '-';
-		if (hi < lo)
-			bb_error_msg_and_die("bad range '%s'", opt_i_str);
+		यदि (hi < lo)
+			bb_error_सन्देशः_and_die("bad range '%s'", opt_i_str);
 		hi -= lo;
-		if (sizeof(size_t) > sizeof(numlines)) {
-			if (hi >= UINT_MAX)
-				bb_error_msg_and_die("bad range '%s'", opt_i_str);
-		} else {
-			if (hi >= UINT_MAX / sizeof(lines[0]))
-				bb_error_msg_and_die("bad range '%s'", opt_i_str);
+		यदि (परिमाण(आकार_t) > परिमाण(numlines)) {
+			यदि (hi >= UINT_MAX)
+				bb_error_सन्देशः_and_die("bad range '%s'", opt_i_str);
+		} अन्यथा {
+			यदि (hi >= UINT_MAX / परिमाण(पङ्क्तयः[0]))
+				bb_error_सन्देशः_and_die("bad range '%s'", opt_i_str);
 		}
 
 		numlines = hi + 1;
-		lines = xmalloc((size_t)numlines * sizeof(lines[0]));
-		for (i = 0; i < numlines; i++) {
-			lines[i] = (char*)(uintptr_t)i;
+		पङ्क्तयः = xmalloc((आकार_t)numlines * परिमाण(पङ्क्तयः[0]));
+		प्रति (i = 0; i < numlines; i++) {
+			पङ्क्तयः[i] = (वर्ण*)(uintptr_t)i;
 		}
-	} else {
+	} अन्यथा {
 		/* default - read lines from stdin or the input file */
 		FILE *fp;
-		const char *fname = "-";
+		ध्रुव वर्ण *fname = "-";
 
-		if (argv[0]) {
-			if (argv[1])
+		यदि (argv[0]) {
+			यदि (argv[1])
 				bb_show_usage();
 			fname = argv[0];
 		}
 
 		fp = xfopen_stdin(fname);
-		lines = NULL;
+		पङ्क्तयः = रिक्त;
 		numlines = 0;
-		for (;;) {
-			char *line = xmalloc_fgetline(fp);
-			if (!line)
-				break;
-			lines = xrealloc_vector(lines, 6, numlines);
-			lines[numlines++] = line;
+		प्रति (;;) {
+			वर्ण *पङ्क्तिः = xmalloc_fgetline(fp);
+			यदि (!पङ्क्तिः)
+				भङ्ग;
+			पङ्क्तयः = xrealloc_सदिशम्(पङ्क्तयः, 6, numlines);
+			पङ्क्तयः[numlines++] = पङ्क्तिः;
 		}
 		fclose_if_not_stdin(fp);
 	}
 
 	outlines = numlines;
-	if (opts & OPT_n) {
+	यदि (opts & OPT_n) {
 		outlines = xatou(opt_n_str);
-		if (outlines > numlines)
+		यदि (outlines > numlines)
 			outlines = numlines;
 	}
 
-	shuffle_lines(lines, numlines, outlines);
+	shuffle_पङ्क्तयः(पङ्क्तयः, numlines, outlines);
 
-	if (opts & OPT_o)
+	यदि (opts & OPT_o)
 		xmove_fd(xopen(opt_o_str, O_WRONLY|O_CREAT|O_TRUNC), STDOUT_FILENO);
 
 	eol = '\n';
-	if (opts & OPT_z)
+	यदि (opts & OPT_z)
 		eol = '\0';
 
-	for (i = numlines - outlines; i < numlines; i++) {
-		if (opts & OPT_i) {
-#if COMMON_PREFIX_HACK
-			if (pfx_len != 0)
-				printf("%.*s%0*llu%c", pfx_len, pfx, padding_width, lo + (uintptr_t)lines[i], eol);
-			else
-#endif
-				printf("%llu%c", lo + (uintptr_t)lines[i], eol);
-		} else
-			printf("%s%c", lines[i], eol);
+	प्रति (i = numlines - outlines; i < numlines; i++) {
+		यदि (opts & OPT_i) {
+#यदि COMMON_उपसर्गः_HACK
+			यदि (pfx_len != 0)
+				प्रारूप_लिख("%.*s%0*llu%c", pfx_len, pfx, padding_विस्तारः, lo + (uintptr_t)पङ्क्तयः[i], eol);
+			अन्यथा
+#यदि_अन्तः
+				प्रारूप_लिख("%llu%c", lo + (uintptr_t)पङ्क्तयः[i], eol);
+		} अन्यथा
+			प्रारूप_लिख("%s%c", पङ्क्तयः[i], eol);
 	}
 
 	fflush_stdout_and_exit_SUCCESS();

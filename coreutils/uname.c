@@ -97,95 +97,95 @@
 //usage:#define arch_full_usage "\n\n"
 //usage:       "Print system architecture"
 
-#include "libbb.h"
+#अन्तर्भाव "libbb.h"
 /* After libbb.h, since it needs sys/types.h on some systems */
-#include <sys/utsname.h>
+#अन्तर्भाव <sys/utsname.h>
 
-typedef struct {
-	struct utsname name;
-	char processor[sizeof(((struct utsname*)NULL)->machine)];
-	char platform[sizeof(((struct utsname*)NULL)->machine)];
-	char os[sizeof(CONFIG_UNAME_OSNAME)];
+प्रकारनिर्देश संरचना {
+	संरचना utsname name;
+	वर्ण processor[परिमाण(((संरचना utsname*)रिक्त)->machine)];
+	वर्ण platform[परिमाण(((संरचना utsname*)रिक्त)->machine)];
+	वर्ण os[परिमाण(CONFIG_UNAME_OSNAME)];
 } uname_info_t;
 
-#if ENABLE_UNAME
-#define options "snrvmpioa"
-static const unsigned short utsname_offset[] = {
+#यदि ENABLE_UNAME
+#परिभाषय options "snrvmpioa"
+स्थिर ध्रुव अचिह्नित ह्रस्व utsname_विस्थापनम्[] = {
 	offsetof(uname_info_t, name.sysname), /* -s */
 	offsetof(uname_info_t, name.nodename), /* -n */
 	offsetof(uname_info_t, name.release), /* -r */
-	offsetof(uname_info_t, name.version), /* -v */
+	offsetof(uname_info_t, name.संस्करणम्), /* -v */
 	offsetof(uname_info_t, name.machine), /* -m */
 	offsetof(uname_info_t, processor), /* -p */
 	offsetof(uname_info_t, platform), /* -i */
 	offsetof(uname_info_t, os), /* -o */
 };
-#endif
+#यदि_अन्तः
 
-int uname_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int uname_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+पूर्णाङ्क uname_main(पूर्णाङ्क argc, वर्ण **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णाङ्क uname_main(पूर्णाङ्क argc अप्रयुक्तम्_PARAM, वर्ण **argv अप्रयुक्तम्_PARAM)
 {
 	uname_info_t uname_info;
-	IF_UNAME(const char *unknown_str = "unknown";)
-#if ENABLE_UNAME
-	unsigned toprint = (1 << 4); /* "arch" = "uname -m" */
+	IF_UNAME(ध्रुव वर्ण *unknown_str = "unknown";)
+#यदि ENABLE_UNAME
+	अचिह्नित toprint = (1 << 4); /* "arch" = "uname -m" */
 
-	if (!ENABLE_BB_ARCH || applet_name[0] == 'u') {
-# if ENABLE_LONG_OPTS
-		static const char uname_longopts[] ALIGN1 =
+	यदि (!ENABLE_BB_ARCH || applet_name[0] == 'u') {
+# यदि ENABLE_LONG_OPTS
+		स्थिर ध्रुव वर्ण uname_longopts[] ALIGN1 =
 			/* name, has_arg, val */
-			"all\0"               No_argument       "a"
-			"kernel-name\0"       No_argument       "s"
-			"nodename\0"          No_argument       "n"
-			"kernel-release\0"    No_argument       "r"
-			"release\0"           No_argument       "r"
-			"kernel-version\0"    No_argument       "v"
-			"machine\0"           No_argument       "m"
-			"processor\0"         No_argument       "p"
-			"hardware-platform\0" No_argument       "i"
-			"operating-system\0"  No_argument       "o"
+			"all\0"               No_तर्कः       "a"
+			"kernel-name\0"       No_तर्कः       "s"
+			"nodename\0"          No_तर्कः       "n"
+			"kernel-release\0"    No_तर्कः       "r"
+			"release\0"           No_तर्कः       "r"
+			"kernel-version\0"    No_तर्कः       "v"
+			"machine\0"           No_तर्कः       "m"
+			"processor\0"         No_तर्कः       "p"
+			"hardware-platform\0" No_तर्कः       "i"
+			"operating-system\0"  No_तर्कः       "o"
 		;
 # endif
 		toprint = getopt32long(argv, options, uname_longopts);
-		if (argv[optind]) { /* coreutils-6.9 compat */
+		यदि (argv[optind]) { /* coreutils-6.9 compat */
 			bb_show_usage();
 		}
-		if (toprint & (1 << 8)) { /* -a => all opts on */
+		यदि (toprint & (1 << 8)) { /* -a => all opts on */
 			toprint = (1 << 8) - 1;
 			unknown_str = ""; /* -a does not print unknown fields */
 		}
-		if (toprint == 0) { /* no opts => -s (sysname) */
+		यदि (toprint == 0) { /* no opts => -s (sysname) */
 			toprint = 1;
 		}
 	} /* if "uname" */
-#endif
+#यदि_अन्तः
 
 	uname(&uname_info.name); /* never fails */
 
-#if defined(__sparc__) && defined(__linux__)
+#यदि defined(__sparc__) && defined(__linux__)
 	{
-		char *fake_sparc = getenv("FAKE_SPARC");
-		if (fake_sparc && (fake_sparc[0] | 0x20) == 'y') {
-			strcpy(uname_info.name.machine, "sparc");
+		वर्ण *fake_sparc = getenv("FAKE_SPARC");
+		यदि (fake_sparc && (fake_sparc[0] | 0x20) == 'y') {
+			वाक्यं_प्रतिलिख(uname_info.name.machine, "sparc");
 		}
 	}
-#endif
-	if (ENABLE_BB_ARCH && (!ENABLE_UNAME || applet_name[0] == 'a')) {
-		puts(uname_info.name.machine);
-	} else {
-#if ENABLE_UNAME
+#यदि_अन्तः
+	यदि (ENABLE_BB_ARCH && (!ENABLE_UNAME || applet_name[0] == 'a')) {
+		पङ्क्तिं_लिख(uname_info.name.machine);
+	} अन्यथा {
+#यदि ENABLE_UNAME
 		/* "uname" */
-		const char *fmt;
-		const unsigned short *delta;
+		ध्रुव वर्ण *fmt;
+		ध्रुव अचिह्नित ह्रस्व *delta;
 
-		strcpy(uname_info.processor, unknown_str);
-		strcpy(uname_info.platform, unknown_str);
-		strcpy(uname_info.os, CONFIG_UNAME_OSNAME);
-# if ENABLE_FEDORA_COMPAT
+		वाक्यं_प्रतिलिख(uname_info.processor, unknown_str);
+		वाक्यं_प्रतिलिख(uname_info.platform, unknown_str);
+		वाक्यं_प्रतिलिख(uname_info.os, CONFIG_UNAME_OSNAME);
+# यदि ENABLE_FEDORA_COMPAT
 		/* Fedora does something like this */
-		strcpy(uname_info.processor, uname_info.name.machine);
-		strcpy(uname_info.platform, uname_info.name.machine);
-		if (uname_info.platform[0] == 'i'
+		वाक्यं_प्रतिलिख(uname_info.processor, uname_info.name.machine);
+		वाक्यं_प्रतिलिख(uname_info.platform, uname_info.name.machine);
+		यदि (uname_info.platform[0] == 'i'
 		 && uname_info.platform[1]
 		 && uname_info.platform[2] == '8'
 		 && uname_info.platform[3] == '6'
@@ -193,20 +193,20 @@ int uname_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
 			uname_info.platform[1] = '3';
 		}
 # endif
-		delta = utsname_offset;
+		delta = utsname_विस्थापनम्;
 		fmt = " %s" + 1;
-		do {
-			if (toprint & 1) {
-				const char *p = (char *)(&uname_info) + *delta;
-				if (p[0]) {
-					printf(fmt, p);
+		कुरु {
+			यदि (toprint & 1) {
+				ध्रुव वर्ण *p = (वर्ण *)(&uname_info) + *delta;
+				यदि (p[0]) {
+					प्रारूप_लिख(fmt, p);
 					fmt = " %s";
 				}
 			}
 			++delta;
-		} while (toprint >>= 1);
+		} यावत् (toprint >>= 1);
 		bb_putchar('\n');
-#endif
+#यदि_अन्तः
 	}
 
 	fflush_stdout_and_exit_SUCCESS(); /* coreutils-6.9 compat */
