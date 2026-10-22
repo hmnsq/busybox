@@ -28,7 +28,7 @@
 //usage:#define nohup_example_usage
 //usage:       "$ nohup make &"
 
-#include "libbb.h"
+#अन्तर्भाव "libbb.h"
 
 /* Compat info: nohup (GNU coreutils 6.8) does this:
 # nohup true
@@ -49,49 +49,49 @@ nohup: redirecting stderr to stdout
 #
 */
 
-int nohup_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int nohup_main(int argc UNUSED_PARAM, char **argv)
+पूर्णाङ्क nohup_main(पूर्णाङ्क argc, वर्ण **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णाङ्क nohup_main(पूर्णाङ्क argc UNUSED_PARAM, वर्ण **argv)
 {
-	const char *nohupout;
-	char *home;
+	अचर वर्ण *nohupout;
+	वर्ण *home;
 
 	xfunc_error_retval = 127;
 
-	if (!argv[1]) {
+	यदि (!argv[1]) {
 		bb_show_usage();
 	}
 
 	/* If stdin is a tty, detach from it. */
-	if (isatty(STDIN_FILENO)) {
+	यदि (isatty(STDIN_FILENO)) {
 		/* bb_error_msg("ignoring input"); */
-		close(STDIN_FILENO);
+		बंद(STDIN_FILENO);
 		xopen(bb_dev_null, O_RDONLY); /* will be fd 0 (STDIN_FILENO) */
 	}
 
 	nohupout = "nohup.out";
 	/* Redirect stdout to nohup.out, either in "." or in "$HOME". */
-	if (isatty(STDOUT_FILENO)) {
-		close(STDOUT_FILENO);
-		if (open(nohupout, O_CREAT|O_WRONLY|O_APPEND, S_IRUSR|S_IWUSR) < 0) {
-			home = getenv("HOME");
-			if (home) {
+	यदि (isatty(STDOUT_FILENO)) {
+		बंद(STDOUT_FILENO);
+		यदि (खोलो(nohupout, O_CREAT|O_WRONLY|O_APPEND, S_IRUSR|S_IWUSR) < 0) {
+			home = दो_पर्या("HOME");
+			यदि (home) {
 				nohupout = concat_path_file(home, nohupout);
 				xopen3(nohupout, O_CREAT|O_WRONLY|O_APPEND, S_IRUSR|S_IWUSR);
-			} else {
+			} अन्यथा {
 				xopen(bb_dev_null, O_RDONLY); /* will be fd 1 */
 			}
 		}
-		bb_error_msg("appending output to %s", nohupout);
+		bb_error_सन्देश("appending output to %s", nohupout);
 	}
 
 	/* If we have a tty on stderr, redirect to stdout. */
-	if (isatty(STDERR_FILENO)) {
+	यदि (isatty(STDERR_FILENO)) {
 		/* if (stdout_wasnt_a_tty)
 			bb_error_msg("redirecting stderr to stdout"); */
 		dup2(STDOUT_FILENO, STDERR_FILENO);
 	}
 
-	signal(SIGHUP, SIG_IGN);
+	सङ्केत(SIGHUP, संक_छोड़ो);
 
 	argv++;
 	BB_EXECVP_or_die(argv);

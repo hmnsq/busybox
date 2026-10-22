@@ -46,21 +46,21 @@
 //usage:       "$ ls -l /tmp/foo\n"
 //usage:       "-r--r--r--    1 andersen root            0 Apr 12 18:25 /tmp/foo\n"
 
-#include "libbb.h"
+#अन्तर्भाव "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
 
-int chgrp_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int chgrp_main(int argc, char **argv)
+पूर्णाङ्क chgrp_main(पूर्णाङ्क argc, वर्ण **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णाङ्क chgrp_main(पूर्णाङ्क argc, वर्ण **argv)
 {
 	/* "chgrp [opts] abc file(s)" == "chown [opts] :abc file(s)" */
-	char **p = argv;
-	while (*++p) {
-		if (p[0][0] != '-') {
+	वर्ण **p = argv;
+	जबसम्म (*++p) {
+		यदि (p[0][0] != '-') {
 			p[0] = xasprintf(":%s", p[0]);
-			break;
+			रोक;
 		}
 	}
-	return chown_main(argc, argv);
+	फर्काऊ chown_main(argc, argv);
 }

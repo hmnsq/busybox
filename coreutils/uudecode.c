@@ -31,131 +31,131 @@
 //usage:       "$ ls -l busybox\n"
 //usage:       "-rwxr-xr-x   1 ams      ams        245264 Jun  7 21:35 busybox\n"
 
-#include "libbb.h"
+#अन्तर्भाव "libbb.h"
 
-#if ENABLE_UUDECODE
-static void FAST_FUNC read_stduu(FILE *src_stream, FILE *dst_stream, int flags UNUSED_PARAM)
+#यदि ENABLE_UUDECODE
+स्थिर शून्य FAST_FUNC read_stduu(खाता *src_stream, खाता *dst_stream, पूर्णाङ्क flags UNUSED_PARAM)
 {
-	char *line;
+	वर्ण *पङ्क्ति;
 
-	for (;;) {
-		int encoded_len, str_len;
-		char *line_ptr, *dst;
-		size_t line_len;
+	लागि (;;) {
+		पूर्णाङ्क encoded_len, str_len;
+		वर्ण *पङ्क्ति_ptr, *dst;
+		माप_प्रकार पङ्क्ति_len;
 
-		line_len = 64 * 1024;
-		line = xmalloc_fgets_str_len(src_stream, "\n", &line_len);
-		if (!line)
-			break;
+		पङ्क्ति_len = 64 * 1024;
+		पङ्क्ति = xmalloc_fgets_str_len(src_stream, "\n", &पङ्क्ति_len);
+		यदि (!पङ्क्ति)
+			रोक;
 		/* Handle both Unix and MSDOS text.
 		 * Note: space should not be trimmed, some encoders use it instead of "`"
 		 * for padding of last incomplete 4-char block.
 		 */
-		str_len = line_len;
-		while (--str_len >= 0
-		 && (line[str_len] == '\n' || line[str_len] == '\r')
+		str_len = पङ्क्ति_len;
+		जबसम्म (--str_len >= 0
+		 && (पङ्क्ति[str_len] == '\n' || पङ्क्ति[str_len] == '\r')
 		) {
-			line[str_len] = '\0';
+			पङ्क्ति[str_len] = '\0';
 		}
 
-		if (strcmp(line, "end") == 0) {
-			return; /* the only non-error exit */
+		यदि (म_भेद(पङ्क्ति, "end") == 0) {
+			फर्काऊ; /* the only non-error exit */
 		}
 
-		line_ptr = line;
-		while (*line_ptr) {
-			*line_ptr = (*line_ptr - 0x20) & 0x3f;
-			line_ptr++;
+		पङ्क्ति_ptr = पङ्क्ति;
+		जबसम्म (*पङ्क्ति_ptr) {
+			*पङ्क्ति_ptr = (*पङ्क्ति_ptr - 0x20) & 0x3f;
+			पङ्क्ति_ptr++;
 		}
-		str_len = line_ptr - line;
+		str_len = पङ्क्ति_ptr - पङ्क्ति;
 
-		encoded_len = line[0] * 4 / 3;
+		encoded_len = पङ्क्ति[0] * 4 / 3;
 		/* Check that line is not too short. (we tolerate
 		 * overly _long_ line to accommodate possible extra "`").
 		 * Empty line case is also caught here. */
-		if (str_len <= encoded_len) {
-			break; /* go to bb_error_msg_and_die("short file"); */
+		यदि (str_len <= encoded_len) {
+			रोक; /* go to bb_error_msg_and_die("short file"); */
 		}
-		if (encoded_len <= 0) {
+		यदि (encoded_len <= 0) {
 			/* Ignore the "`\n" line, why is it even in the encode file ? */
-			free(line);
-			continue;
+			मुक्त(पङ्क्ति);
+			जारी;
 		}
-		if (encoded_len > 60) {
-			bb_simple_error_msg_and_die("line too long");
+		यदि (encoded_len > 60) {
+			bb_simple_error_सन्देश_and_die("line too long");
 		}
 
-		dst = line;
-		line_ptr = line + 1;
-		do {
+		dst = पङ्क्ति;
+		पङ्क्ति_ptr = पङ्क्ति + 1;
+		गर {
 			/* Merge four 6 bit chars to three 8 bit chars */
-			*dst++ = line_ptr[0] << 2 | line_ptr[1] >> 4;
+			*dst++ = पङ्क्ति_ptr[0] << 2 | पङ्क्ति_ptr[1] >> 4;
 			encoded_len--;
-			if (encoded_len == 0) {
-				break;
+			यदि (encoded_len == 0) {
+				रोक;
 			}
 
-			*dst++ = line_ptr[1] << 4 | line_ptr[2] >> 2;
+			*dst++ = पङ्क्ति_ptr[1] << 4 | पङ्क्ति_ptr[2] >> 2;
 			encoded_len--;
-			if (encoded_len == 0) {
-				break;
+			यदि (encoded_len == 0) {
+				रोक;
 			}
 
-			*dst++ = line_ptr[2] << 6 | line_ptr[3];
-			line_ptr += 4;
+			*dst++ = पङ्क्ति_ptr[2] << 6 | पङ्क्ति_ptr[3];
+			पङ्क्ति_ptr += 4;
 			encoded_len -= 2;
-		} while (encoded_len > 0);
-		fwrite(line, 1, dst - line, dst_stream);
-		free(line);
+		} जबसम्म (encoded_len > 0);
+		ख_डालो(पङ्क्ति, 1, dst - पङ्क्ति, dst_stream);
+		मुक्त(पङ्क्ति);
 	}
-	bb_simple_error_msg_and_die("short file");
+	bb_simple_error_सन्देश_and_die("short file");
 }
 
-int uudecode_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int uudecode_main(int argc UNUSED_PARAM, char **argv)
+पूर्णाङ्क uudecode_main(पूर्णाङ्क argc, वर्ण **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णाङ्क uudecode_main(पूर्णाङ्क argc UNUSED_PARAM, वर्ण **argv)
 {
-	FILE *src_stream;
-	char *outname = NULL;
-	char *line;
+	खाता *src_stream;
+	वर्ण *outname = रिक्त;
+	वर्ण *पङ्क्ति;
 
 	getopt32(argv, "^" "o:" "\0" "?1"/* 1 arg max*/, &outname);
 	argv += optind;
 
-	if (!argv[0])
-		*--argv = (char*)"-";
+	यदि (!argv[0])
+		*--argv = (वर्ण*)"-";
 	src_stream = xfopen_stdin(argv[0]);
 
 	/* Search for the start of the encoding */
-	while ((line = xmalloc_fgetline(src_stream)) != NULL) {
-		void FAST_FUNC (*decode_fn_ptr)(FILE *src, FILE *dst, int flags);
-		char *line_ptr;
-		FILE *dst_stream;
-		int mode;
+	जबसम्म ((पङ्क्ति = xmalloc_fgetline(src_stream)) != रिक्त) {
+		शून्य FAST_FUNC (*decode_fn_ptr)(खाता *src, खाता *dst, पूर्णाङ्क flags);
+		वर्ण *पङ्क्ति_ptr;
+		खाता *dst_stream;
+		पूर्णाङ्क mode;
 
-		if (is_prefixed_with(line, "begin-base64 ")) {
-			line_ptr = line + 13;
+		यदि (is_prefixed_with(पङ्क्ति, "begin-base64 ")) {
+			पङ्क्ति_ptr = पङ्क्ति + 13;
 			decode_fn_ptr = read_base64;
-		} else if (is_prefixed_with(line, "begin ")) {
-			line_ptr = line + 6;
+		} अन्यथा यदि (is_prefixed_with(पङ्क्ति, "begin ")) {
+			पङ्क्ति_ptr = पङ्क्ति + 6;
 			decode_fn_ptr = read_stduu;
-		} else {
-			free(line);
-			continue;
+		} अन्यथा {
+			मुक्त(पङ्क्ति);
+			जारी;
 		}
 
 		/* begin line found. decode and exit */
-		mode = bb_strtou(line_ptr, NULL, 8);
-		if (outname == NULL) {
-			outname = strchr(line_ptr, ' ');
-			if (!outname)
-				break;
+		mode = bb_strtou(पङ्क्ति_ptr, रिक्त, 8);
+		यदि (outname == रिक्त) {
+			outname = म_अक्षर(पङ्क्ति_ptr, ' ');
+			यदि (!outname)
+				रोक;
 			outname++;
 			trim(outname); /* remove trailing space (and '\r' for DOS text) */
-			if (!outname[0])
-				break;
+			यदि (!outname[0])
+				रोक;
 		}
-		dst_stream = stdout;
-		if (NOT_LONE_DASH(outname)
+		dst_stream = मानक_निकास;
+		यदि (NOT_LONE_DASH(outname)
 /* https://pubs.opengroup.org/onlinepubs/9699919799/utilities/uudecode.html
  * https://pubs.opengroup.org/onlinepubs/9699919799/utilities/uuencode.html
  * The above says that output file name specified in input file
@@ -163,17 +163,17 @@ int uudecode_main(int argc UNUSED_PARAM, char **argv)
  * This usually works "implicitly": many systems have /dev/stdout.
  * If ENABLE_DESKTOP, support that explicitly:
  */
-		 && (!ENABLE_DESKTOP || strcmp(outname, "/dev/stdout") != 0)
+		 && (!ENABLE_DESKTOP || म_भेद(outname, "/dev/stdout") != 0)
 		) {
 			dst_stream = xfopen_for_write(outname);
 			fchmod(fileno(dst_stream), mode & (S_IRWXU | S_IRWXG | S_IRWXO));
 		}
-		free(line);
+		मुक्त(पङ्क्ति);
 		decode_fn_ptr(src_stream, dst_stream, /*flags:*/ BASE64_FLAG_UU_STOP + BASE64_FLAG_NO_STOP_CHAR);
 		/* fclose_if_not_stdin(src_stream); - redundant */
-		return EXIT_SUCCESS;
+		फर्काऊ निकास_सफल;
 	}
-	bb_simple_error_msg_and_die("no 'begin' line");
+	bb_simple_error_सन्देश_and_die("no 'begin' line");
 }
 #endif
 
@@ -214,17 +214,17 @@ int uudecode_main(int argc UNUSED_PARAM, char **argv)
 //kbuild:lib-$(CONFIG_BASE64) += uudecode.o
 //kbuild:lib-$(CONFIG_BASE32) += uudecode.o
 
-#if ENABLE_BASE32 || ENABLE_BASE64
+#यदि ENABLE_BASE32 || ENABLE_BASE64
 
-# if ENABLE_BASE32
-static void bb_b32encode(char *p, const void *src, int length)
+# यदि ENABLE_BASE32
+स्थिर शून्य bb_b32encode(वर्ण *p, अचर शून्य *src, पूर्णाङ्क length)
 {
 #define tbl bb_uuenc_tbl_base32
-	const unsigned char *s = src;
+	अचर अचिन्हित वर्ण *s = src;
 
 	/* Transform 5x8 bits to 8x5 bits */
-	while (length > 0) {
-		unsigned cur, next;
+	जबसम्म (length > 0) {
+		अचिन्हित cur, next;
 
 		length--;
 		cur = *s++;
@@ -232,7 +232,7 @@ static void bb_b32encode(char *p, const void *src, int length)
 		cur &= 7;
 
 		next = 0;
-		if (--length >= 0)
+		यदि (--length >= 0)
 			next = *s++;
 		*p++ = tbl[(cur << 2) + (next >> 6)];	// -----xxx xx------ -------- -------- --------
 		cur = next & 0x3f;
@@ -241,13 +241,13 @@ static void bb_b32encode(char *p, const void *src, int length)
 		cur &= 1;
 
 		next = 0;
-		if (--length >= 0)
+		यदि (--length >= 0)
 			next = *s++;
 		*p++ = tbl[(cur << 4) + (next >> 4)];	// -------- -------x xxxx---- -------- --------
 		cur = next & 0xf;
 
 		next = 0;
-		if (--length >= 0)
+		यदि (--length >= 0)
 			next = *s++;
 		*p++ = tbl[(cur << 1) + (next >> 7)];	// -------- -------- ----xxxx x------- --------
 		cur = next & 0x7f;
@@ -256,7 +256,7 @@ static void bb_b32encode(char *p, const void *src, int length)
 		cur &= 3;
 
 		next = 0;
-		if (--length >= 0)
+		यदि (--length >= 0)
 			next = *s++;
 		*p++ = tbl[(cur << 3) + (next >> 5)];	// -------- -------- -------- ------xx xxx-----
 		cur = next & 0x1f;
@@ -268,35 +268,35 @@ static void bb_b32encode(char *p, const void *src, int length)
 	*p = '\0';
 	/* Pad as necessary */
 	length = ((-length) * 3) >> 1; /* -4 => 6 pad chars, -3 => 4, -2 => 3, -1 => 1 */
-	while (length--) {
+	जबसम्म (length--) {
 		*--p = '=';
 	}
 }
-# else
-void bb_b32encode(char *p, const void *src, int length); /* undefined */
+# अन्यथा
+शून्य bb_b32encode(वर्ण *p, अचर शून्य *src, पूर्णाङ्क length); /* undefined */
 # endif
 
-int baseNUM_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int baseNUM_main(int argc UNUSED_PARAM, char **argv)
+पूर्णाङ्क base_अङ्क_main(पूर्णाङ्क argc, वर्ण **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णाङ्क base_अङ्क_main(पूर्णाङ्क argc UNUSED_PARAM, वर्ण **argv)
 {
-	FILE *src_stream;
-	unsigned opts;
-	unsigned col = 76;
+	खाता *src_stream;
+	अचिन्हित opts;
+	अचिन्हित col = 76;
 
 	opts = getopt32(argv, "^" "diw:+" "\0" "?1"/* 1 arg max*/, &col);
 	argv += optind;
 
-	if (!argv[0])
-		*--argv = (char*)"-";
+	यदि (!argv[0])
+		*--argv = (वर्ण*)"-";
 	src_stream = xfopen_stdin(argv[0]);
-	if (opts & 1) {
+	यदि (opts & 1) {
 		/* -d: decode */
-		int flags = (unsigned char)EOF;
-		if (ENABLE_BASE32 && (!ENABLE_BASE64 || applet_name[4] == '3'))
-			flags = ((unsigned char)EOF) | BASE64_32;
-		read_base64(src_stream, stdout, flags);
-	} else {
-		enum {
+		पूर्णाङ्क flags = (अचिन्हित वर्ण)खातापूर्ण;
+		यदि (ENABLE_BASE32 && (!ENABLE_BASE64 || applet_name[4] == '3'))
+			flags = ((अचिन्हित वर्ण)खातापूर्ण) | BASE64_32;
+		read_base64(src_stream, मानक_निकास, flags);
+	} अन्यथा {
+		गणना {
 			SRC_BUF_SIZE = 3 * 5 * 32, /* this *MUST* be a multiple of 3 and 5 */
 			DST_BUF_SIZE = 8 * ((SRC_BUF_SIZE + 4) / 5), /* max growth on encode (base32 case) */
 		};
@@ -305,45 +305,45 @@ int baseNUM_main(int argc UNUSED_PARAM, char **argv)
 		 * it's safe to place source at the end of the buffer and
 		 * overwrite it while encoding, just be careful to have a gap.
 		 */
-		char dst_buf[((DST_BUF_SIZE + /*gap:*/ 16) /*round up to 16:*/ | 0xf) + 1];
-#define src_buf (dst_buf + sizeof(dst_buf) - SRC_BUF_SIZE)
-		int src_fd, rem;
+		वर्ण dst_buf[((DST_BUF_SIZE + /*gap:*/ 16) /*round up to 16:*/ | 0xf) + 1];
+#define src_buf (dst_buf + परिमाण(dst_buf) - SRC_BUF_SIZE)
+		पूर्णाङ्क src_fd, rem;
 
 		src_fd = fileno(src_stream);
 		rem = 0;
-		while (1) {
-			size_t size = full_read(src_fd, src_buf, SRC_BUF_SIZE);
-			if ((ssize_t)size < 0)
-				bb_simple_perror_msg_and_die(bb_msg_read_error);
-			if (size == 0) {
-				if (rem != 0) bb_putchar('\n');
-				break;
+		जबसम्म (1) {
+			माप_प्रकार size = full_read(src_fd, src_buf, SRC_BUF_SIZE);
+			यदि ((ssize_t)size < 0)
+				bb_simple_perror_सन्देश_and_die(bb_सन्देश_read_error);
+			यदि (size == 0) {
+				यदि (rem != 0) bb_putchar('\n');
+				रोक;
 			}
 
 			/* Encode the buffer we just read in */
-			if (ENABLE_BASE32 && (!ENABLE_BASE64 || applet_name[4] == '3')) {
+			यदि (ENABLE_BASE32 && (!ENABLE_BASE64 || applet_name[4] == '3')) {
 				bb_b32encode(dst_buf, src_buf, size);
 				size = 8 * ((size + 4) / 5);
-			} else {
+			} अन्यथा {
 				bb_uuencode(dst_buf, src_buf, size, bb_uuenc_tbl_base64);
 				size = 4 * ((size + 2) / 3);
 			}
 
-			if (col == 0) {
+			यदि (col == 0) {
 				fputs_stdout(dst_buf);
-			} else {
-				char *result = dst_buf;
-				if (rem == 0)
+			} अन्यथा {
+				वर्ण *result = dst_buf;
+				यदि (rem == 0)
 					rem = col;
-				while (1) {
-					int out = size < rem ? size : rem;
+				जबसम्म (1) {
+					पूर्णाङ्क out = size < rem ? size : rem;
 					rem -= out;
-					printf(rem != 0 ? "%.*s" : "%.*s\n", out, result);
-					if (rem != 0)
-						break;
+					म_लिखो(rem != 0 ? "%.*s" : "%.*s\n", out, result);
+					यदि (rem != 0)
+						रोक;
 					size -= out;
-					if (size == 0)
-						break;
+					यदि (size == 0)
+						रोक;
 					result += out;
 					rem = col;
 				}

@@ -18,28 +18,28 @@
 //usage:#define factor_full_usage "\n\n"
 //usage:       "Print prime factors"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#अन्तर्भाव "libbb.h"
+#अन्तर्भाव "common_bufsiz.h"
 
-#if 0
-# define dbg(...) bb_error_msg(__VA_ARGS__)
-#else
-# define dbg(...) ((void)0)
+#यदि 0
+# define dbg(...) bb_error_सन्देश(__VA_ARGS__)
+#अन्यथा
+# define dbg(...) ((शून्य)0)
 #endif
 
-typedef unsigned long long wide_t;
+प्रकारनिर्देश अचिन्हित दीर्घ दीर्घ wide_t;
 
-#if ULLONG_MAX == (UINT_MAX * UINT_MAX + 2 * UINT_MAX)
+#यदि ULLONG_MAX == (अच_पूर्णांक_उच्च * अच_पूर्णांक_उच्च + 2 * अच_पूर्णांक_उच्च)
 /* "unsigned" is half as wide as ullong */
-typedef unsigned half_t;
-#define HALF_MAX UINT_MAX
+प्रकारनिर्देश अचिन्हित half_t;
+#define HALF_MAX अच_पूर्णांक_उच्च
 #define HALF_FMT ""
-#elif ULLONG_MAX == (ULONG_MAX * ULONG_MAX + 2 * ULONG_MAX)
+#अथवायदि ULLONG_MAX == (अच_दीर्घ_उच्च * अच_दीर्घ_उच्च + 2 * अच_दीर्घ_उच्च)
 /* long is half as wide as ullong */
-typedef unsigned long half_t;
-#define HALF_MAX ULONG_MAX
+प्रकारनिर्देश अचिन्हित दीर्घ half_t;
+#define HALF_MAX अच_दीर्घ_उच्च
 #define HALF_FMT "l"
-#else
+#अन्यथा
 #error Cant find an integer type which is half as wide as ullong
 #endif
 
@@ -57,7 +57,7 @@ typedef unsigned long half_t;
 		(A/2),(B/2),(C/2),(D/2),(E/2),(F/2),(G/2),(H/2),(I/2),(J/2), \
 		(x/2) \
 	)
-static const uint64_t packed_wheel[] = {
+स्थिर अचर uint64_t packed_wheel[] = {
 	/* 1, 2, */
 	P( 2, 4, 2, 4, 2, 4, 6, 2, 6, 4, 2, 4, 6, 6, 2, 6, 4, 2, 6, 4, 6),
 	P( 8, 4, 2, 4, 2, 4,14, 4, 6, 2,10, 2, 6, 6, 4, 2, 4, 6, 2,10, 2),
@@ -87,7 +87,7 @@ static const uint64_t packed_wheel[] = {
 #undef R
 #define WHEEL_START 5
 #define WHEEL_SIZE (5 + 24 * 20)
-#define square_count (((uint8_t*)&bb_common_bufsiz1)[0])
+#define square_गन्ती (((uint8_t*)&bb_common_bufsiz1)[0])
 #define wheel_tab    (((uint8_t*)&bb_common_bufsiz1) + 1)
 /*
  * Why, you ask?
@@ -98,18 +98,18 @@ static const uint64_t packed_wheel[] = {
  *	packed_wheel              -     184    +184
  *	factor_main             108     163     +55
  */
-static void unpack_wheel(void)
+स्थिर शून्य unpack_wheel(शून्य)
 {
-	int i;
+	पूर्णाङ्क i;
 	uint8_t *p;
 
 	setup_common_bufsiz();
 	wheel_tab[0] = 1;
 	wheel_tab[1] = 2;
 	p = &wheel_tab[2];
-	for (i = 0; i < ARRAY_SIZE(packed_wheel); i++) {
+	लागि (i = 0; i < ARRAY_SIZE(packed_wheel); i++) {
 		uint64_t v = packed_wheel[i];
-		while ((v & 0xe) != 0) {
+		जबसम्म ((v & 0xe) != 0) {
 			*p = v & 0xe;
 			//printf("%2u,", *p);
 			p++;
@@ -120,21 +120,21 @@ static void unpack_wheel(void)
 }
 
 /* Prevent inlining, factorize() needs all help it can get with reducing register pressure */
-static NOINLINE void print_w(wide_t n)
+स्थिर NOINLINE शून्य print_w(wide_t n)
 {
-	unsigned rep = square_count;
-	do
-		printf(" %llu", n);
-	while (--rep != 0);
+	अचिन्हित rep = square_गन्ती;
+	गर
+		म_लिखो(" %llu", n);
+	जबसम्म (--rep != 0);
 }
-static NOINLINE void print_h(half_t n)
+स्थिर NOINLINE शून्य print_h(half_t n)
 {
 	print_w(n);
 }
 
-static void factorize(wide_t N);
+स्थिर शून्य factorize(wide_t N);
 
-static half_t isqrt_odd(wide_t N)
+स्थिर half_t isqrt_odd(wide_t N)
 {
 	half_t s = isqrt(N);
 	/* s^2 is <= N, (s+1)^2 > N */
@@ -144,28 +144,28 @@ static half_t isqrt_odd(wide_t N)
 	 * factor 18446743988964486098 = 2 * 3037000493 * 3037000493
 	 * factor 18446743902517389507 = 3 * 2479700513 * 2479700513
 	 */
-	if ((wide_t)s * s == N) {
+	यदि ((wide_t)s * s == N) {
 		/* factorize sqrt(N), printing each factor twice */
-		square_count *= 2;
+		square_गन्ती *= 2;
 		factorize(s);
 		/* Let caller know we recursed */
-		return 0;
+		फर्काऊ 0;
 	}
 
 	/* Subtract 1 from even s, odd s won't change: */
 	/* (doesnt work for zero, but we know that s != 0 here) */
 	s = (s - 1) | 1;
-	return s;
+	फर्काऊ s;
 }
 
-static NOINLINE void factorize(wide_t N)
+स्थिर NOINLINE शून्य factorize(wide_t N)
 {
-	unsigned w;
+	अचिन्हित w;
 	half_t factor;
 	half_t max_factor;
 
-	if (N < 4)
-		goto end;
+	यदि (N < 4)
+		गच्छ end;
 
 	/* The code needs to be optimized for the case where
 	 * there are large prime factors. For example,
@@ -182,57 +182,57 @@ static NOINLINE void factorize(wide_t N)
 	 * factor 18446744073709551557 (0xffffffffffffffc5).
 	 */
 	max_factor = isqrt_odd(N);
-	if (!max_factor)
-		return; /* square was detected and recursively factored */
+	यदि (!max_factor)
+		फर्काऊ; /* square was detected and recursively factored */
 	factor = 2;
 	w = 0;
-	for (;;) {
+	लागि (;;) {
 		half_t fw;
 
 		/* The division is the most costly part of the loop.
 		 * On 64bit CPUs, takes at best 12 cycles, often ~20.
 		 */
-		while ((N % factor) == 0) { /* not likely */
+		जबसम्म ((N % factor) == 0) { /* not likely */
 			N = N / factor;
 			print_h(factor);
 			max_factor = isqrt_odd(N);
-			if (!max_factor)
-				return; /* square was detected */
+			यदि (!max_factor)
+				फर्काऊ; /* square was detected */
 		}
-		if (factor >= max_factor)
-			break;
+		यदि (factor >= max_factor)
+			रोक;
 		fw = factor + wheel_tab[w];
-		if (fw < factor)
-			break; /* overflow */
+		यदि (fw < factor)
+			रोक; /* overflow */
 		factor = fw;
 		w++;
-		if (w < WHEEL_SIZE)
-			continue;
+		यदि (w < WHEEL_SIZE)
+			जारी;
 		w = WHEEL_START;
 	}
  end:
-	if (N > 1)
+	यदि (N > 1)
 		print_w(N);
 	bb_putchar('\n');
 }
 
-static void factorize_numstr(const char *numstr)
+स्थिर शून्य factorize_numstr(अचर वर्ण *numstr)
 {
 	wide_t N;
 
 	/* Leading + is ok (coreutils compat) */
-	if (*numstr == '+')
+	यदि (*numstr == '+')
 		numstr++;
-	N = bb_strtoull(numstr, NULL, 10);
-	if (errno)
+	N = bb_strtoull(numstr, रिक्त, 10);
+	यदि (त्रुटि_सं)
 		bb_show_usage();
-	printf("%llu:", N);
-	square_count = 1;
+	म_लिखो("%llu:", N);
+	square_गन्ती = 1;
 	factorize(N);
 }
 
-int factor_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int factor_main(int argc UNUSED_PARAM, char **argv)
+पूर्णाङ्क factor_main(पूर्णाङ्क argc, वर्ण **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णाङ्क factor_main(पूर्णाङ्क argc UNUSED_PARAM, वर्ण **argv)
 {
 	unpack_wheel();
 
@@ -241,33 +241,33 @@ int factor_main(int argc UNUSED_PARAM, char **argv)
 	//argv += optind;
 	argv++;
 
-	if (!*argv) {
+	यदि (!*argv) {
 		/* Read from stdin, several numbers per line are accepted */
-		for (;;) {
-			char *numstr, *line;
-			line = xmalloc_fgetline(stdin);
-			if (!line)
-				return EXIT_SUCCESS;
-			numstr = line;
-			for (;;) {
-				char *end;
+		लागि (;;) {
+			वर्ण *numstr, *पङ्क्ति;
+			पङ्क्ति = xmalloc_fgetline(मानक_निवेश);
+			यदि (!पङ्क्ति)
+				फर्काऊ निकास_सफल;
+			numstr = पङ्क्ति;
+			लागि (;;) {
+				वर्ण *end;
 				numstr = skip_whitespace(numstr);
-				if (!numstr[0])
-					break;
+				यदि (!numstr[0])
+					रोक;
 				end = skip_non_whitespace(numstr);
-				if (*end != '\0')
+				यदि (*end != '\0')
 					*end++ = '\0';
 				factorize_numstr(numstr);
 				numstr = end;
 			}
-			free(line);
+			मुक्त(पङ्क्ति);
 		}
 	}
 
-	do {
+	गर {
 		/* Leading spaces are ok (coreutils compat) */
 		factorize_numstr(skip_whitespace(*argv));
-	} while (*++argv);
+	} जबसम्म (*++argv);
 
-	return EXIT_SUCCESS;
+	फर्काऊ निकास_सफल;
 }

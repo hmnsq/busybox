@@ -59,7 +59,7 @@
 //usage:       "$ printf \"Val=%d\\n\" 5\n"
 //usage:       "Val=5\n"
 
-#include "libbb.h"
+#अन्तर्भाव "libbb.h"
 
 /* A note on bad input: neither bash 3.2 nor coreutils 6.10 stop on it.
  * They report it:
@@ -77,267 +77,267 @@
  * We try to be compatible.
  */
 
-typedef void FAST_FUNC (*converter)(const char *arg, void *result);
+प्रकारनिर्देश शून्य FAST_FUNC (*converter)(अचर वर्ण *arg, शून्य *result);
 
-static int multiconvert(const char *arg, void *result, converter convert)
+स्थिर पूर्णाङ्क multiconvert(अचर वर्ण *arg, शून्य *result, converter convert)
 {
-	if (*arg == '"' || *arg == '\'') {
-		arg = utoa((unsigned char)arg[1]);
+	यदि (*arg == '"' || *arg == '\'') {
+		arg = utoa((अचिन्हित वर्ण)arg[1]);
 	}
-	errno = 0;
+	त्रुटि_सं = 0;
 	convert(arg, result);
-	if (errno) {
-		bb_error_msg("invalid number '%s'", arg);
-		return 1;
+	यदि (त्रुटि_सं) {
+		bb_error_सन्देश("invalid number '%s'", arg);
+		फर्काऊ 1;
 	}
-	return 0;
+	फर्काऊ 0;
 }
 
-static void FAST_FUNC conv_strtoull(const char *arg, void *result)
+स्थिर शून्य FAST_FUNC conv_strtoull(अचर वर्ण *arg, शून्य *result)
 {
 	/* Allow leading '+' - bb_strtoull() by itself does not allow it,
 	 * and probably shouldn't (other callers might require purely numeric
 	 * inputs to be allowed.
 	 */
-	if (arg[0] == '+')
+	यदि (arg[0] == '+')
 		arg++;
-	*(unsigned long long*)result = bb_strtoull(arg, NULL, 0);
+	*(अचिन्हित दीर्घ दीर्घ*)result = bb_strtoull(arg, रिक्त, 0);
 	/* both coreutils 6.10 and bash 3.2:
 	 * $ printf '%x\n' -2
 	 * fffffffffffffffe
 	 * Mimic that:
 	 */
-	if (errno) {
-		*(unsigned long long*)result = bb_strtoll(arg, NULL, 0);
+	यदि (त्रुटि_सं) {
+		*(अचिन्हित दीर्घ दीर्घ*)result = bb_strtoll(arg, रिक्त, 0);
 	}
 }
-static void FAST_FUNC conv_strtoll(const char *arg, void *result)
+स्थिर शून्य FAST_FUNC conv_strtoll(अचर वर्ण *arg, शून्य *result)
 {
-	if (arg[0] == '+')
+	यदि (arg[0] == '+')
 		arg++;
-	*(long long*)result = bb_strtoll(arg, NULL, 0);
+	*(दीर्घ दीर्घ*)result = bb_strtoll(arg, रिक्त, 0);
 }
-static void FAST_FUNC conv_strtod(const char *arg, void *result)
+स्थिर शून्य FAST_FUNC conv_strtod(अचर वर्ण *arg, शून्य *result)
 {
-	char *end;
+	वर्ण *end;
 	/* Well, this one allows leading whitespace... so what? */
 	/* What I like much less is that "-" accepted too! :( */
 //TODO: needs setlocale(LC_NUMERIC, "C")?
-	*(double*)result = strtod(arg, &end);
-	if (end[0]) {
-		errno = ERANGE;
-		*(double*)result = 0;
+	*(द्विगुण*)result = म_से_भग्न(arg, &end);
+	यदि (end[0]) {
+		त्रुटि_सं = दुस्फल;
+		*(द्विगुण*)result = 0;
 	}
 }
 
 /* Callers should check errno to detect errors */
-static unsigned long long my_xstrtoull(const char *arg)
+स्थिर अचिन्हित दीर्घ दीर्घ my_xstrtoull(अचर वर्ण *arg)
 {
-	unsigned long long result;
-	if (multiconvert(arg, &result, conv_strtoull))
+	अचिन्हित दीर्घ दीर्घ result;
+	यदि (multiconvert(arg, &result, conv_strtoull))
 		result = 0;
-	return result;
+	फर्काऊ result;
 }
-static long long my_xstrtoll(const char *arg)
+स्थिर दीर्घ दीर्घ my_xstrtoll(अचर वर्ण *arg)
 {
-	long long result;
-	if (multiconvert(arg, &result, conv_strtoll))
+	दीर्घ दीर्घ result;
+	यदि (multiconvert(arg, &result, conv_strtoll))
 		result = 0;
-	return result;
+	फर्काऊ result;
 }
-static double my_xstrtod(const char *arg)
+स्थिर द्विगुण my_xstrtod(अचर वर्ण *arg)
 {
-	double result;
+	द्विगुण result;
 	multiconvert(arg, &result, conv_strtod);
-	return result;
+	फर्काऊ result;
 }
 
 /* Handles %b; return 1 if output is to be short-circuited by \c */
-static int print_esc_string(const char *str)
+स्थिर पूर्णाङ्क print_esc_string(अचर वर्ण *str)
 {
-	char c;
-	while ((c = *str) != '\0') {
+	वर्ण c;
+	जबसम्म ((c = *str) != '\0') {
 		str++;
-		if (c == '\\') {
+		यदि (c == '\\') {
 			/* %b also accepts 4-digit octals of the form \0### */
-			if (*str == '0') {
-				if ((unsigned char)(str[1] - '0') < 8) {
+			यदि (*str == '0') {
+				यदि ((अचिन्हित वर्ण)(str[1] - '0') < 8) {
 					/* 2nd char is 0..7: skip leading '0' */
 					str++;
 				}
 			}
-			else if (*str == 'c') {
-				return 1;
+			अन्यथा यदि (*str == 'c') {
+				फर्काऊ 1;
 			}
 			{
 				/* optimization: don't force arg to be on-stack,
 				 * use another variable for that. */
-				const char *z = str;
+				अचर वर्ण *z = str;
 				c = bb_process_escape_sequence(&z);
 				str = z;
 			}
 		}
-		putchar(c);
+		अक्षर_दो(c);
 	}
 
-	return 0;
+	फर्काऊ 0;
 }
 
-static void print_direc(char *format, unsigned fmt_length,
-		int field_width, int precision,
-		const char *argument)
+स्थिर शून्य print_direc(वर्ण *format, अचिन्हित fmt_length,
+		पूर्णाङ्क field_width, पूर्णाङ्क precision,
+		अचर वर्ण *argument)
 {
-	long long llv;
-	double dv;
-	char saved;
-	char *have_prec, *have_width;
+	दीर्घ दीर्घ llv;
+	द्विगुण dv;
+	वर्ण saved;
+	वर्ण *have_prec, *have_width;
 
 	saved = format[fmt_length];
 	format[fmt_length] = '\0';
 
-	have_prec = strstr(format, ".*");
-	have_width = strchr(format, '*');
-	if (have_width - 1 == have_prec)
-		have_width = NULL;
+	have_prec = म_माला(format, ".*");
+	have_width = म_अक्षर(format, '*');
+	यदि (have_width - 1 == have_prec)
+		have_width = रिक्त;
 
 	/* multiconvert sets errno = 0, but %s needs it cleared */
-	errno = 0;
+	त्रुटि_सं = 0;
 
-	switch (format[fmt_length - 1]) {
-	case 'c':
-		printf(format, *argument);
-		break;
-	case 'd':
-	case 'i':
+	विकल्प (format[fmt_length - 1]) {
+	पक्ष 'c':
+		म_लिखो(format, *argument);
+		रोक;
+	पक्ष 'd':
+	पक्ष 'i':
 		llv = my_xstrtoll(skip_whitespace(argument));
  print_long:
-		if (!have_width) {
-			if (!have_prec)
-				printf(format, llv);
-			else
-				printf(format, precision, llv);
-		} else {
-			if (!have_prec)
-				printf(format, field_width, llv);
-			else
-				printf(format, field_width, precision, llv);
+		यदि (!have_width) {
+			यदि (!have_prec)
+				म_लिखो(format, llv);
+			अन्यथा
+				म_लिखो(format, precision, llv);
+		} अन्यथा {
+			यदि (!have_prec)
+				म_लिखो(format, field_width, llv);
+			अन्यथा
+				म_लिखो(format, field_width, precision, llv);
 		}
-		break;
-	case 'o':
-	case 'u':
-	case 'x':
-	case 'X':
+		रोक;
+	पक्ष 'o':
+	पक्ष 'u':
+	पक्ष 'x':
+	पक्ष 'X':
 		llv = my_xstrtoull(skip_whitespace(argument));
 		/* cheat: unsigned long and long have same width, so... */
-		goto print_long;
-	case 's':
+		गच्छ print_long;
+	पक्ष 's':
 		/* Are char* and long long the same? */
-		if (sizeof(argument) == sizeof(llv)) {
-			llv = (long long)(ptrdiff_t)argument;
-			goto print_long;
-		} else {
+		यदि (परिमाण(argument) == परिमाण(llv)) {
+			llv = (दीर्घ दीर्घ)(सूचक_भेद_प्रकार)argument;
+			गच्छ print_long;
+		} अन्यथा {
 			/* Hope compiler will optimize it out by moving call
 			 * instruction after the ifs... */
-			if (!have_width) {
-				if (!have_prec)
-					printf(format, argument, /*unused:*/ argument, argument);
-				else
-					printf(format, precision, argument, /*unused:*/ argument);
-			} else {
-				if (!have_prec)
-					printf(format, field_width, argument, /*unused:*/ argument);
-				else
-					printf(format, field_width, precision, argument);
+			यदि (!have_width) {
+				यदि (!have_prec)
+					म_लिखो(format, argument, /*unused:*/ argument, argument);
+				अन्यथा
+					म_लिखो(format, precision, argument, /*unused:*/ argument);
+			} अन्यथा {
+				यदि (!have_prec)
+					म_लिखो(format, field_width, argument, /*unused:*/ argument);
+				अन्यथा
+					म_लिखो(format, field_width, precision, argument);
 			}
-			break;
+			रोक;
 		}
-	case 'f':
-	case 'e':
-	case 'E':
-	case 'g':
-	case 'G':
+	पक्ष 'f':
+	पक्ष 'e':
+	पक्ष 'E':
+	पक्ष 'g':
+	पक्ष 'G':
 		dv = my_xstrtod(argument);
-		if (!have_width) {
-			if (!have_prec)
-				printf(format, dv);
-			else
-				printf(format, precision, dv);
-		} else {
-			if (!have_prec)
-				printf(format, field_width, dv);
-			else
-				printf(format, field_width, precision, dv);
+		यदि (!have_width) {
+			यदि (!have_prec)
+				म_लिखो(format, dv);
+			अन्यथा
+				म_लिखो(format, precision, dv);
+		} अन्यथा {
+			यदि (!have_prec)
+				म_लिखो(format, field_width, dv);
+			अन्यथा
+				म_लिखो(format, field_width, precision, dv);
 		}
-		break;
+		रोक;
 	} /* switch */
 
 	format[fmt_length] = saved;
 }
 
 /* Handle params for "%*.*f". Negative numbers are ok (compat). */
-static int get_width_prec(const char *str)
+स्थिर पूर्णाङ्क get_width_prec(अचर वर्ण *str)
 {
-	int v = bb_strtoi(str, NULL, 10);
-	if (errno) {
-		bb_error_msg("invalid number '%s'", str);
+	पूर्णाङ्क v = bb_strtoi(str, रिक्त, 10);
+	यदि (त्रुटि_सं) {
+		bb_error_सन्देश("invalid number '%s'", str);
 		v = 0;
 	}
-	return v;
+	फर्काऊ v;
 }
 
 /* Print the text in FORMAT, using ARGV for arguments to any '%' directives.
    Return advanced ARGV.  */
-static char **print_formatted(char *f, char **argv, int *conv_err)
+स्थिर वर्ण **print_formatted(वर्ण *f, वर्ण **argv, पूर्णाङ्क *conv_err)
 {
-	char *direc_start;      /* Start of % directive.  */
-	unsigned direc_length;  /* Length of % directive.  */
-	int field_width;        /* Arg to first '*' */
-	int precision;          /* Arg to second '*' */
-	char **saved_argv = argv;
+	वर्ण *direc_start;      /* Start of % directive.  */
+	अचिन्हित direc_length;  /* Length of % directive.  */
+	पूर्णाङ्क field_width;        /* Arg to first '*' */
+	पूर्णाङ्क precision;          /* Arg to second '*' */
+	वर्ण **saved_argv = argv;
 
-	for (; *f; ++f) {
-		switch (*f) {
-		case '%':
+	लागि (; *f; ++f) {
+		विकल्प (*f) {
+		पक्ष '%':
 			direc_start = f++;
 			direc_length = 1;
 			field_width = precision = 0;
-			if (*f == '%') {
+			यदि (*f == '%') {
 				bb_putchar('%');
-				break;
+				रोक;
 			}
-			if (*f == 'b') {
-				if (*argv) {
-					if (print_esc_string(*argv))
-						return saved_argv; /* causes main() to exit */
+			यदि (*f == 'b') {
+				यदि (*argv) {
+					यदि (print_esc_string(*argv))
+						फर्काऊ saved_argv; /* causes main() to exit */
 					++argv;
 				}
-				break;
+				रोक;
 			}
-			while (*f && strchr("-+ #0", *f)) {
+			जबसम्म (*f && म_अक्षर("-+ #0", *f)) {
 				++f;
 				++direc_length;
 			}
-			if (*f == '*') {
+			यदि (*f == '*') {
 				++f;
 				++direc_length;
-				if (*argv)
+				यदि (*argv)
 					field_width = get_width_prec(*argv++);
-			} else {
-				while (isdigit(*f)) {
+			} अन्यथा {
+				जबसम्म (है_अंक(*f)) {
 					++f;
 					++direc_length;
 				}
 			}
-			if (*f == '.') {
+			यदि (*f == '.') {
 				++f;
 				++direc_length;
-				if (*f == '*') {
+				यदि (*f == '*') {
 					++f;
 					++direc_length;
-					if (*argv)
+					यदि (*argv)
 						precision = get_width_prec(*argv++);
-				} else {
-					while (isdigit(*f)) {
+				} अन्यथा {
+					जबसम्म (है_अंक(*f)) {
 						++f;
 						++direc_length;
 					}
@@ -348,64 +348,64 @@ static char **print_formatted(char *f, char **argv, int *conv_err)
 			 * bash does not like "%lld", but coreutils
 			 * happily takes even "%Llllhhzhhzd"!
 			 * We are permissive like coreutils */
-			while ((*f | 0x20) == 'l' || *f == 'h' || *f == 'z') {
+			जबसम्म ((*f | 0x20) == 'l' || *f == 'h' || *f == 'z') {
 				overlapping_strcpy(f, f + 1);
 			}
 			/* Add "ll" if integer modifier, then print */
 			{
-				static const char format_chars[] ALIGN1 = "diouxXfeEgGcs";
-				char *p = strchr(format_chars, *f);
+				स्थिर अचर वर्ण format_chars[] ALIGN1 = "diouxXfeEgGcs";
+				वर्ण *p = म_अक्षर(format_chars, *f);
 				/* needed - try "printf %" without it */
-				if (p == NULL || *f == '\0') {
-					bb_error_msg("%s: invalid format", direc_start);
+				यदि (p == रिक्त || *f == '\0') {
+					bb_error_सन्देश("%s: invalid format", direc_start);
 					/* causes main() to exit with error */
-					return saved_argv - 1;
+					फर्काऊ saved_argv - 1;
 				}
 				++direc_length;
-				if (p - format_chars <= 5) {
+				यदि (p - format_chars <= 5) {
 					/* it is one of "diouxX" */
 					p = xmalloc(direc_length + 3);
-					memcpy(p, direc_start, direc_length);
+					स_नकल(p, direc_start, direc_length);
 					p[direc_length + 1] = p[direc_length - 1];
 					p[direc_length - 1] = 'l';
 					p[direc_length] = 'l';
 					//bb_error_msg("<%s>", p);
 					direc_length += 2;
 					direc_start = p;
-				} else {
-					p = NULL;
+				} अन्यथा {
+					p = रिक्त;
 				}
-				if (*argv) {
+				यदि (*argv) {
 					print_direc(direc_start, direc_length, field_width,
 								precision, *argv++);
-				} else {
+				} अन्यथा {
 					print_direc(direc_start, direc_length, field_width,
 								precision, "");
 				}
-				*conv_err |= errno;
-				free(p);
+				*conv_err |= त्रुटि_सं;
+				मुक्त(p);
 			}
-			break;
-		case '\\':
-			if (*++f == 'c') {
-				return saved_argv; /* causes main() to exit */
+			रोक;
+		पक्ष '\\':
+			यदि (*++f == 'c') {
+				फर्काऊ saved_argv; /* causes main() to exit */
 			}
-			bb_putchar(bb_process_escape_sequence((const char **)&f));
+			bb_putchar(bb_process_escape_sequence((अचर वर्ण **)&f));
 			f--;
-			break;
-		default:
-			putchar(*f);
+			रोक;
+		स्वभाव:
+			अक्षर_दो(*f);
 		}
 	}
 
-	return argv;
+	फर्काऊ argv;
 }
 
-int printf_main(int argc UNUSED_PARAM, char **argv)
+पूर्णाङ्क printf_main(पूर्णाङ्क argc UNUSED_PARAM, वर्ण **argv)
 {
-	int conv_err;
-	char *format;
-	char **argv2;
+	पूर्णाङ्क conv_err;
+	वर्ण *format;
+	वर्ण **argv2;
 
 	/* We must check that stdout is not closed.
 	 * The reason for this is highly non-obvious.
@@ -417,8 +417,8 @@ int printf_main(int argc UNUSED_PARAM, char **argv)
 	 * to output data no matter what. So it will try later,
 	 * and possibly will clobber future output. Not good. */
 // TODO: check fcntl() & O_ACCMODE == O_WRONLY or O_RDWR?
-	if (fcntl(1, F_GETFL) == -1)
-		return 1; /* match coreutils 6.10 (sans error msg to stderr) */
+	यदि (fcntl(1, F_GETFL) == -1)
+		फर्काऊ 1; /* match coreutils 6.10 (sans error msg to stderr) */
 	//if (dup2(1, 1) != 1) - old way
 	//	return 1;
 
@@ -427,12 +427,12 @@ int printf_main(int argc UNUSED_PARAM, char **argv)
 	 * We will mimic coreutils. */
 	argv = skip_dash_dash(argv);
 
-	if (!argv[0]) {
-		if ((ENABLE_ASH_PRINTF || ENABLE_HUSH_PRINTF)
+	यदि (!argv[0]) {
+		यदि ((ENABLE_ASH_PRINTF || ENABLE_HUSH_PRINTF)
 		 && applet_name[0] != 'p'
 		) {
-			bb_simple_error_msg("usage: printf FORMAT [ARGUMENT...]");
-			return 2; /* bash compat */
+			bb_simple_error_सन्देश("usage: printf FORMAT [ARGUMENT...]");
+			फर्काऊ 2; /* bash compat */
 		}
 		bb_show_usage();
 	}
@@ -441,16 +441,16 @@ int printf_main(int argc UNUSED_PARAM, char **argv)
 	argv2 = argv + 1;
 
 	conv_err = 0;
-	do {
+	गर {
 		argv = argv2;
 		argv2 = print_formatted(format, argv, &conv_err);
-	} while (argv2 > argv && *argv2);
+	} जबसम्म (argv2 > argv && *argv2);
 
 	/* coreutils compat (bash doesn't do this):
 	if (*argv)
 		fprintf(stderr, "excess args ignored");
 	*/
 
-	return (argv2 < argv) /* if true, print_formatted errored out */
+	फर्काऊ (argv2 < argv) /* if true, print_formatted errored out */
 		|| conv_err; /* print_formatted saw invalid number */
 }

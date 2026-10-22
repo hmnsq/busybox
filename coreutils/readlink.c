@@ -36,7 +36,7 @@
 //usage:     "\n	-v	Verbose"
 //usage:	)
 
-#include "libbb.h"
+#अन्तर्भाव "libbb.h"
 
 /*
  * # readlink --version
@@ -64,31 +64,31 @@
  * behavior which means we'd have to implement the full stack ourselves :(.
  */
 
-int readlink_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int readlink_main(int argc UNUSED_PARAM, char **argv)
+पूर्णाङ्क readlink_main(पूर्णाङ्क argc, वर्ण **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णाङ्क readlink_main(पूर्णाङ्क argc UNUSED_PARAM, वर्ण **argv)
 {
-	char *buf;
-	unsigned opt;
+	वर्ण *buf;
+	अचिन्हित opt;
 
 	/* -n must use bit 0 (see printf below) */
 	opt = getopt32(argv, "^" "n" IF_FEATURE_READLINK_FOLLOW("fvsq")
                        "\0" "=1");
 
 	/* compat: coreutils readlink reports errors silently via exit code */
-	if (!(opt & 4)) /* not -v */
+	यदि (!(opt & 4)) /* not -v */
 		logmode = LOGMODE_NONE;
 
 	/* NOFORK: only one alloc is allowed; must free */
-	if (opt & 2) { /* -f */
+	यदि (opt & 2) { /* -f */
 		buf = xmalloc_realpath_coreutils(argv[optind]);
-	} else {
+	} अन्यथा {
 		buf = xmalloc_readlink_or_warn(argv[optind]);
 	}
 
-	if (!buf)
-		return EXIT_FAILURE;
-	printf("%s%s", buf, &"\n"[opt & 1]);
-	free(buf);
+	यदि (!buf)
+		फर्काऊ निकास_त्रुटि;
+	म_लिखो("%s%s", buf, &"\n"[opt & 1]);
+	मुक्त(buf);
 
 	fflush_stdout_and_exit_SUCCESS();
 }

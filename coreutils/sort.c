@@ -89,10 +89,10 @@
 //usage:	)
 //usage:       ""
 
-#include "libbb.h"
+#अन्तर्भाव "libbb.h"
 
 /* These are sort types */
-enum {
+गणना {
 	FLAG_n  = 1 << 0,       /* Numeric sort */
 	FLAG_g  = 1 << 1,       /* Sort using strtod() */
 	FLAG_h  = 1 << 2,       /* Sort using strtod(), plus KMGT suffixes */
@@ -119,7 +119,7 @@ enum {
 	FLAG_no_tie_break = 0x40000000,
 };
 
-static const char sort_opt_str[] ALIGN1 = "^"
+स्थिर अचर वर्ण sort_opt_str[] ALIGN1 = "^"
 			"nghMVucszbrdfimS:T:o:k:*t:"
 			"\0" "o--o:t--t"/*-t, -o: at most one of each*/;
 /*
@@ -128,65 +128,65 @@ static const char sort_opt_str[] ALIGN1 = "^"
  */
 #define OPT_STR (sort_opt_str + 1)
 
-#if ENABLE_FEATURE_SORT_BIG
-static char key_separator;
+#यदि ENABLE_FEATURE_SORT_BIG
+स्थिर वर्ण साँचो_separator;
 
-static struct sort_key {
-	struct sort_key *next_key;  /* linked list */
-	unsigned range[4];          /* start word, start char, end word, end char */
-	unsigned flags;
-} *key_list;
+स्थिर संरचना sort_साँचो {
+	संरचना sort_साँचो *next_साँचो;  /* linked list */
+	अचिन्हित range[4];          /* start word, start char, end word, end char */
+	अचिन्हित flags;
+} *साँचो_list;
 
 
 /* This is a NOEXEC applet. Be very careful! */
 
 
-static char *get_key(char *str, struct sort_key *key, int flags)
+स्थिर वर्ण *get_साँचो(वर्ण *str, संरचना sort_साँचो *साँचो, पूर्णाङ्क flags)
 {
-	int start = start; /* for compiler */
-	int end;
-	int len, j;
-	unsigned i;
+	पूर्णाङ्क start = start; /* for compiler */
+	पूर्णाङ्क end;
+	पूर्णाङ्क len, j;
+	अचिन्हित i;
 
 	/* Special case whole string, so we don't have to make a copy */
-	if (key->range[0] == 1 && !key->range[1] && !key->range[2] && !key->range[3]
+	यदि (साँचो->range[0] == 1 && !साँचो->range[1] && !साँचो->range[2] && !साँचो->range[3]
 	 && !(flags & (FLAG_b | FLAG_d | FLAG_f | FLAG_i | FLAG_bb))
 	) {
-		return str;
+		फर्काऊ str;
 	}
 
 	/* Find start of key on first pass, end on second pass */
-	len = strlen(str);
-	for (j = 0; j < 2; j++) {
-		if (!key->range[2*j])
+	len = म_माप(str);
+	लागि (j = 0; j < 2; j++) {
+		यदि (!साँचो->range[2*j])
 			end = len;
 		/* Loop through fields */
-		else {
-			unsigned char ch = 0;
+		अन्यथा {
+			अचिन्हित वर्ण ch = 0;
 
 			end = 0;
-			for (i = 1; i < key->range[2*j] + j; i++) {
-				if (key_separator) {
+			लागि (i = 1; i < साँचो->range[2*j] + j; i++) {
+				यदि (साँचो_separator) {
 					/* Skip body of key and separator */
-					while ((ch = str[end]) != '\0') {
+					जबसम्म ((ch = str[end]) != '\0') {
 							end++;
-						if (ch == key_separator)
-							break;
+						यदि (ch == साँचो_separator)
+							रोक;
 					}
-				} else {
+				} अन्यथा {
 					/* Skip leading blanks */
-					while (isspace(str[end]))
+					जबसम्म (है_खाली(str[end]))
 						end++;
 					/* Skip body of key */
-					while (str[end] != '\0') {
-						if (isspace(str[end]))
-							break;
+					जबसम्म (str[end] != '\0') {
+						यदि (है_खाली(str[end]))
+							रोक;
 						end++;
 					}
 				}
 			}
 			/* Remove last delim: "abc:def:" => "abc:def" */
-			if (j && ch) {
+			यदि (j && ch) {
 				//if (str[end-1] != key_separator)
 				//  bb_error_msg(_and_die("BUG! "
 				//  "str[start:%d,end:%d]:'%.*s'",
@@ -194,270 +194,270 @@ static char *get_key(char *str, struct sort_key *key, int flags)
 				end--;
 			}
 		}
-		if (!j) start = end;
+		यदि (!j) start = end;
 	}
 	/* Strip leading whitespace if necessary */
-	if (flags & FLAG_b)
+	यदि (flags & FLAG_b)
 		/* not using skip_whitespace() for speed */
-		while (isspace(str[start])) start++;
+		जबसम्म (है_खाली(str[start])) start++;
 	/* Strip trailing whitespace if necessary */
-	if (flags & FLAG_bb)
-		while (end > start && isspace(str[end-1])) end--;
+	यदि (flags & FLAG_bb)
+		जबसम्म (end > start && है_खाली(str[end-1])) end--;
 	/* -kSTART,N.ENDCHAR: honor ENDCHAR (1-based) */
-	if (key->range[3]) {
-		end = key->range[3];
-		if (end > len) end = len;
+	यदि (साँचो->range[3]) {
+		end = साँचो->range[3];
+		यदि (end > len) end = len;
 	}
 	/* -kN.STARTCHAR[,...]: honor STARTCHAR (1-based) */
-	if (key->range[1]) {
-		start += key->range[1] - 1;
-		if (start > len) start = len;
+	यदि (साँचो->range[1]) {
+		start += साँचो->range[1] - 1;
+		यदि (start > len) start = len;
 	}
 	/* Make the copy */
-	if (end < start)
+	यदि (end < start)
 		end = start;
 	str = xstrndup(str+start, end-start);
 	/* Handle -d */
-	if (flags & FLAG_d) {
-		for (start = end = 0; str[end]; end++)
-			if (isspace(str[end]) || isalnum(str[end]))
+	यदि (flags & FLAG_d) {
+		लागि (start = end = 0; str[end]; end++)
+			यदि (है_खाली(str[end]) || है_अक्षर_अंक(str[end]))
 				str[start++] = str[end];
 		str[start] = '\0';
 	}
 	/* Handle -i */
-	if (flags & FLAG_i) {
-		for (start = end = 0; str[end]; end++)
-			if (isprint_asciionly(str[end]))
+	यदि (flags & FLAG_i) {
+		लागि (start = end = 0; str[end]; end++)
+			यदि (isprint_asciionly(str[end]))
 				str[start++] = str[end];
 		str[start] = '\0';
 	}
 	/* Handle -f */
-	if (flags & FLAG_f)
-		for (i = 0; str[i]; i++)
-			str[i] = toupper(str[i]);
+	यदि (flags & FLAG_f)
+		लागि (i = 0; str[i]; i++)
+			str[i] = बड़े(str[i]);
 
-	return str;
+	फर्काऊ str;
 }
 
-static struct sort_key *add_key(void)
+स्थिर संरचना sort_साँचो *add_साँचो(शून्य)
 {
-	struct sort_key **pkey = &key_list;
-	while (*pkey)
-		pkey = &((*pkey)->next_key);
-	return *pkey = xzalloc(sizeof(struct sort_key));
+	संरचना sort_साँचो **pkey = &साँचो_list;
+	जबसम्म (*pkey)
+		pkey = &((*pkey)->next_साँचो);
+	फर्काऊ *pkey = xzalloc(परिमाण(संरचना sort_साँचो));
 }
 
-#define GET_LINE(fp) \
+#define GET_पङ्क्ति(fp) \
 	((option_mask32 & FLAG_z) \
-	? bb_get_chunk_from_file(fp, NULL) \
+	? bb_get_chunk_from_file(fp, रिक्त) \
 	: xmalloc_fgetline(fp))
-#else
-#define GET_LINE(fp) xmalloc_fgetline(fp)
+#अन्यथा
+#define GET_पङ्क्ति(fp) xmalloc_fgetline(fp)
 #endif
 
-#if ENABLE_FEATURE_SORT_BIG
-static int scale_suffix(const char *tail)
+#यदि ENABLE_FEATURE_SORT_BIG
+स्थिर पूर्णाङ्क scale_suffix(अचर वर्ण *tail)
 {
-	static const char suffix[] ALIGN1 = "kmgtpezy";
-	const char *s;
-	int n;
+	स्थिर अचर वर्ण suffix[] ALIGN1 = "kmgtpezy";
+	अचर वर्ण *s;
+	पूर्णाङ्क n;
 
-	if (!tail[0])
-		return -1;
-	s = strchr(suffix, tail[0] | 0x20);
-	if (!s)
-		return -1;
+	यदि (!tail[0])
+		फर्काऊ -1;
+	s = म_अक्षर(suffix, tail[0] | 0x20);
+	यदि (!s)
+		फर्काऊ -1;
 	n = s - suffix;
-	if (n != 0 && tail[0] >= 'a')
-		return -1; /* mg... not accepted, only MG... */
-	return n;
+	यदि (n != 0 && tail[0] >= 'a')
+		फर्काऊ -1; /* mg... not accepted, only MG... */
+	फर्काऊ n;
 }
 #endif
 
 /* Iterate through keys list and perform comparisons */
-static int compare_keys(const void *xarg, const void *yarg)
+स्थिर पूर्णाङ्क compare_साँचोहरू(अचर शून्य *xarg, अचर शून्य *yarg)
 {
-	int flags = option_mask32, retval = 0;
-	char *x, *y;
+	पूर्णाङ्क flags = option_mask32, retval = 0;
+	वर्ण *x, *y;
 
-#if ENABLE_FEATURE_SORT_BIG
-	struct sort_key *key;
+#यदि ENABLE_FEATURE_SORT_BIG
+	संरचना sort_साँचो *साँचो;
 
-	for (key = key_list; !retval && key; key = key->next_key) {
-		flags = key->flags ? key->flags : option_mask32;
+	लागि (साँचो = साँचो_list; !retval && साँचो; साँचो = साँचो->next_साँचो) {
+		flags = साँचो->flags ? साँचो->flags : option_mask32;
 		/* Chop out and modify key chunks, handling -dfib */
-		x = get_key(*(char **)xarg, key, flags);
-		y = get_key(*(char **)yarg, key, flags);
-#else
+		x = get_साँचो(*(वर्ण **)xarg, साँचो, flags);
+		y = get_साँचो(*(वर्ण **)yarg, साँचो, flags);
+#अन्यथा
 	/* This curly bracket serves no purpose but to match the nesting
 	 * level of the for () loop we're not using */
 	{
-		x = *(char **)xarg;
-		y = *(char **)yarg;
+		x = *(वर्ण **)xarg;
+		y = *(वर्ण **)yarg;
 #endif
 		/* Perform actual comparison */
-		switch (flags & (FLAG_n | FLAG_g | FLAG_h | FLAG_M | FLAG_V)) {
-		default:
-			bb_simple_error_msg_and_die("unknown sort type");
-			break;
-#if defined(HAVE_STRVERSCMP) && HAVE_STRVERSCMP == 1
-		case FLAG_V:
+		विकल्प (flags & (FLAG_n | FLAG_g | FLAG_h | FLAG_M | FLAG_V)) {
+		स्वभाव:
+			bb_simple_error_सन्देश_and_die("unknown sort type");
+			रोक;
+#यदि defined(HAVE_STRVERSCMP) && HAVE_STRVERSCMP == 1
+		पक्ष FLAG_V:
 			retval = strverscmp(x, y);
-			break;
+			रोक;
 #endif
 		/* Ascii sort */
-		case 0:
-#if ENABLE_LOCALE_SUPPORT
+		पक्ष 0:
+#यदि ENABLE_LOCALE_SUPPORT
 			retval = strcoll(x, y);
-#else
-			retval = strcmp(x, y);
+#अन्यथा
+			retval = म_भेद(x, y);
 #endif
-			break;
-#if ENABLE_FEATURE_SORT_BIG
-		case FLAG_g:
-		case FLAG_h: {
-			char *xx, *yy;
+			रोक;
+#यदि ENABLE_FEATURE_SORT_BIG
+		पक्ष FLAG_g:
+		पक्ष FLAG_h: {
+			वर्ण *xx, *yy;
 //TODO: needs setlocale(LC_NUMERIC, "C")?
-			double dx = strtod(x, &xx);
-			double dy = strtod(y, &yy);
+			द्विगुण dx = म_से_भग्न(x, &xx);
+			द्विगुण dy = म_से_भग्न(y, &yy);
 			/* not numbers < NaN < -infinity < numbers < +infinity) */
-			if (x == xx)
+			यदि (x == xx)
 				retval = (y == yy ? 0 : -1);
-			else if (y == yy)
+			अन्यथा यदि (y == yy)
 				retval = 1;
 			/* Check for isnan */
-			else if (dx != dx)
+			अन्यथा यदि (dx != dx)
 				retval = (dy != dy) ? 0 : -1;
-			else if (dy != dy)
+			अन्यथा यदि (dy != dy)
 				retval = 1;
-			else {
-				if (flags & FLAG_h) {
-					int xs = scale_suffix(xx);
-					int ys = scale_suffix(yy);
-					if (xs != ys) {
+			अन्यथा {
+				यदि (flags & FLAG_h) {
+					पूर्णाङ्क xs = scale_suffix(xx);
+					पूर्णाङ्क ys = scale_suffix(yy);
+					यदि (xs != ys) {
 						retval = xs - ys;
-						break;
+						रोक;
 					}
 				}
 				/* Check for infinity.  Could underflow, but it avoids libm. */
-				if (1.0 / dx == 0.0) {
-					if (dx < 0)
+				यदि (1.0 / dx == 0.0) {
+					यदि (dx < 0)
 						retval = (1.0 / dy == 0.0 && dy < 0) ? 0 : -1;
-					else
+					अन्यथा
 						retval = (1.0 / dy == 0.0 && dy > 0) ? 0 : 1;
-				} else if (1.0 / dy == 0.0)
+				} अन्यथा यदि (1.0 / dy == 0.0)
 					retval = (dy < 0) ? 1 : -1;
-				else
+				अन्यथा
 					retval = (dx > dy) ? 1 : ((dx < dy) ? -1 : 0);
 			}
-			break;
+			रोक;
 		}
-		case FLAG_M: {
-			struct tm thyme;
-			int dx;
-			char *xx, *yy;
+		पक्ष FLAG_M: {
+			संरचना पंचांग thyme;
+			पूर्णाङ्क dx;
+			वर्ण *xx, *yy;
 
 			xx = strptime(skip_whitespace(x), "%b", &thyme);
 			dx = thyme.tm_mon;
 			yy = strptime(skip_whitespace(y), "%b", &thyme);
-			if (!xx)
+			यदि (!xx)
 				retval = (!yy) ? 0 : -1;
-			else if (!yy)
+			अन्यथा यदि (!yy)
 				retval = 1;
-			else
+			अन्यथा
 				retval = dx - thyme.tm_mon;
-			break;
+			रोक;
 		}
 		/* Full floating point version of -n */
-		case FLAG_n: {
-			double dx = atof(x);
-			double dy = atof(y);
+		पक्ष FLAG_n: {
+			द्विगुण dx = म_से_भ(x);
+			द्विगुण dy = म_से_भ(y);
 			retval = (dx > dy) ? 1 : ((dx < dy) ? -1 : 0);
-			break;
+			रोक;
 		}
 		} /* switch */
 		/* Free key copies. */
-		if (x != *(char **)xarg) free(x);
-		if (y != *(char **)yarg) free(y);
+		यदि (x != *(वर्ण **)xarg) मुक्त(x);
+		यदि (y != *(वर्ण **)yarg) मुक्त(y);
 		/* if (retval) break; - done by for () anyway */
-#else
+#अन्यथा
 		/* Integer version of -n for tiny systems */
-		case FLAG_n:
-			retval = atoi(x) - atoi(y);
-			break;
+		पक्ष FLAG_n:
+			retval = म_से_प(x) - म_से_प(y);
+			रोक;
 		} /* switch */
 #endif
 	} /* for */
 
-	if (retval == 0) {
+	यदि (retval == 0) {
 		/* So far lines are "the same" */
 
-		if (option_mask32 & FLAG_s) {
+		यदि (option_mask32 & FLAG_s) {
 			/* "Stable sort": later line is "greater than",
 			 * IOW: do not allow qsort() to swap equal lines.
 			 */
 			uint32_t *p32;
 			uint32_t x32, y32;
-			char *line;
-			unsigned len;
+			वर्ण *पङ्क्ति;
+			अचिन्हित len;
 
-			line = *(char**)xarg;
-			len = (strlen(line) + 4) & (~3u);
-			p32 = (void*)(line + len);
+			पङ्क्ति = *(वर्ण**)xarg;
+			len = (म_माप(पङ्क्ति) + 4) & (~3u);
+			p32 = (शून्य*)(पङ्क्ति + len);
 			x32 = *p32;
-			line = *(char**)yarg;
-			len = (strlen(line) + 4) & (~3u);
-			p32 = (void*)(line + len);
+			पङ्क्ति = *(वर्ण**)yarg;
+			len = (म_माप(पङ्क्ति) + 4) & (~3u);
+			p32 = (शून्य*)(पङ्क्ति + len);
 			y32 = *p32;
 
 			/* If x > y, 1, else -1 */
 			retval = (x32 > y32) * 2 - 1;
 			/* Here, -r has no effect! */
-			return retval;
+			फर्काऊ retval;
 		}
-		if (!(option_mask32 & FLAG_no_tie_break)) {
+		यदि (!(option_mask32 & FLAG_no_tie_break)) {
 			/* fallback sort */
 			flags = option_mask32;
-			retval = strcmp(*(char **)xarg, *(char **)yarg);
+			retval = म_भेद(*(वर्ण **)xarg, *(वर्ण **)yarg);
 		}
 	}
 
-	if (flags & FLAG_r)
-		return -retval;
+	यदि (flags & FLAG_r)
+		फर्काऊ -retval;
 
-	return retval;
+	फर्काऊ retval;
 }
 
-#if ENABLE_FEATURE_SORT_BIG
-static unsigned str2u(char **str)
+#यदि ENABLE_FEATURE_SORT_BIG
+स्थिर अचिन्हित str2u(वर्ण **str)
 {
-	unsigned long lu;
-	if (!isdigit((*str)[0]))
-		bb_simple_error_msg_and_die("bad field specification");
-	lu = strtoul(*str, str, 10);
-	if ((sizeof(long) > sizeof(int) && lu > INT_MAX) || !lu)
-		bb_simple_error_msg_and_die("bad field specification");
-	return lu;
+	अचिन्हित दीर्घ lu;
+	यदि (!है_अंक((*str)[0]))
+		bb_simple_error_सन्देश_and_die("bad field specification");
+	lu = म_से_अदीर्घ(*str, str, 10);
+	यदि ((परिमाण(दीर्घ) > परिमाण(पूर्णाङ्क) && lu > पूर्णांक_उच्च) || !lu)
+		bb_simple_error_सन्देश_and_die("bad field specification");
+	फर्काऊ lu;
 }
 #endif
 
-int sort_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int sort_main(int argc UNUSED_PARAM, char **argv)
+पूर्णाङ्क sort_main(पूर्णाङ्क argc, वर्ण **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णाङ्क sort_main(पूर्णाङ्क argc UNUSED_PARAM, वर्ण **argv)
 {
-	char **lines;
-	char *str_ignored, *str_o, *str_t;
-	llist_t *lst_k = NULL;
-	int i;
-	int linecount;
-	unsigned opts;
-#if ENABLE_FEATURE_SORT_OPTIMIZE_MEMORY
+	वर्ण **पङ्क्तिहरू;
+	वर्ण *str_ignored, *str_o, *str_t;
+	llist_t *lst_k = रिक्त;
+	पूर्णाङ्क i;
+	पूर्णाङ्क linecount;
+	अचिन्हित opts;
+#यदि ENABLE_FEATURE_SORT_OPTIMIZE_MEMORY
 	bool can_drop_dups;
-	size_t prev_len = 0;
-	char *prev_line = (char*) "";
+	माप_प्रकार prev_len = 0;
+	वर्ण *prev_पङ्क्ति = (वर्ण*) "";
 	/* Postpone optimizing if the input is small, < 16k lines:
 	 * even just free()ing duplicate lines takes time.
 	 */
-	size_t count_to_optimize_dups = 0x3fff;
+	माप_प्रकार गन्ती_to_optimize_dups = 0x3fff;
 #endif
 
 	xfunc_error_retval = 2;
@@ -467,7 +467,7 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 			sort_opt_str,
 			&str_ignored, &str_ignored, &str_o, &lst_k, &str_t
 	);
-#if ENABLE_FEATURE_SORT_OPTIMIZE_MEMORY
+#यदि ENABLE_FEATURE_SORT_OPTIMIZE_MEMORY
 	/* Can drop dups only if -u but no "complicating" options,
 	 * IOW: if we do a full line compares. Safe options:
 	 * -o FILE Output to FILE
@@ -487,24 +487,24 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 	/* Stable sort needs every line to be uniquely allocated,
 	 * disable optimization to reuse strings:
 	 */
-	if (opts & FLAG_s)
-		count_to_optimize_dups = (size_t)-1L;
+	यदि (opts & FLAG_s)
+		गन्ती_to_optimize_dups = (माप_प्रकार)-1L;
 #endif
 	/* global b strips leading and trailing spaces */
-	if (opts & FLAG_b)
+	यदि (opts & FLAG_b)
 		option_mask32 |= FLAG_bb;
-#if ENABLE_FEATURE_SORT_BIG
-	if (opts & FLAG_t) {
-		if (!str_t[0] || str_t[1])
-			bb_simple_error_msg_and_die("bad -t parameter");
-		key_separator = str_t[0];
+#यदि ENABLE_FEATURE_SORT_BIG
+	यदि (opts & FLAG_t) {
+		यदि (!str_t[0] || str_t[1])
+			bb_simple_error_सन्देश_and_die("bad -t parameter");
+		साँचो_separator = str_t[0];
 	}
 	/* note: below this point we use option_mask32, not opts,
 	 * since that reduces register pressure and makes code smaller */
 
 	/* Parse sort key */
-	while (lst_k) {
-		enum {
+	जबसम्म (lst_k) {
+		गणना {
 			FLAG_allowed_for_k =
 				FLAG_n | /* Numeric sort */
 				FLAG_g | /* Sort using strtod() */
@@ -517,37 +517,37 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 				FLAG_i | /* Ignore !isprint() */
 			0
 		};
-		struct sort_key *key = add_key();
-		char *str_k = llist_pop(&lst_k);
+		संरचना sort_साँचो *साँचो = add_साँचो();
+		वर्ण *str_k = llist_झिक(&lst_k);
 
 		i = 0; /* i==0 before comma, 1 after (-k3,6) */
-		while (*str_k) {
+		जबसम्म (*str_k) {
 			/* Start of range */
 			/* Cannot use bb_strtou - suffix can be a letter */
-			key->range[2*i] = str2u(&str_k);
-			if (*str_k == '.') {
+			साँचो->range[2*i] = str2u(&str_k);
+			यदि (*str_k == '.') {
 				str_k++;
-				key->range[2*i+1] = str2u(&str_k);
+				साँचो->range[2*i+1] = str2u(&str_k);
 			}
-			while (*str_k) {
-				int flag;
-				const char *idx;
+			जबसम्म (*str_k) {
+				पूर्णाङ्क flag;
+				अचर वर्ण *idx;
 
-				if (*str_k == ',' && !i++) {
+				यदि (*str_k == ',' && !i++) {
 					str_k++;
-					break;
+					रोक;
 				} /* no else needed: fall through to syntax error
 					because comma isn't in OPT_STR */
-				idx = strchr(OPT_STR, *str_k);
-				if (!idx)
-					bb_simple_error_msg_and_die("unknown key option");
+				idx = म_अक्षर(OPT_STR, *str_k);
+				यदि (!idx)
+					bb_simple_error_सन्देश_and_die("unknown key option");
 				flag = 1 << (idx - OPT_STR);
-				if (flag & ~FLAG_allowed_for_k)
-					bb_simple_error_msg_and_die("unknown sort type");
+				यदि (flag & ~FLAG_allowed_for_k)
+					bb_simple_error_सन्देश_and_die("unknown sort type");
 				/* b after ',' means strip _trailing_ space */
-				if (i && flag == FLAG_b)
+				यदि (i && flag == FLAG_b)
 					flag = FLAG_bb;
-				key->flags |= flag;
+				साँचो->flags |= flag;
 				str_k++;
 			}
 		}
@@ -556,90 +556,90 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 
 	/* Open input files and read data */
 	argv += optind;
-	if (!*argv)
-		*--argv = (char*)"-";
+	यदि (!*argv)
+		*--argv = (वर्ण*)"-";
 	linecount = 0;
-	lines = NULL;
-	do {
+	पङ्क्तिहरू = रिक्त;
+	गर {
 		/* coreutils 6.9 compat: abort on first open error,
 		 * do not continue to next file: */
-		FILE *fp = xfopen_stdin(*argv);
-		for (;;) {
-			char *line = GET_LINE(fp);
-			if (!line)
-				break;
+		खाता *fp = xfopen_stdin(*argv);
+		लागि (;;) {
+			वर्ण *पङ्क्ति = GET_पङ्क्ति(fp);
+			यदि (!पङ्क्ति)
+				रोक;
 
-#if ENABLE_FEATURE_SORT_OPTIMIZE_MEMORY
-			if (count_to_optimize_dups != 0)
-				count_to_optimize_dups--;
-			if (count_to_optimize_dups == 0) {
-				size_t len;
-				char *new_line;
+#यदि ENABLE_FEATURE_SORT_OPTIMIZE_MEMORY
+			यदि (गन्ती_to_optimize_dups != 0)
+				गन्ती_to_optimize_dups--;
+			यदि (गन्ती_to_optimize_dups == 0) {
+				माप_प्रकार len;
+				वर्ण *new_पङ्क्ति;
 
 				/* On kernel/linux/arch/ *.[ch] files,
 				 * this reduces memory usage by 6%.
 				 *  yes | head -99999999 | sort
 				 * goes down from 1900Mb to 380 Mb.
 				 */
-				len = strlen(line);
-				if (len <= prev_len) {
-					new_line = prev_line + (prev_len - len);
-					if (strcmp(line, new_line) == 0) {
+				len = म_माप(पङ्क्ति);
+				यदि (len <= prev_len) {
+					new_पङ्क्ति = prev_पङ्क्ति + (prev_len - len);
+					यदि (म_भेद(पङ्क्ति, new_पङ्क्ति) == 0) {
 						/* it's a tail of the prev line */
-						if (can_drop_dups && prev_len == len) {
+						यदि (can_drop_dups && prev_len == len) {
 							/* it's identical to prev line */
-							free(line);
-							continue;
+							मुक्त(पङ्क्ति);
+							जारी;
 						}
-						free(line);
-						line = new_line;
+						मुक्त(पङ्क्ति);
+						पङ्क्ति = new_पङ्क्ति;
 						/* continue using longer prev_line
 						 * for future tail tests.
 						 */
-						goto skip;
+						गच्छ skip;
 					}
 				}
 				prev_len = len;
-				prev_line = line;
+				prev_पङ्क्ति = पङ्क्ति;
  skip: ;
 			}
-#else
+#अन्यथा
 //TODO: lighter version which only drops total dups if can_drop_dups == true
 #endif
-			lines = xrealloc_vector(lines, 6, linecount);
-			lines[linecount++] = line;
+			पङ्क्तिहरू = xrealloc_vector(पङ्क्तिहरू, 6, linecount);
+			पङ्क्तिहरू[linecount++] = पङ्क्ति;
 		}
 		fclose_if_not_stdin(fp);
-	} while (*++argv);
+	} जबसम्म (*++argv);
 
-#if ENABLE_FEATURE_SORT_BIG
+#यदि ENABLE_FEATURE_SORT_BIG
 	/* If no key, perform alphabetic sort */
-	if (!key_list)
-		add_key()->range[0] = 1;
+	यदि (!साँचो_list)
+		add_साँचो()->range[0] = 1;
 	/* Handle -c */
-	if (option_mask32 & FLAG_c) {
-		int j = (option_mask32 & FLAG_u) ? -1 : 0;
-		for (i = 1; i < linecount; i++) {
-			if (compare_keys(&lines[i-1], &lines[i]) > j) {
-				fprintf(stderr, "Check line %u\n", i);
-				return EXIT_FAILURE;
+	यदि (option_mask32 & FLAG_c) {
+		पूर्णाङ्क j = (option_mask32 & FLAG_u) ? -1 : 0;
+		लागि (i = 1; i < linecount; i++) {
+			यदि (compare_साँचोहरू(&पङ्क्तिहरू[i-1], &पङ्क्तिहरू[i]) > j) {
+				ख_लिखो(मानक_त्रुटि, "Check line %u\n", i);
+				फर्काऊ निकास_त्रुटि;
 			}
 		}
-		return EXIT_SUCCESS;
+		फर्काऊ निकास_सफल;
 	}
 #endif
 
 	/* For stable sort, store original line position beyond terminating NUL */
-	if (option_mask32 & FLAG_s) {
-		for (i = 0; i < linecount; i++) {
+	यदि (option_mask32 & FLAG_s) {
+		लागि (i = 0; i < linecount; i++) {
 			uint32_t *p32;
-			char *line;
-			unsigned len;
+			वर्ण *पङ्क्ति;
+			अचिन्हित len;
 
-			line = lines[i];
-			len = (strlen(line) + 4) & (~3u);
-			lines[i] = line = xrealloc(line, len + 4);
-			p32 = (void*)(line + len);
+			पङ्क्ति = पङ्क्तिहरू[i];
+			len = (म_माप(पङ्क्ति) + 4) & (~3u);
+			पङ्क्तिहरू[i] = पङ्क्ति = xrealloc(पङ्क्ति, len + 4);
+			p32 = (शून्य*)(पङ्क्ति + len);
 			*p32 = i;
 		}
 		/*option_mask32 |= FLAG_no_tie_break;*/
@@ -647,37 +647,37 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 	}
 
 	/* Perform the actual sort */
-	qsort(lines, linecount, sizeof(lines[0]), compare_keys);
+	क्विक(पङ्क्तिहरू, linecount, परिमाण(पङ्क्तिहरू[0]), compare_साँचोहरू);
 
 	/* Handle -u */
-	if (option_mask32 & FLAG_u) {
-		int j = 0;
+	यदि (option_mask32 & FLAG_u) {
+		पूर्णाङ्क j = 0;
 		/* coreutils 6.3 drop lines for which only key is the same:
 		 * - disabling last-resort compare, or else compare_keys()
 		 * will be the same only for completely identical lines
 		 * - disabling -s (same reasons)
 		 */
 		option_mask32 = (option_mask32 | FLAG_no_tie_break) & (~FLAG_s);
-		for (i = 1; i < linecount; i++) {
-			if (compare_keys(&lines[j], &lines[i]) == 0)
-				free(lines[i]);
-			else
-				lines[++j] = lines[i];
+		लागि (i = 1; i < linecount; i++) {
+			यदि (compare_साँचोहरू(&पङ्क्तिहरू[j], &पङ्क्तिहरू[i]) == 0)
+				मुक्त(पङ्क्तिहरू[i]);
+			अन्यथा
+				पङ्क्तिहरू[++j] = पङ्क्तिहरू[i];
 		}
-		if (linecount)
+		यदि (linecount)
 			linecount = j+1;
 	}
 
 	/* Print it */
-#if ENABLE_FEATURE_SORT_BIG
+#यदि ENABLE_FEATURE_SORT_BIG
 	/* Open output file _after_ we read all input ones */
-	if (option_mask32 & FLAG_o)
+	यदि (option_mask32 & FLAG_o)
 		xmove_fd(xopen(str_o, O_WRONLY|O_CREAT|O_TRUNC), STDOUT_FILENO);
 #endif
 	{
-		int ch = (option_mask32 & FLAG_z) ? '\0' : '\n';
-		for (i = 0; i < linecount; i++)
-			printf("%s%c", lines[i], ch);
+		पूर्णाङ्क ch = (option_mask32 & FLAG_z) ? '\0' : '\n';
+		लागि (i = 0; i < linecount; i++)
+			म_लिखो("%s%c", पङ्क्तिहरू[i], ch);
 	}
 
 	fflush_stdout_and_exit_SUCCESS();

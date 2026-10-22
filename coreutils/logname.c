@@ -37,24 +37,24 @@
 //usage:       "$ logname\n"
 //usage:       "root\n"
 
-#include "libbb.h"
+#अन्तर्भाव "libbb.h"
 
 /* This is a NOFORK applet. Be very careful! */
 
-int logname_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int logname_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+पूर्णाङ्क logname_main(पूर्णाङ्क argc, वर्ण **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णाङ्क logname_main(पूर्णाङ्क argc UNUSED_PARAM, वर्ण **argv UNUSED_PARAM)
 {
-	char buf[64];
+	वर्ण buf[64];
 
-	if (argv[1]) {
+	यदि (argv[1]) {
 		bb_show_usage();
 	}
 
 	/* Using _r function - avoid pulling in static buffer from libc */
-	if (getlogin_r(buf, sizeof(buf)) == 0) {
-		puts(buf);
-		return fflush_all();
+	यदि (getlogin_r(buf, परिमाण(buf)) == 0) {
+		माला_दो(buf);
+		फर्काऊ fflush_all();
 	}
 
-	bb_simple_perror_msg_and_die("getlogin");
+	bb_simple_perror_सन्देश_and_die("getlogin");
 }
