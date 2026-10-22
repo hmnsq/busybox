@@ -80,30 +80,30 @@
  * But this function is not standard.
  */
 
-int echo_main(int argc UNUSED_PARAM, char **argv)
+ཧྲིལ echo_main(ཧྲིལ argc UNUSED_PARAM, var_na **argv)
 {
-	char **pp;
-	const char *arg;
-	char *out;
-	char *buffer;
+	var_na **pp;
+	const var_na *arg;
+	var_na *out;
+	var_na *buffer;
 	unsigned buflen;
-	int err;
-#if !ENABLE_FEATURE_FANCY_ECHO
-	enum {
+	ཧྲིལ err;
+#གལ་ཏེ !ENABLE_FEATURE_FANCY_ECHO
+	ga_nanaa {
 		eflag = 0,  /* 0 -- disable escape sequences */
 		nflag = 1,  /* 1 -- print '\n' */
 	};
 
 	argv++;
-#else
-	char nflag = 1;
-	char eflag = 0;
+#དེ་མིན
+	var_na nflag = 1;
+	var_na eflag = 0;
 
-	while ((arg = *++argv) != NULL) {
-		char n, e;
+	སྐབས ((arg = *++argv) != NULL) {
+		var_na n, e;
 
-		if (arg[0] != '-')
-			break; /* not an option arg, echo it */
+		གལ་ཏེ (arg[0] != '-')
+			bha_nga; /* not an option arg, echo it */
 
 		/* If it appears that we are handling options, then make sure
 		 * that all of the options specified are actually valid.
@@ -113,16 +113,16 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
 		n = nflag;
 		e = eflag;
 		do {
-			if (*arg == 'n')
+			གལ་ཏེ (*arg == 'n')
 				n = 0;
-			else if (*arg == 'e')
+			དེ་མིན གལ་ཏེ (*arg == 'e')
 				e = '\\';
-			else if (*arg != 'E') {
+			དེ་མིན གལ་ཏེ (*arg != 'E') {
 				/* "-ccc" arg with one of c's invalid, echo it */
 				/* arg consisting from just "-" also handled here */
 				goto just_echo;
 			}
-		} while (*++arg);
+		} སྐབས (*++arg);
 		nflag = n;
 		eflag = e;
 	}
@@ -131,32 +131,32 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
 
 	buflen = 0;
 	pp = argv;
-	while ((arg = *pp) != NULL) {
+	སྐབས ((arg = *pp) != NULL) {
 		buflen += strlen(arg) + 1;
 		pp++;
 	}
 	out = buffer = xmalloc(buflen + 1); /* +1 is needed for "no args" case */
 
-	while ((arg = *argv) != NULL) {
-		int c;
+	སྐབས ((arg = *argv) != NULL) {
+		ཧྲིལ c;
 
-		if (!eflag) {
+		གལ་ཏེ (!eflag) {
 			/* optimization for very common case */
 			out = stpcpy(out, arg);
-		} else
-		while ((c = *arg++) != '\0') {
-			if (c == eflag) {
+		} དེ་མིན
+		སྐབས ((c = *arg++) != '\0') {
+			གལ་ཏེ (c == eflag) {
 				/* This is an "\x" sequence */
 
-				if (*arg == 'c') {
+				གལ་ཏེ (*arg == 'c') {
 					/* "\c" means cancel newline and
 					 * ignore all subsequent chars. */
 					goto do_write;
 				}
 				/* Since SUSv3 mandates a first digit of 0, 4-digit octals
 				* of the form \0### are accepted. */
-				if (*arg == '0') {
-					if ((unsigned char)(arg[1] - '0') < 8) {
+				གལ་ཏེ (*arg == '0') {
+					གལ་ཏེ ((unsigned var_na)(arg[1] - '0') < 8) {
 						/* 2nd char is 0..7: skip leading '0' */
 						arg++;
 					}
@@ -166,7 +166,7 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
 				{
 					/* optimization: don't force arg to be on-stack,
 					 * use another variable for that. ~30 bytes win */
-					const char *z = arg;
+					const var_na *z = arg;
 					c = bb_process_escape_sequence(&z);
 					arg = z;
 				}
@@ -174,12 +174,12 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
 			*out++ = c;
 		}
 
-		if (!*++argv)
-			break;
+		གལ་ཏེ (!*++argv)
+			bha_nga;
 		*out++ = ' ';
 	}
 
-	if (nflag) {
+	གལ་ཏེ (nflag) {
 		*out++ = '\n';
 	}
 
@@ -187,11 +187,11 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
 	/* Careful to error out on partial writes too (think ENOSPC!) */
 	errno = 0;
 	err = full_write(STDOUT_FILENO, buffer, out - buffer) != out - buffer;
-	if (err) {
+	གལ་ཏེ (err) {
 		bb_simple_perror_msg(bb_msg_write_error);
 	}
 	free(buffer);
-	return err;
+	ཕྱིར err;
 }
 
 /*
@@ -246,79 +246,79 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
  * Using writev instead, with 'direct' conversion of argv vector.
  */
 
-int echo_main(int argc, char **argv)
+ཧྲིལ echo_main(ཧྲིལ argc, var_na **argv)
 {
-	struct iovec io[argc];
-	struct iovec *cur_io = io;
-	char *arg;
-	char *p;
-#if !ENABLE_FEATURE_FANCY_ECHO
-	enum {
+	sa_nracanaa iovec io[argc];
+	sa_nracanaa iovec *cur_io = io;
+	var_na *arg;
+	var_na *p;
+#གལ་ཏེ !ENABLE_FEATURE_FANCY_ECHO
+	ga_nanaa {
 		eflag = '\\',
 		nflag = 1,  /* 1 -- print '\n' */
 	};
 	arg = *++argv;
-	if (!arg)
+	གལ་ཏེ (!arg)
 		goto newline_ret;
-#else
-	char nflag = 1;
-	char eflag = 0;
+#དེ་མིན
+	var_na nflag = 1;
+	var_na eflag = 0;
 
-	while (1) {
+	སྐབས (1) {
 		arg = *++argv;
-		if (!arg)
+		གལ་ཏེ (!arg)
 			goto newline_ret;
-		if (*arg != '-')
-			break;
+		གལ་ཏེ (*arg != '-')
+			bha_nga;
 
 		/* If it appears that we are handling options, then make sure
 		 * that all of the options specified are actually valid.
 		 * Otherwise, the string should just be echoed.
 		 */
 		p = arg + 1;
-		if (!*p)	/* A single '-', so echo it. */
+		གལ་ཏེ (!*p)	/* A single '-', so echo it. */
 			goto just_echo;
 
 		do {
-			if (!strchr("neE", *p))
+			གལ་ཏེ (!strchr("neE", *p))
 				goto just_echo;
-		} while (*++p);
+		} སྐབས (*++p);
 
 		/* All of the options in this arg are valid, so handle them. */
 		p = arg + 1;
 		do {
-			if (*p == 'n')
+			གལ་ཏེ (*p == 'n')
 				nflag = 0;
-			if (*p == 'e')
+			གལ་ཏེ (*p == 'e')
 				eflag = '\\';
-		} while (*++p);
+		} སྐབས (*++p);
 	}
  just_echo:
 #endif
 
-	while (1) {
+	སྐབས (1) {
 		/* arg is already == *argv and isn't NULL */
-		int c;
+		ཧྲིལ c;
 
 		cur_io->iov_base = p = arg;
 
-		if (!eflag) {
+		གལ་ཏེ (!eflag) {
 			/* optimization for very common case */
 			p += strlen(arg);
-		} else while ((c = *arg++)) {
-			if (c == eflag) {
+		} དེ་མིན སྐབས ((c = *arg++)) {
+			གལ་ཏེ (c == eflag) {
 				/* This is an "\x" sequence */
 
-				if (*arg == 'c') {
+				གལ་ཏེ (*arg == 'c') {
 					/* "\c" means cancel newline and
 					 * ignore all subsequent chars. */
-					cur_io->iov_len = p - (char*)cur_io->iov_base;
+					cur_io->iov_len = p - (var_na*)cur_io->iov_base;
 					cur_io++;
 					goto ret;
 				}
 				/* Since SUSv3 mandates a first digit of 0, 4-digit octals
 				* of the form \0### are accepted. */
-				if (*arg == '0' && (unsigned char)(arg[1] - '0') < 8) {
+				གལ་ཏེ (*arg == '0' && (unsigned var_na)(arg[1] - '0') < 8) {
 					arg++;
 				}
 //FIXME? we also accept non-0 starting sequences (see echo-prints-slash_41 test)
@@ -330,22 +330,22 @@ int echo_main(int argc, char **argv)
 		}
 
 		arg = *++argv;
-		if (arg)
+		གལ་ཏེ (arg)
 			*p++ = ' ';
-		cur_io->iov_len = p - (char*)cur_io->iov_base;
+		cur_io->iov_len = p - (var_na*)cur_io->iov_base;
 		cur_io++;
-		if (!arg)
-			break;
+		གལ་ཏེ (!arg)
+			bha_nga;
 	}
 
  newline_ret:
-	if (nflag) {
-		cur_io->iov_base = (char*)"\n";
+	གལ་ཏེ (nflag) {
+		cur_io->iov_base = (var_na*)"\n";
 		cur_io->iov_len = 1;
 		cur_io++;
 	}
  ret:
 	/* TODO: implement and use full_writev? */
-	return writev(1, io, (cur_io - io)) >= 0;
+	ཕྱིར writev(1, io, (cur_io - io)) >= 0;
 }
 #endif

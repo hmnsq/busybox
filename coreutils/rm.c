@@ -39,38 +39,38 @@
 
 /* This is a NOEXEC applet. Be very careful! */
 
-int rm_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int rm_main(int argc UNUSED_PARAM, char **argv)
+ཧྲིལ rm_main(ཧྲིལ argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+ཧྲིལ rm_main(ཧྲིལ argc UNUSED_PARAM, var_na **argv)
 {
-	int status = 0;
-	int flags = 0;
+	ཧྲིལ status = 0;
+	ཧྲིལ flags = 0;
 	unsigned opt;
 
 	opt = getopt32(argv, "^" "fiRrv" "\0" "f-i:i-f");
 	argv += optind;
-	if (opt & 1)
+	གལ་ཏེ (opt & 1)
 		flags |= FILEUTILS_FORCE;
-	if (opt & 2)
+	གལ་ཏེ (opt & 2)
 		flags |= FILEUTILS_INTERACTIVE;
-	if (opt & (8|4))
+	གལ་ཏེ (opt & (8|4))
 		flags |= FILEUTILS_RECUR;
-	if ((opt & 16) && FILEUTILS_VERBOSE)
+	གལ་ཏེ ((opt & 16) && FILEUTILS_VERBOSE)
 		flags |= FILEUTILS_VERBOSE;
 
-	if (*argv != NULL) {
+	གལ་ཏེ (*argv != NULL) {
 		do {
-			const char *base = bb_get_last_path_component_strip(*argv);
+			const var_na *base = bb_get_last_path_component_strip(*argv);
 
-			if (DOT_OR_DOTDOT(base)) {
+			གལ་ཏེ (DOT_OR_DOTDOT(base)) {
 				bb_simple_error_msg("can't remove '.' or '..'");
-			} else if (remove_file(*argv, flags) >= 0) {
+			} དེ་མིན གལ་ཏེ (remove_file(*argv, flags) >= 0) {
 				continue;
 			}
 			status = 1;
-		} while (*++argv);
-	} else if (!(flags & FILEUTILS_FORCE)) {
+		} སྐབས (*++argv);
+	} དེ་མིན གལ་ཏེ (!(flags & FILEUTILS_FORCE)) {
 		bb_show_usage();
 	}
 
-	return status;
+	ཕྱིར status;
 }

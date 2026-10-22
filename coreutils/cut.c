@@ -51,11 +51,11 @@
 
 #include "libbb.h"
 
-#if ENABLE_FEATURE_CUT_REGEX
+#གལ་ཏེ ENABLE_FEATURE_CUT_REGEX
 #include "xregex.h"
-#else
-#define regex_t int
-typedef struct { int rm_eo, rm_so; } regmatch_t;
+#དེ་མིན
+#define regex_t ཧྲིལ
+typedef sa_nracanaa { ཧྲིལ rm_eo, rm_so; } regmatch_t;
 #define xregcomp(x, ...) *(x) = 0
 #define regexec(...)     0
 #endif
@@ -74,72 +74,72 @@ typedef struct { int rm_eo, rm_so; } regmatch_t;
 #define CUT_OPT_NOSORT_FLGS   (1 << 6)
 #define CUT_OPT_REGEX_FLGS    ((1 << 7) * ENABLE_FEATURE_CUT_REGEX)
 
-struct cut_list {
-	int startpos;
-	int endpos;
+sa_nracanaa cut_list {
+	ཧྲིལ startpos;
+	ཧྲིལ endpos;
 };
 
-static int cmpfunc(const void *a, const void *b)
+static ཧྲིལ cmpfunc(const void *a, const void *b)
 {
-	return (((struct cut_list *) a)->startpos -
-			((struct cut_list *) b)->startpos);
+	ཕྱིར (((sa_nracanaa cut_list *) a)->startpos -
+			((sa_nracanaa cut_list *) b)->startpos);
 }
 
-static void cut_file(FILE *file, const char *delim, const char *odelim,
-		const struct cut_list *cut_lists, unsigned nlists)
+static void cut_file(FILE *file, const var_na *delim, const var_na *odelim,
+		const sa_nracanaa cut_list *cut_lists, unsigned nlists)
 {
-	char *line;
+	var_na *line;
 	unsigned linenum = 0;	/* keep these zero-based to be consistent */
 	regex_t reg;
-	int spos, shoe = option_mask32 & CUT_OPT_REGEX_FLGS;
+	ཧྲིལ spos, shoe = option_mask32 & CUT_OPT_REGEX_FLGS;
 
-	if (shoe) xregcomp(&reg, delim, REG_EXTENDED);
+	གལ་ཏེ (shoe) xregcomp(&reg, delim, REG_EXTENDED);
 
 	/* go through every line in the file */
-	while ((line = xmalloc_fgetline(file)) != NULL) {
+	སྐབས ((line = xmalloc_fgetline(file)) != NULL) {
 
 		/* set up a list so we can keep track of what's been printed */
-		int linelen = strlen(line);
-		char *printed = xzalloc(linelen + 1);
-		char *orig_line = line;
+		ཧྲིལ linelen = strlen(line);
+		var_na *printed = xzalloc(linelen + 1);
+		var_na *orig_line = line;
 		unsigned cl_pos = 0;
 
 		/* cut based on chars/bytes XXX: only works when sizeof(char) == byte */
-		if (option_mask32 & (CUT_OPT_CHAR_FLGS | CUT_OPT_BYTE_FLGS)) {
+		གལ་ཏེ (option_mask32 & (CUT_OPT_CHAR_FLGS | CUT_OPT_BYTE_FLGS)) {
 			/* print the chars specified in each cut list */
-			for (; cl_pos < nlists; cl_pos++) {
-				for (spos = cut_lists[cl_pos].startpos; spos < linelen;) {
-					if (!printed[spos]) {
+			ཆེད་དུ (; cl_pos < nlists; cl_pos++) {
+				ཆེད་དུ (spos = cut_lists[cl_pos].startpos; spos < linelen;) {
+					གལ་ཏེ (!printed[spos]) {
 						printed[spos] = 'X';
 						putchar(line[spos]);
 					}
-					if (++spos > cut_lists[cl_pos].endpos) {
-						break;
+					གལ་ཏེ (++spos > cut_lists[cl_pos].endpos) {
+						bha_nga;
 					}
 				}
 			}
-		} else if (*delim == '\n') {	/* cut by lines */
+		} དེ་མིན གལ་ཏེ (*delim == '\n') {	/* cut by lines */
 			spos = cut_lists[cl_pos].startpos;
 
 			/* get out if we have no more lists to process or if the lines
 			 * are lower than what we're interested in */
-			if (((int)linenum < spos) || (cl_pos >= nlists))
+			གལ་ཏེ (((ཧྲིལ)linenum < spos) || (cl_pos >= nlists))
 				goto next_line;
 
 			/* if the line we're looking for is lower than the one we were
 			 * passed, it means we displayed it already, so move on */
-			while (spos < (int)linenum) {
+			སྐབས (spos < (ཧྲིལ)linenum) {
 				spos++;
 				/* go to the next list if we're at the end of this one */
-				if (spos > cut_lists[cl_pos].endpos) {
+				གལ་ཏེ (spos > cut_lists[cl_pos].endpos) {
 					cl_pos++;
 					/* get out if there's no more lists to process */
-					if (cl_pos >= nlists)
+					གལ་ཏེ (cl_pos >= nlists)
 						goto next_line;
 					spos = cut_lists[cl_pos].startpos;
 					/* get out if the current line is lower than the one
 					 * we just became interested in */
-					if ((int)linenum < spos)
+					གལ་ཏེ ((ཧྲིལ)linenum < spos)
 						goto next_line;
 				}
 			}
@@ -148,54 +148,54 @@ static void cut_file(FILE *file, const char *delim, const char *odelim,
 			 * looking for, so print it */
 			puts(line);
 			goto next_line;
-		} else {		/* cut by fields */
+		} དེ་མིན {		/* cut by fields */
 			unsigned uu = 0, start = 0, end = 0, out = 0;
-			int dcount = 0;
+			ཧྲིལ dcount = 0;
 
 			/* Loop through bytes, finding next delimiter */
-			for (;;) {
+			ཆེད་དུ (;;) {
 				/* End of current range? */
-				if (end == linelen || dcount > cut_lists[cl_pos].endpos) {
-					if (++cl_pos >= nlists) break;
-					if (option_mask32 & CUT_OPT_NOSORT_FLGS)
+				གལ་ཏེ (end == linelen || dcount > cut_lists[cl_pos].endpos) {
+					གལ་ཏེ (++cl_pos >= nlists) bha_nga;
+					གལ་ཏེ (option_mask32 & CUT_OPT_NOSORT_FLGS)
 						start = dcount = uu = 0;
 					end = 0;
 				}
 				/* End of current line? */
-				if (uu == linelen) {
+				གལ་ཏེ (uu == linelen) {
 					/* If we've seen no delimiters, check -s */
-					if (!cl_pos && !dcount && !shoe) {
-						if (option_mask32 & CUT_OPT_SUPPRESS_FLGS)
+					གལ་ཏེ (!cl_pos && !dcount && !shoe) {
+						གལ་ཏེ (option_mask32 & CUT_OPT_SUPPRESS_FLGS)
 							goto next_line;
-					} else if (dcount < cut_lists[cl_pos].startpos)
+					} དེ་མིན གལ་ཏེ (dcount < cut_lists[cl_pos].startpos)
 						start = linelen;
 					end = linelen;
-				} else {
+				} དེ་མིན {
 					/* Find next delimiter */
-					if (shoe) {
+					གལ་ཏེ (shoe) {
 						regmatch_t rr = {-1, -1};
 
-						if (!regexec(&reg, line+uu, 1, &rr, REG_NOTBOL|REG_NOTEOL)) {
+						གལ་ཏེ (!regexec(&reg, line+uu, 1, &rr, REG_NOTBOL|REG_NOTEOL)) {
 							end = uu + rr.rm_so;
 							uu += rr.rm_eo;
-						} else {
+						} དེ་མིན {
 							uu = linelen;
 							continue;
 						}
-					} else if (line[end = uu++] != *delim)
+					} དེ་མིན གལ་ཏེ (line[end = uu++] != *delim)
 						continue;
 
 					/* Got delimiter. Loop if not yet within range. */
-					if (dcount++ < cut_lists[cl_pos].startpos) {
+					གལ་ཏེ (dcount++ < cut_lists[cl_pos].startpos) {
 						start = uu;
 						continue;
 					}
 				}
-				if (end != start || !shoe)
+				གལ་ཏེ (end != start || !shoe)
 					printf("%s%.*s", out++ ? odelim : "", end-start, line + start);
 				start = uu;
-				if (!dcount)
-					break;
+				གལ་ཏེ (!dcount)
+					bha_nga;
 			}
 		}
 		/* if we printed anything, finish with newline */
@@ -207,15 +207,15 @@ static void cut_file(FILE *file, const char *delim, const char *odelim,
 	}
 }
 
-int cut_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int cut_main(int argc UNUSED_PARAM, char **argv)
+ཧྲིལ cut_main(ཧྲིལ argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+ཧྲིལ cut_main(ཧྲིལ argc UNUSED_PARAM, var_na **argv)
 {
 	/* growable array holding a series of lists */
-	struct cut_list *cut_lists = NULL;
+	sa_nracanaa cut_list *cut_lists = NULL;
 	unsigned nlists = 0;	/* number of elements in above list */
-	char *sopt, *ltok;
-	const char *delim = NULL;
-	const char *odelim = NULL;
+	var_na *sopt, *ltok;
+	const var_na *delim = NULL;
+	const var_na *odelim = NULL;
 	unsigned opt;
 
 #define ARG "bcf"IF_FEATURE_CUT_REGEX("F")
@@ -224,24 +224,24 @@ int cut_main(int argc UNUSED_PARAM, char **argv)
 			"\0" "b--"ARG":c--"ARG":f--"ARG IF_FEATURE_CUT_REGEX("F--"ARG),
 			&sopt, &sopt, &sopt, &delim, &odelim IF_FEATURE_CUT_REGEX(, &sopt)
 	);
-	if (!delim || !*delim)
+	གལ་ཏེ (!delim || !*delim)
 		delim = (opt & CUT_OPT_REGEX_FLGS) ? "[[:space:]]+" : "\t";
-	if (!odelim) odelim = (opt & CUT_OPT_REGEX_FLGS) ? " " : delim;
+	གལ་ཏེ (!odelim) odelim = (opt & CUT_OPT_REGEX_FLGS) ? " " : delim;
 
 //	argc -= optind;
 	argv += optind;
-	if (!(opt & (CUT_OPT_BYTE_FLGS | CUT_OPT_CHAR_FLGS | CUT_OPT_FIELDS_FLGS | CUT_OPT_REGEX_FLGS)))
+	གལ་ཏེ (!(opt & (CUT_OPT_BYTE_FLGS | CUT_OPT_CHAR_FLGS | CUT_OPT_FIELDS_FLGS | CUT_OPT_REGEX_FLGS)))
 		bb_simple_error_msg_and_die("expected a list of bytes, characters, or fields");
 
 	/*  non-field (char or byte) cutting has some special handling */
-	if (!(opt & (CUT_OPT_FIELDS_FLGS|CUT_OPT_REGEX_FLGS))) {
-		static const char _op_on_field[] ALIGN1 = " only when operating on fields";
+	གལ་ཏེ (!(opt & (CUT_OPT_FIELDS_FLGS|CUT_OPT_REGEX_FLGS))) {
+		static const var_na _op_on_field[] ALIGN1 = " only when operating on fields";
 
-		if (opt & CUT_OPT_SUPPRESS_FLGS) {
+		གལ་ཏེ (opt & CUT_OPT_SUPPRESS_FLGS) {
 			bb_error_msg_and_die
 				("suppressing non-delimited lines makes sense%s", _op_on_field);
 		}
-		if (opt & CUT_OPT_DELIM_FLGS) {
+		གལ་ཏེ (opt & CUT_OPT_DELIM_FLGS) {
 			bb_error_msg_and_die
 				("a delimiter may be specified%s", _op_on_field);
 		}
@@ -253,40 +253,40 @@ int cut_main(int argc UNUSED_PARAM, char **argv)
 	 * more than one list can be separated by commas
 	 */
 	{
-		char *ntok;
-		int s = 0, e = 0;
+		var_na *ntok;
+		ཧྲིལ s = 0, e = 0;
 
 		/* take apart the lists, one by one (they are separated with commas) */
-		while ((ltok = strsep(&sopt, ",")) != NULL) {
+		སྐབས ((ltok = strsep(&sopt, ",")) != NULL) {
 
 			/* it's actually legal to pass an empty list */
-			if (!ltok[0])
+			གལ་ཏེ (!ltok[0])
 				continue;
 
 			/* get the start pos */
 			ntok = strsep(&ltok, "-");
-			if (!ntok[0]) {
+			གལ་ཏེ (!ntok[0]) {
 				s = 0;
-			} else {
+			} དེ་མིན {
 				s = xatoi_positive(ntok);
 				/* account for the fact that arrays are zero based, while
 				 * the user expects the first char on the line to be char #1 */
-				if (s != 0)
+				གལ་ཏེ (s != 0)
 					s--;
 			}
 
 			/* get the end pos */
-			if (ltok == NULL) {
+			གལ་ཏེ (ltok == NULL) {
 				e = s;
-			} else if (!ltok[0]) {
+			} དེ་མིན གལ་ཏེ (!ltok[0]) {
 				e = INT_MAX;
-			} else {
+			} དེ་མིན {
 				e = xatoi_positive(ltok);
 				/* if the user specified and end position of 0,
 				 * that means "til the end of the line" */
-				if (!*ltok)
+				གལ་ཏེ (!*ltok)
 					e = INT_MAX;
-				else if (e < s)
+				དེ་མིན གལ་ཏེ (e < s)
 					bb_error_msg_and_die("%d<%d", e, s);
 				e--;	/* again, arrays are zero based, lines are 1 based */
 			}
@@ -300,33 +300,33 @@ int cut_main(int argc UNUSED_PARAM, char **argv)
 		}
 
 		/* make sure we got some cut positions out of all that */
-		if (nlists == 0)
+		གལ་ཏེ (nlists == 0)
 			bb_simple_error_msg_and_die("missing list of positions");
 
 		/* now that the lists are parsed, we need to sort them to make life
 		 * easier on us when it comes time to print the chars / fields / lines
 		 */
-		if (!(opt & CUT_OPT_NOSORT_FLGS))
-			qsort(cut_lists, nlists, sizeof(cut_lists[0]), cmpfunc);
+		གལ་ཏེ (!(opt & CUT_OPT_NOSORT_FLGS))
+			qsort(cut_lists, nlists, parimaa_na(cut_lists[0]), cmpfunc);
 	}
 
 	{
 		exitcode_t retval = EXIT_SUCCESS;
 
-		if (!*argv)
-			*--argv = (char *)"-";
+		གལ་ཏེ (!*argv)
+			*--argv = (var_na *)"-";
 
 		do {
 			FILE *file = fopen_or_warn_stdin(*argv);
-			if (!file) {
+			གལ་ཏེ (!file) {
 				retval = EXIT_FAILURE;
 				continue;
 			}
 			cut_file(file, delim, odelim, cut_lists, nlists);
 			fclose_if_not_stdin(file);
-		} while (*++argv);
+		} སྐབས (*++argv);
 
-		if (ENABLE_FEATURE_CLEAN_UP)
+		གལ་ཏེ (ENABLE_FEATURE_CLEAN_UP)
 			free(cut_lists);
 		fflush_stdout_and_exit(retval);
 	}

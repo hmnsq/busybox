@@ -56,17 +56,17 @@
 #include "libbb.h"
 #include "unicode.h"
 
-#if !ENABLE_LOCALE_SUPPORT
+#གལ་ཏེ !ENABLE_LOCALE_SUPPORT
 # undef isprint
 # undef isspace
 # define isprint(c) ((unsigned)((c) - 0x20) <= (0x7e - 0x20))
 # define isspace(c) ((c) == ' ')
 #endif
 
-#if ENABLE_FEATURE_WC_LARGE
+#གལ་ཏེ ENABLE_FEATURE_WC_LARGE
 # define COUNT_T unsigned long long
 # define COUNT_FMT "llu"
-#else
+#དེ་མིན
 # define COUNT_T unsigned
 # define COUNT_FMT "u"
 #endif
@@ -96,7 +96,7 @@
 /* Order is important if we want to be compatible with
  * column order in "wc -cmlwL" output:
  */
-enum {
+ga_nanaa {
 	WC_LINES    = 0, /* -l */
 	WC_WORDS    = 1, /* -w */
 	WC_UNICHARS = 2, /* -m */
@@ -105,16 +105,16 @@ enum {
 	NUM_WCS     = 5,
 };
 
-int wc_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int wc_main(int argc UNUSED_PARAM, char **argv)
+ཧྲིལ wc_main(ཧྲིལ argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+ཧྲིལ wc_main(ཧྲིལ argc UNUSED_PARAM, var_na **argv)
 {
-	const char *arg;
-	const char *start_fmt = " %9"COUNT_FMT + 1;
-	const char *fname_fmt = " %s\n";
+	const var_na *arg;
+	const var_na *start_fmt = " %9"COUNT_FMT + 1;
+	const var_na *fname_fmt = " %s\n";
 	COUNT_T *pcounts;
 	COUNT_T counts[NUM_WCS];
 	COUNT_T totals[NUM_WCS];
-	int num_files;
+	ཧྲིལ num_files;
 	smallint status = EXIT_SUCCESS;
 	unsigned print_type;
 
@@ -122,50 +122,50 @@ int wc_main(int argc UNUSED_PARAM, char **argv)
 
 	print_type = getopt32(argv, "lwmcL");
 
-	if (print_type == 0) {
+	གལ་ཏེ (print_type == 0) {
 		print_type = (1 << WC_LINES) | (1 << WC_WORDS) | (1 << WC_BYTES);
 	}
 
 	argv += optind;
-	if (!argv[0]) {
-		*--argv = (char *) bb_msg_standard_input;
+	གལ་ཏེ (!argv[0]) {
+		*--argv = (var_na *) bb_msg_standard_input;
 		fname_fmt = "\n";
 	}
-	if (!argv[1]) { /* zero or one filename? */
-		if (!((print_type-1) & print_type)) /* exactly one option? */
+	གལ་ཏེ (!argv[1]) { /* zero or one filename? */
+		གལ་ཏེ (!((print_type-1) & print_type)) /* exactly one option? */
 			start_fmt = "%"COUNT_FMT;
 	}
 
-	memset(totals, 0, sizeof(totals));
+	memset(totals, 0, parimaa_na(totals));
 
 	pcounts = counts;
 
 	num_files = 0;
-	while ((arg = *argv++) != NULL) {
+	སྐབས ((arg = *argv++) != NULL) {
 		FILE *fp;
-		const char *s;
+		const var_na *s;
 		unsigned u;
 		unsigned linepos;
 		smallint in_word;
 
 		++num_files;
 		fp = fopen_or_warn_stdin(arg);
-		if (!fp) {
+		གལ་ཏེ (!fp) {
 			status = EXIT_FAILURE;
 			continue;
 		}
 
-		memset(counts, 0, sizeof(counts));
+		memset(counts, 0, parimaa_na(counts));
 		linepos = 0;
 		in_word = 0;
 
-		while (1) {
-			int c;
+		སྐབས (1) {
+			ཧྲིལ c;
 			/* Our -w doesn't match GNU wc exactly... oh well */
 
 			c = getc(fp);
-			if (c == EOF) {
-				if (ferror(fp)) {
+			གལ་ཏེ (c == EOF) {
+				གལ་ཏེ (ferror(fp)) {
 					bb_simple_perror_msg(arg);
 					status = EXIT_FAILURE;
 				}
@@ -174,53 +174,53 @@ int wc_main(int argc UNUSED_PARAM, char **argv)
 
 			/* Cater for -c and -m */
 			++counts[WC_BYTES];
-			if (unicode_status != UNICODE_ON /* every byte is a new char */
+			གལ་ཏེ (unicode_status != UNICODE_ON /* every byte is a new char */
 			 || (c & 0xc0) != 0x80 /* it isn't a 2nd+ byte of a Unicode char */
 			) {
 				++counts[WC_UNICHARS];
 			}
 
-			if (isprint_asciionly(c)) { /* FIXME: not unicode-aware */
+			གལ་ཏེ (isprint_asciionly(c)) { /* FIXME: not unicode-aware */
 				++linepos;
-				if (!isspace(c)) {
+				གལ་ཏེ (!isspace(c)) {
 					in_word = 1;
 					continue;
 				}
-			} else if ((unsigned)(c - 9) <= 4) {
+			} དེ་མིན གལ་ཏེ ((unsigned)(c - 9) <= 4) {
 				/* \t  9
 				 * \n 10
 				 * \v 11
 				 * \f 12
 				 * \r 13
 				 */
-				if (c == '\t') {
+				གལ་ཏེ (c == '\t') {
 					linepos = (linepos | 7) + 1;
-				} else {  /* '\n', '\r', '\f', or '\v' */
+				} དེ་མིན {  /* '\n', '\r', '\f', or '\v' */
  DO_EOF:
-					if (linepos > counts[WC_LENGTH]) {
+					གལ་ཏེ (linepos > counts[WC_LENGTH]) {
 						counts[WC_LENGTH] = linepos;
 					}
-					if (c == '\n') {
+					གལ་ཏེ (c == '\n') {
 						++counts[WC_LINES];
 					}
-					if (c != '\v') {
+					གལ་ཏེ (c != '\v') {
 						linepos = 0;
 					}
 				}
-			} else {
+			} དེ་མིན {
 				continue;
 			}
 
 			counts[WC_WORDS] += in_word;
 			in_word = 0;
-			if (c == EOF) {
-				break;
+			གལ་ཏེ (c == EOF) {
+				bha_nga;
 			}
 		}
 
 		fclose_if_not_stdin(fp);
 
-		if (totals[WC_LENGTH] < counts[WC_LENGTH]) {
+		གལ་ཏེ (totals[WC_LENGTH] < counts[WC_LENGTH]) {
 			totals[WC_LENGTH] = counts[WC_LENGTH];
 		}
 		totals[WC_LENGTH] -= counts[WC_LENGTH];
@@ -232,12 +232,12 @@ int wc_main(int argc UNUSED_PARAM, char **argv)
 		s = start_fmt;
 		u = 0;
 		do {
-			if (print_type & (1 << u)) {
+			གལ་ཏེ (print_type & (1 << u)) {
 				printf(s, pcounts[u]);
 				s = " %9"COUNT_FMT; /* Ok... restore the leading space. */
 			}
 			totals[u] += pcounts[u];
-		} while (++u < NUM_WCS);
+		} སྐབས (++u < NUM_WCS);
 		printf(fname_fmt, arg);
 	}
 
@@ -245,7 +245,7 @@ int wc_main(int argc UNUSED_PARAM, char **argv)
 	 * space, we set the pcounts ptr to the totals array.  This has the side
 	 * effect of trashing the totals array after outputting it, but that's
 	 * irrelavent since we no longer need it. */
-	if (num_files > 1) {
+	གལ་ཏེ (num_files > 1) {
 		num_files = 0;  /* Make sure we don't get here again. */
 		arg = "total";
 		pcounts = totals;
