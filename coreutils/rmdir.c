@@ -31,65 +31,65 @@
 //usage:#define rmdir_example_usage
 //usage:       "# rmdir /tmp/foo\n"
 
-#include "libbb.h"
+#ضمن "libbb.h"
 
 /* This is a NOFORK applet. Be very careful! */
 
 
-#define PARENTS          (1 << 0)
-#define VERBOSE          ((1 << 1) * ENABLE_FEATURE_VERBOSE)
-#define IGNORE_NON_EMPTY ((1 << 2) * ENABLE_LONG_OPTS)
+#تعریف_کړه PARENTS          (1 << 0)
+#تعریف_کړه VERBOSE          ((1 << 1) * ENABLE_FEATURE_VERBOSE)
+#تعریف_کړه IGNORE_NON_تشه ((1 << 2) * ENABLE_LONG_OPTS)
 
-int rmdir_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int rmdir_main(int argc UNUSED_PARAM, char **argv)
+صحيح rmdir_main(صحيح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحيح rmdir_main(صحيح argc ناکارول_شوی_PARAM, حرف **argv)
 {
-	int status = EXIT_SUCCESS;
-	int flags;
-	char *path;
+	صحيح حالت = EXIT_SUCCESS;
+	صحيح flags;
+	حرف *لار;
 
 	flags = getopt32long(argv, "pv",
-		"parents\0"                  No_argument "p"
+		"parents\0"                  No_دلیل "p"
 		/* Debian etch: many packages fail to be purged or installed
 		 * because they desperately want this option: */
-		"ignore-fail-on-non-empty\0" No_argument "\xff"
+		"ignore-fail-on-non-empty\0" No_دلیل "\xff"
 		IF_FEATURE_VERBOSE(
-		"verbose\0"                  No_argument "v"
+		"verbose\0"                  No_دلیل "v"
 		)
 	);
 	argv += optind;
 
-	if (!*argv) {
+	إذا (!*argv) {
 		bb_show_usage();
 	}
 
-	do {
-		path = *argv;
+	افعل {
+		لار = *argv;
 
-		while (1) {
-			if (flags & VERBOSE) {
-				printf("rmdir: removing directory, '%s'\n", path);
+		طالما (1) {
+			إذا (flags & VERBOSE) {
+				چاپ_کړه("rmdir: removing directory, '%s'\n", لار);
 			}
 
-			if (rmdir(path) < 0) {
-#if ENABLE_LONG_OPTS
-				if ((flags & IGNORE_NON_EMPTY) && errno == ENOTEMPTY)
-					break;
-#endif
-				bb_perror_msg("'%s'", path);  /* Match gnu rmdir msg. */
-				status = EXIT_FAILURE;
-			} else if (flags & PARENTS) {
+			إذا (rmdir(لار) < 0) {
+#إذا ENABLE_LONG_OPTS
+				إذا ((flags & IGNORE_NON_تشه) && errno == ENOTEMPTY)
+					اكسر;
+#د_که_پای
+				bb_perror_پیغام("'%s'", لار);  /* Match gnu rmdir msg. */
+				حالت = EXIT_FAILURE;
+			} وإلا إذا (flags & PARENTS) {
 				/* Note: path was not "" since rmdir succeeded. */
-				path = dirname(path);
+				لار = dirname(لار);
 				/* Path is now just the parent component.  Dirname
 				 * returns "." if there are no parents.
 				 */
-				if (NOT_LONE_CHAR(path, '.')) {
-					continue;
+				إذا (NOT_LONE_CHAR(لار, '.')) {
+					استمر;
 				}
 			}
-			break;
+			اكسر;
 		}
-	} while (*++argv);
+	} طالما (*++argv);
 
-	return status;
+	أرجع حالت;
 }

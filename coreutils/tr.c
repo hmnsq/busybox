@@ -60,9 +60,9 @@
 //usage:       "$ echo \"gdkkn vnqkc\" | tr [a-y] [b-z]\n"
 //usage:       "hello world\n"
 
-#include "libbb.h"
+#ضمن "libbb.h"
 
-enum {
+تعداد {
 	ASCII = 256,
 	/* string buffer needs to be at least as big as the whole "alphabet".
 	 * BUFSIZ == ASCII is ok, but we will realloc in expand
@@ -71,18 +71,18 @@ enum {
 	TR_BUFSIZ = (BUFSIZ > ASCII*2) ? BUFSIZ : ASCII*2,
 };
 
-static void map(char *pvector,
-		char *string1, unsigned string1_len,
-		char *string2, unsigned string2_len)
+ساكن فراغ map(حرف *pvector,
+		حرف *string1, بینښه string1_len,
+		حرف *string2, بینښه string2_len)
 {
-	char last = '0';
-	unsigned i, j;
+	حرف وروستی = '0';
+	بینښه i, j;
 
-	for (j = 0, i = 0; i < string1_len; i++) {
-		if (string2_len <= j)
-			pvector[(unsigned char)(string1[i])] = last;
-		else
-			pvector[(unsigned char)(string1[i])] = last = string2[j++];
+	لكل (j = 0, i = 0; i < string1_len; i++) {
+		إذا (string2_len <= j)
+			pvector[(بینښه حرف)(string1[i])] = وروستی;
+		وإلا
+			pvector[(بینښه حرف)(string1[i])] = وروستی = string2[j++];
 	}
 }
 
@@ -99,25 +99,25 @@ static void map(char *pvector,
  * # echo qwe123 | /usr/bin/tr 123456789 '[d*]'
  * qweddd
  */
-static unsigned expand(char *arg, char **buffer_p)
+ساكن بینښه expand(حرف *arg, حرف **بفر_p)
 {
-	char *buffer = *buffer_p;
-	unsigned pos = 0;
-	unsigned size = TR_BUFSIZ;
-	unsigned i; /* can't be unsigned char: must be able to hold 256 */
-	unsigned char ac;
+	حرف *بفر = *بفر_p;
+	بینښه pos = 0;
+	بینښه اندازه = TR_BUFSIZ;
+	بینښه i; /* can't be unsigned char: must be able to hold 256 */
+	بینښه حرف ac;
 
-	while (*arg) {
-		if (pos + ASCII > size) {
-			size += ASCII;
-			*buffer_p = buffer = xrealloc(buffer, size);
+	طالما (*arg) {
+		إذا (pos + ASCII > اندازه) {
+			اندازه += ASCII;
+			*بفر_p = بفر = xrealloc(بفر, اندازه);
 		}
-		if (*arg == '\\') {
-			const char *z;
+		إذا (*arg == '\\') {
+			ثابت حرف *z;
 			arg++;
 			z = arg;
 			ac = bb_process_escape_sequence(&z);
-			arg = (char *)z;
+			arg = (حرف *)z;
 			arg--;
 			*arg = ac;
 			/*
@@ -125,44 +125,44 @@ static unsigned expand(char *arg, char **buffer_p)
 			 * If not, current char will be treated anyway.
 			 */
 		}
-		if (arg[1] == '-') { /* "0-9..." */
+		إذا (arg[1] == '-') { /* "0-9..." */
 			ac = arg[2];
-			if (ac == '\0') { /* "0-": copy verbatim */
-				buffer[pos++] = *arg++; /* copy '0' */
-				continue; /* next iter will copy '-' and stop */
+			إذا (ac == '\0') { /* "0-": copy verbatim */
+				بفر[pos++] = *arg++; /* copy '0' */
+				استمر; /* next iter will copy '-' and stop */
 			}
-			i = (unsigned char) *arg;
+			i = (بینښه حرف) *arg;
 			arg += 3; /* skip 0-9 or 0-\ */
-			if (ac == '\\') {
-				const char *z;
+			إذا (ac == '\\') {
+				ثابت حرف *z;
 				z = arg;
 				ac = bb_process_escape_sequence(&z);
-				arg = (char *)z;
+				arg = (حرف *)z;
 			}
-			while (i <= ac) /* ok: i is unsigned _int_ */
-				buffer[pos++] = i++;
-			continue;
+			طالما (i <= ac) /* ok: i is unsigned _int_ */
+				بفر[pos++] = i++;
+			استمر;
 		}
-		if ((ENABLE_FEATURE_TR_CLASSES || ENABLE_FEATURE_TR_EQUIV)
+		إذا ((ENABLE_FEATURE_TR_CLASSES || ENABLE_FEATURE_TR_EQUIV)
 		 && *arg == '['
 		) {
 			arg++;
-			i = (unsigned char) *arg++;
+			i = (بینښه حرف) *arg++;
 			/* "[xyz...". i=x, arg points to y */
-			if (ENABLE_FEATURE_TR_CLASSES && i == ':') { /* [:class:] */
-#define CLO ":]\0"
-				static const char classes[] ALIGN1 =
+			إذا (ENABLE_FEATURE_TR_CLASSES && i == ':') { /* [:class:] */
+#تعریف_کړه CLO ":]\0"
+				ساكن ثابت حرف classes[] ALIGN1 =
 					"alpha"CLO "alnum"CLO "digit"CLO
 					"lower"CLO "upper"CLO "space"CLO
 					"blank"CLO "punct"CLO "cntrl"CLO
 					"xdigit"CLO;
-				enum {
+				تعداد {
 					CLASS_invalid = 0, /* we increment the retval */
 					CLASS_alpha = 1,
 					CLASS_alnum = 2,
 					CLASS_digit = 3,
-					CLASS_lower = 4,
-					CLASS_upper = 5,
+					CLASS_ښکتنی = 4,
+					CLASS_پاسنی = 5,
 					CLASS_space = 6,
 					CLASS_blank = 7,
 					CLASS_punct = 8,
@@ -172,65 +172,65 @@ static unsigned expand(char *arg, char **buffer_p)
 					//CLASS_print = 12,
 				};
 				smalluint j;
-				char *tmp;
+				حرف *tmp;
 
 				/* xdigit needs 8, not 7 */
 				i = 7 + (arg[0] == 'x');
 				tmp = xstrndup(arg, i);
-				j = index_in_strings(classes, tmp) + 1;
-				free(tmp);
+				j = شاخص_دننه_مزي_ګانې(classes, tmp) + 1;
+				حرر(tmp);
 
-				if (j == CLASS_invalid)
-					goto skip_bracket;
+				إذا (j == CLASS_invalid)
+					اذهب skip_bracket;
 
 				arg += i;
-				if (j == CLASS_alnum || j == CLASS_digit || j == CLASS_xdigit) {
-					for (i = '0'; i <= '9'; i++)
-						buffer[pos++] = i;
+				إذا (j == CLASS_alnum || j == CLASS_digit || j == CLASS_xdigit) {
+					لكل (i = '0'; i <= '9'; i++)
+						بفر[pos++] = i;
 				}
-				if (j == CLASS_alpha || j == CLASS_alnum || j == CLASS_upper) {
-					for (i = 'A'; i <= 'Z'; i++)
-						buffer[pos++] = i;
+				إذا (j == CLASS_alpha || j == CLASS_alnum || j == CLASS_پاسنی) {
+					لكل (i = 'A'; i <= 'Z'; i++)
+						بفر[pos++] = i;
 				}
-				if (j == CLASS_alpha || j == CLASS_alnum || j == CLASS_lower) {
-					for (i = 'a'; i <= 'z'; i++)
-						buffer[pos++] = i;
+				إذا (j == CLASS_alpha || j == CLASS_alnum || j == CLASS_ښکتنی) {
+					لكل (i = 'a'; i <= 'z'; i++)
+						بفر[pos++] = i;
 				}
-				if (j == CLASS_space || j == CLASS_blank) {
-					buffer[pos++] = '\t';
-					if (j == CLASS_space) {
-						buffer[pos++] = '\n';
-						buffer[pos++] = '\v';
-						buffer[pos++] = '\f';
-						buffer[pos++] = '\r';
+				إذا (j == CLASS_space || j == CLASS_blank) {
+					بفر[pos++] = '\t';
+					إذا (j == CLASS_space) {
+						بفر[pos++] = '\n';
+						بفر[pos++] = '\v';
+						بفر[pos++] = '\f';
+						بفر[pos++] = '\r';
 					}
-					buffer[pos++] = ' ';
+					بفر[pos++] = ' ';
 				}
-				if (j == CLASS_punct || j == CLASS_cntrl) {
-					for (i = '\0'; i < ASCII; i++) {
-						if ((j == CLASS_punct && isprint_asciionly(i) && !isalnum(i) && !isspace(i))
+				إذا (j == CLASS_punct || j == CLASS_cntrl) {
+					لكل (i = '\0'; i < ASCII; i++) {
+						إذا ((j == CLASS_punct && isprint_asciionly(i) && !که_توری_یا_عدد(i) && !که_تشه(i))
 						 || (j == CLASS_cntrl && iscntrl(i))
 						) {
-							buffer[pos++] = i;
+							بفر[pos++] = i;
 						}
 					}
 				}
-				if (j == CLASS_xdigit) {
-					for (i = 'A'; i <= 'F'; i++) {
-						buffer[pos + 6] = i | 0x20;
-						buffer[pos++] = i;
+				إذا (j == CLASS_xdigit) {
+					لكل (i = 'A'; i <= 'F'; i++) {
+						بفر[pos + 6] = i | 0x20;
+						بفر[pos++] = i;
 					}
 					pos += 6;
 				}
-				continue;
+				استمر;
 			}
 			/* "[xyz...", i=x, arg points to y */
-			if (ENABLE_FEATURE_TR_EQUIV && i == '=') { /* [=CHAR=] */
-				buffer[pos++] = *arg; /* copy CHAR */
-				if (!arg[0] || arg[1] != '=' || arg[2] != ']')
+			إذا (ENABLE_FEATURE_TR_EQUIV && i == '=') { /* [=CHAR=] */
+				بفر[pos++] = *arg; /* copy CHAR */
+				إذا (!arg[0] || arg[1] != '=' || arg[2] != ']')
 					bb_show_usage();
 				arg += 3;  /* skip CHAR=] */
-				continue;
+				استمر;
 			}
 			/* The rest of "[xyz..." cases is treated as normal
 			 * string, "[" has no special meaning here:
@@ -241,55 +241,55 @@ static unsigned expand(char *arg, char **buffer_p)
  skip_bracket:
 			arg -= 2; /* points to "[" in "[xyz..." */
 		}
-		buffer[pos++] = *arg++;
+		بفر[pos++] = *arg++;
 	}
-	return pos;
+	أرجع pos;
 }
 
 /* NB: buffer is guaranteed to be at least TR_BUFSIZE
  * (which is >= ASCII) big.
  */
-static int complement(char *buffer, int buffer_len)
+ساكن صحيح complement(حرف *بفر, صحيح بفر_len)
 {
-	int len;
-	char conv[ASCII];
-	unsigned char ch;
+	صحيح len;
+	حرف conv[ASCII];
+	بینښه حرف ch;
 
 	len = 0;
 	ch = '\0';
-	while (1) {
-		if (memchr(buffer, ch, buffer_len) == NULL)
+	طالما (1) {
+		إذا (memchr(بفر, ch, بفر_len) == عدم)
 			conv[len++] = ch;
-		if (++ch == '\0')
-			break;
+		إذا (++ch == '\0')
+			اكسر;
 	}
-	memcpy(buffer, conv, len);
-	return len;
+	حافظه_نقل(بفر, conv, len);
+	أرجع len;
 }
 
-int tr_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int tr_main(int argc UNUSED_PARAM, char **argv)
+صحيح tr_main(صحيح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحيح tr_main(صحيح argc ناکارول_شوی_PARAM, حرف **argv)
 {
-	int i;
+	صحيح i;
 	smalluint opts;
 	ssize_t read_chars;
-	size_t in_index, out_index;
-	unsigned last = UCHAR_MAX + 1; /* not equal to any char */
-	unsigned char coded, c;
-	char *str1 = xmalloc(TR_BUFSIZ);
-	char *str2 = xmalloc(TR_BUFSIZ);
-	int str2_length;
-	int str1_length;
-	char *vector = xzalloc(ASCII * 3);
-	char *invec  = vector + ASCII;
-	char *outvec = vector + ASCII * 2;
+	اندازه_t دننه_شاخص, بهر_شاخص;
+	بینښه وروستی = UCHAR_MAX + 1; /* not equal to any char */
+	بینښه حرف coded, c;
+	حرف *str1 = xmalloc(TR_BUFSIZ);
+	حرف *str2 = xmalloc(TR_BUFSIZ);
+	صحيح str2_اوږدتیا;
+	صحيح str1_اوږدتیا;
+	حرف *ویکټور = xzalloc(ASCII * 3);
+	حرف *invec  = ویکټور + ASCII;
+	حرف *outvec = ویکټور + ASCII * 2;
 
-#define TR_OPT_complement   (3 << 0)
-#define TR_OPT_delete       (1 << 2)
-#define TR_OPT_squeeze_reps (1 << 3)
+#تعریف_کړه TR_OPT_complement   (3 << 0)
+#تعریف_کړه TR_OPT_delete       (1 << 2)
+#تعریف_کړه TR_OPT_squeeze_reps (1 << 3)
 
-	for (i = 0; i < ASCII; i++) {
-		vector[i] = i;
+	لكل (i = 0; i < ASCII; i++) {
+		ویکټور[i] = i;
 		/*invec[i] = outvec[i] = FALSE; - done by xzalloc */
 	}
 
@@ -302,59 +302,59 @@ int tr_main(int argc UNUSED_PARAM, char **argv)
 	opts = getopt32(argv, "^+" "Ccds" "\0" "-1:?2");
 	argv += optind;
 
-	str1_length = expand(*argv++, &str1);
-	str2_length = 0;
-	if (opts & TR_OPT_complement)
-		str1_length = complement(str1, str1_length);
-	if (*argv) {
-		if (argv[0][0] == '\0')
-			bb_simple_error_msg_and_die("STRING2 cannot be empty");
-		str2_length = expand(*argv, &str2);
-		map(vector, str1, str1_length,
-				str2, str2_length);
+	str1_اوږدتیا = expand(*argv++, &str1);
+	str2_اوږدتیا = 0;
+	إذا (opts & TR_OPT_complement)
+		str1_اوږدتیا = complement(str1, str1_اوږدتیا);
+	إذا (*argv) {
+		إذا (argv[0][0] == '\0')
+			bb_simple_error_پیغام_and_die("STRING2 cannot be empty");
+		str2_اوږدتیا = expand(*argv, &str2);
+		map(ویکټور, str1, str1_اوږدتیا,
+				str2, str2_اوږدتیا);
 	}
-	for (i = 0; i < str1_length; i++)
-		invec[(unsigned char)(str1[i])] = TRUE;
-	for (i = 0; i < str2_length; i++)
-		outvec[(unsigned char)(str2[i])] = TRUE;
+	لكل (i = 0; i < str1_اوږدتیا; i++)
+		invec[(بینښه حرف)(str1[i])] = TRUE;
+	لكل (i = 0; i < str2_اوږدتیا; i++)
+		outvec[(بینښه حرف)(str2[i])] = TRUE;
 
-	goto start_from;
+	اذهب پیل_from;
 
 	/* In this loop, str1 space is reused as input buffer,
 	 * str2 - as output one. */
-	for (;;) {
+	لكل (;;) {
 		/* If we're out of input, flush output and read more input. */
-		if ((ssize_t)in_index == read_chars) {
-			if (out_index) {
-				xwrite(STDOUT_FILENO, str2, out_index);
- start_from:
-				out_index = 0;
+		إذا ((ssize_t)دننه_شاخص == read_chars) {
+			إذا (بهر_شاخص) {
+				xwrite(STDOUT_FILENO, str2, بهر_شاخص);
+ پیل_from:
+				بهر_شاخص = 0;
 			}
-			read_chars = safe_read(STDIN_FILENO, str1, TR_BUFSIZ);
-			if (read_chars <= 0) {
-				if (read_chars < 0)
-					bb_simple_perror_msg_and_die(bb_msg_read_error);
-				break;
+			read_chars = خوندي_read(STDIN_FILENO, str1, TR_BUFSIZ);
+			إذا (read_chars <= 0) {
+				إذا (read_chars < 0)
+					bb_simple_perror_پیغام_and_die(bb_پیغام_read_error);
+				اكسر;
 			}
-			in_index = 0;
+			دننه_شاخص = 0;
 		}
-		c = str1[in_index++];
-		if ((opts & TR_OPT_delete) && invec[c])
-			continue;
-		coded = vector[c];
-		if ((opts & TR_OPT_squeeze_reps) && last == coded
+		c = str1[دننه_شاخص++];
+		إذا ((opts & TR_OPT_delete) && invec[c])
+			استمر;
+		coded = ویکټور[c];
+		إذا ((opts & TR_OPT_squeeze_reps) && وروستی == coded
 		 && (invec[c] || outvec[coded])
 		) {
-			continue;
+			استمر;
 		}
-		str2[out_index++] = last = coded;
+		str2[بهر_شاخص++] = وروستی = coded;
 	}
 
-	if (ENABLE_FEATURE_CLEAN_UP) {
-		free(vector);
-		free(str2);
-		free(str1);
+	إذا (ENABLE_FEATURE_CLEAN_پورته) {
+		حرر(ویکټور);
+		حرر(str2);
+		حرر(str1);
 	}
 
-	return EXIT_SUCCESS;
+	أرجع EXIT_SUCCESS;
 }

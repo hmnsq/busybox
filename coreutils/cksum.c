@@ -27,80 +27,80 @@
 //usage:#define cksum_full_usage "\n\n"
 //usage:       "Calculate CRC32 checksum of FILEs"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#ضمن "libbb.h"
+#ضمن "common_bufsiz.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-#define IS_CKSUM (ENABLE_CKSUM && (!ENABLE_CRC32 || applet_name[1] == 'k'))
-#define IS_CRC32 (ENABLE_CRC32 && (!ENABLE_CKSUM || applet_name[1] == 'r'))
+#تعریف_کړه IS_CKSUM (ENABLE_CKSUM && (!ENABLE_دوراني_ازموینه_32 || applet_name[1] == 'k'))
+#تعریف_کړه IS_دوراني_ازموینه_32 (ENABLE_دوراني_ازموینه_32 && (!ENABLE_CKSUM || applet_name[1] == 'r'))
 
-int cksum_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int cksum_main(int argc UNUSED_PARAM, char **argv)
+صحيح cksum_main(صحيح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحيح cksum_main(صحيح argc ناکارول_شوی_PARAM, حرف **argv)
 {
-	uint32_t *crc32_table = crc32_filltable(NULL, IS_CKSUM);
-	exitcode_t exit_code = EXIT_SUCCESS;
+	uint32_t *دوراني_ازموینه_32_جدول = دوراني_ازموینه_32_filltable(عدم, IS_CKSUM);
+	exitcode_t exit_کوډ = EXIT_SUCCESS;
 
-#if ENABLE_DESKTOP
+#إذا ENABLE_DESKTOP
 	getopt32(argv, ""); /* cksum coreutils 6.9 compat */
 	argv += optind;
-#else
+#وإلا
 	argv++;
-#endif
+#د_که_پای
 
-	setup_common_bufsiz();
-	do {
-		uint32_t crc;
+	تیاری_common_bufsiz();
+	افعل {
+		uint32_t دوراني_ازموینه;
 		IF_CKSUM(off_t filesize;)
-		const char *fname = *argv ? *argv : bb_msg_standard_input;
-		int fd = open_or_warn_stdin(fname);
+		ثابت حرف *fname = *argv ? *argv : bb_پیغام_standard_ننوت;
+		صحيح fd = open_or_warn_stdin(fname);
 
-		if (fd < 0) {
-			exit_code = EXIT_FAILURE;
-			continue;
+		إذا (fd < 0) {
+			exit_کوډ = EXIT_FAILURE;
+			استمر;
 		}
 
-		crc = IS_CKSUM ? 0 : 0xffffffff;
+		دوراني_ازموینه = IS_CKSUM ? 0 : 0xffffffff;
 		IF_CKSUM(filesize = 0;)
-#define read_buf bb_common_bufsiz1
-		for (;;) {
-			int bytes_read = safe_read(fd, read_buf, COMMON_BUFSIZE);
-			if (bytes_read < 0)
-				bb_simple_perror_msg_and_die(fname);
-			if (bytes_read > 0) {
-				IF_CKSUM(filesize += bytes_read;)
-			} else {
+#تعریف_کړه read_buf bb_common_bufsiz1
+		لكل (;;) {
+			صحيح بایټونه_read = خوندي_read(fd, read_buf, COMMON_BUFSIZE);
+			إذا (بایټونه_read < 0)
+				bb_simple_perror_پیغام_and_die(fname);
+			إذا (بایټونه_read > 0) {
+				IF_CKSUM(filesize += بایټونه_read;)
+			} وإلا {
 				IF_CKSUM(uoff_t t;)
 
 				close(fd);
-				if (IS_CRC32)
-					break;
-#if ENABLE_CKSUM
+				إذا (IS_دوراني_ازموینه_32)
+					اكسر;
+#إذا ENABLE_CKSUM
 				fd = -1; /* break flag */
 				/* Checksum filesize bytes, LSB first */
 				t = filesize;
 				/*bytes_read = 0; - already is */
-				while (t != 0) {
-					read_buf[bytes_read++] = (uint8_t)t;
+				طالما (t != 0) {
+					read_buf[بایټونه_read++] = (uint8_t)t;
 					t >>= 8;
 				}
-#endif
+#د_که_پای
 			}
-			crc = (IS_CKSUM ? crc32_block_endian1 : crc32_block_endian0)(crc, read_buf, bytes_read, crc32_table);
-			if (ENABLE_CKSUM && fd < 0)
-				break;
+			دوراني_ازموینه = (IS_CKSUM ? دوراني_ازموینه_32_بلاک_endian1 : دوراني_ازموینه_32_بلاک_endian0)(دوراني_ازموینه, read_buf, بایټونه_read, دوراني_ازموینه_32_جدول);
+			إذا (ENABLE_CKSUM && fd < 0)
+				اكسر;
 		}
 
-		crc = ~crc;
-#if ENABLE_CKSUM
-		if (IS_CKSUM)
-			printf((*argv ? "%u %"OFF_FMT"u %s\n" : "%u %"OFF_FMT"u\n"),
-				(unsigned)crc, filesize, *argv);
-		else
-#endif
-			printf((*argv ? "%08x %s\n" : "%08x\n"),
-				(unsigned)crc, *argv);
-	} while (*argv && *++argv);
+		دوراني_ازموینه = ~دوراني_ازموینه;
+#إذا ENABLE_CKSUM
+		إذا (IS_CKSUM)
+			چاپ_کړه((*argv ? "%u %"OFF_FMT"u %s\n" : "%u %"OFF_FMT"u\n"),
+				(بینښه)دوراني_ازموینه, filesize, *argv);
+		وإلا
+#د_که_پای
+			چاپ_کړه((*argv ? "%08x %s\n" : "%08x\n"),
+				(بینښه)دوراني_ازموینه, *argv);
+	} طالما (*argv && *++argv);
 
-	fflush_stdout_and_exit(exit_code);
+	fflush_stdout_and_exit(exit_کوډ);
 }

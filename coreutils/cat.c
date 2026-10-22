@@ -69,10 +69,10 @@
 //usage:       "$ cat /proc/uptime\n"
 //usage:       "110716.72 17.67"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#ضمن "libbb.h"
+#ضمن "common_bufsiz.h"
 
-#if ENABLE_FEATURE_CATV
+#إذا ENABLE_FEATURE_CATV
 /*
  * cat -v implementation for busybox
  *
@@ -101,78 +101,78 @@
  * to achieve "cat -v" effect. The actual effect would be "users pissed off
  * by gratuitous incompatibility".
  */
-#define CAT_OPT_e (1<<0)
-#define CAT_OPT_t (1<<1)
-#define CAT_OPT_v (1<<2)
+#تعریف_کړه CAT_OPT_e (1<<0)
+#تعریف_کړه CAT_OPT_t (1<<1)
+#تعریف_کړه CAT_OPT_v (1<<2)
 /* -A occupies bit (1<<3) */
-#define CAT_OPT_n ((1<<4) * ENABLE_FEATURE_CATN)
-#define CAT_OPT_b ((1<<5) * ENABLE_FEATURE_CATN)
-static int catv(unsigned opts, char **argv)
+#تعریف_کړه CAT_OPT_n ((1<<4) * ENABLE_FEATURE_CATN)
+#تعریف_کړه CAT_OPT_b ((1<<5) * ENABLE_FEATURE_CATN)
+ساكن صحيح catv(بینښه opts, حرف **argv)
 {
-	int retval = EXIT_SUCCESS;
-	int fd;
-#if ENABLE_FEATURE_CATN
-	bool eol_seen = (opts & (CAT_OPT_n|CAT_OPT_b));
-	unsigned eol_char = (eol_seen ? '\n' : 0x100);
-	unsigned skip_num_on = (opts & CAT_OPT_b) ? '\n' : 0x100;
-	unsigned lineno = 0;
-#endif
+	صحيح retval = EXIT_SUCCESS;
+	صحيح fd;
+#إذا ENABLE_FEATURE_CATN
+	bool eol_کتل_شوی = (opts & (CAT_OPT_n|CAT_OPT_b));
+	بینښه eol_char = (eol_کتل_شوی ? '\n' : 0x100);
+	بینښه skip_عدد_on = (opts & CAT_OPT_b) ? '\n' : 0x100;
+	بینښه lineno = 0;
+#د_که_پای
 
 	BUILD_BUG_ON(CAT_OPT_e != VISIBLE_ENDLINE);
 	BUILD_BUG_ON(CAT_OPT_t != VISIBLE_SHOW_TABS);
-#if 0 /* These consts match, we can just pass "opts" to visible() */
-	if (opts & CAT_OPT_e)
+#إذا 0 /* These consts match, we can just pass "opts" to visible() */
+	إذا (opts & CAT_OPT_e)
 		flags |= VISIBLE_ENDLINE;
-	if (opts & CAT_OPT_t)
+	إذا (opts & CAT_OPT_t)
 		flags |= VISIBLE_SHOW_TABS;
-#endif
+#د_که_پای
 
-#define read_buf bb_common_bufsiz1
-	setup_common_bufsiz();
-	do {
+#تعریف_کړه read_buf bb_common_bufsiz1
+	تیاری_common_bufsiz();
+	افعل {
 		fd = open_or_warn_stdin(*argv);
-		if (fd < 0) {
+		إذا (fd < 0) {
 			retval = EXIT_FAILURE;
-			continue;
+			استمر;
 		}
-		for (;;) {
-			int i, res;
+		لكل (;;) {
+			صحيح i, res;
 
-			res = read(fd, read_buf, COMMON_BUFSIZE);
-			if (res < 0)
+			res = اقرأ(fd, read_buf, COMMON_BUFSIZE);
+			إذا (res < 0)
 				retval = EXIT_FAILURE;
-			if (res <= 0)
-				break;
-			for (i = 0; i < res; i++) {
-				unsigned char c = read_buf[i];
-				char buf[sizeof("M-^c")];
-#if ENABLE_FEATURE_CATN
-				if (eol_seen && c != skip_num_on)
-					printf("%6u  ", ++lineno);
-				eol_seen = (c == eol_char);
-#endif
+			إذا (res <= 0)
+				اكسر;
+			لكل (i = 0; i < res; i++) {
+				بینښه حرف c = read_buf[i];
+				حرف buf[حجم("M-^c")];
+#إذا ENABLE_FEATURE_CATN
+				إذا (eol_کتل_شوی && c != skip_عدد_on)
+					چاپ_کړه("%6u  ", ++lineno);
+				eol_کتل_شوی = (c == eol_char);
+#د_که_پای
 				visible(c, buf, opts);
 				fputs_stdout(buf);
 			}
 		}
-		if (ENABLE_FEATURE_CLEAN_UP && fd)
+		إذا (ENABLE_FEATURE_CLEAN_پورته && fd)
 			close(fd);
-	} while (*++argv);
+	} طالما (*++argv);
 
 	fflush_stdout_and_exit(retval);
 }
-#undef CAT_OPT_n
-#undef CAT_OPT_b
-#endif
+#تعریف_لغوه CAT_OPT_n
+#تعریف_لغوه CAT_OPT_b
+#د_که_پای
 
-int cat_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int cat_main(int argc UNUSED_PARAM, char **argv)
+صحيح cat_main(صحيح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحيح cat_main(صحيح argc ناکارول_شوی_PARAM, حرف **argv)
 {
-#if ENABLE_FEATURE_CATV || ENABLE_FEATURE_CATN
-	unsigned opts;
+#إذا ENABLE_FEATURE_CATV || ENABLE_FEATURE_CATN
+	بینښه opts;
 
 	opts =
-#endif
+#د_که_پای
 	getopt32(argv, IF_FEATURE_CATV("^")
 		/* -u is ignored ("unbuffered") */
 		IF_FEATURE_CATV("etvA")IF_FEATURE_CATN("nb")"u"
@@ -181,37 +181,37 @@ int cat_main(int argc UNUSED_PARAM, char **argv)
 	argv += optind;
 
 	/* Read from stdin if there's nothing else to do. */
-	if (!argv[0])
-		*--argv = (char*)"-";
+	إذا (!argv[0])
+		*--argv = (حرف*)"-";
 
-#if ENABLE_FEATURE_CATV
-	if (opts & 7)
-		return catv(opts, argv);
+#إذا ENABLE_FEATURE_CATV
+	إذا (opts & 7)
+		أرجع catv(opts, argv);
 	opts >>= 4;
-#endif
+#د_که_پای
 
-#if ENABLE_FEATURE_CATN
+#إذا ENABLE_FEATURE_CATN
 # define CAT_OPT_n (1<<0)
 # define CAT_OPT_b (1<<1)
-	if (opts & (CAT_OPT_n|CAT_OPT_b)) { /* -n or -b */
-		struct number_state ns;
-		int exitcode;
+	إذا (opts & (CAT_OPT_n|CAT_OPT_b)) { /* -n or -b */
+		بنية شمېره_state ns;
+		صحيح exitcode;
 
-		ns.width = 6;
-		ns.start = 1;
+		ns.پلنوالی = 6;
+		ns.پیل = 1;
 		ns.inc = 1;
 		ns.sep = "\t";
-		ns.empty_str = NULL;
+		ns.تشه_str = عدم;
 		ns.all = !(opts & CAT_OPT_b); /* -n without -b */
 		ns.nonempty = (opts & CAT_OPT_b); /* -b (with or without -n) */
 		exitcode = EXIT_SUCCESS;
-		do {
-			exitcode |= print_numbered_lines(&ns, *argv);
-		} while (*++argv);
+		افعل {
+			exitcode |= print_numbered_کرښې(&ns, *argv);
+		} طالما (*++argv);
 		fflush_stdout_and_exit(exitcode);
 	}
 	/*opts >>= 2;*/
-#endif
+#د_که_پای
 
-	return bb_cat(argv);
+	أرجع bb_cat(argv);
 }
