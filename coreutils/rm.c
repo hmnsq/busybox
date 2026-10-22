@@ -35,42 +35,42 @@
 //usage:#define rm_example_usage
 //usage:       "$ rm -rf /tmp/foo\n"
 
-#include "libbb.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-int rm_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int rm_main(int argc UNUSED_PARAM, char **argv)
+ಪೂರ್ಣಾಙ್ಕ rm_main(ಪೂರ್ಣಾಙ್ಕ argc, ವರ್ಣ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಙ್ಕ rm_main(ಪೂರ್ಣಾಙ್ಕ argc UNUSED_PARAM, ವರ್ಣ **argv)
 {
-	int status = 0;
-	int flags = 0;
+	ಪೂರ್ಣಾಙ್ಕ status = 0;
+	ಪೂರ್ಣಾಙ್ಕ flags = 0;
 	unsigned opt;
 
 	opt = getopt32(argv, "^" "fiRrv" "\0" "f-i:i-f");
 	argv += optind;
-	if (opt & 1)
+	ಯದಿ (opt & 1)
 		flags |= FILEUTILS_FORCE;
-	if (opt & 2)
+	ಯದಿ (opt & 2)
 		flags |= FILEUTILS_INTERACTIVE;
-	if (opt & (8|4))
+	ಯದಿ (opt & (8|4))
 		flags |= FILEUTILS_RECUR;
-	if ((opt & 16) && FILEUTILS_VERBOSE)
+	ಯದಿ ((opt & 16) && FILEUTILS_VERBOSE)
 		flags |= FILEUTILS_VERBOSE;
 
-	if (*argv != NULL) {
-		do {
-			const char *base = bb_get_last_path_component_strip(*argv);
+	ಯದಿ (*argv != ರಿಕ್ತ) {
+		ಕುರು {
+			ಧ್ರುವ ವರ್ಣ *base = bb_get_last_path_component_strip(*argv);
 
-			if (DOT_OR_DOTDOT(base)) {
-				bb_simple_error_msg("can't remove '.' or '..'");
-			} else if (remove_file(*argv, flags) >= 0) {
-				continue;
+			ಯದಿ (DOT_OR_DOTDOT(base)) {
+				bb_simple_error_ಸಂದೇಶ("can't remove '.' or '..'");
+			} ಅನ್ಯಥಾ ಯದಿ (remove_file(*argv, flags) >= 0) {
+				ಅನುವರ್ತ;
 			}
 			status = 1;
-		} while (*++argv);
-	} else if (!(flags & FILEUTILS_FORCE)) {
+		} ಯಾವತ್ (*++argv);
+	} ಅನ್ಯಥಾ ಯದಿ (!(flags & FILEUTILS_FORCE)) {
 		bb_show_usage();
 	}
 
-	return status;
+	ಪ್ರತ್ಯಾಗಮ status;
 }

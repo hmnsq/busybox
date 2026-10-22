@@ -97,20 +97,20 @@
 //usage:#define arch_full_usage "\n\n"
 //usage:       "Print system architecture"
 
-#include "libbb.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
 /* After libbb.h, since it needs sys/types.h on some systems */
-#include <sys/utsname.h>
+#ಅನ್ತರ್ಭಾವ <sys/utsname.h>
 
-typedef struct {
-	struct utsname name;
-	char processor[sizeof(((struct utsname*)NULL)->machine)];
-	char platform[sizeof(((struct utsname*)NULL)->machine)];
-	char os[sizeof(CONFIG_UNAME_OSNAME)];
+ಪ್ರಕಾರನಿರ್ದೇಶ ಸಂರಚನಾ {
+	ಸಂರಚನಾ utsname name;
+	ವರ್ಣ processor[ಪರಿಮಾಣ(((ಸಂರಚನಾ utsname*)ರಿಕ್ತ)->machine)];
+	ವರ್ಣ platform[ಪರಿಮಾಣ(((ಸಂರಚನಾ utsname*)ರಿಕ್ತ)->machine)];
+	ವರ್ಣ os[ಪರಿಮಾಣ(CONFIG_UNAME_OSNAME)];
 } uname_info_t;
 
-#if ENABLE_UNAME
+#ಯದಿ ENABLE_UNAME
 #define options "snrvmpioa"
-static const unsigned short utsname_offset[] = {
+ಸ್ಥಿರ ಧ್ರುವ unsigned short utsname_offset[] = {
 	offsetof(uname_info_t, name.sysname), /* -s */
 	offsetof(uname_info_t, name.nodename), /* -n */
 	offsetof(uname_info_t, name.release), /* -r */
@@ -122,17 +122,17 @@ static const unsigned short utsname_offset[] = {
 };
 #endif
 
-int uname_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int uname_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+ಪೂರ್ಣಾಙ್ಕ uname_main(ಪೂರ್ಣಾಙ್ಕ argc, ವರ್ಣ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಙ್ಕ uname_main(ಪೂರ್ಣಾಙ್ಕ argc UNUSED_PARAM, ವರ್ಣ **argv UNUSED_PARAM)
 {
 	uname_info_t uname_info;
-	IF_UNAME(const char *unknown_str = "unknown";)
-#if ENABLE_UNAME
+	IF_UNAME(ಧ್ರುವ ವರ್ಣ *unknown_str = "unknown";)
+#ಯದಿ ENABLE_UNAME
 	unsigned toprint = (1 << 4); /* "arch" = "uname -m" */
 
-	if (!ENABLE_BB_ARCH || applet_name[0] == 'u') {
-# if ENABLE_LONG_OPTS
-		static const char uname_longopts[] ALIGN1 =
+	ಯದಿ (!ENABLE_BB_ARCH || applet_name[0] == 'u') {
+# ಯದಿ ENABLE_LONG_OPTS
+		ಸ್ಥಿರ ಧ್ರುವ ವರ್ಣ uname_longopts[] ALIGN1 =
 			/* name, has_arg, val */
 			"all\0"               No_argument       "a"
 			"kernel-name\0"       No_argument       "s"
@@ -147,14 +147,14 @@ int uname_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
 		;
 # endif
 		toprint = getopt32long(argv, options, uname_longopts);
-		if (argv[optind]) { /* coreutils-6.9 compat */
+		ಯದಿ (argv[optind]) { /* coreutils-6.9 compat */
 			bb_show_usage();
 		}
-		if (toprint & (1 << 8)) { /* -a => all opts on */
+		ಯದಿ (toprint & (1 << 8)) { /* -a => all opts on */
 			toprint = (1 << 8) - 1;
 			unknown_str = ""; /* -a does not print unknown fields */
 		}
-		if (toprint == 0) { /* no opts => -s (sysname) */
+		ಯದಿ (toprint == 0) { /* no opts => -s (sysname) */
 			toprint = 1;
 		}
 	} /* if "uname" */
@@ -162,30 +162,30 @@ int uname_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
 
 	uname(&uname_info.name); /* never fails */
 
-#if defined(__sparc__) && defined(__linux__)
+#ಯದಿ defined(__sparc__) && defined(__linux__)
 	{
-		char *fake_sparc = getenv("FAKE_SPARC");
-		if (fake_sparc && (fake_sparc[0] | 0x20) == 'y') {
+		ವರ್ಣ *fake_sparc = getenv("FAKE_SPARC");
+		ಯದಿ (fake_sparc && (fake_sparc[0] | 0x20) == 'y') {
 			strcpy(uname_info.name.machine, "sparc");
 		}
 	}
 #endif
-	if (ENABLE_BB_ARCH && (!ENABLE_UNAME || applet_name[0] == 'a')) {
+	ಯದಿ (ENABLE_BB_ARCH && (!ENABLE_UNAME || applet_name[0] == 'a')) {
 		puts(uname_info.name.machine);
-	} else {
-#if ENABLE_UNAME
+	} ಅನ್ಯಥಾ {
+#ಯದಿ ENABLE_UNAME
 		/* "uname" */
-		const char *fmt;
-		const unsigned short *delta;
+		ಧ್ರುವ ವರ್ಣ *fmt;
+		ಧ್ರುವ unsigned short *delta;
 
 		strcpy(uname_info.processor, unknown_str);
 		strcpy(uname_info.platform, unknown_str);
 		strcpy(uname_info.os, CONFIG_UNAME_OSNAME);
-# if ENABLE_FEDORA_COMPAT
+# ಯದಿ ENABLE_FEDORA_COMPAT
 		/* Fedora does something like this */
 		strcpy(uname_info.processor, uname_info.name.machine);
 		strcpy(uname_info.platform, uname_info.name.machine);
-		if (uname_info.platform[0] == 'i'
+		ಯದಿ (uname_info.platform[0] == 'i'
 		 && uname_info.platform[1]
 		 && uname_info.platform[2] == '8'
 		 && uname_info.platform[3] == '6'
@@ -195,16 +195,16 @@ int uname_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
 # endif
 		delta = utsname_offset;
 		fmt = " %s" + 1;
-		do {
-			if (toprint & 1) {
-				const char *p = (char *)(&uname_info) + *delta;
-				if (p[0]) {
+		ಕುರು {
+			ಯದಿ (toprint & 1) {
+				ಧ್ರುವ ವರ್ಣ *p = (ವರ್ಣ *)(&uname_info) + *delta;
+				ಯದಿ (p[0]) {
 					printf(fmt, p);
 					fmt = " %s";
 				}
 			}
 			++delta;
-		} while (toprint >>= 1);
+		} ಯಾವತ್ (toprint >>= 1);
 		bb_putchar('\n');
 #endif
 	}

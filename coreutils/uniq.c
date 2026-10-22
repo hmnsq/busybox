@@ -38,19 +38,19 @@
 //usage:       "b\n"
 //usage:       "c\n"
 
-#include "libbb.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
 
-int uniq_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int uniq_main(int argc UNUSED_PARAM, char **argv)
+ಪೂರ್ಣಾಙ್ಕ uniq_main(ಪೂರ್ಣಾಙ್ಕ argc, ವರ್ಣ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಙ್ಕ uniq_main(ಪೂರ್ಣಾಙ್ಕ argc UNUSED_PARAM, ವರ್ಣ **argv)
 {
-	const char *input_filename;
+	ಧ್ರುವ ವರ್ಣ *ಒಳಹರಿವು_filename;
 	unsigned skip_fields, skip_chars, max_chars;
 	unsigned opt;
-	char eol;
-	char *cur_line;
-	const char *cur_compare;
+	ವರ್ಣ eol;
+	ವರ್ಣ *cur_ಸಾಲು;
+	ಧ್ರುವ ವರ್ಣ *cur_compare;
 
-	enum {
+	ಗಣನಾ {
 		OPT_c = 1 << 0,
 		OPT_d = 1 << 1, /* print only dups */
 		OPT_u = 1 << 2, /* print only uniq */
@@ -67,19 +67,19 @@ int uniq_main(int argc UNUSED_PARAM, char **argv)
 	opt = getopt32(argv, "cduf:+s:+w:+iz", &skip_fields, &skip_chars, &max_chars);
 	argv += optind;
 
-	input_filename = argv[0];
-	if (input_filename) {
-		const char *output;
+	ಒಳಹರಿವು_filename = argv[0];
+	ಯದಿ (ಒಳಹರಿವು_filename) {
+		ಧ್ರುವ ವರ್ಣ *output;
 
-		if (input_filename[0] != '-' || input_filename[1]) {
+		ಯದಿ (ಒಳಹರಿವು_filename[0] != '-' || ಒಳಹರಿವು_filename[1]) {
 			close(STDIN_FILENO); /* == 0 */
-			xopen(input_filename, O_RDONLY); /* fd will be 0 */
+			xopen(ಒಳಹರಿವು_filename, O_RDONLY); /* fd will be 0 */
 		}
 		output = argv[1];
-		if (output) {
-			if (argv[2])
+		ಯದಿ (output) {
+			ಯದಿ (argv[2])
 				bb_show_usage();
-			if (output[0] != '-' || output[1]) {
+			ಯದಿ (output[0] != '-' || output[1]) {
 				// Won't work with "uniq - FILE" and closed stdin:
 				//close(STDOUT_FILENO);
 				//xopen(output, O_WRONLY | O_CREAT | O_TRUNC);
@@ -88,56 +88,56 @@ int uniq_main(int argc UNUSED_PARAM, char **argv)
 		}
 	}
 
-	cur_compare = cur_line = NULL; /* prime the pump */
+	cur_compare = cur_ಸಾಲು = ರಿಕ್ತ; /* prime the pump */
 	eol = (opt & OPT_z) ? 0 : '\n';
 
-	do {
+	ಕುರು {
 		unsigned i;
 		unsigned long dups;
-		char *old_line;
-		const char *old_compare;
+		ವರ್ಣ *old_ಸಾಲು;
+		ಧ್ರುವ ವರ್ಣ *old_compare;
 
-		old_line = cur_line;
+		old_ಸಾಲು = cur_ಸಾಲು;
 		old_compare = cur_compare;
 		dups = 0;
 
 		/* gnu uniq ignores newlines */
-		while ((cur_line = xmalloc_fgetline(stdin)) != NULL) {
-			cur_compare = cur_line;
-			for (i = skip_fields; i; i--) {
+		ಯಾವತ್ ((cur_ಸಾಲು = xmalloc_fgetline(stdin)) != ರಿಕ್ತ) {
+			cur_compare = cur_ಸಾಲು;
+			ಪ್ರತಿ (i = skip_fields; i; i--) {
 				cur_compare = skip_whitespace(cur_compare);
 				cur_compare = skip_non_whitespace(cur_compare);
 			}
-			for (i = skip_chars; *cur_compare && i; i--) {
+			ಪ್ರತಿ (i = skip_chars; *cur_compare && i; i--) {
 				++cur_compare;
 			}
 
-			if (!old_line)
-				break;
-			if ((opt & OPT_i)
+			ಯದಿ (!old_ಸಾಲು)
+				ಭಙ್ಗ;
+			ಯದಿ ((opt & OPT_i)
 				? strncasecmp(old_compare, cur_compare, max_chars)
 				: strncmp(old_compare, cur_compare, max_chars)
 			) {
-				break;
+				ಭಙ್ಗ;
 			}
 
-			free(cur_line);
+			ಮುಕ್ತ(cur_ಸಾಲು);
 			++dups;  /* testing for overflow seems excessive */
 		}
 
-		if (old_line) {
-			if (!(opt & (OPT_d << !!dups))) { /* (if dups, opt & OPT_u) */
-				if (opt & OPT_c) {
+		ಯದಿ (old_ಸಾಲು) {
+			ಯದಿ (!(opt & (OPT_d << !!dups))) { /* (if dups, opt & OPT_u) */
+				ಯದಿ (opt & OPT_c) {
 					/* %7lu matches GNU coreutils 6.9 */
 					printf("%7lu ", dups + 1);
 				}
-				printf("%s%c", old_line, eol);
+				printf("%s%c", old_ಸಾಲು, eol);
 			}
-			free(old_line);
+			ಮುಕ್ತ(old_ಸಾಲು);
 		}
-	} while (cur_line);
+	} ಯಾವತ್ (cur_ಸಾಲು);
 
-	die_if_ferror(stdin, input_filename);
+	die_if_ferror(stdin, ಒಳಹರಿವು_filename);
 
 	fflush_stdout_and_exit_SUCCESS();
 }

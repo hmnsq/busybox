@@ -27,25 +27,25 @@
 //usage:#define tac_full_usage "\n\n"
 //usage:	"Concatenate FILEs and print them in reverse"
 
-#include "libbb.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-struct lstring {
-	int size;
-	char buf[1];
+ಸಂರಚನಾ lstring {
+	ಪೂರ್ಣಾಙ್ಕ size;
+	ವರ್ಣ buf[1];
 };
 
-int tac_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int tac_main(int argc UNUSED_PARAM, char **argv)
+ಪೂರ್ಣಾಙ್ಕ tac_main(ಪೂರ್ಣಾಙ್ಕ argc, ವರ್ಣ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಙ್ಕ tac_main(ಪೂರ್ಣಾಙ್ಕ argc UNUSED_PARAM, ವರ್ಣ **argv)
 {
-	char **name;
+	ವರ್ಣ **name;
 	FILE *f;
-	struct lstring *line = NULL;
-	llist_t *list = NULL;
-	int retval = EXIT_SUCCESS;
+	ಸಂರಚನಾ lstring *ಸಾಲು = ರಿಕ್ತ;
+	llist_t *list = ರಿಕ್ತ;
+	ಪೂರ್ಣಾಙ್ಕ retval = EXIT_SUCCESS;
 
-#if ENABLE_DESKTOP
+#ಯದಿ ENABLE_DESKTOP
 /* tac from coreutils 6.9 supports:
        -b, --before
               attach the separator before instead of after
@@ -57,61 +57,61 @@ We support none, but at least we will complain or handle "--":
 */
 	getopt32(argv, "");
 	argv += optind;
-#else
+#ಅನ್ಯಥಾ
 	argv++;
 #endif
-	if (!*argv)
-		*--argv = (char *)"-";
+	ಯದಿ (!*argv)
+		*--argv = (ವರ್ಣ *)"-";
 	/* We will read from last file to first */
 	name = argv;
-	while (*name)
+	ಯಾವತ್ (*name)
 		name++;
 
-	do {
-		int ch, i;
+	ಕುರು {
+		ಪೂರ್ಣಾಙ್ಕ ch, i;
 
 		name--;
 		f = fopen_or_warn_stdin(*name);
-		if (f == NULL) {
+		ಯದಿ (f == ರಿಕ್ತ) {
 			/* error message is printed by fopen_or_warn_stdin */
 			retval = EXIT_FAILURE;
-			continue;
+			ಅನುವರ್ತ;
 		}
 
 		errno = i = 0;
-		do {
+		ಕುರು {
 			ch = fgetc(f);
-			if (ch != EOF) {
-				if (!(i & 0x7f))
+			ಯದಿ (ch != EOF) {
+				ಯದಿ (!(i & 0x7f))
 					/* Grow on every 128th char */
-					line = xrealloc(line, i + 0x7f + sizeof(int) + 1);
-				line->buf[i++] = ch;
+					ಸಾಲು = xrealloc(ಸಾಲು, i + 0x7f + ಪರಿಮಾಣ(ಪೂರ್ಣಾಙ್ಕ) + 1);
+				ಸಾಲು->buf[i++] = ch;
 			}
-			if (ch == '\n' || (ch == EOF && i != 0)) {
-				line = xrealloc(line, i + sizeof(int));
-				line->size = i;
-				llist_add_to(&list, line);
-				line = NULL;
+			ಯದಿ (ch == '\n' || (ch == EOF && i != 0)) {
+				ಸಾಲು = xrealloc(ಸಾಲು, i + ಪರಿಮಾಣ(ಪೂರ್ಣಾಙ್ಕ));
+				ಸಾಲು->size = i;
+				llist_add_to(&list, ಸಾಲು);
+				ಸಾಲು = ರಿಕ್ತ;
 				i = 0;
 			}
-		} while (ch != EOF);
+		} ಯಾವತ್ (ch != EOF);
 		/* fgetc sets errno to ENOENT on EOF, we don't want
 		 * to warn on this non-error! */
-		if (errno && errno != ENOENT) {
-			bb_simple_perror_msg(*name);
+		ಯದಿ (errno && errno != ENOENT) {
+			bb_simple_perror_ಸಂದೇಶ(*name);
 			retval = EXIT_FAILURE;
 		}
-	} while (name != argv);
+	} ಯಾವತ್ (name != argv);
 
-	while (list) {
-		line = (struct lstring *)list->data;
-		xwrite(STDOUT_FILENO, line->buf, line->size);
-		if (ENABLE_FEATURE_CLEAN_UP) {
-			free(llist_pop(&list));
-		} else {
+	ಯಾವತ್ (list) {
+		ಸಾಲು = (ಸಂರಚನಾ lstring *)list->data;
+		xwrite(STDOUT_FILENO, ಸಾಲು->buf, ಸಾಲು->size);
+		ಯದಿ (ENABLE_FEATURE_CLEAN_UP) {
+			ಮುಕ್ತ(llist_ತೆಗೆ(&list));
+		} ಅನ್ಯಥಾ {
 			list = list->link;
 		}
 	}
 
-	return retval;
+	ಪ್ರತ್ಯಾಗಮ retval;
 }

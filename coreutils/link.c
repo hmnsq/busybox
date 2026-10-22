@@ -20,20 +20,20 @@
 //usage:#define link_full_usage "\n\n"
 //usage:       "Create hard LINK to FILE"
 
-#include "libbb.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
 
 /* This is a NOFORK applet. Be very careful! */
 
-int link_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int link_main(int argc UNUSED_PARAM, char **argv)
+ಪೂರ್ಣಾಙ್ಕ link_main(ಪೂರ್ಣಾಙ್ಕ argc, ವರ್ಣ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಙ್ಕ link_main(ಪೂರ್ಣಾಙ್ಕ argc UNUSED_PARAM, ವರ್ಣ **argv)
 {
 	getopt32(argv, "^" "" "\0" "=2");
 	argv += optind;
-	if (link(argv[0], argv[1]) != 0) {
+	ಯದಿ (link(argv[0], argv[1]) != 0) {
 		/* shared message */
-		bb_perror_msg_and_die("can't create %slink '%s' to '%s'",
+		bb_perror_ಸಂದೇಶ_and_die("can't create %slink '%s' to '%s'",
 			"hard",	argv[1], argv[0]
 		);
 	}
-	return EXIT_SUCCESS;
+	ಪ್ರತ್ಯಾಗಮ EXIT_SUCCESS;
 }

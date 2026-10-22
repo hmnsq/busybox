@@ -47,226 +47,226 @@
 //usage:       "root:x:0:0:root:/root:/bin/bash\n"
 //usage:       "daemon:x:1:1:daemon:/usr/sbin:/bin/sh\n"
 
-#include "libbb.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-#if !ENABLE_FEATURE_FANCY_HEAD
-# define print_first_N(fp,count,bytes) print_first_N(fp,count)
+#ಯದಿ !ENABLE_FEATURE_FANCY_HEAD
+# define print_first_N(fp,ಎಣಿಕೆ,bytes) print_first_N(fp,ಎಣಿಕೆ)
 #endif
-static void
-print_first_N(FILE *fp, unsigned long count, bool count_bytes)
+ಸ್ಥಿರ ಶೂನ್ಯ
+print_first_N(FILE *fp, unsigned long ಎಣಿಕೆ, bool ಎಣಿಕೆ_bytes)
 {
-#if !ENABLE_FEATURE_FANCY_HEAD
-	const int count_bytes = 0;
+#ಯದಿ !ENABLE_FEATURE_FANCY_HEAD
+	ಧ್ರುವ ಪೂರ್ಣಾಙ್ಕ ಎಣಿಕೆ_bytes = 0;
 #endif
-	while (count) {
-		int c = getc(fp);
-		if (c == EOF)
-			break;
-		if (count_bytes || (c == '\n'))
-			--count;
+	ಯಾವತ್ (ಎಣಿಕೆ) {
+		ಪೂರ್ಣಾಙ್ಕ c = getc(fp);
+		ಯದಿ (c == EOF)
+			ಭಙ್ಗ;
+		ಯದಿ (ಎಣಿಕೆ_bytes || (c == '\n'))
+			--ಎಣಿಕೆ;
 		putchar(c);
 	}
 }
 
-#if ENABLE_FEATURE_FANCY_HEAD
-static void
-print_except_N_last_bytes(FILE *fp, unsigned count)
+#ಯದಿ ENABLE_FEATURE_FANCY_HEAD
+ಸ್ಥಿರ ಶೂನ್ಯ
+print_except_N_last_bytes(FILE *fp, unsigned ಎಣಿಕೆ)
 {
-	unsigned char *circle = xmalloc(++count);
+	unsigned ವರ್ಣ *circle = xmalloc(++ಎಣಿಕೆ);
 	unsigned head = 0;
-	for (;;) {
-		int c;
+	ಪ್ರತಿ (;;) {
+		ಪೂರ್ಣಾಙ್ಕ c;
 		c = getc(fp);
-		if (c == EOF)
-			goto ret;
+		ಯದಿ (c == EOF)
+			ಗಚ್ಛ ret;
 		circle[head++] = c;
-		if (head == count)
-			break;
+		ಯದಿ (head == ಎಣಿಕೆ)
+			ಭಙ್ಗ;
 	}
-	for (;;) {
-		int c;
-		if (head == count)
+	ಪ್ರತಿ (;;) {
+		ಪೂರ್ಣಾಙ್ಕ c;
+		ಯದಿ (head == ಎಣಿಕೆ)
 			head = 0;
 		putchar(circle[head]);
 		c = getc(fp);
-		if (c == EOF)
-			goto ret;
+		ಯದಿ (c == EOF)
+			ಗಚ್ಛ ret;
 		circle[head] = c;
 		head++;
 	}
  ret:
-	free(circle);
+	ಮುಕ್ತ(circle);
 }
 
-static void
-print_except_N_last_lines(FILE *fp, unsigned count)
+ಸ್ಥಿರ ಶೂನ್ಯ
+print_except_N_last_ಸಾಲುಗಳು(FILE *fp, unsigned ಎಣಿಕೆ)
 {
-	char **circle = xzalloc((++count) * sizeof(circle[0]));
+	ವರ್ಣ **circle = xzalloc((++ಎಣಿಕೆ) * ಪರಿಮಾಣ(circle[0]));
 	unsigned head = 0;
-	for (;;) {
-		char *c;
+	ಪ್ರತಿ (;;) {
+		ವರ್ಣ *c;
 		c = xmalloc_fgets(fp);
-		if (!c)
-			goto ret;
+		ಯದಿ (!c)
+			ಗಚ್ಛ ret;
 		circle[head++] = c;
-		if (head == count)
-			break;
+		ಯದಿ (head == ಎಣಿಕೆ)
+			ಭಙ್ಗ;
 	}
-	for (;;) {
-		char *c;
-		if (head == count)
+	ಪ್ರತಿ (;;) {
+		ವರ್ಣ *c;
+		ಯದಿ (head == ಎಣಿಕೆ)
 			head = 0;
 		fputs_stdout(circle[head]);
 		c = xmalloc_fgets(fp);
-		if (!c)
-			goto ret;
-		free(circle[head]);
+		ಯದಿ (!c)
+			ಗಚ್ಛ ret;
+		ಮುಕ್ತ(circle[head]);
 		circle[head++] = c;
 	}
  ret:
 	head = 0;
-	for (;;) {
-		free(circle[head++]);
-		if (head == count)
-			break;
+	ಪ್ರತಿ (;;) {
+		ಮುಕ್ತ(circle[head++]);
+		ಯದಿ (head == ಎಣಿಕೆ)
+			ಭಙ್ಗ;
 	}
-	free(circle);
+	ಮುಕ್ತ(circle);
 }
-#else
+#ಅನ್ಯಥಾ
 /* Must never be called */
-void print_except_N_last_bytes(FILE *fp, unsigned count);
-void print_except_N_last_lines(FILE *fp, unsigned count);
+ಶೂನ್ಯ print_except_N_last_bytes(FILE *fp, unsigned ಎಣಿಕೆ);
+ಶೂನ್ಯ print_except_N_last_ಸಾಲುಗಳು(FILE *fp, unsigned ಎಣಿಕೆ);
 #endif
 
-#if !ENABLE_FEATURE_FANCY_HEAD
-# define eat_num(negative_N,p) eat_num(p)
+#ಯದಿ !ENABLE_FEATURE_FANCY_HEAD
+# define eat_ಅಂಕೆ(negative_N,p) eat_ಅಂಕೆ(p)
 #endif
-static unsigned long
-eat_num(bool *negative_N, const char *p)
+ಸ್ಥಿರ unsigned long
+eat_ಅಂಕೆ(bool *negative_N, ಧ್ರುವ ವರ್ಣ *p)
 {
-#if ENABLE_FEATURE_FANCY_HEAD
-	if (*p == '-') {
+#ಯದಿ ENABLE_FEATURE_FANCY_HEAD
+	ಯದಿ (*p == '-') {
 		*negative_N = 1;
 		p++;
 	}
 #endif
-	return xatoul_sfx(p, bkm_suffixes);
+	ಪ್ರತ್ಯಾಗಮ xatoul_sfx(p, bkm_suffixes);
 }
 
-static const char head_opts[] ALIGN1 =
+ಸ್ಥಿರ ಧ್ರುವ ವರ್ಣ head_opts[] ALIGN1 =
 	"n:"
-#if ENABLE_FEATURE_FANCY_HEAD
+#ಯದಿ ENABLE_FEATURE_FANCY_HEAD
 	"c:qv"
 #endif
 	;
 
 #define header_fmt_str "\n==> %s <==\n"
 
-int head_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int head_main(int argc, char **argv)
+ಪೂರ್ಣಾಙ್ಕ head_main(ಪೂರ್ಣಾಙ್ಕ argc, ವರ್ಣ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಙ್ಕ head_main(ಪೂರ್ಣಾಙ್ಕ argc, ವರ್ಣ **argv)
 {
-	unsigned long count = 10;
-#if ENABLE_FEATURE_FANCY_HEAD
-	int header_threshhold = 1;
-	bool count_bytes = 0;
+	unsigned long ಎಣಿಕೆ = 10;
+#ಯದಿ ENABLE_FEATURE_FANCY_HEAD
+	ಪೂರ್ಣಾಙ್ಕ header_threshhold = 1;
+	bool ಎಣಿಕೆ_bytes = 0;
 	bool negative_N = 0;
-#else
+#ಅನ್ಯಥಾ
 # define header_threshhold 1
-# define count_bytes       0
+# define ಎಣಿಕೆ_bytes       0
 # define negative_N        0
 #endif
 	FILE *fp;
-	const char *fmt;
-	char *p;
-	int opt;
-	int retval = EXIT_SUCCESS;
+	ಧ್ರುವ ವರ್ಣ *fmt;
+	ವರ್ಣ *p;
+	ಪೂರ್ಣಾಙ್ಕ opt;
+	ಪೂರ್ಣಾಙ್ಕ retval = EXIT_SUCCESS;
 
-#if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
+#ಯದಿ ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
 	/* Allow legacy syntax of an initial numeric option without -n. */
-	if (argv[1] && argv[1][0] == '-'
+	ಯದಿ (argv[1] && argv[1][0] == '-'
 	 && isdigit(argv[1][1])
 	) {
 		--argc;
 		++argv;
 		p = argv[0] + 1;
-		goto GET_COUNT;
+		ಗಚ್ಛ GET_ಎಣಿಕೆ;
 	}
 #endif
 
 	/* No size benefit in converting this to getopt32 */
-	while ((opt = getopt(argc, argv, head_opts)) > 0) {
-		switch (opt) {
-#if ENABLE_FEATURE_FANCY_HEAD
-		case 'q':
+	ಯಾವತ್ ((opt = getopt(argc, argv, head_opts)) > 0) {
+		ವಿಕಲ್ಪ (opt) {
+#ಯದಿ ENABLE_FEATURE_FANCY_HEAD
+		ಪಕ್ಷ 'q':
 			header_threshhold = INT_MAX;
-			break;
-		case 'v':
+			ಭಙ್ಗ;
+		ಪಕ್ಷ 'v':
 			header_threshhold = -1;
-			break;
-		case 'c':
-			count_bytes = 1;
+			ಭಙ್ಗ;
+		ಪಕ್ಷ 'c':
+			ಎಣಿಕೆ_bytes = 1;
 			/* fall through */
 #endif
-		case 'n':
+		ಪಕ್ಷ 'n':
 			p = optarg;
-#if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
- GET_COUNT:
+#ಯದಿ ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
+ GET_ಎಣಿಕೆ:
 #endif
-			count = eat_num(&negative_N, p);
-			break;
-		default:
+			ಎಣಿಕೆ = eat_ಅಂಕೆ(&negative_N, p);
+			ಭಙ್ಗ;
+		ಸ್ವಭಾವ:
 			bb_show_usage();
 		}
 	}
 
 	argc -= optind;
 	argv += optind;
-	if (!*argv)
-		*--argv = (char*)"-";
+	ಯದಿ (!*argv)
+		*--argv = (ವರ್ಣ*)"-";
 
 	fmt = header_fmt_str + 1;
-	if (argc <= header_threshhold) {
-#if ENABLE_FEATURE_FANCY_HEAD
+	ಯದಿ (argc <= header_threshhold) {
+#ಯದಿ ENABLE_FEATURE_FANCY_HEAD
 		header_threshhold = 0;
-#else
+#ಅನ್ಯಥಾ
 		fmt += 11; /* "" */
 #endif
 	}
-	if (negative_N) {
-		if (count >= INT_MAX / sizeof(char*))
-			bb_error_msg("count is too big: %lu", count);
+	ಯದಿ (negative_N) {
+		ಯದಿ (ಎಣಿಕೆ >= INT_MAX / ಪರಿಮಾಣ(ವರ್ಣ*))
+			bb_error_ಸಂದೇಶ("count is too big: %lu", ಎಣಿಕೆ);
 	}
 
-	do {
+	ಕುರು {
 		fp = fopen_or_warn_stdin(*argv);
-		if (fp) {
-			if (fp == stdin) {
-				*argv = (char *) bb_msg_standard_input;
+		ಯದಿ (fp) {
+			ಯದಿ (fp == stdin) {
+				*argv = (ವರ್ಣ *) bb_ಸಂದೇಶ_standard_ಒಳಹರಿವು;
 			}
-			if (header_threshhold) {
+			ಯದಿ (header_threshhold) {
 				printf(fmt, *argv);
 			}
-			if (negative_N) {
-				if (count_bytes) {
-					print_except_N_last_bytes(fp, count);
-				} else {
-					print_except_N_last_lines(fp, count);
+			ಯದಿ (negative_N) {
+				ಯದಿ (ಎಣಿಕೆ_bytes) {
+					print_except_N_last_bytes(fp, ಎಣಿಕೆ);
+				} ಅನ್ಯಥಾ {
+					print_except_N_last_ಸಾಲುಗಳು(fp, ಎಣಿಕೆ);
 				}
-			} else {
-				print_first_N(fp, count, count_bytes);
+			} ಅನ್ಯಥಾ {
+				print_first_N(fp, ಎಣಿಕೆ, ಎಣಿಕೆ_bytes);
 			}
 			die_if_ferror_stdout();
-			if (fclose_if_not_stdin(fp)) {
-				bb_simple_perror_msg(*argv);
+			ಯದಿ (fclose_if_not_stdin(fp)) {
+				bb_simple_perror_ಸಂದೇಶ(*argv);
 				retval = EXIT_FAILURE;
 			}
-		} else {
+		} ಅನ್ಯಥಾ {
 			retval = EXIT_FAILURE;
 		}
 		fmt = header_fmt_str;
-	} while (*++argv);
+	} ಯಾವತ್ (*++argv);
 
 	fflush_stdout_and_exit(retval);
 }

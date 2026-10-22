@@ -26,7 +26,7 @@
 //usage:     "\n	-e	Treat ARGs as lines"
 //usage:     "\n	-i L-H	Treat numbers L-H as lines"
 
-#include "libbb.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
@@ -42,15 +42,15 @@
  * If the required number of output lines is less than the total
  * we can stop shuffling early.
  */
-static void shuffle_lines(char **lines, unsigned numlines, unsigned outlines)
+ಸ್ಥಿರ ಶೂನ್ಯ shuffle_ಸಾಲುಗಳು(ವರ್ಣ **ಸಾಲುಗಳು, unsigned numlines, unsigned outlines)
 {
 	srand(monotonic_us());
 
-	while (outlines != 0) {
-		char *tmp;
+	ಯಾವತ್ (outlines != 0) {
+		ವರ್ಣ *tmp;
 		unsigned r = rand();
 		/* RAND_MAX can be as small as 32767 */
-		if (numlines > RAND_MAX)
+		ಯದಿ (numlines > RAND_MAX)
 			r ^= rand() << 15;
 		r %= numlines;
 //TODO: the above method is seriously non-uniform when numlines is very large.
@@ -59,9 +59,9 @@ static void shuffle_lines(char **lines, unsigned numlines, unsigned outlines)
 //are more likely: e.g. r=1 and r=0xf0000001 both map to 1,
 //whereas only one value, r=0xefffffff, maps to 0xefffffff.
 		numlines--;
-		tmp = lines[numlines];
-		lines[numlines] = lines[r];
-		lines[r] = tmp;
+		tmp = ಸಾಲುಗಳು[numlines];
+		ಸಾಲುಗಳು[numlines] = ಸಾಲುಗಳು[r];
+		ಸಾಲುಗಳು[r] = tmp;
 		outlines--;
 	}
 }
@@ -72,20 +72,20 @@ static void shuffle_lines(char **lines, unsigned numlines, unsigned outlines)
  */
 #define COMMON_PREFIX_HACK 0
 
-int shuf_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int shuf_main(int argc, char **argv)
+ಪೂರ್ಣಾಙ್ಕ shuf_main(ಪೂರ್ಣಾಙ್ಕ argc, ವರ್ಣ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಙ್ಕ shuf_main(ಪೂರ್ಣಾಙ್ಕ argc, ವರ್ಣ **argv)
 {
 	unsigned opts;
-	char *opt_i_str, *opt_n_str, *opt_o_str;
-	char **lines;
+	ವರ್ಣ *opt_i_str, *opt_n_str, *opt_o_str;
+	ವರ್ಣ **ಸಾಲುಗಳು;
 	unsigned long long lo = lo;
 	unsigned numlines, outlines;
 	unsigned i;
-	char eol;
-#if COMMON_PREFIX_HACK
+	ವರ್ಣ eol;
+#ಯದಿ COMMON_PREFIX_HACK
 	unsigned pfx_len = 0;
 	unsigned padding_width = padding_width;
-	const char *pfx = pfx;
+	ಧ್ರುವ ವರ್ಣ *pfx = pfx;
 #endif
 
 	opts = getopt32(argv, "^"
@@ -98,37 +98,37 @@ int shuf_main(int argc, char **argv)
 	argv += optind;
 
 	/* Prepare lines for shuffling - either: */
-	if (opts & OPT_e) {
+	ಯದಿ (opts & OPT_e) {
 		/* make lines from command-line arguments */
 		numlines = argc;
-		lines = argv;
-	} else
-	if (opts & OPT_i) {
+		ಸಾಲುಗಳು = argv;
+	} ಅನ್ಯಥಾ
+	ಯದಿ (opts & OPT_i) {
 		/* create a range of numbers */
 		unsigned long long hi;
-		char *dash;
+		ವರ್ಣ *dash;
 
-		if (argv[0])
+		ಯದಿ (argv[0])
 			bb_show_usage();
 
 		dash = strchr(opt_i_str, '-');
-		if (!dash) {
-			bb_error_msg_and_die("bad range '%s'", opt_i_str);
+		ಯದಿ (!dash) {
+			bb_error_ಸಂದೇಶ_and_die("bad range '%s'", opt_i_str);
 		}
 		*dash++ = '\0';
-#if COMMON_PREFIX_HACK
+#ಯದಿ COMMON_PREFIX_HACK
 		{
-			const char *a = opt_i_str;
-			const char *b = dash;
+			ಧ್ರುವ ವರ್ಣ *a = opt_i_str;
+			ಧ್ರುವ ವರ್ಣ *b = dash;
 			/* Skip leading zeros (they may mask that common prefix does exist) */
-			while (*a == '0') a++;
-			while (*b == '0') b++;
+			ಯಾವತ್ (*a == '0') a++;
+			ಯಾವತ್ (*b == '0') b++;
 			/* Do we have a common prefix (long enough to bother)? */
 			padding_width = strlen(a);
-			if (padding_width > 5 && padding_width == strlen(b)) {
+			ಯದಿ (padding_width > 5 && padding_width == strlen(b)) {
 				/* How long is it? */
 				pfx = a;
-				while (isdigit(*a) && *a == *b
+				ಯಾವತ್ (isdigit(*a) && *a == *b
 				 && a[1] /* "111111-111111" case: avoid xatoull("") */
 				) {
 					a++;
@@ -136,7 +136,7 @@ int shuf_main(int argc, char **argv)
 				}
 				pfx_len = a - pfx; /* can end up being 0 */
 				padding_width -= pfx_len;
-			} else {
+			} ಅನ್ಯಥಾ {
 				/* Undo leading zero 'eating' (think "0-9") */
 				a = opt_i_str;
 				b = dash;
@@ -144,77 +144,77 @@ int shuf_main(int argc, char **argv)
 			lo = xatoull(a);
 			hi = xatoull(b);
 		}
-#else
+#ಅನ್ಯಥಾ
 		lo = xatoull(opt_i_str);
 		hi = xatoull(dash);
 #endif
 		dash[-1] = '-';
-		if (hi < lo)
-			bb_error_msg_and_die("bad range '%s'", opt_i_str);
+		ಯದಿ (hi < lo)
+			bb_error_ಸಂದೇಶ_and_die("bad range '%s'", opt_i_str);
 		hi -= lo;
-		if (sizeof(size_t) > sizeof(numlines)) {
-			if (hi >= UINT_MAX)
-				bb_error_msg_and_die("bad range '%s'", opt_i_str);
-		} else {
-			if (hi >= UINT_MAX / sizeof(lines[0]))
-				bb_error_msg_and_die("bad range '%s'", opt_i_str);
+		ಯದಿ (ಪರಿಮಾಣ(size_t) > ಪರಿಮಾಣ(numlines)) {
+			ಯದಿ (hi >= UINT_MAX)
+				bb_error_ಸಂದೇಶ_and_die("bad range '%s'", opt_i_str);
+		} ಅನ್ಯಥಾ {
+			ಯದಿ (hi >= UINT_MAX / ಪರಿಮಾಣ(ಸಾಲುಗಳು[0]))
+				bb_error_ಸಂದೇಶ_and_die("bad range '%s'", opt_i_str);
 		}
 
 		numlines = hi + 1;
-		lines = xmalloc((size_t)numlines * sizeof(lines[0]));
-		for (i = 0; i < numlines; i++) {
-			lines[i] = (char*)(uintptr_t)i;
+		ಸಾಲುಗಳು = xmalloc((size_t)numlines * ಪರಿಮಾಣ(ಸಾಲುಗಳು[0]));
+		ಪ್ರತಿ (i = 0; i < numlines; i++) {
+			ಸಾಲುಗಳು[i] = (ವರ್ಣ*)(uintptr_t)i;
 		}
-	} else {
+	} ಅನ್ಯಥಾ {
 		/* default - read lines from stdin or the input file */
 		FILE *fp;
-		const char *fname = "-";
+		ಧ್ರುವ ವರ್ಣ *fname = "-";
 
-		if (argv[0]) {
-			if (argv[1])
+		ಯದಿ (argv[0]) {
+			ಯದಿ (argv[1])
 				bb_show_usage();
 			fname = argv[0];
 		}
 
 		fp = xfopen_stdin(fname);
-		lines = NULL;
+		ಸಾಲುಗಳು = ರಿಕ್ತ;
 		numlines = 0;
-		for (;;) {
-			char *line = xmalloc_fgetline(fp);
-			if (!line)
-				break;
-			lines = xrealloc_vector(lines, 6, numlines);
-			lines[numlines++] = line;
+		ಪ್ರತಿ (;;) {
+			ವರ್ಣ *ಸಾಲು = xmalloc_fgetline(fp);
+			ಯದಿ (!ಸಾಲು)
+				ಭಙ್ಗ;
+			ಸಾಲುಗಳು = xrealloc_vector(ಸಾಲುಗಳು, 6, numlines);
+			ಸಾಲುಗಳು[numlines++] = ಸಾಲು;
 		}
 		fclose_if_not_stdin(fp);
 	}
 
 	outlines = numlines;
-	if (opts & OPT_n) {
+	ಯದಿ (opts & OPT_n) {
 		outlines = xatou(opt_n_str);
-		if (outlines > numlines)
+		ಯದಿ (outlines > numlines)
 			outlines = numlines;
 	}
 
-	shuffle_lines(lines, numlines, outlines);
+	shuffle_ಸಾಲುಗಳು(ಸಾಲುಗಳು, numlines, outlines);
 
-	if (opts & OPT_o)
+	ಯದಿ (opts & OPT_o)
 		xmove_fd(xopen(opt_o_str, O_WRONLY|O_CREAT|O_TRUNC), STDOUT_FILENO);
 
 	eol = '\n';
-	if (opts & OPT_z)
+	ಯದಿ (opts & OPT_z)
 		eol = '\0';
 
-	for (i = numlines - outlines; i < numlines; i++) {
-		if (opts & OPT_i) {
-#if COMMON_PREFIX_HACK
-			if (pfx_len != 0)
-				printf("%.*s%0*llu%c", pfx_len, pfx, padding_width, lo + (uintptr_t)lines[i], eol);
-			else
+	ಪ್ರತಿ (i = numlines - outlines; i < numlines; i++) {
+		ಯದಿ (opts & OPT_i) {
+#ಯದಿ COMMON_PREFIX_HACK
+			ಯದಿ (pfx_len != 0)
+				printf("%.*s%0*llu%c", pfx_len, pfx, padding_width, lo + (uintptr_t)ಸಾಲುಗಳು[i], eol);
+			ಅನ್ಯಥಾ
 #endif
-				printf("%llu%c", lo + (uintptr_t)lines[i], eol);
-		} else
-			printf("%s%c", lines[i], eol);
+				printf("%llu%c", lo + (uintptr_t)ಸಾಲುಗಳು[i], eol);
+		} ಅನ್ಯಥಾ
+			printf("%s%c", ಸಾಲುಗಳು[i], eol);
 	}
 
 	fflush_stdout_and_exit_SUCCESS();

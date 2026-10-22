@@ -27,12 +27,12 @@
 //usage:       "$ echo $?\n"
 //usage:       "0\n"
 
-#include "libbb.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
 
 /* This is a NOFORK applet. Be very careful! */
 
-int true_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int true_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+ಪೂರ್ಣಾಙ್ಕ true_main(ಪೂರ್ಣಾಙ್ಕ argc, ವರ್ಣ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಙ್ಕ true_main(ಪೂರ್ಣಾಙ್ಕ argc UNUSED_PARAM, ವರ್ಣ **argv UNUSED_PARAM)
 {
-	return EXIT_SUCCESS;
+	ಪ್ರತ್ಯಾಗಮ EXIT_SUCCESS;
 }

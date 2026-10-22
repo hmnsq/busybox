@@ -59,7 +59,7 @@
 //usage:       "$ printf \"Val=%d\\n\" 5\n"
 //usage:       "Val=5\n"
 
-#include "libbb.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
 
 /* A note on bad input: neither bash 3.2 nor coreutils 6.10 stop on it.
  * They report it:
@@ -77,102 +77,102 @@
  * We try to be compatible.
  */
 
-typedef void FAST_FUNC (*converter)(const char *arg, void *result);
+ಪ್ರಕಾರನಿರ್ದೇಶ ಶೂನ್ಯ FAST_FUNC (*converter)(ಧ್ರುವ ವರ್ಣ *arg, ಶೂನ್ಯ *result);
 
-static int multiconvert(const char *arg, void *result, converter convert)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ multiconvert(ಧ್ರುವ ವರ್ಣ *arg, ಶೂನ್ಯ *result, converter convert)
 {
-	if (*arg == '"' || *arg == '\'') {
-		arg = utoa((unsigned char)arg[1]);
+	ಯದಿ (*arg == '"' || *arg == '\'') {
+		arg = utoa((unsigned ವರ್ಣ)arg[1]);
 	}
 	errno = 0;
 	convert(arg, result);
-	if (errno) {
-		bb_error_msg("invalid number '%s'", arg);
-		return 1;
+	ಯದಿ (errno) {
+		bb_error_ಸಂದೇಶ("invalid number '%s'", arg);
+		ಪ್ರತ್ಯಾಗಮ 1;
 	}
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-static void FAST_FUNC conv_strtoull(const char *arg, void *result)
+ಸ್ಥಿರ ಶೂನ್ಯ FAST_FUNC conv_strtoull(ಧ್ರುವ ವರ್ಣ *arg, ಶೂನ್ಯ *result)
 {
 	/* Allow leading '+' - bb_strtoull() by itself does not allow it,
 	 * and probably shouldn't (other callers might require purely numeric
 	 * inputs to be allowed.
 	 */
-	if (arg[0] == '+')
+	ಯದಿ (arg[0] == '+')
 		arg++;
-	*(unsigned long long*)result = bb_strtoull(arg, NULL, 0);
+	*(unsigned long long*)result = bb_strtoull(arg, ರಿಕ್ತ, 0);
 	/* both coreutils 6.10 and bash 3.2:
 	 * $ printf '%x\n' -2
 	 * fffffffffffffffe
 	 * Mimic that:
 	 */
-	if (errno) {
-		*(unsigned long long*)result = bb_strtoll(arg, NULL, 0);
+	ಯದಿ (errno) {
+		*(unsigned long long*)result = bb_strtoll(arg, ರಿಕ್ತ, 0);
 	}
 }
-static void FAST_FUNC conv_strtoll(const char *arg, void *result)
+ಸ್ಥಿರ ಶೂನ್ಯ FAST_FUNC conv_strtoll(ಧ್ರುವ ವರ್ಣ *arg, ಶೂನ್ಯ *result)
 {
-	if (arg[0] == '+')
+	ಯದಿ (arg[0] == '+')
 		arg++;
-	*(long long*)result = bb_strtoll(arg, NULL, 0);
+	*(long long*)result = bb_strtoll(arg, ರಿಕ್ತ, 0);
 }
-static void FAST_FUNC conv_strtod(const char *arg, void *result)
+ಸ್ಥಿರ ಶೂನ್ಯ FAST_FUNC conv_strtod(ಧ್ರುವ ವರ್ಣ *arg, ಶೂನ್ಯ *result)
 {
-	char *end;
+	ವರ್ಣ *end;
 	/* Well, this one allows leading whitespace... so what? */
 	/* What I like much less is that "-" accepted too! :( */
 //TODO: needs setlocale(LC_NUMERIC, "C")?
-	*(double*)result = strtod(arg, &end);
-	if (end[0]) {
+	*(ದ್ವಿಗುಣ*)result = strtod(arg, &end);
+	ಯದಿ (end[0]) {
 		errno = ERANGE;
-		*(double*)result = 0;
+		*(ದ್ವಿಗುಣ*)result = 0;
 	}
 }
 
 /* Callers should check errno to detect errors */
-static unsigned long long my_xstrtoull(const char *arg)
+ಸ್ಥಿರ unsigned long long my_xstrtoull(ಧ್ರುವ ವರ್ಣ *arg)
 {
 	unsigned long long result;
-	if (multiconvert(arg, &result, conv_strtoull))
+	ಯದಿ (multiconvert(arg, &result, conv_strtoull))
 		result = 0;
-	return result;
+	ಪ್ರತ್ಯಾಗಮ result;
 }
-static long long my_xstrtoll(const char *arg)
+ಸ್ಥಿರ long long my_xstrtoll(ಧ್ರುವ ವರ್ಣ *arg)
 {
 	long long result;
-	if (multiconvert(arg, &result, conv_strtoll))
+	ಯದಿ (multiconvert(arg, &result, conv_strtoll))
 		result = 0;
-	return result;
+	ಪ್ರತ್ಯಾಗಮ result;
 }
-static double my_xstrtod(const char *arg)
+ಸ್ಥಿರ ದ್ವಿಗುಣ my_xstrtod(ಧ್ರುವ ವರ್ಣ *arg)
 {
-	double result;
+	ದ್ವಿಗುಣ result;
 	multiconvert(arg, &result, conv_strtod);
-	return result;
+	ಪ್ರತ್ಯಾಗಮ result;
 }
 
 /* Handles %b; return 1 if output is to be short-circuited by \c */
-static int print_esc_string(const char *str)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ print_esc_string(ಧ್ರುವ ವರ್ಣ *str)
 {
-	char c;
-	while ((c = *str) != '\0') {
+	ವರ್ಣ c;
+	ಯಾವತ್ ((c = *str) != '\0') {
 		str++;
-		if (c == '\\') {
+		ಯದಿ (c == '\\') {
 			/* %b also accepts 4-digit octals of the form \0### */
-			if (*str == '0') {
-				if ((unsigned char)(str[1] - '0') < 8) {
+			ಯದಿ (*str == '0') {
+				ಯದಿ ((unsigned ವರ್ಣ)(str[1] - '0') < 8) {
 					/* 2nd char is 0..7: skip leading '0' */
 					str++;
 				}
 			}
-			else if (*str == 'c') {
-				return 1;
+			ಅನ್ಯಥಾ ಯದಿ (*str == 'c') {
+				ಪ್ರತ್ಯಾಗಮ 1;
 			}
 			{
 				/* optimization: don't force arg to be on-stack,
 				 * use another variable for that. */
-				const char *z = str;
+				ಧ್ರುವ ವರ್ಣ *z = str;
 				c = bb_process_escape_sequence(&z);
 				str = z;
 			}
@@ -180,164 +180,164 @@ static int print_esc_string(const char *str)
 		putchar(c);
 	}
 
-	return 0;
+	ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-static void print_direc(char *format, unsigned fmt_length,
-		int field_width, int precision,
-		const char *argument)
+ಸ್ಥಿರ ಶೂನ್ಯ print_direc(ವರ್ಣ *format, unsigned fmt_length,
+		ಪೂರ್ಣಾಙ್ಕ field_width, ಪೂರ್ಣಾಙ್ಕ precision,
+		ಧ್ರುವ ವರ್ಣ *argument)
 {
 	long long llv;
-	double dv;
-	char saved;
-	char *have_prec, *have_width;
+	ದ್ವಿಗುಣ dv;
+	ವರ್ಣ saved;
+	ವರ್ಣ *have_prec, *have_width;
 
 	saved = format[fmt_length];
 	format[fmt_length] = '\0';
 
 	have_prec = strstr(format, ".*");
 	have_width = strchr(format, '*');
-	if (have_width - 1 == have_prec)
-		have_width = NULL;
+	ಯದಿ (have_width - 1 == have_prec)
+		have_width = ರಿಕ್ತ;
 
 	/* multiconvert sets errno = 0, but %s needs it cleared */
 	errno = 0;
 
-	switch (format[fmt_length - 1]) {
-	case 'c':
+	ವಿಕಲ್ಪ (format[fmt_length - 1]) {
+	ಪಕ್ಷ 'c':
 		printf(format, *argument);
-		break;
-	case 'd':
-	case 'i':
+		ಭಙ್ಗ;
+	ಪಕ್ಷ 'd':
+	ಪಕ್ಷ 'i':
 		llv = my_xstrtoll(skip_whitespace(argument));
  print_long:
-		if (!have_width) {
-			if (!have_prec)
+		ಯದಿ (!have_width) {
+			ಯದಿ (!have_prec)
 				printf(format, llv);
-			else
+			ಅನ್ಯಥಾ
 				printf(format, precision, llv);
-		} else {
-			if (!have_prec)
+		} ಅನ್ಯಥಾ {
+			ಯದಿ (!have_prec)
 				printf(format, field_width, llv);
-			else
+			ಅನ್ಯಥಾ
 				printf(format, field_width, precision, llv);
 		}
-		break;
-	case 'o':
-	case 'u':
-	case 'x':
-	case 'X':
+		ಭಙ್ಗ;
+	ಪಕ್ಷ 'o':
+	ಪಕ್ಷ 'u':
+	ಪಕ್ಷ 'x':
+	ಪಕ್ಷ 'X':
 		llv = my_xstrtoull(skip_whitespace(argument));
 		/* cheat: unsigned long and long have same width, so... */
-		goto print_long;
-	case 's':
+		ಗಚ್ಛ print_long;
+	ಪಕ್ಷ 's':
 		/* Are char* and long long the same? */
-		if (sizeof(argument) == sizeof(llv)) {
+		ಯದಿ (ಪರಿಮಾಣ(argument) == ಪರಿಮಾಣ(llv)) {
 			llv = (long long)(ptrdiff_t)argument;
-			goto print_long;
-		} else {
+			ಗಚ್ಛ print_long;
+		} ಅನ್ಯಥಾ {
 			/* Hope compiler will optimize it out by moving call
 			 * instruction after the ifs... */
-			if (!have_width) {
-				if (!have_prec)
+			ಯದಿ (!have_width) {
+				ಯದಿ (!have_prec)
 					printf(format, argument, /*unused:*/ argument, argument);
-				else
+				ಅನ್ಯಥಾ
 					printf(format, precision, argument, /*unused:*/ argument);
-			} else {
-				if (!have_prec)
+			} ಅನ್ಯಥಾ {
+				ಯದಿ (!have_prec)
 					printf(format, field_width, argument, /*unused:*/ argument);
-				else
+				ಅನ್ಯಥಾ
 					printf(format, field_width, precision, argument);
 			}
-			break;
+			ಭಙ್ಗ;
 		}
-	case 'f':
-	case 'e':
-	case 'E':
-	case 'g':
-	case 'G':
+	ಪಕ್ಷ 'f':
+	ಪಕ್ಷ 'e':
+	ಪಕ್ಷ 'E':
+	ಪಕ್ಷ 'g':
+	ಪಕ್ಷ 'G':
 		dv = my_xstrtod(argument);
-		if (!have_width) {
-			if (!have_prec)
+		ಯದಿ (!have_width) {
+			ಯದಿ (!have_prec)
 				printf(format, dv);
-			else
+			ಅನ್ಯಥಾ
 				printf(format, precision, dv);
-		} else {
-			if (!have_prec)
+		} ಅನ್ಯಥಾ {
+			ಯದಿ (!have_prec)
 				printf(format, field_width, dv);
-			else
+			ಅನ್ಯಥಾ
 				printf(format, field_width, precision, dv);
 		}
-		break;
+		ಭಙ್ಗ;
 	} /* switch */
 
 	format[fmt_length] = saved;
 }
 
 /* Handle params for "%*.*f". Negative numbers are ok (compat). */
-static int get_width_prec(const char *str)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ get_width_prec(ಧ್ರುವ ವರ್ಣ *str)
 {
-	int v = bb_strtoi(str, NULL, 10);
-	if (errno) {
-		bb_error_msg("invalid number '%s'", str);
+	ಪೂರ್ಣಾಙ್ಕ v = bb_strtoi(str, ರಿಕ್ತ, 10);
+	ಯದಿ (errno) {
+		bb_error_ಸಂದೇಶ("invalid number '%s'", str);
 		v = 0;
 	}
-	return v;
+	ಪ್ರತ್ಯಾಗಮ v;
 }
 
 /* Print the text in FORMAT, using ARGV for arguments to any '%' directives.
    Return advanced ARGV.  */
-static char **print_formatted(char *f, char **argv, int *conv_err)
+ಸ್ಥಿರ ವರ್ಣ **print_formatted(ವರ್ಣ *f, ವರ್ಣ **argv, ಪೂರ್ಣಾಙ್ಕ *conv_err)
 {
-	char *direc_start;      /* Start of % directive.  */
+	ವರ್ಣ *direc_start;      /* Start of % directive.  */
 	unsigned direc_length;  /* Length of % directive.  */
-	int field_width;        /* Arg to first '*' */
-	int precision;          /* Arg to second '*' */
-	char **saved_argv = argv;
+	ಪೂರ್ಣಾಙ್ಕ field_width;        /* Arg to first '*' */
+	ಪೂರ್ಣಾಙ್ಕ precision;          /* Arg to second '*' */
+	ವರ್ಣ **saved_argv = argv;
 
-	for (; *f; ++f) {
-		switch (*f) {
-		case '%':
+	ಪ್ರತಿ (; *f; ++f) {
+		ವಿಕಲ್ಪ (*f) {
+		ಪಕ್ಷ '%':
 			direc_start = f++;
 			direc_length = 1;
 			field_width = precision = 0;
-			if (*f == '%') {
+			ಯದಿ (*f == '%') {
 				bb_putchar('%');
-				break;
+				ಭಙ್ಗ;
 			}
-			if (*f == 'b') {
-				if (*argv) {
-					if (print_esc_string(*argv))
-						return saved_argv; /* causes main() to exit */
+			ಯದಿ (*f == 'b') {
+				ಯದಿ (*argv) {
+					ಯದಿ (print_esc_string(*argv))
+						ಪ್ರತ್ಯಾಗಮ saved_argv; /* causes main() to exit */
 					++argv;
 				}
-				break;
+				ಭಙ್ಗ;
 			}
-			while (*f && strchr("-+ #0", *f)) {
+			ಯಾವತ್ (*f && strchr("-+ #0", *f)) {
 				++f;
 				++direc_length;
 			}
-			if (*f == '*') {
+			ಯದಿ (*f == '*') {
 				++f;
 				++direc_length;
-				if (*argv)
+				ಯದಿ (*argv)
 					field_width = get_width_prec(*argv++);
-			} else {
-				while (isdigit(*f)) {
+			} ಅನ್ಯಥಾ {
+				ಯಾವತ್ (isdigit(*f)) {
 					++f;
 					++direc_length;
 				}
 			}
-			if (*f == '.') {
+			ಯದಿ (*f == '.') {
 				++f;
 				++direc_length;
-				if (*f == '*') {
+				ಯದಿ (*f == '*') {
 					++f;
 					++direc_length;
-					if (*argv)
+					ಯದಿ (*argv)
 						precision = get_width_prec(*argv++);
-				} else {
-					while (isdigit(*f)) {
+				} ಅನ್ಯಥಾ {
+					ಯಾವತ್ (isdigit(*f)) {
 						++f;
 						++direc_length;
 					}
@@ -348,21 +348,21 @@ static char **print_formatted(char *f, char **argv, int *conv_err)
 			 * bash does not like "%lld", but coreutils
 			 * happily takes even "%Llllhhzhhzd"!
 			 * We are permissive like coreutils */
-			while ((*f | 0x20) == 'l' || *f == 'h' || *f == 'z') {
+			ಯಾವತ್ ((*f | 0x20) == 'l' || *f == 'h' || *f == 'z') {
 				overlapping_strcpy(f, f + 1);
 			}
 			/* Add "ll" if integer modifier, then print */
 			{
-				static const char format_chars[] ALIGN1 = "diouxXfeEgGcs";
-				char *p = strchr(format_chars, *f);
+				ಸ್ಥಿರ ಧ್ರುವ ವರ್ಣ format_chars[] ALIGN1 = "diouxXfeEgGcs";
+				ವರ್ಣ *p = strchr(format_chars, *f);
 				/* needed - try "printf %" without it */
-				if (p == NULL || *f == '\0') {
-					bb_error_msg("%s: invalid format", direc_start);
+				ಯದಿ (p == ರಿಕ್ತ || *f == '\0') {
+					bb_error_ಸಂದೇಶ("%s: invalid format", direc_start);
 					/* causes main() to exit with error */
-					return saved_argv - 1;
+					ಪ್ರತ್ಯಾಗಮ saved_argv - 1;
 				}
 				++direc_length;
-				if (p - format_chars <= 5) {
+				ಯದಿ (p - format_chars <= 5) {
 					/* it is one of "diouxX" */
 					p = xmalloc(direc_length + 3);
 					memcpy(p, direc_start, direc_length);
@@ -372,40 +372,40 @@ static char **print_formatted(char *f, char **argv, int *conv_err)
 					//bb_error_msg("<%s>", p);
 					direc_length += 2;
 					direc_start = p;
-				} else {
-					p = NULL;
+				} ಅನ್ಯಥಾ {
+					p = ರಿಕ್ತ;
 				}
-				if (*argv) {
+				ಯದಿ (*argv) {
 					print_direc(direc_start, direc_length, field_width,
 								precision, *argv++);
-				} else {
+				} ಅನ್ಯಥಾ {
 					print_direc(direc_start, direc_length, field_width,
 								precision, "");
 				}
 				*conv_err |= errno;
-				free(p);
+				ಮುಕ್ತ(p);
 			}
-			break;
-		case '\\':
-			if (*++f == 'c') {
-				return saved_argv; /* causes main() to exit */
+			ಭಙ್ಗ;
+		ಪಕ್ಷ '\\':
+			ಯದಿ (*++f == 'c') {
+				ಪ್ರತ್ಯಾಗಮ saved_argv; /* causes main() to exit */
 			}
-			bb_putchar(bb_process_escape_sequence((const char **)&f));
+			bb_putchar(bb_process_escape_sequence((ಧ್ರುವ ವರ್ಣ **)&f));
 			f--;
-			break;
-		default:
+			ಭಙ್ಗ;
+		ಸ್ವಭಾವ:
 			putchar(*f);
 		}
 	}
 
-	return argv;
+	ಪ್ರತ್ಯಾಗಮ argv;
 }
 
-int printf_main(int argc UNUSED_PARAM, char **argv)
+ಪೂರ್ಣಾಙ್ಕ printf_main(ಪೂರ್ಣಾಙ್ಕ argc UNUSED_PARAM, ವರ್ಣ **argv)
 {
-	int conv_err;
-	char *format;
-	char **argv2;
+	ಪೂರ್ಣಾಙ್ಕ conv_err;
+	ವರ್ಣ *format;
+	ವರ್ಣ **argv2;
 
 	/* We must check that stdout is not closed.
 	 * The reason for this is highly non-obvious.
@@ -417,8 +417,8 @@ int printf_main(int argc UNUSED_PARAM, char **argv)
 	 * to output data no matter what. So it will try later,
 	 * and possibly will clobber future output. Not good. */
 // TODO: check fcntl() & O_ACCMODE == O_WRONLY or O_RDWR?
-	if (fcntl(1, F_GETFL) == -1)
-		return 1; /* match coreutils 6.10 (sans error msg to stderr) */
+	ಯದಿ (fcntl(1, F_GETFL) == -1)
+		ಪ್ರತ್ಯಾಗಮ 1; /* match coreutils 6.10 (sans error msg to stderr) */
 	//if (dup2(1, 1) != 1) - old way
 	//	return 1;
 
@@ -427,12 +427,12 @@ int printf_main(int argc UNUSED_PARAM, char **argv)
 	 * We will mimic coreutils. */
 	argv = skip_dash_dash(argv);
 
-	if (!argv[0]) {
-		if ((ENABLE_ASH_PRINTF || ENABLE_HUSH_PRINTF)
+	ಯದಿ (!argv[0]) {
+		ಯದಿ ((ENABLE_ASH_PRINTF || ENABLE_HUSH_PRINTF)
 		 && applet_name[0] != 'p'
 		) {
-			bb_simple_error_msg("usage: printf FORMAT [ARGUMENT...]");
-			return 2; /* bash compat */
+			bb_simple_error_ಸಂದೇಶ("usage: printf FORMAT [ARGUMENT...]");
+			ಪ್ರತ್ಯಾಗಮ 2; /* bash compat */
 		}
 		bb_show_usage();
 	}
@@ -441,16 +441,16 @@ int printf_main(int argc UNUSED_PARAM, char **argv)
 	argv2 = argv + 1;
 
 	conv_err = 0;
-	do {
+	ಕುರು {
 		argv = argv2;
 		argv2 = print_formatted(format, argv, &conv_err);
-	} while (argv2 > argv && *argv2);
+	} ಯಾವತ್ (argv2 > argv && *argv2);
 
 	/* coreutils compat (bash doesn't do this):
 	if (*argv)
 		fprintf(stderr, "excess args ignored");
 	*/
 
-	return (argv2 < argv) /* if true, print_formatted errored out */
+	ಪ್ರತ್ಯಾಗಮ (argv2 < argv) /* if true, print_formatted errored out */
 		|| conv_err; /* print_formatted saw invalid number */
 }

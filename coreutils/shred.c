@@ -37,17 +37,17 @@
 --remove[=HOW]		like -u but give control on HOW to delete;  See below
 */
 
-#include "libbb.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
 
-int shred_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int shred_main(int argc UNUSED_PARAM, char **argv)
+ಪೂರ್ಣಾಙ್ಕ shred_main(ಪೂರ್ಣಾಙ್ಕ argc, ವರ್ಣ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಙ್ಕ shred_main(ಪೂರ್ಣಾಙ್ಕ argc UNUSED_PARAM, ವರ್ಣ **argv)
 {
-	char *opt_s;
-	int rand_fd = rand_fd; /* for compiler */
-	int zero_fd;
-	unsigned num_iter = 3;
+	ವರ್ಣ *opt_s;
+	ಪೂರ್ಣಾಙ್ಕ rand_fd = rand_fd; /* for compiler */
+	ಪೂರ್ಣಾಙ್ಕ zero_fd;
+	unsigned ಅಂಕೆ_iter = 3;
 	unsigned opt;
-	enum {
+	ಗಣನಾ {
 		OPT_f = (1 << 0),
 		OPT_u = (1 << 1),
 		OPT_z = (1 << 2),
@@ -57,55 +57,55 @@ int shred_main(int argc UNUSED_PARAM, char **argv)
 		OPT_s = (1 << 6),
 	};
 
-	opt = getopt32(argv, "^" "fuzn:+vxs:" "\0" "-1"/*min 1 arg*/, &num_iter, &opt_s);
+	opt = getopt32(argv, "^" "fuzn:+vxs:" "\0" "-1"/*min 1 arg*/, &ಅಂಕೆ_iter, &opt_s);
 	argv += optind;
 
 	zero_fd = xopen("/dev/zero", O_RDONLY);
-	if (num_iter != 0)
+	ಯದಿ (ಅಂಕೆ_iter != 0)
 		rand_fd = xopen("/dev/urandom", O_RDONLY);
 
-	for (;;) {
-		struct stat sb;
-		const char *fname;
+	ಪ್ರತಿ (;;) {
+		ಸಂರಚನಾ stat sb;
+		ಧ್ರುವ ವರ್ಣ *fname;
 		unsigned i;
-		int fd;
+		ಪೂರ್ಣಾಙ್ಕ fd;
 
 		fname = *argv++;
-		if (!fname)
-			break;
+		ಯದಿ (!fname)
+			ಭಙ್ಗ;
 		fd = -1;
-		if (opt & OPT_f) {
+		ಯದಿ (opt & OPT_f) {
 			fd = open(fname, O_WRONLY);
-			if (fd < 0)
+			ಯದಿ (fd < 0)
 				chmod(fname, 0666);
 		}
-		if (fd < 0)
+		ಯದಿ (fd < 0)
 			fd = xopen(fname, O_WRONLY);
 
-		if (fstat(fd, &sb) == 0 && sb.st_size > 0) {
+		ಯದಿ (fstat(fd, &sb) == 0 && sb.st_size > 0) {
 			off_t size = sb.st_size;
 
-			if (opt & OPT_s) {
-				size = BB_STRTOOFF(opt_s, NULL, 0); /* accepts oct/hex */
-				if (errno || size < 0) bb_show_usage();
+			ಯದಿ (opt & OPT_s) {
+				size = BB_STRTOOFF(opt_s, ರಿಕ್ತ, 0); /* accepts oct/hex */
+				ಯದಿ (errno || size < 0) bb_show_usage();
 			}
 
-			for (i = 0; i < num_iter; i++) {
+			ಪ್ರತಿ (i = 0; i < ಅಂಕೆ_iter; i++) {
 				bb_copyfd_size(rand_fd, fd, size);
 				fdatasync(fd);
 				xlseek(fd, 0, SEEK_SET);
 			}
-			if (opt & OPT_z) {
+			ಯದಿ (opt & OPT_z) {
 				bb_copyfd_size(zero_fd, fd, size);
 				fdatasync(fd);
 			}
 		}
-		if (opt & OPT_u) {
+		ಯದಿ (opt & OPT_u) {
 			ftruncate(fd, 0);
 			xunlink(fname);
 		}
 		xclose(fd);
 	}
 
-	return EXIT_SUCCESS;
+	ಪ್ರತ್ಯಾಗಮ EXIT_SUCCESS;
 }
