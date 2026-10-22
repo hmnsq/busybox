@@ -23,50 +23,50 @@
 //usage:     "\n	--ignore=N	Exclude N CPUs"
 //usage:	)
 
-#include "libbb.h"
+#அந்தர்பாவ "libbb.h"
 
-int nproc_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int nproc_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+முழு nproc_main(முழு argc, எழுத்து **argv) MAIN_EXTERNALLY_VISIBLE;
+முழு nproc_main(முழு argc UNUSED_PARAM, எழுத்து **argv UNUSED_PARAM)
 {
-	int count = 0;
-#if ENABLE_LONG_OPTS
-	int ignore = 0;
-	int opts = getopt32long(argv, "\xfe:+",
+	முழு மொத்தம் = 0;
+#எனில் ENABLE_LONG_OPTS
+	முழு ignore = 0;
+	முழு opts = getopt32long(argv, "\xfe:+",
 			"ignore\0" Required_argument "\xfe"
 			"all\0"    No_argument       "\xff"
 			, &ignore
 	);
 
-	if (opts & (1 << 1)) {
+	எனில் (opts & (1 << 1)) {
 		DIR *cpusd = opendir("/sys/devices/system/cpu");
-		if (cpusd) {
-			struct dirent *de;
-			while (NULL != (de = readdir(cpusd))) {
-				char *cpuid = strstr(de->d_name, "cpu");
-				if (cpuid && isdigit(cpuid[strlen(cpuid) - 1]))
-					count++;
+		எனில் (cpusd) {
+			கட்டமைப்பு dirent *de;
+			போது (வெற்று != (de = readdir(cpusd))) {
+				எழுத்து *cpuid = strstr(de->d_name, "cpu");
+				எனில் (cpuid && isdigit(cpuid[strlen(cpuid) - 1]))
+					மொத்தம்++;
 			}
 			IF_FEATURE_CLEAN_UP(closedir(cpusd);)
 		}
-	} else
+	} இல்லையெனில்
 #endif
 	{
-		int i;
+		முழு i;
 		unsigned sz = 2 * 1024;
 		unsigned long *mask = get_malloc_cpu_affinity(0, &sz);
-		sz /= sizeof(long);
-		for (i = 0; i < sz; i++) {
-			if (mask[i] != 0) /* most mask[i] are usually 0 */
-				count += bb_popcnt_long(mask[i]);
+		sz /= அளவு(long);
+		க்கு (i = 0; i < sz; i++) {
+			எனில் (mask[i] != 0) /* most mask[i] are usually 0 */
+				மொத்தம் += bb_popcnt_long(mask[i]);
 		}
-		IF_FEATURE_CLEAN_UP(free(mask);)
+		IF_FEATURE_CLEAN_UP(விடுவி(mask);)
 	}
 
-	IF_LONG_OPTS(count -= ignore;)
-	if (count <= 0)
-		count = 1;
+	IF_LONG_OPTS(மொத்தம் -= ignore;)
+	எனில் (மொத்தம் <= 0)
+		மொத்தம் = 1;
 
-	printf("%u\n", count);
+	printf("%u\n", மொத்தம்);
 
-	return 0;
+	திரும்பு 0;
 }

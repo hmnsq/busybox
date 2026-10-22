@@ -25,69 +25,69 @@
 //usage:       "$ pwd\n"
 //usage:       "/root\n"
 
-#include "libbb.h"
+#அந்தர்பாவ "libbb.h"
 
-static int logical_getcwd(void)
+நிலையான முழு logical_getcwd(வெறுமை)
 {
-	struct stat st1;
-	struct stat st2;
-	char *wd;
-	char *p;
+	கட்டமைப்பு stat st1;
+	கட்டமைப்பு stat st2;
+	எழுத்து *wd;
+	எழுத்து *p;
 
 	wd = getenv("PWD");
-	if (!wd || wd[0] != '/')
-		return 0;
+	எனில் (!wd || wd[0] != '/')
+		திரும்பு 0;
 
 	p = wd;
-	while (*p) {
+	போது (*p) {
 		/* doing strstr(p, "/.") by hand is smaller and faster... */
-		if (*p++ != '/')
-			continue;
-		if (*p != '.')
-			continue;
+		எனில் (*p++ != '/')
+			தொடர்;
+		எனில் (*p != '.')
+			தொடர்;
 		/* we found "/.", skip to next char */
 		p++;
-		if (*p == '.')
+		எனில் (*p == '.')
 			p++; /* we found "/.." */
-		if (*p == '\0' || *p == '/')
-			return 0; /* "/./" or "/../" component: bad */
+		எனில் (*p == '\0' || *p == '/')
+			திரும்பு 0; /* "/./" or "/../" component: bad */
 	}
 
-	if (stat(wd, &st1) != 0)
-		return 0;
-	if (stat(".", &st2) != 0)
-		return 0;
-	if (st1.st_ino != st2.st_ino)
-		return 0;
-	if (st1.st_dev != st2.st_dev)
-		return 0;
+	எனில் (stat(wd, &st1) != 0)
+		திரும்பு 0;
+	எனில் (stat(".", &st2) != 0)
+		திரும்பு 0;
+	எனில் (st1.st_ino != st2.st_ino)
+		திரும்பு 0;
+	எனில் (st1.st_dev != st2.st_dev)
+		திரும்பு 0;
 
 	puts(wd);
-	return 1;
+	திரும்பு 1;
 }
 
-int pwd_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int pwd_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+முழு pwd_main(முழு argc, எழுத்து **argv) MAIN_EXTERNALLY_VISIBLE;
+முழு pwd_main(முழு argc UNUSED_PARAM, எழுத்து **argv UNUSED_PARAM)
 {
-	char *buf;
+	எழுத்து *buf;
 
-	if (ENABLE_DESKTOP) {
+	எனில் (ENABLE_DESKTOP) {
 		/* TODO: assume -L if $POSIXLY_CORRECT? (coreutils does that)
 		 * Rationale:
 		 * POSIX requires a default of -L, but most scripts expect -P
 		 */
 		unsigned opt = getopt32(argv, "LP");
-		if ((opt & 1) && logical_getcwd())
-			return fflush_all();
+		எனில் ((opt & 1) && logical_getcwd())
+			திரும்பு fflush_all();
 	}
 
-	buf = xrealloc_getcwd_or_warn(NULL);
+	buf = xrealloc_getcwd_or_warn(வெற்று);
 
-	if (buf) {
+	எனில் (buf) {
 		puts(buf);
-		free(buf);
-		return fflush_all();
+		விடுவி(buf);
+		திரும்பு fflush_all();
 	}
 
-	return EXIT_FAILURE;
+	திரும்பு EXIT_FAILURE;
 }

@@ -37,17 +37,17 @@
 --remove[=HOW]		like -u but give control on HOW to delete;  See below
 */
 
-#include "libbb.h"
+#அந்தர்பாவ "libbb.h"
 
-int shred_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int shred_main(int argc UNUSED_PARAM, char **argv)
+முழு shred_main(முழு argc, எழுத்து **argv) MAIN_EXTERNALLY_VISIBLE;
+முழு shred_main(முழு argc UNUSED_PARAM, எழுத்து **argv)
 {
-	char *opt_s;
-	int rand_fd = rand_fd; /* for compiler */
-	int zero_fd;
-	unsigned num_iter = 3;
+	எழுத்து *opt_s;
+	முழு rand_fd = rand_fd; /* for compiler */
+	முழு zero_fd;
+	unsigned இலக்கம்_iter = 3;
 	unsigned opt;
-	enum {
+	எண்ணிக்கை {
 		OPT_f = (1 << 0),
 		OPT_u = (1 << 1),
 		OPT_z = (1 << 2),
@@ -57,55 +57,55 @@ int shred_main(int argc UNUSED_PARAM, char **argv)
 		OPT_s = (1 << 6),
 	};
 
-	opt = getopt32(argv, "^" "fuzn:+vxs:" "\0" "-1"/*min 1 arg*/, &num_iter, &opt_s);
+	opt = getopt32(argv, "^" "fuzn:+vxs:" "\0" "-1"/*min 1 arg*/, &இலக்கம்_iter, &opt_s);
 	argv += optind;
 
 	zero_fd = xopen("/dev/zero", O_RDONLY);
-	if (num_iter != 0)
+	எனில் (இலக்கம்_iter != 0)
 		rand_fd = xopen("/dev/urandom", O_RDONLY);
 
-	for (;;) {
-		struct stat sb;
-		const char *fname;
+	க்கு (;;) {
+		கட்டமைப்பு stat sb;
+		மாறிலி எழுத்து *fname;
 		unsigned i;
-		int fd;
+		முழு fd;
 
 		fname = *argv++;
-		if (!fname)
-			break;
+		எனில் (!fname)
+			நிறுத்து;
 		fd = -1;
-		if (opt & OPT_f) {
+		எனில் (opt & OPT_f) {
 			fd = open(fname, O_WRONLY);
-			if (fd < 0)
+			எனில் (fd < 0)
 				chmod(fname, 0666);
 		}
-		if (fd < 0)
+		எனில் (fd < 0)
 			fd = xopen(fname, O_WRONLY);
 
-		if (fstat(fd, &sb) == 0 && sb.st_size > 0) {
+		எனில் (fstat(fd, &sb) == 0 && sb.st_size > 0) {
 			off_t size = sb.st_size;
 
-			if (opt & OPT_s) {
-				size = BB_STRTOOFF(opt_s, NULL, 0); /* accepts oct/hex */
-				if (errno || size < 0) bb_show_usage();
+			எனில் (opt & OPT_s) {
+				size = BB_STRTOOFF(opt_s, வெற்று, 0); /* accepts oct/hex */
+				எனில் (errno || size < 0) bb_show_usage();
 			}
 
-			for (i = 0; i < num_iter; i++) {
+			க்கு (i = 0; i < இலக்கம்_iter; i++) {
 				bb_copyfd_size(rand_fd, fd, size);
 				fdatasync(fd);
 				xlseek(fd, 0, SEEK_SET);
 			}
-			if (opt & OPT_z) {
+			எனில் (opt & OPT_z) {
 				bb_copyfd_size(zero_fd, fd, size);
 				fdatasync(fd);
 			}
 		}
-		if (opt & OPT_u) {
+		எனில் (opt & OPT_u) {
 			ftruncate(fd, 0);
 			xunlink(fname);
 		}
 		xclose(fd);
 	}
 
-	return EXIT_SUCCESS;
+	திரும்பு EXIT_SUCCESS;
 }

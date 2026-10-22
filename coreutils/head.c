@@ -47,226 +47,226 @@
 //usage:       "root:x:0:0:root:/root:/bin/bash\n"
 //usage:       "daemon:x:1:1:daemon:/usr/sbin:/bin/sh\n"
 
-#include "libbb.h"
+#அந்தர்பாவ "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-#if !ENABLE_FEATURE_FANCY_HEAD
-# define print_first_N(fp,count,bytes) print_first_N(fp,count)
+#எனில் !ENABLE_FEATURE_FANCY_HEAD
+# define print_first_N(fp,மொத்தம்,bytes) print_first_N(fp,மொத்தம்)
 #endif
-static void
-print_first_N(FILE *fp, unsigned long count, bool count_bytes)
+நிலையான வெறுமை
+print_first_N(FILE *fp, unsigned long மொத்தம், bool மொத்தம்_bytes)
 {
-#if !ENABLE_FEATURE_FANCY_HEAD
-	const int count_bytes = 0;
+#எனில் !ENABLE_FEATURE_FANCY_HEAD
+	மாறிலி முழு மொத்தம்_bytes = 0;
 #endif
-	while (count) {
-		int c = getc(fp);
-		if (c == EOF)
-			break;
-		if (count_bytes || (c == '\n'))
-			--count;
+	போது (மொத்தம்) {
+		முழு c = getc(fp);
+		எனில் (c == EOF)
+			நிறுத்து;
+		எனில் (மொத்தம்_bytes || (c == '\n'))
+			--மொத்தம்;
 		putchar(c);
 	}
 }
 
-#if ENABLE_FEATURE_FANCY_HEAD
-static void
-print_except_N_last_bytes(FILE *fp, unsigned count)
+#எனில் ENABLE_FEATURE_FANCY_HEAD
+நிலையான வெறுமை
+print_except_N_last_bytes(FILE *fp, unsigned மொத்தம்)
 {
-	unsigned char *circle = xmalloc(++count);
+	unsigned எழுத்து *circle = xmalloc(++மொத்தம்);
 	unsigned head = 0;
-	for (;;) {
-		int c;
+	க்கு (;;) {
+		முழு c;
 		c = getc(fp);
-		if (c == EOF)
-			goto ret;
+		எனில் (c == EOF)
+			செல் ret;
 		circle[head++] = c;
-		if (head == count)
-			break;
+		எனில் (head == மொத்தம்)
+			நிறுத்து;
 	}
-	for (;;) {
-		int c;
-		if (head == count)
+	க்கு (;;) {
+		முழு c;
+		எனில் (head == மொத்தம்)
 			head = 0;
 		putchar(circle[head]);
 		c = getc(fp);
-		if (c == EOF)
-			goto ret;
+		எனில் (c == EOF)
+			செல் ret;
 		circle[head] = c;
 		head++;
 	}
  ret:
-	free(circle);
+	விடுவி(circle);
 }
 
-static void
-print_except_N_last_lines(FILE *fp, unsigned count)
+நிலையான வெறுமை
+print_except_N_last_வரிகள்(FILE *fp, unsigned மொத்தம்)
 {
-	char **circle = xzalloc((++count) * sizeof(circle[0]));
+	எழுத்து **circle = xzalloc((++மொத்தம்) * அளவு(circle[0]));
 	unsigned head = 0;
-	for (;;) {
-		char *c;
+	க்கு (;;) {
+		எழுத்து *c;
 		c = xmalloc_fgets(fp);
-		if (!c)
-			goto ret;
+		எனில் (!c)
+			செல் ret;
 		circle[head++] = c;
-		if (head == count)
-			break;
+		எனில் (head == மொத்தம்)
+			நிறுத்து;
 	}
-	for (;;) {
-		char *c;
-		if (head == count)
+	க்கு (;;) {
+		எழுத்து *c;
+		எனில் (head == மொத்தம்)
 			head = 0;
 		fputs_stdout(circle[head]);
 		c = xmalloc_fgets(fp);
-		if (!c)
-			goto ret;
-		free(circle[head]);
+		எனில் (!c)
+			செல் ret;
+		விடுவி(circle[head]);
 		circle[head++] = c;
 	}
  ret:
 	head = 0;
-	for (;;) {
-		free(circle[head++]);
-		if (head == count)
-			break;
+	க்கு (;;) {
+		விடுவி(circle[head++]);
+		எனில் (head == மொத்தம்)
+			நிறுத்து;
 	}
-	free(circle);
+	விடுவி(circle);
 }
-#else
+#இல்லையெனில்
 /* Must never be called */
-void print_except_N_last_bytes(FILE *fp, unsigned count);
-void print_except_N_last_lines(FILE *fp, unsigned count);
+வெறுமை print_except_N_last_bytes(FILE *fp, unsigned மொத்தம்);
+வெறுமை print_except_N_last_வரிகள்(FILE *fp, unsigned மொத்தம்);
 #endif
 
-#if !ENABLE_FEATURE_FANCY_HEAD
-# define eat_num(negative_N,p) eat_num(p)
+#எனில் !ENABLE_FEATURE_FANCY_HEAD
+# define eat_இலக்கம்(negative_N,p) eat_இலக்கம்(p)
 #endif
-static unsigned long
-eat_num(bool *negative_N, const char *p)
+நிலையான unsigned long
+eat_இலக்கம்(bool *negative_N, மாறிலி எழுத்து *p)
 {
-#if ENABLE_FEATURE_FANCY_HEAD
-	if (*p == '-') {
+#எனில் ENABLE_FEATURE_FANCY_HEAD
+	எனில் (*p == '-') {
 		*negative_N = 1;
 		p++;
 	}
 #endif
-	return xatoul_sfx(p, bkm_suffixes);
+	திரும்பு xatoul_sfx(p, bkm_suffixes);
 }
 
-static const char head_opts[] ALIGN1 =
+நிலையான மாறிலி எழுத்து head_opts[] ALIGN1 =
 	"n:"
-#if ENABLE_FEATURE_FANCY_HEAD
+#எனில் ENABLE_FEATURE_FANCY_HEAD
 	"c:qv"
 #endif
 	;
 
 #define header_fmt_str "\n==> %s <==\n"
 
-int head_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int head_main(int argc, char **argv)
+முழு head_main(முழு argc, எழுத்து **argv) MAIN_EXTERNALLY_VISIBLE;
+முழு head_main(முழு argc, எழுத்து **argv)
 {
-	unsigned long count = 10;
-#if ENABLE_FEATURE_FANCY_HEAD
-	int header_threshhold = 1;
-	bool count_bytes = 0;
+	unsigned long மொத்தம் = 10;
+#எனில் ENABLE_FEATURE_FANCY_HEAD
+	முழு header_threshhold = 1;
+	bool மொத்தம்_bytes = 0;
 	bool negative_N = 0;
-#else
+#இல்லையெனில்
 # define header_threshhold 1
-# define count_bytes       0
+# define மொத்தம்_bytes       0
 # define negative_N        0
 #endif
 	FILE *fp;
-	const char *fmt;
-	char *p;
-	int opt;
-	int retval = EXIT_SUCCESS;
+	மாறிலி எழுத்து *fmt;
+	எழுத்து *p;
+	முழு opt;
+	முழு retval = EXIT_SUCCESS;
 
-#if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
+#எனில் ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
 	/* Allow legacy syntax of an initial numeric option without -n. */
-	if (argv[1] && argv[1][0] == '-'
+	எனில் (argv[1] && argv[1][0] == '-'
 	 && isdigit(argv[1][1])
 	) {
 		--argc;
 		++argv;
 		p = argv[0] + 1;
-		goto GET_COUNT;
+		செல் GET_மொத்தம்;
 	}
 #endif
 
 	/* No size benefit in converting this to getopt32 */
-	while ((opt = getopt(argc, argv, head_opts)) > 0) {
-		switch (opt) {
-#if ENABLE_FEATURE_FANCY_HEAD
-		case 'q':
+	போது ((opt = getopt(argc, argv, head_opts)) > 0) {
+		தேர்வு (opt) {
+#எனில் ENABLE_FEATURE_FANCY_HEAD
+		நிலை 'q':
 			header_threshhold = INT_MAX;
-			break;
-		case 'v':
+			நிறுத்து;
+		நிலை 'v':
 			header_threshhold = -1;
-			break;
-		case 'c':
-			count_bytes = 1;
+			நிறுத்து;
+		நிலை 'c':
+			மொத்தம்_bytes = 1;
 			/* fall through */
 #endif
-		case 'n':
+		நிலை 'n':
 			p = optarg;
-#if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
- GET_COUNT:
+#எனில் ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
+ GET_மொத்தம்:
 #endif
-			count = eat_num(&negative_N, p);
-			break;
-		default:
+			மொத்தம் = eat_இலக்கம்(&negative_N, p);
+			நிறுத்து;
+		இயல்பு:
 			bb_show_usage();
 		}
 	}
 
 	argc -= optind;
 	argv += optind;
-	if (!*argv)
-		*--argv = (char*)"-";
+	எனில் (!*argv)
+		*--argv = (எழுத்து*)"-";
 
 	fmt = header_fmt_str + 1;
-	if (argc <= header_threshhold) {
-#if ENABLE_FEATURE_FANCY_HEAD
+	எனில் (argc <= header_threshhold) {
+#எனில் ENABLE_FEATURE_FANCY_HEAD
 		header_threshhold = 0;
-#else
+#இல்லையெனில்
 		fmt += 11; /* "" */
 #endif
 	}
-	if (negative_N) {
-		if (count >= INT_MAX / sizeof(char*))
-			bb_error_msg("count is too big: %lu", count);
+	எனில் (negative_N) {
+		எனில் (மொத்தம் >= INT_MAX / அளவு(எழுத்து*))
+			bb_error_செய்தி("count is too big: %lu", மொத்தம்);
 	}
 
-	do {
+	செய் {
 		fp = fopen_or_warn_stdin(*argv);
-		if (fp) {
-			if (fp == stdin) {
-				*argv = (char *) bb_msg_standard_input;
+		எனில் (fp) {
+			எனில் (fp == stdin) {
+				*argv = (எழுத்து *) bb_செய்தி_standard_உள்ளீடு;
 			}
-			if (header_threshhold) {
+			எனில் (header_threshhold) {
 				printf(fmt, *argv);
 			}
-			if (negative_N) {
-				if (count_bytes) {
-					print_except_N_last_bytes(fp, count);
-				} else {
-					print_except_N_last_lines(fp, count);
+			எனில் (negative_N) {
+				எனில் (மொத்தம்_bytes) {
+					print_except_N_last_bytes(fp, மொத்தம்);
+				} இல்லையெனில் {
+					print_except_N_last_வரிகள்(fp, மொத்தம்);
 				}
-			} else {
-				print_first_N(fp, count, count_bytes);
+			} இல்லையெனில் {
+				print_first_N(fp, மொத்தம், மொத்தம்_bytes);
 			}
 			die_if_ferror_stdout();
-			if (fclose_if_not_stdin(fp)) {
-				bb_simple_perror_msg(*argv);
+			எனில் (fclose_if_not_stdin(fp)) {
+				bb_simple_perror_செய்தி(*argv);
 				retval = EXIT_FAILURE;
 			}
-		} else {
+		} இல்லையெனில் {
 			retval = EXIT_FAILURE;
 		}
 		fmt = header_fmt_str;
-	} while (*++argv);
+	} போது (*++argv);
 
 	fflush_stdout_and_exit(retval);
 }

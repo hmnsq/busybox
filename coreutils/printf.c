@@ -59,7 +59,7 @@
 //usage:       "$ printf \"Val=%d\\n\" 5\n"
 //usage:       "Val=5\n"
 
-#include "libbb.h"
+#அந்தர்பாவ "libbb.h"
 
 /* A note on bad input: neither bash 3.2 nor coreutils 6.10 stop on it.
  * They report it:
@@ -77,102 +77,102 @@
  * We try to be compatible.
  */
 
-typedef void FAST_FUNC (*converter)(const char *arg, void *result);
+வகைவரை வெறுமை FAST_FUNC (*converter)(மாறிலி எழுத்து *arg, வெறுமை *result);
 
-static int multiconvert(const char *arg, void *result, converter convert)
+நிலையான முழு multiconvert(மாறிலி எழுத்து *arg, வெறுமை *result, converter convert)
 {
-	if (*arg == '"' || *arg == '\'') {
-		arg = utoa((unsigned char)arg[1]);
+	எனில் (*arg == '"' || *arg == '\'') {
+		arg = utoa((unsigned எழுத்து)arg[1]);
 	}
 	errno = 0;
 	convert(arg, result);
-	if (errno) {
-		bb_error_msg("invalid number '%s'", arg);
-		return 1;
+	எனில் (errno) {
+		bb_error_செய்தி("invalid number '%s'", arg);
+		திரும்பு 1;
 	}
-	return 0;
+	திரும்பு 0;
 }
 
-static void FAST_FUNC conv_strtoull(const char *arg, void *result)
+நிலையான வெறுமை FAST_FUNC conv_strtoull(மாறிலி எழுத்து *arg, வெறுமை *result)
 {
 	/* Allow leading '+' - bb_strtoull() by itself does not allow it,
 	 * and probably shouldn't (other callers might require purely numeric
 	 * inputs to be allowed.
 	 */
-	if (arg[0] == '+')
+	எனில் (arg[0] == '+')
 		arg++;
-	*(unsigned long long*)result = bb_strtoull(arg, NULL, 0);
+	*(unsigned long long*)result = bb_strtoull(arg, வெற்று, 0);
 	/* both coreutils 6.10 and bash 3.2:
 	 * $ printf '%x\n' -2
 	 * fffffffffffffffe
 	 * Mimic that:
 	 */
-	if (errno) {
-		*(unsigned long long*)result = bb_strtoll(arg, NULL, 0);
+	எனில் (errno) {
+		*(unsigned long long*)result = bb_strtoll(arg, வெற்று, 0);
 	}
 }
-static void FAST_FUNC conv_strtoll(const char *arg, void *result)
+நிலையான வெறுமை FAST_FUNC conv_strtoll(மாறிலி எழுத்து *arg, வெறுமை *result)
 {
-	if (arg[0] == '+')
+	எனில் (arg[0] == '+')
 		arg++;
-	*(long long*)result = bb_strtoll(arg, NULL, 0);
+	*(long long*)result = bb_strtoll(arg, வெற்று, 0);
 }
-static void FAST_FUNC conv_strtod(const char *arg, void *result)
+நிலையான வெறுமை FAST_FUNC conv_strtod(மாறிலி எழுத்து *arg, வெறுமை *result)
 {
-	char *end;
+	எழுத்து *end;
 	/* Well, this one allows leading whitespace... so what? */
 	/* What I like much less is that "-" accepted too! :( */
 //TODO: needs setlocale(LC_NUMERIC, "C")?
-	*(double*)result = strtod(arg, &end);
-	if (end[0]) {
+	*(இரட்டை*)result = strtod(arg, &end);
+	எனில் (end[0]) {
 		errno = ERANGE;
-		*(double*)result = 0;
+		*(இரட்டை*)result = 0;
 	}
 }
 
 /* Callers should check errno to detect errors */
-static unsigned long long my_xstrtoull(const char *arg)
+நிலையான unsigned long long my_xstrtoull(மாறிலி எழுத்து *arg)
 {
 	unsigned long long result;
-	if (multiconvert(arg, &result, conv_strtoull))
+	எனில் (multiconvert(arg, &result, conv_strtoull))
 		result = 0;
-	return result;
+	திரும்பு result;
 }
-static long long my_xstrtoll(const char *arg)
+நிலையான long long my_xstrtoll(மாறிலி எழுத்து *arg)
 {
 	long long result;
-	if (multiconvert(arg, &result, conv_strtoll))
+	எனில் (multiconvert(arg, &result, conv_strtoll))
 		result = 0;
-	return result;
+	திரும்பு result;
 }
-static double my_xstrtod(const char *arg)
+நிலையான இரட்டை my_xstrtod(மாறிலி எழுத்து *arg)
 {
-	double result;
+	இரட்டை result;
 	multiconvert(arg, &result, conv_strtod);
-	return result;
+	திரும்பு result;
 }
 
 /* Handles %b; return 1 if output is to be short-circuited by \c */
-static int print_esc_string(const char *str)
+நிலையான முழு print_esc_string(மாறிலி எழுத்து *str)
 {
-	char c;
-	while ((c = *str) != '\0') {
+	எழுத்து c;
+	போது ((c = *str) != '\0') {
 		str++;
-		if (c == '\\') {
+		எனில் (c == '\\') {
 			/* %b also accepts 4-digit octals of the form \0### */
-			if (*str == '0') {
-				if ((unsigned char)(str[1] - '0') < 8) {
+			எனில் (*str == '0') {
+				எனில் ((unsigned எழுத்து)(str[1] - '0') < 8) {
 					/* 2nd char is 0..7: skip leading '0' */
 					str++;
 				}
 			}
-			else if (*str == 'c') {
-				return 1;
+			இல்லையெனில் எனில் (*str == 'c') {
+				திரும்பு 1;
 			}
 			{
 				/* optimization: don't force arg to be on-stack,
 				 * use another variable for that. */
-				const char *z = str;
+				மாறிலி எழுத்து *z = str;
 				c = bb_process_escape_sequence(&z);
 				str = z;
 			}
@@ -180,164 +180,164 @@ static int print_esc_string(const char *str)
 		putchar(c);
 	}
 
-	return 0;
+	திரும்பு 0;
 }
 
-static void print_direc(char *format, unsigned fmt_length,
-		int field_width, int precision,
-		const char *argument)
+நிலையான வெறுமை print_direc(எழுத்து *format, unsigned fmt_length,
+		முழு field_width, முழு precision,
+		மாறிலி எழுத்து *argument)
 {
 	long long llv;
-	double dv;
-	char saved;
-	char *have_prec, *have_width;
+	இரட்டை dv;
+	எழுத்து saved;
+	எழுத்து *have_prec, *have_width;
 
 	saved = format[fmt_length];
 	format[fmt_length] = '\0';
 
 	have_prec = strstr(format, ".*");
 	have_width = strchr(format, '*');
-	if (have_width - 1 == have_prec)
-		have_width = NULL;
+	எனில் (have_width - 1 == have_prec)
+		have_width = வெற்று;
 
 	/* multiconvert sets errno = 0, but %s needs it cleared */
 	errno = 0;
 
-	switch (format[fmt_length - 1]) {
-	case 'c':
+	தேர்வு (format[fmt_length - 1]) {
+	நிலை 'c':
 		printf(format, *argument);
-		break;
-	case 'd':
-	case 'i':
+		நிறுத்து;
+	நிலை 'd':
+	நிலை 'i':
 		llv = my_xstrtoll(skip_whitespace(argument));
  print_long:
-		if (!have_width) {
-			if (!have_prec)
+		எனில் (!have_width) {
+			எனில் (!have_prec)
 				printf(format, llv);
-			else
+			இல்லையெனில்
 				printf(format, precision, llv);
-		} else {
-			if (!have_prec)
+		} இல்லையெனில் {
+			எனில் (!have_prec)
 				printf(format, field_width, llv);
-			else
+			இல்லையெனில்
 				printf(format, field_width, precision, llv);
 		}
-		break;
-	case 'o':
-	case 'u':
-	case 'x':
-	case 'X':
+		நிறுத்து;
+	நிலை 'o':
+	நிலை 'u':
+	நிலை 'x':
+	நிலை 'X':
 		llv = my_xstrtoull(skip_whitespace(argument));
 		/* cheat: unsigned long and long have same width, so... */
-		goto print_long;
-	case 's':
+		செல் print_long;
+	நிலை 's':
 		/* Are char* and long long the same? */
-		if (sizeof(argument) == sizeof(llv)) {
+		எனில் (அளவு(argument) == அளவு(llv)) {
 			llv = (long long)(ptrdiff_t)argument;
-			goto print_long;
-		} else {
+			செல் print_long;
+		} இல்லையெனில் {
 			/* Hope compiler will optimize it out by moving call
 			 * instruction after the ifs... */
-			if (!have_width) {
-				if (!have_prec)
+			எனில் (!have_width) {
+				எனில் (!have_prec)
 					printf(format, argument, /*unused:*/ argument, argument);
-				else
+				இல்லையெனில்
 					printf(format, precision, argument, /*unused:*/ argument);
-			} else {
-				if (!have_prec)
+			} இல்லையெனில் {
+				எனில் (!have_prec)
 					printf(format, field_width, argument, /*unused:*/ argument);
-				else
+				இல்லையெனில்
 					printf(format, field_width, precision, argument);
 			}
-			break;
+			நிறுத்து;
 		}
-	case 'f':
-	case 'e':
-	case 'E':
-	case 'g':
-	case 'G':
+	நிலை 'f':
+	நிலை 'e':
+	நிலை 'E':
+	நிலை 'g':
+	நிலை 'G':
 		dv = my_xstrtod(argument);
-		if (!have_width) {
-			if (!have_prec)
+		எனில் (!have_width) {
+			எனில் (!have_prec)
 				printf(format, dv);
-			else
+			இல்லையெனில்
 				printf(format, precision, dv);
-		} else {
-			if (!have_prec)
+		} இல்லையெனில் {
+			எனில் (!have_prec)
 				printf(format, field_width, dv);
-			else
+			இல்லையெனில்
 				printf(format, field_width, precision, dv);
 		}
-		break;
+		நிறுத்து;
 	} /* switch */
 
 	format[fmt_length] = saved;
 }
 
 /* Handle params for "%*.*f". Negative numbers are ok (compat). */
-static int get_width_prec(const char *str)
+நிலையான முழு get_width_prec(மாறிலி எழுத்து *str)
 {
-	int v = bb_strtoi(str, NULL, 10);
-	if (errno) {
-		bb_error_msg("invalid number '%s'", str);
+	முழு v = bb_strtoi(str, வெற்று, 10);
+	எனில் (errno) {
+		bb_error_செய்தி("invalid number '%s'", str);
 		v = 0;
 	}
-	return v;
+	திரும்பு v;
 }
 
 /* Print the text in FORMAT, using ARGV for arguments to any '%' directives.
    Return advanced ARGV.  */
-static char **print_formatted(char *f, char **argv, int *conv_err)
+நிலையான எழுத்து **print_formatted(எழுத்து *f, எழுத்து **argv, முழு *conv_err)
 {
-	char *direc_start;      /* Start of % directive.  */
+	எழுத்து *direc_start;      /* Start of % directive.  */
 	unsigned direc_length;  /* Length of % directive.  */
-	int field_width;        /* Arg to first '*' */
-	int precision;          /* Arg to second '*' */
-	char **saved_argv = argv;
+	முழு field_width;        /* Arg to first '*' */
+	முழு precision;          /* Arg to second '*' */
+	எழுத்து **saved_argv = argv;
 
-	for (; *f; ++f) {
-		switch (*f) {
-		case '%':
+	க்கு (; *f; ++f) {
+		தேர்வு (*f) {
+		நிலை '%':
 			direc_start = f++;
 			direc_length = 1;
 			field_width = precision = 0;
-			if (*f == '%') {
+			எனில் (*f == '%') {
 				bb_putchar('%');
-				break;
+				நிறுத்து;
 			}
-			if (*f == 'b') {
-				if (*argv) {
-					if (print_esc_string(*argv))
-						return saved_argv; /* causes main() to exit */
+			எனில் (*f == 'b') {
+				எனில் (*argv) {
+					எனில் (print_esc_string(*argv))
+						திரும்பு saved_argv; /* causes main() to exit */
 					++argv;
 				}
-				break;
+				நிறுத்து;
 			}
-			while (*f && strchr("-+ #0", *f)) {
+			போது (*f && strchr("-+ #0", *f)) {
 				++f;
 				++direc_length;
 			}
-			if (*f == '*') {
+			எனில் (*f == '*') {
 				++f;
 				++direc_length;
-				if (*argv)
+				எனில் (*argv)
 					field_width = get_width_prec(*argv++);
-			} else {
-				while (isdigit(*f)) {
+			} இல்லையெனில் {
+				போது (isdigit(*f)) {
 					++f;
 					++direc_length;
 				}
 			}
-			if (*f == '.') {
+			எனில் (*f == '.') {
 				++f;
 				++direc_length;
-				if (*f == '*') {
+				எனில் (*f == '*') {
 					++f;
 					++direc_length;
-					if (*argv)
+					எனில் (*argv)
 						precision = get_width_prec(*argv++);
-				} else {
-					while (isdigit(*f)) {
+				} இல்லையெனில் {
+					போது (isdigit(*f)) {
 						++f;
 						++direc_length;
 					}
@@ -348,21 +348,21 @@ static char **print_formatted(char *f, char **argv, int *conv_err)
 			 * bash does not like "%lld", but coreutils
 			 * happily takes even "%Llllhhzhhzd"!
 			 * We are permissive like coreutils */
-			while ((*f | 0x20) == 'l' || *f == 'h' || *f == 'z') {
+			போது ((*f | 0x20) == 'l' || *f == 'h' || *f == 'z') {
 				overlapping_strcpy(f, f + 1);
 			}
 			/* Add "ll" if integer modifier, then print */
 			{
-				static const char format_chars[] ALIGN1 = "diouxXfeEgGcs";
-				char *p = strchr(format_chars, *f);
+				நிலையான மாறிலி எழுத்து format_chars[] ALIGN1 = "diouxXfeEgGcs";
+				எழுத்து *p = strchr(format_chars, *f);
 				/* needed - try "printf %" without it */
-				if (p == NULL || *f == '\0') {
-					bb_error_msg("%s: invalid format", direc_start);
+				எனில் (p == வெற்று || *f == '\0') {
+					bb_error_செய்தி("%s: invalid format", direc_start);
 					/* causes main() to exit with error */
-					return saved_argv - 1;
+					திரும்பு saved_argv - 1;
 				}
 				++direc_length;
-				if (p - format_chars <= 5) {
+				எனில் (p - format_chars <= 5) {
 					/* it is one of "diouxX" */
 					p = xmalloc(direc_length + 3);
 					memcpy(p, direc_start, direc_length);
@@ -372,40 +372,40 @@ static char **print_formatted(char *f, char **argv, int *conv_err)
 					//bb_error_msg("<%s>", p);
 					direc_length += 2;
 					direc_start = p;
-				} else {
-					p = NULL;
+				} இல்லையெனில் {
+					p = வெற்று;
 				}
-				if (*argv) {
+				எனில் (*argv) {
 					print_direc(direc_start, direc_length, field_width,
 								precision, *argv++);
-				} else {
+				} இல்லையெனில் {
 					print_direc(direc_start, direc_length, field_width,
 								precision, "");
 				}
 				*conv_err |= errno;
-				free(p);
+				விடுவி(p);
 			}
-			break;
-		case '\\':
-			if (*++f == 'c') {
-				return saved_argv; /* causes main() to exit */
+			நிறுத்து;
+		நிலை '\\':
+			எனில் (*++f == 'c') {
+				திரும்பு saved_argv; /* causes main() to exit */
 			}
-			bb_putchar(bb_process_escape_sequence((const char **)&f));
+			bb_putchar(bb_process_escape_sequence((மாறிலி எழுத்து **)&f));
 			f--;
-			break;
-		default:
+			நிறுத்து;
+		இயல்பு:
 			putchar(*f);
 		}
 	}
 
-	return argv;
+	திரும்பு argv;
 }
 
-int printf_main(int argc UNUSED_PARAM, char **argv)
+முழு printf_main(முழு argc UNUSED_PARAM, எழுத்து **argv)
 {
-	int conv_err;
-	char *format;
-	char **argv2;
+	முழு conv_err;
+	எழுத்து *format;
+	எழுத்து **argv2;
 
 	/* We must check that stdout is not closed.
 	 * The reason for this is highly non-obvious.
@@ -417,8 +417,8 @@ int printf_main(int argc UNUSED_PARAM, char **argv)
 	 * to output data no matter what. So it will try later,
 	 * and possibly will clobber future output. Not good. */
 // TODO: check fcntl() & O_ACCMODE == O_WRONLY or O_RDWR?
-	if (fcntl(1, F_GETFL) == -1)
-		return 1; /* match coreutils 6.10 (sans error msg to stderr) */
+	எனில் (fcntl(1, F_GETFL) == -1)
+		திரும்பு 1; /* match coreutils 6.10 (sans error msg to stderr) */
 	//if (dup2(1, 1) != 1) - old way
 	//	return 1;
 
@@ -427,12 +427,12 @@ int printf_main(int argc UNUSED_PARAM, char **argv)
 	 * We will mimic coreutils. */
 	argv = skip_dash_dash(argv);
 
-	if (!argv[0]) {
-		if ((ENABLE_ASH_PRINTF || ENABLE_HUSH_PRINTF)
+	எனில் (!argv[0]) {
+		எனில் ((ENABLE_ASH_PRINTF || ENABLE_HUSH_PRINTF)
 		 && applet_name[0] != 'p'
 		) {
-			bb_simple_error_msg("usage: printf FORMAT [ARGUMENT...]");
-			return 2; /* bash compat */
+			bb_simple_error_செய்தி("usage: printf FORMAT [ARGUMENT...]");
+			திரும்பு 2; /* bash compat */
 		}
 		bb_show_usage();
 	}
@@ -441,16 +441,16 @@ int printf_main(int argc UNUSED_PARAM, char **argv)
 	argv2 = argv + 1;
 
 	conv_err = 0;
-	do {
+	செய் {
 		argv = argv2;
 		argv2 = print_formatted(format, argv, &conv_err);
-	} while (argv2 > argv && *argv2);
+	} போது (argv2 > argv && *argv2);
 
 	/* coreutils compat (bash doesn't do this):
 	if (*argv)
 		fprintf(stderr, "excess args ignored");
 	*/
 
-	return (argv2 < argv) /* if true, print_formatted errored out */
+	திரும்பு (argv2 < argv) /* if true, print_formatted errored out */
 		|| conv_err; /* print_formatted saw invalid number */
 }

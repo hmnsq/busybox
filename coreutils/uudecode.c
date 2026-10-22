@@ -31,131 +31,131 @@
 //usage:       "$ ls -l busybox\n"
 //usage:       "-rwxr-xr-x   1 ams      ams        245264 Jun  7 21:35 busybox\n"
 
-#include "libbb.h"
+#அந்தர்பாவ "libbb.h"
 
-#if ENABLE_UUDECODE
-static void FAST_FUNC read_stduu(FILE *src_stream, FILE *dst_stream, int flags UNUSED_PARAM)
+#எனில் ENABLE_UUDECODE
+நிலையான வெறுமை FAST_FUNC read_stduu(FILE *src_stream, FILE *dst_stream, முழு flags UNUSED_PARAM)
 {
-	char *line;
+	எழுத்து *வரி;
 
-	for (;;) {
-		int encoded_len, str_len;
-		char *line_ptr, *dst;
-		size_t line_len;
+	க்கு (;;) {
+		முழு encoded_len, str_len;
+		எழுத்து *வரி_ptr, *dst;
+		size_t வரி_len;
 
-		line_len = 64 * 1024;
-		line = xmalloc_fgets_str_len(src_stream, "\n", &line_len);
-		if (!line)
-			break;
+		வரி_len = 64 * 1024;
+		வரி = xmalloc_fgets_str_len(src_stream, "\n", &வரி_len);
+		எனில் (!வரி)
+			நிறுத்து;
 		/* Handle both Unix and MSDOS text.
 		 * Note: space should not be trimmed, some encoders use it instead of "`"
 		 * for padding of last incomplete 4-char block.
 		 */
-		str_len = line_len;
-		while (--str_len >= 0
-		 && (line[str_len] == '\n' || line[str_len] == '\r')
+		str_len = வரி_len;
+		போது (--str_len >= 0
+		 && (வரி[str_len] == '\n' || வரி[str_len] == '\r')
 		) {
-			line[str_len] = '\0';
+			வரி[str_len] = '\0';
 		}
 
-		if (strcmp(line, "end") == 0) {
-			return; /* the only non-error exit */
+		எனில் (strcmp(வரி, "end") == 0) {
+			திரும்பு; /* the only non-error exit */
 		}
 
-		line_ptr = line;
-		while (*line_ptr) {
-			*line_ptr = (*line_ptr - 0x20) & 0x3f;
-			line_ptr++;
+		வரி_ptr = வரி;
+		போது (*வரி_ptr) {
+			*வரி_ptr = (*வரி_ptr - 0x20) & 0x3f;
+			வரி_ptr++;
 		}
-		str_len = line_ptr - line;
+		str_len = வரி_ptr - வரி;
 
-		encoded_len = line[0] * 4 / 3;
+		encoded_len = வரி[0] * 4 / 3;
 		/* Check that line is not too short. (we tolerate
 		 * overly _long_ line to accommodate possible extra "`").
 		 * Empty line case is also caught here. */
-		if (str_len <= encoded_len) {
-			break; /* go to bb_error_msg_and_die("short file"); */
+		எனில் (str_len <= encoded_len) {
+			நிறுத்து; /* go to bb_error_msg_and_die("short file"); */
 		}
-		if (encoded_len <= 0) {
+		எனில் (encoded_len <= 0) {
 			/* Ignore the "`\n" line, why is it even in the encode file ? */
-			free(line);
-			continue;
+			விடுவி(வரி);
+			தொடர்;
 		}
-		if (encoded_len > 60) {
-			bb_simple_error_msg_and_die("line too long");
+		எனில் (encoded_len > 60) {
+			bb_simple_error_செய்தி_and_die("line too long");
 		}
 
-		dst = line;
-		line_ptr = line + 1;
-		do {
+		dst = வரி;
+		வரி_ptr = வரி + 1;
+		செய் {
 			/* Merge four 6 bit chars to three 8 bit chars */
-			*dst++ = line_ptr[0] << 2 | line_ptr[1] >> 4;
+			*dst++ = வரி_ptr[0] << 2 | வரி_ptr[1] >> 4;
 			encoded_len--;
-			if (encoded_len == 0) {
-				break;
+			எனில் (encoded_len == 0) {
+				நிறுத்து;
 			}
 
-			*dst++ = line_ptr[1] << 4 | line_ptr[2] >> 2;
+			*dst++ = வரி_ptr[1] << 4 | வரி_ptr[2] >> 2;
 			encoded_len--;
-			if (encoded_len == 0) {
-				break;
+			எனில் (encoded_len == 0) {
+				நிறுத்து;
 			}
 
-			*dst++ = line_ptr[2] << 6 | line_ptr[3];
-			line_ptr += 4;
+			*dst++ = வரி_ptr[2] << 6 | வரி_ptr[3];
+			வரி_ptr += 4;
 			encoded_len -= 2;
-		} while (encoded_len > 0);
-		fwrite(line, 1, dst - line, dst_stream);
-		free(line);
+		} போது (encoded_len > 0);
+		fwrite(வரி, 1, dst - வரி, dst_stream);
+		விடுவி(வரி);
 	}
-	bb_simple_error_msg_and_die("short file");
+	bb_simple_error_செய்தி_and_die("short file");
 }
 
-int uudecode_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int uudecode_main(int argc UNUSED_PARAM, char **argv)
+முழு uudecode_main(முழு argc, எழுத்து **argv) MAIN_EXTERNALLY_VISIBLE;
+முழு uudecode_main(முழு argc UNUSED_PARAM, எழுத்து **argv)
 {
 	FILE *src_stream;
-	char *outname = NULL;
-	char *line;
+	எழுத்து *outname = வெற்று;
+	எழுத்து *வரி;
 
 	getopt32(argv, "^" "o:" "\0" "?1"/* 1 arg max*/, &outname);
 	argv += optind;
 
-	if (!argv[0])
-		*--argv = (char*)"-";
+	எனில் (!argv[0])
+		*--argv = (எழுத்து*)"-";
 	src_stream = xfopen_stdin(argv[0]);
 
 	/* Search for the start of the encoding */
-	while ((line = xmalloc_fgetline(src_stream)) != NULL) {
-		void FAST_FUNC (*decode_fn_ptr)(FILE *src, FILE *dst, int flags);
-		char *line_ptr;
+	போது ((வரி = xmalloc_fgetline(src_stream)) != வெற்று) {
+		வெறுமை FAST_FUNC (*decode_fn_ptr)(FILE *src, FILE *dst, முழு flags);
+		எழுத்து *வரி_ptr;
 		FILE *dst_stream;
-		int mode;
+		முழு mode;
 
-		if (is_prefixed_with(line, "begin-base64 ")) {
-			line_ptr = line + 13;
+		எனில் (is_prefixed_with(வரி, "begin-base64 ")) {
+			வரி_ptr = வரி + 13;
 			decode_fn_ptr = read_base64;
-		} else if (is_prefixed_with(line, "begin ")) {
-			line_ptr = line + 6;
+		} இல்லையெனில் எனில் (is_prefixed_with(வரி, "begin ")) {
+			வரி_ptr = வரி + 6;
 			decode_fn_ptr = read_stduu;
-		} else {
-			free(line);
-			continue;
+		} இல்லையெனில் {
+			விடுவி(வரி);
+			தொடர்;
 		}
 
 		/* begin line found. decode and exit */
-		mode = bb_strtou(line_ptr, NULL, 8);
-		if (outname == NULL) {
-			outname = strchr(line_ptr, ' ');
-			if (!outname)
-				break;
+		mode = bb_strtou(வரி_ptr, வெற்று, 8);
+		எனில் (outname == வெற்று) {
+			outname = strchr(வரி_ptr, ' ');
+			எனில் (!outname)
+				நிறுத்து;
 			outname++;
 			trim(outname); /* remove trailing space (and '\r' for DOS text) */
-			if (!outname[0])
-				break;
+			எனில் (!outname[0])
+				நிறுத்து;
 		}
 		dst_stream = stdout;
-		if (NOT_LONE_DASH(outname)
+		எனில் (NOT_LONE_DASH(outname)
 /* https://pubs.opengroup.org/onlinepubs/9699919799/utilities/uudecode.html
  * https://pubs.opengroup.org/onlinepubs/9699919799/utilities/uuencode.html
  * The above says that output file name specified in input file
@@ -168,12 +168,12 @@ int uudecode_main(int argc UNUSED_PARAM, char **argv)
 			dst_stream = xfopen_for_write(outname);
 			fchmod(fileno(dst_stream), mode & (S_IRWXU | S_IRWXG | S_IRWXO));
 		}
-		free(line);
+		விடுவி(வரி);
 		decode_fn_ptr(src_stream, dst_stream, /*flags:*/ BASE64_FLAG_UU_STOP + BASE64_FLAG_NO_STOP_CHAR);
 		/* fclose_if_not_stdin(src_stream); - redundant */
-		return EXIT_SUCCESS;
+		திரும்பு EXIT_SUCCESS;
 	}
-	bb_simple_error_msg_and_die("no 'begin' line");
+	bb_simple_error_செய்தி_and_die("no 'begin' line");
 }
 #endif
 
@@ -214,16 +214,16 @@ int uudecode_main(int argc UNUSED_PARAM, char **argv)
 //kbuild:lib-$(CONFIG_BASE64) += uudecode.o
 //kbuild:lib-$(CONFIG_BASE32) += uudecode.o
 
-#if ENABLE_BASE32 || ENABLE_BASE64
+#எனில் ENABLE_BASE32 || ENABLE_BASE64
 
-# if ENABLE_BASE32
-static void bb_b32encode(char *p, const void *src, int length)
+# எனில் ENABLE_BASE32
+நிலையான வெறுமை bb_b32encode(எழுத்து *p, மாறிலி வெறுமை *src, முழு length)
 {
 #define tbl bb_uuenc_tbl_base32
-	const unsigned char *s = src;
+	மாறிலி unsigned எழுத்து *s = src;
 
 	/* Transform 5x8 bits to 8x5 bits */
-	while (length > 0) {
+	போது (length > 0) {
 		unsigned cur, next;
 
 		length--;
@@ -232,7 +232,7 @@ static void bb_b32encode(char *p, const void *src, int length)
 		cur &= 7;
 
 		next = 0;
-		if (--length >= 0)
+		எனில் (--length >= 0)
 			next = *s++;
 		*p++ = tbl[(cur << 2) + (next >> 6)];	// -----xxx xx------ -------- -------- --------
 		cur = next & 0x3f;
@@ -241,13 +241,13 @@ static void bb_b32encode(char *p, const void *src, int length)
 		cur &= 1;
 
 		next = 0;
-		if (--length >= 0)
+		எனில் (--length >= 0)
 			next = *s++;
 		*p++ = tbl[(cur << 4) + (next >> 4)];	// -------- -------x xxxx---- -------- --------
 		cur = next & 0xf;
 
 		next = 0;
-		if (--length >= 0)
+		எனில் (--length >= 0)
 			next = *s++;
 		*p++ = tbl[(cur << 1) + (next >> 7)];	// -------- -------- ----xxxx x------- --------
 		cur = next & 0x7f;
@@ -256,7 +256,7 @@ static void bb_b32encode(char *p, const void *src, int length)
 		cur &= 3;
 
 		next = 0;
-		if (--length >= 0)
+		எனில் (--length >= 0)
 			next = *s++;
 		*p++ = tbl[(cur << 3) + (next >> 5)];	// -------- -------- -------- ------xx xxx-----
 		cur = next & 0x1f;
@@ -268,16 +268,16 @@ static void bb_b32encode(char *p, const void *src, int length)
 	*p = '\0';
 	/* Pad as necessary */
 	length = ((-length) * 3) >> 1; /* -4 => 6 pad chars, -3 => 4, -2 => 3, -1 => 1 */
-	while (length--) {
+	போது (length--) {
 		*--p = '=';
 	}
 }
-# else
-void bb_b32encode(char *p, const void *src, int length); /* undefined */
+# இல்லையெனில்
+வெறுமை bb_b32encode(எழுத்து *p, மாறிலி வெறுமை *src, முழு length); /* undefined */
 # endif
 
-int baseNUM_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int baseNUM_main(int argc UNUSED_PARAM, char **argv)
+முழு base_இலக்கம்_main(முழு argc, எழுத்து **argv) MAIN_EXTERNALLY_VISIBLE;
+முழு base_இலக்கம்_main(முழு argc UNUSED_PARAM, எழுத்து **argv)
 {
 	FILE *src_stream;
 	unsigned opts;
@@ -286,17 +286,17 @@ int baseNUM_main(int argc UNUSED_PARAM, char **argv)
 	opts = getopt32(argv, "^" "diw:+" "\0" "?1"/* 1 arg max*/, &col);
 	argv += optind;
 
-	if (!argv[0])
-		*--argv = (char*)"-";
+	எனில் (!argv[0])
+		*--argv = (எழுத்து*)"-";
 	src_stream = xfopen_stdin(argv[0]);
-	if (opts & 1) {
+	எனில் (opts & 1) {
 		/* -d: decode */
-		int flags = (unsigned char)EOF;
-		if (ENABLE_BASE32 && (!ENABLE_BASE64 || applet_name[4] == '3'))
-			flags = ((unsigned char)EOF) | BASE64_32;
+		முழு flags = (unsigned எழுத்து)EOF;
+		எனில் (ENABLE_BASE32 && (!ENABLE_BASE64 || applet_name[4] == '3'))
+			flags = ((unsigned எழுத்து)EOF) | BASE64_32;
 		read_base64(src_stream, stdout, flags);
-	} else {
-		enum {
+	} இல்லையெனில் {
+		எண்ணிக்கை {
 			SRC_BUF_SIZE = 3 * 5 * 32, /* this *MUST* be a multiple of 3 and 5 */
 			DST_BUF_SIZE = 8 * ((SRC_BUF_SIZE + 4) / 5), /* max growth on encode (base32 case) */
 		};
@@ -305,45 +305,45 @@ int baseNUM_main(int argc UNUSED_PARAM, char **argv)
 		 * it's safe to place source at the end of the buffer and
 		 * overwrite it while encoding, just be careful to have a gap.
 		 */
-		char dst_buf[((DST_BUF_SIZE + /*gap:*/ 16) /*round up to 16:*/ | 0xf) + 1];
-#define src_buf (dst_buf + sizeof(dst_buf) - SRC_BUF_SIZE)
-		int src_fd, rem;
+		எழுத்து dst_buf[((DST_BUF_SIZE + /*gap:*/ 16) /*round up to 16:*/ | 0xf) + 1];
+#define src_buf (dst_buf + அளவு(dst_buf) - SRC_BUF_SIZE)
+		முழு src_fd, rem;
 
 		src_fd = fileno(src_stream);
 		rem = 0;
-		while (1) {
+		போது (1) {
 			size_t size = full_read(src_fd, src_buf, SRC_BUF_SIZE);
-			if ((ssize_t)size < 0)
-				bb_simple_perror_msg_and_die(bb_msg_read_error);
-			if (size == 0) {
-				if (rem != 0) bb_putchar('\n');
-				break;
+			எனில் ((ssize_t)size < 0)
+				bb_simple_perror_செய்தி_and_die(bb_செய்தி_read_error);
+			எனில் (size == 0) {
+				எனில் (rem != 0) bb_putchar('\n');
+				நிறுத்து;
 			}
 
 			/* Encode the buffer we just read in */
-			if (ENABLE_BASE32 && (!ENABLE_BASE64 || applet_name[4] == '3')) {
+			எனில் (ENABLE_BASE32 && (!ENABLE_BASE64 || applet_name[4] == '3')) {
 				bb_b32encode(dst_buf, src_buf, size);
 				size = 8 * ((size + 4) / 5);
-			} else {
+			} இல்லையெனில் {
 				bb_uuencode(dst_buf, src_buf, size, bb_uuenc_tbl_base64);
 				size = 4 * ((size + 2) / 3);
 			}
 
-			if (col == 0) {
+			எனில் (col == 0) {
 				fputs_stdout(dst_buf);
-			} else {
-				char *result = dst_buf;
-				if (rem == 0)
+			} இல்லையெனில் {
+				எழுத்து *result = dst_buf;
+				எனில் (rem == 0)
 					rem = col;
-				while (1) {
-					int out = size < rem ? size : rem;
+				போது (1) {
+					முழு out = size < rem ? size : rem;
 					rem -= out;
 					printf(rem != 0 ? "%.*s" : "%.*s\n", out, result);
-					if (rem != 0)
-						break;
+					எனில் (rem != 0)
+						நிறுத்து;
 					size -= out;
-					if (size == 0)
-						break;
+					எனில் (size == 0)
+						நிறுத்து;
 					result += out;
 					rem = col;
 				}

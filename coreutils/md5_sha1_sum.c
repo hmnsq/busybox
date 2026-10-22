@@ -124,11 +124,11 @@
 // --quiet   don't print OK for each successfully verified file
 // --status  don't output anything, status code shows success
 
-#include "libbb.h"
+#அந்தர்பாவ "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-enum {
+எண்ணிக்கை {
 	/* 4th letter of applet_name is... */
 	HASH_MD5 = 's', /* "md5>s<um" */
 	HASH_SHA1 = '1',
@@ -142,143 +142,143 @@ enum {
 #define FLAG_WARN    4
 
 /* This might be useful elsewhere */
-static unsigned char *hash_bin_to_hex(unsigned char *hash_value,
+நிலையான unsigned எழுத்து *hash_bin_to_hex(unsigned எழுத்து *hash_மதிப்பு,
 				unsigned hash_length)
 {
 	/* xzalloc zero-terminates */
-	char *hex_value = xzalloc((hash_length * 2) + 1);
-	bin2hex(hex_value, (char*)hash_value, hash_length);
-	return (unsigned char *)hex_value;
+	எழுத்து *hex_மதிப்பு = xzalloc((hash_length * 2) + 1);
+	bin2hex(hex_மதிப்பு, (எழுத்து*)hash_மதிப்பு, hash_length);
+	திரும்பு (unsigned எழுத்து *)hex_மதிப்பு;
 }
 
 #define BUFSZ (CONFIG_FEATURE_COPYBUF_KB < 4 ? 4096 : CONFIG_FEATURE_COPYBUF_KB * 1024)
 
-#if !ENABLE_SHA3SUM
+#எனில் !ENABLE_SHA3SUM
 # define hash_file(b,f,w) hash_file(b,f)
 #endif
-static uint8_t *hash_file(unsigned char *in_buf, const char *filename, unsigned sha3_width)
+நிலையான uint8_t *hash_file(unsigned எழுத்து *in_buf, மாறிலி எழுத்து *filename, unsigned sha3_width)
 {
-	int src_fd, hash_len, count;
-	union _ctx_ {
+	முழு src_fd, hash_len, மொத்தம்;
+	ஒன்றிப்பு _ctx_ {
 		sha3_ctx_t sha3;
 		sha512_ctx_t sha512;
 		sha256_ctx_t sha256;
 		sha1_ctx_t sha1;
 		md5_ctx_t md5;
 	} context;
-	uint8_t *hash_value;
-	void FAST_FUNC (*update)(void*, const void*, size_t);
-	unsigned FAST_FUNC (*final)(void*, void*);
-	char hash_algo;
+	uint8_t *hash_மதிப்பு;
+	வெறுமை FAST_FUNC (*update)(வெறுமை*, மாறிலி வெறுமை*, size_t);
+	unsigned FAST_FUNC (*final)(வெறுமை*, வெறுமை*);
+	எழுத்து hash_algo;
 
 	src_fd = open_or_warn_stdin(filename);
-	if (src_fd < 0) {
-		return NULL;
+	எனில் (src_fd < 0) {
+		திரும்பு வெற்று;
 	}
 
 	hash_algo = applet_name[3];
 
 	/* figure specific hash algorithms */
-	if (ENABLE_MD5SUM && hash_algo == HASH_MD5) {
+	எனில் (ENABLE_MD5SUM && hash_algo == HASH_MD5) {
 		md5_begin(&context.md5);
-		update = (void*)md5_hash;
-		final = (void*)md5_end;
+		update = (வெறுமை*)md5_hash;
+		final = (வெறுமை*)md5_end;
 		hash_len = 16;
 	}
-	else if (ENABLE_SHA1SUM && hash_algo == HASH_SHA1) {
+	இல்லையெனில் எனில் (ENABLE_SHA1SUM && hash_algo == HASH_SHA1) {
 		sha1_begin(&context.sha1);
-		update = (void*)sha1_hash;
-		final = (void*)sha1_end;
+		update = (வெறுமை*)sha1_hash;
+		final = (வெறுமை*)sha1_end;
 		hash_len = 20;
 	}
-	else if (ENABLE_SHA256SUM && hash_algo == HASH_SHA256) {
+	இல்லையெனில் எனில் (ENABLE_SHA256SUM && hash_algo == HASH_SHA256) {
 		sha256_begin(&context.sha256);
-		update = (void*)sha256_hash;
-		final = (void*)sha256_end;
+		update = (வெறுமை*)sha256_hash;
+		final = (வெறுமை*)sha256_end;
 		hash_len = 32;
 	}
-	else if (ENABLE_SHA512SUM && hash_algo == HASH_SHA512) {
+	இல்லையெனில் எனில் (ENABLE_SHA512SUM && hash_algo == HASH_SHA512) {
 		sha512_begin(&context.sha512);
-		update = (void*)sha512_hash;
-		final = (void*)sha512_end;
+		update = (வெறுமை*)sha512_hash;
+		final = (வெறுமை*)sha512_end;
 		hash_len = 64;
 	}
-#if ENABLE_SHA3SUM
-	else if (ENABLE_SHA3SUM && hash_algo == HASH_SHA3) {
+#எனில் ENABLE_SHA3SUM
+	இல்லையெனில் எனில் (ENABLE_SHA3SUM && hash_algo == HASH_SHA3) {
 		sha3_begin(&context.sha3);
-		update = (void*)sha3_hash;
-		final = (void*)sha3_end;
+		update = (வெறுமை*)sha3_hash;
+		final = (வெறுமை*)sha3_end;
 		/*
 		 * Should support 224, 256, 384, 512.
 		 * We allow any value which does not blow the algorithm up.
 		 */
-		if (sha3_width >= 1600/2 /* input block can't be <= 0 */
+		எனில் (sha3_width >= 1600/2 /* input block can't be <= 0 */
 		 || sha3_width == 0      /* hash len can't be 0 */
 		 || (sha3_width & 0x1f)  /* should be multiple of 32 */
 		/* (because input uses up to 8 byte wide word XORs. 32/4=8) */
 		) {
-			bb_error_msg_and_die("bad -a%u", sha3_width);
+			bb_error_செய்தி_and_die("bad -a%u", sha3_width);
 		}
 		sha3_width /= 4;
-		context.sha3.input_block_bytes = 1600/8 - sha3_width;
+		context.sha3.உள்ளீடு_block_bytes = 1600/8 - sha3_width;
 		hash_len = sha3_width/2;
 	}
 #endif
-	else {
+	இல்லையெனில் {
 		xfunc_die(); /* can't reach this */
 	}
 
 	{
-		while ((count = safe_read(src_fd, in_buf, BUFSZ)) > 0) {
-			update(&context, in_buf, count);
+		போது ((மொத்தம் = safe_read(src_fd, in_buf, BUFSZ)) > 0) {
+			update(&context, in_buf, மொத்தம்);
 		}
-		hash_value = NULL;
-		if (count < 0)
-			bb_perror_msg("can't read '%s'", filename);
-		else /* count == 0 */ {
+		hash_மதிப்பு = வெற்று;
+		எனில் (மொத்தம் < 0)
+			bb_perror_செய்தி("can't read '%s'", filename);
+		இல்லையெனில் /* count == 0 */ {
 			final(&context, in_buf);
-			hash_value = hash_bin_to_hex(in_buf, hash_len);
+			hash_மதிப்பு = hash_bin_to_hex(in_buf, hash_len);
 		}
 	}
 
-	if (src_fd != STDIN_FILENO) {
+	எனில் (src_fd != STDIN_FILENO) {
 		close(src_fd);
 	}
 
-	return hash_value;
+	திரும்பு hash_மதிப்பு;
 }
 
-int md5_sha1_sum_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int md5_sha1_sum_main(int argc UNUSED_PARAM, char **argv)
+முழு md5_sha1_sum_main(முழு argc, எழுத்து **argv) MAIN_EXTERNALLY_VISIBLE;
+முழு md5_sha1_sum_main(முழு argc UNUSED_PARAM, எழுத்து **argv)
 {
-	unsigned char *in_buf;
-	int return_value = EXIT_SUCCESS;
+	unsigned எழுத்து *in_buf;
+	முழு return_மதிப்பு = EXIT_SUCCESS;
 	unsigned flags;
-#if ENABLE_SHA3SUM
+#எனில் ENABLE_SHA3SUM
 	unsigned sha3_width = 224;
 #endif
 
-	if (ENABLE_FEATURE_MD5_SHA1_SUM_CHECK) {
+	எனில் (ENABLE_FEATURE_MD5_SHA1_SUM_CHECK) {
 		/* -b "binary", -t "text" are ignored (shaNNNsum compat) */
 		/* -s and -w require -c */
-#if ENABLE_SHA3SUM
-		if (applet_name[3] == HASH_SHA3)
+#எனில் ENABLE_SHA3SUM
+		எனில் (applet_name[3] == HASH_SHA3)
 			flags = getopt32(argv, "^" "scwbta:+" "\0" "s?c:w?c", &sha3_width);
-		else
+		இல்லையெனில்
 #endif
 			flags = getopt32(argv, "^" "scwbt" "\0" "s?c:w?c");
-	} else {
-#if ENABLE_SHA3SUM
-		if (applet_name[3] == HASH_SHA3)
+	} இல்லையெனில் {
+#எனில் ENABLE_SHA3SUM
+		எனில் (applet_name[3] == HASH_SHA3)
 			getopt32(argv, "a:+", &sha3_width);
-		else
+		இல்லையெனில்
 #endif
 			getopt32(argv, "");
 	}
 	argv += optind;
 	//argc -= optind;
-	if (!*argv)
-		*--argv = (char*)"-";
+	எனில் (!*argv)
+		*--argv = (எழுத்து*)"-";
 
 	/* The buffer is not alloc/freed for each input file:
 	 * for big values of COPYBUF_KB, this helps to keep its pages
@@ -286,76 +286,76 @@ int md5_sha1_sum_main(int argc UNUSED_PARAM, char **argv)
 	 */
 	in_buf = xmalloc(BUFSZ);
 
-	do {
-		if (ENABLE_FEATURE_MD5_SHA1_SUM_CHECK && (flags & FLAG_CHECK)) {
+	செய் {
+		எனில் (ENABLE_FEATURE_MD5_SHA1_SUM_CHECK && (flags & FLAG_CHECK)) {
 			FILE *pre_computed_stream;
-			char *line;
-			int count_total = 0;
-			int count_failed = 0;
+			எழுத்து *வரி;
+			முழு மொத்தம்_total = 0;
+			முழு மொத்தம்_failed = 0;
 
 			pre_computed_stream = xfopen_stdin(*argv);
 
-			while ((line = xmalloc_fgetline(pre_computed_stream)) != NULL) {
-				uint8_t *hash_value;
-				char *filename_ptr;
+			போது ((வரி = xmalloc_fgetline(pre_computed_stream)) != வெற்று) {
+				uint8_t *hash_மதிப்பு;
+				எழுத்து *filename_ptr;
 
-				count_total++;
-				filename_ptr = strchr(line, ' ');
-				if (!filename_ptr) {
-					if (flags & FLAG_WARN) {
-						bb_simple_error_msg("invalid format");
+				மொத்தம்_total++;
+				filename_ptr = strchr(வரி, ' ');
+				எனில் (!filename_ptr) {
+					எனில் (flags & FLAG_WARN) {
+						bb_simple_error_செய்தி("invalid format");
 					}
-					count_failed++;
-					return_value = EXIT_FAILURE;
-					free(line);
-					continue;
+					மொத்தம்_failed++;
+					return_மதிப்பு = EXIT_FAILURE;
+					விடுவி(வரி);
+					தொடர்;
 				}
 				*filename_ptr++ = '\0';
 				/* coreutils 9.1 allows "HASH FILENAME" format,
 				 * with only one space. Skip the 'correct'
 				 * "  " or " *" delimiter if it is there:
 				 */
-				if (*filename_ptr == ' ' || *filename_ptr == '*')
+				எனில் (*filename_ptr == ' ' || *filename_ptr == '*')
 					filename_ptr++;
 
-				hash_value = hash_file(in_buf, filename_ptr, sha3_width);
+				hash_மதிப்பு = hash_file(in_buf, filename_ptr, sha3_width);
 
-				if (hash_value && (strcasecmp((char*)hash_value, line) == 0)) {
-					if (!(flags & FLAG_SILENT))
+				எனில் (hash_மதிப்பு && (strcasecmp((எழுத்து*)hash_மதிப்பு, வரி) == 0)) {
+					எனில் (!(flags & FLAG_SILENT))
 						printf("%s: OK\n", filename_ptr);
-				} else {
-					if (!(flags & FLAG_SILENT))
+				} இல்லையெனில் {
+					எனில் (!(flags & FLAG_SILENT))
 						printf("%s: FAILED\n", filename_ptr);
-					count_failed++;
-					return_value = EXIT_FAILURE;
+					மொத்தம்_failed++;
+					return_மதிப்பு = EXIT_FAILURE;
 				}
 				/* possible free(NULL) */
-				free(hash_value);
-				free(line);
+				விடுவி(hash_மதிப்பு);
+				விடுவி(வரி);
 			}
-			if (count_failed && !(flags & FLAG_SILENT)) {
-				bb_error_msg("WARNING: %d of %d computed checksums did NOT match",
-						count_failed, count_total);
+			எனில் (மொத்தம்_failed && !(flags & FLAG_SILENT)) {
+				bb_error_செய்தி("WARNING: %d of %d computed checksums did NOT match",
+						மொத்தம்_failed, மொத்தம்_total);
 			}
-			if (count_total == 0) {
-				return_value = EXIT_FAILURE;
+			எனில் (மொத்தம்_total == 0) {
+				return_மதிப்பு = EXIT_FAILURE;
 				/*
 				 * md5sum from GNU coreutils 8.25 says:
 				 * md5sum: <FILE>: no properly formatted MD5 checksum lines found
 				 */
-				bb_error_msg("%s: no checksum lines found", *argv);
+				bb_error_செய்தி("%s: no checksum lines found", *argv);
 			}
 			fclose_if_not_stdin(pre_computed_stream);
-		} else {
-			uint8_t *hash_value = hash_file(in_buf, *argv, sha3_width);
-			if (hash_value == NULL) {
-				return_value = EXIT_FAILURE;
-			} else {
-				printf("%s  %s\n", hash_value, *argv);
-				free(hash_value);
+		} இல்லையெனில் {
+			uint8_t *hash_மதிப்பு = hash_file(in_buf, *argv, sha3_width);
+			எனில் (hash_மதிப்பு == வெற்று) {
+				return_மதிப்பு = EXIT_FAILURE;
+			} இல்லையெனில் {
+				printf("%s  %s\n", hash_மதிப்பு, *argv);
+				விடுவி(hash_மதிப்பு);
 			}
 		}
-	} while (*++argv);
+	} போது (*++argv);
 
-	return return_value;
+	திரும்பு return_மதிப்பு;
 }

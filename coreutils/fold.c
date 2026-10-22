@@ -28,69 +28,69 @@
 //usage:     "\n	-s	Break at spaces"
 //usage:     "\n	-w	Use WIDTH columns instead of 80"
 
-#include "libbb.h"
-#include "unicode.h"
+#அந்தர்பாவ "libbb.h"
+#அந்தர்பாவ "unicode.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
 /* Must match getopt32 call */
-#define FLAG_COUNT_BYTES        1
+#define FLAG_மொத்தம்_BYTES        1
 #define FLAG_BREAK_SPACES       2
 #define FLAG_WIDTH              4
 
 /* Assuming the current column is COLUMN, return the column that
    printing C will move the cursor to.
    The first column is 0. */
-static int adjust_column(unsigned column, char c)
+நிலையான முழு adjust_column(unsigned column, எழுத்து c)
 {
-	if (option_mask32 & FLAG_COUNT_BYTES)
-		return ++column;
+	எனில் (option_mask32 & FLAG_மொத்தம்_BYTES)
+		திரும்பு ++column;
 
-	if (c == '\t')
-		return column + 8 - column % 8;
+	எனில் (c == '\t')
+		திரும்பு column + 8 - column % 8;
 
-	if (c == '\b') {
-		if ((int)--column < 0)
+	எனில் (c == '\b') {
+		எனில் ((முழு)--column < 0)
 			column = 0;
 	}
-	else if (c == '\r')
+	இல்லையெனில் எனில் (c == '\r')
 		column = 0;
-	else { /* just a printable char */
-		if (unicode_status != UNICODE_ON /* every byte is a new char */
+	இல்லையெனில் { /* just a printable char */
+		எனில் (unicode_status != UNICODE_ON /* every byte is a new char */
 		 || (c & 0xc0) != 0x80 /* it isn't a 2nd+ byte of a Unicode char */
 		) {
 			column++;
 		}
 	}
-	return column;
+	திரும்பு column;
 }
 
 /* Note that this function can write NULs, unlike fputs etc. */
-static void write2stdout(const void *buf, unsigned size)
+நிலையான வெறுமை write2stdout(மாறிலி வெறுமை *buf, unsigned size)
 {
 	fwrite(buf, 1, size, stdout);
 }
 
-int fold_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int fold_main(int argc UNUSED_PARAM, char **argv)
+முழு fold_main(முழு argc, எழுத்து **argv) MAIN_EXTERNALLY_VISIBLE;
+முழு fold_main(முழு argc UNUSED_PARAM, எழுத்து **argv)
 {
-	char *line_out = NULL;
-	const char *w_opt = "80";
+	எழுத்து *வரி_out = வெற்று;
+	மாறிலி எழுத்து *w_opt = "80";
 	unsigned width;
 	exitcode_t exitcode = EXIT_SUCCESS;
 
 	init_unicode();
 
-	if (ENABLE_INCLUDE_SUSv2) {
+	எனில் (ENABLE_INCLUDE_SUSv2) {
 		/* Turn any numeric options into -w options.  */
-		int i;
-		for (i = 1; argv[i]; i++) {
-			const char *a = argv[i];
-			if (*a == '-') {
+		முழு i;
+		க்கு (i = 1; argv[i]; i++) {
+			மாறிலி எழுத்து *a = argv[i];
+			எனில் (*a == '-') {
 				a++;
-				if (*a == '-' && !a[1]) /* "--" */
-					break;
-				if (isdigit(*a))
+				எனில் (*a == '-' && !a[1]) /* "--" */
+					நிறுத்து;
+				எனில் (isdigit(*a))
 					argv[i] = xasprintf("-w%s", a);
 			}
 		}
@@ -100,87 +100,87 @@ int fold_main(int argc UNUSED_PARAM, char **argv)
 	width = xatou_range(w_opt, 1, 10000);
 
 	argv += optind;
-	if (!*argv)
-		*--argv = (char*)"-";
+	எனில் (!*argv)
+		*--argv = (எழுத்து*)"-";
 
-	do {
+	செய் {
 		FILE *istream = fopen_or_warn_stdin(*argv);
-		int c;
+		முழு c;
 		unsigned column = 0;     /* Screen column where next char will go */
 		unsigned offset_out = 0; /* Index in 'line_out' for next char */
 
-		if (istream == NULL) {
+		எனில் (istream == வெற்று) {
 			exitcode = EXIT_FAILURE;
-			continue;
+			தொடர்;
 		}
 
-		while ((c = getc(istream)) != EOF) {
+		போது ((c = getc(istream)) != EOF) {
 			/* We grow line_out in chunks of 0x1000 bytes */
-			if ((offset_out & 0xfff) == 0) {
-				line_out = xrealloc(line_out, offset_out + 0x1000);
+			எனில் ((offset_out & 0xfff) == 0) {
+				வரி_out = xrealloc(வரி_out, offset_out + 0x1000);
 			}
  rescan:
-			line_out[offset_out] = c;
-			if (c == '\n') {
-				write2stdout(line_out, offset_out + 1);
+			வரி_out[offset_out] = c;
+			எனில் (c == '\n') {
+				write2stdout(வரி_out, offset_out + 1);
 				column = offset_out = 0;
-				continue;
+				தொடர்;
 			}
 			column = adjust_column(column, c);
-			if (column <= width || offset_out == 0) {
+			எனில் (column <= width || offset_out == 0) {
 				/* offset_out == 0 case happens
 				 * with small width (say, 1) and tabs.
 				 * The very first tab already goes to column 8,
 				 * but we must not wrap it */
 				offset_out++;
-				continue;
+				தொடர்;
 			}
 
 			/* This character would make the line too long.
 			 * Print the line plus a newline, and make this character
 			 * start the next line */
-			if (option_mask32 & FLAG_BREAK_SPACES) {
+			எனில் (option_mask32 & FLAG_BREAK_SPACES) {
 				unsigned i;
 				unsigned logical_end;
 
 				/* Look for the last blank. */
-				for (logical_end = offset_out - 1; (int)logical_end >= 0; logical_end--) {
-					if (!isblank(line_out[logical_end]))
-						continue;
+				க்கு (logical_end = offset_out - 1; (முழு)logical_end >= 0; logical_end--) {
+					எனில் (!isblank(வரி_out[logical_end]))
+						தொடர்;
 
 					/* Found a space or tab.
 					 * Output up to and including it, and start a new line */
 					logical_end++;
 					/*line_out[logical_end] = '\n'; - NO! this nukes one buffered character */
-					write2stdout(line_out, logical_end);
+					write2stdout(வரி_out, logical_end);
 					putchar('\n');
 					/* Move the remainder to the beginning of the next line.
 					 * The areas being copied here might overlap. */
-					memmove(line_out, line_out + logical_end, offset_out - logical_end);
+					memmove(வரி_out, வரி_out + logical_end, offset_out - logical_end);
 					offset_out -= logical_end;
-					for (column = i = 0; i < offset_out; i++) {
-						column = adjust_column(column, line_out[i]);
+					க்கு (column = i = 0; i < offset_out; i++) {
+						column = adjust_column(column, வரி_out[i]);
 					}
-					goto rescan;
+					செல் rescan;
 				}
 				/* No blank found, wrap will split the overlong word */
 			}
 			/* Output what we accumulated up to now, and start a new line */
-			line_out[offset_out] = '\n';
-			write2stdout(line_out, offset_out + 1);
+			வரி_out[offset_out] = '\n';
+			write2stdout(வரி_out, offset_out + 1);
 			column = offset_out = 0;
-			goto rescan;
+			செல் rescan;
 		} /* while (not EOF) */
 
-		if (offset_out) {
-			write2stdout(line_out, offset_out);
+		எனில் (offset_out) {
+			write2stdout(வரி_out, offset_out);
 		}
 
-		if (fclose_if_not_stdin(istream)) {
-			bb_simple_perror_msg(*argv);
+		எனில் (fclose_if_not_stdin(istream)) {
+			bb_simple_perror_செய்தி(*argv);
 			exitcode = EXIT_FAILURE;
 		}
-	} while (*++argv);
+	} போது (*++argv);
 
 	fflush_stdout_and_exit(exitcode);
 }

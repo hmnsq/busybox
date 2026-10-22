@@ -21,13 +21,13 @@
 //usage:#define unlink_full_usage "\n\n"
 //usage:	"Delete FILE by calling unlink()"
 
-#include "libbb.h"
+#அந்தர்பாவ "libbb.h"
 
-int unlink_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int unlink_main(int argc UNUSED_PARAM, char **argv)
+முழு unlink_main(முழு argc, எழுத்து **argv) MAIN_EXTERNALLY_VISIBLE;
+முழு unlink_main(முழு argc UNUSED_PARAM, எழுத்து **argv)
 {
 	getopt32(argv, "^" "" "\0" "=1");
 	argv += optind;
 	xunlink(argv[0]);
-	return 0;
+	திரும்பு 0;
 }

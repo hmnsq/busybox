@@ -25,26 +25,26 @@
 //usage:     "\n	-w	Pad with leading zeros"
 //usage:     "\n	-s SEP	String separator"
 
-#include "libbb.h"
+#அந்தர்பாவ "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-int seq_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int seq_main(int argc, char **argv)
+முழு seq_main(முழு argc, எழுத்து **argv) MAIN_EXTERNALLY_VISIBLE;
+முழு seq_main(முழு argc, எழுத்து **argv)
 {
-	enum {
+	எண்ணிக்கை {
 		OPT_w = (1 << 0),
 		OPT_s = (1 << 1),
 	};
-	double first, last, increment, v;
+	இரட்டை first, last, increment, v;
 	unsigned n;
 	unsigned width;
 	unsigned frac_part;
-	const char *sep, *opt_s = "\n";
-	char *saved;
+	மாறிலி எழுத்து *sep, *opt_s = "\n";
+	எழுத்து *saved;
 	unsigned opt;
 
-#if ENABLE_LOCALE_SUPPORT
+#எனில் ENABLE_LOCALE_SUPPORT
 	/* Undo busybox.c: on input, we want to use dot
 	 * as fractional separator, regardless of current locale */
 	setlocale(LC_NUMERIC, "C");
@@ -52,21 +52,21 @@ int seq_main(int argc, char **argv)
 
 	/* Cater for negative arguments: if we see one, truncate argv[] on it */
 	n = 0;
-	for (;;) {
-		char c;
+	க்கு (;;) {
+		எழுத்து c;
 		saved = argv[++n];
-		if (!saved)
-			break;
-		if (saved[0] != '-') {
+		எனில் (!saved)
+			நிறுத்து;
+		எனில் (saved[0] != '-') {
 			// break; // "seq -s : -1 1" won't be treated correctly
-			continue;
+			தொடர்;
 		}
 // "seq -s -1 1 9" is not treated correctly, but such usage
 // (delimiter string which looks like negative number) is very unlikely
 		c = saved[1];
-		if (c == '.' || (c >= '0' && c <= '9')) {
-			argv[n] = NULL;
-			break;
+		எனில் (c == '.' || (c >= '0' && c <= '9')) {
+			argv[n] = வெற்று;
+			நிறுத்து;
 		}
 	}
 	opt = getopt32(argv, "+ws:", &opt_s); /* "+": stop at first non-option */
@@ -77,66 +77,66 @@ int seq_main(int argc, char **argv)
 	argv += optind;
 	first = increment = 1;
 	errno = 0;
-	switch (argc) {
-			char *pp;
-		case 3:
+	தேர்வு (argc) {
+			எழுத்து *pp;
+		நிலை 3:
 			increment = strtod(argv[1], &pp);
 			errno |= *pp;
-		case 2:
+		நிலை 2:
 			first = strtod(argv[0], &pp);
 			errno |= *pp;
-		case 1:
+		நிலை 1:
 			last = strtod(argv[argc-1], &pp);
-			if (!errno && *pp == '\0')
-				break;
-		default:
+			எனில் (!errno && *pp == '\0')
+				நிறுத்து;
+		இயல்பு:
 			bb_show_usage();
 	}
 
-#if ENABLE_LOCALE_SUPPORT
+#எனில் ENABLE_LOCALE_SUPPORT
 	setlocale(LC_NUMERIC, "");
 #endif
 
 	/* Last checked to be compatible with: coreutils-6.10 */
 	width = 0;
 	frac_part = 0;
-	while (1) {
-		char *dot = strchrnul(*argv, '.');
-		int w = (dot - *argv);
-		int f = strlen(dot);
-		if (width < w)
+	போது (1) {
+		எழுத்து *dot = strchrnul(*argv, '.');
+		முழு w = (dot - *argv);
+		முழு f = strlen(dot);
+		எனில் (width < w)
 			width = w;
 		argv++;
-		if (!*argv)
-			break;
+		எனில் (!*argv)
+			நிறுத்து;
 		/* Why do the above _before_ frac check below?
 		 * Try "seq 1 2.0" and "seq 1.0 2.0":
 		 * coreutils never pay attention to the number
 		 * of fractional digits in last arg. */
-		if (frac_part < f)
+		எனில் (frac_part < f)
 			frac_part = f;
 	}
-	if (frac_part) {
+	எனில் (frac_part) {
 		frac_part--;
-		if (frac_part)
+		எனில் (frac_part)
 			width += frac_part + 1;
 	}
-	if (!(opt & OPT_w))
+	எனில் (!(opt & OPT_w))
 		width = 0;
 
 	sep = "";
 	v = first;
 	n = 0;
-	while (increment >= 0 ? v <= last : v >= last) {
-		if (printf("%s%0*.*f", sep, width, frac_part, v) < 0)
-			break; /* I/O error, bail out (yes, this really happens) */
+	போது (increment >= 0 ? v <= last : v >= last) {
+		எனில் (printf("%s%0*.*f", sep, width, frac_part, v) < 0)
+			நிறுத்து; /* I/O error, bail out (yes, this really happens) */
 		sep = opt_s;
 		/* v += increment; - would accumulate floating point errors */
 		n++;
 		v = first + n * increment;
 	}
-	if (n) /* if while loop executed at least once */
+	எனில் (n) /* if while loop executed at least once */
 		bb_putchar('\n');
 
-	return fflush_all();
+	திரும்பு fflush_all();
 }

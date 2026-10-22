@@ -36,7 +36,7 @@
 //usage:     "\n	-v	Verbose"
 //usage:	)
 
-#include "libbb.h"
+#அந்தர்பாவ "libbb.h"
 
 /*
  * # readlink --version
@@ -64,10 +64,10 @@
  * behavior which means we'd have to implement the full stack ourselves :(.
  */
 
-int readlink_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int readlink_main(int argc UNUSED_PARAM, char **argv)
+முழு readlink_main(முழு argc, எழுத்து **argv) MAIN_EXTERNALLY_VISIBLE;
+முழு readlink_main(முழு argc UNUSED_PARAM, எழுத்து **argv)
 {
-	char *buf;
+	எழுத்து *buf;
 	unsigned opt;
 
 	/* -n must use bit 0 (see printf below) */
@@ -75,20 +75,20 @@ int readlink_main(int argc UNUSED_PARAM, char **argv)
                        "\0" "=1");
 
 	/* compat: coreutils readlink reports errors silently via exit code */
-	if (!(opt & 4)) /* not -v */
+	எனில் (!(opt & 4)) /* not -v */
 		logmode = LOGMODE_NONE;
 
 	/* NOFORK: only one alloc is allowed; must free */
-	if (opt & 2) { /* -f */
+	எனில் (opt & 2) { /* -f */
 		buf = xmalloc_realpath_coreutils(argv[optind]);
-	} else {
+	} இல்லையெனில் {
 		buf = xmalloc_readlink_or_warn(argv[optind]);
 	}
 
-	if (!buf)
-		return EXIT_FAILURE;
+	எனில் (!buf)
+		திரும்பு EXIT_FAILURE;
 	printf("%s%s", buf, &"\n"[opt & 1]);
-	free(buf);
+	விடுவி(buf);
 
 	fflush_stdout_and_exit_SUCCESS();
 }

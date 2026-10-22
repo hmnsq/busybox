@@ -53,22 +53,22 @@
 /* BB_AUDIT SUSv3 compliant. */
 /* http://www.opengroup.org/onlinepubs/007904975/utilities/wc.html */
 
-#include "libbb.h"
-#include "unicode.h"
+#அந்தர்பாவ "libbb.h"
+#அந்தர்பாவ "unicode.h"
 
-#if !ENABLE_LOCALE_SUPPORT
+#எனில் !ENABLE_LOCALE_SUPPORT
 # undef isprint
 # undef isspace
 # define isprint(c) ((unsigned)((c) - 0x20) <= (0x7e - 0x20))
 # define isspace(c) ((c) == ' ')
 #endif
 
-#if ENABLE_FEATURE_WC_LARGE
-# define COUNT_T unsigned long long
-# define COUNT_FMT "llu"
-#else
-# define COUNT_T unsigned
-# define COUNT_FMT "u"
+#எனில் ENABLE_FEATURE_WC_LARGE
+# define மொத்தம்_T unsigned long long
+# define மொத்தம்_FMT "llu"
+#இல்லையெனில்
+# define மொத்தம்_T unsigned
+# define மொத்தம்_FMT "u"
 #endif
 
 /* We support -m even when UNICODE_SUPPORT is off,
@@ -96,25 +96,25 @@
 /* Order is important if we want to be compatible with
  * column order in "wc -cmlwL" output:
  */
-enum {
-	WC_LINES    = 0, /* -l */
-	WC_WORDS    = 1, /* -w */
+எண்ணிக்கை {
+	WC_வரிகள்    = 0, /* -l */
+	WC_சொற்கள்    = 1, /* -w */
 	WC_UNICHARS = 2, /* -m */
 	WC_BYTES    = 3, /* -c */
 	WC_LENGTH   = 4, /* -L */
-	NUM_WCS     = 5,
+	இலக்கம்_WCS     = 5,
 };
 
-int wc_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int wc_main(int argc UNUSED_PARAM, char **argv)
+முழு wc_main(முழு argc, எழுத்து **argv) MAIN_EXTERNALLY_VISIBLE;
+முழு wc_main(முழு argc UNUSED_PARAM, எழுத்து **argv)
 {
-	const char *arg;
-	const char *start_fmt = " %9"COUNT_FMT + 1;
-	const char *fname_fmt = " %s\n";
-	COUNT_T *pcounts;
-	COUNT_T counts[NUM_WCS];
-	COUNT_T totals[NUM_WCS];
-	int num_files;
+	மாறிலி எழுத்து *arg;
+	மாறிலி எழுத்து *start_fmt = " %9"மொத்தம்_FMT + 1;
+	மாறிலி எழுத்து *fname_fmt = " %s\n";
+	மொத்தம்_T *pcounts;
+	மொத்தம்_T counts[இலக்கம்_WCS];
+	மொத்தம்_T totals[இலக்கம்_WCS];
+	முழு இலக்கம்_files;
 	smallint status = EXIT_SUCCESS;
 	unsigned print_type;
 
@@ -122,105 +122,105 @@ int wc_main(int argc UNUSED_PARAM, char **argv)
 
 	print_type = getopt32(argv, "lwmcL");
 
-	if (print_type == 0) {
-		print_type = (1 << WC_LINES) | (1 << WC_WORDS) | (1 << WC_BYTES);
+	எனில் (print_type == 0) {
+		print_type = (1 << WC_வரிகள்) | (1 << WC_சொற்கள்) | (1 << WC_BYTES);
 	}
 
 	argv += optind;
-	if (!argv[0]) {
-		*--argv = (char *) bb_msg_standard_input;
+	எனில் (!argv[0]) {
+		*--argv = (எழுத்து *) bb_செய்தி_standard_உள்ளீடு;
 		fname_fmt = "\n";
 	}
-	if (!argv[1]) { /* zero or one filename? */
-		if (!((print_type-1) & print_type)) /* exactly one option? */
-			start_fmt = "%"COUNT_FMT;
+	எனில் (!argv[1]) { /* zero or one filename? */
+		எனில் (!((print_type-1) & print_type)) /* exactly one option? */
+			start_fmt = "%"மொத்தம்_FMT;
 	}
 
-	memset(totals, 0, sizeof(totals));
+	memset(totals, 0, அளவு(totals));
 
 	pcounts = counts;
 
-	num_files = 0;
-	while ((arg = *argv++) != NULL) {
+	இலக்கம்_files = 0;
+	போது ((arg = *argv++) != வெற்று) {
 		FILE *fp;
-		const char *s;
+		மாறிலி எழுத்து *s;
 		unsigned u;
 		unsigned linepos;
 		smallint in_word;
 
-		++num_files;
+		++இலக்கம்_files;
 		fp = fopen_or_warn_stdin(arg);
-		if (!fp) {
+		எனில் (!fp) {
 			status = EXIT_FAILURE;
-			continue;
+			தொடர்;
 		}
 
-		memset(counts, 0, sizeof(counts));
+		memset(counts, 0, அளவு(counts));
 		linepos = 0;
 		in_word = 0;
 
-		while (1) {
-			int c;
+		போது (1) {
+			முழு c;
 			/* Our -w doesn't match GNU wc exactly... oh well */
 
 			c = getc(fp);
-			if (c == EOF) {
-				if (ferror(fp)) {
-					bb_simple_perror_msg(arg);
+			எனில் (c == EOF) {
+				எனில் (ferror(fp)) {
+					bb_simple_perror_செய்தி(arg);
 					status = EXIT_FAILURE;
 				}
-				goto DO_EOF;  /* Treat an EOF as '\r'. */
+				செல் DO_EOF;  /* Treat an EOF as '\r'. */
 			}
 
 			/* Cater for -c and -m */
 			++counts[WC_BYTES];
-			if (unicode_status != UNICODE_ON /* every byte is a new char */
+			எனில் (unicode_status != UNICODE_ON /* every byte is a new char */
 			 || (c & 0xc0) != 0x80 /* it isn't a 2nd+ byte of a Unicode char */
 			) {
 				++counts[WC_UNICHARS];
 			}
 
-			if (isprint_asciionly(c)) { /* FIXME: not unicode-aware */
+			எனில் (isprint_asciionly(c)) { /* FIXME: not unicode-aware */
 				++linepos;
-				if (!isspace(c)) {
+				எனில் (!isspace(c)) {
 					in_word = 1;
-					continue;
+					தொடர்;
 				}
-			} else if ((unsigned)(c - 9) <= 4) {
+			} இல்லையெனில் எனில் ((unsigned)(c - 9) <= 4) {
 				/* \t  9
 				 * \n 10
 				 * \v 11
 				 * \f 12
 				 * \r 13
 				 */
-				if (c == '\t') {
+				எனில் (c == '\t') {
 					linepos = (linepos | 7) + 1;
-				} else {  /* '\n', '\r', '\f', or '\v' */
+				} இல்லையெனில் {  /* '\n', '\r', '\f', or '\v' */
  DO_EOF:
-					if (linepos > counts[WC_LENGTH]) {
+					எனில் (linepos > counts[WC_LENGTH]) {
 						counts[WC_LENGTH] = linepos;
 					}
-					if (c == '\n') {
-						++counts[WC_LINES];
+					எனில் (c == '\n') {
+						++counts[WC_வரிகள்];
 					}
-					if (c != '\v') {
+					எனில் (c != '\v') {
 						linepos = 0;
 					}
 				}
-			} else {
-				continue;
+			} இல்லையெனில் {
+				தொடர்;
 			}
 
-			counts[WC_WORDS] += in_word;
+			counts[WC_சொற்கள்] += in_word;
 			in_word = 0;
-			if (c == EOF) {
-				break;
+			எனில் (c == EOF) {
+				நிறுத்து;
 			}
 		}
 
 		fclose_if_not_stdin(fp);
 
-		if (totals[WC_LENGTH] < counts[WC_LENGTH]) {
+		எனில் (totals[WC_LENGTH] < counts[WC_LENGTH]) {
 			totals[WC_LENGTH] = counts[WC_LENGTH];
 		}
 		totals[WC_LENGTH] -= counts[WC_LENGTH];
@@ -231,13 +231,13 @@ int wc_main(int argc UNUSED_PARAM, char **argv)
 		 * we won't try that hard, it will bloat us too much */
 		s = start_fmt;
 		u = 0;
-		do {
-			if (print_type & (1 << u)) {
+		செய் {
+			எனில் (print_type & (1 << u)) {
 				printf(s, pcounts[u]);
-				s = " %9"COUNT_FMT; /* Ok... restore the leading space. */
+				s = " %9"மொத்தம்_FMT; /* Ok... restore the leading space. */
 			}
 			totals[u] += pcounts[u];
-		} while (++u < NUM_WCS);
+		} போது (++u < இலக்கம்_WCS);
 		printf(fname_fmt, arg);
 	}
 
@@ -245,12 +245,12 @@ int wc_main(int argc UNUSED_PARAM, char **argv)
 	 * space, we set the pcounts ptr to the totals array.  This has the side
 	 * effect of trashing the totals array after outputting it, but that's
 	 * irrelavent since we no longer need it. */
-	if (num_files > 1) {
-		num_files = 0;  /* Make sure we don't get here again. */
+	எனில் (இலக்கம்_files > 1) {
+		இலக்கம்_files = 0;  /* Make sure we don't get here again. */
 		arg = "total";
 		pcounts = totals;
 		--argv;
-		goto OUTPUT;
+		செல் OUTPUT;
 	}
 
 	fflush_stdout_and_exit(status);

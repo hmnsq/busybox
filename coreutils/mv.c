@@ -36,19 +36,19 @@
 //usage:#define mv_example_usage
 //usage:       "$ mv /tmp/foo /bin/bar\n"
 
-#include "libbb.h"
-#include "libcoreutils/coreutils.h"
+#அந்தர்பாவ "libbb.h"
+#அந்தர்பாவ "libcoreutils/coreutils.h"
 
-int mv_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int mv_main(int argc, char **argv)
+முழு mv_main(முழு argc, எழுத்து **argv) MAIN_EXTERNALLY_VISIBLE;
+முழு mv_main(முழு argc, எழுத்து **argv)
 {
-	struct stat statbuf;
-	const char *last;
-	const char *dest;
+	கட்டமைப்பு stat statbuf;
+	மாறிலி எழுத்து *last;
+	மாறிலி எழுத்து *dest;
 	unsigned flags;
-	int dest_exists;
-	int status = 0;
-	int copy_flag = 0;
+	முழு dest_exists;
+	முழு status = 0;
+	முழு copy_flag = 0;
 
 #define OPT_FORCE       (1 << 0)
 #define OPT_INTERACTIVE (1 << 1)
@@ -78,114 +78,114 @@ int mv_main(int argc, char **argv)
 	argc -= optind;
 	argv += optind;
 
-	if (!(flags & OPT_DESTDIR)) {
+	எனில் (!(flags & OPT_DESTDIR)) {
 		last = argv[argc - 1];
-		if (argc < 2)
+		எனில் (argc < 2)
 			bb_show_usage();
-		if (argc != 2) {
-			if (flags & OPT_DESTNOTDIR)
+		எனில் (argc != 2) {
+			எனில் (flags & OPT_DESTNOTDIR)
 				bb_show_usage();
 			/* "mv A B C... DIR" - target must be dir */
-		} else /* argc == 2 */ {
+		} இல்லையெனில் /* argc == 2 */ {
 			/* "mv A B" - only case where target can be not a dir */
 			dest_exists = cp_mv_stat(last, &statbuf);
-			if (dest_exists < 0) { /* error other than ENOENT */
-				return EXIT_FAILURE;
+			எனில் (dest_exists < 0) { /* error other than ENOENT */
+				திரும்பு EXIT_FAILURE;
 			}
-			if (!(dest_exists & 2)) {
+			எனில் (!(dest_exists & 2)) {
 				/* last is not a directory */
 				dest = last;
-				goto DO_MOVE;
+				செல் DO_MOVE;
 			}
 			/* last is a directory */
-			if (flags & OPT_DESTNOTDIR) {
-				if (stat(argv[0], &statbuf) == 0 && !S_ISDIR(statbuf.st_mode))
-					bb_error_msg_and_die("'%s' is a directory", last);
+			எனில் (flags & OPT_DESTNOTDIR) {
+				எனில் (stat(argv[0], &statbuf) == 0 && !S_ISDIR(statbuf.st_mode))
+					bb_error_செய்தி_and_die("'%s' is a directory", last);
 				/* "mv -T DIR1 DIR2" is allowed (renames a dir) */
 				dest = last;
-				goto DO_MOVE;
+				செல் DO_MOVE;
 			}
 			/* else: fall through into "do { move SRC to DIR/SRC } while" loop */
 		}
 	}
 	/* else: last is DIR from "-t DIR" */
 
-	do {
+	செய் {
 		dest = concat_path_file(last, bb_get_last_path_component_strip(*argv));
 		dest_exists = cp_mv_stat(dest, &statbuf);
-		if (dest_exists < 0) {
-			goto RET_1;
+		எனில் (dest_exists < 0) {
+			செல் RET_1;
 		}
 
  DO_MOVE:
-		if (dest_exists) {
-			if (flags & OPT_NOCLOBBER)
-				goto RET_0;
-			if (!(flags & OPT_FORCE)
+		எனில் (dest_exists) {
+			எனில் (flags & OPT_NOCLOBBER)
+				செல் RET_0;
+			எனில் (!(flags & OPT_FORCE)
 			 && ((access(dest, W_OK) < 0 && isatty(0))
 			    || (flags & OPT_INTERACTIVE))
 			) {
-				if (fprintf(stderr, "mv: overwrite '%s'? ", dest) < 0) {
-					goto RET_1;  /* Ouch! fprintf failed! */
+				எனில் (fprintf(stderr, "mv: overwrite '%s'? ", dest) < 0) {
+					செல் RET_1;  /* Ouch! fprintf failed! */
 				}
-				if (!bb_ask_y_confirmation()) {
-					goto RET_0;
+				எனில் (!bb_ask_y_confirmation()) {
+					செல் RET_0;
 				}
 			}
 		}
 
-		if (rename(*argv, dest) < 0) {
-			int source_exists;
+		எனில் (rename(*argv, dest) < 0) {
+			முழு source_exists;
 
-			if (errno != EXDEV
+			எனில் (errno != EXDEV
 			 || (source_exists = cp_mv_stat2(*argv, &statbuf, lstat)) < 1
 			) {
-				bb_perror_msg("can't rename '%s'", *argv);
-			} else {
-				static const char fmt[] ALIGN1 =
+				bb_perror_செய்தி("can't rename '%s'", *argv);
+			} இல்லையெனில் {
+				நிலையான மாறிலி எழுத்து fmt[] ALIGN1 =
 					"can't overwrite %sdirectory with %sdirectory";
 
-				if (dest_exists) {
-					if (dest_exists == 3) {
-						if (source_exists != 3) {
-							bb_error_msg(fmt, "", "non-");
-							goto RET_1;
+				எனில் (dest_exists) {
+					எனில் (dest_exists == 3) {
+						எனில் (source_exists != 3) {
+							bb_error_செய்தி(fmt, "", "non-");
+							செல் RET_1;
 						}
-					} else {
-						if (source_exists == 3) {
-							bb_error_msg(fmt, "non-", "");
-							goto RET_1;
+					} இல்லையெனில் {
+						எனில் (source_exists == 3) {
+							bb_error_செய்தி(fmt, "non-", "");
+							செல் RET_1;
 						}
 					}
-					if (unlink(dest) < 0) {
-						bb_perror_msg("can't remove '%s'", dest);
-						goto RET_1;
+					எனில் (unlink(dest) < 0) {
+						bb_perror_செய்தி("can't remove '%s'", dest);
+						செல் RET_1;
 					}
 				}
 				/* FILEUTILS_RECUR also prevents nasties like
 				 * "read from device and write contents to dst"
 				 * instead of "create same device node" */
 				copy_flag = FILEUTILS_RECUR | FILEUTILS_PRESERVE_STATUS;
-#if ENABLE_SELINUX
+#எனில் ENABLE_SELINUX
 				copy_flag |= FILEUTILS_PRESERVE_SECURITY_CONTEXT;
 #endif
-				if ((copy_file(*argv, dest, copy_flag) >= 0)
+				எனில் ((copy_file(*argv, dest, copy_flag) >= 0)
 				 && (remove_file(*argv, FILEUTILS_RECUR | FILEUTILS_FORCE) >= 0)
 				) {
-					goto RET_0;
+					செல் RET_0;
 				}
 			}
  RET_1:
 			status = 1;
 		}
  RET_0:
-		if (flags & OPT_VERBOSE) {
+		எனில் (flags & OPT_VERBOSE) {
 			printf("'%s' -> '%s'\n", *argv, dest);
 		}
-		if (dest != last) {
-			free((void *) dest);
+		எனில் (dest != last) {
+			விடுவி((வெறுமை *) dest);
 		}
-	} while (*++argv && *argv != last);
+	} போது (*++argv && *argv != last);
 
-	return status;
+	திரும்பு status;
 }

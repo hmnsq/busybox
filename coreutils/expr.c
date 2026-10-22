@@ -77,18 +77,18 @@
 //usage:       "\\( and \\) or null; if \\( and \\) are not used, they return the number\n"
 //usage:       "of characters matched or 0."
 
-#include "libbb.h"
-#include "common_bufsiz.h"
-#include "xregex.h"
+#அந்தர்பாவ "libbb.h"
+#அந்தர்பாவ "common_bufsiz.h"
+#அந்தர்பாவ "xregex.h"
 
-#if ENABLE_EXPR_MATH_SUPPORT_64
-typedef int64_t arith_t;
+#எனில் ENABLE_கோவை_MATH_SUPPORT_64
+வகைவரை int64_t arith_t;
 
 #define PF_REZ      "ll"
 #define PF_REZ_TYPE (long long)
 #define STRTOL(s, e, b) strtoll(s, e, b)
-#else
-typedef long arith_t;
+#இல்லையெனில்
+வகைவரை long arith_t;
 
 #define PF_REZ      "l"
 #define PF_REZ_TYPE (long)
@@ -98,85 +98,85 @@ typedef long arith_t;
 /* TODO: use bb_strtol[l]? It's easier to check for errors... */
 
 /* The kinds of value we can have.  */
-enum {
+எண்ணிக்கை {
 	INTEGER,
 	STRING
 };
 
 /* A value is.... */
-struct valinfo {
+கட்டமைப்பு valinfo {
 	smallint type;                  /* Which kind. */
-	union {                         /* The value itself. */
+	ஒன்றிப்பு {                         /* The value itself. */
 		arith_t i;
-		char *s;
+		எழுத்து *s;
 	} u;
 };
-typedef struct valinfo VALUE;
+வகைவரை கட்டமைப்பு valinfo மதிப்பு;
 
 /* The arguments given to the program, minus the program name.  */
-struct globals {
-	char **args;
+கட்டமைப்பு globals {
+	எழுத்து **args;
 } FIX_ALIASING;
-#define G (*(struct globals*)bb_common_bufsiz1)
-#define INIT_G() do { \
+#define G (*(கட்டமைப்பு globals*)bb_common_bufsiz1)
+#define INIT_G() செய் { \
 	setup_common_bufsiz(); \
 	/* NB: noexec applet - globals not zeroed */ \
-} while (0)
+} போது (0)
 
 /* forward declarations */
-static VALUE *eval(void);
+நிலையான மதிப்பு *eval(வெறுமை);
 
 
 /* Return a VALUE for I.  */
 
-static VALUE *int_value(arith_t i)
+நிலையான மதிப்பு *int_மதிப்பு(arith_t i)
 {
-	VALUE *v;
+	மதிப்பு *v;
 
-	v = xzalloc(sizeof(VALUE));
-	if (INTEGER) /* otherwise xzalloc did it already */
+	v = xzalloc(அளவு(மதிப்பு));
+	எனில் (INTEGER) /* otherwise xzalloc did it already */
 		v->type = INTEGER;
 	v->u.i = i;
-	return v;
+	திரும்பு v;
 }
 
 /* Return a VALUE for S.  */
 
-static VALUE *str_value(const char *s)
+நிலையான மதிப்பு *str_மதிப்பு(மாறிலி எழுத்து *s)
 {
-	VALUE *v;
+	மதிப்பு *v;
 
-	v = xzalloc(sizeof(VALUE));
-	if (STRING) /* otherwise xzalloc did it already */
+	v = xzalloc(அளவு(மதிப்பு));
+	எனில் (STRING) /* otherwise xzalloc did it already */
 		v->type = STRING;
 	v->u.s = xstrdup(s);
-	return v;
+	திரும்பு v;
 }
 
 /* Free VALUE V, including structure components.  */
 
-static void freev(VALUE *v)
+நிலையான வெறுமை freev(மதிப்பு *v)
 {
-	if (v->type == STRING)
-		free(v->u.s);
-	free(v);
+	எனில் (v->type == STRING)
+		விடுவி(v->u.s);
+	விடுவி(v);
 }
 
 /* Return nonzero if V is a null-string or zero-number.  */
 
-static int null(VALUE *v)
+நிலையான முழு null(மதிப்பு *v)
 {
-	if (v->type == INTEGER)
-		return v->u.i == 0;
+	எனில் (v->type == INTEGER)
+		திரும்பு v->u.i == 0;
 	/* STRING: */
-	return v->u.s[0] == '\0' || LONE_CHAR(v->u.s, '0');
+	திரும்பு v->u.s[0] == '\0' || LONE_CHAR(v->u.s, '0');
 }
 
 /* Coerce V to a STRING value (can't fail).  */
 
-static void tostring(VALUE *v)
+நிலையான வெறுமை tostring(மதிப்பு *v)
 {
-	if (v->type == INTEGER) {
+	எனில் (v->type == INTEGER) {
 		v->u.s = xasprintf("%" PF_REZ "d", PF_REZ_TYPE v->u.i);
 		v->type = STRING;
 	}
@@ -184,43 +184,43 @@ static void tostring(VALUE *v)
 
 /* Coerce V to an INTEGER value.  Return 1 on success, 0 on failure.  */
 
-static bool toarith(VALUE *v)
+நிலையான bool toarith(மதிப்பு *v)
 {
-	if (v->type == STRING) {
+	எனில் (v->type == STRING) {
 		arith_t i;
-		char *e;
+		எழுத்து *e;
 
 		/* Don't interpret the empty string as an integer.  */
 		/* Currently does not worry about overflow or int/long differences. */
 		i = STRTOL(v->u.s, &e, 10);
-		if ((v->u.s == e) || *e)
-			return 0;
-		free(v->u.s);
+		எனில் ((v->u.s == e) || *e)
+			திரும்பு 0;
+		விடுவி(v->u.s);
 		v->u.i = i;
 		v->type = INTEGER;
 	}
-	return 1;
+	திரும்பு 1;
 }
 
 /* Return str[0]+str[1] if the next token matches STR exactly.
    STR must not be NULL.  */
 
-static int nextarg(const char *str)
+நிலையான முழு nextarg(மாறிலி எழுத்து *str)
 {
-	if (*G.args == NULL || strcmp(*G.args, str) != 0)
-		return 0;
-	return (unsigned char)str[0] + (unsigned char)str[1];
+	எனில் (*G.args == வெற்று || strcmp(*G.args, str) != 0)
+		திரும்பு 0;
+	திரும்பு (unsigned எழுத்து)str[0] + (unsigned எழுத்து)str[1];
 }
 
 /* The comparison operator handling functions.  */
 
-static int cmp_common(VALUE *l, VALUE *r, int op)
+நிலையான முழு cmp_common(மதிப்பு *l, மதிப்பு *r, முழு op)
 {
 	arith_t ll, rr;
 
 	ll = l->u.i;
 	rr = r->u.i;
-	if (l->type == STRING || r->type == STRING) {
+	எனில் (l->type == STRING || r->type == STRING) {
 		tostring(l);
 		tostring(r);
 		ll = strcmp(l->u.s, r->u.s);
@@ -228,168 +228,168 @@ static int cmp_common(VALUE *l, VALUE *r, int op)
 	}
 	/* calculating ll - rr and checking the result is prone to overflows.
 	 * We'll do it differently: */
-	if (op == '<')
-		return ll < rr;
-	if (op == ('<' + '='))
-		return ll <= rr;
-	if (op == '=' || (op == '=' + '='))
-		return ll == rr;
-	if (op == '!' + '=')
-		return ll != rr;
-	if (op == '>')
-		return ll > rr;
+	எனில் (op == '<')
+		திரும்பு ll < rr;
+	எனில் (op == ('<' + '='))
+		திரும்பு ll <= rr;
+	எனில் (op == '=' || (op == '=' + '='))
+		திரும்பு ll == rr;
+	எனில் (op == '!' + '=')
+		திரும்பு ll != rr;
+	எனில் (op == '>')
+		திரும்பு ll > rr;
 	/* >= */
-	return ll >= rr;
+	திரும்பு ll >= rr;
 }
 
 /* The arithmetic operator handling functions.  */
 
-static arith_t arithmetic_common(VALUE *l, VALUE *r, int op)
+நிலையான arith_t arithmetic_common(மதிப்பு *l, மதிப்பு *r, முழு op)
 {
 	arith_t li, ri;
 
-	if (!toarith(l) || !toarith(r))
-		bb_simple_error_msg_and_die("non-numeric argument");
+	எனில் (!toarith(l) || !toarith(r))
+		bb_simple_error_செய்தி_and_die("non-numeric argument");
 	li = l->u.i;
 	ri = r->u.i;
-	if (op == '+')
-		return li + ri;
-	if (op == '-')
-		return li - ri;
-	if (op == '*')
-		return li * ri;
-	if (ri == 0)
-		bb_simple_error_msg_and_die("division by zero");
-	if (op == '/')
-		return li / ri;
-	return li % ri;
+	எனில் (op == '+')
+		திரும்பு li + ri;
+	எனில் (op == '-')
+		திரும்பு li - ri;
+	எனில் (op == '*')
+		திரும்பு li * ri;
+	எனில் (ri == 0)
+		bb_simple_error_செய்தி_and_die("division by zero");
+	எனில் (op == '/')
+		திரும்பு li / ri;
+	திரும்பு li % ri;
 }
 
 /* Do the : operator.
    SV is the VALUE for the lhs (the string),
    PV is the VALUE for the rhs (the pattern).  */
 
-static VALUE *docolon(VALUE *sv, VALUE *pv)
+நிலையான மதிப்பு *docolon(மதிப்பு *sv, மதிப்பு *pv)
 {
-	enum { NMATCH = 2 };
-	VALUE *v;
+	எண்ணிக்கை { NMATCH = 2 };
+	மதிப்பு *v;
 	regex_t re_buffer;
 	regmatch_t re_regs[NMATCH];
 
 	tostring(sv);
 	tostring(pv);
 
-	if (pv->u.s[0] == '^') {
-		bb_error_msg(
+	எனில் (pv->u.s[0] == '^') {
+		bb_error_செய்தி(
 "warning: '%s': using '^' as the first character\n"
 "of a basic regular expression is not portable; it is ignored", pv->u.s);
 	}
 
-	memset(&re_buffer, 0, sizeof(re_buffer));
-	memset(re_regs, 0, sizeof(re_regs));
+	memset(&re_buffer, 0, அளவு(re_buffer));
+	memset(re_regs, 0, அளவு(re_regs));
 	xregcomp(&re_buffer, pv->u.s, 0);
 
 	/* expr uses an anchored pattern match, so check that there was a
 	 * match and that the match starts at offset 0. */
-	if (regexec(&re_buffer, sv->u.s, NMATCH, re_regs, 0) != REG_NOMATCH
+	எனில் (regexec(&re_buffer, sv->u.s, NMATCH, re_regs, 0) != REG_NOMATCH
 	 && re_regs[0].rm_so == 0
 	) {
 		/* Were \(...\) used? */
-		if (re_buffer.re_nsub > 0 && re_regs[1].rm_so >= 0) {
+		எனில் (re_buffer.re_nsub > 0 && re_regs[1].rm_so >= 0) {
 			sv->u.s[re_regs[1].rm_eo] = '\0';
-			v = str_value(sv->u.s + re_regs[1].rm_so);
-		} else {
-			v = int_value(re_regs[0].rm_eo);
+			v = str_மதிப்பு(sv->u.s + re_regs[1].rm_so);
+		} இல்லையெனில் {
+			v = int_மதிப்பு(re_regs[0].rm_eo);
 		}
-	} else {
+	} இல்லையெனில் {
 		/* Match failed -- return the right kind of null.  */
-		if (re_buffer.re_nsub > 0)
-			v = str_value("");
-		else
-			v = int_value(0);
+		எனில் (re_buffer.re_nsub > 0)
+			v = str_மதிப்பு("");
+		இல்லையெனில்
+			v = int_மதிப்பு(0);
 	}
 	regfree(&re_buffer);
-	return v;
+	திரும்பு v;
 }
 
 /* Handle bare operands and ( expr ) syntax.  */
 
-static VALUE *eval7(void)
+நிலையான மதிப்பு *eval7(வெறுமை)
 {
-	VALUE *v;
+	மதிப்பு *v;
 
-	if (!*G.args)
-		bb_simple_error_msg_and_die("syntax error");
+	எனில் (!*G.args)
+		bb_simple_error_செய்தி_and_die("syntax error");
 
-	if (nextarg("(")) {
+	எனில் (nextarg("(")) {
 		G.args++;
 		v = eval();
-		if (!nextarg(")"))
-			bb_simple_error_msg_and_die("syntax error");
+		எனில் (!nextarg(")"))
+			bb_simple_error_செய்தி_and_die("syntax error");
 		G.args++;
-		return v;
+		திரும்பு v;
 	}
 
-	if (nextarg(")"))
-		bb_simple_error_msg_and_die("syntax error");
+	எனில் (nextarg(")"))
+		bb_simple_error_செய்தி_and_die("syntax error");
 
-	return str_value(*G.args++);
+	திரும்பு str_மதிப்பு(*G.args++);
 }
 
 /* Handle match, substr, index, length, and quote keywords.  */
 
-static VALUE *eval6(void)
+நிலையான மதிப்பு *eval6(வெறுமை)
 {
-	static const char keywords[] ALIGN1 =
+	நிலையான மாறிலி எழுத்து keywords[] ALIGN1 =
 		"quote\0""length\0""match\0""index\0""substr\0";
 
-	VALUE *r, *i1, *i2;
-	VALUE *l = l; /* silence gcc */
-	VALUE *v = v; /* silence gcc */
-	int key = *G.args ? index_in_strings(keywords, *G.args) + 1 : 0;
+	மதிப்பு *r, *i1, *i2;
+	மதிப்பு *l = l; /* silence gcc */
+	மதிப்பு *v = v; /* silence gcc */
+	முழு சாவி = *G.args ? index_in_strings(keywords, *G.args) + 1 : 0;
 
-	if (key == 0) /* not a keyword */
-		return eval7();
+	எனில் (சாவி == 0) /* not a keyword */
+		திரும்பு eval7();
 	G.args++; /* We have a valid token, so get the next argument.  */
-	if (key == 1) { /* quote */
-		if (!*G.args)
-			bb_simple_error_msg_and_die("syntax error");
-		return str_value(*G.args++);
+	எனில் (சாவி == 1) { /* quote */
+		எனில் (!*G.args)
+			bb_simple_error_செய்தி_and_die("syntax error");
+		திரும்பு str_மதிப்பு(*G.args++);
 	}
-	if (key == 2) { /* length */
+	எனில் (சாவி == 2) { /* length */
 		r = eval6();
 		tostring(r);
-		v = int_value(strlen(r->u.s));
+		v = int_மதிப்பு(strlen(r->u.s));
 		freev(r);
-	} else
+	} இல்லையெனில்
 		l = eval6();
 
-	if (key == 3) { /* match */
+	எனில் (சாவி == 3) { /* match */
 		r = eval6();
 		v = docolon(l, r);
 		freev(l);
 		freev(r);
 	}
-	if (key == 4) { /* index */
+	எனில் (சாவி == 4) { /* index */
 		r = eval6();
 		tostring(l);
 		tostring(r);
-		v = int_value(strcspn(l->u.s, r->u.s) + 1);
-		if (v->u.i == (arith_t) strlen(l->u.s) + 1)
+		v = int_மதிப்பு(strcspn(l->u.s, r->u.s) + 1);
+		எனில் (v->u.i == (arith_t) strlen(l->u.s) + 1)
 			v->u.i = 0;
 		freev(l);
 		freev(r);
 	}
-	if (key == 5) { /* substr */
+	எனில் (சாவி == 5) { /* substr */
 		i1 = eval6();
 		i2 = eval6();
 		tostring(l);
-		if (!toarith(i1) || !toarith(i2)
+		எனில் (!toarith(i1) || !toarith(i2)
 		 || i1->u.i > (arith_t) strlen(l->u.s)
 		 || i1->u.i <= 0 || i2->u.i <= 0)
-			v = str_value("");
-		else {
-			v = xmalloc(sizeof(VALUE));
+			v = str_மதிப்பு("");
+		இல்லையெனில் {
+			v = xmalloc(அளவு(மதிப்பு));
 			v->type = STRING;
 			v->u.s = xstrndup(l->u.s + i1->u.i - 1, i2->u.i);
 		}
@@ -397,18 +397,18 @@ static VALUE *eval6(void)
 		freev(i1);
 		freev(i2);
 	}
-	return v;
+	திரும்பு v;
 }
 
 /* Handle : operator (pattern matching).
    Calls docolon to do the real work.  */
 
-static VALUE *eval5(void)
+நிலையான மதிப்பு *eval5(வெறுமை)
 {
-	VALUE *l, *r, *v;
+	மதிப்பு *l, *r, *v;
 
 	l = eval6();
-	while (nextarg(":")) {
+	போது (nextarg(":")) {
 		G.args++;
 		r = eval6();
 		v = docolon(l, r);
@@ -416,75 +416,75 @@ static VALUE *eval5(void)
 		freev(r);
 		l = v;
 	}
-	return l;
+	திரும்பு l;
 }
 
 /* Handle *, /, % operators.  */
 
-static VALUE *eval4(void)
+நிலையான மதிப்பு *eval4(வெறுமை)
 {
-	VALUE *l, *r;
-	int op;
+	மதிப்பு *l, *r;
+	முழு op;
 	arith_t val;
 
 	l = eval5();
-	while (1) {
+	போது (1) {
 		op = nextarg("*");
-		if (!op) { op = nextarg("/");
-		 if (!op) { op = nextarg("%");
-		  if (!op) return l;
+		எனில் (!op) { op = nextarg("/");
+		 எனில் (!op) { op = nextarg("%");
+		  எனில் (!op) திரும்பு l;
 		}}
 		G.args++;
 		r = eval5();
 		val = arithmetic_common(l, r, op);
 		freev(l);
 		freev(r);
-		l = int_value(val);
+		l = int_மதிப்பு(val);
 	}
 }
 
 /* Handle +, - operators.  */
 
-static VALUE *eval3(void)
+நிலையான மதிப்பு *eval3(வெறுமை)
 {
-	VALUE *l, *r;
-	int op;
+	மதிப்பு *l, *r;
+	முழு op;
 	arith_t val;
 
 	l = eval4();
-	while (1) {
+	போது (1) {
 		op = nextarg("+");
-		if (!op) {
+		எனில் (!op) {
 			op = nextarg("-");
-			if (!op) return l;
+			எனில் (!op) திரும்பு l;
 		}
 		G.args++;
 		r = eval4();
 		val = arithmetic_common(l, r, op);
 		freev(l);
 		freev(r);
-		l = int_value(val);
+		l = int_மதிப்பு(val);
 	}
 }
 
 /* Handle comparisons.  */
 
-static VALUE *eval2(void)
+நிலையான மதிப்பு *eval2(வெறுமை)
 {
-	VALUE *l, *r;
-	int op;
+	மதிப்பு *l, *r;
+	முழு op;
 	arith_t val;
 
 	l = eval3();
-	while (1) {
+	போது (1) {
 		op = nextarg("<");
-		if (!op) { op = nextarg("<=");
-		 if (!op) { op = nextarg("=");
-		  if (!op) { op = nextarg("==");
-		   if (!op) { op = nextarg("!=");
-		    if (!op) { op = nextarg(">=");
-		     if (!op) { op = nextarg(">");
-		      if (!op) return l;
+		எனில் (!op) { op = nextarg("<=");
+		 எனில் (!op) { op = nextarg("=");
+		  எனில் (!op) { op = nextarg("==");
+		   எனில் (!op) { op = nextarg("!=");
+		    எனில் (!op) { op = nextarg(">=");
+		     எனில் (!op) { op = nextarg(">");
+		      எனில் (!op) திரும்பு l;
 		}}}}}}
 		G.args++;
 		r = eval3();
@@ -493,67 +493,67 @@ static VALUE *eval2(void)
 		val = cmp_common(l, r, op);
 		freev(l);
 		freev(r);
-		l = int_value(val);
+		l = int_மதிப்பு(val);
 	}
 }
 
 /* Handle &.  */
 
-static VALUE *eval1(void)
+நிலையான மதிப்பு *eval1(வெறுமை)
 {
-	VALUE *l, *r;
+	மதிப்பு *l, *r;
 
 	l = eval2();
-	while (nextarg("&")) {
+	போது (nextarg("&")) {
 		G.args++;
 		r = eval2();
-		if (null(l) || null(r)) {
+		எனில் (null(l) || null(r)) {
 			freev(l);
 			freev(r);
-			l = int_value(0);
-		} else
+			l = int_மதிப்பு(0);
+		} இல்லையெனில்
 			freev(r);
 	}
-	return l;
+	திரும்பு l;
 }
 
 /* Handle |.  */
 
-static VALUE *eval(void)
+நிலையான மதிப்பு *eval(வெறுமை)
 {
-	VALUE *l, *r;
+	மதிப்பு *l, *r;
 
 	l = eval1();
-	while (nextarg("|")) {
+	போது (nextarg("|")) {
 		G.args++;
 		r = eval1();
-		if (null(l)) {
+		எனில் (null(l)) {
 			freev(l);
 			l = r;
-		} else
+		} இல்லையெனில்
 			freev(r);
 	}
-	return l;
+	திரும்பு l;
 }
 
-int expr_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int expr_main(int argc UNUSED_PARAM, char **argv)
+முழு கோவை_main(முழு argc, எழுத்து **argv) MAIN_EXTERNALLY_VISIBLE;
+முழு கோவை_main(முழு argc UNUSED_PARAM, எழுத்து **argv)
 {
-	VALUE *v;
+	மதிப்பு *v;
 
 	INIT_G();
 
 	xfunc_error_retval = 2; /* coreutils compat */
 	G.args = argv + 1;
-	if (*G.args == NULL) {
-		bb_simple_error_msg_and_die("too few arguments");
+	எனில் (*G.args == வெற்று) {
+		bb_simple_error_செய்தி_and_die("too few arguments");
 	}
 	v = eval();
-	if (*G.args)
-		bb_simple_error_msg_and_die("syntax error");
-	if (v->type == INTEGER)
+	எனில் (*G.args)
+		bb_simple_error_செய்தி_and_die("syntax error");
+	எனில் (v->type == INTEGER)
 		printf("%" PF_REZ "d\n", PF_REZ_TYPE v->u.i);
-	else
+	இல்லையெனில்
 		puts(v->u.s);
 	fflush_stdout_and_exit(null(v));
 }

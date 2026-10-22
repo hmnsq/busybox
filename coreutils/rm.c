@@ -35,42 +35,42 @@
 //usage:#define rm_example_usage
 //usage:       "$ rm -rf /tmp/foo\n"
 
-#include "libbb.h"
+#அந்தர்பாவ "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-int rm_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int rm_main(int argc UNUSED_PARAM, char **argv)
+முழு rm_main(முழு argc, எழுத்து **argv) MAIN_EXTERNALLY_VISIBLE;
+முழு rm_main(முழு argc UNUSED_PARAM, எழுத்து **argv)
 {
-	int status = 0;
-	int flags = 0;
+	முழு status = 0;
+	முழு flags = 0;
 	unsigned opt;
 
 	opt = getopt32(argv, "^" "fiRrv" "\0" "f-i:i-f");
 	argv += optind;
-	if (opt & 1)
+	எனில் (opt & 1)
 		flags |= FILEUTILS_FORCE;
-	if (opt & 2)
+	எனில் (opt & 2)
 		flags |= FILEUTILS_INTERACTIVE;
-	if (opt & (8|4))
+	எனில் (opt & (8|4))
 		flags |= FILEUTILS_RECUR;
-	if ((opt & 16) && FILEUTILS_VERBOSE)
+	எனில் ((opt & 16) && FILEUTILS_VERBOSE)
 		flags |= FILEUTILS_VERBOSE;
 
-	if (*argv != NULL) {
-		do {
-			const char *base = bb_get_last_path_component_strip(*argv);
+	எனில் (*argv != வெற்று) {
+		செய் {
+			மாறிலி எழுத்து *base = bb_get_last_path_component_strip(*argv);
 
-			if (DOT_OR_DOTDOT(base)) {
-				bb_simple_error_msg("can't remove '.' or '..'");
-			} else if (remove_file(*argv, flags) >= 0) {
-				continue;
+			எனில் (DOT_OR_DOTDOT(base)) {
+				bb_simple_error_செய்தி("can't remove '.' or '..'");
+			} இல்லையெனில் எனில் (remove_file(*argv, flags) >= 0) {
+				தொடர்;
 			}
 			status = 1;
-		} while (*++argv);
-	} else if (!(flags & FILEUTILS_FORCE)) {
+		} போது (*++argv);
+	} இல்லையெனில் எனில் (!(flags & FILEUTILS_FORCE)) {
 		bb_show_usage();
 	}
 
-	return status;
+	திரும்பு status;
 }

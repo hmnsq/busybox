@@ -58,15 +58,15 @@
 //usage:       "$ ls -la /tmp/temp.mWiLjM\n"
 //usage:       "-rw-------    1 andersen andersen        0 Apr 25 17:10 /tmp/temp.mWiLjM\n"
 
-#include "libbb.h"
+#அந்தர்பாவ "libbb.h"
 
-int mktemp_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int mktemp_main(int argc UNUSED_PARAM, char **argv)
+முழு mktemp_main(முழு argc, எழுத்து **argv) MAIN_EXTERNALLY_VISIBLE;
+முழு mktemp_main(முழு argc UNUSED_PARAM, எழுத்து **argv)
 {
-	const char *path;
-	char *chp;
+	மாறிலி எழுத்து *path;
+	எழுத்து *chp;
 	unsigned opts;
-	enum {
+	எண்ணிக்கை {
 		OPT_d = 1 << 0,
 		OPT_q = 1 << 1,
 		OPT_t = 1 << 2,
@@ -76,10 +76,10 @@ int mktemp_main(int argc UNUSED_PARAM, char **argv)
 	};
 
 	path = getenv("TMPDIR");
-	if (!path || path[0] == '\0')
+	எனில் (!path || path[0] == '\0')
 		path = "/tmp";
 
-#if ENABLE_LONG_OPTS
+#எனில் ENABLE_LONG_OPTS
 	opts = getopt32long(argv, "^"
 		"dqtp:u"
 		"\0"
@@ -90,44 +90,44 @@ int mktemp_main(int argc UNUSED_PARAM, char **argv)
 		"tmpdir\0"    Optional_argument "\xff"
 		, &path, &path
 	);
-#else
+#இல்லையெனில்
 	opts = getopt32(argv, "^" "dqtp:u" "\0" "?1"/*1 arg max*/, &path);
 #endif
 
 	chp = argv[optind];
-	if (!chp) {
+	எனில் (!chp) {
 		/* GNU coreutils 8.4:
 		 * bare "mktemp" -> "mktemp -t tmp.XXXXXX"
 		 */
 		chp = xstrdup("tmp.XXXXXX");
 		opts |= OPT_t;
 	}
-#if 0
+#எனில் 0
 	/* Don't allow directory separator in template */
-	if ((opts & OPT_t) && bb_basename(chp) != chp) {
+	எனில் ((opts & OPT_t) && bb_basename(chp) != chp) {
 		errno = EINVAL;
-		goto error;
+		செல் error;
 	}
 #endif
-	if (opts & (OPT_t|OPT_p|OPT_tmpdir))
+	எனில் (opts & (OPT_t|OPT_p|OPT_tmpdir))
 		chp = concat_path_file(path, chp);
 
-	if (opts & OPT_u) {
+	எனில் (opts & OPT_u) {
 		chp = mktemp(chp);
-		if (chp[0] == '\0')
-			goto error;
-	} else if (opts & OPT_d) {
-		if (mkdtemp(chp) == NULL)
-			goto error;
-	} else {
-		if (mkstemp(chp) < 0)
-			goto error;
+		எனில் (chp[0] == '\0')
+			செல் error;
+	} இல்லையெனில் எனில் (opts & OPT_d) {
+		எனில் (mkdtemp(chp) == வெற்று)
+			செல் error;
+	} இல்லையெனில் {
+		எனில் (mkstemp(chp) < 0)
+			செல் error;
 	}
 	puts(chp);
-	return EXIT_SUCCESS;
+	திரும்பு EXIT_SUCCESS;
  error:
-	if (opts & OPT_q)
-		return EXIT_FAILURE;
+	எனில் (opts & OPT_q)
+		திரும்பு EXIT_FAILURE;
 	/* don't use chp as it gets mangled in case of error */
 	bb_perror_nomsg_and_die();
 }

@@ -68,73 +68,73 @@
 //usage:       "$ tail -n 1 /etc/resolv.conf\n"
 //usage:       "nameserver 10.0.0.1\n"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#அந்தர்பாவ "libbb.h"
+#அந்தர்பாவ "common_bufsiz.h"
 
-struct globals {
-	bool from_top;
+கட்டமைப்பு globals {
+	bool from_உச்சி;
 	bool exitcode;
 } FIX_ALIASING;
-#define G (*(struct globals*)bb_common_bufsiz1)
-#define INIT_G() do { setup_common_bufsiz(); } while (0)
+#define G (*(கட்டமைப்பு globals*)bb_common_bufsiz1)
+#define INIT_G() செய் { setup_common_bufsiz(); } போது (0)
 
-static void tail_xprint_header(const char *fmt, const char *filename)
+நிலையான வெறுமை tail_xprint_header(மாறிலி எழுத்து *fmt, மாறிலி எழுத்து *filename)
 {
-	if (fdprintf(STDOUT_FILENO, fmt, filename) < 0)
+	எனில் (fdprintf(STDOUT_FILENO, fmt, filename) < 0)
 		bb_perror_nomsg_and_die();
 }
 
-static ssize_t tail_read(int fd, char *buf, size_t count)
+நிலையான ssize_t tail_read(முழு fd, எழுத்து *buf, size_t மொத்தம்)
 {
 	ssize_t r;
 
-	r = full_read(fd, buf, count);
-	if (r < 0) {
-		bb_simple_perror_msg(bb_msg_read_error);
+	r = full_read(fd, buf, மொத்தம்);
+	எனில் (r < 0) {
+		bb_simple_perror_செய்தி(bb_செய்தி_read_error);
 		G.exitcode = EXIT_FAILURE;
 	}
 
-	return r;
+	திரும்பு r;
 }
 
 #define header_fmt_str "\n==> %s <==\n"
 
-static unsigned eat_num(const char *p)
+நிலையான unsigned eat_இலக்கம்(மாறிலி எழுத்து *p)
 {
-	if (*p == '-')
+	எனில் (*p == '-')
 		p++;
-	else if (*p == '+') {
+	இல்லையெனில் எனில் (*p == '+') {
 		p++;
-		G.from_top = 1;
+		G.from_உச்சி = 1;
 	}
-	return xatou_sfx(p, bkm_suffixes);
+	திரும்பு xatou_sfx(p, bkm_suffixes);
 }
 
-int tail_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int tail_main(int argc, char **argv)
+முழு tail_main(முழு argc, எழுத்து **argv) MAIN_EXTERNALLY_VISIBLE;
+முழு tail_main(முழு argc, எழுத்து **argv)
 {
-	unsigned count = 10;
+	unsigned மொத்தம் = 10;
 	unsigned sleep_period = 1;
-	const char *str_c, *str_n;
+	மாறிலி எழுத்து *str_c, *str_n;
 
-	char *tailbuf;
+	எழுத்து *tailbuf;
 	size_t tailbufsize;
 	unsigned header_threshold = 1;
 	unsigned nfiles;
-	int i, opt;
+	முழு i, opt;
 
-	int *fds;
-	const char *fmt;
-	int prev_fd;
+	முழு *fds;
+	மாறிலி எழுத்து *fmt;
+	முழு prev_fd;
 
 	INIT_G();
 
-#if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_TAIL
+#எனில் ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_TAIL
 	/* Allow legacy syntax of an initial numeric option without -n. */
-	if (argv[1] && (argv[1][0] == '+' || argv[1][0] == '-')
+	எனில் (argv[1] && (argv[1][0] == '+' || argv[1][0] == '-')
 	 && isdigit(argv[1][1])
 	) {
-		count = eat_num(argv[1]);
+		மொத்தம் = eat_இலக்கம்(argv[1]);
 		argv++;
 		argc--;
 	}
@@ -147,114 +147,114 @@ int tail_main(int argc, char **argv)
 			&str_c, &str_n IF_FEATURE_FANCY_TAIL(,&sleep_period)
 	);
 #define FOLLOW (opt & 0x1)
-#define COUNT_BYTES (opt & 0x2)
+#define மொத்தம்_BYTES (opt & 0x2)
 	//if (opt & 0x1) // -f
-	if (opt & 0x2) count = eat_num(str_c); // -c
-	if (opt & 0x4) count = eat_num(str_n); // -n
-#if ENABLE_FEATURE_FANCY_TAIL
+	எனில் (opt & 0x2) மொத்தம் = eat_இலக்கம்(str_c); // -c
+	எனில் (opt & 0x4) மொத்தம் = eat_இலக்கம்(str_n); // -n
+#எனில் ENABLE_FEATURE_FANCY_TAIL
 	/* q: make it impossible for nfiles to be > header_threshold */
-	if (opt & 0x8) header_threshold = UINT_MAX; // -q
+	எனில் (opt & 0x8) header_threshold = UINT_MAX; // -q
 	//if (opt & 0x10) // -s
-	if (opt & 0x20) header_threshold = 0; // -v
+	எனில் (opt & 0x20) header_threshold = 0; // -v
 # define FOLLOW_RETRY (opt & 0x40)
-#else
+#இல்லையெனில்
 # define FOLLOW_RETRY 0
 #endif
 	argc -= optind;
 	argv += optind;
 
 	/* open all the files */
-	fds = xmalloc(sizeof(fds[0]) * (argc + 1));
-	if (!argv[0]) {
-		struct stat statbuf;
+	fds = xmalloc(அளவு(fds[0]) * (argc + 1));
+	எனில் (!argv[0]) {
+		கட்டமைப்பு stat statbuf;
 
-		if (fstat(STDIN_FILENO, &statbuf) == 0
+		எனில் (fstat(STDIN_FILENO, &statbuf) == 0
 		 && S_ISFIFO(statbuf.st_mode)
 		) {
 			opt &= ~1; /* clear FOLLOW */
 		}
-		argv[0] = (char *) bb_msg_standard_input;
+		argv[0] = (எழுத்து *) bb_செய்தி_standard_உள்ளீடு;
 	}
 	nfiles = i = 0;
-	do {
-		int fd = open_or_warn_stdin(argv[i]);
-		if (fd < 0 && !FOLLOW_RETRY) {
+	செய் {
+		முழு fd = open_or_warn_stdin(argv[i]);
+		எனில் (fd < 0 && !FOLLOW_RETRY) {
 			G.exitcode = EXIT_FAILURE;
-			continue;
+			தொடர்;
 		}
 		fds[nfiles] = fd;
 		argv[nfiles++] = argv[i];
-	} while (++i < argc);
+	} போது (++i < argc);
 
-	if (!nfiles)
-		bb_simple_error_msg_and_die("no files");
+	எனில் (!nfiles)
+		bb_simple_error_செய்தி_and_die("no files");
 
 	/* prepare the buffer */
 	tailbufsize = BUFSIZ;
-	if (!G.from_top && COUNT_BYTES) {
-		if (tailbufsize < count + BUFSIZ) {
-			tailbufsize = count + BUFSIZ;
+	எனில் (!G.from_உச்சி && மொத்தம்_BYTES) {
+		எனில் (tailbufsize < மொத்தம் + BUFSIZ) {
+			tailbufsize = மொத்தம் + BUFSIZ;
 		}
 	}
 	/* tail -c1024m REGULAR_FILE doesn't really need 1G mem block.
 	 * (In fact, it doesn't need ANY memory). So delay allocation.
 	 */
-	tailbuf = NULL;
+	tailbuf = வெற்று;
 
 	/* tail the files */
 
 	fmt = header_fmt_str + 1; /* skip leading newline in the header on the first output */
 	i = 0;
-	do {
-		char *buf;
-		int taillen;
-		int newlines_seen;
+	செய் {
+		எழுத்து *buf;
+		முழு taillen;
+		முழு newlines_seen;
 		unsigned seen;
-		int nread;
-		int fd = fds[i];
+		முழு nread;
+		முழு fd = fds[i];
 
-		if (ENABLE_FEATURE_FANCY_TAIL && fd < 0)
-			continue; /* may happen with -F */
+		எனில் (ENABLE_FEATURE_FANCY_TAIL && fd < 0)
+			தொடர்; /* may happen with -F */
 
-		if (nfiles > header_threshold) {
+		எனில் (nfiles > header_threshold) {
 			tail_xprint_header(fmt, argv[i]);
 			fmt = header_fmt_str;
 		}
 
-		if (!G.from_top) {
+		எனில் (!G.from_உச்சி) {
 			off_t current = lseek(fd, 0, SEEK_END);
-			if (current > 0) {
+			எனில் (current > 0) {
 				unsigned off;
-				if (COUNT_BYTES) {
+				எனில் (மொத்தம்_BYTES) {
 				/* Optimizing count-bytes case if the file is seekable.
 				 * Beware of backing up too far.
 				 * Also we exclude files with size 0 (because of /proc/xxx) */
-					if (count == 0)
-						continue; /* showing zero bytes is easy :) */
-					current -= count;
-					if (current < 0)
+					எனில் (மொத்தம் == 0)
+						தொடர்; /* showing zero bytes is easy :) */
+					current -= மொத்தம்;
+					எனில் (current < 0)
 						current = 0;
 					xlseek(fd, current, SEEK_SET);
-					bb_copyfd_size(fd, STDOUT_FILENO, count);
-					continue;
+					bb_copyfd_size(fd, STDOUT_FILENO, மொத்தம்);
+					தொடர்;
 				}
-#if 1 /* This is technically incorrect for *LONG* strings, but very useful */
+#எனில் 1 /* This is technically incorrect for *LONG* strings, but very useful */
 				/* Optimizing count-lines case if the file is seekable.
 				 * We assume the lines are <64k.
 				 * (Users complain that tail takes too long
 				 * on multi-gigabyte files) */
-				off = (count | 0xf); /* for small counts, be more paranoid */
-				if (off > (INT_MAX / (64*1024)))
+				off = (மொத்தம் | 0xf); /* for small counts, be more paranoid */
+				எனில் (off > (INT_MAX / (64*1024)))
 					off = (INT_MAX / (64*1024));
 				current -= off * (64*1024);
-				if (current < 0)
+				எனில் (current < 0)
 					current = 0;
 				xlseek(fd, current, SEEK_SET);
 #endif
 			}
 		}
 
-		if (!tailbuf)
+		எனில் (!tailbuf)
 			tailbuf = xmalloc(tailbufsize);
 
 		buf = tailbuf;
@@ -263,64 +263,64 @@ int tail_main(int argc, char **argv)
 		 * Used only by +N code ("start from Nth", 1-based): */
 		seen = 1;
 		newlines_seen = 0;
-		while ((nread = tail_read(fd, buf, tailbufsize - taillen)) > 0) {
-			if (G.from_top) {
-				int nwrite = nread;
-				if (seen < count) {
+		போது ((nread = tail_read(fd, buf, tailbufsize - taillen)) > 0) {
+			எனில் (G.from_உச்சி) {
+				முழு nwrite = nread;
+				எனில் (seen < மொத்தம்) {
 					/* We need to skip a few more bytes/lines */
-					if (COUNT_BYTES) {
-						nwrite -= (count - seen);
+					எனில் (மொத்தம்_BYTES) {
+						nwrite -= (மொத்தம் - seen);
 						seen += nread;
-					} else {
-						char *s = buf;
-						do {
+					} இல்லையெனில் {
+						எழுத்து *s = buf;
+						செய் {
 							--nwrite;
-							if (*s++ == '\n' && ++seen == count) {
-								break;
+							எனில் (*s++ == '\n' && ++seen == மொத்தம்) {
+								நிறுத்து;
 							}
-						} while (nwrite);
+						} போது (nwrite);
 					}
 				}
-				if (nwrite > 0)
+				எனில் (nwrite > 0)
 					xwrite(STDOUT_FILENO, buf + nread - nwrite, nwrite);
-			} else if (count) {
-				if (COUNT_BYTES) {
+			} இல்லையெனில் எனில் (மொத்தம்) {
+				எனில் (மொத்தம்_BYTES) {
 					taillen += nread;
-					if (taillen > (int)count) {
-						memmove(tailbuf, tailbuf + taillen - count, count);
-						taillen = count;
+					எனில் (taillen > (முழு)மொத்தம்) {
+						memmove(tailbuf, tailbuf + taillen - மொத்தம், மொத்தம்);
+						taillen = மொத்தம்;
 					}
-				} else {
-					int k = nread;
-					int newlines_in_buf = 0;
+				} இல்லையெனில் {
+					முழு k = nread;
+					முழு newlines_in_buf = 0;
 
-					do { /* count '\n' in last read */
+					செய் { /* count '\n' in last read */
 						k--;
-						if (buf[k] == '\n') {
+						எனில் (buf[k] == '\n') {
 							newlines_in_buf++;
 						}
-					} while (k);
+					} போது (k);
 
-					if (newlines_seen + newlines_in_buf < (int)count) {
+					எனில் (newlines_seen + newlines_in_buf < (முழு)மொத்தம்) {
 						newlines_seen += newlines_in_buf;
 						taillen += nread;
-					} else {
-						int extra = (buf[nread-1] != '\n');
-						char *s;
+					} இல்லையெனில் {
+						முழு extra = (buf[nread-1] != '\n');
+						எழுத்து *s;
 
-						k = newlines_seen + newlines_in_buf + extra - count;
+						k = newlines_seen + newlines_in_buf + extra - மொத்தம்;
 						s = tailbuf;
-						while (k) {
-							if (*s == '\n') {
+						போது (k) {
+							எனில் (*s == '\n') {
 								k--;
 							}
 							s++;
 						}
 						taillen += nread - (s - tailbuf);
 						memmove(tailbuf, s, taillen);
-						newlines_seen = count - extra;
+						newlines_seen = மொத்தம் - extra;
 					}
-					if (tailbufsize < (size_t)taillen + BUFSIZ) {
+					எனில் (tailbufsize < (size_t)taillen + BUFSIZ) {
 						tailbufsize = taillen + BUFSIZ;
 						tailbuf = xrealloc(tailbuf, tailbufsize);
 					}
@@ -328,31 +328,31 @@ int tail_main(int argc, char **argv)
 				buf = tailbuf + taillen;
 			}
 		} /* while (tail_read() > 0) */
-		if (!G.from_top) {
+		எனில் (!G.from_உச்சி) {
 			xwrite(STDOUT_FILENO, tailbuf, taillen);
 		}
-	} while (++i < nfiles);
+	} போது (++i < nfiles);
 	prev_fd = fds[i-1];
 
 	tailbuf = xrealloc(tailbuf, BUFSIZ);
 
-	fmt = NULL;
+	fmt = வெற்று;
 
-	if (FOLLOW) while (1) {
+	எனில் (FOLLOW) போது (1) {
 		sleep(sleep_period);
 
 		i = 0;
-		do {
-			int nread;
-			const char *filename = argv[i];
-			int fd = fds[i];
-			int new_fd = -1;
-			struct stat sbuf;
+		செய் {
+			முழு nread;
+			மாறிலி எழுத்து *filename = argv[i];
+			முழு fd = fds[i];
+			முழு new_fd = -1;
+			கட்டமைப்பு stat sbuf;
 
-			if (FOLLOW_RETRY) {
-				struct stat fsbuf;
+			எனில் (FOLLOW_RETRY) {
+				கட்டமைப்பு stat fsbuf;
 
-				if (fd < 0
+				எனில் (fd < 0
 				 || fstat(fd, &fsbuf) < 0
 				 || stat(filename, &sbuf) < 0
 				 || fsbuf.st_dev != sbuf.st_dev
@@ -360,62 +360,62 @@ int tail_main(int argc, char **argv)
 				) {
 					/* Looks like file has been created/renamed/deleted */
 					new_fd = open(filename, O_RDONLY);
-					if (new_fd >= 0) {
-						bb_error_msg("%s has %s; following end of new file",
+					எனில் (new_fd >= 0) {
+						bb_error_செய்தி("%s has %s; following end of new file",
 							filename, (fd < 0) ? "appeared" : "been replaced"
 						);
-						if (fd < 0) {
+						எனில் (fd < 0) {
 							/* No previously open fd for this file,
 							 * start using new_fd immediately. */
 							fds[i] = fd = new_fd;
 							new_fd = -1;
 						}
-					} else if (fd >= 0) {
-						bb_perror_msg("%s has been renamed or deleted", filename);
+					} இல்லையெனில் எனில் (fd >= 0) {
+						bb_perror_செய்தி("%s has been renamed or deleted", filename);
 					}
 				}
 			}
-			if (ENABLE_FEATURE_FANCY_TAIL && fd < 0)
-				continue;
-			if (nfiles > header_threshold) {
+			எனில் (ENABLE_FEATURE_FANCY_TAIL && fd < 0)
+				தொடர்;
+			எனில் (nfiles > header_threshold) {
 				fmt = header_fmt_str;
 			}
-			for (;;) {
+			க்கு (;;) {
 				/* tail -f keeps following files even if they are truncated */
 				/* /proc files report zero st_size, don't lseek them */
-				if (fstat(fd, &sbuf) == 0
+				எனில் (fstat(fd, &sbuf) == 0
 				 /* && S_ISREG(sbuf.st_mode) TODO? */
 				 && sbuf.st_size > 0
 				) {
 					off_t current = lseek(fd, 0, SEEK_CUR);
-					if (sbuf.st_size < current) {
+					எனில் (sbuf.st_size < current) {
 						//bb_perror_msg("%s: file truncated", filename); - says coreutils 8.32
 						xlseek(fd, 0, SEEK_SET);
 					}
 				}
 
 				nread = tail_read(fd, tailbuf, BUFSIZ);
-				if (nread <= 0) {
-					if (new_fd < 0)
-						break;
+				எனில் (nread <= 0) {
+					எனில் (new_fd < 0)
+						நிறுத்து;
 					/* Switch to "tail -F"ing the new file */
 					xmove_fd(new_fd, fd);
 					new_fd = -1;
-					continue;
+					தொடர்;
 				}
-				if (fmt && (fd != prev_fd)) {
+				எனில் (fmt && (fd != prev_fd)) {
 					tail_xprint_header(fmt, filename);
-					fmt = NULL;
+					fmt = வெற்று;
 					prev_fd = fd;
 				}
 				xwrite(STDOUT_FILENO, tailbuf, nread);
 			}
-		} while (++i < nfiles);
+		} போது (++i < nfiles);
 	} /* while (1) */
 
-	if (ENABLE_FEATURE_CLEAN_UP) {
-		free(fds);
-		free(tailbuf);
+	எனில் (ENABLE_FEATURE_CLEAN_UP) {
+		விடுவி(fds);
+		விடுவி(tailbuf);
 	}
-	return G.exitcode;
+	திரும்பு G.exitcode;
 }

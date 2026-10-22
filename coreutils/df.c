@@ -97,28 +97,28 @@
 //usage:       "Filesystem          512-blocks      Used Available Capacity Mounted on\n"
 //usage:       "/dev/sda3             17381728  17107080    274648      98% /\n"
 
-#include <mntent.h>
-#include <sys/statvfs.h>
-#include "libbb.h"
-#include "unicode.h"
+#அந்தர்பாவ <mntent.h>
+#அந்தர்பாவ <sys/statvfs.h>
+#அந்தர்பாவ "libbb.h"
+#அந்தர்பாவ "unicode.h"
 
-#if !ENABLE_FEATURE_HUMAN_READABLE
-static unsigned long kscale(unsigned long b, unsigned long bs)
+#எனில் !ENABLE_FEATURE_HUMAN_READABLE
+நிலையான unsigned long kscale(unsigned long b, unsigned long bs)
 {
-	return (b * (unsigned long long) bs + 1024/2) / 1024;
+	திரும்பு (b * (unsigned long long) bs + 1024/2) / 1024;
 }
 #endif
 
-int df_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int df_main(int argc UNUSED_PARAM, char **argv)
+முழு df_main(முழு argc, எழுத்து **argv) MAIN_EXTERNALLY_VISIBLE;
+முழு df_main(முழு argc UNUSED_PARAM, எழுத்து **argv)
 {
 	unsigned long df_disp_hr = 1024;
 	exitcode_t status = EXIT_SUCCESS;
 	unsigned opt;
 	FILE *mount_table;
-	struct mntent *mount_entry;
-	struct statvfs s;
-	enum {
+	கட்டமைப்பு mntent *mount_entry;
+	கட்டமைப்பு statvfs s;
+	எண்ணிக்கை {
 		OPT_KILO     = (1 << 0),
 		OPT_POSIX    = (1 << 1),
 		OPT_FSTYPE   = (1 << 2),
@@ -130,8 +130,8 @@ int df_main(int argc UNUSED_PARAM, char **argv)
 		OPT_HUMANDEC = (1 << (5 + 3*ENABLE_FEATURE_DF_FANCY)) * ENABLE_FEATURE_HUMAN_READABLE,
 		OPT_MEGA     = (1 << (6 + 3*ENABLE_FEATURE_DF_FANCY)) * ENABLE_FEATURE_HUMAN_READABLE,
 	};
-	const char *disp_units_hdr = NULL;
-	char *chp, *opt_t;
+	மாறிலி எழுத்து *disp_units_hdr = வெற்று;
+	எழுத்து *chp, *opt_t;
 
 	init_unicode();
 
@@ -139,7 +139,7 @@ int df_main(int argc UNUSED_PARAM, char **argv)
 	 * Disk space is shown in 1K blocks by default, unless the environment
 	 * variable POSIXLY_CORRECT is set, in which case 512-byte blocks are used.
 	 */
-	if (getenv("POSIXLY_CORRECT")) /* TODO - a new libbb function? */
+	எனில் (getenv("POSIXLY_CORRECT")) /* TODO - a new libbb function? */
 		df_disp_hr = 512;
 
 	opt = getopt32(argv, "^"
@@ -147,24 +147,24 @@ int df_main(int argc UNUSED_PARAM, char **argv)
 			IF_FEATURE_DF_FANCY("aiB:")
 			IF_FEATURE_HUMAN_READABLE("hHm")
 			"\0"
-#if ENABLE_FEATURE_HUMAN_READABLE && ENABLE_FEATURE_DF_FANCY
+#எனில் ENABLE_FEATURE_HUMAN_READABLE && ENABLE_FEATURE_DF_FANCY
 			"k-mB:m-Bk:B-km"
-#elif ENABLE_FEATURE_HUMAN_READABLE
+#அல்லதெனில் ENABLE_FEATURE_HUMAN_READABLE
 			"k-m:m-k"
 #endif
 			, &opt_t
 			IF_FEATURE_DF_FANCY(, &chp)
 	);
-	if (opt & OPT_MEGA)
+	எனில் (opt & OPT_MEGA)
 		df_disp_hr = 1024*1024;
 
-	if (opt & OPT_BSIZE) {
+	எனில் (opt & OPT_BSIZE) {
 		/* GNU coreutils 8.25 accepts "-BMiB" form too */
-		int i;
-		for (i = 0; kmg_i_suffixes[i].suffix[0]; i++) {
-			if (strcmp(kmg_i_suffixes[i].suffix, chp) == 0) {
+		முழு i;
+		க்கு (i = 0; kmg_i_suffixes[i].suffix[0]; i++) {
+			எனில் (strcmp(kmg_i_suffixes[i].suffix, chp) == 0) {
 				df_disp_hr = kmg_i_suffixes[i].mult;
-				goto got_it;
+				செல் got_it;
 			}
 		}
 		/* Range used to disallow 0 */
@@ -172,24 +172,24 @@ int df_main(int argc UNUSED_PARAM, char **argv)
  got_it: ;
 	}
 
-	if (opt & (OPT_HUMAN|OPT_HUMANDEC)) {
+	எனில் (opt & (OPT_HUMAN|OPT_HUMANDEC)) {
 		df_disp_hr = 0;
 //TODO: need to add support in make_human_readable_str() for "decimal human readable"
 		//if (opt & OPT_HUMANDEC)
 		//	df_disp_hr--;
 		disp_units_hdr = "     Size";
 	}
-	if (opt & OPT_INODE)
+	எனில் (opt & OPT_INODE)
 		disp_units_hdr = "   Inodes";
 
-	if (disp_units_hdr == NULL) {
-#if ENABLE_FEATURE_HUMAN_READABLE
+	எனில் (disp_units_hdr == வெற்று) {
+#எனில் ENABLE_FEATURE_HUMAN_READABLE
 		disp_units_hdr = xasprintf("%s-blocks",
 			/* print df_disp_hr, show no fractionals,
 			 * use suffixes if OPT_POSIX is set in opt */
 			make_human_readable_str(df_disp_hr, 0, !!(opt & OPT_POSIX))
 		);
-#else
+#இல்லையெனில்
 		disp_units_hdr = xasprintf("%lu-blocks", df_disp_hr);
 #endif
 	}
@@ -199,81 +199,81 @@ int df_main(int argc UNUSED_PARAM, char **argv)
 			disp_units_hdr,
 			(opt & OPT_POSIX) ? "Capacity" : "Use%");
 
-	mount_table = NULL;
+	mount_table = வெற்று;
 	argv += optind;
-	if (!argv[0]) {
+	எனில் (!argv[0]) {
 		mount_table = setmntent(bb_path_mtab_file, "r");
-		if (!mount_table)
-			bb_simple_perror_msg_and_die(bb_path_mtab_file);
+		எனில் (!mount_table)
+			bb_simple_perror_செய்தி_and_die(bb_path_mtab_file);
 	}
 
-	while (1) {
-		const char *device;
-		const char *mount_point;
-		const char *fs_type;
+	போது (1) {
+		மாறிலி எழுத்து *device;
+		மாறிலி எழுத்து *mount_point;
+		மாறிலி எழுத்து *fs_type;
 
-		if (mount_table) {
+		எனில் (mount_table) {
 			mount_entry = getmntent(mount_table);
-			if (!mount_entry) {
+			எனில் (!mount_entry) {
 				endmntent(mount_table);
-				break;
+				நிறுத்து;
 			}
-		} else {
+		} இல்லையெனில் {
 			mount_point = *argv++;
-			if (!mount_point)
-				break;
+			எனில் (!mount_point)
+				நிறுத்து;
 			mount_entry = find_mount_point(mount_point, 1);
-			if (!mount_entry) {
-				bb_error_msg("%s: can't find mount point", mount_point);
+			எனில் (!mount_entry) {
+				bb_error_செய்தி("%s: can't find mount point", mount_point);
  set_error:
 				status = EXIT_FAILURE;
-				continue;
+				தொடர்;
 			}
 		}
 
 		device = mount_entry->mnt_fsname;
 
 		/* GNU coreutils 6.10 skips certain mounts, try to be compatible */
-		if (ENABLE_FEATURE_SKIP_ROOTFS && strcmp(device, "rootfs") == 0)
-			continue;
+		எனில் (ENABLE_FEATURE_SKIP_ROOTFS && strcmp(device, "rootfs") == 0)
+			தொடர்;
 
 		mount_point = mount_entry->mnt_dir;
 		fs_type = mount_entry->mnt_type;
 
-		if (opt & OPT_t) {
-			if (strcmp(fs_type, opt_t) != 0)
-				continue;
+		எனில் (opt & OPT_t) {
+			எனில் (strcmp(fs_type, opt_t) != 0)
+				தொடர்;
 		}
 
-		if (statvfs(mount_point, &s) != 0) {
-			bb_simple_perror_msg(mount_point);
-			goto set_error;
+		எனில் (statvfs(mount_point, &s) != 0) {
+			bb_simple_perror_செய்தி(mount_point);
+			செல் set_error;
 		}
 		/* Some uclibc versions were seen to lose f_frsize
 		 * (kernel does return it, but then uclibc does not copy it)
 		 */
-		if (s.f_frsize == 0)
+		எனில் (s.f_frsize == 0)
 			s.f_frsize = s.f_bsize;
 
-		if ((s.f_blocks > 0) || !mount_table || (opt & OPT_ALL)) {
+		எனில் ((s.f_blocks > 0) || !mount_table || (opt & OPT_ALL)) {
 			unsigned long long blocks_used;
 			unsigned long long blocks_total;
 			unsigned blocks_percent_used;
 
-			if (opt & OPT_INODE) {
+			எனில் (opt & OPT_INODE) {
 				s.f_blocks = s.f_files;
 				s.f_bavail = s.f_bfree = s.f_ffree;
 				s.f_frsize = 1;
-				if (df_disp_hr)
+				எனில் (df_disp_hr)
 					df_disp_hr = 1;
 			}
 			blocks_used = s.f_blocks - s.f_bfree;
 			blocks_total = blocks_used + s.f_bavail;
 			blocks_percent_used = blocks_total; /* 0% if blocks_total == 0, else... */
-			if (blocks_total != 0) {
+			எனில் (blocks_total != 0) {
 				/* Downscale sizes for narrower division */
 				unsigned u;
-				while (blocks_total >= INT_MAX / 101) {
+				போது (blocks_total >= INT_MAX / 101) {
 					blocks_total >>= 1;
 					blocks_used >>= 1;
 				}
@@ -281,46 +281,46 @@ int df_main(int argc UNUSED_PARAM, char **argv)
 				blocks_percent_used = u / (unsigned)blocks_total;
 			}
 
-#ifdef WHY_WE_DO_IT_FOR_DEV_ROOT_ONLY
-			if (strcmp(device, "/dev/root") == 0) {
+#ifdef WHY_WE_DO_IT_FOR_DEV_வேர்_ONLY
+			எனில் (strcmp(device, "/dev/root") == 0) {
 				/* Adjusts device to be the real root device,
 				 * or leaves device alone if it can't find it */
 				device = find_block_device("/");
-				if (!device) {
-					goto set_error;
+				எனில் (!device) {
+					செல் set_error;
 				}
 			}
 #endif
 
-#if ENABLE_UNICODE_SUPPORT
+#எனில் ENABLE_UNICODE_SUPPORT
 			{
 				uni_stat_t uni_stat;
-				char *uni_dev = unicode_conv_to_printable(&uni_stat, device);
-				if (uni_stat.unicode_width > 20 && !(opt & OPT_POSIX)) {
+				எழுத்து *uni_dev = unicode_conv_to_printable(&uni_stat, device);
+				எனில் (uni_stat.unicode_width > 20 && !(opt & OPT_POSIX)) {
 					printf("%s\n%20s", uni_dev, "");
-				} else {
-					printf("%s%*s", uni_dev, 20 - (int)uni_stat.unicode_width, "");
+				} இல்லையெனில் {
+					printf("%s%*s", uni_dev, 20 - (முழு)uni_stat.unicode_width, "");
 				}
-				free(uni_dev);
-				if (opt & OPT_FSTYPE) {
-					char *uni_type = unicode_conv_to_printable(&uni_stat, fs_type);
-					if (uni_stat.unicode_width > 10 && !(opt & OPT_POSIX))
+				விடுவி(uni_dev);
+				எனில் (opt & OPT_FSTYPE) {
+					எழுத்து *uni_type = unicode_conv_to_printable(&uni_stat, fs_type);
+					எனில் (uni_stat.unicode_width > 10 && !(opt & OPT_POSIX))
 						printf(" %s\n%31s", uni_type, "");
-					else
-						printf(" %s%*s", uni_type, 10 - (int)uni_stat.unicode_width, "");
-					free(uni_type);
+					இல்லையெனில்
+						printf(" %s%*s", uni_type, 10 - (முழு)uni_stat.unicode_width, "");
+					விடுவி(uni_type);
 				}
 			}
-#else
-			if (printf("\n%-20s" + 1, device) > 20 && !(opt & OPT_POSIX))
+#இல்லையெனில்
+			எனில் (printf("\n%-20s" + 1, device) > 20 && !(opt & OPT_POSIX))
 				printf("\n%-20s", "");
-			if (opt & OPT_FSTYPE) {
-				if (printf(" %-10s", fs_type) > 11 && !(opt & OPT_POSIX))
+			எனில் (opt & OPT_FSTYPE) {
+				எனில் (printf(" %-10s", fs_type) > 11 && !(opt & OPT_POSIX))
 					printf("\n%-30s", "");
 			}
 #endif
 
-#if ENABLE_FEATURE_HUMAN_READABLE
+#எனில் ENABLE_FEATURE_HUMAN_READABLE
 			printf(" %9s ",
 				/* f_blocks x f_frsize / df_disp_hr, show one fractional,
 				 * use suffixes if df_disp_hr == 0 */
@@ -337,7 +337,7 @@ int df_main(int argc UNUSED_PARAM, char **argv)
 				 * use suffixes if df_disp_hr == 0 */
 				make_human_readable_str(s.f_bavail, s.f_frsize, df_disp_hr),
 				blocks_percent_used, mount_point);
-#else
+#இல்லையெனில்
 			printf(" %9lu %9lu %9lu %3u%% %s\n",
 				kscale(s.f_blocks, s.f_frsize),
 				kscale(s.f_blocks - s.f_bfree, s.f_frsize),
@@ -347,5 +347,5 @@ int df_main(int argc UNUSED_PARAM, char **argv)
 		}
 	}
 
-	return status;
+	திரும்பு status;
 }
