@@ -25,93 +25,93 @@
 //usage:     "\n	-2	Suppress lines unique to FILE2"
 //usage:     "\n	-3	Suppress lines common to both files"
 
-#include "libbb.h"
+#അന്തര്ഭാവ "libbb.h"
 
 #define COMM_OPT_1 (1 << 0)
 #define COMM_OPT_2 (1 << 1)
 #define COMM_OPT_3 (1 << 2)
 
 /* writeline outputs the input given, appropriately aligned according to class */
-static void writeline(char *line, int class)
+സ്ഥിതം ശൂന്യം writeline(അക്ഷരം *വരി, പൂർണ്ണസംഖ്യ class)
 {
-	int flags = option_mask32;
-	if (class == 0) {
-		if (flags & COMM_OPT_1)
-			return;
-	} else if (class == 1) {
-		if (flags & COMM_OPT_2)
-			return;
-		if (!(flags & COMM_OPT_1))
+	പൂർണ്ണസംഖ്യ flags = option_mask32;
+	എങ്കിൽ (class == 0) {
+		എങ്കിൽ (flags & COMM_OPT_1)
+			തിരികെ;
+	} അല്ലെങ്കിൽ എങ്കിൽ (class == 1) {
+		എങ്കിൽ (flags & COMM_OPT_2)
+			തിരികെ;
+		എങ്കിൽ (!(flags & COMM_OPT_1))
 			putchar('\t');
-	} else /*if (class == 2)*/ {
-		if (flags & COMM_OPT_3)
-			return;
-		if (!(flags & COMM_OPT_1))
+	} അല്ലെങ്കിൽ /*if (class == 2)*/ {
+		എങ്കിൽ (flags & COMM_OPT_3)
+			തിരികെ;
+		എങ്കിൽ (!(flags & COMM_OPT_1))
 			putchar('\t');
-		if (!(flags & COMM_OPT_2))
+		എങ്കിൽ (!(flags & COMM_OPT_2))
 			putchar('\t');
 	}
-	puts(line);
+	puts(വരി);
 }
 
-int comm_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int comm_main(int argc UNUSED_PARAM, char **argv)
+പൂർണ്ണസംഖ്യ comm_main(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv) MAIN_EXTERNALLY_VISIBLE;
+പൂർണ്ണസംഖ്യ comm_main(പൂർണ്ണസംഖ്യ argc UNUSED_PARAM, അക്ഷരം **argv)
 {
-	char *thisline[2];
+	അക്ഷരം *thisline[2];
 	FILE *stream[2];
-	int i;
-	int order;
+	പൂർണ്ണസംഖ്യ i;
+	പൂർണ്ണസംഖ്യ order;
 
 	getopt32(argv, "^" "123" "\0" "=2");
 	argv += optind;
 
-	for (i = 0; i < 2; ++i) {
+	വേണ്ടി (i = 0; i < 2; ++i) {
 		stream[i] = xfopen_stdin(argv[i]);
 	}
 
 	order = 0;
-	thisline[1] = thisline[0] = NULL;
-	while (1) {
-		if (order <= 0) {
-			free(thisline[0]);
+	thisline[1] = thisline[0] = ശൂന്യ;
+	ആകുമ്പോൾ (1) {
+		എങ്കിൽ (order <= 0) {
+			സ്വതന്ത്രം(thisline[0]);
 			thisline[0] = xmalloc_fgetline(stream[0]);
 		}
-		if (order >= 0) {
-			free(thisline[1]);
+		എങ്കിൽ (order >= 0) {
+			സ്വതന്ത്രം(thisline[1]);
 			thisline[1] = xmalloc_fgetline(stream[1]);
 		}
 
 		i = !thisline[0] + (!thisline[1] << 1);
-		if (i)
-			break;
+		എങ്കിൽ (i)
+			നിർത്തുക;
 		order = strcmp(thisline[0], thisline[1]);
 
-		if (order >= 0)
+		എങ്കിൽ (order >= 0)
 			writeline(thisline[1], order ? 1 : 2);
-		else
+		അല്ലെങ്കിൽ
 			writeline(thisline[0], 0);
 	}
 
 	/* EOF at least on one of the streams */
 	i &= 1;
-	if (thisline[i]) {
+	എങ്കിൽ (thisline[i]) {
 		/* stream[i] is not at EOF yet */
 		/* we did not print thisline[i] yet */
-		char *p = thisline[i];
+		അക്ഷരം *p = thisline[i];
 		writeline(p, i);
-		while (1) {
-			free(p);
+		ആകുമ്പോൾ (1) {
+			സ്വതന്ത്രം(p);
 			p = xmalloc_fgetline(stream[i]);
-			if (!p)
-				break;
+			എങ്കിൽ (!p)
+				നിർത്തുക;
 			writeline(p, i);
 		}
 	}
 
-	if (ENABLE_FEATURE_CLEAN_UP) {
+	എങ്കിൽ (ENABLE_FEATURE_CLEAN_UP) {
 		fclose(stream[0]);
 		fclose(stream[1]);
 	}
 
-	return EXIT_SUCCESS;
+	തിരികെ EXIT_SUCCESS;
 }

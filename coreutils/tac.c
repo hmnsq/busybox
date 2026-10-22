@@ -27,25 +27,25 @@
 //usage:#define tac_full_usage "\n\n"
 //usage:	"Concatenate FILEs and print them in reverse"
 
-#include "libbb.h"
+#അന്തര്ഭാവ "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-struct lstring {
-	int size;
-	char buf[1];
+ഘടന lstring {
+	പൂർണ്ണസംഖ്യ size;
+	അക്ഷരം buf[1];
 };
 
-int tac_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int tac_main(int argc UNUSED_PARAM, char **argv)
+പൂർണ്ണസംഖ്യ tac_main(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv) MAIN_EXTERNALLY_VISIBLE;
+പൂർണ്ണസംഖ്യ tac_main(പൂർണ്ണസംഖ്യ argc UNUSED_PARAM, അക്ഷരം **argv)
 {
-	char **name;
+	അക്ഷരം **name;
 	FILE *f;
-	struct lstring *line = NULL;
-	llist_t *list = NULL;
-	int retval = EXIT_SUCCESS;
+	ഘടന lstring *വരി = ശൂന്യ;
+	llist_t *list = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ retval = EXIT_SUCCESS;
 
-#if ENABLE_DESKTOP
+#എങ്കിൽ ENABLE_DESKTOP
 /* tac from coreutils 6.9 supports:
        -b, --before
               attach the separator before instead of after
@@ -57,61 +57,61 @@ We support none, but at least we will complain or handle "--":
 */
 	getopt32(argv, "");
 	argv += optind;
-#else
+#അല്ലെങ്കിൽ
 	argv++;
 #endif
-	if (!*argv)
-		*--argv = (char *)"-";
+	എങ്കിൽ (!*argv)
+		*--argv = (അക്ഷരം *)"-";
 	/* We will read from last file to first */
 	name = argv;
-	while (*name)
+	ആകുമ്പോൾ (*name)
 		name++;
 
-	do {
-		int ch, i;
+	ചെയ്യുക {
+		പൂർണ്ണസംഖ്യ ch, i;
 
 		name--;
 		f = fopen_or_warn_stdin(*name);
-		if (f == NULL) {
+		എങ്കിൽ (f == ശൂന്യ) {
 			/* error message is printed by fopen_or_warn_stdin */
 			retval = EXIT_FAILURE;
-			continue;
+			തുടരുക;
 		}
 
 		errno = i = 0;
-		do {
+		ചെയ്യുക {
 			ch = fgetc(f);
-			if (ch != EOF) {
-				if (!(i & 0x7f))
+			എങ്കിൽ (ch != EOF) {
+				എങ്കിൽ (!(i & 0x7f))
 					/* Grow on every 128th char */
-					line = xrealloc(line, i + 0x7f + sizeof(int) + 1);
-				line->buf[i++] = ch;
+					വരി = xrealloc(വരി, i + 0x7f + വലുപ്പം(പൂർണ്ണസംഖ്യ) + 1);
+				വരി->buf[i++] = ch;
 			}
-			if (ch == '\n' || (ch == EOF && i != 0)) {
-				line = xrealloc(line, i + sizeof(int));
-				line->size = i;
-				llist_add_to(&list, line);
-				line = NULL;
+			എങ്കിൽ (ch == '\n' || (ch == EOF && i != 0)) {
+				വരി = xrealloc(വരി, i + വലുപ്പം(പൂർണ്ണസംഖ്യ));
+				വരി->size = i;
+				llist_add_to(&list, വരി);
+				വരി = ശൂന്യ;
 				i = 0;
 			}
-		} while (ch != EOF);
+		} ആകുമ്പോൾ (ch != EOF);
 		/* fgetc sets errno to ENOENT on EOF, we don't want
 		 * to warn on this non-error! */
-		if (errno && errno != ENOENT) {
-			bb_simple_perror_msg(*name);
+		എങ്കിൽ (errno && errno != ENOENT) {
+			bb_simple_perror_സന്ദേശം(*name);
 			retval = EXIT_FAILURE;
 		}
-	} while (name != argv);
+	} ആകുമ്പോൾ (name != argv);
 
-	while (list) {
-		line = (struct lstring *)list->data;
-		xwrite(STDOUT_FILENO, line->buf, line->size);
-		if (ENABLE_FEATURE_CLEAN_UP) {
-			free(llist_pop(&list));
-		} else {
+	ആകുമ്പോൾ (list) {
+		വരി = (ഘടന lstring *)list->data;
+		xwrite(STDOUT_FILENO, വരി->buf, വരി->size);
+		എങ്കിൽ (ENABLE_FEATURE_CLEAN_UP) {
+			സ്വതന്ത്രം(llist_എടുക്കുക(&list));
+		} അല്ലെങ്കിൽ {
 			list = list->link;
 		}
 	}
 
-	return retval;
+	തിരികെ retval;
 }

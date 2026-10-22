@@ -26,7 +26,7 @@
 //usage:     "\n	-e	Treat ARGs as lines"
 //usage:     "\n	-i L-H	Treat numbers L-H as lines"
 
-#include "libbb.h"
+#അന്തര്ഭാവ "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
@@ -42,15 +42,15 @@
  * If the required number of output lines is less than the total
  * we can stop shuffling early.
  */
-static void shuffle_lines(char **lines, unsigned numlines, unsigned outlines)
+സ്ഥിതം ശൂന്യം shuffle_വരികൾ(അക്ഷരം **വരികൾ, unsigned numlines, unsigned outlines)
 {
 	srand(monotonic_us());
 
-	while (outlines != 0) {
-		char *tmp;
+	ആകുമ്പോൾ (outlines != 0) {
+		അക്ഷരം *tmp;
 		unsigned r = rand();
 		/* RAND_MAX can be as small as 32767 */
-		if (numlines > RAND_MAX)
+		എങ്കിൽ (numlines > RAND_MAX)
 			r ^= rand() << 15;
 		r %= numlines;
 //TODO: the above method is seriously non-uniform when numlines is very large.
@@ -59,9 +59,9 @@ static void shuffle_lines(char **lines, unsigned numlines, unsigned outlines)
 //are more likely: e.g. r=1 and r=0xf0000001 both map to 1,
 //whereas only one value, r=0xefffffff, maps to 0xefffffff.
 		numlines--;
-		tmp = lines[numlines];
-		lines[numlines] = lines[r];
-		lines[r] = tmp;
+		tmp = വരികൾ[numlines];
+		വരികൾ[numlines] = വരികൾ[r];
+		വരികൾ[r] = tmp;
 		outlines--;
 	}
 }
@@ -72,20 +72,20 @@ static void shuffle_lines(char **lines, unsigned numlines, unsigned outlines)
  */
 #define COMMON_PREFIX_HACK 0
 
-int shuf_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int shuf_main(int argc, char **argv)
+പൂർണ്ണസംഖ്യ shuf_main(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv) MAIN_EXTERNALLY_VISIBLE;
+പൂർണ്ണസംഖ്യ shuf_main(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv)
 {
 	unsigned opts;
-	char *opt_i_str, *opt_n_str, *opt_o_str;
-	char **lines;
+	അക്ഷരം *opt_i_str, *opt_n_str, *opt_o_str;
+	അക്ഷരം **വരികൾ;
 	unsigned long long lo = lo;
 	unsigned numlines, outlines;
 	unsigned i;
-	char eol;
-#if COMMON_PREFIX_HACK
+	അക്ഷരം eol;
+#എങ്കിൽ COMMON_PREFIX_HACK
 	unsigned pfx_len = 0;
 	unsigned padding_width = padding_width;
-	const char *pfx = pfx;
+	സ്ഥിരം അക്ഷരം *pfx = pfx;
 #endif
 
 	opts = getopt32(argv, "^"
@@ -98,37 +98,37 @@ int shuf_main(int argc, char **argv)
 	argv += optind;
 
 	/* Prepare lines for shuffling - either: */
-	if (opts & OPT_e) {
+	എങ്കിൽ (opts & OPT_e) {
 		/* make lines from command-line arguments */
 		numlines = argc;
-		lines = argv;
-	} else
-	if (opts & OPT_i) {
+		വരികൾ = argv;
+	} അല്ലെങ്കിൽ
+	എങ്കിൽ (opts & OPT_i) {
 		/* create a range of numbers */
 		unsigned long long hi;
-		char *dash;
+		അക്ഷരം *dash;
 
-		if (argv[0])
+		എങ്കിൽ (argv[0])
 			bb_show_usage();
 
 		dash = strchr(opt_i_str, '-');
-		if (!dash) {
-			bb_error_msg_and_die("bad range '%s'", opt_i_str);
+		എങ്കിൽ (!dash) {
+			bb_error_സന്ദേശം_and_die("bad range '%s'", opt_i_str);
 		}
 		*dash++ = '\0';
-#if COMMON_PREFIX_HACK
+#എങ്കിൽ COMMON_PREFIX_HACK
 		{
-			const char *a = opt_i_str;
-			const char *b = dash;
+			സ്ഥിരം അക്ഷരം *a = opt_i_str;
+			സ്ഥിരം അക്ഷരം *b = dash;
 			/* Skip leading zeros (they may mask that common prefix does exist) */
-			while (*a == '0') a++;
-			while (*b == '0') b++;
+			ആകുമ്പോൾ (*a == '0') a++;
+			ആകുമ്പോൾ (*b == '0') b++;
 			/* Do we have a common prefix (long enough to bother)? */
 			padding_width = strlen(a);
-			if (padding_width > 5 && padding_width == strlen(b)) {
+			എങ്കിൽ (padding_width > 5 && padding_width == strlen(b)) {
 				/* How long is it? */
 				pfx = a;
-				while (isdigit(*a) && *a == *b
+				ആകുമ്പോൾ (isdigit(*a) && *a == *b
 				 && a[1] /* "111111-111111" case: avoid xatoull("") */
 				) {
 					a++;
@@ -136,7 +136,7 @@ int shuf_main(int argc, char **argv)
 				}
 				pfx_len = a - pfx; /* can end up being 0 */
 				padding_width -= pfx_len;
-			} else {
+			} അല്ലെങ്കിൽ {
 				/* Undo leading zero 'eating' (think "0-9") */
 				a = opt_i_str;
 				b = dash;
@@ -144,77 +144,77 @@ int shuf_main(int argc, char **argv)
 			lo = xatoull(a);
 			hi = xatoull(b);
 		}
-#else
+#അല്ലെങ്കിൽ
 		lo = xatoull(opt_i_str);
 		hi = xatoull(dash);
 #endif
 		dash[-1] = '-';
-		if (hi < lo)
-			bb_error_msg_and_die("bad range '%s'", opt_i_str);
+		എങ്കിൽ (hi < lo)
+			bb_error_സന്ദേശം_and_die("bad range '%s'", opt_i_str);
 		hi -= lo;
-		if (sizeof(size_t) > sizeof(numlines)) {
-			if (hi >= UINT_MAX)
-				bb_error_msg_and_die("bad range '%s'", opt_i_str);
-		} else {
-			if (hi >= UINT_MAX / sizeof(lines[0]))
-				bb_error_msg_and_die("bad range '%s'", opt_i_str);
+		എങ്കിൽ (വലുപ്പം(size_t) > വലുപ്പം(numlines)) {
+			എങ്കിൽ (hi >= UINT_MAX)
+				bb_error_സന്ദേശം_and_die("bad range '%s'", opt_i_str);
+		} അല്ലെങ്കിൽ {
+			എങ്കിൽ (hi >= UINT_MAX / വലുപ്പം(വരികൾ[0]))
+				bb_error_സന്ദേശം_and_die("bad range '%s'", opt_i_str);
 		}
 
 		numlines = hi + 1;
-		lines = xmalloc((size_t)numlines * sizeof(lines[0]));
-		for (i = 0; i < numlines; i++) {
-			lines[i] = (char*)(uintptr_t)i;
+		വരികൾ = xmalloc((size_t)numlines * വലുപ്പം(വരികൾ[0]));
+		വേണ്ടി (i = 0; i < numlines; i++) {
+			വരികൾ[i] = (അക്ഷരം*)(uintptr_t)i;
 		}
-	} else {
+	} അല്ലെങ്കിൽ {
 		/* default - read lines from stdin or the input file */
 		FILE *fp;
-		const char *fname = "-";
+		സ്ഥിരം അക്ഷരം *fname = "-";
 
-		if (argv[0]) {
-			if (argv[1])
+		എങ്കിൽ (argv[0]) {
+			എങ്കിൽ (argv[1])
 				bb_show_usage();
 			fname = argv[0];
 		}
 
 		fp = xfopen_stdin(fname);
-		lines = NULL;
+		വരികൾ = ശൂന്യ;
 		numlines = 0;
-		for (;;) {
-			char *line = xmalloc_fgetline(fp);
-			if (!line)
-				break;
-			lines = xrealloc_vector(lines, 6, numlines);
-			lines[numlines++] = line;
+		വേണ്ടി (;;) {
+			അക്ഷരം *വരി = xmalloc_fgetline(fp);
+			എങ്കിൽ (!വരി)
+				നിർത്തുക;
+			വരികൾ = xrealloc_vector(വരികൾ, 6, numlines);
+			വരികൾ[numlines++] = വരി;
 		}
 		fclose_if_not_stdin(fp);
 	}
 
 	outlines = numlines;
-	if (opts & OPT_n) {
+	എങ്കിൽ (opts & OPT_n) {
 		outlines = xatou(opt_n_str);
-		if (outlines > numlines)
+		എങ്കിൽ (outlines > numlines)
 			outlines = numlines;
 	}
 
-	shuffle_lines(lines, numlines, outlines);
+	shuffle_വരികൾ(വരികൾ, numlines, outlines);
 
-	if (opts & OPT_o)
+	എങ്കിൽ (opts & OPT_o)
 		xmove_fd(xopen(opt_o_str, O_WRONLY|O_CREAT|O_TRUNC), STDOUT_FILENO);
 
 	eol = '\n';
-	if (opts & OPT_z)
+	എങ്കിൽ (opts & OPT_z)
 		eol = '\0';
 
-	for (i = numlines - outlines; i < numlines; i++) {
-		if (opts & OPT_i) {
-#if COMMON_PREFIX_HACK
-			if (pfx_len != 0)
-				printf("%.*s%0*llu%c", pfx_len, pfx, padding_width, lo + (uintptr_t)lines[i], eol);
-			else
+	വേണ്ടി (i = numlines - outlines; i < numlines; i++) {
+		എങ്കിൽ (opts & OPT_i) {
+#എങ്കിൽ COMMON_PREFIX_HACK
+			എങ്കിൽ (pfx_len != 0)
+				printf("%.*s%0*llu%c", pfx_len, pfx, padding_width, lo + (uintptr_t)വരികൾ[i], eol);
+			അല്ലെങ്കിൽ
 #endif
-				printf("%llu%c", lo + (uintptr_t)lines[i], eol);
-		} else
-			printf("%s%c", lines[i], eol);
+				printf("%llu%c", lo + (uintptr_t)വരികൾ[i], eol);
+		} അല്ലെങ്കിൽ
+			printf("%s%c", വരികൾ[i], eol);
 	}
 
 	fflush_stdout_and_exit_SUCCESS();

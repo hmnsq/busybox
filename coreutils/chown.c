@@ -54,7 +54,7 @@
 //usage:       "ls -l /tmp/foo\n"
 //usage:       "-r--r--r--    1 root     root            0 Apr 12 18:25 /tmp/foo\n"
 
-#include "libbb.h"
+#അന്തര്ഭാവ "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
@@ -77,15 +77,15 @@
 #define BIT_TRAVERSE 0x20
 #define OPT_TRAVERSE (IF_DESKTOP(opt & BIT_TRAVERSE) IF_NOT_DESKTOP(0))
 /* -H or -L */
-#define BIT_TRAVERSE_TOP (0x20|0x40)
-#define OPT_TRAVERSE_TOP (IF_DESKTOP(opt & BIT_TRAVERSE_TOP) IF_NOT_DESKTOP(0))
+#define BIT_TRAVERSE_മുകൾ (0x20|0x40)
+#define OPT_TRAVERSE_മുകൾ (IF_DESKTOP(opt & BIT_TRAVERSE_മുകൾ) IF_NOT_DESKTOP(0))
 
-#if ENABLE_FEATURE_CHOWN_LONG_OPTIONS
-static const char chown_longopts[] ALIGN1 =
+#എങ്കിൽ ENABLE_FEATURE_CHOWN_LONG_OPTIONS
+സ്ഥിതം സ്ഥിരം അക്ഷരം chown_longopts[] ALIGN1 =
 	"recursive\0"        No_argument   "R"
 	"dereference\0"      No_argument   "\xff"
 	"no-dereference\0"   No_argument   "h"
-# if ENABLE_DESKTOP
+# എങ്കിൽ ENABLE_DESKTOP
 	"changes\0"          No_argument   "c"
 	"silent\0"           No_argument   "f"
 	"quiet\0"            No_argument   "f"
@@ -94,72 +94,72 @@ static const char chown_longopts[] ALIGN1 =
 	;
 #endif
 
-typedef int (*chown_fptr)(const char *, uid_t, gid_t);
+തരനിർവചനം പൂർണ്ണസംഖ്യ (*chown_fptr)(സ്ഥിരം അക്ഷരം *, uid_t, gid_t);
 
-struct param_t {
-	struct bb_uidgid_t ugid;
+ഘടന param_t {
+	ഘടന bb_uidgid_t ugid;
 	chown_fptr chown_func;
 };
 
-static int FAST_FUNC fileAction(struct recursive_state *state UNUSED_PARAM,
-		const char *fileName, struct stat *statbuf)
+സ്ഥിതം പൂർണ്ണസംഖ്യ FAST_FUNC fileAction(ഘടന recursive_state *state UNUSED_PARAM,
+		സ്ഥിരം അക്ഷരം *fileName, ഘടന stat *statbuf)
 {
-#define param  (*(struct param_t*)state->userData)
+#define param  (*(ഘടന param_t*)state->userData)
 #define opt option_mask32
 	uid_t u = (param.ugid.uid == (uid_t)-1L) ? statbuf->st_uid : param.ugid.uid;
 	gid_t g = (param.ugid.gid == (gid_t)-1L) ? statbuf->st_gid : param.ugid.gid;
 
-	if (param.chown_func(fileName, u, g) == 0) {
-		if (OPT_VERBOSE
+	എങ്കിൽ (param.chown_func(fileName, u, g) == 0) {
+		എങ്കിൽ (OPT_VERBOSE
 		 || (OPT_CHANGED && (statbuf->st_uid != u || statbuf->st_gid != g))
 		) {
 			printf("changed ownership of '%s' to %u:%u\n",
 					fileName, (unsigned)u, (unsigned)g);
 		}
-		return TRUE;
+		തിരികെ TRUE;
 	}
-	if (!OPT_QUIET)
-		bb_simple_perror_msg(fileName);
-	return FALSE;
+	എങ്കിൽ (!OPT_QUIET)
+		bb_simple_perror_സന്ദേശം(fileName);
+	തിരികെ FALSE;
 #undef opt
 #undef param
 }
 
-int chown_main(int argc UNUSED_PARAM, char **argv)
+പൂർണ്ണസംഖ്യ chown_main(പൂർണ്ണസംഖ്യ argc UNUSED_PARAM, അക്ഷരം **argv)
 {
-	int retval = EXIT_SUCCESS;
-	int opt, flags;
-	struct param_t param;
+	പൂർണ്ണസംഖ്യ retval = EXIT_SUCCESS;
+	പൂർണ്ണസംഖ്യ opt, flags;
+	ഘടന param_t param;
 
-#if ENABLE_FEATURE_CHOWN_LONG_OPTIONS
+#എങ്കിൽ ENABLE_FEATURE_CHOWN_LONG_OPTIONS
 	opt = getopt32long(argv, "^" OPT_STR "\0" "-2", chown_longopts);
-#else
+#അല്ലെങ്കിൽ
 	opt = getopt32(argv, "^" OPT_STR "\0" "-2");
 #endif
 	argv += optind;
 
 	/* This matches coreutils behavior (almost - see below) */
 	param.chown_func = chown;
-	if (OPT_NODEREF
+	എങ്കിൽ (OPT_NODEREF
 	/* || (OPT_RECURSE && !OPT_TRAVERSE_TOP): */
-	IF_DESKTOP( || (opt & (BIT_RECURSE|BIT_TRAVERSE_TOP)) == BIT_RECURSE)
+	IF_DESKTOP( || (opt & (BIT_RECURSE|BIT_TRAVERSE_മുകൾ)) == BIT_RECURSE)
 	) {
 		param.chown_func = lchown;
 	}
 
 	flags = ACTION_DEPTHFIRST; /* match coreutils order */
-	if (OPT_RECURSE)
+	എങ്കിൽ (OPT_RECURSE)
 		flags |= ACTION_RECURSE;
-	if (OPT_TRAVERSE_TOP)
+	എങ്കിൽ (OPT_TRAVERSE_മുകൾ)
 		flags |= ACTION_FOLLOWLINKS_L0; /* -H/-L: follow links on depth 0 */
-	if (OPT_TRAVERSE)
+	എങ്കിൽ (OPT_TRAVERSE)
 		flags |= ACTION_FOLLOWLINKS; /* follow links if -L */
 
 	parse_chown_usergroup_or_die(&param.ugid, argv[0]);
 
 	/* Ok, ready to do the deed now */
-	while (*++argv) {
-		if (!recursive_action(*argv,
+	ആകുമ്പോൾ (*++argv) {
+		എങ്കിൽ (!recursive_action(*argv,
 				flags,          /* flags */
 				fileAction,     /* file action */
 				fileAction,     /* dir action */
@@ -169,7 +169,7 @@ int chown_main(int argc UNUSED_PARAM, char **argv)
 		}
 	}
 
-	return retval;
+	തിരികെ retval;
 }
 
 /*

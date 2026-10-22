@@ -53,22 +53,22 @@
 /* BB_AUDIT SUSv3 compliant. */
 /* http://www.opengroup.org/onlinepubs/007904975/utilities/wc.html */
 
-#include "libbb.h"
-#include "unicode.h"
+#അന്തര്ഭാവ "libbb.h"
+#അന്തര്ഭാവ "unicode.h"
 
-#if !ENABLE_LOCALE_SUPPORT
+#എങ്കിൽ !ENABLE_LOCALE_SUPPORT
 # undef isprint
 # undef isspace
 # define isprint(c) ((unsigned)((c) - 0x20) <= (0x7e - 0x20))
 # define isspace(c) ((c) == ' ')
 #endif
 
-#if ENABLE_FEATURE_WC_LARGE
-# define COUNT_T unsigned long long
-# define COUNT_FMT "llu"
-#else
-# define COUNT_T unsigned
-# define COUNT_FMT "u"
+#എങ്കിൽ ENABLE_FEATURE_WC_LARGE
+# define എണ്ണം_T unsigned long long
+# define എണ്ണം_FMT "llu"
+#അല്ലെങ്കിൽ
+# define എണ്ണം_T unsigned
+# define എണ്ണം_FMT "u"
 #endif
 
 /* We support -m even when UNICODE_SUPPORT is off,
@@ -96,25 +96,25 @@
 /* Order is important if we want to be compatible with
  * column order in "wc -cmlwL" output:
  */
-enum {
-	WC_LINES    = 0, /* -l */
-	WC_WORDS    = 1, /* -w */
+എണ്ണൽ {
+	WC_വരികൾ    = 0, /* -l */
+	WC_വാക്കുകൾ    = 1, /* -w */
 	WC_UNICHARS = 2, /* -m */
 	WC_BYTES    = 3, /* -c */
 	WC_LENGTH   = 4, /* -L */
-	NUM_WCS     = 5,
+	അക്കം_WCS     = 5,
 };
 
-int wc_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int wc_main(int argc UNUSED_PARAM, char **argv)
+പൂർണ്ണസംഖ്യ wc_main(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv) MAIN_EXTERNALLY_VISIBLE;
+പൂർണ്ണസംഖ്യ wc_main(പൂർണ്ണസംഖ്യ argc UNUSED_PARAM, അക്ഷരം **argv)
 {
-	const char *arg;
-	const char *start_fmt = " %9"COUNT_FMT + 1;
-	const char *fname_fmt = " %s\n";
-	COUNT_T *pcounts;
-	COUNT_T counts[NUM_WCS];
-	COUNT_T totals[NUM_WCS];
-	int num_files;
+	സ്ഥിരം അക്ഷരം *arg;
+	സ്ഥിരം അക്ഷരം *start_fmt = " %9"എണ്ണം_FMT + 1;
+	സ്ഥിരം അക്ഷരം *fname_fmt = " %s\n";
+	എണ്ണം_T *pcounts;
+	എണ്ണം_T counts[അക്കം_WCS];
+	എണ്ണം_T totals[അക്കം_WCS];
+	പൂർണ്ണസംഖ്യ അക്കം_files;
 	smallint status = EXIT_SUCCESS;
 	unsigned print_type;
 
@@ -122,105 +122,105 @@ int wc_main(int argc UNUSED_PARAM, char **argv)
 
 	print_type = getopt32(argv, "lwmcL");
 
-	if (print_type == 0) {
-		print_type = (1 << WC_LINES) | (1 << WC_WORDS) | (1 << WC_BYTES);
+	എങ്കിൽ (print_type == 0) {
+		print_type = (1 << WC_വരികൾ) | (1 << WC_വാക്കുകൾ) | (1 << WC_BYTES);
 	}
 
 	argv += optind;
-	if (!argv[0]) {
-		*--argv = (char *) bb_msg_standard_input;
+	എങ്കിൽ (!argv[0]) {
+		*--argv = (അക്ഷരം *) bb_സന്ദേശം_standard_നിവേശം;
 		fname_fmt = "\n";
 	}
-	if (!argv[1]) { /* zero or one filename? */
-		if (!((print_type-1) & print_type)) /* exactly one option? */
-			start_fmt = "%"COUNT_FMT;
+	എങ്കിൽ (!argv[1]) { /* zero or one filename? */
+		എങ്കിൽ (!((print_type-1) & print_type)) /* exactly one option? */
+			start_fmt = "%"എണ്ണം_FMT;
 	}
 
-	memset(totals, 0, sizeof(totals));
+	memset(totals, 0, വലുപ്പം(totals));
 
 	pcounts = counts;
 
-	num_files = 0;
-	while ((arg = *argv++) != NULL) {
+	അക്കം_files = 0;
+	ആകുമ്പോൾ ((arg = *argv++) != ശൂന്യ) {
 		FILE *fp;
-		const char *s;
+		സ്ഥിരം അക്ഷരം *s;
 		unsigned u;
 		unsigned linepos;
 		smallint in_word;
 
-		++num_files;
+		++അക്കം_files;
 		fp = fopen_or_warn_stdin(arg);
-		if (!fp) {
+		എങ്കിൽ (!fp) {
 			status = EXIT_FAILURE;
-			continue;
+			തുടരുക;
 		}
 
-		memset(counts, 0, sizeof(counts));
+		memset(counts, 0, വലുപ്പം(counts));
 		linepos = 0;
 		in_word = 0;
 
-		while (1) {
-			int c;
+		ആകുമ്പോൾ (1) {
+			പൂർണ്ണസംഖ്യ c;
 			/* Our -w doesn't match GNU wc exactly... oh well */
 
 			c = getc(fp);
-			if (c == EOF) {
-				if (ferror(fp)) {
-					bb_simple_perror_msg(arg);
+			എങ്കിൽ (c == EOF) {
+				എങ്കിൽ (ferror(fp)) {
+					bb_simple_perror_സന്ദേശം(arg);
 					status = EXIT_FAILURE;
 				}
-				goto DO_EOF;  /* Treat an EOF as '\r'. */
+				പോകുക DO_EOF;  /* Treat an EOF as '\r'. */
 			}
 
 			/* Cater for -c and -m */
 			++counts[WC_BYTES];
-			if (unicode_status != UNICODE_ON /* every byte is a new char */
+			എങ്കിൽ (unicode_status != UNICODE_ON /* every byte is a new char */
 			 || (c & 0xc0) != 0x80 /* it isn't a 2nd+ byte of a Unicode char */
 			) {
 				++counts[WC_UNICHARS];
 			}
 
-			if (isprint_asciionly(c)) { /* FIXME: not unicode-aware */
+			എങ്കിൽ (isprint_asciionly(c)) { /* FIXME: not unicode-aware */
 				++linepos;
-				if (!isspace(c)) {
+				എങ്കിൽ (!isspace(c)) {
 					in_word = 1;
-					continue;
+					തുടരുക;
 				}
-			} else if ((unsigned)(c - 9) <= 4) {
+			} അല്ലെങ്കിൽ എങ്കിൽ ((unsigned)(c - 9) <= 4) {
 				/* \t  9
 				 * \n 10
 				 * \v 11
 				 * \f 12
 				 * \r 13
 				 */
-				if (c == '\t') {
+				എങ്കിൽ (c == '\t') {
 					linepos = (linepos | 7) + 1;
-				} else {  /* '\n', '\r', '\f', or '\v' */
+				} അല്ലെങ്കിൽ {  /* '\n', '\r', '\f', or '\v' */
  DO_EOF:
-					if (linepos > counts[WC_LENGTH]) {
+					എങ്കിൽ (linepos > counts[WC_LENGTH]) {
 						counts[WC_LENGTH] = linepos;
 					}
-					if (c == '\n') {
-						++counts[WC_LINES];
+					എങ്കിൽ (c == '\n') {
+						++counts[WC_വരികൾ];
 					}
-					if (c != '\v') {
+					എങ്കിൽ (c != '\v') {
 						linepos = 0;
 					}
 				}
-			} else {
-				continue;
+			} അല്ലെങ്കിൽ {
+				തുടരുക;
 			}
 
-			counts[WC_WORDS] += in_word;
+			counts[WC_വാക്കുകൾ] += in_word;
 			in_word = 0;
-			if (c == EOF) {
-				break;
+			എങ്കിൽ (c == EOF) {
+				നിർത്തുക;
 			}
 		}
 
 		fclose_if_not_stdin(fp);
 
-		if (totals[WC_LENGTH] < counts[WC_LENGTH]) {
+		എങ്കിൽ (totals[WC_LENGTH] < counts[WC_LENGTH]) {
 			totals[WC_LENGTH] = counts[WC_LENGTH];
 		}
 		totals[WC_LENGTH] -= counts[WC_LENGTH];
@@ -231,13 +231,13 @@ int wc_main(int argc UNUSED_PARAM, char **argv)
 		 * we won't try that hard, it will bloat us too much */
 		s = start_fmt;
 		u = 0;
-		do {
-			if (print_type & (1 << u)) {
+		ചെയ്യുക {
+			എങ്കിൽ (print_type & (1 << u)) {
 				printf(s, pcounts[u]);
-				s = " %9"COUNT_FMT; /* Ok... restore the leading space. */
+				s = " %9"എണ്ണം_FMT; /* Ok... restore the leading space. */
 			}
 			totals[u] += pcounts[u];
-		} while (++u < NUM_WCS);
+		} ആകുമ്പോൾ (++u < അക്കം_WCS);
 		printf(fname_fmt, arg);
 	}
 
@@ -245,12 +245,12 @@ int wc_main(int argc UNUSED_PARAM, char **argv)
 	 * space, we set the pcounts ptr to the totals array.  This has the side
 	 * effect of trashing the totals array after outputting it, but that's
 	 * irrelavent since we no longer need it. */
-	if (num_files > 1) {
-		num_files = 0;  /* Make sure we don't get here again. */
+	എങ്കിൽ (അക്കം_files > 1) {
+		അക്കം_files = 0;  /* Make sure we don't get here again. */
 		arg = "total";
 		pcounts = totals;
 		--argv;
-		goto OUTPUT;
+		പോകുക OUTPUT;
 	}
 
 	fflush_stdout_and_exit(status);

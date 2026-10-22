@@ -25,69 +25,69 @@
 //usage:       "$ pwd\n"
 //usage:       "/root\n"
 
-#include "libbb.h"
+#അന്തര്ഭാവ "libbb.h"
 
-static int logical_getcwd(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ logical_getcwd(ശൂന്യം)
 {
-	struct stat st1;
-	struct stat st2;
-	char *wd;
-	char *p;
+	ഘടന stat st1;
+	ഘടന stat st2;
+	അക്ഷരം *wd;
+	അക്ഷരം *p;
 
 	wd = getenv("PWD");
-	if (!wd || wd[0] != '/')
-		return 0;
+	എങ്കിൽ (!wd || wd[0] != '/')
+		തിരികെ 0;
 
 	p = wd;
-	while (*p) {
+	ആകുമ്പോൾ (*p) {
 		/* doing strstr(p, "/.") by hand is smaller and faster... */
-		if (*p++ != '/')
-			continue;
-		if (*p != '.')
-			continue;
+		എങ്കിൽ (*p++ != '/')
+			തുടരുക;
+		എങ്കിൽ (*p != '.')
+			തുടരുക;
 		/* we found "/.", skip to next char */
 		p++;
-		if (*p == '.')
+		എങ്കിൽ (*p == '.')
 			p++; /* we found "/.." */
-		if (*p == '\0' || *p == '/')
-			return 0; /* "/./" or "/../" component: bad */
+		എങ്കിൽ (*p == '\0' || *p == '/')
+			തിരികെ 0; /* "/./" or "/../" component: bad */
 	}
 
-	if (stat(wd, &st1) != 0)
-		return 0;
-	if (stat(".", &st2) != 0)
-		return 0;
-	if (st1.st_ino != st2.st_ino)
-		return 0;
-	if (st1.st_dev != st2.st_dev)
-		return 0;
+	എങ്കിൽ (stat(wd, &st1) != 0)
+		തിരികെ 0;
+	എങ്കിൽ (stat(".", &st2) != 0)
+		തിരികെ 0;
+	എങ്കിൽ (st1.st_ino != st2.st_ino)
+		തിരികെ 0;
+	എങ്കിൽ (st1.st_dev != st2.st_dev)
+		തിരികെ 0;
 
 	puts(wd);
-	return 1;
+	തിരികെ 1;
 }
 
-int pwd_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int pwd_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+പൂർണ്ണസംഖ്യ pwd_main(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv) MAIN_EXTERNALLY_VISIBLE;
+പൂർണ്ണസംഖ്യ pwd_main(പൂർണ്ണസംഖ്യ argc UNUSED_PARAM, അക്ഷരം **argv UNUSED_PARAM)
 {
-	char *buf;
+	അക്ഷരം *buf;
 
-	if (ENABLE_DESKTOP) {
+	എങ്കിൽ (ENABLE_DESKTOP) {
 		/* TODO: assume -L if $POSIXLY_CORRECT? (coreutils does that)
 		 * Rationale:
 		 * POSIX requires a default of -L, but most scripts expect -P
 		 */
 		unsigned opt = getopt32(argv, "LP");
-		if ((opt & 1) && logical_getcwd())
-			return fflush_all();
+		എങ്കിൽ ((opt & 1) && logical_getcwd())
+			തിരികെ fflush_all();
 	}
 
-	buf = xrealloc_getcwd_or_warn(NULL);
+	buf = xrealloc_getcwd_or_warn(ശൂന്യ);
 
-	if (buf) {
+	എങ്കിൽ (buf) {
 		puts(buf);
-		free(buf);
-		return fflush_all();
+		സ്വതന്ത്രം(buf);
+		തിരികെ fflush_all();
 	}
 
-	return EXIT_FAILURE;
+	തിരികെ EXIT_FAILURE;
 }

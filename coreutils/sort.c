@@ -89,10 +89,10 @@
 //usage:	)
 //usage:       ""
 
-#include "libbb.h"
+#അന്തര്ഭാവ "libbb.h"
 
 /* These are sort types */
-enum {
+എണ്ണൽ {
 	FLAG_n  = 1 << 0,       /* Numeric sort */
 	FLAG_g  = 1 << 1,       /* Sort using strtod() */
 	FLAG_h  = 1 << 2,       /* Sort using strtod(), plus KMGT suffixes */
@@ -119,7 +119,7 @@ enum {
 	FLAG_no_tie_break = 0x40000000,
 };
 
-static const char sort_opt_str[] ALIGN1 = "^"
+സ്ഥിതം സ്ഥിരം അക്ഷരം sort_opt_str[] ALIGN1 = "^"
 			"nghMVucszbrdfimS:T:o:k:*t:"
 			"\0" "o--o:t--t"/*-t, -o: at most one of each*/;
 /*
@@ -128,65 +128,65 @@ static const char sort_opt_str[] ALIGN1 = "^"
  */
 #define OPT_STR (sort_opt_str + 1)
 
-#if ENABLE_FEATURE_SORT_BIG
-static char key_separator;
+#എങ്കിൽ ENABLE_FEATURE_SORT_BIG
+സ്ഥിതം അക്ഷരം താക്കോൽ_separator;
 
-static struct sort_key {
-	struct sort_key *next_key;  /* linked list */
+സ്ഥിതം ഘടന sort_താക്കോൽ {
+	ഘടന sort_താക്കോൽ *next_താക്കോൽ;  /* linked list */
 	unsigned range[4];          /* start word, start char, end word, end char */
 	unsigned flags;
-} *key_list;
+} *താക്കോൽ_list;
 
 
 /* This is a NOEXEC applet. Be very careful! */
 
 
-static char *get_key(char *str, struct sort_key *key, int flags)
+സ്ഥിതം അക്ഷരം *get_താക്കോൽ(അക്ഷരം *str, ഘടന sort_താക്കോൽ *താക്കോൽ, പൂർണ്ണസംഖ്യ flags)
 {
-	int start = start; /* for compiler */
-	int end;
-	int len, j;
+	പൂർണ്ണസംഖ്യ start = start; /* for compiler */
+	പൂർണ്ണസംഖ്യ end;
+	പൂർണ്ണസംഖ്യ len, j;
 	unsigned i;
 
 	/* Special case whole string, so we don't have to make a copy */
-	if (key->range[0] == 1 && !key->range[1] && !key->range[2] && !key->range[3]
+	എങ്കിൽ (താക്കോൽ->range[0] == 1 && !താക്കോൽ->range[1] && !താക്കോൽ->range[2] && !താക്കോൽ->range[3]
 	 && !(flags & (FLAG_b | FLAG_d | FLAG_f | FLAG_i | FLAG_bb))
 	) {
-		return str;
+		തിരികെ str;
 	}
 
 	/* Find start of key on first pass, end on second pass */
 	len = strlen(str);
-	for (j = 0; j < 2; j++) {
-		if (!key->range[2*j])
+	വേണ്ടി (j = 0; j < 2; j++) {
+		എങ്കിൽ (!താക്കോൽ->range[2*j])
 			end = len;
 		/* Loop through fields */
-		else {
-			unsigned char ch = 0;
+		അല്ലെങ്കിൽ {
+			unsigned അക്ഷരം ch = 0;
 
 			end = 0;
-			for (i = 1; i < key->range[2*j] + j; i++) {
-				if (key_separator) {
+			വേണ്ടി (i = 1; i < താക്കോൽ->range[2*j] + j; i++) {
+				എങ്കിൽ (താക്കോൽ_separator) {
 					/* Skip body of key and separator */
-					while ((ch = str[end]) != '\0') {
+					ആകുമ്പോൾ ((ch = str[end]) != '\0') {
 							end++;
-						if (ch == key_separator)
-							break;
+						എങ്കിൽ (ch == താക്കോൽ_separator)
+							നിർത്തുക;
 					}
-				} else {
+				} അല്ലെങ്കിൽ {
 					/* Skip leading blanks */
-					while (isspace(str[end]))
+					ആകുമ്പോൾ (isspace(str[end]))
 						end++;
 					/* Skip body of key */
-					while (str[end] != '\0') {
-						if (isspace(str[end]))
-							break;
+					ആകുമ്പോൾ (str[end] != '\0') {
+						എങ്കിൽ (isspace(str[end]))
+							നിർത്തുക;
 						end++;
 					}
 				}
 			}
 			/* Remove last delim: "abc:def:" => "abc:def" */
-			if (j && ch) {
+			എങ്കിൽ (j && ch) {
 				//if (str[end-1] != key_separator)
 				//  bb_error_msg(_and_die("BUG! "
 				//  "str[start:%d,end:%d]:'%.*s'",
@@ -194,270 +194,270 @@ static char *get_key(char *str, struct sort_key *key, int flags)
 				end--;
 			}
 		}
-		if (!j) start = end;
+		എങ്കിൽ (!j) start = end;
 	}
 	/* Strip leading whitespace if necessary */
-	if (flags & FLAG_b)
+	എങ്കിൽ (flags & FLAG_b)
 		/* not using skip_whitespace() for speed */
-		while (isspace(str[start])) start++;
+		ആകുമ്പോൾ (isspace(str[start])) start++;
 	/* Strip trailing whitespace if necessary */
-	if (flags & FLAG_bb)
-		while (end > start && isspace(str[end-1])) end--;
+	എങ്കിൽ (flags & FLAG_bb)
+		ആകുമ്പോൾ (end > start && isspace(str[end-1])) end--;
 	/* -kSTART,N.ENDCHAR: honor ENDCHAR (1-based) */
-	if (key->range[3]) {
-		end = key->range[3];
-		if (end > len) end = len;
+	എങ്കിൽ (താക്കോൽ->range[3]) {
+		end = താക്കോൽ->range[3];
+		എങ്കിൽ (end > len) end = len;
 	}
 	/* -kN.STARTCHAR[,...]: honor STARTCHAR (1-based) */
-	if (key->range[1]) {
-		start += key->range[1] - 1;
-		if (start > len) start = len;
+	എങ്കിൽ (താക്കോൽ->range[1]) {
+		start += താക്കോൽ->range[1] - 1;
+		എങ്കിൽ (start > len) start = len;
 	}
 	/* Make the copy */
-	if (end < start)
+	എങ്കിൽ (end < start)
 		end = start;
 	str = xstrndup(str+start, end-start);
 	/* Handle -d */
-	if (flags & FLAG_d) {
-		for (start = end = 0; str[end]; end++)
-			if (isspace(str[end]) || isalnum(str[end]))
+	എങ്കിൽ (flags & FLAG_d) {
+		വേണ്ടി (start = end = 0; str[end]; end++)
+			എങ്കിൽ (isspace(str[end]) || isalnum(str[end]))
 				str[start++] = str[end];
 		str[start] = '\0';
 	}
 	/* Handle -i */
-	if (flags & FLAG_i) {
-		for (start = end = 0; str[end]; end++)
-			if (isprint_asciionly(str[end]))
+	എങ്കിൽ (flags & FLAG_i) {
+		വേണ്ടി (start = end = 0; str[end]; end++)
+			എങ്കിൽ (isprint_asciionly(str[end]))
 				str[start++] = str[end];
 		str[start] = '\0';
 	}
 	/* Handle -f */
-	if (flags & FLAG_f)
-		for (i = 0; str[i]; i++)
+	എങ്കിൽ (flags & FLAG_f)
+		വേണ്ടി (i = 0; str[i]; i++)
 			str[i] = toupper(str[i]);
 
-	return str;
+	തിരികെ str;
 }
 
-static struct sort_key *add_key(void)
+സ്ഥിതം ഘടന sort_താക്കോൽ *add_താക്കോൽ(ശൂന്യം)
 {
-	struct sort_key **pkey = &key_list;
-	while (*pkey)
-		pkey = &((*pkey)->next_key);
-	return *pkey = xzalloc(sizeof(struct sort_key));
+	ഘടന sort_താക്കോൽ **pkey = &താക്കോൽ_list;
+	ആകുമ്പോൾ (*pkey)
+		pkey = &((*pkey)->next_താക്കോൽ);
+	തിരികെ *pkey = xzalloc(വലുപ്പം(ഘടന sort_താക്കോൽ));
 }
 
-#define GET_LINE(fp) \
+#define GET_വരി(fp) \
 	((option_mask32 & FLAG_z) \
-	? bb_get_chunk_from_file(fp, NULL) \
+	? bb_get_chunk_from_file(fp, ശൂന്യ) \
 	: xmalloc_fgetline(fp))
-#else
-#define GET_LINE(fp) xmalloc_fgetline(fp)
+#അല്ലെങ്കിൽ
+#define GET_വരി(fp) xmalloc_fgetline(fp)
 #endif
 
-#if ENABLE_FEATURE_SORT_BIG
-static int scale_suffix(const char *tail)
+#എങ്കിൽ ENABLE_FEATURE_SORT_BIG
+സ്ഥിതം പൂർണ്ണസംഖ്യ scale_suffix(സ്ഥിരം അക്ഷരം *tail)
 {
-	static const char suffix[] ALIGN1 = "kmgtpezy";
-	const char *s;
-	int n;
+	സ്ഥിതം സ്ഥിരം അക്ഷരം suffix[] ALIGN1 = "kmgtpezy";
+	സ്ഥിരം അക്ഷരം *s;
+	പൂർണ്ണസംഖ്യ n;
 
-	if (!tail[0])
-		return -1;
+	എങ്കിൽ (!tail[0])
+		തിരികെ -1;
 	s = strchr(suffix, tail[0] | 0x20);
-	if (!s)
-		return -1;
+	എങ്കിൽ (!s)
+		തിരികെ -1;
 	n = s - suffix;
-	if (n != 0 && tail[0] >= 'a')
-		return -1; /* mg... not accepted, only MG... */
-	return n;
+	എങ്കിൽ (n != 0 && tail[0] >= 'a')
+		തിരികെ -1; /* mg... not accepted, only MG... */
+	തിരികെ n;
 }
 #endif
 
 /* Iterate through keys list and perform comparisons */
-static int compare_keys(const void *xarg, const void *yarg)
+സ്ഥിതം പൂർണ്ണസംഖ്യ compare_താക്കോലുകൾ(സ്ഥിരം ശൂന്യം *xarg, സ്ഥിരം ശൂന്യം *yarg)
 {
-	int flags = option_mask32, retval = 0;
-	char *x, *y;
+	പൂർണ്ണസംഖ്യ flags = option_mask32, retval = 0;
+	അക്ഷരം *x, *y;
 
-#if ENABLE_FEATURE_SORT_BIG
-	struct sort_key *key;
+#എങ്കിൽ ENABLE_FEATURE_SORT_BIG
+	ഘടന sort_താക്കോൽ *താക്കോൽ;
 
-	for (key = key_list; !retval && key; key = key->next_key) {
-		flags = key->flags ? key->flags : option_mask32;
+	വേണ്ടി (താക്കോൽ = താക്കോൽ_list; !retval && താക്കോൽ; താക്കോൽ = താക്കോൽ->next_താക്കോൽ) {
+		flags = താക്കോൽ->flags ? താക്കോൽ->flags : option_mask32;
 		/* Chop out and modify key chunks, handling -dfib */
-		x = get_key(*(char **)xarg, key, flags);
-		y = get_key(*(char **)yarg, key, flags);
-#else
+		x = get_താക്കോൽ(*(അക്ഷരം **)xarg, താക്കോൽ, flags);
+		y = get_താക്കോൽ(*(അക്ഷരം **)yarg, താക്കോൽ, flags);
+#അല്ലെങ്കിൽ
 	/* This curly bracket serves no purpose but to match the nesting
 	 * level of the for () loop we're not using */
 	{
-		x = *(char **)xarg;
-		y = *(char **)yarg;
+		x = *(അക്ഷരം **)xarg;
+		y = *(അക്ഷരം **)yarg;
 #endif
 		/* Perform actual comparison */
-		switch (flags & (FLAG_n | FLAG_g | FLAG_h | FLAG_M | FLAG_V)) {
-		default:
-			bb_simple_error_msg_and_die("unknown sort type");
-			break;
-#if defined(HAVE_STRVERSCMP) && HAVE_STRVERSCMP == 1
-		case FLAG_V:
+		തിരഞ്ഞെടുപ്പ് (flags & (FLAG_n | FLAG_g | FLAG_h | FLAG_M | FLAG_V)) {
+		സ്ഥിരസ്ഥിതി:
+			bb_simple_error_സന്ദേശം_and_die("unknown sort type");
+			നിർത്തുക;
+#എങ്കിൽ defined(HAVE_STRVERSCMP) && HAVE_STRVERSCMP == 1
+		അവസ്ഥ FLAG_V:
 			retval = strverscmp(x, y);
-			break;
+			നിർത്തുക;
 #endif
 		/* Ascii sort */
-		case 0:
-#if ENABLE_LOCALE_SUPPORT
+		അവസ്ഥ 0:
+#എങ്കിൽ ENABLE_LOCALE_SUPPORT
 			retval = strcoll(x, y);
-#else
+#അല്ലെങ്കിൽ
 			retval = strcmp(x, y);
 #endif
-			break;
-#if ENABLE_FEATURE_SORT_BIG
-		case FLAG_g:
-		case FLAG_h: {
-			char *xx, *yy;
+			നിർത്തുക;
+#എങ്കിൽ ENABLE_FEATURE_SORT_BIG
+		അവസ്ഥ FLAG_g:
+		അവസ്ഥ FLAG_h: {
+			അക്ഷരം *xx, *yy;
 //TODO: needs setlocale(LC_NUMERIC, "C")?
-			double dx = strtod(x, &xx);
-			double dy = strtod(y, &yy);
+			ഇരട്ട dx = strtod(x, &xx);
+			ഇരട്ട dy = strtod(y, &yy);
 			/* not numbers < NaN < -infinity < numbers < +infinity) */
-			if (x == xx)
+			എങ്കിൽ (x == xx)
 				retval = (y == yy ? 0 : -1);
-			else if (y == yy)
+			അല്ലെങ്കിൽ എങ്കിൽ (y == yy)
 				retval = 1;
 			/* Check for isnan */
-			else if (dx != dx)
+			അല്ലെങ്കിൽ എങ്കിൽ (dx != dx)
 				retval = (dy != dy) ? 0 : -1;
-			else if (dy != dy)
+			അല്ലെങ്കിൽ എങ്കിൽ (dy != dy)
 				retval = 1;
-			else {
-				if (flags & FLAG_h) {
-					int xs = scale_suffix(xx);
-					int ys = scale_suffix(yy);
-					if (xs != ys) {
+			അല്ലെങ്കിൽ {
+				എങ്കിൽ (flags & FLAG_h) {
+					പൂർണ്ണസംഖ്യ xs = scale_suffix(xx);
+					പൂർണ്ണസംഖ്യ ys = scale_suffix(yy);
+					എങ്കിൽ (xs != ys) {
 						retval = xs - ys;
-						break;
+						നിർത്തുക;
 					}
 				}
 				/* Check for infinity.  Could underflow, but it avoids libm. */
-				if (1.0 / dx == 0.0) {
-					if (dx < 0)
+				എങ്കിൽ (1.0 / dx == 0.0) {
+					എങ്കിൽ (dx < 0)
 						retval = (1.0 / dy == 0.0 && dy < 0) ? 0 : -1;
-					else
+					അല്ലെങ്കിൽ
 						retval = (1.0 / dy == 0.0 && dy > 0) ? 0 : 1;
-				} else if (1.0 / dy == 0.0)
+				} അല്ലെങ്കിൽ എങ്കിൽ (1.0 / dy == 0.0)
 					retval = (dy < 0) ? 1 : -1;
-				else
+				അല്ലെങ്കിൽ
 					retval = (dx > dy) ? 1 : ((dx < dy) ? -1 : 0);
 			}
-			break;
+			നിർത്തുക;
 		}
-		case FLAG_M: {
-			struct tm thyme;
-			int dx;
-			char *xx, *yy;
+		അവസ്ഥ FLAG_M: {
+			ഘടന tm thyme;
+			പൂർണ്ണസംഖ്യ dx;
+			അക്ഷരം *xx, *yy;
 
 			xx = strptime(skip_whitespace(x), "%b", &thyme);
 			dx = thyme.tm_mon;
 			yy = strptime(skip_whitespace(y), "%b", &thyme);
-			if (!xx)
+			എങ്കിൽ (!xx)
 				retval = (!yy) ? 0 : -1;
-			else if (!yy)
+			അല്ലെങ്കിൽ എങ്കിൽ (!yy)
 				retval = 1;
-			else
+			അല്ലെങ്കിൽ
 				retval = dx - thyme.tm_mon;
-			break;
+			നിർത്തുക;
 		}
 		/* Full floating point version of -n */
-		case FLAG_n: {
-			double dx = atof(x);
-			double dy = atof(y);
+		അവസ്ഥ FLAG_n: {
+			ഇരട്ട dx = atof(x);
+			ഇരട്ട dy = atof(y);
 			retval = (dx > dy) ? 1 : ((dx < dy) ? -1 : 0);
-			break;
+			നിർത്തുക;
 		}
 		} /* switch */
 		/* Free key copies. */
-		if (x != *(char **)xarg) free(x);
-		if (y != *(char **)yarg) free(y);
+		എങ്കിൽ (x != *(അക്ഷരം **)xarg) സ്വതന്ത്രം(x);
+		എങ്കിൽ (y != *(അക്ഷരം **)yarg) സ്വതന്ത്രം(y);
 		/* if (retval) break; - done by for () anyway */
-#else
+#അല്ലെങ്കിൽ
 		/* Integer version of -n for tiny systems */
-		case FLAG_n:
+		അവസ്ഥ FLAG_n:
 			retval = atoi(x) - atoi(y);
-			break;
+			നിർത്തുക;
 		} /* switch */
 #endif
 	} /* for */
 
-	if (retval == 0) {
+	എങ്കിൽ (retval == 0) {
 		/* So far lines are "the same" */
 
-		if (option_mask32 & FLAG_s) {
+		എങ്കിൽ (option_mask32 & FLAG_s) {
 			/* "Stable sort": later line is "greater than",
 			 * IOW: do not allow qsort() to swap equal lines.
 			 */
 			uint32_t *p32;
 			uint32_t x32, y32;
-			char *line;
+			അക്ഷരം *വരി;
 			unsigned len;
 
-			line = *(char**)xarg;
-			len = (strlen(line) + 4) & (~3u);
-			p32 = (void*)(line + len);
+			വരി = *(അക്ഷരം**)xarg;
+			len = (strlen(വരി) + 4) & (~3u);
+			p32 = (ശൂന്യം*)(വരി + len);
 			x32 = *p32;
-			line = *(char**)yarg;
-			len = (strlen(line) + 4) & (~3u);
-			p32 = (void*)(line + len);
+			വരി = *(അക്ഷരം**)yarg;
+			len = (strlen(വരി) + 4) & (~3u);
+			p32 = (ശൂന്യം*)(വരി + len);
 			y32 = *p32;
 
 			/* If x > y, 1, else -1 */
 			retval = (x32 > y32) * 2 - 1;
 			/* Here, -r has no effect! */
-			return retval;
+			തിരികെ retval;
 		}
-		if (!(option_mask32 & FLAG_no_tie_break)) {
+		എങ്കിൽ (!(option_mask32 & FLAG_no_tie_break)) {
 			/* fallback sort */
 			flags = option_mask32;
-			retval = strcmp(*(char **)xarg, *(char **)yarg);
+			retval = strcmp(*(അക്ഷരം **)xarg, *(അക്ഷരം **)yarg);
 		}
 	}
 
-	if (flags & FLAG_r)
-		return -retval;
+	എങ്കിൽ (flags & FLAG_r)
+		തിരികെ -retval;
 
-	return retval;
+	തിരികെ retval;
 }
 
-#if ENABLE_FEATURE_SORT_BIG
-static unsigned str2u(char **str)
+#എങ്കിൽ ENABLE_FEATURE_SORT_BIG
+സ്ഥിതം unsigned str2u(അക്ഷരം **str)
 {
 	unsigned long lu;
-	if (!isdigit((*str)[0]))
-		bb_simple_error_msg_and_die("bad field specification");
+	എങ്കിൽ (!isdigit((*str)[0]))
+		bb_simple_error_സന്ദേശം_and_die("bad field specification");
 	lu = strtoul(*str, str, 10);
-	if ((sizeof(long) > sizeof(int) && lu > INT_MAX) || !lu)
-		bb_simple_error_msg_and_die("bad field specification");
-	return lu;
+	എങ്കിൽ ((വലുപ്പം(long) > വലുപ്പം(പൂർണ്ണസംഖ്യ) && lu > INT_MAX) || !lu)
+		bb_simple_error_സന്ദേശം_and_die("bad field specification");
+	തിരികെ lu;
 }
 #endif
 
-int sort_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int sort_main(int argc UNUSED_PARAM, char **argv)
+പൂർണ്ണസംഖ്യ sort_main(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv) MAIN_EXTERNALLY_VISIBLE;
+പൂർണ്ണസംഖ്യ sort_main(പൂർണ്ണസംഖ്യ argc UNUSED_PARAM, അക്ഷരം **argv)
 {
-	char **lines;
-	char *str_ignored, *str_o, *str_t;
-	llist_t *lst_k = NULL;
-	int i;
-	int linecount;
+	അക്ഷരം **വരികൾ;
+	അക്ഷരം *str_ignored, *str_o, *str_t;
+	llist_t *lst_k = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ i;
+	പൂർണ്ണസംഖ്യ linecount;
 	unsigned opts;
-#if ENABLE_FEATURE_SORT_OPTIMIZE_MEMORY
+#എങ്കിൽ ENABLE_FEATURE_SORT_OPTIMIZE_MEMORY
 	bool can_drop_dups;
 	size_t prev_len = 0;
-	char *prev_line = (char*) "";
+	അക്ഷരം *prev_വരി = (അക്ഷരം*) "";
 	/* Postpone optimizing if the input is small, < 16k lines:
 	 * even just free()ing duplicate lines takes time.
 	 */
-	size_t count_to_optimize_dups = 0x3fff;
+	size_t എണ്ണം_to_optimize_dups = 0x3fff;
 #endif
 
 	xfunc_error_retval = 2;
@@ -467,7 +467,7 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 			sort_opt_str,
 			&str_ignored, &str_ignored, &str_o, &lst_k, &str_t
 	);
-#if ENABLE_FEATURE_SORT_OPTIMIZE_MEMORY
+#എങ്കിൽ ENABLE_FEATURE_SORT_OPTIMIZE_MEMORY
 	/* Can drop dups only if -u but no "complicating" options,
 	 * IOW: if we do a full line compares. Safe options:
 	 * -o FILE Output to FILE
@@ -487,24 +487,24 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 	/* Stable sort needs every line to be uniquely allocated,
 	 * disable optimization to reuse strings:
 	 */
-	if (opts & FLAG_s)
-		count_to_optimize_dups = (size_t)-1L;
+	എങ്കിൽ (opts & FLAG_s)
+		എണ്ണം_to_optimize_dups = (size_t)-1L;
 #endif
 	/* global b strips leading and trailing spaces */
-	if (opts & FLAG_b)
+	എങ്കിൽ (opts & FLAG_b)
 		option_mask32 |= FLAG_bb;
-#if ENABLE_FEATURE_SORT_BIG
-	if (opts & FLAG_t) {
-		if (!str_t[0] || str_t[1])
-			bb_simple_error_msg_and_die("bad -t parameter");
-		key_separator = str_t[0];
+#എങ്കിൽ ENABLE_FEATURE_SORT_BIG
+	എങ്കിൽ (opts & FLAG_t) {
+		എങ്കിൽ (!str_t[0] || str_t[1])
+			bb_simple_error_സന്ദേശം_and_die("bad -t parameter");
+		താക്കോൽ_separator = str_t[0];
 	}
 	/* note: below this point we use option_mask32, not opts,
 	 * since that reduces register pressure and makes code smaller */
 
 	/* Parse sort key */
-	while (lst_k) {
-		enum {
+	ആകുമ്പോൾ (lst_k) {
+		എണ്ണൽ {
 			FLAG_allowed_for_k =
 				FLAG_n | /* Numeric sort */
 				FLAG_g | /* Sort using strtod() */
@@ -517,37 +517,37 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 				FLAG_i | /* Ignore !isprint() */
 			0
 		};
-		struct sort_key *key = add_key();
-		char *str_k = llist_pop(&lst_k);
+		ഘടന sort_താക്കോൽ *താക്കോൽ = add_താക്കോൽ();
+		അക്ഷരം *str_k = llist_എടുക്കുക(&lst_k);
 
 		i = 0; /* i==0 before comma, 1 after (-k3,6) */
-		while (*str_k) {
+		ആകുമ്പോൾ (*str_k) {
 			/* Start of range */
 			/* Cannot use bb_strtou - suffix can be a letter */
-			key->range[2*i] = str2u(&str_k);
-			if (*str_k == '.') {
+			താക്കോൽ->range[2*i] = str2u(&str_k);
+			എങ്കിൽ (*str_k == '.') {
 				str_k++;
-				key->range[2*i+1] = str2u(&str_k);
+				താക്കോൽ->range[2*i+1] = str2u(&str_k);
 			}
-			while (*str_k) {
-				int flag;
-				const char *idx;
+			ആകുമ്പോൾ (*str_k) {
+				പൂർണ്ണസംഖ്യ flag;
+				സ്ഥിരം അക്ഷരം *idx;
 
-				if (*str_k == ',' && !i++) {
+				എങ്കിൽ (*str_k == ',' && !i++) {
 					str_k++;
-					break;
+					നിർത്തുക;
 				} /* no else needed: fall through to syntax error
 					because comma isn't in OPT_STR */
 				idx = strchr(OPT_STR, *str_k);
-				if (!idx)
-					bb_simple_error_msg_and_die("unknown key option");
+				എങ്കിൽ (!idx)
+					bb_simple_error_സന്ദേശം_and_die("unknown key option");
 				flag = 1 << (idx - OPT_STR);
-				if (flag & ~FLAG_allowed_for_k)
-					bb_simple_error_msg_and_die("unknown sort type");
+				എങ്കിൽ (flag & ~FLAG_allowed_for_k)
+					bb_simple_error_സന്ദേശം_and_die("unknown sort type");
 				/* b after ',' means strip _trailing_ space */
-				if (i && flag == FLAG_b)
+				എങ്കിൽ (i && flag == FLAG_b)
 					flag = FLAG_bb;
-				key->flags |= flag;
+				താക്കോൽ->flags |= flag;
 				str_k++;
 			}
 		}
@@ -556,90 +556,90 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 
 	/* Open input files and read data */
 	argv += optind;
-	if (!*argv)
-		*--argv = (char*)"-";
+	എങ്കിൽ (!*argv)
+		*--argv = (അക്ഷരം*)"-";
 	linecount = 0;
-	lines = NULL;
-	do {
+	വരികൾ = ശൂന്യ;
+	ചെയ്യുക {
 		/* coreutils 6.9 compat: abort on first open error,
 		 * do not continue to next file: */
 		FILE *fp = xfopen_stdin(*argv);
-		for (;;) {
-			char *line = GET_LINE(fp);
-			if (!line)
-				break;
+		വേണ്ടി (;;) {
+			അക്ഷരം *വരി = GET_വരി(fp);
+			എങ്കിൽ (!വരി)
+				നിർത്തുക;
 
-#if ENABLE_FEATURE_SORT_OPTIMIZE_MEMORY
-			if (count_to_optimize_dups != 0)
-				count_to_optimize_dups--;
-			if (count_to_optimize_dups == 0) {
+#എങ്കിൽ ENABLE_FEATURE_SORT_OPTIMIZE_MEMORY
+			എങ്കിൽ (എണ്ണം_to_optimize_dups != 0)
+				എണ്ണം_to_optimize_dups--;
+			എങ്കിൽ (എണ്ണം_to_optimize_dups == 0) {
 				size_t len;
-				char *new_line;
+				അക്ഷരം *new_വരി;
 
 				/* On kernel/linux/arch/ *.[ch] files,
 				 * this reduces memory usage by 6%.
 				 *  yes | head -99999999 | sort
 				 * goes down from 1900Mb to 380 Mb.
 				 */
-				len = strlen(line);
-				if (len <= prev_len) {
-					new_line = prev_line + (prev_len - len);
-					if (strcmp(line, new_line) == 0) {
+				len = strlen(വരി);
+				എങ്കിൽ (len <= prev_len) {
+					new_വരി = prev_വരി + (prev_len - len);
+					എങ്കിൽ (strcmp(വരി, new_വരി) == 0) {
 						/* it's a tail of the prev line */
-						if (can_drop_dups && prev_len == len) {
+						എങ്കിൽ (can_drop_dups && prev_len == len) {
 							/* it's identical to prev line */
-							free(line);
-							continue;
+							സ്വതന്ത്രം(വരി);
+							തുടരുക;
 						}
-						free(line);
-						line = new_line;
+						സ്വതന്ത്രം(വരി);
+						വരി = new_വരി;
 						/* continue using longer prev_line
 						 * for future tail tests.
 						 */
-						goto skip;
+						പോകുക skip;
 					}
 				}
 				prev_len = len;
-				prev_line = line;
+				prev_വരി = വരി;
  skip: ;
 			}
-#else
+#അല്ലെങ്കിൽ
 //TODO: lighter version which only drops total dups if can_drop_dups == true
 #endif
-			lines = xrealloc_vector(lines, 6, linecount);
-			lines[linecount++] = line;
+			വരികൾ = xrealloc_vector(വരികൾ, 6, linecount);
+			വരികൾ[linecount++] = വരി;
 		}
 		fclose_if_not_stdin(fp);
-	} while (*++argv);
+	} ആകുമ്പോൾ (*++argv);
 
-#if ENABLE_FEATURE_SORT_BIG
+#എങ്കിൽ ENABLE_FEATURE_SORT_BIG
 	/* If no key, perform alphabetic sort */
-	if (!key_list)
-		add_key()->range[0] = 1;
+	എങ്കിൽ (!താക്കോൽ_list)
+		add_താക്കോൽ()->range[0] = 1;
 	/* Handle -c */
-	if (option_mask32 & FLAG_c) {
-		int j = (option_mask32 & FLAG_u) ? -1 : 0;
-		for (i = 1; i < linecount; i++) {
-			if (compare_keys(&lines[i-1], &lines[i]) > j) {
+	എങ്കിൽ (option_mask32 & FLAG_c) {
+		പൂർണ്ണസംഖ്യ j = (option_mask32 & FLAG_u) ? -1 : 0;
+		വേണ്ടി (i = 1; i < linecount; i++) {
+			എങ്കിൽ (compare_താക്കോലുകൾ(&വരികൾ[i-1], &വരികൾ[i]) > j) {
 				fprintf(stderr, "Check line %u\n", i);
-				return EXIT_FAILURE;
+				തിരികെ EXIT_FAILURE;
 			}
 		}
-		return EXIT_SUCCESS;
+		തിരികെ EXIT_SUCCESS;
 	}
 #endif
 
 	/* For stable sort, store original line position beyond terminating NUL */
-	if (option_mask32 & FLAG_s) {
-		for (i = 0; i < linecount; i++) {
+	എങ്കിൽ (option_mask32 & FLAG_s) {
+		വേണ്ടി (i = 0; i < linecount; i++) {
 			uint32_t *p32;
-			char *line;
+			അക്ഷരം *വരി;
 			unsigned len;
 
-			line = lines[i];
-			len = (strlen(line) + 4) & (~3u);
-			lines[i] = line = xrealloc(line, len + 4);
-			p32 = (void*)(line + len);
+			വരി = വരികൾ[i];
+			len = (strlen(വരി) + 4) & (~3u);
+			വരികൾ[i] = വരി = xrealloc(വരി, len + 4);
+			p32 = (ശൂന്യം*)(വരി + len);
 			*p32 = i;
 		}
 		/*option_mask32 |= FLAG_no_tie_break;*/
@@ -647,37 +647,37 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 	}
 
 	/* Perform the actual sort */
-	qsort(lines, linecount, sizeof(lines[0]), compare_keys);
+	qsort(വരികൾ, linecount, വലുപ്പം(വരികൾ[0]), compare_താക്കോലുകൾ);
 
 	/* Handle -u */
-	if (option_mask32 & FLAG_u) {
-		int j = 0;
+	എങ്കിൽ (option_mask32 & FLAG_u) {
+		പൂർണ്ണസംഖ്യ j = 0;
 		/* coreutils 6.3 drop lines for which only key is the same:
 		 * - disabling last-resort compare, or else compare_keys()
 		 * will be the same only for completely identical lines
 		 * - disabling -s (same reasons)
 		 */
 		option_mask32 = (option_mask32 | FLAG_no_tie_break) & (~FLAG_s);
-		for (i = 1; i < linecount; i++) {
-			if (compare_keys(&lines[j], &lines[i]) == 0)
-				free(lines[i]);
-			else
-				lines[++j] = lines[i];
+		വേണ്ടി (i = 1; i < linecount; i++) {
+			എങ്കിൽ (compare_താക്കോലുകൾ(&വരികൾ[j], &വരികൾ[i]) == 0)
+				സ്വതന്ത്രം(വരികൾ[i]);
+			അല്ലെങ്കിൽ
+				വരികൾ[++j] = വരികൾ[i];
 		}
-		if (linecount)
+		എങ്കിൽ (linecount)
 			linecount = j+1;
 	}
 
 	/* Print it */
-#if ENABLE_FEATURE_SORT_BIG
+#എങ്കിൽ ENABLE_FEATURE_SORT_BIG
 	/* Open output file _after_ we read all input ones */
-	if (option_mask32 & FLAG_o)
+	എങ്കിൽ (option_mask32 & FLAG_o)
 		xmove_fd(xopen(str_o, O_WRONLY|O_CREAT|O_TRUNC), STDOUT_FILENO);
 #endif
 	{
-		int ch = (option_mask32 & FLAG_z) ? '\0' : '\n';
-		for (i = 0; i < linecount; i++)
-			printf("%s%c", lines[i], ch);
+		പൂർണ്ണസംഖ്യ ch = (option_mask32 & FLAG_z) ? '\0' : '\n';
+		വേണ്ടി (i = 0; i < linecount; i++)
+			printf("%s%c", വരികൾ[i], ch);
 	}
 
 	fflush_stdout_and_exit_SUCCESS();

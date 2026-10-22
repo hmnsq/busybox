@@ -60,7 +60,7 @@
 //usage:       "$ echo \"Erik\\nis\\ncool\"\n"
 //usage:       "Erik\\nis\\ncool\n")
 
-#include "libbb.h"
+#അന്തര്ഭാവ "libbb.h"
 
 /* This is a NOFORK applet. Be very careful! */
 
@@ -80,30 +80,30 @@
  * But this function is not standard.
  */
 
-int echo_main(int argc UNUSED_PARAM, char **argv)
+പൂർണ്ണസംഖ്യ echo_main(പൂർണ്ണസംഖ്യ argc UNUSED_PARAM, അക്ഷരം **argv)
 {
-	char **pp;
-	const char *arg;
-	char *out;
-	char *buffer;
+	അക്ഷരം **pp;
+	സ്ഥിരം അക്ഷരം *arg;
+	അക്ഷരം *out;
+	അക്ഷരം *buffer;
 	unsigned buflen;
-	int err;
-#if !ENABLE_FEATURE_FANCY_ECHO
-	enum {
+	പൂർണ്ണസംഖ്യ err;
+#എങ്കിൽ !ENABLE_FEATURE_FANCY_ECHO
+	എണ്ണൽ {
 		eflag = 0,  /* 0 -- disable escape sequences */
 		nflag = 1,  /* 1 -- print '\n' */
 	};
 
 	argv++;
-#else
-	char nflag = 1;
-	char eflag = 0;
+#അല്ലെങ്കിൽ
+	അക്ഷരം nflag = 1;
+	അക്ഷരം eflag = 0;
 
-	while ((arg = *++argv) != NULL) {
-		char n, e;
+	ആകുമ്പോൾ ((arg = *++argv) != ശൂന്യ) {
+		അക്ഷരം n, e;
 
-		if (arg[0] != '-')
-			break; /* not an option arg, echo it */
+		എങ്കിൽ (arg[0] != '-')
+			നിർത്തുക; /* not an option arg, echo it */
 
 		/* If it appears that we are handling options, then make sure
 		 * that all of the options specified are actually valid.
@@ -112,17 +112,17 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
 		arg++;
 		n = nflag;
 		e = eflag;
-		do {
-			if (*arg == 'n')
+		ചെയ്യുക {
+			എങ്കിൽ (*arg == 'n')
 				n = 0;
-			else if (*arg == 'e')
+			അല്ലെങ്കിൽ എങ്കിൽ (*arg == 'e')
 				e = '\\';
-			else if (*arg != 'E') {
+			അല്ലെങ്കിൽ എങ്കിൽ (*arg != 'E') {
 				/* "-ccc" arg with one of c's invalid, echo it */
 				/* arg consisting from just "-" also handled here */
-				goto just_echo;
+				പോകുക just_echo;
 			}
-		} while (*++arg);
+		} ആകുമ്പോൾ (*++arg);
 		nflag = n;
 		eflag = e;
 	}
@@ -131,32 +131,32 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
 
 	buflen = 0;
 	pp = argv;
-	while ((arg = *pp) != NULL) {
+	ആകുമ്പോൾ ((arg = *pp) != ശൂന്യ) {
 		buflen += strlen(arg) + 1;
 		pp++;
 	}
 	out = buffer = xmalloc(buflen + 1); /* +1 is needed for "no args" case */
 
-	while ((arg = *argv) != NULL) {
-		int c;
+	ആകുമ്പോൾ ((arg = *argv) != ശൂന്യ) {
+		പൂർണ്ണസംഖ്യ c;
 
-		if (!eflag) {
+		എങ്കിൽ (!eflag) {
 			/* optimization for very common case */
 			out = stpcpy(out, arg);
-		} else
-		while ((c = *arg++) != '\0') {
-			if (c == eflag) {
+		} അല്ലെങ്കിൽ
+		ആകുമ്പോൾ ((c = *arg++) != '\0') {
+			എങ്കിൽ (c == eflag) {
 				/* This is an "\x" sequence */
 
-				if (*arg == 'c') {
+				എങ്കിൽ (*arg == 'c') {
 					/* "\c" means cancel newline and
 					 * ignore all subsequent chars. */
-					goto do_write;
+					പോകുക do_write;
 				}
 				/* Since SUSv3 mandates a first digit of 0, 4-digit octals
 				* of the form \0### are accepted. */
-				if (*arg == '0') {
-					if ((unsigned char)(arg[1] - '0') < 8) {
+				എങ്കിൽ (*arg == '0') {
+					എങ്കിൽ ((unsigned അക്ഷരം)(arg[1] - '0') < 8) {
 						/* 2nd char is 0..7: skip leading '0' */
 						arg++;
 					}
@@ -166,7 +166,7 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
 				{
 					/* optimization: don't force arg to be on-stack,
 					 * use another variable for that. ~30 bytes win */
-					const char *z = arg;
+					സ്ഥിരം അക്ഷരം *z = arg;
 					c = bb_process_escape_sequence(&z);
 					arg = z;
 				}
@@ -174,12 +174,12 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
 			*out++ = c;
 		}
 
-		if (!*++argv)
-			break;
+		എങ്കിൽ (!*++argv)
+			നിർത്തുക;
 		*out++ = ' ';
 	}
 
-	if (nflag) {
+	എങ്കിൽ (nflag) {
 		*out++ = '\n';
 	}
 
@@ -187,11 +187,11 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
 	/* Careful to error out on partial writes too (think ENOSPC!) */
 	errno = 0;
 	err = full_write(STDOUT_FILENO, buffer, out - buffer) != out - buffer;
-	if (err) {
-		bb_simple_perror_msg(bb_msg_write_error);
+	എങ്കിൽ (err) {
+		bb_simple_perror_സന്ദേശം(bb_സന്ദേശം_write_error);
 	}
-	free(buffer);
-	return err;
+	സ്വതന്ത്രം(buffer);
+	തിരികെ err;
 }
 
 /*
@@ -246,106 +246,106 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
  * Using writev instead, with 'direct' conversion of argv vector.
  */
 
-int echo_main(int argc, char **argv)
+പൂർണ്ണസംഖ്യ echo_main(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv)
 {
-	struct iovec io[argc];
-	struct iovec *cur_io = io;
-	char *arg;
-	char *p;
-#if !ENABLE_FEATURE_FANCY_ECHO
-	enum {
+	ഘടന iovec io[argc];
+	ഘടന iovec *cur_io = io;
+	അക്ഷരം *arg;
+	അക്ഷരം *p;
+#എങ്കിൽ !ENABLE_FEATURE_FANCY_ECHO
+	എണ്ണൽ {
 		eflag = '\\',
 		nflag = 1,  /* 1 -- print '\n' */
 	};
 	arg = *++argv;
-	if (!arg)
-		goto newline_ret;
-#else
-	char nflag = 1;
-	char eflag = 0;
+	എങ്കിൽ (!arg)
+		പോകുക newline_ret;
+#അല്ലെങ്കിൽ
+	അക്ഷരം nflag = 1;
+	അക്ഷരം eflag = 0;
 
-	while (1) {
+	ആകുമ്പോൾ (1) {
 		arg = *++argv;
-		if (!arg)
-			goto newline_ret;
-		if (*arg != '-')
-			break;
+		എങ്കിൽ (!arg)
+			പോകുക newline_ret;
+		എങ്കിൽ (*arg != '-')
+			നിർത്തുക;
 
 		/* If it appears that we are handling options, then make sure
 		 * that all of the options specified are actually valid.
 		 * Otherwise, the string should just be echoed.
 		 */
 		p = arg + 1;
-		if (!*p)	/* A single '-', so echo it. */
-			goto just_echo;
+		എങ്കിൽ (!*p)	/* A single '-', so echo it. */
+			പോകുക just_echo;
 
-		do {
-			if (!strchr("neE", *p))
-				goto just_echo;
-		} while (*++p);
+		ചെയ്യുക {
+			എങ്കിൽ (!strchr("neE", *p))
+				പോകുക just_echo;
+		} ആകുമ്പോൾ (*++p);
 
 		/* All of the options in this arg are valid, so handle them. */
 		p = arg + 1;
-		do {
-			if (*p == 'n')
+		ചെയ്യുക {
+			എങ്കിൽ (*p == 'n')
 				nflag = 0;
-			if (*p == 'e')
+			എങ്കിൽ (*p == 'e')
 				eflag = '\\';
-		} while (*++p);
+		} ആകുമ്പോൾ (*++p);
 	}
  just_echo:
 #endif
 
-	while (1) {
+	ആകുമ്പോൾ (1) {
 		/* arg is already == *argv and isn't NULL */
-		int c;
+		പൂർണ്ണസംഖ്യ c;
 
 		cur_io->iov_base = p = arg;
 
-		if (!eflag) {
+		എങ്കിൽ (!eflag) {
 			/* optimization for very common case */
 			p += strlen(arg);
-		} else while ((c = *arg++)) {
-			if (c == eflag) {
+		} അല്ലെങ്കിൽ ആകുമ്പോൾ ((c = *arg++)) {
+			എങ്കിൽ (c == eflag) {
 				/* This is an "\x" sequence */
 
-				if (*arg == 'c') {
+				എങ്കിൽ (*arg == 'c') {
 					/* "\c" means cancel newline and
 					 * ignore all subsequent chars. */
-					cur_io->iov_len = p - (char*)cur_io->iov_base;
+					cur_io->iov_len = p - (അക്ഷരം*)cur_io->iov_base;
 					cur_io++;
-					goto ret;
+					പോകുക ret;
 				}
 				/* Since SUSv3 mandates a first digit of 0, 4-digit octals
 				* of the form \0### are accepted. */
-				if (*arg == '0' && (unsigned char)(arg[1] - '0') < 8) {
+				എങ്കിൽ (*arg == '0' && (unsigned അക്ഷരം)(arg[1] - '0') < 8) {
 					arg++;
 				}
 //FIXME? we also accept non-0 starting sequences (see echo-prints-slash_41 test)
 // echo -ne '-\41-' prints "-!-". bash 5.0.17 does not (prints "-\41-").
 				/* bb_process_escape_sequence can handle nul correctly */
-				c = bb_process_escape_sequence( (void*) &arg);
+				c = bb_process_escape_sequence( (ശൂന്യം*) &arg);
 			}
 			*p++ = c;
 		}
 
 		arg = *++argv;
-		if (arg)
+		എങ്കിൽ (arg)
 			*p++ = ' ';
-		cur_io->iov_len = p - (char*)cur_io->iov_base;
+		cur_io->iov_len = p - (അക്ഷരം*)cur_io->iov_base;
 		cur_io++;
-		if (!arg)
-			break;
+		എങ്കിൽ (!arg)
+			നിർത്തുക;
 	}
 
  newline_ret:
-	if (nflag) {
-		cur_io->iov_base = (char*)"\n";
+	എങ്കിൽ (nflag) {
+		cur_io->iov_base = (അക്ഷരം*)"\n";
 		cur_io->iov_len = 1;
 		cur_io++;
 	}
  ret:
 	/* TODO: implement and use full_writev? */
-	return writev(1, io, (cur_io - io)) >= 0;
+	തിരികെ writev(1, io, (cur_io - io)) >= 0;
 }
 #endif

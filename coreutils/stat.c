@@ -104,54 +104,54 @@
 //usage:	)
 //usage:	)
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#അന്തര്ഭാവ "libbb.h"
+#അന്തര്ഭാവ "common_bufsiz.h"
 
-enum {
+എണ്ണൽ {
 	OPT_TERSE       = (1 << 0),
 	OPT_DEREFERENCE = (1 << 1),
 	OPT_FILESYS     = (1 << 2) * ENABLE_FEATURE_STAT_FILESYSTEM,
 	OPT_SELINUX     = (1 << (2+ENABLE_FEATURE_STAT_FILESYSTEM)) * ENABLE_SELINUX,
 };
 
-#if ENABLE_FEATURE_STAT_FORMAT
-typedef bool (*statfunc_ptr)(const char *, const char *);
-#else
-typedef bool (*statfunc_ptr)(const char *);
+#എങ്കിൽ ENABLE_FEATURE_STAT_FORMAT
+തരനിർവചനം bool (*statfunc_ptr)(സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *);
+#അല്ലെങ്കിൽ
+തരനിർവചനം bool (*statfunc_ptr)(സ്ഥിരം അക്ഷരം *);
 #endif
 
-static const char *file_type(const struct stat *st)
+സ്ഥിതം സ്ഥിരം അക്ഷരം *file_type(സ്ഥിരം ഘടന stat *st)
 {
 	/* See POSIX 1003.1-2001 XCU Table 4-8 lines 17093-17107
 	 * for some of these formats.
 	 * To keep diagnostics grammatical in English, the
 	 * returned string must start with a consonant.
 	 */
-	if (S_ISREG(st->st_mode))  return st->st_size == 0 ? "regular empty file" : "regular file";
-	if (S_ISDIR(st->st_mode))  return "directory";
-	if (S_ISBLK(st->st_mode))  return "block special file";
-	if (S_ISCHR(st->st_mode))  return "character special file";
-	if (S_ISFIFO(st->st_mode)) return "fifo";
-	if (S_ISLNK(st->st_mode))  return "symbolic link";
-	if (S_ISSOCK(st->st_mode)) return "socket";
+	എങ്കിൽ (S_ISREG(st->st_mode))  തിരികെ st->st_size == 0 ? "regular empty file" : "regular file";
+	എങ്കിൽ (S_ISDIR(st->st_mode))  തിരികെ "directory";
+	എങ്കിൽ (S_ISBLK(st->st_mode))  തിരികെ "block special file";
+	എങ്കിൽ (S_ISCHR(st->st_mode))  തിരികെ "character special file";
+	എങ്കിൽ (S_ISFIFO(st->st_mode)) തിരികെ "fifo";
+	എങ്കിൽ (S_ISLNK(st->st_mode))  തിരികെ "symbolic link";
+	എങ്കിൽ (S_ISSOCK(st->st_mode)) തിരികെ "socket";
 #ifdef S_TYPEISMQ
-	if (S_TYPEISMQ(st))        return "message queue";
+	എങ്കിൽ (S_TYPEISMQ(st))        തിരികെ "message queue";
 #endif
 #ifdef S_TYPEISSEM
-	if (S_TYPEISSEM(st))       return "semaphore";
+	എങ്കിൽ (S_TYPEISSEM(st))       തിരികെ "semaphore";
 #endif
 #ifdef S_TYPEISSHM
-	if (S_TYPEISSHM(st))       return "shared memory object";
+	എങ്കിൽ (S_TYPEISSHM(st))       തിരികെ "shared memory object";
 #endif
 #ifdef S_TYPEISTMO
-	if (S_TYPEISTMO(st))       return "typed memory object";
+	എങ്കിൽ (S_TYPEISTMO(st))       തിരികെ "typed memory object";
 #endif
-	return "weird file";
+	തിരികെ "weird file";
 }
 
-static const char *human_time(struct timespec *ts)
+സ്ഥിതം സ്ഥിരം അക്ഷരം *human_time(ഘടന timespec *ts)
 {
-	char fmt[sizeof("%Y-%m-%d %H:%M:%S.123456789 %z") + /*paranoia*/ 8];
+	അക്ഷരം fmt[വലുപ്പം("%Y-%m-%d %H:%M:%S.123456789 %z") + /*paranoia*/ 8];
 
 	/* coreutils 6.3 compat */
 #define buf bb_common_bufsiz1
@@ -159,11 +159,11 @@ static const char *human_time(struct timespec *ts)
 
 	sprintf(stpcpy(fmt, "%Y-%m-%d %H:%M:%S"), ".%09u %%z", (unsigned)ts->tv_nsec);
 	strftime(buf, COMMON_BUFSIZE, fmt, localtime(&ts->tv_sec));
-	return buf;
+	തിരികെ buf;
 #undef buf
 }
 
-#if ENABLE_FEATURE_STAT_FILESYSTEM
+#എങ്കിൽ ENABLE_FEATURE_STAT_FILESYSTEM
 #define FS_TYPE_LIST \
 FS_TYPE(0xADFF,     "affs") \
 FS_TYPE(0x1CD1,     "devpts") \
@@ -205,98 +205,98 @@ FS_TYPE(0x62656572, "sysfs")
  * Others have statfs.f_fstypename[MFSNAMELEN]. (NetBSD 1.5.2)
  * Still others have neither and have to get by with f_type (Linux).
  */
-static const char *human_fstype(uint32_t f_type)
+സ്ഥിതം സ്ഥിരം അക്ഷരം *human_fstype(uint32_t f_type)
 {
 # define FS_TYPE(type, name) type,
-	static const uint32_t fstype[] ALIGN4 = {
+	സ്ഥിതം സ്ഥിരം uint32_t fstype[] ALIGN4 = {
 		FS_TYPE_LIST
 	};
 # undef FS_TYPE
 # define FS_TYPE(type, name) name"\0"
-	static const char humanname[] ALIGN1 =
+	സ്ഥിതം സ്ഥിരം അക്ഷരം humanname[] ALIGN1 =
 		FS_TYPE_LIST
 		"UNKNOWN";
 # undef FS_TYPE
-	int i;
+	പൂർണ്ണസംഖ്യ i;
 
-	for (i = 0; i < ARRAY_SIZE(fstype); ++i)
-		if (fstype[i] == f_type)
-			break;
-	return nth_string(humanname, i);
+	വേണ്ടി (i = 0; i < ARRAY_SIZE(fstype); ++i)
+		എങ്കിൽ (fstype[i] == f_type)
+			നിർത്തുക;
+	തിരികെ nth_string(humanname, i);
 }
 
 /* "man statfs" says that statfsbuf->f_fsid is a mess */
 /* coreutils treats it as an array of ints, most significant first */
-static unsigned long long get_f_fsid(const struct statfs *statfsbuf)
+സ്ഥിതം unsigned long long get_f_fsid(സ്ഥിരം ഘടന statfs *statfsbuf)
 {
-	const unsigned *p = (const void*) &statfsbuf->f_fsid;
-	unsigned sz = sizeof(statfsbuf->f_fsid) / sizeof(unsigned);
+	സ്ഥിരം unsigned *p = (സ്ഥിരം ശൂന്യം*) &statfsbuf->f_fsid;
+	unsigned sz = വലുപ്പം(statfsbuf->f_fsid) / വലുപ്പം(unsigned);
 	unsigned long long r = 0;
 
-	do
-		r = (r << (sizeof(unsigned)*8)) | *p++;
-	while (--sz > 0);
-	return r;
+	ചെയ്യുക
+		r = (r << (വലുപ്പം(unsigned)*8)) | *p++;
+	ആകുമ്പോൾ (--sz > 0);
+	തിരികെ r;
 }
 #endif  /* FEATURE_STAT_FILESYSTEM */
 
-#if ENABLE_FEATURE_STAT_FORMAT
-static void strcatc(char *str, char c)
+#എങ്കിൽ ENABLE_FEATURE_STAT_FORMAT
+സ്ഥിതം ശൂന്യം strcatc(അക്ഷരം *str, അക്ഷരം c)
 {
-	int len = strlen(str);
+	പൂർണ്ണസംഖ്യ len = strlen(str);
 	str[len++] = c;
 	str[len] = '\0';
 }
 
-static void printfs(char *pformat, const char *msg)
+സ്ഥിതം ശൂന്യം printfs(അക്ഷരം *pformat, സ്ഥിരം അക്ഷരം *സന്ദേശം)
 {
 	strcatc(pformat, 's');
-	printf(pformat, msg);
+	printf(pformat, സന്ദേശം);
 }
 
-#if ENABLE_FEATURE_STAT_FILESYSTEM
+#എങ്കിൽ ENABLE_FEATURE_STAT_FILESYSTEM
 /* print statfs info */
-static void FAST_FUNC print_statfs(char *pformat, const char m,
-		const char *const filename, const void *data
+സ്ഥിതം ശൂന്യം FAST_FUNC print_statfs(അക്ഷരം *pformat, സ്ഥിരം അക്ഷരം m,
+		സ്ഥിരം അക്ഷരം *സ്ഥിരം filename, സ്ഥിരം ശൂന്യം *data
 		IF_SELINUX(, security_context_t scontext))
 {
-	const struct statfs *statfsbuf = data;
-	if (m == 'n') {
+	സ്ഥിരം ഘടന statfs *statfsbuf = data;
+	എങ്കിൽ (m == 'n') {
 		printfs(pformat, filename);
-	} else if (m == 'i') {
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 'i') {
 		strcat(pformat, "llx");
 		printf(pformat, get_f_fsid(statfsbuf));
-	} else if (m == 'l') {
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 'l') {
 		strcat(pformat, "lu");
 		printf(pformat, (unsigned long) statfsbuf->f_namelen);
-	} else if (m == 't') {
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 't') {
 		strcat(pformat, "lx");
 		printf(pformat, (unsigned long) statfsbuf->f_type); /* no equiv */
-	} else if (m == 'T') {
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 'T') {
 		printfs(pformat, human_fstype(statfsbuf->f_type));
-	} else if (m == 'b') {
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 'b') {
 		strcat(pformat, "llu");
 		printf(pformat, (unsigned long long) statfsbuf->f_blocks);
-	} else if (m == 'f') {
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 'f') {
 		strcat(pformat, "llu");
 		printf(pformat, (unsigned long long) statfsbuf->f_bfree);
-	} else if (m == 'a') {
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 'a') {
 		strcat(pformat, "llu");
 		printf(pformat, (unsigned long long) statfsbuf->f_bavail);
-	} else if (m == 's' || m == 'S') {
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 's' || m == 'S') {
 		strcat(pformat, "lu");
 		printf(pformat, (unsigned long) statfsbuf->f_bsize);
-	} else if (m == 'c') {
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 'c') {
 		strcat(pformat, "llu");
 		printf(pformat, (unsigned long long) statfsbuf->f_files);
-	} else if (m == 'd') {
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 'd') {
 		strcat(pformat, "llu");
 		printf(pformat, (unsigned long long) statfsbuf->f_ffree);
-# if ENABLE_SELINUX
-	} else if (m == 'C' && (option_mask32 & OPT_SELINUX)) {
+# എങ്കിൽ ENABLE_SELINUX
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 'C' && (option_mask32 & OPT_SELINUX)) {
 		printfs(pformat, scontext);
 # endif
-	} else {
+	} അല്ലെങ്കിൽ {
 		strcatc(pformat, 'c');
 		printf(pformat, m);
 	}
@@ -304,133 +304,133 @@ static void FAST_FUNC print_statfs(char *pformat, const char m,
 #endif
 
 /* print stat info */
-static void FAST_FUNC print_stat(char *pformat, const char m,
-		const char *const filename, const void *data
+സ്ഥിതം ശൂന്യം FAST_FUNC print_stat(അക്ഷരം *pformat, സ്ഥിരം അക്ഷരം m,
+		സ്ഥിരം അക്ഷരം *സ്ഥിരം filename, സ്ഥിരം ശൂന്യം *data
 		IF_SELINUX(, security_context_t scontext))
 {
 #define TYPE_SIGNED(t) (! ((t) 0 < (t) -1))
-	struct stat *statbuf = (struct stat *) data;
-	struct passwd *pw_ent;
-	struct group *gw_ent;
+	ഘടന stat *statbuf = (ഘടന stat *) data;
+	ഘടന passwd *pw_ent;
+	ഘടന group *gw_ent;
 
-	if (m == 'n') {
+	എങ്കിൽ (m == 'n') {
 		printfs(pformat, filename);
-	} else if (m == 'N') {
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 'N') {
 		strcatc(pformat, 's');
-		if (S_ISLNK(statbuf->st_mode)) {
-			char *linkname = xmalloc_readlink_or_warn(filename);
-			if (linkname == NULL)
-				return;
+		എങ്കിൽ (S_ISLNK(statbuf->st_mode)) {
+			അക്ഷരം *linkname = xmalloc_readlink_or_warn(filename);
+			എങ്കിൽ (linkname == ശൂന്യ)
+				തിരികെ;
 			printf("'%s' -> '%s'", filename, linkname);
-			free(linkname);
-		} else {
+			സ്വതന്ത്രം(linkname);
+		} അല്ലെങ്കിൽ {
 			printf(pformat, filename);
 		}
-	} else if (m == 'd') {
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 'd') {
 		strcat(pformat, "llu");
 		printf(pformat, (unsigned long long) statbuf->st_dev);
-	} else if (m == 'D') {
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 'D') {
 		strcat(pformat, "llx");
 		printf(pformat, (unsigned long long) statbuf->st_dev);
-	} else if (m == 'i') {
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 'i') {
 		strcat(pformat, "llu");
 		printf(pformat, (unsigned long long) statbuf->st_ino);
-	} else if (m == 'a') {
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 'a') {
 		strcat(pformat, "lo");
 		printf(pformat, (unsigned long) (statbuf->st_mode & (S_ISUID|S_ISGID|S_ISVTX|S_IRWXU|S_IRWXG|S_IRWXO)));
-	} else if (m == 'A') {
-		char modestr[12];
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 'A') {
+		അക്ഷരം modestr[12];
 		printfs(pformat, bb_mode_string(modestr, statbuf->st_mode));
-	} else if (m == 'f') {
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 'f') {
 		strcat(pformat, "lx");
 		printf(pformat, (unsigned long) statbuf->st_mode);
-	} else if (m == 'F') {
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 'F') {
 		printfs(pformat, file_type(statbuf));
-	} else if (m == 'h') {
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 'h') {
 		strcat(pformat, "lu");
 		printf(pformat, (unsigned long) statbuf->st_nlink);
-	} else if (m == 'u') {
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 'u') {
 		strcat(pformat, "lu");
 		printf(pformat, (unsigned long) statbuf->st_uid);
-	} else if (m == 'U') {
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 'U') {
 		pw_ent = getpwuid(statbuf->st_uid);
-		printfs(pformat, (pw_ent != NULL) ? pw_ent->pw_name : "UNKNOWN");
-	} else if (m == 'g') {
+		printfs(pformat, (pw_ent != ശൂന്യ) ? pw_ent->pw_name : "UNKNOWN");
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 'g') {
 		strcat(pformat, "lu");
 		printf(pformat, (unsigned long) statbuf->st_gid);
-	} else if (m == 'G') {
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 'G') {
 		gw_ent = getgrgid(statbuf->st_gid);
-		printfs(pformat, (gw_ent != NULL) ? gw_ent->gr_name : "UNKNOWN");
-	} else if (m == 't') {
+		printfs(pformat, (gw_ent != ശൂന്യ) ? gw_ent->gr_name : "UNKNOWN");
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 't') {
 		strcat(pformat, "lx");
 		printf(pformat, (unsigned long) major(statbuf->st_rdev));
-	} else if (m == 'T') {
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 'T') {
 		strcat(pformat, "lx");
 		printf(pformat, (unsigned long) minor(statbuf->st_rdev));
-	} else if (m == 's') {
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 's') {
 		strcat(pformat, "llu");
 		printf(pformat, (unsigned long long) statbuf->st_size);
-	} else if (m == 'B') {
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 'B') {
 		strcat(pformat, "lu");
 		printf(pformat, (unsigned long) 512); //ST_NBLOCKSIZE
-	} else if (m == 'b') {
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 'b') {
 		strcat(pformat, "llu");
 		printf(pformat, (unsigned long long) statbuf->st_blocks);
-	} else if (m == 'o') {
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 'o') {
 		strcat(pformat, "lu");
 		printf(pformat, (unsigned long) statbuf->st_blksize);
-	} else if (m == 'x') {
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 'x') {
 		printfs(pformat, human_time(&statbuf->st_atim));
-	} else if (m == 'X') {
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 'X') {
 		strcat(pformat, TYPE_SIGNED(time_t) ? "ld" : "lu");
 		/* note: (unsigned long) would be wrong:
 		 * imagine (unsigned long64)int32 */
 		printf(pformat, (long) statbuf->st_atime);
-	} else if (m == 'y') {
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 'y') {
 		printfs(pformat, human_time(&statbuf->st_mtim));
-	} else if (m == 'Y') {
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 'Y') {
 		strcat(pformat, TYPE_SIGNED(time_t) ? "ld" : "lu");
 		printf(pformat, (long) statbuf->st_mtime);
-	} else if (m == 'z') {
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 'z') {
 		printfs(pformat, human_time(&statbuf->st_ctim));
-	} else if (m == 'Z') {
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 'Z') {
 		strcat(pformat, TYPE_SIGNED(time_t) ? "ld" : "lu");
 		printf(pformat, (long) statbuf->st_ctime);
-# if ENABLE_SELINUX
-	} else if (m == 'C' && (option_mask32 & OPT_SELINUX)) {
+# എങ്കിൽ ENABLE_SELINUX
+	} അല്ലെങ്കിൽ എങ്കിൽ (m == 'C' && (option_mask32 & OPT_SELINUX)) {
 		printfs(pformat, scontext);
 # endif
-	} else {
+	} അല്ലെങ്കിൽ {
 		strcatc(pformat, 'c');
 		printf(pformat, m);
 	}
 }
 
-static void print_it(const char *masterformat,
-		const char *filename,
-		void FAST_FUNC (*print_func)(char*, char, const char*, const void* IF_SELINUX(, security_context_t scontext)),
-		const void *data
+സ്ഥിതം ശൂന്യം print_it(സ്ഥിരം അക്ഷരം *masterformat,
+		സ്ഥിരം അക്ഷരം *filename,
+		ശൂന്യം FAST_FUNC (*print_func)(അക്ഷരം*, അക്ഷരം, സ്ഥിരം അക്ഷരം*, സ്ഥിരം ശൂന്യം* IF_SELINUX(, security_context_t scontext)),
+		സ്ഥിരം ശൂന്യം *data
 		IF_SELINUX(, security_context_t scontext))
 {
 	/* Create a working copy of the format string */
-	char *format = xstrdup(masterformat);
+	അക്ഷരം *format = xstrdup(masterformat);
 	/* Add 2 to accommodate our conversion of the stat '%s' format string
 	 * to the printf '%llu' one.  */
-	char *dest = xmalloc(strlen(format) + 2 + 1);
-	char *b;
+	അക്ഷരം *dest = xmalloc(strlen(format) + 2 + 1);
+	അക്ഷരം *b;
 
 	b = format;
-	while (b) {
+	ആകുമ്പോൾ (b) {
 		/* Each iteration finds next %spec,
 		 * prints preceding string and handles found %spec
 		 */
 		size_t len;
-		char *p = strchr(b, '%');
-		if (!p) {
+		അക്ഷരം *p = strchr(b, '%');
+		എങ്കിൽ (!p) {
 			/* coreutils 6.3 always prints newline at the end */
 			/*fputs(b, stdout);*/
 			puts(b);
-			break;
+			നിർത്തുക;
 		}
 
 		/* dest = "%<modifiers>" */
@@ -444,58 +444,58 @@ static void print_it(const char *masterformat,
 
 		p += len;
 		b = p + 1;
-		switch (*p) {
-		case '\0':
-			b = NULL;
+		തിരഞ്ഞെടുപ്പ് (*p) {
+		അവസ്ഥ '\0':
+			b = ശൂന്യ;
 			/* fall through */
-		case '%':
+		അവസ്ഥ '%':
 			bb_putchar('%');
-			break;
-		default:
+			നിർത്തുക;
+		സ്ഥിരസ്ഥിതി:
 			/* Completes "%<modifiers>" with specifier and printfs */
 			print_func(dest, *p, filename, data IF_SELINUX(,scontext));
-			break;
+			നിർത്തുക;
 		}
 	}
 
-	free(format);
-	free(dest);
+	സ്വതന്ത്രം(format);
+	സ്വതന്ത്രം(dest);
 }
 #endif  /* FEATURE_STAT_FORMAT */
 
-#if ENABLE_FEATURE_STAT_FILESYSTEM
+#എങ്കിൽ ENABLE_FEATURE_STAT_FILESYSTEM
 /* Stat the file system and print what we find.  */
-#if !ENABLE_FEATURE_STAT_FORMAT
+#എങ്കിൽ !ENABLE_FEATURE_STAT_FORMAT
 #define do_statfs(filename, format) do_statfs(filename)
 #endif
-static bool do_statfs(const char *filename, const char *format)
+സ്ഥിതം bool do_statfs(സ്ഥിരം അക്ഷരം *filename, സ്ഥിരം അക്ഷരം *format)
 {
-	struct statfs statfsbuf;
-#if !ENABLE_FEATURE_STAT_FORMAT
-	const char *format;
+	ഘടന statfs statfsbuf;
+#എങ്കിൽ !ENABLE_FEATURE_STAT_FORMAT
+	സ്ഥിരം അക്ഷരം *format;
 #endif
-#if ENABLE_SELINUX
-	security_context_t scontext = NULL;
+#എങ്കിൽ ENABLE_SELINUX
+	security_context_t scontext = ശൂന്യ;
 
-	if (option_mask32 & OPT_SELINUX) {
-		if ((option_mask32 & OPT_DEREFERENCE
+	എങ്കിൽ (option_mask32 & OPT_SELINUX) {
+		എങ്കിൽ ((option_mask32 & OPT_DEREFERENCE
 		     ? lgetfilecon(filename, &scontext)
 		     : getfilecon(filename, &scontext)
 		    ) < 0
 		) {
-			bb_simple_perror_msg(filename);
-			return 0;
+			bb_simple_perror_സന്ദേശം(filename);
+			തിരികെ 0;
 		}
 	}
 #endif
-	if (statfs(filename, &statfsbuf) != 0) {
-		bb_perror_msg("can't read file system information for '%s'", filename);
-		return 0;
+	എങ്കിൽ (statfs(filename, &statfsbuf) != 0) {
+		bb_perror_സന്ദേശം("can't read file system information for '%s'", filename);
+		തിരികെ 0;
 	}
 
-#if ENABLE_FEATURE_STAT_FORMAT
-	if (format == NULL) {
-# if !ENABLE_SELINUX
+#എങ്കിൽ ENABLE_FEATURE_STAT_FORMAT
+	എങ്കിൽ (format == ശൂന്യ) {
+# എങ്കിൽ !ENABLE_SELINUX
 		format = (option_mask32 & OPT_TERSE
 			? "%n %i %l %t %s %b %f %a %c %d"
 			: "  File: \"%n\"\n"
@@ -503,7 +503,7 @@ static bool do_statfs(const char *filename, const char *format)
 			  "Block size: %-10s\n"
 			  "Blocks: Total: %-10b Free: %-10f Available: %a\n"
 			  "Inodes: Total: %-10c Free: %d");
-# else
+# അല്ലെങ്കിൽ
 		format = (option_mask32 & OPT_TERSE
 			? (option_mask32 & OPT_SELINUX
 				? "%n %i %l %t %s %b %f %a %c %d %C"
@@ -524,7 +524,7 @@ static bool do_statfs(const char *filename, const char *format)
 # endif /* SELINUX */
 	}
 	print_it(format, filename, print_statfs, &statfsbuf IF_SELINUX(, scontext));
-#else /* !FEATURE_STAT_FORMAT */
+#അല്ലെങ്കിൽ /* !FEATURE_STAT_FORMAT */
 	format = (option_mask32 & OPT_TERSE
 		? "%s %llx %lu "
 		: "  File: \"%s\"\n"
@@ -534,12 +534,12 @@ static bool do_statfs(const char *filename, const char *format)
 	       get_f_fsid(&statfsbuf),
 	       statfsbuf.f_namelen);
 
-	if (option_mask32 & OPT_TERSE)
+	എങ്കിൽ (option_mask32 & OPT_TERSE)
 		printf("%lx ", (unsigned long) statfsbuf.f_type);
-	else
+	അല്ലെങ്കിൽ
 		printf("Type: %s\n", human_fstype(statfsbuf.f_type));
 
-# if !ENABLE_SELINUX
+# എങ്കിൽ !ENABLE_SELINUX
 	format = (option_mask32 & OPT_TERSE
 		? "%lu %llu %llu %llu %llu %llu\n"
 		: "Block size: %-10lu\n"
@@ -552,7 +552,7 @@ static bool do_statfs(const char *filename, const char *format)
 	       (unsigned long long) statfsbuf.f_bavail,
 	       (unsigned long long) statfsbuf.f_files,
 	       (unsigned long long) statfsbuf.f_ffree);
-# else
+# അല്ലെങ്കിൽ
 	format = (option_mask32 & OPT_TERSE
 		? (option_mask32 & OPT_SELINUX ? "%lu %llu %llu %llu %llu %llu %C\n" : "%lu %llu %llu %llu %llu %llu\n")
 		: (option_mask32 & OPT_SELINUX
@@ -574,47 +574,47 @@ static bool do_statfs(const char *filename, const char *format)
 		(unsigned long long) statfsbuf.f_ffree,
 		scontext);
 
-	if (scontext)
+	എങ്കിൽ (scontext)
 		freecon(scontext);
 # endif
 #endif  /* FEATURE_STAT_FORMAT */
-	return 1;
+	തിരികെ 1;
 }
 #endif  /* FEATURE_STAT_FILESYSTEM */
 
 /* stat the file and print what we find */
-#if !ENABLE_FEATURE_STAT_FORMAT
+#എങ്കിൽ !ENABLE_FEATURE_STAT_FORMAT
 #define do_stat(filename, format) do_stat(filename)
 #endif
-static bool do_stat(const char *filename, const char *format)
+സ്ഥിതം bool do_stat(സ്ഥിരം അക്ഷരം *filename, സ്ഥിരം അക്ഷരം *format)
 {
-	struct stat statbuf;
-#if ENABLE_SELINUX
-	security_context_t scontext = NULL;
+	ഘടന stat statbuf;
+#എങ്കിൽ ENABLE_SELINUX
+	security_context_t scontext = ശൂന്യ;
 
-	if (option_mask32 & OPT_SELINUX) {
-		if ((option_mask32 & OPT_DEREFERENCE
+	എങ്കിൽ (option_mask32 & OPT_SELINUX) {
+		എങ്കിൽ ((option_mask32 & OPT_DEREFERENCE
 		     ? lgetfilecon(filename, &scontext)
 		     : getfilecon(filename, &scontext)
 		    ) < 0
 		) {
-			bb_simple_perror_msg(filename);
-			return 0;
+			bb_simple_perror_സന്ദേശം(filename);
+			തിരികെ 0;
 		}
 	}
 #endif
-	if ((option_mask32 & OPT_DEREFERENCE ? stat : lstat) (filename, &statbuf) != 0) {
-		bb_perror_msg("can't stat '%s'", filename);
-		return 0;
+	എങ്കിൽ ((option_mask32 & OPT_DEREFERENCE ? stat : lstat) (filename, &statbuf) != 0) {
+		bb_perror_സന്ദേശം("can't stat '%s'", filename);
+		തിരികെ 0;
 	}
 
-#if ENABLE_FEATURE_STAT_FORMAT
-	if (format == NULL) {
-# if !ENABLE_SELINUX
-		if (option_mask32 & OPT_TERSE) {
+#എങ്കിൽ ENABLE_FEATURE_STAT_FORMAT
+	എങ്കിൽ (format == ശൂന്യ) {
+# എങ്കിൽ !ENABLE_SELINUX
+		എങ്കിൽ (option_mask32 & OPT_TERSE) {
 			format = "%n %s %b %f %u %g %D %i %h %t %T %X %Y %Z %o";
-		} else {
-			if (S_ISBLK(statbuf.st_mode) || S_ISCHR(statbuf.st_mode)) {
+		} അല്ലെങ്കിൽ {
+			എങ്കിൽ (S_ISBLK(statbuf.st_mode) || S_ISCHR(statbuf.st_mode)) {
 				format =
 					"  File: %N\n"
 					"  Size: %-10s\tBlocks: %-10b IO Block: %-6o %F\n"
@@ -622,7 +622,7 @@ static bool do_stat(const char *filename, const char *format)
 					" Device type: %t,%T\n"
 					"Access: (%04a/%10.10A)  Uid: (%5u/%8U)   Gid: (%5g/%8G)\n"
 					"Access: %x\n" "Modify: %y\n" "Change: %z";
-			} else {
+			} അല്ലെങ്കിൽ {
 				format =
 					"  File: %N\n"
 					"  Size: %-10s\tBlocks: %-10b IO Block: %-6o %F\n"
@@ -631,15 +631,15 @@ static bool do_stat(const char *filename, const char *format)
 					"Access: %x\n" "Modify: %y\n" "Change: %z";
 			}
 		}
-# else
-		if (option_mask32 & OPT_TERSE) {
+# അല്ലെങ്കിൽ
+		എങ്കിൽ (option_mask32 & OPT_TERSE) {
 			format = (option_mask32 & OPT_SELINUX ?
 				"%n %s %b %f %u %g %D %i %h %t %T %X %Y %Z %o %C\n"
 				:
 				"%n %s %b %f %u %g %D %i %h %t %T %X %Y %Z %o\n"
 				);
-		} else {
-			if (S_ISBLK(statbuf.st_mode) || S_ISCHR(statbuf.st_mode)) {
+		} അല്ലെങ്കിൽ {
+			എങ്കിൽ (S_ISBLK(statbuf.st_mode) || S_ISCHR(statbuf.st_mode)) {
 				format = (option_mask32 & OPT_SELINUX ?
 					"  File: %N\n"
 					"  Size: %-10s\tBlocks: %-10b IO Block: %-6o %F\n"
@@ -656,7 +656,7 @@ static bool do_stat(const char *filename, const char *format)
 					"Access: (%04a/%10.10A)  Uid: (%5u/%8U)   Gid: (%5g/%8G)\n"
 					"Access: %x\n" "Modify: %y\n" "Change: %z"
 					);
-			} else {
+			} അല്ലെങ്കിൽ {
 				format = (option_mask32 & OPT_SELINUX ?
 					"  File: %N\n"
 					"  Size: %-10s\tBlocks: %-10b IO Block: %-6o %F\n"
@@ -676,8 +676,8 @@ static bool do_stat(const char *filename, const char *format)
 # endif
 	}
 	print_it(format, filename, print_stat, &statbuf IF_SELINUX(, scontext));
-#else	/* FEATURE_STAT_FORMAT */
-	if (option_mask32 & OPT_TERSE) {
+#അല്ലെങ്കിൽ	/* FEATURE_STAT_FORMAT */
+	എങ്കിൽ (option_mask32 & OPT_TERSE) {
 		printf("%s %llu %llu %lx %lu %lu %llx %llu %lu %lx %lx %lu %lu %lu %lu"
 		       IF_NOT_SELINUX("\n"),
 		       filename,
@@ -696,27 +696,27 @@ static bool do_stat(const char *filename, const char *format)
 		       (unsigned long) statbuf.st_ctime,
 		       (unsigned long) statbuf.st_blksize
 		);
-# if ENABLE_SELINUX
-		if (option_mask32 & OPT_SELINUX)
+# എങ്കിൽ ENABLE_SELINUX
+		എങ്കിൽ (option_mask32 & OPT_SELINUX)
 			printf(" %s\n", scontext);
-		else
+		അല്ലെങ്കിൽ
 			bb_putchar('\n');
 # endif
-	} else {
-		char modestr[12];
-		char *linkname = NULL;
-		struct passwd *pw_ent;
-		struct group *gw_ent;
+	} അല്ലെങ്കിൽ {
+		അക്ഷരം modestr[12];
+		അക്ഷരം *linkname = ശൂന്യ;
+		ഘടന passwd *pw_ent;
+		ഘടന group *gw_ent;
 
 		gw_ent = getgrgid(statbuf.st_gid);
 		pw_ent = getpwuid(statbuf.st_uid);
 
-		if (S_ISLNK(statbuf.st_mode))
+		എങ്കിൽ (S_ISLNK(statbuf.st_mode))
 			linkname = xmalloc_readlink_or_warn(filename);
-		if (linkname) {
+		എങ്കിൽ (linkname) {
 			printf("  File: '%s' -> '%s'\n", filename, linkname);
-			free(linkname);
-		} else {
+			സ്വതന്ത്രം(linkname);
+		} അല്ലെങ്കിൽ {
 			printf("  File: '%s'\n", filename);
 		}
 
@@ -730,21 +730,21 @@ static bool do_stat(const char *filename, const char *format)
 		       (unsigned long long) statbuf.st_dev,
 		       (unsigned long long) statbuf.st_ino,
 		       (unsigned long) statbuf.st_nlink);
-		if (S_ISBLK(statbuf.st_mode) || S_ISCHR(statbuf.st_mode))
+		എങ്കിൽ (S_ISBLK(statbuf.st_mode) || S_ISCHR(statbuf.st_mode))
 			printf(" Device type: %lx,%lx\n",
 			       (unsigned long) major(statbuf.st_rdev),
 			       (unsigned long) minor(statbuf.st_rdev));
-		else
+		അല്ലെങ്കിൽ
 			bb_putchar('\n');
 		printf("Access: (%04lo/%10.10s)  Uid: (%5lu/%8s)   Gid: (%5lu/%8s)\n",
 		       (unsigned long) (statbuf.st_mode & (S_ISUID|S_ISGID|S_ISVTX|S_IRWXU|S_IRWXG|S_IRWXO)),
 		       bb_mode_string(modestr, statbuf.st_mode),
 		       (unsigned long) statbuf.st_uid,
-		       (pw_ent != NULL) ? pw_ent->pw_name : "UNKNOWN",
+		       (pw_ent != ശൂന്യ) ? pw_ent->pw_name : "UNKNOWN",
 		       (unsigned long) statbuf.st_gid,
-		       (gw_ent != NULL) ? gw_ent->gr_name : "UNKNOWN");
-# if ENABLE_SELINUX
-		if (option_mask32 & OPT_SELINUX)
+		       (gw_ent != ശൂന്യ) ? gw_ent->gr_name : "UNKNOWN");
+# എങ്കിൽ ENABLE_SELINUX
+		എങ്കിൽ (option_mask32 & OPT_SELINUX)
 			printf("   S_Context: %s\n", scontext);
 # endif
 		printf("Access: %s\n", human_time(&statbuf.st_atim));
@@ -752,17 +752,17 @@ static bool do_stat(const char *filename, const char *format)
 		printf("Change: %s\n", human_time(&statbuf.st_ctim));
 	}
 #endif  /* FEATURE_STAT_FORMAT */
-	return 1;
+	തിരികെ 1;
 }
 
-int stat_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int stat_main(int argc UNUSED_PARAM, char **argv)
+പൂർണ്ണസംഖ്യ stat_main(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv) MAIN_EXTERNALLY_VISIBLE;
+പൂർണ്ണസംഖ്യ stat_main(പൂർണ്ണസംഖ്യ argc UNUSED_PARAM, അക്ഷരം **argv)
 {
-	IF_FEATURE_STAT_FORMAT(char *format = NULL;)
-	int i;
-	int ok;
+	IF_FEATURE_STAT_FORMAT(അക്ഷരം *format = ശൂന്യ;)
+	പൂർണ്ണസംഖ്യ i;
+	പൂർണ്ണസംഖ്യ ok;
 	statfunc_ptr statfunc = do_stat;
-#if ENABLE_FEATURE_STAT_FILESYSTEM || ENABLE_SELINUX
+#എങ്കിൽ ENABLE_FEATURE_STAT_FILESYSTEM || ENABLE_SELINUX
 	unsigned opts;
 
 	opts =
@@ -775,19 +775,19 @@ int stat_main(int argc UNUSED_PARAM, char **argv)
 		"\0" "-1" /* min one arg */
 		IF_FEATURE_STAT_FORMAT(,&format)
 	);
-#if ENABLE_FEATURE_STAT_FILESYSTEM
-	if (opts & OPT_FILESYS) /* -f */
+#എങ്കിൽ ENABLE_FEATURE_STAT_FILESYSTEM
+	എങ്കിൽ (opts & OPT_FILESYS) /* -f */
 		statfunc = do_statfs;
 #endif
-#if ENABLE_SELINUX
-	if (opts & OPT_SELINUX) {
+#എങ്കിൽ ENABLE_SELINUX
+	എങ്കിൽ (opts & OPT_SELINUX) {
 		selinux_or_die();
 	}
 #endif
 	ok = 1;
 	argv += optind;
-	for (i = 0; argv[i]; ++i)
+	വേണ്ടി (i = 0; argv[i]; ++i)
 		ok &= statfunc(argv[i] IF_FEATURE_STAT_FORMAT(, format));
 
-	return (ok ? EXIT_SUCCESS : EXIT_FAILURE);
+	തിരികെ (ok ? EXIT_SUCCESS : EXIT_FAILURE);
 }

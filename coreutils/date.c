@@ -124,13 +124,13 @@
 //usage:       "$ date\n"
 //usage:       "Wed Apr 12 18:52:41 MDT 2000\n"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
-#if ENABLE_FEATURE_DATE_NANO
+#അന്തര്ഭാവ "libbb.h"
+#അന്തര്ഭാവ "common_bufsiz.h"
+#എങ്കിൽ ENABLE_FEATURE_DATE_NANO
 # include <sys/syscall.h>
 #endif
 
-enum {
+എണ്ണൽ {
 	OPT_RFC2822   = (1 << 0), /* R */
 	OPT_SET       = (1 << 1), /* s */
 	OPT_UTC       = (1 << 2), /* u */
@@ -140,8 +140,8 @@ enum {
 	OPT_STR2DT    = (1 << 6) * ENABLE_FEATURE_DATE_ISOFMT, /* D */
 };
 
-#if ENABLE_LONG_OPTS
-static const char date_longopts[] ALIGN1 =
+#എങ്കിൽ ENABLE_LONG_OPTS
+സ്ഥിതം സ്ഥിരം അക്ഷരം date_longopts[] ALIGN1 =
 		"rfc-822\0"   No_argument       "R"
 		"rfc-2822\0"  No_argument       "R"
 		"set\0"       Required_argument "s"
@@ -159,19 +159,19 @@ static const char date_longopts[] ALIGN1 =
  * - after xasprintf we use other xfuncs
  */
 
-int date_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int date_main(int argc UNUSED_PARAM, char **argv)
+പൂർണ്ണസംഖ്യ date_main(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv) MAIN_EXTERNALLY_VISIBLE;
+പൂർണ്ണസംഖ്യ date_main(പൂർണ്ണസംഖ്യ argc UNUSED_PARAM, അക്ഷരം **argv)
 {
-	struct timespec ts;
-	struct tm tm_time;
-	char buf_fmt_dt2str[64];
+	ഘടന timespec ts;
+	ഘടന tm tm_time;
+	അക്ഷരം buf_fmt_dt2str[64];
 	unsigned opt;
-	int isofmt = -1;
-	char *date_str;
-	char *fmt_dt2str;
-	char *fmt_str2dt;
-	char *filename;
-	char *isofmt_arg = NULL;
+	പൂർണ്ണസംഖ്യ isofmt = -1;
+	അക്ഷരം *date_str;
+	അക്ഷരം *fmt_dt2str;
+	അക്ഷരം *fmt_str2dt;
+	അക്ഷരം *filename;
+	അക്ഷരം *isofmt_arg = ശൂന്യ;
 
 	opt = getopt32long(argv, "^"
 			"Rs:ud:r:"
@@ -185,32 +185,32 @@ int date_main(int argc UNUSED_PARAM, char **argv)
 	);
 	argv += optind;
 
-	if (opt & OPT_UTC)
-		putenv((char*)"TZ=UTC0");
+	എങ്കിൽ (opt & OPT_UTC)
+		putenv((അക്ഷരം*)"TZ=UTC0");
 
-	if (ENABLE_FEATURE_DATE_ISOFMT && (opt & OPT_ISO8601)) {
+	എങ്കിൽ (ENABLE_FEATURE_DATE_ISOFMT && (opt & OPT_ISO8601)) {
 		isofmt = 0; /* default is date */
-		if (isofmt_arg) {
-			static const char isoformats[] ALIGN1 =
+		എങ്കിൽ (isofmt_arg) {
+			സ്ഥിതം സ്ഥിരം അക്ഷരം isoformats[] ALIGN1 =
 				"date\0""hours\0""minutes\0""seconds\0ns\0";
 			isofmt = index_in_substrings(isoformats, isofmt_arg);
-			if (isofmt < 0)
+			എങ്കിൽ (isofmt < 0)
 				bb_show_usage();
 		}
 	}
 
-	fmt_dt2str = NULL;
-	if (argv[0] && argv[0][0] == '+') {
+	fmt_dt2str = ശൂന്യ;
+	എങ്കിൽ (argv[0] && argv[0][0] == '+') {
 		fmt_dt2str = &argv[0][1]; /* skip over the '+' */
 		argv++;
 	}
-	if (!(opt & (OPT_SET | OPT_DATE))) { /* neither -s TIME nor -d TIME? */
+	എങ്കിൽ (!(opt & (OPT_SET | OPT_DATE))) { /* neither -s TIME nor -d TIME? */
 		opt |= OPT_SET;
 		date_str = argv[0]; /* can be NULL */
-		if (date_str) {
-#if ENABLE_FEATURE_DATE_COMPAT
-			int len = strspn(date_str, "0123456789");
-			if (date_str[len] == '\0'
+		എങ്കിൽ (date_str) {
+#എങ്കിൽ ENABLE_FEATURE_DATE_COMPAT
+			പൂർണ്ണസംഖ്യ len = strspn(date_str, "0123456789");
+			എങ്കിൽ (date_str[len] == '\0'
 			 || (date_str[len] == '.'
 			    && isdigit(date_str[len+1])
 			    && isdigit(date_str[len+2])
@@ -222,10 +222,10 @@ int date_main(int argc UNUSED_PARAM, char **argv)
 				 * Some users actually do use it.
 				 */
 				len -= 8;
-				if (len < 0 || len > 4 || (len & 1))
-					bb_error_msg_and_die(bb_msg_invalid_date, date_str);
-				if (len != 0) { /* move YY or CCYY to front */
-					char buf[4];
+				എങ്കിൽ (len < 0 || len > 4 || (len & 1))
+					bb_error_സന്ദേശം_and_die(bb_സന്ദേശം_invalid_date, date_str);
+				എങ്കിൽ (len != 0) { /* move YY or CCYY to front */
+					അക്ഷരം buf[4];
 					memcpy(buf, date_str + 8, len);
 					memmove(date_str + len, date_str, 8);
 					memcpy(date_str, buf, len);
@@ -235,77 +235,77 @@ int date_main(int argc UNUSED_PARAM, char **argv)
 			argv++;
 		}
 	}
-	if (*argv)
+	എങ്കിൽ (*argv)
 		bb_show_usage();
 
 	/* Now we have parsed all the information except the date format
 	 * which depends on whether the clock is being set or read */
 
-	if (opt & OPT_REFERENCE) {
-		struct stat statbuf;
+	എങ്കിൽ (opt & OPT_REFERENCE) {
+		ഘടന stat statbuf;
 		xstat(filename, &statbuf);
 		ts.tv_sec = statbuf.st_mtime;
-#if ENABLE_FEATURE_DATE_NANO
+#എങ്കിൽ ENABLE_FEATURE_DATE_NANO
 		ts.tv_nsec = statbuf.st_mtim.tv_nsec;
 		/* Some toolchains use .st_mtimensec instead of st_mtim.tv_nsec.
 		 * If you need #define _SVID_SOURCE 1 to enable st_mtim.tv_nsec,
 		 * drop a mail to project mailing list please
 		 */
 #endif
-	} else {
-#if ENABLE_FEATURE_DATE_NANO
+	} അല്ലെങ്കിൽ {
+#എങ്കിൽ ENABLE_FEATURE_DATE_NANO
 		clock_gettime(CLOCK_REALTIME, &ts);
-#else
+#അല്ലെങ്കിൽ
 		time(&ts.tv_sec);
 #endif
 	}
-#if !ENABLE_FEATURE_DATE_NANO
+#എങ്കിൽ !ENABLE_FEATURE_DATE_NANO
 	ts.tv_nsec = 0;
 #endif
 	localtime_r(&ts.tv_sec, &tm_time);
 
 	/* If date string is given, update tm_time, and maybe set date */
-	if (date_str != NULL) {
-		int check_dst = 1;
+	എങ്കിൽ (date_str != ശൂന്യ) {
+		പൂർണ്ണസംഖ്യ check_dst = 1;
 		/* Zero out fields - take her back to midnight! */
 		tm_time.tm_sec = 0;
 		tm_time.tm_min = 0;
 		tm_time.tm_hour = 0;
 
 		/* Process any date input to UNIX time since 1 Jan 1970 */
-		if (ENABLE_FEATURE_DATE_ISOFMT && (opt & OPT_STR2DT)) {
-			if (strptime(date_str, fmt_str2dt, &tm_time) == NULL)
-				bb_error_msg_and_die(bb_msg_invalid_date, date_str);
-		} else {
+		എങ്കിൽ (ENABLE_FEATURE_DATE_ISOFMT && (opt & OPT_STR2DT)) {
+			എങ്കിൽ (strptime(date_str, fmt_str2dt, &tm_time) == ശൂന്യ)
+				bb_error_സന്ദേശം_and_die(bb_സന്ദേശം_invalid_date, date_str);
+		} അല്ലെങ്കിൽ {
 			check_dst = parse_datestr(date_str, &tm_time);
 		}
 
 		/* Correct any day of week and day of year etc. fields */
 		/* Be sure to recheck dst (but not if date is UTC) */
-		if (check_dst)
+		എങ്കിൽ (check_dst)
 			tm_time.tm_isdst = -1;
 		ts.tv_sec = validate_tm_time(date_str, &tm_time);
 		ts.tv_nsec = 0;
 
 		/* if setting time, set it */
-		if ((opt & OPT_SET) && clock_settime(CLOCK_REALTIME, &ts) < 0) {
-			bb_simple_perror_msg("can't set date");
+		എങ്കിൽ ((opt & OPT_SET) && clock_settime(CLOCK_REALTIME, &ts) < 0) {
+			bb_simple_perror_സന്ദേശം("can't set date");
 		}
 	}
 
 	/* Display output */
 
 	/* Deal with format string */
-	if (fmt_dt2str == NULL) {
-		int i;
+	എങ്കിൽ (fmt_dt2str == ശൂന്യ) {
+		പൂർണ്ണസംഖ്യ i;
 		fmt_dt2str = buf_fmt_dt2str;
-		if (ENABLE_FEATURE_DATE_ISOFMT && isofmt >= 0) {
+		എങ്കിൽ (ENABLE_FEATURE_DATE_ISOFMT && isofmt >= 0) {
 			/* -I[SPEC]: 0:date 1:hours 2:minutes 3:seconds 4:ns*/
 			strcpy(fmt_dt2str, "%Y-%m-%dT%H:%M:%S");
 			i = 8 + 3 * isofmt;
-			if (isofmt != 0) {
-				int n;
-				if (isofmt == 4) {
+			എങ്കിൽ (isofmt != 0) {
+				പൂർണ്ണസംഖ്യ n;
+				എങ്കിൽ (isofmt == 4) {
 					i -= 3;
 					i += sprintf(&fmt_dt2str[i], ",%09u", (unsigned)ts.tv_nsec);
 				}
@@ -313,7 +313,7 @@ int date_main(int argc UNUSED_PARAM, char **argv)
 				/* ...therefore this atrocity: */
 				n = strftime(&fmt_dt2str[i], 8, "%z", &tm_time);
 				i += n;
-				if (n == 5 && (fmt_dt2str[i-5] == '+' || fmt_dt2str[i-5] == '-')) {
+				എങ്കിൽ (n == 5 && (fmt_dt2str[i-5] == '+' || fmt_dt2str[i-5] == '-')) {
 					/* "mm" -> ":mm" */
 					fmt_dt2str[i    ] = fmt_dt2str[i - 1];
 					fmt_dt2str[i - 1] = fmt_dt2str[i - 2];
@@ -322,45 +322,45 @@ int date_main(int argc UNUSED_PARAM, char **argv)
 				}
 			}
 			fmt_dt2str[i] = '\0';
-		} else if (opt & OPT_RFC2822) {
+		} അല്ലെങ്കിൽ എങ്കിൽ (opt & OPT_RFC2822) {
 			/* -R. undo busybox.c setlocale */
-			if (ENABLE_LOCALE_SUPPORT)
+			എങ്കിൽ (ENABLE_LOCALE_SUPPORT)
 				setlocale(LC_TIME, "C");
-			fmt_dt2str = (char*)"%a, %d %b %Y %H:%M:%S %z";
-		} else { /* default case */
-			fmt_dt2str = (char*)"%a %b %e %H:%M:%S %Z %Y";
+			fmt_dt2str = (അക്ഷരം*)"%a, %d %b %Y %H:%M:%S %z";
+		} അല്ലെങ്കിൽ { /* default case */
+			fmt_dt2str = (അക്ഷരം*)"%a %b %e %H:%M:%S %Z %Y";
 		}
 	}
-#if ENABLE_FEATURE_DATE_NANO
-	else {
+#എങ്കിൽ ENABLE_FEATURE_DATE_NANO
+	അല്ലെങ്കിൽ {
 		/* User-specified fmt_dt2str */
 		/* Search for and process "%N" */
-		char *p = fmt_dt2str;
-		while ((p = strchr(p, '%')) != NULL) {
-			int n, m;
+		അക്ഷരം *p = fmt_dt2str;
+		ആകുമ്പോൾ ((p = strchr(p, '%')) != ശൂന്യ) {
+			പൂർണ്ണസംഖ്യ n, m;
 			unsigned pres, scale;
 
 			p++;
-			if (*p == '%') {
+			എങ്കിൽ (*p == '%') {
 				p++;
-				continue;
+				തുടരുക;
 			}
 			n = strspn(p, "0123456789");
-			if (p[n] != 'N') {
+			എങ്കിൽ (p[n] != 'N') {
 				p += n;
-				continue;
+				തുടരുക;
 			}
 			/* We have "%[nnn]N" */
 			p[-1] = '\0';
 			p[n] = '\0';
 			scale = 1;
 			pres = 9;
-			if (n) {
+			എങ്കിൽ (n) {
 				pres = xatoi_positive(p);
-				if (pres == 0)
+				എങ്കിൽ (pres == 0)
 					pres = 9;
 				m = 9 - pres;
-				while (--m >= 0)
+				ആകുമ്പോൾ (--m >= 0)
 					scale *= 10;
 			}
 
@@ -374,14 +374,14 @@ int date_main(int argc UNUSED_PARAM, char **argv)
 
 #define date_buf bb_common_bufsiz1
 	setup_common_bufsiz();
-	if (*fmt_dt2str == '\0') {
+	എങ്കിൽ (*fmt_dt2str == '\0') {
 		/* With no format string, just print a blank line */
 		date_buf[0] = '\0';
-	} else {
+	} അല്ലെങ്കിൽ {
 		/* Generate output string */
 		strftime(date_buf, COMMON_BUFSIZE, fmt_dt2str, &tm_time);
 	}
 	puts(date_buf);
 
-	return EXIT_SUCCESS;
+	തിരികെ EXIT_SUCCESS;
 }

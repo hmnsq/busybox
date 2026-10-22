@@ -18,28 +18,28 @@
 //usage:#define factor_full_usage "\n\n"
 //usage:       "Print prime factors"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#അന്തര്ഭാവ "libbb.h"
+#അന്തര്ഭാവ "common_bufsiz.h"
 
-#if 0
-# define dbg(...) bb_error_msg(__VA_ARGS__)
-#else
-# define dbg(...) ((void)0)
+#എങ്കിൽ 0
+# define dbg(...) bb_error_സന്ദേശം(__VA_ARGS__)
+#അല്ലെങ്കിൽ
+# define dbg(...) ((ശൂന്യം)0)
 #endif
 
-typedef unsigned long long wide_t;
+തരനിർവചനം unsigned long long wide_t;
 
-#if ULLONG_MAX == (UINT_MAX * UINT_MAX + 2 * UINT_MAX)
+#എങ്കിൽ ULLONG_MAX == (UINT_MAX * UINT_MAX + 2 * UINT_MAX)
 /* "unsigned" is half as wide as ullong */
-typedef unsigned half_t;
+തരനിർവചനം unsigned half_t;
 #define HALF_MAX UINT_MAX
 #define HALF_FMT ""
-#elif ULLONG_MAX == (ULONG_MAX * ULONG_MAX + 2 * ULONG_MAX)
+#അല്ലെങ്കിലെങ്കിൽ ULLONG_MAX == (ULONG_MAX * ULONG_MAX + 2 * ULONG_MAX)
 /* long is half as wide as ullong */
-typedef unsigned long half_t;
+തരനിർവചനം unsigned long half_t;
 #define HALF_MAX ULONG_MAX
 #define HALF_FMT "l"
-#else
+#അല്ലെങ്കിൽ
 #error Cant find an integer type which is half as wide as ullong
 #endif
 
@@ -57,7 +57,7 @@ typedef unsigned long half_t;
 		(A/2),(B/2),(C/2),(D/2),(E/2),(F/2),(G/2),(H/2),(I/2),(J/2), \
 		(x/2) \
 	)
-static const uint64_t packed_wheel[] = {
+സ്ഥിതം സ്ഥിരം uint64_t packed_wheel[] = {
 	/* 1, 2, */
 	P( 2, 4, 2, 4, 2, 4, 6, 2, 6, 4, 2, 4, 6, 6, 2, 6, 4, 2, 6, 4, 6),
 	P( 8, 4, 2, 4, 2, 4,14, 4, 6, 2,10, 2, 6, 6, 4, 2, 4, 6, 2,10, 2),
@@ -87,7 +87,7 @@ static const uint64_t packed_wheel[] = {
 #undef R
 #define WHEEL_START 5
 #define WHEEL_SIZE (5 + 24 * 20)
-#define square_count (((uint8_t*)&bb_common_bufsiz1)[0])
+#define square_എണ്ണം (((uint8_t*)&bb_common_bufsiz1)[0])
 #define wheel_tab    (((uint8_t*)&bb_common_bufsiz1) + 1)
 /*
  * Why, you ask?
@@ -98,18 +98,18 @@ static const uint64_t packed_wheel[] = {
  *	packed_wheel              -     184    +184
  *	factor_main             108     163     +55
  */
-static void unpack_wheel(void)
+സ്ഥിതം ശൂന്യം unpack_wheel(ശൂന്യം)
 {
-	int i;
+	പൂർണ്ണസംഖ്യ i;
 	uint8_t *p;
 
 	setup_common_bufsiz();
 	wheel_tab[0] = 1;
 	wheel_tab[1] = 2;
 	p = &wheel_tab[2];
-	for (i = 0; i < ARRAY_SIZE(packed_wheel); i++) {
+	വേണ്ടി (i = 0; i < ARRAY_SIZE(packed_wheel); i++) {
 		uint64_t v = packed_wheel[i];
-		while ((v & 0xe) != 0) {
+		ആകുമ്പോൾ ((v & 0xe) != 0) {
 			*p = v & 0xe;
 			//printf("%2u,", *p);
 			p++;
@@ -120,21 +120,21 @@ static void unpack_wheel(void)
 }
 
 /* Prevent inlining, factorize() needs all help it can get with reducing register pressure */
-static NOINLINE void print_w(wide_t n)
+സ്ഥിതം NOINLINE ശൂന്യം print_w(wide_t n)
 {
-	unsigned rep = square_count;
-	do
+	unsigned rep = square_എണ്ണം;
+	ചെയ്യുക
 		printf(" %llu", n);
-	while (--rep != 0);
+	ആകുമ്പോൾ (--rep != 0);
 }
-static NOINLINE void print_h(half_t n)
+സ്ഥിതം NOINLINE ശൂന്യം print_h(half_t n)
 {
 	print_w(n);
 }
 
-static void factorize(wide_t N);
+സ്ഥിതം ശൂന്യം factorize(wide_t N);
 
-static half_t isqrt_odd(wide_t N)
+സ്ഥിതം half_t isqrt_odd(wide_t N)
 {
 	half_t s = isqrt(N);
 	/* s^2 is <= N, (s+1)^2 > N */
@@ -144,28 +144,28 @@ static half_t isqrt_odd(wide_t N)
 	 * factor 18446743988964486098 = 2 * 3037000493 * 3037000493
 	 * factor 18446743902517389507 = 3 * 2479700513 * 2479700513
 	 */
-	if ((wide_t)s * s == N) {
+	എങ്കിൽ ((wide_t)s * s == N) {
 		/* factorize sqrt(N), printing each factor twice */
-		square_count *= 2;
+		square_എണ്ണം *= 2;
 		factorize(s);
 		/* Let caller know we recursed */
-		return 0;
+		തിരികെ 0;
 	}
 
 	/* Subtract 1 from even s, odd s won't change: */
 	/* (doesnt work for zero, but we know that s != 0 here) */
 	s = (s - 1) | 1;
-	return s;
+	തിരികെ s;
 }
 
-static NOINLINE void factorize(wide_t N)
+സ്ഥിതം NOINLINE ശൂന്യം factorize(wide_t N)
 {
 	unsigned w;
 	half_t factor;
 	half_t max_factor;
 
-	if (N < 4)
-		goto end;
+	എങ്കിൽ (N < 4)
+		പോകുക end;
 
 	/* The code needs to be optimized for the case where
 	 * there are large prime factors. For example,
@@ -182,57 +182,57 @@ static NOINLINE void factorize(wide_t N)
 	 * factor 18446744073709551557 (0xffffffffffffffc5).
 	 */
 	max_factor = isqrt_odd(N);
-	if (!max_factor)
-		return; /* square was detected and recursively factored */
+	എങ്കിൽ (!max_factor)
+		തിരികെ; /* square was detected and recursively factored */
 	factor = 2;
 	w = 0;
-	for (;;) {
+	വേണ്ടി (;;) {
 		half_t fw;
 
 		/* The division is the most costly part of the loop.
 		 * On 64bit CPUs, takes at best 12 cycles, often ~20.
 		 */
-		while ((N % factor) == 0) { /* not likely */
+		ആകുമ്പോൾ ((N % factor) == 0) { /* not likely */
 			N = N / factor;
 			print_h(factor);
 			max_factor = isqrt_odd(N);
-			if (!max_factor)
-				return; /* square was detected */
+			എങ്കിൽ (!max_factor)
+				തിരികെ; /* square was detected */
 		}
-		if (factor >= max_factor)
-			break;
+		എങ്കിൽ (factor >= max_factor)
+			നിർത്തുക;
 		fw = factor + wheel_tab[w];
-		if (fw < factor)
-			break; /* overflow */
+		എങ്കിൽ (fw < factor)
+			നിർത്തുക; /* overflow */
 		factor = fw;
 		w++;
-		if (w < WHEEL_SIZE)
-			continue;
+		എങ്കിൽ (w < WHEEL_SIZE)
+			തുടരുക;
 		w = WHEEL_START;
 	}
  end:
-	if (N > 1)
+	എങ്കിൽ (N > 1)
 		print_w(N);
 	bb_putchar('\n');
 }
 
-static void factorize_numstr(const char *numstr)
+സ്ഥിതം ശൂന്യം factorize_numstr(സ്ഥിരം അക്ഷരം *numstr)
 {
 	wide_t N;
 
 	/* Leading + is ok (coreutils compat) */
-	if (*numstr == '+')
+	എങ്കിൽ (*numstr == '+')
 		numstr++;
-	N = bb_strtoull(numstr, NULL, 10);
-	if (errno)
+	N = bb_strtoull(numstr, ശൂന്യ, 10);
+	എങ്കിൽ (errno)
 		bb_show_usage();
 	printf("%llu:", N);
-	square_count = 1;
+	square_എണ്ണം = 1;
 	factorize(N);
 }
 
-int factor_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int factor_main(int argc UNUSED_PARAM, char **argv)
+പൂർണ്ണസംഖ്യ factor_main(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv) MAIN_EXTERNALLY_VISIBLE;
+പൂർണ്ണസംഖ്യ factor_main(പൂർണ്ണസംഖ്യ argc UNUSED_PARAM, അക്ഷരം **argv)
 {
 	unpack_wheel();
 
@@ -241,33 +241,33 @@ int factor_main(int argc UNUSED_PARAM, char **argv)
 	//argv += optind;
 	argv++;
 
-	if (!*argv) {
+	എങ്കിൽ (!*argv) {
 		/* Read from stdin, several numbers per line are accepted */
-		for (;;) {
-			char *numstr, *line;
-			line = xmalloc_fgetline(stdin);
-			if (!line)
-				return EXIT_SUCCESS;
-			numstr = line;
-			for (;;) {
-				char *end;
+		വേണ്ടി (;;) {
+			അക്ഷരം *numstr, *വരി;
+			വരി = xmalloc_fgetline(stdin);
+			എങ്കിൽ (!വരി)
+				തിരികെ EXIT_SUCCESS;
+			numstr = വരി;
+			വേണ്ടി (;;) {
+				അക്ഷരം *end;
 				numstr = skip_whitespace(numstr);
-				if (!numstr[0])
-					break;
+				എങ്കിൽ (!numstr[0])
+					നിർത്തുക;
 				end = skip_non_whitespace(numstr);
-				if (*end != '\0')
+				എങ്കിൽ (*end != '\0')
 					*end++ = '\0';
 				factorize_numstr(numstr);
 				numstr = end;
 			}
-			free(line);
+			സ്വതന്ത്രം(വരി);
 		}
 	}
 
-	do {
+	ചെയ്യുക {
 		/* Leading spaces are ok (coreutils compat) */
 		factorize_numstr(skip_whitespace(*argv));
-	} while (*++argv);
+	} ആകുമ്പോൾ (*++argv);
 
-	return EXIT_SUCCESS;
+	തിരികെ EXIT_SUCCESS;
 }

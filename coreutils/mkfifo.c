@@ -29,30 +29,30 @@
 //usage:     "\n	-Z	Set security context"
 //usage:	)
 
-#include "libbb.h"
-#include "libcoreutils/coreutils.h"
+#അന്തര്ഭാവ "libbb.h"
+#അന്തര്ഭാവ "libcoreutils/coreutils.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-int mkfifo_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int mkfifo_main(int argc UNUSED_PARAM, char **argv)
+പൂർണ്ണസംഖ്യ mkfifo_main(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv) MAIN_EXTERNALLY_VISIBLE;
+പൂർണ്ണസംഖ്യ mkfifo_main(പൂർണ്ണസംഖ്യ argc UNUSED_PARAM, അക്ഷരം **argv)
 {
 	mode_t mode;
-	int retval = EXIT_SUCCESS;
+	പൂർണ്ണസംഖ്യ retval = EXIT_SUCCESS;
 
 	mode = getopt_mk_fifo_nod(argv);
 
 	argv += optind;
-	if (!*argv) {
+	എങ്കിൽ (!*argv) {
 		bb_show_usage();
 	}
 
-	do {
-		if (mkfifo(*argv, mode) < 0) {
-			bb_simple_perror_msg(*argv);  /* Avoid multibyte problems. */
+	ചെയ്യുക {
+		എങ്കിൽ (mkfifo(*argv, mode) < 0) {
+			bb_simple_perror_സന്ദേശം(*argv);  /* Avoid multibyte problems. */
 			retval = EXIT_FAILURE;
 		}
-	} while (*++argv);
+	} ആകുമ്പോൾ (*++argv);
 
-	return retval;
+	തിരികെ retval;
 }

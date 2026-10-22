@@ -5,15 +5,15 @@
 #ifndef COREUTILS_H
 #define COREUTILS_H 1
 
-PUSH_AND_SET_FUNCTION_VISIBILITY_TO_HIDDEN
+തള്ളുക_AND_SET_FUNCTION_VISIBILITY_TO_HIDDEN
 
-typedef int (*stat_func)(const char *fn, struct stat *ps);
+തരനിർവചനം പൂർണ്ണസംഖ്യ (*stat_func)(സ്ഥിരം അക്ഷരം *fn, ഘടന stat *ps);
 
-int cp_mv_stat2(const char *fn, struct stat *fn_stat, stat_func sf) FAST_FUNC;
-int cp_mv_stat(const char *fn, struct stat *fn_stat) FAST_FUNC;
+പൂർണ്ണസംഖ്യ cp_mv_stat2(സ്ഥിരം അക്ഷരം *fn, ഘടന stat *fn_stat, stat_func sf) FAST_FUNC;
+പൂർണ്ണസംഖ്യ cp_mv_stat(സ്ഥിരം അക്ഷരം *fn, ഘടന stat *fn_stat) FAST_FUNC;
 
-mode_t getopt_mk_fifo_nod(char **argv) FAST_FUNC;
+mode_t getopt_mk_fifo_nod(അക്ഷരം **argv) FAST_FUNC;
 
-POP_SAVED_FUNCTION_VISIBILITY
+എടുക്കുക_SAVED_FUNCTION_VISIBILITY
 
 #endif

@@ -25,28 +25,28 @@
 //usage:#define realpath_full_usage "\n\n"
 //usage:       "Print absolute pathnames of FILEs"
 
-#include "libbb.h"
+#അന്തര്ഭാവ "libbb.h"
 
-int realpath_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int realpath_main(int argc UNUSED_PARAM, char **argv)
+പൂർണ്ണസംഖ്യ realpath_main(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv) MAIN_EXTERNALLY_VISIBLE;
+പൂർണ്ണസംഖ്യ realpath_main(പൂർണ്ണസംഖ്യ argc UNUSED_PARAM, അക്ഷരം **argv)
 {
-	int retval = EXIT_SUCCESS;
+	പൂർണ്ണസംഖ്യ retval = EXIT_SUCCESS;
 
-	if (!*++argv) {
+	എങ്കിൽ (!*++argv) {
 		bb_show_usage();
 	}
 
-	do {
+	ചെയ്യുക {
 		/* NOFORK: only one alloc is allowed; must free */
-		char *resolved_path = xmalloc_realpath_coreutils(*argv);
-		if (resolved_path != NULL) {
+		അക്ഷരം *resolved_path = xmalloc_realpath_coreutils(*argv);
+		എങ്കിൽ (resolved_path != ശൂന്യ) {
 			puts(resolved_path);
-			free(resolved_path);
-		} else {
+			സ്വതന്ത്രം(resolved_path);
+		} അല്ലെങ്കിൽ {
 			retval = EXIT_FAILURE;
-			bb_simple_perror_msg(*argv);
+			bb_simple_perror_സന്ദേശം(*argv);
 		}
-	} while (*++argv);
+	} ആകുമ്പോൾ (*++argv);
 
 	fflush_stdout_and_exit(retval);
 }

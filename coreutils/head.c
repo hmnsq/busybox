@@ -47,226 +47,226 @@
 //usage:       "root:x:0:0:root:/root:/bin/bash\n"
 //usage:       "daemon:x:1:1:daemon:/usr/sbin:/bin/sh\n"
 
-#include "libbb.h"
+#അന്തര്ഭാവ "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-#if !ENABLE_FEATURE_FANCY_HEAD
-# define print_first_N(fp,count,bytes) print_first_N(fp,count)
+#എങ്കിൽ !ENABLE_FEATURE_FANCY_HEAD
+# define print_first_N(fp,എണ്ണം,bytes) print_first_N(fp,എണ്ണം)
 #endif
-static void
-print_first_N(FILE *fp, unsigned long count, bool count_bytes)
+സ്ഥിതം ശൂന്യം
+print_first_N(FILE *fp, unsigned long എണ്ണം, bool എണ്ണം_bytes)
 {
-#if !ENABLE_FEATURE_FANCY_HEAD
-	const int count_bytes = 0;
+#എങ്കിൽ !ENABLE_FEATURE_FANCY_HEAD
+	സ്ഥിരം പൂർണ്ണസംഖ്യ എണ്ണം_bytes = 0;
 #endif
-	while (count) {
-		int c = getc(fp);
-		if (c == EOF)
-			break;
-		if (count_bytes || (c == '\n'))
-			--count;
+	ആകുമ്പോൾ (എണ്ണം) {
+		പൂർണ്ണസംഖ്യ c = getc(fp);
+		എങ്കിൽ (c == EOF)
+			നിർത്തുക;
+		എങ്കിൽ (എണ്ണം_bytes || (c == '\n'))
+			--എണ്ണം;
 		putchar(c);
 	}
 }
 
-#if ENABLE_FEATURE_FANCY_HEAD
-static void
-print_except_N_last_bytes(FILE *fp, unsigned count)
+#എങ്കിൽ ENABLE_FEATURE_FANCY_HEAD
+സ്ഥിതം ശൂന്യം
+print_except_N_last_bytes(FILE *fp, unsigned എണ്ണം)
 {
-	unsigned char *circle = xmalloc(++count);
+	unsigned അക്ഷരം *circle = xmalloc(++എണ്ണം);
 	unsigned head = 0;
-	for (;;) {
-		int c;
+	വേണ്ടി (;;) {
+		പൂർണ്ണസംഖ്യ c;
 		c = getc(fp);
-		if (c == EOF)
-			goto ret;
+		എങ്കിൽ (c == EOF)
+			പോകുക ret;
 		circle[head++] = c;
-		if (head == count)
-			break;
+		എങ്കിൽ (head == എണ്ണം)
+			നിർത്തുക;
 	}
-	for (;;) {
-		int c;
-		if (head == count)
+	വേണ്ടി (;;) {
+		പൂർണ്ണസംഖ്യ c;
+		എങ്കിൽ (head == എണ്ണം)
 			head = 0;
 		putchar(circle[head]);
 		c = getc(fp);
-		if (c == EOF)
-			goto ret;
+		എങ്കിൽ (c == EOF)
+			പോകുക ret;
 		circle[head] = c;
 		head++;
 	}
  ret:
-	free(circle);
+	സ്വതന്ത്രം(circle);
 }
 
-static void
-print_except_N_last_lines(FILE *fp, unsigned count)
+സ്ഥിതം ശൂന്യം
+print_except_N_last_വരികൾ(FILE *fp, unsigned എണ്ണം)
 {
-	char **circle = xzalloc((++count) * sizeof(circle[0]));
+	അക്ഷരം **circle = xzalloc((++എണ്ണം) * വലുപ്പം(circle[0]));
 	unsigned head = 0;
-	for (;;) {
-		char *c;
+	വേണ്ടി (;;) {
+		അക്ഷരം *c;
 		c = xmalloc_fgets(fp);
-		if (!c)
-			goto ret;
+		എങ്കിൽ (!c)
+			പോകുക ret;
 		circle[head++] = c;
-		if (head == count)
-			break;
+		എങ്കിൽ (head == എണ്ണം)
+			നിർത്തുക;
 	}
-	for (;;) {
-		char *c;
-		if (head == count)
+	വേണ്ടി (;;) {
+		അക്ഷരം *c;
+		എങ്കിൽ (head == എണ്ണം)
 			head = 0;
 		fputs_stdout(circle[head]);
 		c = xmalloc_fgets(fp);
-		if (!c)
-			goto ret;
-		free(circle[head]);
+		എങ്കിൽ (!c)
+			പോകുക ret;
+		സ്വതന്ത്രം(circle[head]);
 		circle[head++] = c;
 	}
  ret:
 	head = 0;
-	for (;;) {
-		free(circle[head++]);
-		if (head == count)
-			break;
+	വേണ്ടി (;;) {
+		സ്വതന്ത്രം(circle[head++]);
+		എങ്കിൽ (head == എണ്ണം)
+			നിർത്തുക;
 	}
-	free(circle);
+	സ്വതന്ത്രം(circle);
 }
-#else
+#അല്ലെങ്കിൽ
 /* Must never be called */
-void print_except_N_last_bytes(FILE *fp, unsigned count);
-void print_except_N_last_lines(FILE *fp, unsigned count);
+ശൂന്യം print_except_N_last_bytes(FILE *fp, unsigned എണ്ണം);
+ശൂന്യം print_except_N_last_വരികൾ(FILE *fp, unsigned എണ്ണം);
 #endif
 
-#if !ENABLE_FEATURE_FANCY_HEAD
-# define eat_num(negative_N,p) eat_num(p)
+#എങ്കിൽ !ENABLE_FEATURE_FANCY_HEAD
+# define eat_അക്കം(negative_N,p) eat_അക്കം(p)
 #endif
-static unsigned long
-eat_num(bool *negative_N, const char *p)
+സ്ഥിതം unsigned long
+eat_അക്കം(bool *negative_N, സ്ഥിരം അക്ഷരം *p)
 {
-#if ENABLE_FEATURE_FANCY_HEAD
-	if (*p == '-') {
+#എങ്കിൽ ENABLE_FEATURE_FANCY_HEAD
+	എങ്കിൽ (*p == '-') {
 		*negative_N = 1;
 		p++;
 	}
 #endif
-	return xatoul_sfx(p, bkm_suffixes);
+	തിരികെ xatoul_sfx(p, bkm_suffixes);
 }
 
-static const char head_opts[] ALIGN1 =
+സ്ഥിതം സ്ഥിരം അക്ഷരം head_opts[] ALIGN1 =
 	"n:"
-#if ENABLE_FEATURE_FANCY_HEAD
+#എങ്കിൽ ENABLE_FEATURE_FANCY_HEAD
 	"c:qv"
 #endif
 	;
 
 #define header_fmt_str "\n==> %s <==\n"
 
-int head_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int head_main(int argc, char **argv)
+പൂർണ്ണസംഖ്യ head_main(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv) MAIN_EXTERNALLY_VISIBLE;
+പൂർണ്ണസംഖ്യ head_main(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv)
 {
-	unsigned long count = 10;
-#if ENABLE_FEATURE_FANCY_HEAD
-	int header_threshhold = 1;
-	bool count_bytes = 0;
+	unsigned long എണ്ണം = 10;
+#എങ്കിൽ ENABLE_FEATURE_FANCY_HEAD
+	പൂർണ്ണസംഖ്യ header_threshhold = 1;
+	bool എണ്ണം_bytes = 0;
 	bool negative_N = 0;
-#else
+#അല്ലെങ്കിൽ
 # define header_threshhold 1
-# define count_bytes       0
+# define എണ്ണം_bytes       0
 # define negative_N        0
 #endif
 	FILE *fp;
-	const char *fmt;
-	char *p;
-	int opt;
-	int retval = EXIT_SUCCESS;
+	സ്ഥിരം അക്ഷരം *fmt;
+	അക്ഷരം *p;
+	പൂർണ്ണസംഖ്യ opt;
+	പൂർണ്ണസംഖ്യ retval = EXIT_SUCCESS;
 
-#if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
+#എങ്കിൽ ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
 	/* Allow legacy syntax of an initial numeric option without -n. */
-	if (argv[1] && argv[1][0] == '-'
+	എങ്കിൽ (argv[1] && argv[1][0] == '-'
 	 && isdigit(argv[1][1])
 	) {
 		--argc;
 		++argv;
 		p = argv[0] + 1;
-		goto GET_COUNT;
+		പോകുക GET_എണ്ണം;
 	}
 #endif
 
 	/* No size benefit in converting this to getopt32 */
-	while ((opt = getopt(argc, argv, head_opts)) > 0) {
-		switch (opt) {
-#if ENABLE_FEATURE_FANCY_HEAD
-		case 'q':
+	ആകുമ്പോൾ ((opt = getopt(argc, argv, head_opts)) > 0) {
+		തിരഞ്ഞെടുപ്പ് (opt) {
+#എങ്കിൽ ENABLE_FEATURE_FANCY_HEAD
+		അവസ്ഥ 'q':
 			header_threshhold = INT_MAX;
-			break;
-		case 'v':
+			നിർത്തുക;
+		അവസ്ഥ 'v':
 			header_threshhold = -1;
-			break;
-		case 'c':
-			count_bytes = 1;
+			നിർത്തുക;
+		അവസ്ഥ 'c':
+			എണ്ണം_bytes = 1;
 			/* fall through */
 #endif
-		case 'n':
+		അവസ്ഥ 'n':
 			p = optarg;
-#if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
- GET_COUNT:
+#എങ്കിൽ ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
+ GET_എണ്ണം:
 #endif
-			count = eat_num(&negative_N, p);
-			break;
-		default:
+			എണ്ണം = eat_അക്കം(&negative_N, p);
+			നിർത്തുക;
+		സ്ഥിരസ്ഥിതി:
 			bb_show_usage();
 		}
 	}
 
 	argc -= optind;
 	argv += optind;
-	if (!*argv)
-		*--argv = (char*)"-";
+	എങ്കിൽ (!*argv)
+		*--argv = (അക്ഷരം*)"-";
 
 	fmt = header_fmt_str + 1;
-	if (argc <= header_threshhold) {
-#if ENABLE_FEATURE_FANCY_HEAD
+	എങ്കിൽ (argc <= header_threshhold) {
+#എങ്കിൽ ENABLE_FEATURE_FANCY_HEAD
 		header_threshhold = 0;
-#else
+#അല്ലെങ്കിൽ
 		fmt += 11; /* "" */
 #endif
 	}
-	if (negative_N) {
-		if (count >= INT_MAX / sizeof(char*))
-			bb_error_msg("count is too big: %lu", count);
+	എങ്കിൽ (negative_N) {
+		എങ്കിൽ (എണ്ണം >= INT_MAX / വലുപ്പം(അക്ഷരം*))
+			bb_error_സന്ദേശം("count is too big: %lu", എണ്ണം);
 	}
 
-	do {
+	ചെയ്യുക {
 		fp = fopen_or_warn_stdin(*argv);
-		if (fp) {
-			if (fp == stdin) {
-				*argv = (char *) bb_msg_standard_input;
+		എങ്കിൽ (fp) {
+			എങ്കിൽ (fp == stdin) {
+				*argv = (അക്ഷരം *) bb_സന്ദേശം_standard_നിവേശം;
 			}
-			if (header_threshhold) {
+			എങ്കിൽ (header_threshhold) {
 				printf(fmt, *argv);
 			}
-			if (negative_N) {
-				if (count_bytes) {
-					print_except_N_last_bytes(fp, count);
-				} else {
-					print_except_N_last_lines(fp, count);
+			എങ്കിൽ (negative_N) {
+				എങ്കിൽ (എണ്ണം_bytes) {
+					print_except_N_last_bytes(fp, എണ്ണം);
+				} അല്ലെങ്കിൽ {
+					print_except_N_last_വരികൾ(fp, എണ്ണം);
 				}
-			} else {
-				print_first_N(fp, count, count_bytes);
+			} അല്ലെങ്കിൽ {
+				print_first_N(fp, എണ്ണം, എണ്ണം_bytes);
 			}
 			die_if_ferror_stdout();
-			if (fclose_if_not_stdin(fp)) {
-				bb_simple_perror_msg(*argv);
+			എങ്കിൽ (fclose_if_not_stdin(fp)) {
+				bb_simple_perror_സന്ദേശം(*argv);
 				retval = EXIT_FAILURE;
 			}
-		} else {
+		} അല്ലെങ്കിൽ {
 			retval = EXIT_FAILURE;
 		}
 		fmt = header_fmt_str;
-	} while (*++argv);
+	} ആകുമ്പോൾ (*++argv);
 
 	fflush_stdout_and_exit(retval);
 }

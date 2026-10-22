@@ -33,18 +33,18 @@
 
 /* By default, selects -v1 -i1 -l1 -sTAB -w6 -nrn -hn -bt -fn */
 
-#include "libbb.h"
+#അന്തര്ഭാവ "libbb.h"
 
-int nl_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int nl_main(int argc UNUSED_PARAM, char **argv)
+പൂർണ്ണസംഖ്യ nl_main(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv) MAIN_EXTERNALLY_VISIBLE;
+പൂർണ്ണസംഖ്യ nl_main(പൂർണ്ണസംഖ്യ argc UNUSED_PARAM, അക്ഷരം **argv)
 {
-	struct number_state ns;
-	const char *opt_b = "t";
-	enum {
+	ഘടന സംഖ്യ_state ns;
+	സ്ഥിരം അക്ഷരം *opt_b = "t";
+	എണ്ണൽ {
 		OPT_p = (1 << 0),
 	};
-#if ENABLE_LONG_OPTS
-	static const char nl_longopts[] ALIGN1 =
+#എങ്കിൽ ENABLE_LONG_OPTS
+	സ്ഥിതം സ്ഥിരം അക്ഷരം nl_longopts[] ALIGN1 =
 		"body-numbering\0"	Required_argument "b"
 	//	"footer-numbering\0"	Required_argument "f" - not implemented yet
 	//	"header-numbering\0"	Required_argument "h" - not implemented yet
@@ -58,7 +58,7 @@ int nl_main(int argc UNUSED_PARAM, char **argv)
 		"number-width\0"	Required_argument "w"
 	;
 #endif
-	int exitcode;
+	പൂർണ്ണസംഖ്യ exitcode;
 
 	ns.width = 6;
 	ns.start = 1;
@@ -68,16 +68,16 @@ int nl_main(int argc UNUSED_PARAM, char **argv)
 			&ns.width, &ns.sep, &ns.start, &ns.inc, &opt_b);
 	ns.all = (opt_b[0] == 'a');
 	ns.nonempty = (opt_b[0] == 't');
-	ns.empty_str = xasprintf("%*s", ns.width + (int)strlen(ns.sep), "");
+	ns.empty_str = xasprintf("%*s", ns.width + (പൂർണ്ണസംഖ്യ)strlen(ns.sep), "");
 
 	argv += optind;
-	if (!*argv)
-		*--argv = (char*)"-";
+	എങ്കിൽ (!*argv)
+		*--argv = (അക്ഷരം*)"-";
 
 	exitcode = EXIT_SUCCESS;
-	do {
-		exitcode |= print_numbered_lines(&ns, *argv);
-	} while (*++argv);
+	ചെയ്യുക {
+		exitcode |= print_numbered_വരികൾ(&ns, *argv);
+	} ആകുമ്പോൾ (*++argv);
 
 	fflush_stdout_and_exit(exitcode);
 }

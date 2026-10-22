@@ -40,37 +40,37 @@
 # include <sys/sysmacros.h>  // For makedev
 #endif
 
-#include "libbb.h"
-#include "libcoreutils/coreutils.h"
+#അന്തര്ഭാവ "libbb.h"
+#അന്തര്ഭാവ "libcoreutils/coreutils.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-static const char modes_chars[] ALIGN1 = { 'p', 'c', 'u', 'b', 0, 1, 1, 2 };
-static const mode_t modes_cubp[] = { S_IFIFO, S_IFCHR, S_IFBLK };
+സ്ഥിതം സ്ഥിരം അക്ഷരം modes_chars[] ALIGN1 = { 'p', 'c', 'u', 'b', 0, 1, 1, 2 };
+സ്ഥിതം സ്ഥിരം mode_t modes_cubp[] = { S_IFIFO, S_IFCHR, S_IFBLK };
 
-int mknod_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int mknod_main(int argc UNUSED_PARAM, char **argv)
+പൂർണ്ണസംഖ്യ mknod_main(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv) MAIN_EXTERNALLY_VISIBLE;
+പൂർണ്ണസംഖ്യ mknod_main(പൂർണ്ണസംഖ്യ argc UNUSED_PARAM, അക്ഷരം **argv)
 {
 	mode_t mode;
 	dev_t dev;
-	const char *type, *arg;
+	സ്ഥിരം അക്ഷരം *type, *arg;
 
 	mode = getopt_mk_fifo_nod(argv);
 	argv += optind;
 	//argc -= optind;
 
-	if (!argv[0] || !argv[1])
+	എങ്കിൽ (!argv[0] || !argv[1])
 		bb_show_usage();
 	type = strchr(modes_chars, argv[1][0]);
-	if (!type)
+	എങ്കിൽ (!type)
 		bb_show_usage();
 
-	mode |= modes_cubp[(int)(type[4])];
+	mode |= modes_cubp[(പൂർണ്ണസംഖ്യ)(type[4])];
 
 	dev = 0;
 	arg = argv[2];
-	if (*type != 'p') {
-		if (!argv[2] || !argv[3])
+	എങ്കിൽ (*type != 'p') {
+		എങ്കിൽ (!argv[2] || !argv[3])
 			bb_show_usage();
 		/* Autodetect what the system supports; these macros should
 		 * optimize out to two constants. */
@@ -78,11 +78,11 @@ int mknod_main(int argc UNUSED_PARAM, char **argv)
 				xatoul_range(argv[3], 0, minor(UINT_MAX)));
 		arg = argv[4];
 	}
-	if (arg)
+	എങ്കിൽ (arg)
 		bb_show_usage();
 
-	if (mknod(argv[0], mode, dev) != 0) {
-		bb_simple_perror_msg_and_die(argv[0]);
+	എങ്കിൽ (mknod(argv[0], mode, dev) != 0) {
+		bb_simple_perror_സന്ദേശം_and_die(argv[0]);
 	}
-	return EXIT_SUCCESS;
+	തിരികെ EXIT_SUCCESS;
 }

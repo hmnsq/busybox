@@ -24,16 +24,16 @@
 //usage:#define whoami_full_usage "\n\n"
 //usage:       "Print the user name associated with the current effective user id"
 
-#include "libbb.h"
+#അന്തര്ഭാവ "libbb.h"
 
-int whoami_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int whoami_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+പൂർണ്ണസംഖ്യ whoami_main(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv) MAIN_EXTERNALLY_VISIBLE;
+പൂർണ്ണസംഖ്യ whoami_main(പൂർണ്ണസംഖ്യ argc UNUSED_PARAM, അക്ഷരം **argv UNUSED_PARAM)
 {
-	if (argv[1])
+	എങ്കിൽ (argv[1])
 		bb_show_usage();
 
 	/* Will complain and die if username not found */
 	puts(xuid2uname(geteuid()));
 
-	return fflush_all();
+	തിരികെ fflush_all();
 }

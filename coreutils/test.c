@@ -75,9 +75,9 @@
 //usage:       "$ echo $?\n"
 //usage:       "1\n"
 
-#include "libbb.h"
-#include <regex.h>
-#include <fnmatch.h>
+#അന്തര്ഭാവ "libbb.h"
+#അന്തര്ഭാവ <regex.h>
+#അന്തര്ഭാവ <fnmatch.h>
 
 /* This is a NOFORK applet. Be very careful! */
 
@@ -148,15 +148,15 @@
 
 #define TEST_DEBUG 0
 
-#if ENABLE_TEST2 \
+#എങ്കിൽ ENABLE_TEST2 \
  || (ENABLE_ASH_BASH_COMPAT && ENABLE_ASH_TEST) \
  || (ENABLE_HUSH_BASH_COMPAT && ENABLE_HUSH_TEST)
 # define BASH_TEST2 1
-#else
+#അല്ലെങ്കിൽ
 # define BASH_TEST2 0
 #endif
 
-enum token {
+എണ്ണൽ token {
 	EOI,
 
 	FILRD, /* file access */
@@ -194,7 +194,7 @@ enum token {
 	STRLT,
 	STRGT,
 
-#if BASH_TEST2
+#എങ്കിൽ BASH_TEST2
 	REGEX,
 #endif
 
@@ -212,37 +212,37 @@ enum token {
 	RPAREN,
 	OPERAND
 };
-#define is_int_op(a)      (((unsigned char)((a) - INTEQ)) <= 5)
-#define is_str_op(a)      (((unsigned char)((a) - STREZ)) <= 5)
-#define is_file_op(a)     (((unsigned char)((a) - FILNT)) <= 2)
-#define is_file_access(a) (((unsigned char)((a) - FILRD)) <= 2)
-#define is_file_type(a)   (((unsigned char)((a) - FILREG)) <= 5)
-#define is_file_bit(a)    (((unsigned char)((a) - FILSUID)) <= 2)
+#define is_int_op(a)      (((unsigned അക്ഷരം)((a) - INTEQ)) <= 5)
+#define is_str_op(a)      (((unsigned അക്ഷരം)((a) - STREZ)) <= 5)
+#define is_file_op(a)     (((unsigned അക്ഷരം)((a) - FILNT)) <= 2)
+#define is_file_access(a) (((unsigned അക്ഷരം)((a) - FILRD)) <= 2)
+#define is_file_type(a)   (((unsigned അക്ഷരം)((a) - FILREG)) <= 5)
+#define is_file_bit(a)    (((unsigned അക്ഷരം)((a) - FILSUID)) <= 2)
 
-#if TEST_DEBUG
-int depth;
-#define nest_msg(...) do { \
+#എങ്കിൽ TEST_DEBUG
+പൂർണ്ണസംഖ്യ depth;
+#define nest_സന്ദേശം(...) ചെയ്യുക { \
 	depth++; \
 	fprintf(stderr, "%*s", depth*2, ""); \
 	fprintf(stderr, __VA_ARGS__); \
-} while (0)
-#define unnest_msg(...) do { \
+} ആകുമ്പോൾ (0)
+#define unnest_സന്ദേശം(...) ചെയ്യുക { \
 	fprintf(stderr, "%*s", depth*2, ""); \
 	fprintf(stderr, __VA_ARGS__); \
 	depth--; \
-} while (0)
-#define dbg_msg(...) do { \
+} ആകുമ്പോൾ (0)
+#define dbg_സന്ദേശം(...) ചെയ്യുക { \
 	fprintf(stderr, "%*s", depth*2, ""); \
 	fprintf(stderr, __VA_ARGS__); \
-} while (0)
-#define unnest_msg_and_return(expr, ...) do { \
-	number_t __res = (expr); \
+} ആകുമ്പോൾ (0)
+#define unnest_സന്ദേശം_and_return(വ്യഞ്ജകം, ...) ചെയ്യുക { \
+	സംഖ്യ_t __res = (വ്യഞ്ജകം); \
 	fprintf(stderr, "%*s", depth*2, ""); \
 	fprintf(stderr, __VA_ARGS__, res); \
 	depth--; \
-	return __res; \
-} while (0)
-static const char *const TOKSTR[] ALIGN_PTR = {
+	തിരികെ __res; \
+} ആകുമ്പോൾ (0)
+സ്ഥിതം സ്ഥിരം അക്ഷരം *സ്ഥിരം TOKSTR[] ALIGN_PTR = {
 	"EOI",
 	"FILRD",
 	"FILWR",
@@ -271,7 +271,7 @@ static const char *const TOKSTR[] ALIGN_PTR = {
 	"STRNE",
 	"STRLT",
 	"STRGT",
-#if BASH_TEST2
+#എങ്കിൽ BASH_TEST2
 	"REGEX",
 #endif
 	"INTEQ",
@@ -287,14 +287,14 @@ static const char *const TOKSTR[] ALIGN_PTR = {
 	"RPAREN",
 	"OPERAND"
 };
-#else
-#define nest_msg(...)   ((void)0)
-#define unnest_msg(...) ((void)0)
-#define dbg_msg(...)    ((void)0)
-#define unnest_msg_and_return(expr, ...) return expr
+#അല്ലെങ്കിൽ
+#define nest_സന്ദേശം(...)   ((ശൂന്യം)0)
+#define unnest_സന്ദേശം(...) ((ശൂന്യം)0)
+#define dbg_സന്ദേശം(...)    ((ശൂന്യം)0)
+#define unnest_സന്ദേശം_and_return(വ്യഞ്ജകം, ...) തിരികെ വ്യഞ്ജകം
 #endif
 
-enum {
+എണ്ണൽ {
 	UNOP,
 	BINOP,
 	BUNOP,
@@ -302,11 +302,11 @@ enum {
 	PAREN
 };
 
-struct operator_t {
-	unsigned char op_num, op_type;
+ഘടന operator_t {
+	unsigned അക്ഷരം op_അക്കം, op_type;
 };
 
-static const struct operator_t ops_table[] ALIGN2 = {
+സ്ഥിതം സ്ഥിരം ഘടന operator_t ops_table[] ALIGN2 = {
 	{ /* "-r" */ FILRD   , UNOP   },
 	{ /* "-w" */ FILWR   , UNOP   },
 	{ /* "-x" */ FILEX   , UNOP   },
@@ -337,7 +337,7 @@ static const struct operator_t ops_table[] ALIGN2 = {
 	{ /* "!=" */ STRNE   , BINOP  },
 	{ /* "<"  */ STRLT   , BINOP  },
 	{ /* ">"  */ STRGT   , BINOP  },
-#if BASH_TEST2
+#എങ്കിൽ BASH_TEST2
 	{ /* "=~" */ REGEX   , BINOP  },
 #endif
 	{ /* "-eq"*/ INTEQ   , BINOP  },
@@ -352,7 +352,7 @@ static const struct operator_t ops_table[] ALIGN2 = {
 	{ /* "!"  */ UNOT    , BUNOP  },
 	{ /* "-a" */ BAND    , BBINOP },
 	{ /* "-o" */ BOR     , BBINOP },
-#if BASH_TEST2
+#എങ്കിൽ BASH_TEST2
 	{ /* "&&" */ BAND    , BBINOP },
 	{ /* "||" */ BOR     , BBINOP },
 #endif
@@ -360,7 +360,7 @@ static const struct operator_t ops_table[] ALIGN2 = {
 	{ /* ")"  */ RPAREN  , PAREN  },
 };
 /* Please keep these two tables in sync */
-static const char ops_texts[] ALIGN1 =
+സ്ഥിതം സ്ഥിരം അക്ഷരം ops_texts[] ALIGN1 =
 	"-r"  "\0"
 	"-w"  "\0"
 	"-x"  "\0"
@@ -389,7 +389,7 @@ static const char ops_texts[] ALIGN1 =
 	"!="  "\0"
 	"<"   "\0"
 	">"   "\0"
-#if BASH_TEST2
+#എങ്കിൽ BASH_TEST2
 	"=~"  "\0"
 #endif
 	"-eq" "\0"
@@ -404,7 +404,7 @@ static const char ops_texts[] ALIGN1 =
 	"!"   "\0"
 	"-a"  "\0"
 	"-o"  "\0"
-#if BASH_TEST2
+#എങ്കിൽ BASH_TEST2
 	"&&"  "\0"
 	"||"  "\0"
 #endif
@@ -413,29 +413,29 @@ static const char ops_texts[] ALIGN1 =
 ;
 
 
-#if ENABLE_FEATURE_TEST_64
-typedef int64_t number_t;
-#else
-typedef int number_t;
+#എങ്കിൽ ENABLE_FEATURE_TEST_64
+തരനിർവചനം int64_t സംഖ്യ_t;
+#അല്ലെങ്കിൽ
+തരനിർവചനം പൂർണ്ണസംഖ്യ സംഖ്യ_t;
 #endif
 
 
 /* We try to minimize both static and stack usage. */
-struct test_statics {
-	char **args;
+ഘടന test_statics {
+	അക്ഷരം **args;
 	/* set only by check_operator(), either to bogus struct
 	 * or points to matching operator_t struct. Never NULL. */
-	const struct operator_t *last_operator;
+	സ്ഥിരം ഘടന operator_t *last_operator;
 	gid_t *group_array;
-	int ngroups;
-#if BASH_TEST2
+	പൂർണ്ണസംഖ്യ ngroups;
+#എങ്കിൽ BASH_TEST2
 	bool bash_test2;
 #endif
 	jmp_buf leaving;
 };
 
 /* See test_ptr_hack.c */
-extern struct test_statics *BB_GLOBAL_CONST test_ptr_to_statics;
+ബാഹ്യ ഘടന test_statics *BB_GLOBAL_CONST test_ptr_to_statics;
 
 #define S (*test_ptr_to_statics)
 #define args            (S.args         )
@@ -445,52 +445,52 @@ extern struct test_statics *BB_GLOBAL_CONST test_ptr_to_statics;
 #define bash_test2      (S.bash_test2   )
 #define leaving         (S.leaving      )
 
-#define INIT_S() do { \
-	XZALLOC_CONST_PTR(&test_ptr_to_statics, sizeof(S)); \
-} while (0)
-#define DEINIT_S() do { \
-	free(group_array); \
-	free(test_ptr_to_statics); \
-} while (0)
+#define INIT_S() ചെയ്യുക { \
+	XZALLOC_CONST_PTR(&test_ptr_to_statics, വലുപ്പം(S)); \
+} ആകുമ്പോൾ (0)
+#define DEINIT_S() ചെയ്യുക { \
+	സ്വതന്ത്രം(group_array); \
+	സ്വതന്ത്രം(test_ptr_to_statics); \
+} ആകുമ്പോൾ (0)
 
-static number_t primary(enum token n);
+സ്ഥിതം സംഖ്യ_t primary(എണ്ണൽ token n);
 
-static void syntax(const char *op, const char *msg) NORETURN;
-static void syntax(const char *op, const char *msg)
+സ്ഥിതം ശൂന്യം syntax(സ്ഥിരം അക്ഷരം *op, സ്ഥിരം അക്ഷരം *സന്ദേശം) NORETURN;
+സ്ഥിതം ശൂന്യം syntax(സ്ഥിരം അക്ഷരം *op, സ്ഥിരം അക്ഷരം *സന്ദേശം)
 {
-	if (op && *op) {
-		bb_error_msg("%s: %s", op, msg);
-	} else {
-		bb_error_msg("%s: %s"+4, msg);
+	എങ്കിൽ (op && *op) {
+		bb_error_സന്ദേശം("%s: %s", op, സന്ദേശം);
+	} അല്ലെങ്കിൽ {
+		bb_error_സന്ദേശം("%s: %s"+4, സന്ദേശം);
 	}
 	longjmp(leaving, 2);
 }
 
 /* atoi with error detection */
 //XXX: FIXME: duplicate of existing libbb function?
-static number_t getn(const char *s)
+സ്ഥിതം സംഖ്യ_t getn(സ്ഥിരം അക്ഷരം *s)
 {
-	char *p;
-#if ENABLE_FEATURE_TEST_64
+	അക്ഷരം *p;
+#എങ്കിൽ ENABLE_FEATURE_TEST_64
 	long long r;
-#else
+#അല്ലെങ്കിൽ
 	long r;
 #endif
 
 	errno = 0;
-#if ENABLE_FEATURE_TEST_64
+#എങ്കിൽ ENABLE_FEATURE_TEST_64
 	r = strtoll(s, &p, 10);
-#else
+#അല്ലെങ്കിൽ
 	r = strtol(s, &p, 10);
 #endif
 
-	if (errno != 0)
+	എങ്കിൽ (errno != 0)
 		syntax(s, "out of range");
 
-	if (p == s || *(skip_whitespace(p)) != '\0')
+	എങ്കിൽ (p == s || *(skip_whitespace(p)) != '\0')
 		syntax(s, "bad number");
 
-	return r;
+	തിരികെ r;
 }
 
 /* UNUSED
@@ -521,417 +521,417 @@ static int equalf(const char *f1, const char *f2)
 */
 
 
-static enum token check_operator(const char *s)
+സ്ഥിതം എണ്ണൽ token check_operator(സ്ഥിരം അക്ഷരം *s)
 {
-	static const struct operator_t no_op = {
-		.op_num = -1,
+	സ്ഥിതം സ്ഥിരം ഘടന operator_t no_op = {
+		.op_അക്കം = -1,
 		.op_type = -1
 	};
-	int n;
+	പൂർണ്ണസംഖ്യ n;
 
 	last_operator = &no_op;
-	if (s == NULL)
-		return EOI;
+	എങ്കിൽ (s == ശൂന്യ)
+		തിരികെ EOI;
 	n = index_in_strings(ops_texts, s);
-	if (n < 0)
-		return OPERAND;
+	എങ്കിൽ (n < 0)
+		തിരികെ OPERAND;
 
-#if BASH_TEST2
-	if (ops_table[n].op_num == REGEX && !bash_test2) {
+#എങ്കിൽ BASH_TEST2
+	എങ്കിൽ (ops_table[n].op_അക്കം == REGEX && !bash_test2) {
 		/* =~ is only for [[ ]] */
-		return OPERAND;
+		തിരികെ OPERAND;
 	}
-	if (ops_table[n].op_num == BAND || ops_table[n].op_num == BOR) {
+	എങ്കിൽ (ops_table[n].op_അക്കം == BAND || ops_table[n].op_അക്കം == BOR) {
 		/* [ ]   accepts -a and -o but not && and || */
 		/* [[ ]] accepts && and || but not -a and -o */
-		if (bash_test2 == (s[0] == '-'))
-			return OPERAND;
+		എങ്കിൽ (bash_test2 == (s[0] == '-'))
+			തിരികെ OPERAND;
 	}
 #endif
 
 	last_operator = &ops_table[n];
-	return ops_table[n].op_num;
+	തിരികെ ops_table[n].op_അക്കം;
 }
 
 
-static int binop(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ binop(ശൂന്യം)
 {
-	const char *opnd1, *opnd2;
-	const struct operator_t *op;
-	number_t val1, val2;
+	സ്ഥിരം അക്ഷരം *opnd1, *opnd2;
+	സ്ഥിരം ഘടന operator_t *op;
+	സംഖ്യ_t val1, val2;
 
 	opnd1 = *args;
 	check_operator(*++args);
 	op = last_operator;
 
 	opnd2 = *++args;
-	if (opnd2 == NULL)
+	എങ്കിൽ (opnd2 == ശൂന്യ)
 		syntax(args[-1], "argument expected");
 
-	if (is_int_op(op->op_num)) {
+	എങ്കിൽ (is_int_op(op->op_അക്കം)) {
 		val1 = getn(opnd1);
 		val2 = getn(opnd2);
-		if (op->op_num == INTEQ)
-			return val1 == val2;
-		if (op->op_num == INTNE)
-			return val1 != val2;
-		if (op->op_num == INTGE)
-			return val1 >= val2;
-		if (op->op_num == INTGT)
-			return val1 >  val2;
-		if (op->op_num == INTLE)
-			return val1 <= val2;
+		എങ്കിൽ (op->op_അക്കം == INTEQ)
+			തിരികെ val1 == val2;
+		എങ്കിൽ (op->op_അക്കം == INTNE)
+			തിരികെ val1 != val2;
+		എങ്കിൽ (op->op_അക്കം == INTGE)
+			തിരികെ val1 >= val2;
+		എങ്കിൽ (op->op_അക്കം == INTGT)
+			തിരികെ val1 >  val2;
+		എങ്കിൽ (op->op_അക്കം == INTLE)
+			തിരികെ val1 <= val2;
 		/*if (op->op_num == INTLT)*/
-		return val1 <  val2;
+		തിരികെ val1 <  val2;
 	}
-#if BASH_TEST2
-	if (bash_test2) {
-		if (op->op_num == STREQ) {
+#എങ്കിൽ BASH_TEST2
+	എങ്കിൽ (bash_test2) {
+		എങ്കിൽ (op->op_അക്കം == STREQ) {
 			val1 = fnmatch(opnd2, opnd1, 0);
-			return val1 == 0;
+			തിരികെ val1 == 0;
 		}
-		if (op->op_num == STRNE) {
+		എങ്കിൽ (op->op_അക്കം == STRNE) {
 			val1 = fnmatch(opnd2, opnd1, 0);
-			return val1 != 0;
+			തിരികെ val1 != 0;
 		}
-		if (op->op_num == REGEX) {
+		എങ്കിൽ (op->op_അക്കം == REGEX) {
 			regex_t re_buffer;
-			memset(&re_buffer, 0, sizeof(re_buffer));
-			if (regcomp(&re_buffer, opnd2, REG_EXTENDED)) { // REG_NEWLINE?
+			memset(&re_buffer, 0, വലുപ്പം(re_buffer));
+			എങ്കിൽ (regcomp(&re_buffer, opnd2, REG_EXTENDED)) { // REG_NEWLINE?
 				/* Bad regex */
 				longjmp(leaving, 2); /* [[ a =~ * ]]; echo $? - prints 2 (silently, no error msg) */
 			}
-			val1 = regexec(&re_buffer, opnd1, 0, NULL, 0);
+			val1 = regexec(&re_buffer, opnd1, 0, ശൂന്യ, 0);
 			regfree(&re_buffer);
-			return val1 == 0;
+			തിരികെ val1 == 0;
 		}
 	}
 #endif
-	if (is_str_op(op->op_num)) {
+	എങ്കിൽ (is_str_op(op->op_അക്കം)) {
 		val1 = strcmp(opnd1, opnd2);
-		if (op->op_num == STREQ)
-			return val1 == 0;
-		if (op->op_num == STRNE)
-			return val1 != 0;
-		if (op->op_num == STRLT)
-			return val1 < 0;
+		എങ്കിൽ (op->op_അക്കം == STREQ)
+			തിരികെ val1 == 0;
+		എങ്കിൽ (op->op_അക്കം == STRNE)
+			തിരികെ val1 != 0;
+		എങ്കിൽ (op->op_അക്കം == STRLT)
+			തിരികെ val1 < 0;
 		/*if (op->op_num == STRGT)*/
-		return val1 > 0;
+		തിരികെ val1 > 0;
 	}
 	/* We are sure that these three are by now the only binops we didn't check
 	 * yet, so we do not check if the class is correct:
 	 */
 /*	if (is_file_op(op->op_num)) */
 	{
-		struct stat b1, b2;
+		ഘടന stat b1, b2;
 
-		if (stat(opnd1, &b1) || stat(opnd2, &b2))
-			return 0; /* false, since at least one stat failed */
-		if (op->op_num == FILNT)
-			return b1.st_mtime > b2.st_mtime;
-		if (op->op_num == FILOT)
-			return b1.st_mtime < b2.st_mtime;
+		എങ്കിൽ (stat(opnd1, &b1) || stat(opnd2, &b2))
+			തിരികെ 0; /* false, since at least one stat failed */
+		എങ്കിൽ (op->op_അക്കം == FILNT)
+			തിരികെ b1.st_mtime > b2.st_mtime;
+		എങ്കിൽ (op->op_അക്കം == FILOT)
+			തിരികെ b1.st_mtime < b2.st_mtime;
 		/*if (op->op_num == FILEQ)*/
-		return b1.st_dev == b2.st_dev && b1.st_ino == b2.st_ino;
+		തിരികെ b1.st_dev == b2.st_dev && b1.st_ino == b2.st_ino;
 	}
 	/*return 1; - NOTREACHED */
 }
 
-static void initialize_group_array(void)
+സ്ഥിതം ശൂന്യം initialize_group_array(ശൂന്യം)
 {
-	group_array = bb_getgroups(&ngroups, NULL);
+	group_array = bb_getgroups(&ngroups, ശൂന്യ);
 }
 
 /* Return non-zero if GID is one that we have in our groups list. */
 //XXX: FIXME: duplicate of existing libbb function?
 // see toplevel TODO file:
 // possible code duplication ingroup() and is_a_group_member()
-static int is_a_group_member(gid_t gid)
+സ്ഥിതം പൂർണ്ണസംഖ്യ is_a_group_member(gid_t gid)
 {
-	int i;
+	പൂർണ്ണസംഖ്യ i;
 
 	/* Short-circuit if possible, maybe saving a call to getgroups(). */
-	if (gid == getgid() || gid == getegid())
-		return 1;
+	എങ്കിൽ (gid == getgid() || gid == getegid())
+		തിരികെ 1;
 
-	if (ngroups == 0)
+	എങ്കിൽ (ngroups == 0)
 		initialize_group_array();
 
 	/* Search through the list looking for GID. */
-	for (i = 0; i < ngroups; i++)
-		if (gid == group_array[i])
-			return 1;
+	വേണ്ടി (i = 0; i < ngroups; i++)
+		എങ്കിൽ (gid == group_array[i])
+			തിരികെ 1;
 
-	return 0;
+	തിരികെ 0;
 }
 
 
 /* Do the same thing access(2) does, but use the effective uid and gid,
    and don't make the mistake of telling root that any file is
    executable. */
-static int test_eaccess(struct stat *st, int mode)
+സ്ഥിതം പൂർണ്ണസംഖ്യ test_eaccess(ഘടന stat *st, പൂർണ്ണസംഖ്യ mode)
 {
-	unsigned int euid = geteuid();
+	unsigned പൂർണ്ണസംഖ്യ euid = geteuid();
 
-	if (euid == 0) {
+	എങ്കിൽ (euid == 0) {
 		/* Root can read or write any file. */
-		if (mode != X_OK)
-			return 0;
+		എങ്കിൽ (mode != X_OK)
+			തിരികെ 0;
 
 		/* Root can execute any file that has any one of the execute
 		 * bits set. */
-		if (st->st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))
-			return 0;
+		എങ്കിൽ (st->st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))
+			തിരികെ 0;
 	}
 
-	if (st->st_uid == euid)  /* owner */
+	എങ്കിൽ (st->st_uid == euid)  /* owner */
 		mode <<= 6;
-	else if (is_a_group_member(st->st_gid))
+	അല്ലെങ്കിൽ എങ്കിൽ (is_a_group_member(st->st_gid))
 		mode <<= 3;
 
-	if (st->st_mode & mode)
-		return 0;
+	എങ്കിൽ (st->st_mode & mode)
+		തിരികെ 0;
 
-	return -1;
+	തിരികെ -1;
 }
 
 
-static int filstat(char *nm, enum token mode)
+സ്ഥിതം പൂർണ്ണസംഖ്യ filstat(അക്ഷരം *nm, എണ്ണൽ token mode)
 {
-	struct stat s;
+	ഘടന stat s;
 	unsigned i = i; /* gcc 3.x thinks it can be used uninitialized */
 
-	if (mode == FILSYM) {
+	എങ്കിൽ (mode == FILSYM) {
 #ifdef S_IFLNK
-		if (lstat(nm, &s) == 0) {
+		എങ്കിൽ (lstat(nm, &s) == 0) {
 			i = S_IFLNK;
-			goto filetype;
+			പോകുക filetype;
 		}
 #endif
-		return 0;
+		തിരികെ 0;
 	}
 
-	if (stat(nm, &s) != 0)
-		return 0;
-	if (mode == FILEXIST)
-		return 1;
-	if (is_file_access(mode)) {
-		if (mode == FILRD)
+	എങ്കിൽ (stat(nm, &s) != 0)
+		തിരികെ 0;
+	എങ്കിൽ (mode == FILEXIST)
+		തിരികെ 1;
+	എങ്കിൽ (is_file_access(mode)) {
+		എങ്കിൽ (mode == FILRD)
 			i = R_OK;
-		if (mode == FILWR)
+		എങ്കിൽ (mode == FILWR)
 			i = W_OK;
-		if (mode == FILEX)
+		എങ്കിൽ (mode == FILEX)
 			i = X_OK;
-		return test_eaccess(&s, i) == 0;
+		തിരികെ test_eaccess(&s, i) == 0;
 	}
-	if (is_file_type(mode)) {
-		if (mode == FILREG)
+	എങ്കിൽ (is_file_type(mode)) {
+		എങ്കിൽ (mode == FILREG)
 			i = S_IFREG;
-		if (mode == FILDIR)
+		എങ്കിൽ (mode == FILDIR)
 			i = S_IFDIR;
-		if (mode == FILCDEV)
+		എങ്കിൽ (mode == FILCDEV)
 			i = S_IFCHR;
-		if (mode == FILBDEV)
+		എങ്കിൽ (mode == FILBDEV)
 			i = S_IFBLK;
-		if (mode == FILFIFO) {
+		എങ്കിൽ (mode == FILFIFO) {
 #ifdef S_IFIFO
 			i = S_IFIFO;
-#else
-			return 0;
+#അല്ലെങ്കിൽ
+			തിരികെ 0;
 #endif
 		}
-		if (mode == FILSOCK) {
+		എങ്കിൽ (mode == FILSOCK) {
 #ifdef S_IFSOCK
 			i = S_IFSOCK;
-#else
-			return 0;
+#അല്ലെങ്കിൽ
+			തിരികെ 0;
 #endif
 		}
  filetype:
-		return ((s.st_mode & S_IFMT) == i);
+		തിരികെ ((s.st_mode & S_IFMT) == i);
 	}
-	if (is_file_bit(mode)) {
-		if (mode == FILSUID)
+	എങ്കിൽ (is_file_bit(mode)) {
+		എങ്കിൽ (mode == FILSUID)
 			i = S_ISUID;
-		if (mode == FILSGID)
+		എങ്കിൽ (mode == FILSGID)
 			i = S_ISGID;
-		if (mode == FILSTCK)
+		എങ്കിൽ (mode == FILSTCK)
 			i = S_ISVTX;
-		return ((s.st_mode & i) != 0);
+		തിരികെ ((s.st_mode & i) != 0);
 	}
-	if (mode == FILGZ)
-		return s.st_size > 0L;
-	if (mode == FILUID)
-		return s.st_uid == geteuid();
-	if (mode == FILGID)
-		return s.st_gid == getegid();
-	return 1; /* NOTREACHED */
+	എങ്കിൽ (mode == FILGZ)
+		തിരികെ s.st_size > 0L;
+	എങ്കിൽ (mode == FILUID)
+		തിരികെ s.st_uid == geteuid();
+	എങ്കിൽ (mode == FILGID)
+		തിരികെ s.st_gid == getegid();
+	തിരികെ 1; /* NOTREACHED */
 }
 
 
-static number_t nexpr(enum token n)
+സ്ഥിതം സംഖ്യ_t nexpr(എണ്ണൽ token n)
 {
-	number_t res;
+	സംഖ്യ_t res;
 
-	nest_msg(">nexpr(%s)\n", TOKSTR[n]);
-	if (n == UNOT) {
+	nest_സന്ദേശം(">nexpr(%s)\n", TOKSTR[n]);
+	എങ്കിൽ (n == UNOT) {
 		n = check_operator(*++args);
-		if (n == EOI) {
+		എങ്കിൽ (n == EOI) {
 			/* special case: [ ! ], [ a -a ! ] are valid */
 			/* IOW, "! ARG" may miss ARG */
 			args--;
-			unnest_msg("<nexpr:1 (!EOI), args:%s(%p)\n", args[0], &args[0]);
-			return 1;
+			unnest_സന്ദേശം("<nexpr:1 (!EOI), args:%s(%p)\n", args[0], &args[0]);
+			തിരികെ 1;
 		}
 		res = !nexpr(n);
-		unnest_msg("<nexpr:%lld\n", res);
-		return res;
+		unnest_സന്ദേശം("<nexpr:%lld\n", res);
+		തിരികെ res;
 	}
 	res = primary(n);
-	unnest_msg("<nexpr:%lld\n", res);
-	return res;
+	unnest_സന്ദേശം("<nexpr:%lld\n", res);
+	തിരികെ res;
 }
 
 
-static number_t aexpr(enum token n)
+സ്ഥിതം സംഖ്യ_t aexpr(എണ്ണൽ token n)
 {
-	number_t res;
+	സംഖ്യ_t res;
 
-	nest_msg(">aexpr(%s)\n", TOKSTR[n]);
+	nest_സന്ദേശം(">aexpr(%s)\n", TOKSTR[n]);
 	res = nexpr(n);
-	dbg_msg("aexpr: nexpr:%lld, next args:%s(%p)\n", res, args[1], &args[1]);
-	if (check_operator(*++args) == BAND) {
-		dbg_msg("aexpr: arg is AND, next args:%s(%p)\n", args[1], &args[1]);
+	dbg_സന്ദേശം("aexpr: nexpr:%lld, next args:%s(%p)\n", res, args[1], &args[1]);
+	എങ്കിൽ (check_operator(*++args) == BAND) {
+		dbg_സന്ദേശം("aexpr: arg is AND, next args:%s(%p)\n", args[1], &args[1]);
 		res = aexpr(check_operator(*++args)) && res;
-		unnest_msg("<aexpr:%lld\n", res);
-		return res;
+		unnest_സന്ദേശം("<aexpr:%lld\n", res);
+		തിരികെ res;
 	}
 	args--;
-	unnest_msg("<aexpr:%lld, args:%s(%p)\n", res, args[0], &args[0]);
-	return res;
+	unnest_സന്ദേശം("<aexpr:%lld, args:%s(%p)\n", res, args[0], &args[0]);
+	തിരികെ res;
 }
 
 
-static number_t oexpr(enum token n)
+സ്ഥിതം സംഖ്യ_t oexpr(എണ്ണൽ token n)
 {
-	number_t res;
+	സംഖ്യ_t res;
 
-	nest_msg(">oexpr(%s)\n", TOKSTR[n]);
+	nest_സന്ദേശം(">oexpr(%s)\n", TOKSTR[n]);
 	res = aexpr(n);
-	dbg_msg("oexpr: aexpr:%lld, next args:%s(%p)\n", res, args[1], &args[1]);
-	if (check_operator(*++args) == BOR) {
-		dbg_msg("oexpr: next arg is OR, next args:%s(%p)\n", args[1], &args[1]);
+	dbg_സന്ദേശം("oexpr: aexpr:%lld, next args:%s(%p)\n", res, args[1], &args[1]);
+	എങ്കിൽ (check_operator(*++args) == BOR) {
+		dbg_സന്ദേശം("oexpr: next arg is OR, next args:%s(%p)\n", args[1], &args[1]);
 		res = oexpr(check_operator(*++args)) || res;
-		unnest_msg("<oexpr:%lld\n", res);
-		return res;
+		unnest_സന്ദേശം("<oexpr:%lld\n", res);
+		തിരികെ res;
 	}
 	args--;
-	unnest_msg("<oexpr:%lld, args:%s(%p)\n", res, args[0], &args[0]);
-	return res;
+	unnest_സന്ദേശം("<oexpr:%lld, args:%s(%p)\n", res, args[0], &args[0]);
+	തിരികെ res;
 }
 
 
-static number_t primary(enum token n)
+സ്ഥിതം സംഖ്യ_t primary(എണ്ണൽ token n)
 {
-#if TEST_DEBUG
-	number_t res = res; /* for compiler */
-#else
-	number_t res;
+#എങ്കിൽ TEST_DEBUG
+	സംഖ്യ_t res = res; /* for compiler */
+#അല്ലെങ്കിൽ
+	സംഖ്യ_t res;
 #endif
-	const struct operator_t *args0_op;
+	സ്ഥിരം ഘടന operator_t *args0_op;
 
-	nest_msg(">primary(%s)\n", TOKSTR[n]);
-	if (n == EOI) {
-		syntax(NULL, "argument expected");
+	nest_സന്ദേശം(">primary(%s)\n", TOKSTR[n]);
+	എങ്കിൽ (n == EOI) {
+		syntax(ശൂന്യ, "argument expected");
 	}
-	if (n == LPAREN) {
+	എങ്കിൽ (n == LPAREN) {
 		res = oexpr(check_operator(*++args));
-		if (check_operator(*++args) != RPAREN)
-			syntax(NULL, "closing paren expected");
-		unnest_msg("<primary:%lld\n", res);
-		return res;
+		എങ്കിൽ (check_operator(*++args) != RPAREN)
+			syntax(ശൂന്യ, "closing paren expected");
+		unnest_സന്ദേശം("<primary:%lld\n", res);
+		തിരികെ res;
 	}
 
 	/* coreutils 6.9 checks "is args[1] binop and args[2] exist?" first,
 	 * do the same */
 	args0_op = last_operator;
 	/* last_operator = operator at args[1] */
-	if (check_operator(args[1]) != EOI) { /* if args[1] != NULL */
-		if (args[2]) {
+	എങ്കിൽ (check_operator(args[1]) != EOI) { /* if args[1] != NULL */
+		എങ്കിൽ (args[2]) {
 			// coreutils also does this:
 			// if (args[3] && args[0] = "-l" && args[2] is BINOP)
 			//	return binop(1 /* prepended by -l */);
-			if (last_operator->op_type == BINOP)
-				unnest_msg_and_return(binop(), "<primary: binop:%lld\n");
+			എങ്കിൽ (last_operator->op_type == BINOP)
+				unnest_സന്ദേശം_and_return(binop(), "<primary: binop:%lld\n");
 		}
 	}
 	/* check "is args[0] unop?" second */
-	if (args0_op->op_type == UNOP) {
+	എങ്കിൽ (args0_op->op_type == UNOP) {
 		/* unary expression */
-		if (args[1] == NULL)
+		എങ്കിൽ (args[1] == ശൂന്യ)
 //			syntax(args0_op->op_text, "argument expected");
-			goto check_emptiness;
+			പോകുക check_emptiness;
 		args++;
-		if (n == STREZ)
-			unnest_msg_and_return(args[0][0] == '\0', "<primary:%lld\n");
-		if (n == STRNZ)
-			unnest_msg_and_return(args[0][0] != '\0', "<primary:%lld\n");
-		if (n == FILTT)
-			unnest_msg_and_return(isatty(getn(*args)), "<primary: isatty(%s)%lld\n", *args);
-		unnest_msg_and_return(filstat(*args, n), "<primary: filstat(%s):%lld\n", *args);
+		എങ്കിൽ (n == STREZ)
+			unnest_സന്ദേശം_and_return(args[0][0] == '\0', "<primary:%lld\n");
+		എങ്കിൽ (n == STRNZ)
+			unnest_സന്ദേശം_and_return(args[0][0] != '\0', "<primary:%lld\n");
+		എങ്കിൽ (n == FILTT)
+			unnest_സന്ദേശം_and_return(isatty(getn(*args)), "<primary: isatty(%s)%lld\n", *args);
+		unnest_സന്ദേശം_and_return(filstat(*args, n), "<primary: filstat(%s):%lld\n", *args);
 	}
 
 	/*check_operator(args[1]); - already done */
-	if (last_operator->op_type == BINOP) {
+	എങ്കിൽ (last_operator->op_type == BINOP) {
 		/* args[2] is known to be NULL, isn't it bound to fail? */
-		unnest_msg_and_return(binop(), "<primary:%lld\n");
+		unnest_സന്ദേശം_and_return(binop(), "<primary:%lld\n");
 	}
  check_emptiness:
-	unnest_msg_and_return(args[0][0] != '\0', "<primary:%lld\n");
+	unnest_സന്ദേശം_and_return(args[0][0] != '\0', "<primary:%lld\n");
 }
 
 
-int test_main(int argc, char **argv)
+പൂർണ്ണസംഖ്യ test_main(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv)
 {
-	int res;
-	const char *arg0;
-#if BASH_TEST2
+	പൂർണ്ണസംഖ്യ res;
+	സ്ഥിരം അക്ഷരം *arg0;
+#എങ്കിൽ BASH_TEST2
 	bool bt2 = 0;
 #endif
 
 	arg0 = bb_basename(argv[0]);
-	if ((ENABLE_TEST1 || ENABLE_TEST2 || ENABLE_ASH_TEST || ENABLE_HUSH_TEST)
+	എങ്കിൽ ((ENABLE_TEST1 || ENABLE_TEST2 || ENABLE_ASH_TEST || ENABLE_HUSH_TEST)
 	 && (arg0[0] == '[')
 	) {
 		--argc;
-		if (!arg0[1]) { /* "[" ? */
-			if (NOT_LONE_CHAR(argv[argc], ']')) {
-				bb_simple_error_msg("missing ]");
-				return 2;
+		എങ്കിൽ (!arg0[1]) { /* "[" ? */
+			എങ്കിൽ (NOT_LONE_CHAR(argv[argc], ']')) {
+				bb_simple_error_സന്ദേശം("missing ]");
+				തിരികെ 2;
 			}
-		} else { /* assuming "[[" */
-			if (strcmp(argv[argc], "]]") != 0) {
-				bb_simple_error_msg("missing ]]");
-				return 2;
+		} അല്ലെങ്കിൽ { /* assuming "[[" */
+			എങ്കിൽ (strcmp(argv[argc], "]]") != 0) {
+				bb_simple_error_സന്ദേശം("missing ]]");
+				തിരികെ 2;
 			}
-#if BASH_TEST2
+#എങ്കിൽ BASH_TEST2
 			bt2 = 1;
 #endif
 		}
-		argv[argc] = NULL;
+		argv[argc] = ശൂന്യ;
 	}
 	/* argc is unused after this point */
 
 	/* We must do DEINIT_S() prior to returning */
 	INIT_S();
 
-#if BASH_TEST2
+#എങ്കിൽ BASH_TEST2
 	bash_test2 = bt2;
 #endif
 
 	res = setjmp(leaving);
-	if (res)
-		goto ret;
+	എങ്കിൽ (res)
+		പോകുക ret;
 
 	/* resetting ngroups is probably unnecessary.  it will
 	 * force a new call to getgroups(), which prevents using
@@ -950,21 +950,21 @@ int test_main(int argc, char **argv)
 	 * Testcase: "test '(' = '('"
 	 * The general parser would misinterpret '(' as group start.
 	 */
-	if (1) {
-		int negate = 0;
+	എങ്കിൽ (1) {
+		പൂർണ്ണസംഖ്യ negate = 0;
  again:
-		if (!argv[0]) {
+		എങ്കിൽ (!argv[0]) {
 			/* "test" */
 			res = 1;
-			goto ret_special;
+			പോകുക ret_special;
 		}
-		if (!argv[1]) {
+		എങ്കിൽ (!argv[1]) {
 			/* "test [!] arg" */
 			res = (argv[0][0] == '\0');
-			goto ret_special;
+			പോകുക ret_special;
 		}
-		if (argv[2]) {
-			if (!argv[3]) {
+		എങ്കിൽ (argv[2]) {
+			എങ്കിൽ (!argv[3]) {
 				/*
 				 * http://pubs.opengroup.org/onlinepubs/009695399/utilities/test.html
 				 * """ 3 arguments:
@@ -972,22 +972,22 @@ int test_main(int argc, char **argv)
 				 * """
 				 */
 				check_operator(argv[1]);
-				if (last_operator->op_type == BINOP) {
+				എങ്കിൽ (last_operator->op_type == BINOP) {
 					/* "test [!] arg1 <binary_op> arg2" */
 					args = argv;
 					res = (binop() == 0);
  ret_special:
 					/* If there was leading "!" op... */
 					res ^= negate;
-					goto ret;
+					പോകുക ret;
 				}
 				/* """If $1 is '(' and $3 is ')', perform the unary test of $2."""
 				 * Looks like this works without additional coding.
 				 */
-				goto check_negate;
+				പോകുക check_negate;
 			}
 			/* argv[3] exists (at least 4 args), is it exactly 4 args? */
-			if (!argv[4]) {
+			എങ്കിൽ (!argv[4]) {
 				/*
 				 * """ 4 arguments:
 				 * If $1 is '!', negate the three-argument test of $2, $3, and $4.
@@ -995,34 +995,34 @@ int test_main(int argc, char **argv)
 				 * """
 				 * Example why code below is necessary: test '(' ! -e ')'
 				 */
-				if (LONE_CHAR(argv[0], '(')
+				എങ്കിൽ (LONE_CHAR(argv[0], '(')
 				 && LONE_CHAR(argv[3], ')')
 				) {
 					/* "test [!] ( x y )" */
-					argv[3] = NULL;
+					argv[3] = ശൂന്യ;
 					argv++;
 				}
 			}
 		}
  check_negate:
-		if (LONE_CHAR(argv[0], '!')) {
+		എങ്കിൽ (LONE_CHAR(argv[0], '!')) {
 			argv++;
 			negate ^= 1;
-			goto again;
+			പോകുക again;
 		}
 	}
 
 	res = !oexpr(check_operator(*args));
 
-	if (*args != NULL && *++args != NULL) {
+	എങ്കിൽ (*args != ശൂന്യ && *++args != ശൂന്യ) {
 		/* Examples:
 		 * test 3 -lt 5 6
 		 * test -t 1 2
 		 */
-		bb_error_msg("%s: unknown operand", *args);
+		bb_error_സന്ദേശം("%s: unknown operand", *args);
 		res = 2;
 	}
  ret:
 	DEINIT_S();
-	return res;
+	തിരികെ res;
 }

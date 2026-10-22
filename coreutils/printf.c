@@ -59,7 +59,7 @@
 //usage:       "$ printf \"Val=%d\\n\" 5\n"
 //usage:       "Val=5\n"
 
-#include "libbb.h"
+#അന്തര്ഭാവ "libbb.h"
 
 /* A note on bad input: neither bash 3.2 nor coreutils 6.10 stop on it.
  * They report it:
@@ -77,102 +77,102 @@
  * We try to be compatible.
  */
 
-typedef void FAST_FUNC (*converter)(const char *arg, void *result);
+തരനിർവചനം ശൂന്യം FAST_FUNC (*converter)(സ്ഥിരം അക്ഷരം *arg, ശൂന്യം *result);
 
-static int multiconvert(const char *arg, void *result, converter convert)
+സ്ഥിതം പൂർണ്ണസംഖ്യ multiconvert(സ്ഥിരം അക്ഷരം *arg, ശൂന്യം *result, converter convert)
 {
-	if (*arg == '"' || *arg == '\'') {
-		arg = utoa((unsigned char)arg[1]);
+	എങ്കിൽ (*arg == '"' || *arg == '\'') {
+		arg = utoa((unsigned അക്ഷരം)arg[1]);
 	}
 	errno = 0;
 	convert(arg, result);
-	if (errno) {
-		bb_error_msg("invalid number '%s'", arg);
-		return 1;
+	എങ്കിൽ (errno) {
+		bb_error_സന്ദേശം("invalid number '%s'", arg);
+		തിരികെ 1;
 	}
-	return 0;
+	തിരികെ 0;
 }
 
-static void FAST_FUNC conv_strtoull(const char *arg, void *result)
+സ്ഥിതം ശൂന്യം FAST_FUNC conv_strtoull(സ്ഥിരം അക്ഷരം *arg, ശൂന്യം *result)
 {
 	/* Allow leading '+' - bb_strtoull() by itself does not allow it,
 	 * and probably shouldn't (other callers might require purely numeric
 	 * inputs to be allowed.
 	 */
-	if (arg[0] == '+')
+	എങ്കിൽ (arg[0] == '+')
 		arg++;
-	*(unsigned long long*)result = bb_strtoull(arg, NULL, 0);
+	*(unsigned long long*)result = bb_strtoull(arg, ശൂന്യ, 0);
 	/* both coreutils 6.10 and bash 3.2:
 	 * $ printf '%x\n' -2
 	 * fffffffffffffffe
 	 * Mimic that:
 	 */
-	if (errno) {
-		*(unsigned long long*)result = bb_strtoll(arg, NULL, 0);
+	എങ്കിൽ (errno) {
+		*(unsigned long long*)result = bb_strtoll(arg, ശൂന്യ, 0);
 	}
 }
-static void FAST_FUNC conv_strtoll(const char *arg, void *result)
+സ്ഥിതം ശൂന്യം FAST_FUNC conv_strtoll(സ്ഥിരം അക്ഷരം *arg, ശൂന്യം *result)
 {
-	if (arg[0] == '+')
+	എങ്കിൽ (arg[0] == '+')
 		arg++;
-	*(long long*)result = bb_strtoll(arg, NULL, 0);
+	*(long long*)result = bb_strtoll(arg, ശൂന്യ, 0);
 }
-static void FAST_FUNC conv_strtod(const char *arg, void *result)
+സ്ഥിതം ശൂന്യം FAST_FUNC conv_strtod(സ്ഥിരം അക്ഷരം *arg, ശൂന്യം *result)
 {
-	char *end;
+	അക്ഷരം *end;
 	/* Well, this one allows leading whitespace... so what? */
 	/* What I like much less is that "-" accepted too! :( */
 //TODO: needs setlocale(LC_NUMERIC, "C")?
-	*(double*)result = strtod(arg, &end);
-	if (end[0]) {
+	*(ഇരട്ട*)result = strtod(arg, &end);
+	എങ്കിൽ (end[0]) {
 		errno = ERANGE;
-		*(double*)result = 0;
+		*(ഇരട്ട*)result = 0;
 	}
 }
 
 /* Callers should check errno to detect errors */
-static unsigned long long my_xstrtoull(const char *arg)
+സ്ഥിതം unsigned long long my_xstrtoull(സ്ഥിരം അക്ഷരം *arg)
 {
 	unsigned long long result;
-	if (multiconvert(arg, &result, conv_strtoull))
+	എങ്കിൽ (multiconvert(arg, &result, conv_strtoull))
 		result = 0;
-	return result;
+	തിരികെ result;
 }
-static long long my_xstrtoll(const char *arg)
+സ്ഥിതം long long my_xstrtoll(സ്ഥിരം അക്ഷരം *arg)
 {
 	long long result;
-	if (multiconvert(arg, &result, conv_strtoll))
+	എങ്കിൽ (multiconvert(arg, &result, conv_strtoll))
 		result = 0;
-	return result;
+	തിരികെ result;
 }
-static double my_xstrtod(const char *arg)
+സ്ഥിതം ഇരട്ട my_xstrtod(സ്ഥിരം അക്ഷരം *arg)
 {
-	double result;
+	ഇരട്ട result;
 	multiconvert(arg, &result, conv_strtod);
-	return result;
+	തിരികെ result;
 }
 
 /* Handles %b; return 1 if output is to be short-circuited by \c */
-static int print_esc_string(const char *str)
+സ്ഥിതം പൂർണ്ണസംഖ്യ print_esc_string(സ്ഥിരം അക്ഷരം *str)
 {
-	char c;
-	while ((c = *str) != '\0') {
+	അക്ഷരം c;
+	ആകുമ്പോൾ ((c = *str) != '\0') {
 		str++;
-		if (c == '\\') {
+		എങ്കിൽ (c == '\\') {
 			/* %b also accepts 4-digit octals of the form \0### */
-			if (*str == '0') {
-				if ((unsigned char)(str[1] - '0') < 8) {
+			എങ്കിൽ (*str == '0') {
+				എങ്കിൽ ((unsigned അക്ഷരം)(str[1] - '0') < 8) {
 					/* 2nd char is 0..7: skip leading '0' */
 					str++;
 				}
 			}
-			else if (*str == 'c') {
-				return 1;
+			അല്ലെങ്കിൽ എങ്കിൽ (*str == 'c') {
+				തിരികെ 1;
 			}
 			{
 				/* optimization: don't force arg to be on-stack,
 				 * use another variable for that. */
-				const char *z = str;
+				സ്ഥിരം അക്ഷരം *z = str;
 				c = bb_process_escape_sequence(&z);
 				str = z;
 			}
@@ -180,164 +180,164 @@ static int print_esc_string(const char *str)
 		putchar(c);
 	}
 
-	return 0;
+	തിരികെ 0;
 }
 
-static void print_direc(char *format, unsigned fmt_length,
-		int field_width, int precision,
-		const char *argument)
+സ്ഥിതം ശൂന്യം print_direc(അക്ഷരം *format, unsigned fmt_length,
+		പൂർണ്ണസംഖ്യ field_width, പൂർണ്ണസംഖ്യ precision,
+		സ്ഥിരം അക്ഷരം *argument)
 {
 	long long llv;
-	double dv;
-	char saved;
-	char *have_prec, *have_width;
+	ഇരട്ട dv;
+	അക്ഷരം saved;
+	അക്ഷരം *have_prec, *have_width;
 
 	saved = format[fmt_length];
 	format[fmt_length] = '\0';
 
 	have_prec = strstr(format, ".*");
 	have_width = strchr(format, '*');
-	if (have_width - 1 == have_prec)
-		have_width = NULL;
+	എങ്കിൽ (have_width - 1 == have_prec)
+		have_width = ശൂന്യ;
 
 	/* multiconvert sets errno = 0, but %s needs it cleared */
 	errno = 0;
 
-	switch (format[fmt_length - 1]) {
-	case 'c':
+	തിരഞ്ഞെടുപ്പ് (format[fmt_length - 1]) {
+	അവസ്ഥ 'c':
 		printf(format, *argument);
-		break;
-	case 'd':
-	case 'i':
+		നിർത്തുക;
+	അവസ്ഥ 'd':
+	അവസ്ഥ 'i':
 		llv = my_xstrtoll(skip_whitespace(argument));
  print_long:
-		if (!have_width) {
-			if (!have_prec)
+		എങ്കിൽ (!have_width) {
+			എങ്കിൽ (!have_prec)
 				printf(format, llv);
-			else
+			അല്ലെങ്കിൽ
 				printf(format, precision, llv);
-		} else {
-			if (!have_prec)
+		} അല്ലെങ്കിൽ {
+			എങ്കിൽ (!have_prec)
 				printf(format, field_width, llv);
-			else
+			അല്ലെങ്കിൽ
 				printf(format, field_width, precision, llv);
 		}
-		break;
-	case 'o':
-	case 'u':
-	case 'x':
-	case 'X':
+		നിർത്തുക;
+	അവസ്ഥ 'o':
+	അവസ്ഥ 'u':
+	അവസ്ഥ 'x':
+	അവസ്ഥ 'X':
 		llv = my_xstrtoull(skip_whitespace(argument));
 		/* cheat: unsigned long and long have same width, so... */
-		goto print_long;
-	case 's':
+		പോകുക print_long;
+	അവസ്ഥ 's':
 		/* Are char* and long long the same? */
-		if (sizeof(argument) == sizeof(llv)) {
+		എങ്കിൽ (വലുപ്പം(argument) == വലുപ്പം(llv)) {
 			llv = (long long)(ptrdiff_t)argument;
-			goto print_long;
-		} else {
+			പോകുക print_long;
+		} അല്ലെങ്കിൽ {
 			/* Hope compiler will optimize it out by moving call
 			 * instruction after the ifs... */
-			if (!have_width) {
-				if (!have_prec)
+			എങ്കിൽ (!have_width) {
+				എങ്കിൽ (!have_prec)
 					printf(format, argument, /*unused:*/ argument, argument);
-				else
+				അല്ലെങ്കിൽ
 					printf(format, precision, argument, /*unused:*/ argument);
-			} else {
-				if (!have_prec)
+			} അല്ലെങ്കിൽ {
+				എങ്കിൽ (!have_prec)
 					printf(format, field_width, argument, /*unused:*/ argument);
-				else
+				അല്ലെങ്കിൽ
 					printf(format, field_width, precision, argument);
 			}
-			break;
+			നിർത്തുക;
 		}
-	case 'f':
-	case 'e':
-	case 'E':
-	case 'g':
-	case 'G':
+	അവസ്ഥ 'f':
+	അവസ്ഥ 'e':
+	അവസ്ഥ 'E':
+	അവസ്ഥ 'g':
+	അവസ്ഥ 'G':
 		dv = my_xstrtod(argument);
-		if (!have_width) {
-			if (!have_prec)
+		എങ്കിൽ (!have_width) {
+			എങ്കിൽ (!have_prec)
 				printf(format, dv);
-			else
+			അല്ലെങ്കിൽ
 				printf(format, precision, dv);
-		} else {
-			if (!have_prec)
+		} അല്ലെങ്കിൽ {
+			എങ്കിൽ (!have_prec)
 				printf(format, field_width, dv);
-			else
+			അല്ലെങ്കിൽ
 				printf(format, field_width, precision, dv);
 		}
-		break;
+		നിർത്തുക;
 	} /* switch */
 
 	format[fmt_length] = saved;
 }
 
 /* Handle params for "%*.*f". Negative numbers are ok (compat). */
-static int get_width_prec(const char *str)
+സ്ഥിതം പൂർണ്ണസംഖ്യ get_width_prec(സ്ഥിരം അക്ഷരം *str)
 {
-	int v = bb_strtoi(str, NULL, 10);
-	if (errno) {
-		bb_error_msg("invalid number '%s'", str);
+	പൂർണ്ണസംഖ്യ v = bb_strtoi(str, ശൂന്യ, 10);
+	എങ്കിൽ (errno) {
+		bb_error_സന്ദേശം("invalid number '%s'", str);
 		v = 0;
 	}
-	return v;
+	തിരികെ v;
 }
 
 /* Print the text in FORMAT, using ARGV for arguments to any '%' directives.
    Return advanced ARGV.  */
-static char **print_formatted(char *f, char **argv, int *conv_err)
+സ്ഥിതം അക്ഷരം **print_formatted(അക്ഷരം *f, അക്ഷരം **argv, പൂർണ്ണസംഖ്യ *conv_err)
 {
-	char *direc_start;      /* Start of % directive.  */
+	അക്ഷരം *direc_start;      /* Start of % directive.  */
 	unsigned direc_length;  /* Length of % directive.  */
-	int field_width;        /* Arg to first '*' */
-	int precision;          /* Arg to second '*' */
-	char **saved_argv = argv;
+	പൂർണ്ണസംഖ്യ field_width;        /* Arg to first '*' */
+	പൂർണ്ണസംഖ്യ precision;          /* Arg to second '*' */
+	അക്ഷരം **saved_argv = argv;
 
-	for (; *f; ++f) {
-		switch (*f) {
-		case '%':
+	വേണ്ടി (; *f; ++f) {
+		തിരഞ്ഞെടുപ്പ് (*f) {
+		അവസ്ഥ '%':
 			direc_start = f++;
 			direc_length = 1;
 			field_width = precision = 0;
-			if (*f == '%') {
+			എങ്കിൽ (*f == '%') {
 				bb_putchar('%');
-				break;
+				നിർത്തുക;
 			}
-			if (*f == 'b') {
-				if (*argv) {
-					if (print_esc_string(*argv))
-						return saved_argv; /* causes main() to exit */
+			എങ്കിൽ (*f == 'b') {
+				എങ്കിൽ (*argv) {
+					എങ്കിൽ (print_esc_string(*argv))
+						തിരികെ saved_argv; /* causes main() to exit */
 					++argv;
 				}
-				break;
+				നിർത്തുക;
 			}
-			while (*f && strchr("-+ #0", *f)) {
+			ആകുമ്പോൾ (*f && strchr("-+ #0", *f)) {
 				++f;
 				++direc_length;
 			}
-			if (*f == '*') {
+			എങ്കിൽ (*f == '*') {
 				++f;
 				++direc_length;
-				if (*argv)
+				എങ്കിൽ (*argv)
 					field_width = get_width_prec(*argv++);
-			} else {
-				while (isdigit(*f)) {
+			} അല്ലെങ്കിൽ {
+				ആകുമ്പോൾ (isdigit(*f)) {
 					++f;
 					++direc_length;
 				}
 			}
-			if (*f == '.') {
+			എങ്കിൽ (*f == '.') {
 				++f;
 				++direc_length;
-				if (*f == '*') {
+				എങ്കിൽ (*f == '*') {
 					++f;
 					++direc_length;
-					if (*argv)
+					എങ്കിൽ (*argv)
 						precision = get_width_prec(*argv++);
-				} else {
-					while (isdigit(*f)) {
+				} അല്ലെങ്കിൽ {
+					ആകുമ്പോൾ (isdigit(*f)) {
 						++f;
 						++direc_length;
 					}
@@ -348,21 +348,21 @@ static char **print_formatted(char *f, char **argv, int *conv_err)
 			 * bash does not like "%lld", but coreutils
 			 * happily takes even "%Llllhhzhhzd"!
 			 * We are permissive like coreutils */
-			while ((*f | 0x20) == 'l' || *f == 'h' || *f == 'z') {
+			ആകുമ്പോൾ ((*f | 0x20) == 'l' || *f == 'h' || *f == 'z') {
 				overlapping_strcpy(f, f + 1);
 			}
 			/* Add "ll" if integer modifier, then print */
 			{
-				static const char format_chars[] ALIGN1 = "diouxXfeEgGcs";
-				char *p = strchr(format_chars, *f);
+				സ്ഥിതം സ്ഥിരം അക്ഷരം format_chars[] ALIGN1 = "diouxXfeEgGcs";
+				അക്ഷരം *p = strchr(format_chars, *f);
 				/* needed - try "printf %" without it */
-				if (p == NULL || *f == '\0') {
-					bb_error_msg("%s: invalid format", direc_start);
+				എങ്കിൽ (p == ശൂന്യ || *f == '\0') {
+					bb_error_സന്ദേശം("%s: invalid format", direc_start);
 					/* causes main() to exit with error */
-					return saved_argv - 1;
+					തിരികെ saved_argv - 1;
 				}
 				++direc_length;
-				if (p - format_chars <= 5) {
+				എങ്കിൽ (p - format_chars <= 5) {
 					/* it is one of "diouxX" */
 					p = xmalloc(direc_length + 3);
 					memcpy(p, direc_start, direc_length);
@@ -372,40 +372,40 @@ static char **print_formatted(char *f, char **argv, int *conv_err)
 					//bb_error_msg("<%s>", p);
 					direc_length += 2;
 					direc_start = p;
-				} else {
-					p = NULL;
+				} അല്ലെങ്കിൽ {
+					p = ശൂന്യ;
 				}
-				if (*argv) {
+				എങ്കിൽ (*argv) {
 					print_direc(direc_start, direc_length, field_width,
 								precision, *argv++);
-				} else {
+				} അല്ലെങ്കിൽ {
 					print_direc(direc_start, direc_length, field_width,
 								precision, "");
 				}
 				*conv_err |= errno;
-				free(p);
+				സ്വതന്ത്രം(p);
 			}
-			break;
-		case '\\':
-			if (*++f == 'c') {
-				return saved_argv; /* causes main() to exit */
+			നിർത്തുക;
+		അവസ്ഥ '\\':
+			എങ്കിൽ (*++f == 'c') {
+				തിരികെ saved_argv; /* causes main() to exit */
 			}
-			bb_putchar(bb_process_escape_sequence((const char **)&f));
+			bb_putchar(bb_process_escape_sequence((സ്ഥിരം അക്ഷരം **)&f));
 			f--;
-			break;
-		default:
+			നിർത്തുക;
+		സ്ഥിരസ്ഥിതി:
 			putchar(*f);
 		}
 	}
 
-	return argv;
+	തിരികെ argv;
 }
 
-int printf_main(int argc UNUSED_PARAM, char **argv)
+പൂർണ്ണസംഖ്യ printf_main(പൂർണ്ണസംഖ്യ argc UNUSED_PARAM, അക്ഷരം **argv)
 {
-	int conv_err;
-	char *format;
-	char **argv2;
+	പൂർണ്ണസംഖ്യ conv_err;
+	അക്ഷരം *format;
+	അക്ഷരം **argv2;
 
 	/* We must check that stdout is not closed.
 	 * The reason for this is highly non-obvious.
@@ -417,8 +417,8 @@ int printf_main(int argc UNUSED_PARAM, char **argv)
 	 * to output data no matter what. So it will try later,
 	 * and possibly will clobber future output. Not good. */
 // TODO: check fcntl() & O_ACCMODE == O_WRONLY or O_RDWR?
-	if (fcntl(1, F_GETFL) == -1)
-		return 1; /* match coreutils 6.10 (sans error msg to stderr) */
+	എങ്കിൽ (fcntl(1, F_GETFL) == -1)
+		തിരികെ 1; /* match coreutils 6.10 (sans error msg to stderr) */
 	//if (dup2(1, 1) != 1) - old way
 	//	return 1;
 
@@ -427,12 +427,12 @@ int printf_main(int argc UNUSED_PARAM, char **argv)
 	 * We will mimic coreutils. */
 	argv = skip_dash_dash(argv);
 
-	if (!argv[0]) {
-		if ((ENABLE_ASH_PRINTF || ENABLE_HUSH_PRINTF)
+	എങ്കിൽ (!argv[0]) {
+		എങ്കിൽ ((ENABLE_ASH_PRINTF || ENABLE_HUSH_PRINTF)
 		 && applet_name[0] != 'p'
 		) {
-			bb_simple_error_msg("usage: printf FORMAT [ARGUMENT...]");
-			return 2; /* bash compat */
+			bb_simple_error_സന്ദേശം("usage: printf FORMAT [ARGUMENT...]");
+			തിരികെ 2; /* bash compat */
 		}
 		bb_show_usage();
 	}
@@ -441,16 +441,16 @@ int printf_main(int argc UNUSED_PARAM, char **argv)
 	argv2 = argv + 1;
 
 	conv_err = 0;
-	do {
+	ചെയ്യുക {
 		argv = argv2;
 		argv2 = print_formatted(format, argv, &conv_err);
-	} while (argv2 > argv && *argv2);
+	} ആകുമ്പോൾ (argv2 > argv && *argv2);
 
 	/* coreutils compat (bash doesn't do this):
 	if (*argv)
 		fprintf(stderr, "excess args ignored");
 	*/
 
-	return (argv2 < argv) /* if true, print_formatted errored out */
+	തിരികെ (argv2 < argv) /* if true, print_formatted errored out */
 		|| conv_err; /* print_formatted saw invalid number */
 }

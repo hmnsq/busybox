@@ -28,69 +28,69 @@
 //usage:     "\n	-s	Break at spaces"
 //usage:     "\n	-w	Use WIDTH columns instead of 80"
 
-#include "libbb.h"
-#include "unicode.h"
+#അന്തര്ഭാവ "libbb.h"
+#അന്തര്ഭാവ "unicode.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
 /* Must match getopt32 call */
-#define FLAG_COUNT_BYTES        1
+#define FLAG_എണ്ണം_BYTES        1
 #define FLAG_BREAK_SPACES       2
 #define FLAG_WIDTH              4
 
 /* Assuming the current column is COLUMN, return the column that
    printing C will move the cursor to.
    The first column is 0. */
-static int adjust_column(unsigned column, char c)
+സ്ഥിതം പൂർണ്ണസംഖ്യ adjust_column(unsigned column, അക്ഷരം c)
 {
-	if (option_mask32 & FLAG_COUNT_BYTES)
-		return ++column;
+	എങ്കിൽ (option_mask32 & FLAG_എണ്ണം_BYTES)
+		തിരികെ ++column;
 
-	if (c == '\t')
-		return column + 8 - column % 8;
+	എങ്കിൽ (c == '\t')
+		തിരികെ column + 8 - column % 8;
 
-	if (c == '\b') {
-		if ((int)--column < 0)
+	എങ്കിൽ (c == '\b') {
+		എങ്കിൽ ((പൂർണ്ണസംഖ്യ)--column < 0)
 			column = 0;
 	}
-	else if (c == '\r')
+	അല്ലെങ്കിൽ എങ്കിൽ (c == '\r')
 		column = 0;
-	else { /* just a printable char */
-		if (unicode_status != UNICODE_ON /* every byte is a new char */
+	അല്ലെങ്കിൽ { /* just a printable char */
+		എങ്കിൽ (unicode_status != UNICODE_ON /* every byte is a new char */
 		 || (c & 0xc0) != 0x80 /* it isn't a 2nd+ byte of a Unicode char */
 		) {
 			column++;
 		}
 	}
-	return column;
+	തിരികെ column;
 }
 
 /* Note that this function can write NULs, unlike fputs etc. */
-static void write2stdout(const void *buf, unsigned size)
+സ്ഥിതം ശൂന്യം write2stdout(സ്ഥിരം ശൂന്യം *buf, unsigned size)
 {
 	fwrite(buf, 1, size, stdout);
 }
 
-int fold_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int fold_main(int argc UNUSED_PARAM, char **argv)
+പൂർണ്ണസംഖ്യ fold_main(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv) MAIN_EXTERNALLY_VISIBLE;
+പൂർണ്ണസംഖ്യ fold_main(പൂർണ്ണസംഖ്യ argc UNUSED_PARAM, അക്ഷരം **argv)
 {
-	char *line_out = NULL;
-	const char *w_opt = "80";
+	അക്ഷരം *വരി_out = ശൂന്യ;
+	സ്ഥിരം അക്ഷരം *w_opt = "80";
 	unsigned width;
 	exitcode_t exitcode = EXIT_SUCCESS;
 
 	init_unicode();
 
-	if (ENABLE_INCLUDE_SUSv2) {
+	എങ്കിൽ (ENABLE_INCLUDE_SUSv2) {
 		/* Turn any numeric options into -w options.  */
-		int i;
-		for (i = 1; argv[i]; i++) {
-			const char *a = argv[i];
-			if (*a == '-') {
+		പൂർണ്ണസംഖ്യ i;
+		വേണ്ടി (i = 1; argv[i]; i++) {
+			സ്ഥിരം അക്ഷരം *a = argv[i];
+			എങ്കിൽ (*a == '-') {
 				a++;
-				if (*a == '-' && !a[1]) /* "--" */
-					break;
-				if (isdigit(*a))
+				എങ്കിൽ (*a == '-' && !a[1]) /* "--" */
+					നിർത്തുക;
+				എങ്കിൽ (isdigit(*a))
 					argv[i] = xasprintf("-w%s", a);
 			}
 		}
@@ -100,87 +100,87 @@ int fold_main(int argc UNUSED_PARAM, char **argv)
 	width = xatou_range(w_opt, 1, 10000);
 
 	argv += optind;
-	if (!*argv)
-		*--argv = (char*)"-";
+	എങ്കിൽ (!*argv)
+		*--argv = (അക്ഷരം*)"-";
 
-	do {
+	ചെയ്യുക {
 		FILE *istream = fopen_or_warn_stdin(*argv);
-		int c;
+		പൂർണ്ണസംഖ്യ c;
 		unsigned column = 0;     /* Screen column where next char will go */
 		unsigned offset_out = 0; /* Index in 'line_out' for next char */
 
-		if (istream == NULL) {
+		എങ്കിൽ (istream == ശൂന്യ) {
 			exitcode = EXIT_FAILURE;
-			continue;
+			തുടരുക;
 		}
 
-		while ((c = getc(istream)) != EOF) {
+		ആകുമ്പോൾ ((c = getc(istream)) != EOF) {
 			/* We grow line_out in chunks of 0x1000 bytes */
-			if ((offset_out & 0xfff) == 0) {
-				line_out = xrealloc(line_out, offset_out + 0x1000);
+			എങ്കിൽ ((offset_out & 0xfff) == 0) {
+				വരി_out = xrealloc(വരി_out, offset_out + 0x1000);
 			}
  rescan:
-			line_out[offset_out] = c;
-			if (c == '\n') {
-				write2stdout(line_out, offset_out + 1);
+			വരി_out[offset_out] = c;
+			എങ്കിൽ (c == '\n') {
+				write2stdout(വരി_out, offset_out + 1);
 				column = offset_out = 0;
-				continue;
+				തുടരുക;
 			}
 			column = adjust_column(column, c);
-			if (column <= width || offset_out == 0) {
+			എങ്കിൽ (column <= width || offset_out == 0) {
 				/* offset_out == 0 case happens
 				 * with small width (say, 1) and tabs.
 				 * The very first tab already goes to column 8,
 				 * but we must not wrap it */
 				offset_out++;
-				continue;
+				തുടരുക;
 			}
 
 			/* This character would make the line too long.
 			 * Print the line plus a newline, and make this character
 			 * start the next line */
-			if (option_mask32 & FLAG_BREAK_SPACES) {
+			എങ്കിൽ (option_mask32 & FLAG_BREAK_SPACES) {
 				unsigned i;
 				unsigned logical_end;
 
 				/* Look for the last blank. */
-				for (logical_end = offset_out - 1; (int)logical_end >= 0; logical_end--) {
-					if (!isblank(line_out[logical_end]))
-						continue;
+				വേണ്ടി (logical_end = offset_out - 1; (പൂർണ്ണസംഖ്യ)logical_end >= 0; logical_end--) {
+					എങ്കിൽ (!isblank(വരി_out[logical_end]))
+						തുടരുക;
 
 					/* Found a space or tab.
 					 * Output up to and including it, and start a new line */
 					logical_end++;
 					/*line_out[logical_end] = '\n'; - NO! this nukes one buffered character */
-					write2stdout(line_out, logical_end);
+					write2stdout(വരി_out, logical_end);
 					putchar('\n');
 					/* Move the remainder to the beginning of the next line.
 					 * The areas being copied here might overlap. */
-					memmove(line_out, line_out + logical_end, offset_out - logical_end);
+					memmove(വരി_out, വരി_out + logical_end, offset_out - logical_end);
 					offset_out -= logical_end;
-					for (column = i = 0; i < offset_out; i++) {
-						column = adjust_column(column, line_out[i]);
+					വേണ്ടി (column = i = 0; i < offset_out; i++) {
+						column = adjust_column(column, വരി_out[i]);
 					}
-					goto rescan;
+					പോകുക rescan;
 				}
 				/* No blank found, wrap will split the overlong word */
 			}
 			/* Output what we accumulated up to now, and start a new line */
-			line_out[offset_out] = '\n';
-			write2stdout(line_out, offset_out + 1);
+			വരി_out[offset_out] = '\n';
+			write2stdout(വരി_out, offset_out + 1);
 			column = offset_out = 0;
-			goto rescan;
+			പോകുക rescan;
 		} /* while (not EOF) */
 
-		if (offset_out) {
-			write2stdout(line_out, offset_out);
+		എങ്കിൽ (offset_out) {
+			write2stdout(വരി_out, offset_out);
 		}
 
-		if (fclose_if_not_stdin(istream)) {
-			bb_simple_perror_msg(*argv);
+		എങ്കിൽ (fclose_if_not_stdin(istream)) {
+			bb_simple_perror_സന്ദേശം(*argv);
 			exitcode = EXIT_FAILURE;
 		}
-	} while (*++argv);
+	} ആകുമ്പോൾ (*++argv);
 
 	fflush_stdout_and_exit(exitcode);
 }

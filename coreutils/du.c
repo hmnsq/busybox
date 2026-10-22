@@ -72,10 +72,10 @@
 //usage:       "104     ./docs\n"
 //usage:       "2417    .\n"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#അന്തര്ഭാവ "libbb.h"
+#അന്തര്ഭാവ "common_bufsiz.h"
 
-enum {
+എണ്ണൽ {
 	OPT_a_files_too    = (1 << 0),
 	OPT_H_follow_links = (1 << 1),
 	OPT_k_kbytes       = (1 << 2),
@@ -90,27 +90,27 @@ enum {
 	OPT_m_mbytes       = (1 << 11),
 };
 
-struct globals {
-#if ENABLE_FEATURE_HUMAN_READABLE
+ഘടന globals {
+#എങ്കിൽ ENABLE_FEATURE_HUMAN_READABLE
 	unsigned long disp_unit;
-#else
+#അല്ലെങ്കിൽ
 	unsigned disp_k;
 #endif
-	int max_print_depth;
+	പൂർണ്ണസംഖ്യ max_print_depth;
 	bool status;
-	int slink_depth;
-	int du_depth;
+	പൂർണ്ണസംഖ്യ slink_depth;
+	പൂർണ്ണസംഖ്യ du_depth;
 	dev_t dir_dev;
 } FIX_ALIASING;
-#define G (*(struct globals*)bb_common_bufsiz1)
-#define INIT_G() do { setup_common_bufsiz(); } while (0)
+#define G (*(ഘടന globals*)bb_common_bufsiz1)
+#define INIT_G() ചെയ്യുക { setup_common_bufsiz(); } ആകുമ്പോൾ (0)
 
 
-static void print(unsigned long long size, const char *filename)
+സ്ഥിതം ശൂന്യം print(unsigned long long size, സ്ഥിരം അക്ഷരം *filename)
 {
 	/* TODO - May not want to defer error checking here. */
-#if ENABLE_FEATURE_HUMAN_READABLE
-# if ENABLE_DESKTOP
+#എങ്കിൽ ENABLE_FEATURE_HUMAN_READABLE
+# എങ്കിൽ ENABLE_DESKTOP
 	/* ~30 bytes of code for extra compat:
 	 * coreutils' du rounds sizes up:
 	 * for example,  1025k file is shown as "2" by du -m.
@@ -118,7 +118,7 @@ static void print(unsigned long long size, const char *filename)
 	 * else (fixed scale such as -m), we round up. To that end,
 	 * add yet another half of the unit before displaying:
 	 */
-	if (G.disp_unit)
+	എങ്കിൽ (G.disp_unit)
 		size += (G.disp_unit-1) / (unsigned)(512 * 2);
 # endif
 	printf("%s\t%s\n",
@@ -128,12 +128,12 @@ static void print(unsigned long long size, const char *filename)
 			 */
 			make_human_readable_str(size, (option_mask32 & OPT_b) ? 1 : 512, G.disp_unit),
 			filename);
-#else
-	if (G.disp_k) {
-		if (!(option_mask32 & OPT_b)) {
+#അല്ലെങ്കിൽ
+	എങ്കിൽ (G.disp_k) {
+		എങ്കിൽ (!(option_mask32 & OPT_b)) {
 			size++;
 			size >>= 1;
-		} else {
+		} അല്ലെങ്കിൽ {
 			size >>= 10;
 		}
 	}
@@ -142,98 +142,98 @@ static void print(unsigned long long size, const char *filename)
 }
 
 /* tiny recursive du */
-static unsigned long long du(const char *filename)
+സ്ഥിതം unsigned long long du(സ്ഥിരം അക്ഷരം *filename)
 {
-	struct stat statbuf;
+	ഘടന stat statbuf;
 	unsigned long long sum;
 
-	if (lstat(filename, &statbuf) != 0) {
-		bb_simple_perror_msg(filename);
+	എങ്കിൽ (lstat(filename, &statbuf) != 0) {
+		bb_simple_perror_സന്ദേശം(filename);
 		G.status = EXIT_FAILURE;
-		return 0;
+		തിരികെ 0;
 	}
 
-	if (option_mask32 & OPT_x_one_FS) {
-		if (G.du_depth == 0) {
+	എങ്കിൽ (option_mask32 & OPT_x_one_FS) {
+		എങ്കിൽ (G.du_depth == 0) {
 			G.dir_dev = statbuf.st_dev;
-		} else if (G.dir_dev != statbuf.st_dev) {
-			return 0;
+		} അല്ലെങ്കിൽ എങ്കിൽ (G.dir_dev != statbuf.st_dev) {
+			തിരികെ 0;
 		}
 	}
 
 	sum = ((option_mask32 & OPT_b) ? statbuf.st_size : statbuf.st_blocks);
 
-	if (S_ISLNK(statbuf.st_mode)) {
-		if (G.slink_depth > G.du_depth) { /* -H or -L */
-			if (stat(filename, &statbuf) != 0) {
-				bb_simple_perror_msg(filename);
+	എങ്കിൽ (S_ISLNK(statbuf.st_mode)) {
+		എങ്കിൽ (G.slink_depth > G.du_depth) { /* -H or -L */
+			എങ്കിൽ (stat(filename, &statbuf) != 0) {
+				bb_simple_perror_സന്ദേശം(filename);
 				G.status = EXIT_FAILURE;
-				return 0;
+				തിരികെ 0;
 			}
 			sum = ((option_mask32 & OPT_b) ? statbuf.st_size : statbuf.st_blocks);
-			if (G.slink_depth == 1) {
+			എങ്കിൽ (G.slink_depth == 1) {
 				/* Convert -H to -L */
 				G.slink_depth = INT_MAX;
 			}
 		}
 	}
 
-	if (!(option_mask32 & OPT_l_hardlinks)
+	എങ്കിൽ (!(option_mask32 & OPT_l_hardlinks)
 	 && statbuf.st_nlink > 1
 	) {
 		/* Add files/directories with links only once */
-		if (is_in_ino_dev_hashtable(&statbuf)) {
-			return 0;
+		എങ്കിൽ (is_in_ino_dev_hashtable(&statbuf)) {
+			തിരികെ 0;
 		}
-		add_to_ino_dev_hashtable(&statbuf, NULL);
+		add_to_ino_dev_hashtable(&statbuf, ശൂന്യ);
 	}
 
-	if (S_ISDIR(statbuf.st_mode)) {
+	എങ്കിൽ (S_ISDIR(statbuf.st_mode)) {
 		DIR *dir;
-		struct dirent *entry;
-		char *newfile;
+		ഘടന dirent *entry;
+		അക്ഷരം *newfile;
 
 		dir = warn_opendir(filename);
-		if (!dir) {
+		എങ്കിൽ (!dir) {
 			G.status = EXIT_FAILURE;
-			return sum;
+			തിരികെ sum;
 		}
 
-		while ((entry = readdir(dir))) {
+		ആകുമ്പോൾ ((entry = readdir(dir))) {
 			newfile = concat_subpath_file(filename, entry->d_name);
-			if (newfile == NULL)
-				continue;
+			എങ്കിൽ (newfile == ശൂന്യ)
+				തുടരുക;
 			++G.du_depth;
 			sum += du(newfile);
 			--G.du_depth;
-			free(newfile);
+			സ്വതന്ത്രം(newfile);
 		}
 		closedir(dir);
-	} else {
-		if (!(option_mask32 & OPT_a_files_too) && G.du_depth != 0)
-			return sum;
+	} അല്ലെങ്കിൽ {
+		എങ്കിൽ (!(option_mask32 & OPT_a_files_too) && G.du_depth != 0)
+			തിരികെ sum;
 	}
-	if (G.du_depth <= G.max_print_depth) {
+	എങ്കിൽ (G.du_depth <= G.max_print_depth) {
 		print(sum, filename);
 	}
-	return sum;
+	തിരികെ sum;
 }
 
-int du_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int du_main(int argc UNUSED_PARAM, char **argv)
+പൂർണ്ണസംഖ്യ du_main(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv) MAIN_EXTERNALLY_VISIBLE;
+പൂർണ്ണസംഖ്യ du_main(പൂർണ്ണസംഖ്യ argc UNUSED_PARAM, അക്ഷരം **argv)
 {
 	unsigned long long total;
-	int slink_depth_save;
+	പൂർണ്ണസംഖ്യ slink_depth_save;
 	unsigned opt;
 
 	INIT_G();
 
-#if ENABLE_FEATURE_HUMAN_READABLE
+#എങ്കിൽ ENABLE_FEATURE_HUMAN_READABLE
 	IF_FEATURE_DU_DEFAULT_BLOCKSIZE_1K(G.disp_unit = 1024;)
 	IF_NOT_FEATURE_DU_DEFAULT_BLOCKSIZE_1K(G.disp_unit = 512;)
-	if (getenv("POSIXLY_CORRECT"))  /* TODO - a new libbb function? */
+	എങ്കിൽ (getenv("POSIXLY_CORRECT"))  /* TODO - a new libbb function? */
 		G.disp_unit = 512;
-#else
+#അല്ലെങ്കിൽ
 	IF_FEATURE_DU_DEFAULT_BLOCKSIZE_1K(G.disp_k = 1;)
 	/* IF_NOT_FEATURE_DU_DEFAULT_BLOCKSIZE_1K(G.disp_k = 0;) - G is pre-zeroed */
 #endif
@@ -245,66 +245,66 @@ int du_main(int argc UNUSED_PARAM, char **argv)
 	 * gnu du exits with an error code in this case.  We choose to simply
 	 * ignore -a.  This is consistent with -s being equivalent to -d 0.
 	 */
-#if ENABLE_FEATURE_HUMAN_READABLE
+#എങ്കിൽ ENABLE_FEATURE_HUMAN_READABLE
 	opt = getopt32(argv, "^"
 			"aHkLsxd:+lcbhm"
 			"\0" "h-km:k-hm:m-hk:H-L:L-H:s-d:d-s",
 			&G.max_print_depth
 	);
 	argv += optind;
-	if (opt & OPT_b) {
+	എങ്കിൽ (opt & OPT_b) {
 		G.disp_unit = 1;
 	}
-	if (opt & OPT_h_for_humans) {
+	എങ്കിൽ (opt & OPT_h_for_humans) {
 		G.disp_unit = 0;
 	}
-	if (opt & OPT_m_mbytes) {
+	എങ്കിൽ (opt & OPT_m_mbytes) {
 		G.disp_unit = 1024*1024;
 	}
-	if (opt & OPT_k_kbytes) {
+	എങ്കിൽ (opt & OPT_k_kbytes) {
 		G.disp_unit = 1024;
 	}
-#else
+#അല്ലെങ്കിൽ
 	opt = getopt32(argv, "^"
 			"aHkLsxd:+lcb"
 			"\0" "H-L:L-H:s-d:d-s",
 			&G.max_print_depth
 	);
 	argv += optind;
-# if !ENABLE_FEATURE_DU_DEFAULT_BLOCKSIZE_1K
-	if (opt & OPT_k_kbytes) {
+# എങ്കിൽ !ENABLE_FEATURE_DU_DEFAULT_BLOCKSIZE_1K
+	എങ്കിൽ (opt & OPT_k_kbytes) {
 		G.disp_k = 1;
 	}
 # endif
 #endif
-	if (opt & OPT_H_follow_links) {
+	എങ്കിൽ (opt & OPT_H_follow_links) {
 		G.slink_depth = 1;
 	}
-	if (opt & OPT_L_follow_links) {
+	എങ്കിൽ (opt & OPT_L_follow_links) {
 		G.slink_depth = INT_MAX;
 	}
-	if (opt & OPT_s_total_norecurse) {
+	എങ്കിൽ (opt & OPT_s_total_norecurse) {
 		G.max_print_depth = 0;
 	}
 
 	/* go through remaining args (if any) */
-	if (!*argv) {
-		*--argv = (char*)".";
-		if (G.slink_depth == 1) {
+	എങ്കിൽ (!*argv) {
+		*--argv = (അക്ഷരം*)".";
+		എങ്കിൽ (G.slink_depth == 1) {
 			G.slink_depth = 0;
 		}
 	}
 
 	slink_depth_save = G.slink_depth;
 	total = 0;
-	do {
+	ചെയ്യുക {
 		total += du(*argv);
 		G.slink_depth = slink_depth_save;
-	} while (*++argv);
+	} ആകുമ്പോൾ (*++argv);
 
-	if (ENABLE_FEATURE_CLEAN_UP)
+	എങ്കിൽ (ENABLE_FEATURE_CLEAN_UP)
 		reset_ino_dev_hashtable();
-	if (opt & OPT_c_total)
+	എങ്കിൽ (opt & OPT_c_total)
 		print(total, "total");
 
 	fflush_stdout_and_exit(G.status);

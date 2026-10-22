@@ -43,15 +43,15 @@
 //usage:       "$ basename /foo/bar.txt .txt\n"
 //usage:       "bar"
 
-#include "libbb.h"
+#അന്തര്ഭാവ "libbb.h"
 
 /* This is a NOFORK applet. Be very careful! */
 
-int basename_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int basename_main(int argc UNUSED_PARAM, char **argv)
+പൂർണ്ണസംഖ്യ basename_main(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv) MAIN_EXTERNALLY_VISIBLE;
+പൂർണ്ണസംഖ്യ basename_main(പൂർണ്ണസംഖ്യ argc UNUSED_PARAM, അക്ഷരം **argv)
 {
 	unsigned opts;
-	const char *suffix = NULL;
+	സ്ഥിരം അക്ഷരം *suffix = ശൂന്യ;
 
 	/* '+': stop at first non-option */
 	opts = getopt32(argv, "^+" "as:"
@@ -60,23 +60,23 @@ int basename_main(int argc UNUSED_PARAM, char **argv)
 	);
 	argv += optind;
 
-	do {
-		char *s;
+	ചെയ്യുക {
+		അക്ഷരം *s;
 		size_t m;
 
 		/* It should strip slash: /abc/def/ -> def */
 		s = bb_get_last_path_component_strip(*argv++);
 		m = strlen(s);
-		if (!opts) {
-			if (*argv) {
+		എങ്കിൽ (!opts) {
+			എങ്കിൽ (*argv) {
 				suffix = *argv;
-				if (argv[1])
+				എങ്കിൽ (argv[1])
 					bb_show_usage();
 			}
 		}
-		if (suffix) {
+		എങ്കിൽ (suffix) {
 			size_t n = strlen(suffix);
-			if ((m > n) && (strcmp(s + m - n, suffix) == 0)) {
+			എങ്കിൽ ((m > n) && (strcmp(s + m - n, suffix) == 0)) {
 				m -= n;
 				/*s[m] = '\0'; - redundant */
 			}
@@ -84,9 +84,9 @@ int basename_main(int argc UNUSED_PARAM, char **argv)
 		/* puts(s) will do, but we can do without stdio this way: */
 		s[m++] = '\n';
 		/* NB: != is correct here: */
-		if (full_write(STDOUT_FILENO, s, m) != (ssize_t)m)
-			return EXIT_FAILURE;
-	} while (opts && *argv);
+		എങ്കിൽ (full_write(STDOUT_FILENO, s, m) != (ssize_t)m)
+			തിരികെ EXIT_FAILURE;
+	} ആകുമ്പോൾ (opts && *argv);
 
-	return EXIT_SUCCESS;
+	തിരികെ EXIT_SUCCESS;
 }

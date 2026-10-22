@@ -101,33 +101,33 @@
 //usage:       "4+0 records in\n"
 //usage:       "4+0 records out\n"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#അന്തര്ഭാവ "libbb.h"
+#അന്തര്ഭാവ "common_bufsiz.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
 
-enum {
+എണ്ണൽ {
 	ifd = STDIN_FILENO,
 	ofd = STDOUT_FILENO,
 };
 
-struct globals {
+ഘടന globals {
 	off_t out_full, out_part, in_full, in_part;
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
+#എങ്കിൽ ENABLE_FEATURE_DD_THIRD_STATUS_വരി
 	unsigned long long total_bytes;
 	unsigned long long begin_time_us;
 #endif
-	int flags;
+	പൂർണ്ണസംഖ്യ flags;
 } FIX_ALIASING;
-#define G (*(struct globals*)bb_common_bufsiz1)
-#define INIT_G() do { \
+#define G (*(ഘടന globals*)bb_common_bufsiz1)
+#define INIT_G() ചെയ്യുക { \
 	setup_common_bufsiz(); \
 	/* we have to zero it out because of NOEXEC */ \
-	memset(&G, 0, sizeof(G)); \
-} while (0)
+	memset(&G, 0, വലുപ്പം(G)); \
+} ആകുമ്പോൾ (0)
 
-enum {
+എണ്ണൽ {
 	/* Must be in the same order as OP_conv_XXX! */
 	/* (see "flags |= (1 << what)" below) */
 	FLAG_NOTRUNC = (1 << 0) * ENABLE_FEATURE_DD_IBS_OBS,
@@ -139,7 +139,7 @@ enum {
 	/* start of input flags */
 	FLAG_IFLAG_SHIFT   = 5,
 	FLAG_SKIP_BYTES    = (1 << 5) * ENABLE_FEATURE_DD_IBS_OBS,
-	FLAG_COUNT_BYTES   = (1 << 6) * ENABLE_FEATURE_DD_IBS_OBS,
+	FLAG_എണ്ണം_BYTES   = (1 << 6) * ENABLE_FEATURE_DD_IBS_OBS,
 	FLAG_FULLBLOCK     = (1 << 7) * ENABLE_FEATURE_DD_IBS_OBS,
 	FLAG_IDIRECT       = (1 << 8) * ENABLE_FEATURE_DD_IBS_OBS,
 	/* end of input flags */
@@ -150,15 +150,15 @@ enum {
 	FLAG_ODIRECT       = (1 << 11) * ENABLE_FEATURE_DD_IBS_OBS,
 	/* end of output flags */
 	FLAG_TWOBUFS       = (1 << 12) * ENABLE_FEATURE_DD_IBS_OBS,
-	FLAG_COUNT         = 1 << 13,
+	FLAG_എണ്ണം         = 1 << 13,
 	FLAG_STATUS_NONE   = 1 << 14,
 	FLAG_STATUS_NOXFER = 1 << 15,
 };
 
-static void dd_output_status(int UNUSED_PARAM cur_signal)
+സ്ഥിതം ശൂന്യം dd_output_status(പൂർണ്ണസംഖ്യ UNUSED_PARAM cur_signal)
 {
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
-	double seconds;
+#എങ്കിൽ ENABLE_FEATURE_DD_THIRD_STATUS_വരി
+	ഇരട്ട seconds;
 	unsigned long long bytes_sec;
 	unsigned long long now_us = monotonic_us(); /* before fprintf */
 #endif
@@ -169,10 +169,10 @@ static void dd_output_status(int UNUSED_PARAM cur_signal)
 			G.in_full, G.in_part,
 			G.out_full, G.out_part);
 
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
-# if ENABLE_FEATURE_DD_STATUS
-	if (G.flags & FLAG_STATUS_NOXFER) /* status=noxfer active? */
-		return;
+#എങ്കിൽ ENABLE_FEATURE_DD_THIRD_STATUS_വരി
+# എങ്കിൽ ENABLE_FEATURE_DD_STATUS
+	എങ്കിൽ (G.flags & FLAG_STATUS_NOXFER) /* status=noxfer active? */
+		തിരികെ;
 	//TODO: should status=none make dd stop reacting to USR1 entirely?
 	//So far we react to it (we print the stats),
 	//status=none only suppresses final, non-USR1 generated status message.
@@ -199,67 +199,67 @@ static void dd_output_status(int UNUSED_PARAM cur_signal)
 #endif
 }
 
-#if ENABLE_FEATURE_DD_IBS_OBS
+#എങ്കിൽ ENABLE_FEATURE_DD_IBS_OBS
 # ifdef O_DIRECT
-static int clear_O_DIRECT(int fd)
+സ്ഥിതം പൂർണ്ണസംഖ്യ clear_O_DIRECT(പൂർണ്ണസംഖ്യ fd)
 {
-	if (errno == EINVAL) {
-		int fl = fcntl(fd, F_GETFL);
-		if (fl & O_DIRECT) {
+	എങ്കിൽ (errno == EINVAL) {
+		പൂർണ്ണസംഖ്യ fl = fcntl(fd, F_GETFL);
+		എങ്കിൽ (fl & O_DIRECT) {
 			fcntl(fd, F_SETFL, fl & ~O_DIRECT);
-			return 1;
+			തിരികെ 1;
 		}
 	}
-	return 0;
+	തിരികെ 0;
 }
 # endif
 #endif
 
-static ssize_t dd_read(void *ibuf, size_t ibs)
+സ്ഥിതം ssize_t dd_read(ശൂന്യം *ibuf, size_t ibs)
 {
 	ssize_t n;
 
-#if ENABLE_FEATURE_DD_IBS_OBS
+#എങ്കിൽ ENABLE_FEATURE_DD_IBS_OBS
  read_again:
-	if (G.flags & FLAG_FULLBLOCK)
+	എങ്കിൽ (G.flags & FLAG_FULLBLOCK)
 		n = full_read(ifd, ibuf, ibs);
-	else
+	അല്ലെങ്കിൽ
 #endif
 		n = safe_read(ifd, ibuf, ibs);
-#if ENABLE_FEATURE_DD_IBS_OBS
+#എങ്കിൽ ENABLE_FEATURE_DD_IBS_OBS
 # ifdef O_DIRECT
-	if (n < 0 && (G.flags & FLAG_IDIRECT) && clear_O_DIRECT(ifd))
-		goto read_again;
+	എങ്കിൽ (n < 0 && (G.flags & FLAG_IDIRECT) && clear_O_DIRECT(ifd))
+		പോകുക read_again;
 # endif
 #endif
-	return n;
+	തിരികെ n;
 }
 
-static bool write_and_stats(const void *buf, size_t len, size_t obs,
-	const char *filename)
+സ്ഥിതം bool write_and_stats(സ്ഥിരം ശൂന്യം *buf, size_t len, size_t obs,
+	സ്ഥിരം അക്ഷരം *filename)
 {
 	ssize_t n;
 
  IF_FEATURE_DD_IBS_OBS(write_again:)
 	n = full_write(ofd, buf, len);
-#if ENABLE_FEATURE_DD_IBS_OBS
+#എങ്കിൽ ENABLE_FEATURE_DD_IBS_OBS
 # ifdef O_DIRECT
-	if (n < 0 && (G.flags & FLAG_ODIRECT) && clear_O_DIRECT(ofd))
-		goto write_again;
+	എങ്കിൽ (n < 0 && (G.flags & FLAG_ODIRECT) && clear_O_DIRECT(ofd))
+		പോകുക write_again;
 # endif
 #endif
 
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
-	if (n > 0)
+#എങ്കിൽ ENABLE_FEATURE_DD_THIRD_STATUS_വരി
+	എങ്കിൽ (n > 0)
 		G.total_bytes += n;
 #endif
-	if ((size_t)n == obs) {
+	എങ്കിൽ ((size_t)n == obs) {
 		G.out_full++;
-		return 0;
+		തിരികെ 0;
 	}
-	if ((size_t)n == len) {
+	എങ്കിൽ ((size_t)n == len) {
 		G.out_part++;
-		return 0;
+		തിരികെ 0;
 	}
 	/* n is < len (and possibly is -1).
 	 * Even if n >= 0, errno is usually set correctly.
@@ -268,81 +268,81 @@ static bool write_and_stats(const void *buf, size_t len, size_t obs,
 	 * the remainder and gets errno set to ENOSPC.
 	 * It returns n > 0 (the amount which it did write).
 	 */
-	bb_perror_msg("error writing '%s'", filename);
-	return 1;
+	bb_perror_സന്ദേശം("error writing '%s'", filename);
+	തിരികെ 1;
 }
 
-#if ENABLE_LFS
+#എങ്കിൽ ENABLE_LFS
 # define XATOU_SFX xatoull_sfx
-#else
+#അല്ലെങ്കിൽ
 # define XATOU_SFX xatoul_sfx
 #endif
 
-#if ENABLE_FEATURE_DD_IBS_OBS
-static int parse_comma_flags(char *val, const char *words, const char *error_in)
+#എങ്കിൽ ENABLE_FEATURE_DD_IBS_OBS
+സ്ഥിതം പൂർണ്ണസംഖ്യ parse_comma_flags(അക്ഷരം *val, സ്ഥിരം അക്ഷരം *വാക്കുകൾ, സ്ഥിരം അക്ഷരം *error_in)
 {
-	int flags = 0;
-	while (1) {
-		int n;
-		char *arg;
+	പൂർണ്ണസംഖ്യ flags = 0;
+	ആകുമ്പോൾ (1) {
+		പൂർണ്ണസംഖ്യ n;
+		അക്ഷരം *arg;
 		/* find ',', replace them with NUL so we can use val for
 		 * index_in_strings() without copying.
 		 * We rely on val being non-null, else strchr would fault.
 		 */
 		arg = strchr(val, ',');
-		if (arg)
+		എങ്കിൽ (arg)
 			*arg = '\0';
-		n = index_in_strings(words, val);
-		if (n < 0)
-			bb_error_msg_and_die(bb_msg_invalid_arg_to, val, error_in);
+		n = index_in_strings(വാക്കുകൾ, val);
+		എങ്കിൽ (n < 0)
+			bb_error_സന്ദേശം_and_die(bb_സന്ദേശം_invalid_arg_to, val, error_in);
 		flags |= (1 << n);
-		if (!arg) /* no ',' left, so this was the last specifier */
-			break;
+		എങ്കിൽ (!arg) /* no ',' left, so this was the last specifier */
+			നിർത്തുക;
 		*arg = ','; /* to preserve ps listing */
 		val = arg + 1; /* skip this keyword and ',' */
 	}
-	return flags;
+	തിരികെ flags;
 }
 #endif
 
-static void *alloc_buf(size_t size)
+സ്ഥിതം ശൂന്യം *alloc_buf(size_t size)
 {
 	/* Important for "{i,o}flag=direct" - buffers must be page aligned */
-	if (size >= bb_getpagesize())
-		return xmmap_anon(size);
-	return xmalloc(size);
+	എങ്കിൽ (size >= bb_getpagesize())
+		തിരികെ xmmap_anon(size);
+	തിരികെ xmalloc(size);
 }
 
-int dd_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int dd_main(int argc UNUSED_PARAM, char **argv)
+പൂർണ്ണസംഖ്യ dd_main(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv) MAIN_EXTERNALLY_VISIBLE;
+പൂർണ്ണസംഖ്യ dd_main(പൂർണ്ണസംഖ്യ argc UNUSED_PARAM, അക്ഷരം **argv)
 {
-	static const char keywords[] ALIGN1 =
+	സ്ഥിതം സ്ഥിരം അക്ഷരം keywords[] ALIGN1 =
 		"bs\0""count\0""seek\0""skip\0""if\0""of\0"IF_FEATURE_DD_STATUS("status\0")
-#if ENABLE_FEATURE_DD_IBS_OBS
+#എങ്കിൽ ENABLE_FEATURE_DD_IBS_OBS
 		"ibs\0""obs\0""conv\0""iflag\0""oflag\0"
 #endif
 		;
-#if ENABLE_FEATURE_DD_IBS_OBS
-	static const char conv_words[] ALIGN1 =
+#എങ്കിൽ ENABLE_FEATURE_DD_IBS_OBS
+	സ്ഥിതം സ്ഥിരം അക്ഷരം conv_വാക്കുകൾ[] ALIGN1 =
 		"notrunc\0""sync\0""noerror\0""fsync\0""swab\0";
-	static const char iflag_words[] ALIGN1 =
+	സ്ഥിതം സ്ഥിരം അക്ഷരം iflag_വാക്കുകൾ[] ALIGN1 =
 		"skip_bytes\0""count_bytes\0""fullblock\0""direct\0";
-	static const char oflag_words[] ALIGN1 =
+	സ്ഥിതം സ്ഥിരം അക്ഷരം oflag_വാക്കുകൾ[] ALIGN1 =
 		"seek_bytes\0append\0""direct\0";
 #endif
-#if ENABLE_FEATURE_DD_STATUS
-	static const char status_words[] ALIGN1 =
+#എങ്കിൽ ENABLE_FEATURE_DD_STATUS
+	സ്ഥിതം സ്ഥിരം അക്ഷരം status_വാക്കുകൾ[] ALIGN1 =
 		"none\0""noxfer\0";
 #endif
-	enum {
+	എണ്ണൽ {
 		OP_bs = 0,
-		OP_count,
+		OP_എണ്ണം,
 		OP_seek,
 		OP_skip,
 		OP_if,
 		OP_of,
 		IF_FEATURE_DD_STATUS(OP_status,)
-#if ENABLE_FEATURE_DD_IBS_OBS
+#എങ്കിൽ ENABLE_FEATURE_DD_IBS_OBS
 		OP_ibs,
 		OP_obs,
 		OP_conv,
@@ -368,7 +368,7 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 	/* Partially implemented: */
 	//swab          swap every pair of input bytes: will abort on non-even reads
 		OP_iflag_skip_bytes,
-		OP_iflag_count_bytes,
+		OP_iflag_എണ്ണം_bytes,
 		OP_iflag_fullblock,
 		OP_iflag_direct,
 		OP_oflag_seek_bytes,
@@ -376,112 +376,112 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 #endif
 	};
 	exitcode_t exitcode = EXIT_FAILURE;
-	int i;
+	പൂർണ്ണസംഖ്യ i;
 	size_t ibs = 512;
-	char *ibuf;
-#if ENABLE_FEATURE_DD_IBS_OBS
+	അക്ഷരം *ibuf;
+#എങ്കിൽ ENABLE_FEATURE_DD_IBS_OBS
 	size_t obs = 512;
-	char *obuf;
-#else
+	അക്ഷരം *obuf;
+#അല്ലെങ്കിൽ
 # define obs  ibs
 # define obuf ibuf
 #endif
 	/* These are all zeroed at once! */
-	struct {
+	ഘടന {
 		IF_FEATURE_DD_IBS_OBS(size_t ocount;)
 		ssize_t prev_read_size; /* for detecting swab failure */
-		off_t count;
+		off_t എണ്ണം;
 		off_t seek, skip;
-		const char *infile, *outfile;
+		സ്ഥിരം അക്ഷരം *infile, *outfile;
 	} Z;
 #define ocount  (Z.ocount )
 #define prev_read_size (Z.prev_read_size)
-#define count   (Z.count  )
+#define എണ്ണം   (Z.എണ്ണം  )
 #define seek    (Z.seek   )
 #define skip    (Z.skip   )
 #define infile  (Z.infile )
 #define outfile (Z.outfile)
 
-	memset(&Z, 0, sizeof(Z));
+	memset(&Z, 0, വലുപ്പം(Z));
 	INIT_G();
 	//fflush_all(); - is this needed because of NOEXEC?
 
-	for (i = 1; argv[i]; i++) {
-		int what;
-		char *val;
-		char *arg = argv[i];
+	വേണ്ടി (i = 1; argv[i]; i++) {
+		പൂർണ്ണസംഖ്യ what;
+		അക്ഷരം *val;
+		അക്ഷരം *arg = argv[i];
 
-#if ENABLE_DESKTOP
+#എങ്കിൽ ENABLE_DESKTOP
 		/* "dd --". NB: coreutils 6.9 will complain if they see
 		 * more than one of them. We wouldn't. */
-		if (arg[0] == '-' && arg[1] == '-' && arg[2] == '\0')
-			continue;
+		എങ്കിൽ (arg[0] == '-' && arg[1] == '-' && arg[2] == '\0')
+			തുടരുക;
 #endif
 		val = strchr(arg, '=');
-		if (val == NULL)
+		എങ്കിൽ (val == ശൂന്യ)
 			bb_show_usage();
 		*val = '\0';
 		what = index_in_strings(keywords, arg);
-		if (what < 0)
+		എങ്കിൽ (what < 0)
 			bb_show_usage();
 		/* *val = '='; - to preserve ps listing? */
 		val++;
-#if ENABLE_FEATURE_DD_IBS_OBS
-		if (what == OP_ibs) {
+#എങ്കിൽ ENABLE_FEATURE_DD_IBS_OBS
+		എങ്കിൽ (what == OP_ibs) {
 			/* Must fit into positive ssize_t */
 			ibs = xatoul_range_sfx(val, 1, ((size_t)-1L)/2, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_obs) {
+		എങ്കിൽ (what == OP_obs) {
 			obs = xatoul_range_sfx(val, 1, ((size_t)-1L)/2, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_conv) {
-			G.flags |= parse_comma_flags(val, conv_words, "conv");
+		എങ്കിൽ (what == OP_conv) {
+			G.flags |= parse_comma_flags(val, conv_വാക്കുകൾ, "conv");
 			/*continue;*/
 		}
-		if (what == OP_iflag) {
-			G.flags |= parse_comma_flags(val, iflag_words, "iflag") << FLAG_IFLAG_SHIFT;
+		എങ്കിൽ (what == OP_iflag) {
+			G.flags |= parse_comma_flags(val, iflag_വാക്കുകൾ, "iflag") << FLAG_IFLAG_SHIFT;
 			/*continue;*/
 		}
-		if (what == OP_oflag) {
-			G.flags |= parse_comma_flags(val, oflag_words, "oflag") << FLAG_OFLAG_SHIFT;
+		എങ്കിൽ (what == OP_oflag) {
+			G.flags |= parse_comma_flags(val, oflag_വാക്കുകൾ, "oflag") << FLAG_OFLAG_SHIFT;
 			/*continue;*/
 		}
 #endif
-		if (what == OP_bs) {
+		എങ്കിൽ (what == OP_bs) {
 			ibs = xatoul_range_sfx(val, 1, ((size_t)-1L)/2, cwbkMG_suffixes);
 			obs = ibs;
 			/*continue;*/
 		}
 		/* These can be large: */
-		if (what == OP_count) {
-			G.flags |= FLAG_COUNT;
-			count = XATOU_SFX(val, cwbkMG_suffixes);
+		എങ്കിൽ (what == OP_എണ്ണം) {
+			G.flags |= FLAG_എണ്ണം;
+			എണ്ണം = XATOU_SFX(val, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_seek) {
+		എങ്കിൽ (what == OP_seek) {
 			seek = XATOU_SFX(val, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_skip) {
+		എങ്കിൽ (what == OP_skip) {
 			skip = XATOU_SFX(val, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_if) {
+		എങ്കിൽ (what == OP_if) {
 			infile = val;
 			/*continue;*/
 		}
-		if (what == OP_of) {
+		എങ്കിൽ (what == OP_of) {
 			outfile = val;
 			/*continue;*/
 		}
-#if ENABLE_FEATURE_DD_STATUS
-		if (what == OP_status) {
-			int n;
-			n = index_in_strings(status_words, val);
-			if (n < 0)
-				bb_error_msg_and_die(bb_msg_invalid_arg_to, val, "status");
+#എങ്കിൽ ENABLE_FEATURE_DD_STATUS
+		എങ്കിൽ (what == OP_status) {
+			പൂർണ്ണസംഖ്യ n;
+			n = index_in_strings(status_വാക്കുകൾ, val);
+			എങ്കിൽ (n < 0)
+				bb_error_സന്ദേശം_and_die(bb_സന്ദേശം_invalid_arg_to, val, "status");
 			G.flags |= FLAG_STATUS_NONE << n;
 			/*continue;*/
 		}
@@ -490,118 +490,118 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 
 	ibuf = alloc_buf(ibs);
 	obuf = ibuf;
-#if ENABLE_FEATURE_DD_IBS_OBS
-	if (ibs != obs) {
+#എങ്കിൽ ENABLE_FEATURE_DD_IBS_OBS
+	എങ്കിൽ (ibs != obs) {
 		G.flags |= FLAG_TWOBUFS;
 		obuf = alloc_buf(obs);
 	}
 #endif
 
-#if ENABLE_FEATURE_DD_SIGNAL_HANDLING
+#എങ്കിൽ ENABLE_FEATURE_DD_SIGNAL_HANDLING
 	signal_SA_RESTART_empty_mask(SIGUSR1, dd_output_status);
 #endif
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
+#എങ്കിൽ ENABLE_FEATURE_DD_THIRD_STATUS_വരി
 	G.begin_time_us = monotonic_us();
 #endif
 
-	if (infile) {
-		int iflag = O_RDONLY;
-#if ENABLE_FEATURE_DD_IBS_OBS
-		if (G.flags & FLAG_IDIRECT) {
+	എങ്കിൽ (infile) {
+		പൂർണ്ണസംഖ്യ iflag = O_RDONLY;
+#എങ്കിൽ ENABLE_FEATURE_DD_IBS_OBS
+		എങ്കിൽ (G.flags & FLAG_IDIRECT) {
 # ifdef O_DIRECT
 			iflag |= O_DIRECT;
-# else
-			bb_error_msg_and_die("O_DIRECT not supported on this platform");
+# അല്ലെങ്കിൽ
+			bb_error_സന്ദേശം_and_die("O_DIRECT not supported on this platform");
 # endif
 		}
 #endif
 		xmove_fd(xopen(infile, iflag), ifd);
-	} else {
-		infile = bb_msg_standard_input;
+	} അല്ലെങ്കിൽ {
+		infile = bb_സന്ദേശം_standard_നിവേശം;
 	}
-	if (outfile) {
-		int oflag = O_WRONLY | O_CREAT;
+	എങ്കിൽ (outfile) {
+		പൂർണ്ണസംഖ്യ oflag = O_WRONLY | O_CREAT;
 
-		if (!seek && !(G.flags & FLAG_NOTRUNC))
+		എങ്കിൽ (!seek && !(G.flags & FLAG_NOTRUNC))
 			oflag |= O_TRUNC;
-		if (G.flags & FLAG_APPEND)
+		എങ്കിൽ (G.flags & FLAG_APPEND)
 			oflag |= O_APPEND;
-#if ENABLE_FEATURE_DD_IBS_OBS
-		if (G.flags & FLAG_ODIRECT) {
+#എങ്കിൽ ENABLE_FEATURE_DD_IBS_OBS
+		എങ്കിൽ (G.flags & FLAG_ODIRECT) {
 # ifdef O_DIRECT
 			oflag |= O_DIRECT;
-# else
-			bb_error_msg_and_die("O_DIRECT not supported on this platform");
+# അല്ലെങ്കിൽ
+			bb_error_സന്ദേശം_and_die("O_DIRECT not supported on this platform");
 # endif
 		}
 #endif
 		xmove_fd(xopen(outfile, oflag), ofd);
 
-		if (seek && !(G.flags & FLAG_NOTRUNC)) {
+		എങ്കിൽ (seek && !(G.flags & FLAG_NOTRUNC)) {
 			size_t blocksz = (G.flags & FLAG_SEEK_BYTES) ? 1 : obs;
-			if (ftruncate(ofd, seek * blocksz) < 0) {
-				struct stat st;
+			എങ്കിൽ (ftruncate(ofd, seek * blocksz) < 0) {
+				ഘടന stat st;
 
-				if (fstat(ofd, &st) < 0
+				എങ്കിൽ (fstat(ofd, &st) < 0
 				 || S_ISREG(st.st_mode)
 				 || S_ISDIR(st.st_mode)
 				) {
-					goto die_outfile;
+					പോകുക die_outfile;
 				}
 			}
 		}
-	} else {
-		outfile = bb_msg_standard_output;
+	} അല്ലെങ്കിൽ {
+		outfile = bb_സന്ദേശം_standard_output;
 	}
-	if (skip) {
+	എങ്കിൽ (skip) {
 		size_t blocksz = (G.flags & FLAG_SKIP_BYTES) ? 1 : ibs;
-		if (lseek(ifd, skip * blocksz, SEEK_CUR) < 0) {
-			do {
+		എങ്കിൽ (lseek(ifd, skip * blocksz, SEEK_CUR) < 0) {
+			ചെയ്യുക {
 				ssize_t n = dd_read(ibuf, blocksz);
-				if (n < 0)
-					goto die_infile;
-				if (n == 0)
-					break;
-			} while (--skip != 0);
+				എങ്കിൽ (n < 0)
+					പോകുക die_infile;
+				എങ്കിൽ (n == 0)
+					നിർത്തുക;
+			} ആകുമ്പോൾ (--skip != 0);
 		}
 	}
-	if (seek) {
+	എങ്കിൽ (seek) {
 		size_t blocksz = (G.flags & FLAG_SEEK_BYTES) ? 1 : obs;
-		if (lseek(ofd, seek * blocksz, SEEK_CUR) < 0)
-			goto die_outfile;
+		എങ്കിൽ (lseek(ofd, seek * blocksz, SEEK_CUR) < 0)
+			പോകുക die_outfile;
 	}
 
-	while (1) {
+	ആകുമ്പോൾ (1) {
 		ssize_t n = ibs;
 
-		if (G.flags & FLAG_COUNT) {
-			if (count == 0)
-				break;
-			if ((G.flags & FLAG_COUNT_BYTES) && count < ibs)
-				n = count;
+		എങ്കിൽ (G.flags & FLAG_എണ്ണം) {
+			എങ്കിൽ (എണ്ണം == 0)
+				നിർത്തുക;
+			എങ്കിൽ ((G.flags & FLAG_എണ്ണം_BYTES) && എണ്ണം < ibs)
+				n = എണ്ണം;
 		}
 
 		n = dd_read(ibuf, n);
-		if (n == 0)
-			break;
-		if (n < 0) {
+		എങ്കിൽ (n == 0)
+			നിർത്തുക;
+		എങ്കിൽ (n < 0) {
 			/* "Bad block" */
-			if (!(G.flags & FLAG_NOERROR))
-				goto die_infile;
-			bb_simple_perror_msg(infile);
+			എങ്കിൽ (!(G.flags & FLAG_NOERROR))
+				പോകുക die_infile;
+			bb_simple_perror_സന്ദേശം(infile);
 			/* GNU dd with conv=noerror skips over bad blocks */
 			xlseek(ifd, ibs, SEEK_CUR);
 			/* conv=noerror,sync writes NULs,
 			 * conv=noerror just ignores input bad blocks */
 			n = 0;
 		}
-		if (G.flags & FLAG_SWAB) {
+		എങ്കിൽ (G.flags & FLAG_SWAB) {
 			uint16_t *p16;
 			ssize_t n2;
 
 			/* Our code allows only last read to be odd-sized */
-			if (prev_read_size & 1)
-				bb_error_msg_and_die("can't swab %lu byte buffer",
+			എങ്കിൽ (prev_read_size & 1)
+				bb_error_സന്ദേശം_and_die("can't swab %lu byte buffer",
 						(unsigned long)prev_read_size);
 			prev_read_size = n;
 
@@ -609,81 +609,81 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 			 *  echo -n "qwe" | dd conv=swab
 			 * prints "wqe".
 			 */
-			p16 = (void*) ibuf;
+			p16 = (ശൂന്യം*) ibuf;
 			n2 = (n >> 1);
-			while (--n2 >= 0) {
+			ആകുമ്പോൾ (--n2 >= 0) {
 				*p16 = bswap_16(*p16);
 				p16++;
 			}
 		}
-		count -= (G.flags & FLAG_COUNT_BYTES) ? n : 1;
-		if ((size_t)n == ibs)
+		എണ്ണം -= (G.flags & FLAG_എണ്ണം_BYTES) ? n : 1;
+		എങ്കിൽ ((size_t)n == ibs)
 			G.in_full++;
-		else {
+		അല്ലെങ്കിൽ {
 			G.in_part++;
-			if (G.flags & FLAG_SYNC) {
+			എങ്കിൽ (G.flags & FLAG_SYNC) {
 				memset(ibuf + n, 0, ibs - n);
 				n = ibs;
 			}
 		}
-#if ENABLE_FEATURE_DD_IBS_OBS
-		if (G.flags & FLAG_TWOBUFS) {
-			char *tmp = ibuf;
-			while (n) {
+#എങ്കിൽ ENABLE_FEATURE_DD_IBS_OBS
+		എങ്കിൽ (G.flags & FLAG_TWOBUFS) {
+			അക്ഷരം *tmp = ibuf;
+			ആകുമ്പോൾ (n) {
 				size_t d = obs - ocount;
-				if (d > (size_t)n)
+				എങ്കിൽ (d > (size_t)n)
 					d = n;
 				memcpy(obuf + ocount, tmp, d);
 				n -= d;
 				tmp += d;
 				ocount += d;
-				if (ocount == obs) {
-					if (write_and_stats(obuf, obs, obs, outfile))
-						goto out_status;
+				എങ്കിൽ (ocount == obs) {
+					എങ്കിൽ (write_and_stats(obuf, obs, obs, outfile))
+						പോകുക out_status;
 					ocount = 0;
 				}
 			}
-		} else
+		} അല്ലെങ്കിൽ
 #endif
 		{
-			if (write_and_stats(ibuf, n, obs, outfile))
-				goto out_status;
+			എങ്കിൽ (write_and_stats(ibuf, n, obs, outfile))
+				പോകുക out_status;
 		}
 	}
 
-	if (G.flags & FLAG_FSYNC) {
-		if (fsync(ofd) < 0)
-			goto die_outfile;
+	എങ്കിൽ (G.flags & FLAG_FSYNC) {
+		എങ്കിൽ (fsync(ofd) < 0)
+			പോകുക die_outfile;
 	}
 
-#if ENABLE_FEATURE_DD_IBS_OBS
-	if (ocount != 0) {
-		if (write_and_stats(obuf, ocount, obs, outfile))
-			goto out_status;
+#എങ്കിൽ ENABLE_FEATURE_DD_IBS_OBS
+	എങ്കിൽ (ocount != 0) {
+		എങ്കിൽ (write_and_stats(obuf, ocount, obs, outfile))
+			പോകുക out_status;
 	}
 #endif
-	if (close(ifd) < 0) {
+	എങ്കിൽ (close(ifd) < 0) {
  die_infile:
-		bb_simple_perror_msg_and_die(infile);
+		bb_simple_perror_സന്ദേശം_and_die(infile);
 	}
 
-	if (close(ofd) < 0) {
+	എങ്കിൽ (close(ofd) < 0) {
  die_outfile:
-		bb_simple_perror_msg_and_die(outfile);
+		bb_simple_perror_സന്ദേശം_and_die(outfile);
 	}
 
 	exitcode = EXIT_SUCCESS;
  out_status:
-	if (!ENABLE_FEATURE_DD_STATUS || !(G.flags & FLAG_STATUS_NONE))
+	എങ്കിൽ (!ENABLE_FEATURE_DD_STATUS || !(G.flags & FLAG_STATUS_NONE))
 		dd_output_status(0);
 
-#if 0 /* can't just free(), they can be mmap()ed */
-	if (ENABLE_FEATURE_CLEAN_UP) {
-		free(obuf);
-		if (G.flags & FLAG_TWOBUFS)
-			free(ibuf);
+#എങ്കിൽ 0 /* can't just free(), they can be mmap()ed */
+	എങ്കിൽ (ENABLE_FEATURE_CLEAN_UP) {
+		സ്വതന്ത്രം(obuf);
+		എങ്കിൽ (G.flags & FLAG_TWOBUFS)
+			സ്വതന്ത്രം(ibuf);
 	}
 #endif
 
-	return exitcode;
+	തിരികെ exitcode;
 }

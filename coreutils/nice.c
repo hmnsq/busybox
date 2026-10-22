@@ -22,34 +22,34 @@
 //usage:       "Change scheduling priority, run PROG\n"
 //usage:     "\n	-n ADJUST	Adjust priority by ADJUST"
 
-#include "libbb.h"
+#അന്തര്ഭാവ "libbb.h"
 
-int nice_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int nice_main(int argc UNUSED_PARAM, char **argv)
+പൂർണ്ണസംഖ്യ nice_main(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv) MAIN_EXTERNALLY_VISIBLE;
+പൂർണ്ണസംഖ്യ nice_main(പൂർണ്ണസംഖ്യ argc UNUSED_PARAM, അക്ഷരം **argv)
 {
-	int old_priority, adjustment;
+	പൂർണ്ണസംഖ്യ old_priority, adjustment;
 
 	old_priority = getpriority(PRIO_PROCESS, 0);
 
-	if (!*++argv) { /* No args, so (GNU) output current nice value. */
+	എങ്കിൽ (!*++argv) { /* No args, so (GNU) output current nice value. */
 		printf("%d\n", old_priority);
 		fflush_stdout_and_exit_SUCCESS();
 	}
 
 	adjustment = 10;  /* Set default adjustment. */
 
-	if (argv[0][0] == '-') {
-		char *nnn = argv[0] + 1;
-		if (nnn[0] == 'n') { /* -n */
+	എങ്കിൽ (argv[0][0] == '-') {
+		അക്ഷരം *nnn = argv[0] + 1;
+		എങ്കിൽ (nnn[0] == 'n') { /* -n */
 			nnn += 1;
-			if (!nnn[0]) { /* "-n NNN" */
+			എങ്കിൽ (!nnn[0]) { /* "-n NNN" */
 				nnn = *++argv;
 			}
 			/* else: "-nNNN" (w/o space) */
 		}
 		/* else: "-NNN" (NNN may be negative) - same as "-n NNN" */
 
-		if (!nnn || !argv[1]) {  /* Missing priority or PROG! */
+		എങ്കിൽ (!nnn || !argv[1]) {  /* Missing priority or PROG! */
 			bb_show_usage();
 		}
 		adjustment = xatoi_range(nnn, INT_MIN/2, INT_MAX/2);
@@ -57,10 +57,10 @@ int nice_main(int argc UNUSED_PARAM, char **argv)
 	}
 
 	{  /* Set our priority. */
-		int prio = old_priority + adjustment;
+		പൂർണ്ണസംഖ്യ prio = old_priority + adjustment;
 
-		if (setpriority(PRIO_PROCESS, 0, prio) < 0) {
-			bb_perror_msg_and_die("setpriority(%d)", prio);
+		എങ്കിൽ (setpriority(PRIO_PROCESS, 0, prio) < 0) {
+			bb_perror_സന്ദേശം_and_die("setpriority(%d)", prio);
 		}
 	}
 

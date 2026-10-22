@@ -28,7 +28,7 @@
 //usage:#define nohup_example_usage
 //usage:       "$ nohup make &"
 
-#include "libbb.h"
+#അന്തര്ഭാവ "libbb.h"
 
 /* Compat info: nohup (GNU coreutils 6.8) does this:
 # nohup true
@@ -49,20 +49,20 @@ nohup: redirecting stderr to stdout
 #
 */
 
-int nohup_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int nohup_main(int argc UNUSED_PARAM, char **argv)
+പൂർണ്ണസംഖ്യ nohup_main(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv) MAIN_EXTERNALLY_VISIBLE;
+പൂർണ്ണസംഖ്യ nohup_main(പൂർണ്ണസംഖ്യ argc UNUSED_PARAM, അക്ഷരം **argv)
 {
-	const char *nohupout;
-	char *home;
+	സ്ഥിരം അക്ഷരം *nohupout;
+	അക്ഷരം *home;
 
 	xfunc_error_retval = 127;
 
-	if (!argv[1]) {
+	എങ്കിൽ (!argv[1]) {
 		bb_show_usage();
 	}
 
 	/* If stdin is a tty, detach from it. */
-	if (isatty(STDIN_FILENO)) {
+	എങ്കിൽ (isatty(STDIN_FILENO)) {
 		/* bb_error_msg("ignoring input"); */
 		close(STDIN_FILENO);
 		xopen(bb_dev_null, O_RDONLY); /* will be fd 0 (STDIN_FILENO) */
@@ -70,28 +70,28 @@ int nohup_main(int argc UNUSED_PARAM, char **argv)
 
 	nohupout = "nohup.out";
 	/* Redirect stdout to nohup.out, either in "." or in "$HOME". */
-	if (isatty(STDOUT_FILENO)) {
+	എങ്കിൽ (isatty(STDOUT_FILENO)) {
 		close(STDOUT_FILENO);
-		if (open(nohupout, O_CREAT|O_WRONLY|O_APPEND, S_IRUSR|S_IWUSR) < 0) {
+		എങ്കിൽ (open(nohupout, O_CREAT|O_WRONLY|O_APPEND, S_IRUSR|S_IWUSR) < 0) {
 			home = getenv("HOME");
-			if (home) {
+			എങ്കിൽ (home) {
 				nohupout = concat_path_file(home, nohupout);
 				xopen3(nohupout, O_CREAT|O_WRONLY|O_APPEND, S_IRUSR|S_IWUSR);
-			} else {
+			} അല്ലെങ്കിൽ {
 				xopen(bb_dev_null, O_RDONLY); /* will be fd 1 */
 			}
 		}
-		bb_error_msg("appending output to %s", nohupout);
+		bb_error_സന്ദേശം("appending output to %s", nohupout);
 	}
 
 	/* If we have a tty on stderr, redirect to stdout. */
-	if (isatty(STDERR_FILENO)) {
+	എങ്കിൽ (isatty(STDERR_FILENO)) {
 		/* if (stdout_wasnt_a_tty)
 			bb_error_msg("redirecting stderr to stdout"); */
 		dup2(STDOUT_FILENO, STDERR_FILENO);
 	}
 
-	signal(SIGHUP, SIG_IGN);
+	സൂചന(SIGHUP, SIG_IGN);
 
 	argv++;
 	BB_EXECVP_or_die(argv);
