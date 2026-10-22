@@ -47,75 +47,75 @@
 //usage:     "\n	-u	dos2unix"
 //usage:     "\n	-d	unix2dos"
 
-#include "libbb.h"
+#شامل "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-enum {
+شمارش {
 	CT_UNIX2DOS = 1,
 	CT_DOS2UNIX
 };
 
 /* if fn is NULL then input is stdin and output is stdout */
-static void convert(char *fn, int conv_type)
+ایستا تهی convert(نویسه *fn, صحیح conv_type)
 {
 	FILE *in, *out;
-	int ch;
-	char *temp_fn = temp_fn; /* for compiler */
-	char *resolved_fn = resolved_fn;
+	صحیح ch;
+	نویسه *temp_fn = temp_fn; /* for compiler */
+	نویسه *resolved_fn = resolved_fn;
 
 	in = stdin;
 	out = stdout;
-	if (fn != NULL) {
-		struct stat st;
-		int fd;
+	اگر (fn != پوچ) {
+		ساختار stat st;
+		صحیح fd;
 
 		resolved_fn = xmalloc_follow_symlinks(fn);
-		if (resolved_fn == NULL)
-			bb_simple_perror_msg_and_die(fn);
+		اگر (resolved_fn == پوچ)
+			bb_simple_perror_پیام_and_die(fn);
 		in = xfopen_for_read(resolved_fn);
 		xfstat(fileno(in), &st, resolved_fn);
 
 		temp_fn = xasprintf("%sXXXXXX", resolved_fn);
 		fd = xmkstemp(temp_fn);
-		if (fchmod(fd, st.st_mode) == -1)
-			bb_simple_perror_msg_and_die(temp_fn);
+		اگر (fchmod(fd, st.st_mode) == -1)
+			bb_simple_perror_پیام_and_die(temp_fn);
 		fchown(fd, st.st_uid, st.st_gid);
 
 		out = xfdopen_for_write(fd);
 	}
 
-	while ((ch = fgetc(in)) != EOF) {
-		if (ch == '\r')
-			continue;
-		if (ch == '\n')
-			if (conv_type == CT_UNIX2DOS)
+	وقتی ((ch = fgetc(in)) != EOF) {
+		اگر (ch == '\r')
+			ادامه;
+		اگر (ch == '\n')
+			اگر (conv_type == CT_UNIX2DOS)
 				fputc('\r', out);
 		fputc(ch, out);
 	}
 
-	if (fn != NULL) {
-		if (fclose(in) < 0 || fclose(out) < 0) {
+	اگر (fn != پوچ) {
+		اگر (fclose(in) < 0 || fclose(out) < 0) {
 			unlink(temp_fn);
 			bb_perror_nomsg_and_die();
 		}
 		xrename(temp_fn, resolved_fn);
-		free(temp_fn);
-		free(resolved_fn);
+		آزاد(temp_fn);
+		آزاد(resolved_fn);
 	}
 }
 
-int dos2unix_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int dos2unix_main(int argc UNUSED_PARAM, char **argv)
+صحیح dos2unix_main(صحیح argc, نویسه **argv) MAIN_EXTERNALLY_VISIBLE;
+صحیح dos2unix_main(صحیح argc UNUSED_PARAM, نویسه **argv)
 {
-	int o, conv_type;
+	صحیح o, conv_type;
 
 	/* See if we are supposed to be doing dos2unix or unix2dos */
-	if (ENABLE_DOS2UNIX
+	اگر (ENABLE_DOS2UNIX
 	 && (!ENABLE_UNIX2DOS || applet_name[0] == 'd')
 	) {
 		conv_type = CT_DOS2UNIX;
-	} else {
+	} وگرنه {
 		conv_type = CT_UNIX2DOS;
 	}
 
@@ -124,14 +124,14 @@ int dos2unix_main(int argc UNUSED_PARAM, char **argv)
 
 	/* Do the conversion requested by an argument else do the default
 	 * conversion depending on our name.  */
-	if (o)
+	اگر (o)
 		conv_type = o;
 
 	argv += optind;
-	do {
+	انجامبده {
 		/* might be convert(NULL) if there is no filename given */
 		convert(*argv, conv_type);
-	} while (*argv && *++argv);
+	} وقتی (*argv && *++argv);
 
-	return 0;
+	بازگشت 0;
 }

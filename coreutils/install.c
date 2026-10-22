@@ -38,11 +38,11 @@
 //usage:     "\n	-Z	Set security context"
 //usage:	)
 
-#include "libbb.h"
-#include "libcoreutils/coreutils.h"
+#شامل "libbb.h"
+#شامل "libcoreutils/coreutils.h"
 
-#if ENABLE_FEATURE_INSTALL_LONG_OPTIONS
-static const char install_longopts[] ALIGN1 =
+#اگر ENABLE_FEATURE_INSTALL_LONG_OPTIONS
+ایستا ثابت نویسه install_longopts[] ALIGN1 =
 	IF_FEATURE_VERBOSE(
 	"verbose\0"             No_argument       "v"
 	)
@@ -55,7 +55,7 @@ static const char install_longopts[] ALIGN1 =
 	"target-directory\0"	Required_argument "t"
 /* autofs build insists of using -b --suffix=.orig */
 /* TODO? (short option for --suffix is -S) */
-# if ENABLE_SELINUX
+# اگر ENABLE_SELINUX
 	"context\0"             Required_argument "Z"
 	"preserve_context\0"    No_argument       "\xff"
 	"preserve-context\0"    No_argument       "\xff"
@@ -63,35 +63,35 @@ static const char install_longopts[] ALIGN1 =
 	;
 # define GETOPT32 getopt32long
 # define LONGOPTS install_longopts,
-#else
+#وگرنه
 # define GETOPT32 getopt32
 # define LONGOPTS
 #endif
 
 
-#if ENABLE_SELINUX
-static void setdefaultfilecon(const char *path)
+#اگر ENABLE_SELINUX
+ایستا تهی setdefaultfilecon(ثابت نویسه *path)
 {
-	struct stat s;
-	security_context_t scontext = NULL;
+	ساختار stat s;
+	security_context_t scontext = پوچ;
 
-	if (!is_selinux_enabled()) {
-		return;
+	اگر (!is_selinux_enabled()) {
+		بازگشت;
 	}
-	if (lstat(path, &s) != 0) {
-		return;
-	}
-
-	if (matchpathcon(path, s.st_mode, &scontext) < 0) {
-		goto out;
-	}
-	if (strcmp(scontext, "<<none>>") == 0) {
-		goto out;
+	اگر (lstat(path, &s) != 0) {
+		بازگشت;
 	}
 
-	if (lsetfilecon(path, scontext) < 0) {
-		if (errno != ENOTSUP) {
-			bb_perror_msg("warning: can't change context"
+	اگر (matchpathcon(path, s.st_mode, &scontext) < 0) {
+		برو out;
+	}
+	اگر (strcmp(scontext, "<<none>>") == 0) {
+		برو out;
+	}
+
+	اگر (lsetfilecon(path, scontext) < 0) {
+		اگر (errno != ENOTSUP) {
+			bb_perror_پیام("warning: can't change context"
 					" of %s to %s", path, scontext);
 		}
 	}
@@ -102,27 +102,27 @@ static void setdefaultfilecon(const char *path)
 
 #endif
 
-int install_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int install_main(int argc, char **argv)
+صحیح install_main(صحیح argc, نویسه **argv) MAIN_EXTERNALLY_VISIBLE;
+صحیح install_main(صحیح argc, نویسه **argv)
 {
-	struct stat statbuf;
+	ساختار stat statbuf;
 	mode_t mode;
 	uid_t uid;
 	gid_t gid;
-	char *arg, *last;
-	const char *gid_str;
-	const char *uid_str;
-	const char *mode_str;
-	int mkdir_flags = FILEUTILS_RECUR;
-	int copy_flags = FILEUTILS_DEREFERENCE | FILEUTILS_FORCE;
-	int opts;
-	int ret = EXIT_SUCCESS;
-	int isdir;
-#if ENABLE_SELINUX
+	نویسه *arg, *last;
+	ثابت نویسه *gid_str;
+	ثابت نویسه *uid_str;
+	ثابت نویسه *mode_str;
+	صحیح mkdir_flags = FILEUTILS_RECUR;
+	صحیح copy_flags = FILEUTILS_DEREFERENCE | FILEUTILS_FORCE;
+	صحیح opts;
+	صحیح ret = EXIT_SUCCESS;
+	صحیح isdir;
+#اگر ENABLE_SELINUX
 	security_context_t scontext;
 	bool use_default_selinux_context = 1;
 #endif
-	enum {
+	شمارش {
 		OPT_c             = 1 << 0,
 		OPT_v             = 1 << 1,
 		OPT_b             = 1 << 2,
@@ -134,7 +134,7 @@ int install_main(int argc, char **argv)
 		OPT_MODE          = 1 << 8,
 		OPT_OWNER         = 1 << 9,
 		OPT_TARGET        = 1 << 10,
-#if ENABLE_SELINUX
+#اگر ENABLE_SELINUX
 		OPT_SET_SECURITY_CONTEXT = 1 << 11,
 		OPT_PRESERVE_SECURITY_CONTEXT = 1 << 12,
 #endif
@@ -154,66 +154,66 @@ int install_main(int argc, char **argv)
 	argc -= optind;
 	argv += optind;
 
-#if ENABLE_SELINUX
-	if (opts & (OPT_PRESERVE_SECURITY_CONTEXT|OPT_SET_SECURITY_CONTEXT)) {
+#اگر ENABLE_SELINUX
+	اگر (opts & (OPT_PRESERVE_SECURITY_CONTEXT|OPT_SET_SECURITY_CONTEXT)) {
 		selinux_or_die();
 		use_default_selinux_context = 0;
-		if (opts & OPT_PRESERVE_SECURITY_CONTEXT) {
+		اگر (opts & OPT_PRESERVE_SECURITY_CONTEXT) {
 			copy_flags |= FILEUTILS_PRESERVE_SECURITY_CONTEXT;
 		}
-		if (opts & OPT_SET_SECURITY_CONTEXT) {
+		اگر (opts & OPT_SET_SECURITY_CONTEXT) {
 			setfscreatecon_or_die(scontext);
 			copy_flags |= FILEUTILS_SET_SECURITY_CONTEXT;
 		}
 	}
 #endif
 
-	if ((opts & OPT_v) && FILEUTILS_VERBOSE) {
+	اگر ((opts & OPT_v) && FILEUTILS_VERBOSE) {
 		mkdir_flags |= FILEUTILS_VERBOSE;
 		copy_flags |= FILEUTILS_VERBOSE;
 	}
 
 	/* preserve access and modification time, this is GNU behaviour,
 	 * BSD only preserves modification time */
-	if (opts & OPT_PRESERVE_TIME) {
+	اگر (opts & OPT_PRESERVE_TIME) {
 		copy_flags |= FILEUTILS_PRESERVE_STATUS;
 	}
 	mode = 0755; /* GNU coreutils 6.10 compat */
-	if (opts & OPT_MODE)
+	اگر (opts & OPT_MODE)
 		mode = bb_parse_mode(mode_str, mode);
 	uid = (opts & OPT_OWNER) ? get_ug_id(uid_str, xuname2uid) : getuid();
 	gid = (opts & OPT_GROUP) ? get_ug_id(gid_str, xgroup2gid) : getgid();
 
 	/* If -t DIR is in use, then isdir=true, last="DIR" */
 	isdir = (opts & OPT_TARGET);
-	if (!(opts & (OPT_TARGET|OPT_DIRECTORY))) {
+	اگر (!(opts & (OPT_TARGET|OPT_DIRECTORY))) {
 		/* Neither -t DIR nor -d is in use */
 		argc--;
 		last = argv[argc];
-		argv[argc] = NULL;
+		argv[argc] = پوچ;
 		/* coreutils install resolves link in this case, don't use lstat */
 		isdir = stat(last, &statbuf) < 0 ? 0 : S_ISDIR(statbuf.st_mode);
 	}
 
-	if (argc < 1)
+	اگر (argc < 1)
 		bb_show_usage();
 
-	while ((arg = *argv++) != NULL) {
-		char *dest;
+	وقتی ((arg = *argv++) != پوچ) {
+		نویسه *dest;
 
-		if (opts & OPT_DIRECTORY) {
+		اگر (opts & OPT_DIRECTORY) {
 			dest = arg;
 			/* GNU coreutils 6.9 does not set uid:gid
 			 * on intermediate created directories
 			 * (only on last one) */
-			if (bb_make_directory(dest, 0755, mkdir_flags)) {
+			اگر (bb_make_directory(dest, 0755, mkdir_flags)) {
 				ret = EXIT_FAILURE;
-				goto next;
+				برو next;
 			}
-		} else {
+		} وگرنه {
 			dest = last;
-			if (opts & OPT_MKDIR_LEADING) {
-				char *ddir = xstrdup(dest);
+			اگر (opts & OPT_MKDIR_LEADING) {
+				نویسه *ddir = xstrdup(dest);
 				/*
 				 * -D -t DIR1/DIR2/F3 FILE: create DIR1/DIR2/F3, copy FILE there
 				 * -D FILE DIR1/DIR2/F3: create DIR1/DIR2, copy FILE there as F3
@@ -222,23 +222,23 @@ int install_main(int argc, char **argv)
 				/* errors are not checked. copy_file
 				 * will fail if dir is not created.
 				 */
-				free(ddir);
+				آزاد(ddir);
 			}
-			if (isdir)
+			اگر (isdir)
 				dest = concat_path_file(last, bb_basename(arg));
-			if (copy_file(arg, dest, copy_flags) != 0) {
+			اگر (copy_file(arg, dest, copy_flags) != 0) {
 				/* copy is not made */
 				ret = EXIT_FAILURE;
-				goto next;
+				برو next;
 			}
-			if (opts & OPT_STRIP) {
-				char *args[4];
-				args[0] = (char*)"strip";
-				args[1] = (char*)"-p"; /* -p --preserve-dates */
+			اگر (opts & OPT_STRIP) {
+				نویسه *args[4];
+				args[0] = (نویسه*)"strip";
+				args[1] = (نویسه*)"-p"; /* -p --preserve-dates */
 				args[2] = dest;
-				args[3] = NULL;
-				if (spawn_and_wait(args)) {
-					bb_simple_perror_msg("strip");
+				args[3] = پوچ;
+				اگر (spawn_and_wait(args)) {
+					bb_simple_perror_پیام("strip");
 					ret = EXIT_FAILURE;
 				}
 			}
@@ -246,27 +246,27 @@ int install_main(int argc, char **argv)
 
 		/* Set the user and group id */
 		/* (must be before chmod, or else chown may clear suid/gid bits) */
-		if ((opts & (OPT_OWNER|OPT_GROUP))
+		اگر ((opts & (OPT_OWNER|OPT_GROUP))
 		 && lchown(dest, uid, gid) == -1
 		) {
-			bb_perror_msg("can't change %s of %s", "ownership", dest);
+			bb_perror_پیام("can't change %s of %s", "ownership", dest);
 			ret = EXIT_FAILURE;
 		}
 
 		/* Set the file mode (always, not only with -m).
 		 * GNU coreutils 6.10 is not affected by umask. */
-		if (chmod(dest, mode) == -1) {
-			bb_perror_msg("can't change %s of %s", "permissions", dest);
+		اگر (chmod(dest, mode) == -1) {
+			bb_perror_پیام("can't change %s of %s", "permissions", dest);
 			ret = EXIT_FAILURE;
 		}
-#if ENABLE_SELINUX
-		if (use_default_selinux_context)
+#اگر ENABLE_SELINUX
+		اگر (use_default_selinux_context)
 			setdefaultfilecon(dest);
 #endif
  next:
-		if (ENABLE_FEATURE_CLEAN_UP && isdir)
-			free(dest);
+		اگر (ENABLE_FEATURE_CLEAN_UP && isdir)
+			آزاد(dest);
 	}
 
-	return ret;
+	بازگشت ret;
 }

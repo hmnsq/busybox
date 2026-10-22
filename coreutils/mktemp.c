@@ -58,15 +58,15 @@
 //usage:       "$ ls -la /tmp/temp.mWiLjM\n"
 //usage:       "-rw-------    1 andersen andersen        0 Apr 25 17:10 /tmp/temp.mWiLjM\n"
 
-#include "libbb.h"
+#شامل "libbb.h"
 
-int mktemp_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int mktemp_main(int argc UNUSED_PARAM, char **argv)
+صحیح mktemp_main(صحیح argc, نویسه **argv) MAIN_EXTERNALLY_VISIBLE;
+صحیح mktemp_main(صحیح argc UNUSED_PARAM, نویسه **argv)
 {
-	const char *path;
-	char *chp;
+	ثابت نویسه *path;
+	نویسه *chp;
 	unsigned opts;
-	enum {
+	شمارش {
 		OPT_d = 1 << 0,
 		OPT_q = 1 << 1,
 		OPT_t = 1 << 2,
@@ -76,10 +76,10 @@ int mktemp_main(int argc UNUSED_PARAM, char **argv)
 	};
 
 	path = getenv("TMPDIR");
-	if (!path || path[0] == '\0')
+	اگر (!path || path[0] == '\0')
 		path = "/tmp";
 
-#if ENABLE_LONG_OPTS
+#اگر ENABLE_LONG_OPTS
 	opts = getopt32long(argv, "^"
 		"dqtp:u"
 		"\0"
@@ -90,44 +90,44 @@ int mktemp_main(int argc UNUSED_PARAM, char **argv)
 		"tmpdir\0"    Optional_argument "\xff"
 		, &path, &path
 	);
-#else
+#وگرنه
 	opts = getopt32(argv, "^" "dqtp:u" "\0" "?1"/*1 arg max*/, &path);
 #endif
 
 	chp = argv[optind];
-	if (!chp) {
+	اگر (!chp) {
 		/* GNU coreutils 8.4:
 		 * bare "mktemp" -> "mktemp -t tmp.XXXXXX"
 		 */
 		chp = xstrdup("tmp.XXXXXX");
 		opts |= OPT_t;
 	}
-#if 0
+#اگر 0
 	/* Don't allow directory separator in template */
-	if ((opts & OPT_t) && bb_basename(chp) != chp) {
+	اگر ((opts & OPT_t) && bb_basename(chp) != chp) {
 		errno = EINVAL;
-		goto error;
+		برو error;
 	}
 #endif
-	if (opts & (OPT_t|OPT_p|OPT_tmpdir))
+	اگر (opts & (OPT_t|OPT_p|OPT_tmpdir))
 		chp = concat_path_file(path, chp);
 
-	if (opts & OPT_u) {
+	اگر (opts & OPT_u) {
 		chp = mktemp(chp);
-		if (chp[0] == '\0')
-			goto error;
-	} else if (opts & OPT_d) {
-		if (mkdtemp(chp) == NULL)
-			goto error;
-	} else {
-		if (mkstemp(chp) < 0)
-			goto error;
+		اگر (chp[0] == '\0')
+			برو error;
+	} وگرنه اگر (opts & OPT_d) {
+		اگر (mkdtemp(chp) == پوچ)
+			برو error;
+	} وگرنه {
+		اگر (mkstemp(chp) < 0)
+			برو error;
 	}
 	puts(chp);
-	return EXIT_SUCCESS;
+	بازگشت EXIT_SUCCESS;
  error:
-	if (opts & OPT_q)
-		return EXIT_FAILURE;
+	اگر (opts & OPT_q)
+		بازگشت EXIT_FAILURE;
 	/* don't use chp as it gets mangled in case of error */
 	bb_perror_nomsg_and_die();
 }

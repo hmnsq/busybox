@@ -30,71 +30,71 @@
 //usage:       "# combine pairs of lines from a file into single lines\n"
 //usage:       "$ paste -s -d '\\t\\n' file\n"
 
-#include "libbb.h"
+#شامل "libbb.h"
 
-static void paste_files(FILE** files, int file_cnt, char* delims, int del_cnt)
+ایستا تهی paste_files(FILE** files, صحیح file_cnt, نویسه* delims, صحیح del_cnt)
 {
-	char *line;
-	char delim;
-	int active_files = file_cnt;
-	int i;
+	نویسه *سطر;
+	نویسه delim;
+	صحیح active_files = file_cnt;
+	صحیح i;
 
-	while (active_files > 0) {
-		int del_idx = 0;
+	وقتی (active_files > 0) {
+		صحیح del_idx = 0;
 
-		for (i = 0; i < file_cnt; ++i) {
-			if (files[i] == NULL)
-				continue;
+		برای (i = 0; i < file_cnt; ++i) {
+			اگر (files[i] == پوچ)
+				ادامه;
 
-			line = xmalloc_fgetline(files[i]);
-			if (!line) {
+			سطر = xmalloc_fgetline(files[i]);
+			اگر (!سطر) {
 				fclose_if_not_stdin(files[i]);
-				files[i] = NULL;
+				files[i] = پوچ;
 				--active_files;
-				continue;
+				ادامه;
 			}
-			fputs_stdout(line);
-			free(line);
+			fputs_stdout(سطر);
+			آزاد(سطر);
 			delim = '\n';
-			if (i != file_cnt - 1) {
+			اگر (i != file_cnt - 1) {
 				delim = delims[del_idx++];
-				if (del_idx == del_cnt)
+				اگر (del_idx == del_cnt)
 					del_idx = 0;
 			}
-			if (delim != '\0')
+			اگر (delim != '\0')
 				fputc(delim, stdout);
 		}
 	}
 }
 
-static void paste_files_separate(FILE** files, char* delims, int del_cnt)
+ایستا تهی paste_files_separate(FILE** files, نویسه* delims, صحیح del_cnt)
 {
-	char *line, *next_line;
-	char delim;
-	int i;
+	نویسه *سطر, *next_سطر;
+	نویسه delim;
+	صحیح i;
 
-	for (i = 0; files[i]; ++i) {
-		int del_idx = 0;
+	برای (i = 0; files[i]; ++i) {
+		صحیح del_idx = 0;
 
-		line = NULL;
-		while ((next_line = xmalloc_fgetline(files[i])) != NULL) {
-			if (line) {
-				fputs_stdout(line);
-				free(line);
+		سطر = پوچ;
+		وقتی ((next_سطر = xmalloc_fgetline(files[i])) != پوچ) {
+			اگر (سطر) {
+				fputs_stdout(سطر);
+				آزاد(سطر);
 				delim = delims[del_idx++];
-				if (del_idx == del_cnt)
+				اگر (del_idx == del_cnt)
 					del_idx = 0;
-				if (delim != '\0')
+				اگر (delim != '\0')
 					fputc(delim, stdout);
 			}
-			line = next_line;
+			سطر = next_سطر;
 		}
-		if (line) {
+		اگر (سطر) {
 			/* coreutils adds \n even if this is a final line
 			 * of the last file and it was not \n-terminated.
 			 */
-			printf("%s\n", line);
-			free(line);
+			printf("%s\n", سطر);
+			آزاد(سطر);
 		}
 		fclose_if_not_stdin(files[i]);
 	}
@@ -103,37 +103,37 @@ static void paste_files_separate(FILE** files, char* delims, int del_cnt)
 #define PASTE_OPT_DELIMITERS (1 << 0)
 #define PASTE_OPT_SEPARATE   (1 << 1)
 
-int paste_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int paste_main(int argc UNUSED_PARAM, char **argv)
+صحیح paste_main(صحیح argc, نویسه **argv) MAIN_EXTERNALLY_VISIBLE;
+صحیح paste_main(صحیح argc UNUSED_PARAM, نویسه **argv)
 {
-	char *delims = (char*)"\t";
-	int del_cnt = 1;
+	نویسه *delims = (نویسه*)"\t";
+	صحیح del_cnt = 1;
 	unsigned opt;
-	int i;
+	صحیح i;
 
 	opt = getopt32(argv, "d:s", &delims);
 	argv += optind;
 
-	if (opt & PASTE_OPT_DELIMITERS) {
-		if (!delims[0])
-			bb_simple_error_msg_and_die("-d '' is not supported");
+	اگر (opt & PASTE_OPT_DELIMITERS) {
+		اگر (!delims[0])
+			bb_simple_error_پیام_and_die("-d '' is not supported");
 		/* unknown mappings are not changed: "\z" -> '\\' 'z' */
 		/* trailing backslash, if any, is preserved */
 		del_cnt = strcpy_and_process_escape_sequences(delims, delims) - delims;
 		/* note: handle NUL properly (do not stop at it!): try -d'\t\0\t' */
 	}
 
-	if (!argv[0])
-		(--argv)[0] = (char*) "-";
-	for (i = 0; argv[i]; ++i) {
-		argv[i] = (void*) fopen_or_warn_stdin(argv[i]);
-		if (!argv[i])
+	اگر (!argv[0])
+		(--argv)[0] = (نویسه*) "-";
+	برای (i = 0; argv[i]; ++i) {
+		argv[i] = (تهی*) fopen_or_warn_stdin(argv[i]);
+		اگر (!argv[i])
 			xfunc_die();
 	}
 
-	if (opt & PASTE_OPT_SEPARATE)
+	اگر (opt & PASTE_OPT_SEPARATE)
 		paste_files_separate((FILE**)argv, delims, del_cnt);
-	else
+	وگرنه
 		paste_files((FILE**)argv, i, delims, del_cnt);
 
 	fflush_stdout_and_exit(0);

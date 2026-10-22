@@ -23,34 +23,34 @@
 //usage:       "Print environment VARIABLEs.\n"
 //usage:       "If no VARIABLE specified, print all."
 
-#include "libbb.h"
+#شامل "libbb.h"
 
 /* This is a NOFORK applet. Be very careful! */
 
-int printenv_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int printenv_main(int argc UNUSED_PARAM, char **argv)
+صحیح printenv_main(صحیح argc, نویسه **argv) MAIN_EXTERNALLY_VISIBLE;
+صحیح printenv_main(صحیح argc UNUSED_PARAM, نویسه **argv)
 {
-	int exit_code = EXIT_SUCCESS;
+	صحیح exit_code = EXIT_SUCCESS;
 
 	/* no variables specified, show whole env */
-	if (!argv[1]) {
-		char **e = environ;
+	اگر (!argv[1]) {
+		نویسه **e = environ;
 
 		/* environ can be NULL! (for example, after clearenv())
 		 * Check for that:
 		 */
-		if (e)
-			while (*e)
+		اگر (e)
+			وقتی (*e)
 				puts(*e++);
-	} else {
+	} وگرنه {
 		/* search for specified variables and print them out if found */
-		char *arg, *env;
+		نویسه *arg, *env;
 
-		while ((arg = *++argv) != NULL) {
+		وقتی ((arg = *++argv) != پوچ) {
 			env = getenv(arg);
-			if (env)
+			اگر (env)
 				puts(env);
-			else
+			وگرنه
 				exit_code = EXIT_FAILURE;
 		}
 	}

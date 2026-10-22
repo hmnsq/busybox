@@ -25,26 +25,26 @@
 //usage:     "\n	-w	Pad with leading zeros"
 //usage:     "\n	-s SEP	String separator"
 
-#include "libbb.h"
+#شامل "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-int seq_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int seq_main(int argc, char **argv)
+صحیح seq_main(صحیح argc, نویسه **argv) MAIN_EXTERNALLY_VISIBLE;
+صحیح seq_main(صحیح argc, نویسه **argv)
 {
-	enum {
+	شمارش {
 		OPT_w = (1 << 0),
 		OPT_s = (1 << 1),
 	};
-	double first, last, increment, v;
+	دوگانه first, last, increment, v;
 	unsigned n;
 	unsigned width;
 	unsigned frac_part;
-	const char *sep, *opt_s = "\n";
-	char *saved;
+	ثابت نویسه *sep, *opt_s = "\n";
+	نویسه *saved;
 	unsigned opt;
 
-#if ENABLE_LOCALE_SUPPORT
+#اگر ENABLE_LOCALE_SUPPORT
 	/* Undo busybox.c: on input, we want to use dot
 	 * as fractional separator, regardless of current locale */
 	setlocale(LC_NUMERIC, "C");
@@ -52,21 +52,21 @@ int seq_main(int argc, char **argv)
 
 	/* Cater for negative arguments: if we see one, truncate argv[] on it */
 	n = 0;
-	for (;;) {
-		char c;
+	برای (;;) {
+		نویسه c;
 		saved = argv[++n];
-		if (!saved)
-			break;
-		if (saved[0] != '-') {
+		اگر (!saved)
+			بشکن;
+		اگر (saved[0] != '-') {
 			// break; // "seq -s : -1 1" won't be treated correctly
-			continue;
+			ادامه;
 		}
 // "seq -s -1 1 9" is not treated correctly, but such usage
 // (delimiter string which looks like negative number) is very unlikely
 		c = saved[1];
-		if (c == '.' || (c >= '0' && c <= '9')) {
-			argv[n] = NULL;
-			break;
+		اگر (c == '.' || (c >= '0' && c <= '9')) {
+			argv[n] = پوچ;
+			بشکن;
 		}
 	}
 	opt = getopt32(argv, "+ws:", &opt_s); /* "+": stop at first non-option */
@@ -77,66 +77,66 @@ int seq_main(int argc, char **argv)
 	argv += optind;
 	first = increment = 1;
 	errno = 0;
-	switch (argc) {
-			char *pp;
-		case 3:
+	انتخاب (argc) {
+			نویسه *pp;
+		حالت 3:
 			increment = strtod(argv[1], &pp);
 			errno |= *pp;
-		case 2:
+		حالت 2:
 			first = strtod(argv[0], &pp);
 			errno |= *pp;
-		case 1:
+		حالت 1:
 			last = strtod(argv[argc-1], &pp);
-			if (!errno && *pp == '\0')
-				break;
-		default:
+			اگر (!errno && *pp == '\0')
+				بشکن;
+		پیشفرض:
 			bb_show_usage();
 	}
 
-#if ENABLE_LOCALE_SUPPORT
+#اگر ENABLE_LOCALE_SUPPORT
 	setlocale(LC_NUMERIC, "");
 #endif
 
 	/* Last checked to be compatible with: coreutils-6.10 */
 	width = 0;
 	frac_part = 0;
-	while (1) {
-		char *dot = strchrnul(*argv, '.');
-		int w = (dot - *argv);
-		int f = strlen(dot);
-		if (width < w)
+	وقتی (1) {
+		نویسه *dot = strchrnul(*argv, '.');
+		صحیح w = (dot - *argv);
+		صحیح f = strlen(dot);
+		اگر (width < w)
 			width = w;
 		argv++;
-		if (!*argv)
-			break;
+		اگر (!*argv)
+			بشکن;
 		/* Why do the above _before_ frac check below?
 		 * Try "seq 1 2.0" and "seq 1.0 2.0":
 		 * coreutils never pay attention to the number
 		 * of fractional digits in last arg. */
-		if (frac_part < f)
+		اگر (frac_part < f)
 			frac_part = f;
 	}
-	if (frac_part) {
+	اگر (frac_part) {
 		frac_part--;
-		if (frac_part)
+		اگر (frac_part)
 			width += frac_part + 1;
 	}
-	if (!(opt & OPT_w))
+	اگر (!(opt & OPT_w))
 		width = 0;
 
 	sep = "";
 	v = first;
 	n = 0;
-	while (increment >= 0 ? v <= last : v >= last) {
-		if (printf("%s%0*.*f", sep, width, frac_part, v) < 0)
-			break; /* I/O error, bail out (yes, this really happens) */
+	وقتی (increment >= 0 ? v <= last : v >= last) {
+		اگر (printf("%s%0*.*f", sep, width, frac_part, v) < 0)
+			بشکن; /* I/O error, bail out (yes, this really happens) */
 		sep = opt_s;
 		/* v += increment; - would accumulate floating point errors */
 		n++;
 		v = first + n * increment;
 	}
-	if (n) /* if while loop executed at least once */
+	اگر (n) /* if while loop executed at least once */
 		bb_putchar('\n');
 
-	return fflush_all();
+	بازگشت fflush_all();
 }

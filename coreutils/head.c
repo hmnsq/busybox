@@ -47,226 +47,226 @@
 //usage:       "root:x:0:0:root:/root:/bin/bash\n"
 //usage:       "daemon:x:1:1:daemon:/usr/sbin:/bin/sh\n"
 
-#include "libbb.h"
+#شامل "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-#if !ENABLE_FEATURE_FANCY_HEAD
-# define print_first_N(fp,count,bytes) print_first_N(fp,count)
+#اگر !ENABLE_FEATURE_FANCY_HEAD
+# define print_first_N(fp,شمار,bytes) print_first_N(fp,شمار)
 #endif
-static void
-print_first_N(FILE *fp, unsigned long count, bool count_bytes)
+ایستا تهی
+print_first_N(FILE *fp, unsigned long شمار, bool شمار_bytes)
 {
-#if !ENABLE_FEATURE_FANCY_HEAD
-	const int count_bytes = 0;
+#اگر !ENABLE_FEATURE_FANCY_HEAD
+	ثابت صحیح شمار_bytes = 0;
 #endif
-	while (count) {
-		int c = getc(fp);
-		if (c == EOF)
-			break;
-		if (count_bytes || (c == '\n'))
-			--count;
+	وقتی (شمار) {
+		صحیح c = getc(fp);
+		اگر (c == EOF)
+			بشکن;
+		اگر (شمار_bytes || (c == '\n'))
+			--شمار;
 		putchar(c);
 	}
 }
 
-#if ENABLE_FEATURE_FANCY_HEAD
-static void
-print_except_N_last_bytes(FILE *fp, unsigned count)
+#اگر ENABLE_FEATURE_FANCY_HEAD
+ایستا تهی
+print_except_N_last_bytes(FILE *fp, unsigned شمار)
 {
-	unsigned char *circle = xmalloc(++count);
+	unsigned نویسه *circle = xmalloc(++شمار);
 	unsigned head = 0;
-	for (;;) {
-		int c;
+	برای (;;) {
+		صحیح c;
 		c = getc(fp);
-		if (c == EOF)
-			goto ret;
+		اگر (c == EOF)
+			برو ret;
 		circle[head++] = c;
-		if (head == count)
-			break;
+		اگر (head == شمار)
+			بشکن;
 	}
-	for (;;) {
-		int c;
-		if (head == count)
+	برای (;;) {
+		صحیح c;
+		اگر (head == شمار)
 			head = 0;
 		putchar(circle[head]);
 		c = getc(fp);
-		if (c == EOF)
-			goto ret;
+		اگر (c == EOF)
+			برو ret;
 		circle[head] = c;
 		head++;
 	}
  ret:
-	free(circle);
+	آزاد(circle);
 }
 
-static void
-print_except_N_last_lines(FILE *fp, unsigned count)
+ایستا تهی
+print_except_N_last_سطرها(FILE *fp, unsigned شمار)
 {
-	char **circle = xzalloc((++count) * sizeof(circle[0]));
+	نویسه **circle = xzalloc((++شمار) * اندازه(circle[0]));
 	unsigned head = 0;
-	for (;;) {
-		char *c;
+	برای (;;) {
+		نویسه *c;
 		c = xmalloc_fgets(fp);
-		if (!c)
-			goto ret;
+		اگر (!c)
+			برو ret;
 		circle[head++] = c;
-		if (head == count)
-			break;
+		اگر (head == شمار)
+			بشکن;
 	}
-	for (;;) {
-		char *c;
-		if (head == count)
+	برای (;;) {
+		نویسه *c;
+		اگر (head == شمار)
 			head = 0;
 		fputs_stdout(circle[head]);
 		c = xmalloc_fgets(fp);
-		if (!c)
-			goto ret;
-		free(circle[head]);
+		اگر (!c)
+			برو ret;
+		آزاد(circle[head]);
 		circle[head++] = c;
 	}
  ret:
 	head = 0;
-	for (;;) {
-		free(circle[head++]);
-		if (head == count)
-			break;
+	برای (;;) {
+		آزاد(circle[head++]);
+		اگر (head == شمار)
+			بشکن;
 	}
-	free(circle);
+	آزاد(circle);
 }
-#else
+#وگرنه
 /* Must never be called */
-void print_except_N_last_bytes(FILE *fp, unsigned count);
-void print_except_N_last_lines(FILE *fp, unsigned count);
+تهی print_except_N_last_bytes(FILE *fp, unsigned شمار);
+تهی print_except_N_last_سطرها(FILE *fp, unsigned شمار);
 #endif
 
-#if !ENABLE_FEATURE_FANCY_HEAD
-# define eat_num(negative_N,p) eat_num(p)
+#اگر !ENABLE_FEATURE_FANCY_HEAD
+# define eat_رقم(negative_N,p) eat_رقم(p)
 #endif
-static unsigned long
-eat_num(bool *negative_N, const char *p)
+ایستا unsigned long
+eat_رقم(bool *negative_N, ثابت نویسه *p)
 {
-#if ENABLE_FEATURE_FANCY_HEAD
-	if (*p == '-') {
+#اگر ENABLE_FEATURE_FANCY_HEAD
+	اگر (*p == '-') {
 		*negative_N = 1;
 		p++;
 	}
 #endif
-	return xatoul_sfx(p, bkm_suffixes);
+	بازگشت xatoul_sfx(p, bkm_suffixes);
 }
 
-static const char head_opts[] ALIGN1 =
+ایستا ثابت نویسه head_opts[] ALIGN1 =
 	"n:"
-#if ENABLE_FEATURE_FANCY_HEAD
+#اگر ENABLE_FEATURE_FANCY_HEAD
 	"c:qv"
 #endif
 	;
 
 #define header_fmt_str "\n==> %s <==\n"
 
-int head_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int head_main(int argc, char **argv)
+صحیح head_main(صحیح argc, نویسه **argv) MAIN_EXTERNALLY_VISIBLE;
+صحیح head_main(صحیح argc, نویسه **argv)
 {
-	unsigned long count = 10;
-#if ENABLE_FEATURE_FANCY_HEAD
-	int header_threshhold = 1;
-	bool count_bytes = 0;
+	unsigned long شمار = 10;
+#اگر ENABLE_FEATURE_FANCY_HEAD
+	صحیح header_threshhold = 1;
+	bool شمار_bytes = 0;
 	bool negative_N = 0;
-#else
+#وگرنه
 # define header_threshhold 1
-# define count_bytes       0
+# define شمار_bytes       0
 # define negative_N        0
 #endif
 	FILE *fp;
-	const char *fmt;
-	char *p;
-	int opt;
-	int retval = EXIT_SUCCESS;
+	ثابت نویسه *fmt;
+	نویسه *p;
+	صحیح opt;
+	صحیح retval = EXIT_SUCCESS;
 
-#if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
+#اگر ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
 	/* Allow legacy syntax of an initial numeric option without -n. */
-	if (argv[1] && argv[1][0] == '-'
+	اگر (argv[1] && argv[1][0] == '-'
 	 && isdigit(argv[1][1])
 	) {
 		--argc;
 		++argv;
 		p = argv[0] + 1;
-		goto GET_COUNT;
+		برو GET_شمار;
 	}
 #endif
 
 	/* No size benefit in converting this to getopt32 */
-	while ((opt = getopt(argc, argv, head_opts)) > 0) {
-		switch (opt) {
-#if ENABLE_FEATURE_FANCY_HEAD
-		case 'q':
+	وقتی ((opt = getopt(argc, argv, head_opts)) > 0) {
+		انتخاب (opt) {
+#اگر ENABLE_FEATURE_FANCY_HEAD
+		حالت 'q':
 			header_threshhold = INT_MAX;
-			break;
-		case 'v':
+			بشکن;
+		حالت 'v':
 			header_threshhold = -1;
-			break;
-		case 'c':
-			count_bytes = 1;
+			بشکن;
+		حالت 'c':
+			شمار_bytes = 1;
 			/* fall through */
 #endif
-		case 'n':
+		حالت 'n':
 			p = optarg;
-#if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
- GET_COUNT:
+#اگر ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
+ GET_شمار:
 #endif
-			count = eat_num(&negative_N, p);
-			break;
-		default:
+			شمار = eat_رقم(&negative_N, p);
+			بشکن;
+		پیشفرض:
 			bb_show_usage();
 		}
 	}
 
 	argc -= optind;
 	argv += optind;
-	if (!*argv)
-		*--argv = (char*)"-";
+	اگر (!*argv)
+		*--argv = (نویسه*)"-";
 
 	fmt = header_fmt_str + 1;
-	if (argc <= header_threshhold) {
-#if ENABLE_FEATURE_FANCY_HEAD
+	اگر (argc <= header_threshhold) {
+#اگر ENABLE_FEATURE_FANCY_HEAD
 		header_threshhold = 0;
-#else
+#وگرنه
 		fmt += 11; /* "" */
 #endif
 	}
-	if (negative_N) {
-		if (count >= INT_MAX / sizeof(char*))
-			bb_error_msg("count is too big: %lu", count);
+	اگر (negative_N) {
+		اگر (شمار >= INT_MAX / اندازه(نویسه*))
+			bb_error_پیام("count is too big: %lu", شمار);
 	}
 
-	do {
+	انجامبده {
 		fp = fopen_or_warn_stdin(*argv);
-		if (fp) {
-			if (fp == stdin) {
-				*argv = (char *) bb_msg_standard_input;
+		اگر (fp) {
+			اگر (fp == stdin) {
+				*argv = (نویسه *) bb_پیام_standard_درون_داد;
 			}
-			if (header_threshhold) {
+			اگر (header_threshhold) {
 				printf(fmt, *argv);
 			}
-			if (negative_N) {
-				if (count_bytes) {
-					print_except_N_last_bytes(fp, count);
-				} else {
-					print_except_N_last_lines(fp, count);
+			اگر (negative_N) {
+				اگر (شمار_bytes) {
+					print_except_N_last_bytes(fp, شمار);
+				} وگرنه {
+					print_except_N_last_سطرها(fp, شمار);
 				}
-			} else {
-				print_first_N(fp, count, count_bytes);
+			} وگرنه {
+				print_first_N(fp, شمار, شمار_bytes);
 			}
 			die_if_ferror_stdout();
-			if (fclose_if_not_stdin(fp)) {
-				bb_simple_perror_msg(*argv);
+			اگر (fclose_if_not_stdin(fp)) {
+				bb_simple_perror_پیام(*argv);
 				retval = EXIT_FAILURE;
 			}
-		} else {
+		} وگرنه {
 			retval = EXIT_FAILURE;
 		}
 		fmt = header_fmt_str;
-	} while (*++argv);
+	} وقتی (*++argv);
 
 	fflush_stdout_and_exit(retval);
 }

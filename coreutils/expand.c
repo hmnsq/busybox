@@ -54,10 +54,10 @@
 //usage:     "\n	-f	Convert only leading blanks"
 //usage:     "\n	-t N	Tabstops every N chars"
 
-#include "libbb.h"
-#include "unicode.h"
+#شامل "libbb.h"
+#شامل "unicode.h"
 
-enum {
+شمارش {
 	OPT_INITIAL     = 1 << 0,
 	OPT_TABS        = 1 << 1,
 	OPT_ALL         = 1 << 2,
@@ -67,27 +67,27 @@ enum {
 //coreutils 8.30 preserves NULs but treats them as chars of width zero:
 //AB<nul><tab>C will expand <tab> to 6 spaces, not 5.
 
-#if ENABLE_EXPAND
-static void expand(FILE *file, unsigned tab_size, unsigned opt)
+#اگر ENABLE_EXPAND
+ایستا تهی expand(FILE *file, unsigned tab_size, unsigned opt)
 {
 
-	for (;;) {
-		char *line;
-		char *ptr;
-		char *ptr_strbeg;
+	برای (;;) {
+		نویسه *سطر;
+		نویسه *ptr;
+		نویسه *ptr_strbeg;
 //commented-out code handles NULs, +90 bytes of code, not tested much
 //		size_t linelen;
 //		unsigned len = 0;
 
 //		linelen = 1024 * 1024;
 //		line = xmalloc_fgets_str_len(file, "\n", &linelen);
-		line = xmalloc_fgets(file); //
-		if (!line)
-			break;
-		ptr = ptr_strbeg = line;
-		for (;;) {
-			unsigned char c = *ptr;
-			if (c == '\0') {
+		سطر = xmalloc_fgets(file); //
+		اگر (!سطر)
+			بشکن;
+		ptr = ptr_strbeg = سطر;
+		برای (;;) {
+			unsigned نویسه c = *ptr;
+			اگر (c == '\0') {
 //				size_t rem = line + linelen - ptr;
 //				if (rem > 0) {
 //# if ENABLE_UNICODE_SUPPORT
@@ -101,18 +101,18 @@ static void expand(FILE *file, unsigned tab_size, unsigned opt)
 //					linelen--;
 //					continue;
 //				}
-				break;
+				بشکن;
 			}
-			if ((opt & OPT_INITIAL) && !isblank(c)) {
+			اگر ((opt & OPT_INITIAL) && !isblank(c)) {
 				/* not space or tab */
-				break;
+				بشکن;
 			}
-			if (c == '\t') {
+			اگر (c == '\t') {
 				unsigned len = 0; //
 				*ptr = '\0';
-# if ENABLE_UNICODE_SUPPORT
+# اگر ENABLE_UNICODE_SUPPORT
 				len += unicode_strwidth(ptr_strbeg);
-# else
+# وگرنه
 				len += ptr - ptr_strbeg;
 # endif
 				len = tab_size - (len % tab_size);
@@ -124,71 +124,71 @@ static void expand(FILE *file, unsigned tab_size, unsigned opt)
 			ptr++;
 		}
 		fputs_stdout(ptr_strbeg);
-		free(line);
+		آزاد(سطر);
 	}
 }
 #endif
 
-#if ENABLE_UNEXPAND
-static void unexpand(FILE *file, unsigned tab_size, unsigned opt)
+#اگر ENABLE_UNEXPAND
+ایستا تهی unexpand(FILE *file, unsigned tab_size, unsigned opt)
 {
-	char *line;
+	نویسه *سطر;
 
-	while ((line = xmalloc_fgets(file)) != NULL) {
-		char *ptr = line;
+	وقتی ((سطر = xmalloc_fgets(file)) != پوچ) {
+		نویسه *ptr = سطر;
 		unsigned column = 0;
 
-		while (*ptr) {
+		وقتی (*ptr) {
 			unsigned n;
 			unsigned len = 0;
 
-			while (*ptr == ' ') {
+			وقتی (*ptr == ' ') {
 				ptr++;
 				len++;
 			}
 			column += len;
-			if (*ptr == '\t') {
+			اگر (*ptr == '\t') {
 				column += tab_size - (column % tab_size);
 				ptr++;
-				continue;
+				ادامه;
 			}
 
 			n = column / tab_size;
-			if (n) {
+			اگر (n) {
 				len = column = column % tab_size;
-				while (n--)
+				وقتی (n--)
 					putchar('\t');
 			}
 
-			if (!(opt & OPT_ALL) && ptr != line) {
+			اگر (!(opt & OPT_ALL) && ptr != سطر) {
 				printf("%*s%s", len, "", ptr);
-				break;
+				بشکن;
 			}
 			n = strcspn(ptr, "\t ");
 			printf("%*s%.*s", len, "", n, ptr);
-# if ENABLE_UNICODE_SUPPORT
+# اگر ENABLE_UNICODE_SUPPORT
 			{
-				char c = ptr[n];
+				نویسه c = ptr[n];
 				ptr[n] = '\0';
 				len = unicode_strwidth(ptr);
 				ptr[n] = c;
 			}
-# else
+# وگرنه
 			len = n;
 # endif
 			ptr += n;
 			column = (column + len) % tab_size;
 		}
-		free(line);
+		آزاد(سطر);
 	}
 }
 #endif
 
-int expand_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int expand_main(int argc UNUSED_PARAM, char **argv)
+صحیح expand_main(صحیح argc, نویسه **argv) MAIN_EXTERNALLY_VISIBLE;
+صحیح expand_main(صحیح argc UNUSED_PARAM, نویسه **argv)
 {
 	/* Default 8 spaces for 1 tab */
-	const char *opt_t = "8";
+	ثابت نویسه *opt_t = "8";
 	FILE *file;
 	unsigned tab_size;
 	unsigned opt;
@@ -196,13 +196,13 @@ int expand_main(int argc UNUSED_PARAM, char **argv)
 
 	init_unicode();
 
-	if (ENABLE_EXPAND && (!ENABLE_UNEXPAND || applet_name[0] == 'e')) {
+	اگر (ENABLE_EXPAND && (!ENABLE_UNEXPAND || applet_name[0] == 'e')) {
 		opt = getopt32long(argv, "it:",
 				"initial\0"          No_argument       "i"
 				"tabs\0"             Required_argument "t"
 				, &opt_t
 		);
-	} else {
+	} وگرنه {
 		opt = getopt32long(argv, "^"
 				"ft:a"
 				"\0"
@@ -213,41 +213,41 @@ int expand_main(int argc UNUSED_PARAM, char **argv)
 				, &opt_t
 		);
 		/* -t implies -a, but an explicit -f overrides */
-		if (opt & OPT_INITIAL) opt &= ~OPT_ALL;
+		اگر (opt & OPT_INITIAL) opt &= ~OPT_ALL;
 	}
 	tab_size = xatou_range(opt_t, 1, UINT_MAX);
 
 	argv += optind;
 
-	if (!*argv) {
-		*--argv = (char*)bb_msg_standard_input;
+	اگر (!*argv) {
+		*--argv = (نویسه*)bb_پیام_standard_درون_داد;
 	}
-	do {
+	انجامبده {
 		file = fopen_or_warn_stdin(*argv);
-		if (!file) {
+		اگر (!file) {
 			exit_status = EXIT_FAILURE;
-			continue;
+			ادامه;
 		}
 
-		if (ENABLE_EXPAND && (!ENABLE_UNEXPAND || applet_name[0] == 'e'))
+		اگر (ENABLE_EXPAND && (!ENABLE_UNEXPAND || applet_name[0] == 'e'))
 			IF_EXPAND(expand(file, tab_size, opt));
-		else
+		وگرنه
 			IF_UNEXPAND(unexpand(file, tab_size, opt));
 
 		/* Check and close the file */
-		if (fclose_if_not_stdin(file)) {
-			bb_simple_perror_msg(*argv);
+		اگر (fclose_if_not_stdin(file)) {
+			bb_simple_perror_پیام(*argv);
 			exit_status = EXIT_FAILURE;
 		}
 		/* If stdin also clear EOF */
-		if (file == stdin)
+		اگر (file == stdin)
 			clearerr(file);
-	} while (*++argv);
+	} وقتی (*++argv);
 
 	/* Now close stdin also */
 	/* (if we didn't read from it, it's a no-op) */
-	if (fclose(stdin))
-		bb_simple_perror_msg_and_die(bb_msg_standard_input);
+	اگر (fclose(stdin))
+		bb_simple_perror_پیام_and_die(bb_پیام_standard_درون_داد);
 
 	fflush_stdout_and_exit(exit_status);
 }

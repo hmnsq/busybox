@@ -54,7 +54,7 @@
 //usage:       "ls -l /tmp/foo\n"
 //usage:       "-r--r--r--    1 root     root            0 Apr 12 18:25 /tmp/foo\n"
 
-#include "libbb.h"
+#شامل "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
@@ -77,15 +77,15 @@
 #define BIT_TRAVERSE 0x20
 #define OPT_TRAVERSE (IF_DESKTOP(opt & BIT_TRAVERSE) IF_NOT_DESKTOP(0))
 /* -H or -L */
-#define BIT_TRAVERSE_TOP (0x20|0x40)
-#define OPT_TRAVERSE_TOP (IF_DESKTOP(opt & BIT_TRAVERSE_TOP) IF_NOT_DESKTOP(0))
+#define BIT_TRAVERSE_بالاترین (0x20|0x40)
+#define OPT_TRAVERSE_بالاترین (IF_DESKTOP(opt & BIT_TRAVERSE_بالاترین) IF_NOT_DESKTOP(0))
 
-#if ENABLE_FEATURE_CHOWN_LONG_OPTIONS
-static const char chown_longopts[] ALIGN1 =
+#اگر ENABLE_FEATURE_CHOWN_LONG_OPTIONS
+ایستا ثابت نویسه chown_longopts[] ALIGN1 =
 	"recursive\0"        No_argument   "R"
 	"dereference\0"      No_argument   "\xff"
 	"no-dereference\0"   No_argument   "h"
-# if ENABLE_DESKTOP
+# اگر ENABLE_DESKTOP
 	"changes\0"          No_argument   "c"
 	"silent\0"           No_argument   "f"
 	"quiet\0"            No_argument   "f"
@@ -94,72 +94,72 @@ static const char chown_longopts[] ALIGN1 =
 	;
 #endif
 
-typedef int (*chown_fptr)(const char *, uid_t, gid_t);
+تعریفنوع صحیح (*chown_fptr)(ثابت نویسه *, uid_t, gid_t);
 
-struct param_t {
-	struct bb_uidgid_t ugid;
+ساختار param_t {
+	ساختار bb_uidgid_t ugid;
 	chown_fptr chown_func;
 };
 
-static int FAST_FUNC fileAction(struct recursive_state *state UNUSED_PARAM,
-		const char *fileName, struct stat *statbuf)
+ایستا صحیح FAST_FUNC fileAction(ساختار recursive_state *state UNUSED_PARAM,
+		ثابت نویسه *fileName, ساختار stat *statbuf)
 {
-#define param  (*(struct param_t*)state->userData)
+#define param  (*(ساختار param_t*)state->userData)
 #define opt option_mask32
 	uid_t u = (param.ugid.uid == (uid_t)-1L) ? statbuf->st_uid : param.ugid.uid;
 	gid_t g = (param.ugid.gid == (gid_t)-1L) ? statbuf->st_gid : param.ugid.gid;
 
-	if (param.chown_func(fileName, u, g) == 0) {
-		if (OPT_VERBOSE
+	اگر (param.chown_func(fileName, u, g) == 0) {
+		اگر (OPT_VERBOSE
 		 || (OPT_CHANGED && (statbuf->st_uid != u || statbuf->st_gid != g))
 		) {
 			printf("changed ownership of '%s' to %u:%u\n",
 					fileName, (unsigned)u, (unsigned)g);
 		}
-		return TRUE;
+		بازگشت TRUE;
 	}
-	if (!OPT_QUIET)
-		bb_simple_perror_msg(fileName);
-	return FALSE;
+	اگر (!OPT_QUIET)
+		bb_simple_perror_پیام(fileName);
+	بازگشت FALSE;
 #undef opt
 #undef param
 }
 
-int chown_main(int argc UNUSED_PARAM, char **argv)
+صحیح chown_main(صحیح argc UNUSED_PARAM, نویسه **argv)
 {
-	int retval = EXIT_SUCCESS;
-	int opt, flags;
-	struct param_t param;
+	صحیح retval = EXIT_SUCCESS;
+	صحیح opt, flags;
+	ساختار param_t param;
 
-#if ENABLE_FEATURE_CHOWN_LONG_OPTIONS
+#اگر ENABLE_FEATURE_CHOWN_LONG_OPTIONS
 	opt = getopt32long(argv, "^" OPT_STR "\0" "-2", chown_longopts);
-#else
+#وگرنه
 	opt = getopt32(argv, "^" OPT_STR "\0" "-2");
 #endif
 	argv += optind;
 
 	/* This matches coreutils behavior (almost - see below) */
 	param.chown_func = chown;
-	if (OPT_NODEREF
+	اگر (OPT_NODEREF
 	/* || (OPT_RECURSE && !OPT_TRAVERSE_TOP): */
-	IF_DESKTOP( || (opt & (BIT_RECURSE|BIT_TRAVERSE_TOP)) == BIT_RECURSE)
+	IF_DESKTOP( || (opt & (BIT_RECURSE|BIT_TRAVERSE_بالاترین)) == BIT_RECURSE)
 	) {
 		param.chown_func = lchown;
 	}
 
 	flags = ACTION_DEPTHFIRST; /* match coreutils order */
-	if (OPT_RECURSE)
+	اگر (OPT_RECURSE)
 		flags |= ACTION_RECURSE;
-	if (OPT_TRAVERSE_TOP)
+	اگر (OPT_TRAVERSE_بالاترین)
 		flags |= ACTION_FOLLOWLINKS_L0; /* -H/-L: follow links on depth 0 */
-	if (OPT_TRAVERSE)
+	اگر (OPT_TRAVERSE)
 		flags |= ACTION_FOLLOWLINKS; /* follow links if -L */
 
 	parse_chown_usergroup_or_die(&param.ugid, argv[0]);
 
 	/* Ok, ready to do the deed now */
-	while (*++argv) {
-		if (!recursive_action(*argv,
+	وقتی (*++argv) {
+		اگر (!recursive_action(*argv,
 				flags,          /* flags */
 				fileAction,     /* file action */
 				fileAction,     /* dir action */
@@ -169,7 +169,7 @@ int chown_main(int argc UNUSED_PARAM, char **argv)
 		}
 	}
 
-	return retval;
+	بازگشت retval;
 }
 
 /*

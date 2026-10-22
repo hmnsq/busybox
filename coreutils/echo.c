@@ -60,7 +60,7 @@
 //usage:       "$ echo \"Erik\\nis\\ncool\"\n"
 //usage:       "Erik\\nis\\ncool\n")
 
-#include "libbb.h"
+#شامل "libbb.h"
 
 /* This is a NOFORK applet. Be very careful! */
 
@@ -80,30 +80,30 @@
  * But this function is not standard.
  */
 
-int echo_main(int argc UNUSED_PARAM, char **argv)
+صحیح echo_main(صحیح argc UNUSED_PARAM, نویسه **argv)
 {
-	char **pp;
-	const char *arg;
-	char *out;
-	char *buffer;
+	نویسه **pp;
+	ثابت نویسه *arg;
+	نویسه *out;
+	نویسه *buffer;
 	unsigned buflen;
-	int err;
-#if !ENABLE_FEATURE_FANCY_ECHO
-	enum {
+	صحیح err;
+#اگر !ENABLE_FEATURE_FANCY_ECHO
+	شمارش {
 		eflag = 0,  /* 0 -- disable escape sequences */
 		nflag = 1,  /* 1 -- print '\n' */
 	};
 
 	argv++;
-#else
-	char nflag = 1;
-	char eflag = 0;
+#وگرنه
+	نویسه nflag = 1;
+	نویسه eflag = 0;
 
-	while ((arg = *++argv) != NULL) {
-		char n, e;
+	وقتی ((arg = *++argv) != پوچ) {
+		نویسه n, e;
 
-		if (arg[0] != '-')
-			break; /* not an option arg, echo it */
+		اگر (arg[0] != '-')
+			بشکن; /* not an option arg, echo it */
 
 		/* If it appears that we are handling options, then make sure
 		 * that all of the options specified are actually valid.
@@ -112,17 +112,17 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
 		arg++;
 		n = nflag;
 		e = eflag;
-		do {
-			if (*arg == 'n')
+		انجامبده {
+			اگر (*arg == 'n')
 				n = 0;
-			else if (*arg == 'e')
+			وگرنه اگر (*arg == 'e')
 				e = '\\';
-			else if (*arg != 'E') {
+			وگرنه اگر (*arg != 'E') {
 				/* "-ccc" arg with one of c's invalid, echo it */
 				/* arg consisting from just "-" also handled here */
-				goto just_echo;
+				برو just_echo;
 			}
-		} while (*++arg);
+		} وقتی (*++arg);
 		nflag = n;
 		eflag = e;
 	}
@@ -131,32 +131,32 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
 
 	buflen = 0;
 	pp = argv;
-	while ((arg = *pp) != NULL) {
+	وقتی ((arg = *pp) != پوچ) {
 		buflen += strlen(arg) + 1;
 		pp++;
 	}
 	out = buffer = xmalloc(buflen + 1); /* +1 is needed for "no args" case */
 
-	while ((arg = *argv) != NULL) {
-		int c;
+	وقتی ((arg = *argv) != پوچ) {
+		صحیح c;
 
-		if (!eflag) {
+		اگر (!eflag) {
 			/* optimization for very common case */
 			out = stpcpy(out, arg);
-		} else
-		while ((c = *arg++) != '\0') {
-			if (c == eflag) {
+		} وگرنه
+		وقتی ((c = *arg++) != '\0') {
+			اگر (c == eflag) {
 				/* This is an "\x" sequence */
 
-				if (*arg == 'c') {
+				اگر (*arg == 'c') {
 					/* "\c" means cancel newline and
 					 * ignore all subsequent chars. */
-					goto do_write;
+					برو do_write;
 				}
 				/* Since SUSv3 mandates a first digit of 0, 4-digit octals
 				* of the form \0### are accepted. */
-				if (*arg == '0') {
-					if ((unsigned char)(arg[1] - '0') < 8) {
+				اگر (*arg == '0') {
+					اگر ((unsigned نویسه)(arg[1] - '0') < 8) {
 						/* 2nd char is 0..7: skip leading '0' */
 						arg++;
 					}
@@ -166,7 +166,7 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
 				{
 					/* optimization: don't force arg to be on-stack,
 					 * use another variable for that. ~30 bytes win */
-					const char *z = arg;
+					ثابت نویسه *z = arg;
 					c = bb_process_escape_sequence(&z);
 					arg = z;
 				}
@@ -174,12 +174,12 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
 			*out++ = c;
 		}
 
-		if (!*++argv)
-			break;
+		اگر (!*++argv)
+			بشکن;
 		*out++ = ' ';
 	}
 
-	if (nflag) {
+	اگر (nflag) {
 		*out++ = '\n';
 	}
 
@@ -187,11 +187,11 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
 	/* Careful to error out on partial writes too (think ENOSPC!) */
 	errno = 0;
 	err = full_write(STDOUT_FILENO, buffer, out - buffer) != out - buffer;
-	if (err) {
-		bb_simple_perror_msg(bb_msg_write_error);
+	اگر (err) {
+		bb_simple_perror_پیام(bb_پیام_write_error);
 	}
-	free(buffer);
-	return err;
+	آزاد(buffer);
+	بازگشت err;
 }
 
 /*
@@ -246,106 +246,106 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
  * Using writev instead, with 'direct' conversion of argv vector.
  */
 
-int echo_main(int argc, char **argv)
+صحیح echo_main(صحیح argc, نویسه **argv)
 {
-	struct iovec io[argc];
-	struct iovec *cur_io = io;
-	char *arg;
-	char *p;
-#if !ENABLE_FEATURE_FANCY_ECHO
-	enum {
+	ساختار iovec io[argc];
+	ساختار iovec *cur_io = io;
+	نویسه *arg;
+	نویسه *p;
+#اگر !ENABLE_FEATURE_FANCY_ECHO
+	شمارش {
 		eflag = '\\',
 		nflag = 1,  /* 1 -- print '\n' */
 	};
 	arg = *++argv;
-	if (!arg)
-		goto newline_ret;
-#else
-	char nflag = 1;
-	char eflag = 0;
+	اگر (!arg)
+		برو newline_ret;
+#وگرنه
+	نویسه nflag = 1;
+	نویسه eflag = 0;
 
-	while (1) {
+	وقتی (1) {
 		arg = *++argv;
-		if (!arg)
-			goto newline_ret;
-		if (*arg != '-')
-			break;
+		اگر (!arg)
+			برو newline_ret;
+		اگر (*arg != '-')
+			بشکن;
 
 		/* If it appears that we are handling options, then make sure
 		 * that all of the options specified are actually valid.
 		 * Otherwise, the string should just be echoed.
 		 */
 		p = arg + 1;
-		if (!*p)	/* A single '-', so echo it. */
-			goto just_echo;
+		اگر (!*p)	/* A single '-', so echo it. */
+			برو just_echo;
 
-		do {
-			if (!strchr("neE", *p))
-				goto just_echo;
-		} while (*++p);
+		انجامبده {
+			اگر (!strchr("neE", *p))
+				برو just_echo;
+		} وقتی (*++p);
 
 		/* All of the options in this arg are valid, so handle them. */
 		p = arg + 1;
-		do {
-			if (*p == 'n')
+		انجامبده {
+			اگر (*p == 'n')
 				nflag = 0;
-			if (*p == 'e')
+			اگر (*p == 'e')
 				eflag = '\\';
-		} while (*++p);
+		} وقتی (*++p);
 	}
  just_echo:
 #endif
 
-	while (1) {
+	وقتی (1) {
 		/* arg is already == *argv and isn't NULL */
-		int c;
+		صحیح c;
 
 		cur_io->iov_base = p = arg;
 
-		if (!eflag) {
+		اگر (!eflag) {
 			/* optimization for very common case */
 			p += strlen(arg);
-		} else while ((c = *arg++)) {
-			if (c == eflag) {
+		} وگرنه وقتی ((c = *arg++)) {
+			اگر (c == eflag) {
 				/* This is an "\x" sequence */
 
-				if (*arg == 'c') {
+				اگر (*arg == 'c') {
 					/* "\c" means cancel newline and
 					 * ignore all subsequent chars. */
-					cur_io->iov_len = p - (char*)cur_io->iov_base;
+					cur_io->iov_len = p - (نویسه*)cur_io->iov_base;
 					cur_io++;
-					goto ret;
+					برو ret;
 				}
 				/* Since SUSv3 mandates a first digit of 0, 4-digit octals
 				* of the form \0### are accepted. */
-				if (*arg == '0' && (unsigned char)(arg[1] - '0') < 8) {
+				اگر (*arg == '0' && (unsigned نویسه)(arg[1] - '0') < 8) {
 					arg++;
 				}
 //FIXME? we also accept non-0 starting sequences (see echo-prints-slash_41 test)
 // echo -ne '-\41-' prints "-!-". bash 5.0.17 does not (prints "-\41-").
 				/* bb_process_escape_sequence can handle nul correctly */
-				c = bb_process_escape_sequence( (void*) &arg);
+				c = bb_process_escape_sequence( (تهی*) &arg);
 			}
 			*p++ = c;
 		}
 
 		arg = *++argv;
-		if (arg)
+		اگر (arg)
 			*p++ = ' ';
-		cur_io->iov_len = p - (char*)cur_io->iov_base;
+		cur_io->iov_len = p - (نویسه*)cur_io->iov_base;
 		cur_io++;
-		if (!arg)
-			break;
+		اگر (!arg)
+			بشکن;
 	}
 
  newline_ret:
-	if (nflag) {
-		cur_io->iov_base = (char*)"\n";
+	اگر (nflag) {
+		cur_io->iov_base = (نویسه*)"\n";
 		cur_io->iov_len = 1;
 		cur_io++;
 	}
  ret:
 	/* TODO: implement and use full_writev? */
-	return writev(1, io, (cur_io - io)) >= 0;
+	بازگشت writev(1, io, (cur_io - io)) >= 0;
 }
 #endif

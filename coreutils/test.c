@@ -75,9 +75,9 @@
 //usage:       "$ echo $?\n"
 //usage:       "1\n"
 
-#include "libbb.h"
-#include <regex.h>
-#include <fnmatch.h>
+#شامل "libbb.h"
+#شامل <regex.h>
+#شامل <fnmatch.h>
 
 /* This is a NOFORK applet. Be very careful! */
 
@@ -148,15 +148,15 @@
 
 #define TEST_DEBUG 0
 
-#if ENABLE_TEST2 \
+#اگر ENABLE_TEST2 \
  || (ENABLE_ASH_BASH_COMPAT && ENABLE_ASH_TEST) \
  || (ENABLE_HUSH_BASH_COMPAT && ENABLE_HUSH_TEST)
 # define BASH_TEST2 1
-#else
+#وگرنه
 # define BASH_TEST2 0
 #endif
 
-enum token {
+شمارش token {
 	EOI,
 
 	FILRD, /* file access */
@@ -194,7 +194,7 @@ enum token {
 	STRLT,
 	STRGT,
 
-#if BASH_TEST2
+#اگر BASH_TEST2
 	REGEX,
 #endif
 
@@ -212,37 +212,37 @@ enum token {
 	RPAREN,
 	OPERAND
 };
-#define is_int_op(a)      (((unsigned char)((a) - INTEQ)) <= 5)
-#define is_str_op(a)      (((unsigned char)((a) - STREZ)) <= 5)
-#define is_file_op(a)     (((unsigned char)((a) - FILNT)) <= 2)
-#define is_file_access(a) (((unsigned char)((a) - FILRD)) <= 2)
-#define is_file_type(a)   (((unsigned char)((a) - FILREG)) <= 5)
-#define is_file_bit(a)    (((unsigned char)((a) - FILSUID)) <= 2)
+#define is_int_op(a)      (((unsigned نویسه)((a) - INTEQ)) <= 5)
+#define is_str_op(a)      (((unsigned نویسه)((a) - STREZ)) <= 5)
+#define is_file_op(a)     (((unsigned نویسه)((a) - FILNT)) <= 2)
+#define is_file_access(a) (((unsigned نویسه)((a) - FILRD)) <= 2)
+#define is_file_type(a)   (((unsigned نویسه)((a) - FILREG)) <= 5)
+#define is_file_bit(a)    (((unsigned نویسه)((a) - FILSUID)) <= 2)
 
-#if TEST_DEBUG
-int depth;
-#define nest_msg(...) do { \
+#اگر TEST_DEBUG
+صحیح depth;
+#define nest_پیام(...) انجامبده { \
 	depth++; \
 	fprintf(stderr, "%*s", depth*2, ""); \
 	fprintf(stderr, __VA_ARGS__); \
-} while (0)
-#define unnest_msg(...) do { \
+} وقتی (0)
+#define unnest_پیام(...) انجامبده { \
 	fprintf(stderr, "%*s", depth*2, ""); \
 	fprintf(stderr, __VA_ARGS__); \
 	depth--; \
-} while (0)
-#define dbg_msg(...) do { \
+} وقتی (0)
+#define dbg_پیام(...) انجامبده { \
 	fprintf(stderr, "%*s", depth*2, ""); \
 	fprintf(stderr, __VA_ARGS__); \
-} while (0)
-#define unnest_msg_and_return(expr, ...) do { \
-	number_t __res = (expr); \
+} وقتی (0)
+#define unnest_پیام_and_return(عبارت, ...) انجامبده { \
+	عدد_t __res = (عبارت); \
 	fprintf(stderr, "%*s", depth*2, ""); \
 	fprintf(stderr, __VA_ARGS__, res); \
 	depth--; \
-	return __res; \
-} while (0)
-static const char *const TOKSTR[] ALIGN_PTR = {
+	بازگشت __res; \
+} وقتی (0)
+ایستا ثابت نویسه *ثابت TOKSTR[] ALIGN_PTR = {
 	"EOI",
 	"FILRD",
 	"FILWR",
@@ -271,7 +271,7 @@ static const char *const TOKSTR[] ALIGN_PTR = {
 	"STRNE",
 	"STRLT",
 	"STRGT",
-#if BASH_TEST2
+#اگر BASH_TEST2
 	"REGEX",
 #endif
 	"INTEQ",
@@ -287,14 +287,14 @@ static const char *const TOKSTR[] ALIGN_PTR = {
 	"RPAREN",
 	"OPERAND"
 };
-#else
-#define nest_msg(...)   ((void)0)
-#define unnest_msg(...) ((void)0)
-#define dbg_msg(...)    ((void)0)
-#define unnest_msg_and_return(expr, ...) return expr
+#وگرنه
+#define nest_پیام(...)   ((تهی)0)
+#define unnest_پیام(...) ((تهی)0)
+#define dbg_پیام(...)    ((تهی)0)
+#define unnest_پیام_and_return(عبارت, ...) بازگشت عبارت
 #endif
 
-enum {
+شمارش {
 	UNOP,
 	BINOP,
 	BUNOP,
@@ -302,11 +302,11 @@ enum {
 	PAREN
 };
 
-struct operator_t {
-	unsigned char op_num, op_type;
+ساختار operator_t {
+	unsigned نویسه op_رقم, op_type;
 };
 
-static const struct operator_t ops_table[] ALIGN2 = {
+ایستا ثابت ساختار operator_t ops_table[] ALIGN2 = {
 	{ /* "-r" */ FILRD   , UNOP   },
 	{ /* "-w" */ FILWR   , UNOP   },
 	{ /* "-x" */ FILEX   , UNOP   },
@@ -337,7 +337,7 @@ static const struct operator_t ops_table[] ALIGN2 = {
 	{ /* "!=" */ STRNE   , BINOP  },
 	{ /* "<"  */ STRLT   , BINOP  },
 	{ /* ">"  */ STRGT   , BINOP  },
-#if BASH_TEST2
+#اگر BASH_TEST2
 	{ /* "=~" */ REGEX   , BINOP  },
 #endif
 	{ /* "-eq"*/ INTEQ   , BINOP  },
@@ -352,7 +352,7 @@ static const struct operator_t ops_table[] ALIGN2 = {
 	{ /* "!"  */ UNOT    , BUNOP  },
 	{ /* "-a" */ BAND    , BBINOP },
 	{ /* "-o" */ BOR     , BBINOP },
-#if BASH_TEST2
+#اگر BASH_TEST2
 	{ /* "&&" */ BAND    , BBINOP },
 	{ /* "||" */ BOR     , BBINOP },
 #endif
@@ -360,7 +360,7 @@ static const struct operator_t ops_table[] ALIGN2 = {
 	{ /* ")"  */ RPAREN  , PAREN  },
 };
 /* Please keep these two tables in sync */
-static const char ops_texts[] ALIGN1 =
+ایستا ثابت نویسه ops_texts[] ALIGN1 =
 	"-r"  "\0"
 	"-w"  "\0"
 	"-x"  "\0"
@@ -389,7 +389,7 @@ static const char ops_texts[] ALIGN1 =
 	"!="  "\0"
 	"<"   "\0"
 	">"   "\0"
-#if BASH_TEST2
+#اگر BASH_TEST2
 	"=~"  "\0"
 #endif
 	"-eq" "\0"
@@ -404,7 +404,7 @@ static const char ops_texts[] ALIGN1 =
 	"!"   "\0"
 	"-a"  "\0"
 	"-o"  "\0"
-#if BASH_TEST2
+#اگر BASH_TEST2
 	"&&"  "\0"
 	"||"  "\0"
 #endif
@@ -413,29 +413,29 @@ static const char ops_texts[] ALIGN1 =
 ;
 
 
-#if ENABLE_FEATURE_TEST_64
-typedef int64_t number_t;
-#else
-typedef int number_t;
+#اگر ENABLE_FEATURE_TEST_64
+تعریفنوع int64_t عدد_t;
+#وگرنه
+تعریفنوع صحیح عدد_t;
 #endif
 
 
 /* We try to minimize both static and stack usage. */
-struct test_statics {
-	char **args;
+ساختار test_statics {
+	نویسه **args;
 	/* set only by check_operator(), either to bogus struct
 	 * or points to matching operator_t struct. Never NULL. */
-	const struct operator_t *last_operator;
+	ثابت ساختار operator_t *last_operator;
 	gid_t *group_array;
-	int ngroups;
-#if BASH_TEST2
+	صحیح ngroups;
+#اگر BASH_TEST2
 	bool bash_test2;
 #endif
 	jmp_buf leaving;
 };
 
 /* See test_ptr_hack.c */
-extern struct test_statics *BB_GLOBAL_CONST test_ptr_to_statics;
+بیرونی ساختار test_statics *BB_GLOBAL_CONST test_ptr_to_statics;
 
 #define S (*test_ptr_to_statics)
 #define args            (S.args         )
@@ -445,52 +445,52 @@ extern struct test_statics *BB_GLOBAL_CONST test_ptr_to_statics;
 #define bash_test2      (S.bash_test2   )
 #define leaving         (S.leaving      )
 
-#define INIT_S() do { \
-	XZALLOC_CONST_PTR(&test_ptr_to_statics, sizeof(S)); \
-} while (0)
-#define DEINIT_S() do { \
-	free(group_array); \
-	free(test_ptr_to_statics); \
-} while (0)
+#define INIT_S() انجامبده { \
+	XZALLOC_CONST_PTR(&test_ptr_to_statics, اندازه(S)); \
+} وقتی (0)
+#define DEINIT_S() انجامبده { \
+	آزاد(group_array); \
+	آزاد(test_ptr_to_statics); \
+} وقتی (0)
 
-static number_t primary(enum token n);
+ایستا عدد_t primary(شمارش token n);
 
-static void syntax(const char *op, const char *msg) NORETURN;
-static void syntax(const char *op, const char *msg)
+ایستا تهی syntax(ثابت نویسه *op, ثابت نویسه *پیام) NORETURN;
+ایستا تهی syntax(ثابت نویسه *op, ثابت نویسه *پیام)
 {
-	if (op && *op) {
-		bb_error_msg("%s: %s", op, msg);
-	} else {
-		bb_error_msg("%s: %s"+4, msg);
+	اگر (op && *op) {
+		bb_error_پیام("%s: %s", op, پیام);
+	} وگرنه {
+		bb_error_پیام("%s: %s"+4, پیام);
 	}
 	longjmp(leaving, 2);
 }
 
 /* atoi with error detection */
 //XXX: FIXME: duplicate of existing libbb function?
-static number_t getn(const char *s)
+ایستا عدد_t getn(ثابت نویسه *s)
 {
-	char *p;
-#if ENABLE_FEATURE_TEST_64
+	نویسه *p;
+#اگر ENABLE_FEATURE_TEST_64
 	long long r;
-#else
+#وگرنه
 	long r;
 #endif
 
 	errno = 0;
-#if ENABLE_FEATURE_TEST_64
+#اگر ENABLE_FEATURE_TEST_64
 	r = strtoll(s, &p, 10);
-#else
+#وگرنه
 	r = strtol(s, &p, 10);
 #endif
 
-	if (errno != 0)
+	اگر (errno != 0)
 		syntax(s, "out of range");
 
-	if (p == s || *(skip_whitespace(p)) != '\0')
+	اگر (p == s || *(skip_whitespace(p)) != '\0')
 		syntax(s, "bad number");
 
-	return r;
+	بازگشت r;
 }
 
 /* UNUSED
@@ -521,417 +521,417 @@ static int equalf(const char *f1, const char *f2)
 */
 
 
-static enum token check_operator(const char *s)
+ایستا شمارش token check_operator(ثابت نویسه *s)
 {
-	static const struct operator_t no_op = {
-		.op_num = -1,
+	ایستا ثابت ساختار operator_t no_op = {
+		.op_رقم = -1,
 		.op_type = -1
 	};
-	int n;
+	صحیح n;
 
 	last_operator = &no_op;
-	if (s == NULL)
-		return EOI;
+	اگر (s == پوچ)
+		بازگشت EOI;
 	n = index_in_strings(ops_texts, s);
-	if (n < 0)
-		return OPERAND;
+	اگر (n < 0)
+		بازگشت OPERAND;
 
-#if BASH_TEST2
-	if (ops_table[n].op_num == REGEX && !bash_test2) {
+#اگر BASH_TEST2
+	اگر (ops_table[n].op_رقم == REGEX && !bash_test2) {
 		/* =~ is only for [[ ]] */
-		return OPERAND;
+		بازگشت OPERAND;
 	}
-	if (ops_table[n].op_num == BAND || ops_table[n].op_num == BOR) {
+	اگر (ops_table[n].op_رقم == BAND || ops_table[n].op_رقم == BOR) {
 		/* [ ]   accepts -a and -o but not && and || */
 		/* [[ ]] accepts && and || but not -a and -o */
-		if (bash_test2 == (s[0] == '-'))
-			return OPERAND;
+		اگر (bash_test2 == (s[0] == '-'))
+			بازگشت OPERAND;
 	}
 #endif
 
 	last_operator = &ops_table[n];
-	return ops_table[n].op_num;
+	بازگشت ops_table[n].op_رقم;
 }
 
 
-static int binop(void)
+ایستا صحیح binop(تهی)
 {
-	const char *opnd1, *opnd2;
-	const struct operator_t *op;
-	number_t val1, val2;
+	ثابت نویسه *opnd1, *opnd2;
+	ثابت ساختار operator_t *op;
+	عدد_t val1, val2;
 
 	opnd1 = *args;
 	check_operator(*++args);
 	op = last_operator;
 
 	opnd2 = *++args;
-	if (opnd2 == NULL)
+	اگر (opnd2 == پوچ)
 		syntax(args[-1], "argument expected");
 
-	if (is_int_op(op->op_num)) {
+	اگر (is_int_op(op->op_رقم)) {
 		val1 = getn(opnd1);
 		val2 = getn(opnd2);
-		if (op->op_num == INTEQ)
-			return val1 == val2;
-		if (op->op_num == INTNE)
-			return val1 != val2;
-		if (op->op_num == INTGE)
-			return val1 >= val2;
-		if (op->op_num == INTGT)
-			return val1 >  val2;
-		if (op->op_num == INTLE)
-			return val1 <= val2;
+		اگر (op->op_رقم == INTEQ)
+			بازگشت val1 == val2;
+		اگر (op->op_رقم == INTNE)
+			بازگشت val1 != val2;
+		اگر (op->op_رقم == INTGE)
+			بازگشت val1 >= val2;
+		اگر (op->op_رقم == INTGT)
+			بازگشت val1 >  val2;
+		اگر (op->op_رقم == INTLE)
+			بازگشت val1 <= val2;
 		/*if (op->op_num == INTLT)*/
-		return val1 <  val2;
+		بازگشت val1 <  val2;
 	}
-#if BASH_TEST2
-	if (bash_test2) {
-		if (op->op_num == STREQ) {
+#اگر BASH_TEST2
+	اگر (bash_test2) {
+		اگر (op->op_رقم == STREQ) {
 			val1 = fnmatch(opnd2, opnd1, 0);
-			return val1 == 0;
+			بازگشت val1 == 0;
 		}
-		if (op->op_num == STRNE) {
+		اگر (op->op_رقم == STRNE) {
 			val1 = fnmatch(opnd2, opnd1, 0);
-			return val1 != 0;
+			بازگشت val1 != 0;
 		}
-		if (op->op_num == REGEX) {
+		اگر (op->op_رقم == REGEX) {
 			regex_t re_buffer;
-			memset(&re_buffer, 0, sizeof(re_buffer));
-			if (regcomp(&re_buffer, opnd2, REG_EXTENDED)) { // REG_NEWLINE?
+			memset(&re_buffer, 0, اندازه(re_buffer));
+			اگر (regcomp(&re_buffer, opnd2, REG_EXTENDED)) { // REG_NEWLINE?
 				/* Bad regex */
 				longjmp(leaving, 2); /* [[ a =~ * ]]; echo $? - prints 2 (silently, no error msg) */
 			}
-			val1 = regexec(&re_buffer, opnd1, 0, NULL, 0);
+			val1 = regexec(&re_buffer, opnd1, 0, پوچ, 0);
 			regfree(&re_buffer);
-			return val1 == 0;
+			بازگشت val1 == 0;
 		}
 	}
 #endif
-	if (is_str_op(op->op_num)) {
+	اگر (is_str_op(op->op_رقم)) {
 		val1 = strcmp(opnd1, opnd2);
-		if (op->op_num == STREQ)
-			return val1 == 0;
-		if (op->op_num == STRNE)
-			return val1 != 0;
-		if (op->op_num == STRLT)
-			return val1 < 0;
+		اگر (op->op_رقم == STREQ)
+			بازگشت val1 == 0;
+		اگر (op->op_رقم == STRNE)
+			بازگشت val1 != 0;
+		اگر (op->op_رقم == STRLT)
+			بازگشت val1 < 0;
 		/*if (op->op_num == STRGT)*/
-		return val1 > 0;
+		بازگشت val1 > 0;
 	}
 	/* We are sure that these three are by now the only binops we didn't check
 	 * yet, so we do not check if the class is correct:
 	 */
 /*	if (is_file_op(op->op_num)) */
 	{
-		struct stat b1, b2;
+		ساختار stat b1, b2;
 
-		if (stat(opnd1, &b1) || stat(opnd2, &b2))
-			return 0; /* false, since at least one stat failed */
-		if (op->op_num == FILNT)
-			return b1.st_mtime > b2.st_mtime;
-		if (op->op_num == FILOT)
-			return b1.st_mtime < b2.st_mtime;
+		اگر (stat(opnd1, &b1) || stat(opnd2, &b2))
+			بازگشت 0; /* false, since at least one stat failed */
+		اگر (op->op_رقم == FILNT)
+			بازگشت b1.st_mtime > b2.st_mtime;
+		اگر (op->op_رقم == FILOT)
+			بازگشت b1.st_mtime < b2.st_mtime;
 		/*if (op->op_num == FILEQ)*/
-		return b1.st_dev == b2.st_dev && b1.st_ino == b2.st_ino;
+		بازگشت b1.st_dev == b2.st_dev && b1.st_ino == b2.st_ino;
 	}
 	/*return 1; - NOTREACHED */
 }
 
-static void initialize_group_array(void)
+ایستا تهی initialize_group_array(تهی)
 {
-	group_array = bb_getgroups(&ngroups, NULL);
+	group_array = bb_getgroups(&ngroups, پوچ);
 }
 
 /* Return non-zero if GID is one that we have in our groups list. */
 //XXX: FIXME: duplicate of existing libbb function?
 // see toplevel TODO file:
 // possible code duplication ingroup() and is_a_group_member()
-static int is_a_group_member(gid_t gid)
+ایستا صحیح is_a_group_member(gid_t gid)
 {
-	int i;
+	صحیح i;
 
 	/* Short-circuit if possible, maybe saving a call to getgroups(). */
-	if (gid == getgid() || gid == getegid())
-		return 1;
+	اگر (gid == getgid() || gid == getegid())
+		بازگشت 1;
 
-	if (ngroups == 0)
+	اگر (ngroups == 0)
 		initialize_group_array();
 
 	/* Search through the list looking for GID. */
-	for (i = 0; i < ngroups; i++)
-		if (gid == group_array[i])
-			return 1;
+	برای (i = 0; i < ngroups; i++)
+		اگر (gid == group_array[i])
+			بازگشت 1;
 
-	return 0;
+	بازگشت 0;
 }
 
 
 /* Do the same thing access(2) does, but use the effective uid and gid,
    and don't make the mistake of telling root that any file is
    executable. */
-static int test_eaccess(struct stat *st, int mode)
+ایستا صحیح test_eaccess(ساختار stat *st, صحیح mode)
 {
-	unsigned int euid = geteuid();
+	unsigned صحیح euid = geteuid();
 
-	if (euid == 0) {
+	اگر (euid == 0) {
 		/* Root can read or write any file. */
-		if (mode != X_OK)
-			return 0;
+		اگر (mode != X_OK)
+			بازگشت 0;
 
 		/* Root can execute any file that has any one of the execute
 		 * bits set. */
-		if (st->st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))
-			return 0;
+		اگر (st->st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))
+			بازگشت 0;
 	}
 
-	if (st->st_uid == euid)  /* owner */
+	اگر (st->st_uid == euid)  /* owner */
 		mode <<= 6;
-	else if (is_a_group_member(st->st_gid))
+	وگرنه اگر (is_a_group_member(st->st_gid))
 		mode <<= 3;
 
-	if (st->st_mode & mode)
-		return 0;
+	اگر (st->st_mode & mode)
+		بازگشت 0;
 
-	return -1;
+	بازگشت -1;
 }
 
 
-static int filstat(char *nm, enum token mode)
+ایستا صحیح filstat(نویسه *nm, شمارش token mode)
 {
-	struct stat s;
+	ساختار stat s;
 	unsigned i = i; /* gcc 3.x thinks it can be used uninitialized */
 
-	if (mode == FILSYM) {
+	اگر (mode == FILSYM) {
 #ifdef S_IFLNK
-		if (lstat(nm, &s) == 0) {
+		اگر (lstat(nm, &s) == 0) {
 			i = S_IFLNK;
-			goto filetype;
+			برو filetype;
 		}
 #endif
-		return 0;
+		بازگشت 0;
 	}
 
-	if (stat(nm, &s) != 0)
-		return 0;
-	if (mode == FILEXIST)
-		return 1;
-	if (is_file_access(mode)) {
-		if (mode == FILRD)
+	اگر (stat(nm, &s) != 0)
+		بازگشت 0;
+	اگر (mode == FILEXIST)
+		بازگشت 1;
+	اگر (is_file_access(mode)) {
+		اگر (mode == FILRD)
 			i = R_OK;
-		if (mode == FILWR)
+		اگر (mode == FILWR)
 			i = W_OK;
-		if (mode == FILEX)
+		اگر (mode == FILEX)
 			i = X_OK;
-		return test_eaccess(&s, i) == 0;
+		بازگشت test_eaccess(&s, i) == 0;
 	}
-	if (is_file_type(mode)) {
-		if (mode == FILREG)
+	اگر (is_file_type(mode)) {
+		اگر (mode == FILREG)
 			i = S_IFREG;
-		if (mode == FILDIR)
+		اگر (mode == FILDIR)
 			i = S_IFDIR;
-		if (mode == FILCDEV)
+		اگر (mode == FILCDEV)
 			i = S_IFCHR;
-		if (mode == FILBDEV)
+		اگر (mode == FILBDEV)
 			i = S_IFBLK;
-		if (mode == FILFIFO) {
+		اگر (mode == FILFIFO) {
 #ifdef S_IFIFO
 			i = S_IFIFO;
-#else
-			return 0;
+#وگرنه
+			بازگشت 0;
 #endif
 		}
-		if (mode == FILSOCK) {
+		اگر (mode == FILSOCK) {
 #ifdef S_IFSOCK
 			i = S_IFSOCK;
-#else
-			return 0;
+#وگرنه
+			بازگشت 0;
 #endif
 		}
  filetype:
-		return ((s.st_mode & S_IFMT) == i);
+		بازگشت ((s.st_mode & S_IFMT) == i);
 	}
-	if (is_file_bit(mode)) {
-		if (mode == FILSUID)
+	اگر (is_file_bit(mode)) {
+		اگر (mode == FILSUID)
 			i = S_ISUID;
-		if (mode == FILSGID)
+		اگر (mode == FILSGID)
 			i = S_ISGID;
-		if (mode == FILSTCK)
+		اگر (mode == FILSTCK)
 			i = S_ISVTX;
-		return ((s.st_mode & i) != 0);
+		بازگشت ((s.st_mode & i) != 0);
 	}
-	if (mode == FILGZ)
-		return s.st_size > 0L;
-	if (mode == FILUID)
-		return s.st_uid == geteuid();
-	if (mode == FILGID)
-		return s.st_gid == getegid();
-	return 1; /* NOTREACHED */
+	اگر (mode == FILGZ)
+		بازگشت s.st_size > 0L;
+	اگر (mode == FILUID)
+		بازگشت s.st_uid == geteuid();
+	اگر (mode == FILGID)
+		بازگشت s.st_gid == getegid();
+	بازگشت 1; /* NOTREACHED */
 }
 
 
-static number_t nexpr(enum token n)
+ایستا عدد_t nexpr(شمارش token n)
 {
-	number_t res;
+	عدد_t res;
 
-	nest_msg(">nexpr(%s)\n", TOKSTR[n]);
-	if (n == UNOT) {
+	nest_پیام(">nexpr(%s)\n", TOKSTR[n]);
+	اگر (n == UNOT) {
 		n = check_operator(*++args);
-		if (n == EOI) {
+		اگر (n == EOI) {
 			/* special case: [ ! ], [ a -a ! ] are valid */
 			/* IOW, "! ARG" may miss ARG */
 			args--;
-			unnest_msg("<nexpr:1 (!EOI), args:%s(%p)\n", args[0], &args[0]);
-			return 1;
+			unnest_پیام("<nexpr:1 (!EOI), args:%s(%p)\n", args[0], &args[0]);
+			بازگشت 1;
 		}
 		res = !nexpr(n);
-		unnest_msg("<nexpr:%lld\n", res);
-		return res;
+		unnest_پیام("<nexpr:%lld\n", res);
+		بازگشت res;
 	}
 	res = primary(n);
-	unnest_msg("<nexpr:%lld\n", res);
-	return res;
+	unnest_پیام("<nexpr:%lld\n", res);
+	بازگشت res;
 }
 
 
-static number_t aexpr(enum token n)
+ایستا عدد_t aexpr(شمارش token n)
 {
-	number_t res;
+	عدد_t res;
 
-	nest_msg(">aexpr(%s)\n", TOKSTR[n]);
+	nest_پیام(">aexpr(%s)\n", TOKSTR[n]);
 	res = nexpr(n);
-	dbg_msg("aexpr: nexpr:%lld, next args:%s(%p)\n", res, args[1], &args[1]);
-	if (check_operator(*++args) == BAND) {
-		dbg_msg("aexpr: arg is AND, next args:%s(%p)\n", args[1], &args[1]);
+	dbg_پیام("aexpr: nexpr:%lld, next args:%s(%p)\n", res, args[1], &args[1]);
+	اگر (check_operator(*++args) == BAND) {
+		dbg_پیام("aexpr: arg is AND, next args:%s(%p)\n", args[1], &args[1]);
 		res = aexpr(check_operator(*++args)) && res;
-		unnest_msg("<aexpr:%lld\n", res);
-		return res;
+		unnest_پیام("<aexpr:%lld\n", res);
+		بازگشت res;
 	}
 	args--;
-	unnest_msg("<aexpr:%lld, args:%s(%p)\n", res, args[0], &args[0]);
-	return res;
+	unnest_پیام("<aexpr:%lld, args:%s(%p)\n", res, args[0], &args[0]);
+	بازگشت res;
 }
 
 
-static number_t oexpr(enum token n)
+ایستا عدد_t oexpr(شمارش token n)
 {
-	number_t res;
+	عدد_t res;
 
-	nest_msg(">oexpr(%s)\n", TOKSTR[n]);
+	nest_پیام(">oexpr(%s)\n", TOKSTR[n]);
 	res = aexpr(n);
-	dbg_msg("oexpr: aexpr:%lld, next args:%s(%p)\n", res, args[1], &args[1]);
-	if (check_operator(*++args) == BOR) {
-		dbg_msg("oexpr: next arg is OR, next args:%s(%p)\n", args[1], &args[1]);
+	dbg_پیام("oexpr: aexpr:%lld, next args:%s(%p)\n", res, args[1], &args[1]);
+	اگر (check_operator(*++args) == BOR) {
+		dbg_پیام("oexpr: next arg is OR, next args:%s(%p)\n", args[1], &args[1]);
 		res = oexpr(check_operator(*++args)) || res;
-		unnest_msg("<oexpr:%lld\n", res);
-		return res;
+		unnest_پیام("<oexpr:%lld\n", res);
+		بازگشت res;
 	}
 	args--;
-	unnest_msg("<oexpr:%lld, args:%s(%p)\n", res, args[0], &args[0]);
-	return res;
+	unnest_پیام("<oexpr:%lld, args:%s(%p)\n", res, args[0], &args[0]);
+	بازگشت res;
 }
 
 
-static number_t primary(enum token n)
+ایستا عدد_t primary(شمارش token n)
 {
-#if TEST_DEBUG
-	number_t res = res; /* for compiler */
-#else
-	number_t res;
+#اگر TEST_DEBUG
+	عدد_t res = res; /* for compiler */
+#وگرنه
+	عدد_t res;
 #endif
-	const struct operator_t *args0_op;
+	ثابت ساختار operator_t *args0_op;
 
-	nest_msg(">primary(%s)\n", TOKSTR[n]);
-	if (n == EOI) {
-		syntax(NULL, "argument expected");
+	nest_پیام(">primary(%s)\n", TOKSTR[n]);
+	اگر (n == EOI) {
+		syntax(پوچ, "argument expected");
 	}
-	if (n == LPAREN) {
+	اگر (n == LPAREN) {
 		res = oexpr(check_operator(*++args));
-		if (check_operator(*++args) != RPAREN)
-			syntax(NULL, "closing paren expected");
-		unnest_msg("<primary:%lld\n", res);
-		return res;
+		اگر (check_operator(*++args) != RPAREN)
+			syntax(پوچ, "closing paren expected");
+		unnest_پیام("<primary:%lld\n", res);
+		بازگشت res;
 	}
 
 	/* coreutils 6.9 checks "is args[1] binop and args[2] exist?" first,
 	 * do the same */
 	args0_op = last_operator;
 	/* last_operator = operator at args[1] */
-	if (check_operator(args[1]) != EOI) { /* if args[1] != NULL */
-		if (args[2]) {
+	اگر (check_operator(args[1]) != EOI) { /* if args[1] != NULL */
+		اگر (args[2]) {
 			// coreutils also does this:
 			// if (args[3] && args[0] = "-l" && args[2] is BINOP)
 			//	return binop(1 /* prepended by -l */);
-			if (last_operator->op_type == BINOP)
-				unnest_msg_and_return(binop(), "<primary: binop:%lld\n");
+			اگر (last_operator->op_type == BINOP)
+				unnest_پیام_and_return(binop(), "<primary: binop:%lld\n");
 		}
 	}
 	/* check "is args[0] unop?" second */
-	if (args0_op->op_type == UNOP) {
+	اگر (args0_op->op_type == UNOP) {
 		/* unary expression */
-		if (args[1] == NULL)
+		اگر (args[1] == پوچ)
 //			syntax(args0_op->op_text, "argument expected");
-			goto check_emptiness;
+			برو check_emptiness;
 		args++;
-		if (n == STREZ)
-			unnest_msg_and_return(args[0][0] == '\0', "<primary:%lld\n");
-		if (n == STRNZ)
-			unnest_msg_and_return(args[0][0] != '\0', "<primary:%lld\n");
-		if (n == FILTT)
-			unnest_msg_and_return(isatty(getn(*args)), "<primary: isatty(%s)%lld\n", *args);
-		unnest_msg_and_return(filstat(*args, n), "<primary: filstat(%s):%lld\n", *args);
+		اگر (n == STREZ)
+			unnest_پیام_and_return(args[0][0] == '\0', "<primary:%lld\n");
+		اگر (n == STRNZ)
+			unnest_پیام_and_return(args[0][0] != '\0', "<primary:%lld\n");
+		اگر (n == FILTT)
+			unnest_پیام_and_return(isatty(getn(*args)), "<primary: isatty(%s)%lld\n", *args);
+		unnest_پیام_and_return(filstat(*args, n), "<primary: filstat(%s):%lld\n", *args);
 	}
 
 	/*check_operator(args[1]); - already done */
-	if (last_operator->op_type == BINOP) {
+	اگر (last_operator->op_type == BINOP) {
 		/* args[2] is known to be NULL, isn't it bound to fail? */
-		unnest_msg_and_return(binop(), "<primary:%lld\n");
+		unnest_پیام_and_return(binop(), "<primary:%lld\n");
 	}
  check_emptiness:
-	unnest_msg_and_return(args[0][0] != '\0', "<primary:%lld\n");
+	unnest_پیام_and_return(args[0][0] != '\0', "<primary:%lld\n");
 }
 
 
-int test_main(int argc, char **argv)
+صحیح test_main(صحیح argc, نویسه **argv)
 {
-	int res;
-	const char *arg0;
-#if BASH_TEST2
+	صحیح res;
+	ثابت نویسه *arg0;
+#اگر BASH_TEST2
 	bool bt2 = 0;
 #endif
 
 	arg0 = bb_basename(argv[0]);
-	if ((ENABLE_TEST1 || ENABLE_TEST2 || ENABLE_ASH_TEST || ENABLE_HUSH_TEST)
+	اگر ((ENABLE_TEST1 || ENABLE_TEST2 || ENABLE_ASH_TEST || ENABLE_HUSH_TEST)
 	 && (arg0[0] == '[')
 	) {
 		--argc;
-		if (!arg0[1]) { /* "[" ? */
-			if (NOT_LONE_CHAR(argv[argc], ']')) {
-				bb_simple_error_msg("missing ]");
-				return 2;
+		اگر (!arg0[1]) { /* "[" ? */
+			اگر (NOT_LONE_CHAR(argv[argc], ']')) {
+				bb_simple_error_پیام("missing ]");
+				بازگشت 2;
 			}
-		} else { /* assuming "[[" */
-			if (strcmp(argv[argc], "]]") != 0) {
-				bb_simple_error_msg("missing ]]");
-				return 2;
+		} وگرنه { /* assuming "[[" */
+			اگر (strcmp(argv[argc], "]]") != 0) {
+				bb_simple_error_پیام("missing ]]");
+				بازگشت 2;
 			}
-#if BASH_TEST2
+#اگر BASH_TEST2
 			bt2 = 1;
 #endif
 		}
-		argv[argc] = NULL;
+		argv[argc] = پوچ;
 	}
 	/* argc is unused after this point */
 
 	/* We must do DEINIT_S() prior to returning */
 	INIT_S();
 
-#if BASH_TEST2
+#اگر BASH_TEST2
 	bash_test2 = bt2;
 #endif
 
 	res = setjmp(leaving);
-	if (res)
-		goto ret;
+	اگر (res)
+		برو ret;
 
 	/* resetting ngroups is probably unnecessary.  it will
 	 * force a new call to getgroups(), which prevents using
@@ -950,21 +950,21 @@ int test_main(int argc, char **argv)
 	 * Testcase: "test '(' = '('"
 	 * The general parser would misinterpret '(' as group start.
 	 */
-	if (1) {
-		int negate = 0;
+	اگر (1) {
+		صحیح negate = 0;
  again:
-		if (!argv[0]) {
+		اگر (!argv[0]) {
 			/* "test" */
 			res = 1;
-			goto ret_special;
+			برو ret_special;
 		}
-		if (!argv[1]) {
+		اگر (!argv[1]) {
 			/* "test [!] arg" */
 			res = (argv[0][0] == '\0');
-			goto ret_special;
+			برو ret_special;
 		}
-		if (argv[2]) {
-			if (!argv[3]) {
+		اگر (argv[2]) {
+			اگر (!argv[3]) {
 				/*
 				 * http://pubs.opengroup.org/onlinepubs/009695399/utilities/test.html
 				 * """ 3 arguments:
@@ -972,22 +972,22 @@ int test_main(int argc, char **argv)
 				 * """
 				 */
 				check_operator(argv[1]);
-				if (last_operator->op_type == BINOP) {
+				اگر (last_operator->op_type == BINOP) {
 					/* "test [!] arg1 <binary_op> arg2" */
 					args = argv;
 					res = (binop() == 0);
  ret_special:
 					/* If there was leading "!" op... */
 					res ^= negate;
-					goto ret;
+					برو ret;
 				}
 				/* """If $1 is '(' and $3 is ')', perform the unary test of $2."""
 				 * Looks like this works without additional coding.
 				 */
-				goto check_negate;
+				برو check_negate;
 			}
 			/* argv[3] exists (at least 4 args), is it exactly 4 args? */
-			if (!argv[4]) {
+			اگر (!argv[4]) {
 				/*
 				 * """ 4 arguments:
 				 * If $1 is '!', negate the three-argument test of $2, $3, and $4.
@@ -995,34 +995,34 @@ int test_main(int argc, char **argv)
 				 * """
 				 * Example why code below is necessary: test '(' ! -e ')'
 				 */
-				if (LONE_CHAR(argv[0], '(')
+				اگر (LONE_CHAR(argv[0], '(')
 				 && LONE_CHAR(argv[3], ')')
 				) {
 					/* "test [!] ( x y )" */
-					argv[3] = NULL;
+					argv[3] = پوچ;
 					argv++;
 				}
 			}
 		}
  check_negate:
-		if (LONE_CHAR(argv[0], '!')) {
+		اگر (LONE_CHAR(argv[0], '!')) {
 			argv++;
 			negate ^= 1;
-			goto again;
+			برو again;
 		}
 	}
 
 	res = !oexpr(check_operator(*args));
 
-	if (*args != NULL && *++args != NULL) {
+	اگر (*args != پوچ && *++args != پوچ) {
 		/* Examples:
 		 * test 3 -lt 5 6
 		 * test -t 1 2
 		 */
-		bb_error_msg("%s: unknown operand", *args);
+		bb_error_پیام("%s: unknown operand", *args);
 		res = 2;
 	}
  ret:
 	DEINIT_S();
-	return res;
+	بازگشت res;
 }

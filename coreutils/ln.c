@@ -37,7 +37,7 @@
 //usage:       "$ ls -l /tmp/ls\n"
 //usage:       "lrwxrwxrwx    1 root     root            7 Apr 12 18:39 ls -> BusyBox*\n"
 
-#include "libbb.h"
+#شامل "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
@@ -49,17 +49,17 @@
 #define LN_VERBOSE          (1 << 5)
 #define LN_LINKFILE         (1 << 6)
 
-int ln_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int ln_main(int argc, char **argv)
+صحیح ln_main(صحیح argc, نویسه **argv) MAIN_EXTERNALLY_VISIBLE;
+صحیح ln_main(صحیح argc, نویسه **argv)
 {
 	exitcode_t status = EXIT_SUCCESS;
-	int opts;
-	char *last;
-	char *src_name;
-	char *src;
-	char *suffix = (char*)"~";
-	struct stat statbuf;
-	int (*link_func)(const char *, const char *);
+	صحیح opts;
+	نویسه *last;
+	نویسه *src_name;
+	نویسه *src;
+	نویسه *suffix = (نویسه*)"~";
+	ساختار stat statbuf;
+	صحیح (*link_func)(ثابت نویسه *, ثابت نویسه *);
 
 	opts = getopt32(argv, "^" "sfnbS:vT" "\0" "-1", &suffix);
 /*
@@ -82,11 +82,11 @@ int ln_main(int argc, char **argv)
 	argv += optind;
 	argc -= optind;
 
-	if ((opts & LN_LINKFILE) && argc > 2) {
-		bb_simple_error_msg_and_die("-T accepts 2 args max");
+	اگر ((opts & LN_LINKFILE) && argc > 2) {
+		bb_simple_error_پیام_and_die("-T accepts 2 args max");
 	}
 
-	if (!argv[1]) {
+	اگر (!argv[1]) {
 		/* "ln PATH/TO/FILE" -> "ln PATH/TO/FILE FILE" */
 		*--argv = last;
 		/* xstrdup is needed: "ln -s PATH/TO/FILE/" is equivalent to
@@ -95,71 +95,71 @@ int ln_main(int argc, char **argv)
 		last = bb_get_last_path_component_strip(xstrdup(last));
 	}
 
-	do {
-		src_name = NULL;
+	انجامبده {
+		src_name = پوچ;
 		src = last;
 
-		if (is_directory(src,
+		اگر (is_directory(src,
 				/*followlinks:*/ !(opts & (LN_NODEREFERENCE|LN_LINKFILE))
 				/* Why LN_LINKFILE does not follow links:
 				 * -T/--no-target-directory implies -n/--no-dereference
 				 */
 				)
 		) {
-			if (opts & LN_LINKFILE) {
-				bb_error_msg_and_die("'%s' is a directory", src);
+			اگر (opts & LN_LINKFILE) {
+				bb_error_پیام_and_die("'%s' is a directory", src);
 			}
 			src_name = xstrdup(*argv);
 			src = concat_path_file(src, bb_get_last_path_component_strip(src_name));
-			free(src_name);
+			آزاد(src_name);
 			src_name = src;
 		}
-		if (!(opts & LN_SYMLINK) && stat(*argv, &statbuf)) {
+		اگر (!(opts & LN_SYMLINK) && stat(*argv, &statbuf)) {
 			// coreutils: "ln dangling_symlink new_hardlink" works
-			if (lstat(*argv, &statbuf) || !S_ISLNK(statbuf.st_mode)) {
-				bb_simple_perror_msg(*argv);
+			اگر (lstat(*argv, &statbuf) || !S_ISLNK(statbuf.st_mode)) {
+				bb_simple_perror_پیام(*argv);
 				status = EXIT_FAILURE;
-				free(src_name);
-				continue;
+				آزاد(src_name);
+				ادامه;
 			}
 		}
 
-		if (opts & LN_BACKUP) {
-			char *backup;
+		اگر (opts & LN_BACKUP) {
+			نویسه *backup;
 			backup = xasprintf("%s%s", src, suffix);
-			if (rename(src, backup) < 0 && errno != ENOENT) {
-				bb_simple_perror_msg(src);
+			اگر (rename(src, backup) < 0 && errno != ENOENT) {
+				bb_simple_perror_پیام(src);
 				status = EXIT_FAILURE;
-				free(backup);
-				continue;
+				آزاد(backup);
+				ادامه;
 			}
-			free(backup);
+			آزاد(backup);
 			/*
 			 * When the source and dest are both hard links to the same
 			 * inode, a rename may succeed even though nothing happened.
 			 * Therefore, always unlink().
 			 */
 			unlink(src);
-		} else if (opts & LN_FORCE) {
+		} وگرنه اگر (opts & LN_FORCE) {
 			unlink(src);
 		}
 
 		link_func = link;
-		if (opts & LN_SYMLINK) {
+		اگر (opts & LN_SYMLINK) {
 			link_func = symlink;
 		}
 
-		if (opts & LN_VERBOSE) {
+		اگر (opts & LN_VERBOSE) {
 			printf("'%s' -> '%s'\n", src, *argv);
 		}
 
-		if (link_func(*argv, src) != 0) {
-			bb_simple_perror_msg(src);
+		اگر (link_func(*argv, src) != 0) {
+			bb_simple_perror_پیام(src);
 			status = EXIT_FAILURE;
 		}
 
-		free(src_name);
-	} while ((++argv)[1]);
+		آزاد(src_name);
+	} وقتی ((++argv)[1]);
 
-	return status;
+	بازگشت status;
 }
