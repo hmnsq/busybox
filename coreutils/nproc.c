@@ -23,50 +23,50 @@
 //usage:     "\n	--ignore=N	Exclude N CPUs"
 //usage:	)
 
-#include "libbb.h"
+#समावेश "libbb.h"
 
-int nproc_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int nproc_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+पूर्णांक nproc_main(पूर्णांक argc, अक्षर **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णांक nproc_main(पूर्णांक argc UNUSED_PARAM, अक्षर **argv UNUSED_PARAM)
 {
-	int count = 0;
-#if ENABLE_LONG_OPTS
-	int ignore = 0;
-	int opts = getopt32long(argv, "\xfe:+",
+	पूर्णांक गिनती = 0;
+#अगर ENABLE_LONG_OPTS
+	पूर्णांक ignore = 0;
+	पूर्णांक opts = getopt32long(argv, "\xfe:+",
 			"ignore\0" Required_argument "\xfe"
 			"all\0"    No_argument       "\xff"
 			, &ignore
 	);
 
-	if (opts & (1 << 1)) {
-		DIR *cpusd = opendir("/sys/devices/system/cpu");
-		if (cpusd) {
-			struct dirent *de;
-			while (NULL != (de = readdir(cpusd))) {
-				char *cpuid = strstr(de->d_name, "cpu");
-				if (cpuid && isdigit(cpuid[strlen(cpuid) - 1]))
-					count++;
+	अगर (opts & (1 << 1)) {
+		सूची *cpusd = सूची_खोलो("/sys/devices/system/cpu");
+		अगर (cpusd) {
+			काष्ठा dirent *de;
+			जबतक (शून्य != (de = सूची_पढ़ो(cpusd))) {
+				अक्षर *cpuid = म_माला(de->d_name, "cpu");
+				अगर (cpuid && है_अंक(cpuid[म_माप(cpuid) - 1]))
+					गिनती++;
 			}
-			IF_FEATURE_CLEAN_UP(closedir(cpusd);)
+			IF_FEATURE_CLEAN_UP(बंद_सूची(cpusd);)
 		}
-	} else
-#endif
+	} अन्यथा
+#पूर्ण_अगर
 	{
-		int i;
-		unsigned sz = 2 * 1024;
-		unsigned long *mask = get_malloc_cpu_affinity(0, &sz);
-		sz /= sizeof(long);
-		for (i = 0; i < sz; i++) {
-			if (mask[i] != 0) /* most mask[i] are usually 0 */
-				count += bb_popcnt_long(mask[i]);
+		पूर्णांक i;
+		अचिन्हित sz = 2 * 1024;
+		अचिन्हित दीर्घ *mask = get_malloc_cpu_affinity(0, &sz);
+		sz /= माप(दीर्घ);
+		क्रम (i = 0; i < sz; i++) {
+			अगर (mask[i] != 0) /* most mask[i] are usually 0 */
+				गिनती += bb_popcnt_long(mask[i]);
 		}
-		IF_FEATURE_CLEAN_UP(free(mask);)
+		IF_FEATURE_CLEAN_UP(मुक्त(mask);)
 	}
 
-	IF_LONG_OPTS(count -= ignore;)
-	if (count <= 0)
-		count = 1;
+	IF_LONG_OPTS(गिनती -= ignore;)
+	अगर (गिनती <= 0)
+		गिनती = 1;
 
-	printf("%u\n", count);
+	म_लिखो("%u\n", गिनती);
 
-	return 0;
+	वापस 0;
 }

@@ -32,14 +32,14 @@
 //usage:       "$ tty\n"
 //usage:       "/dev/tty2\n"
 
-#include "libbb.h"
+#समावेश "libbb.h"
 
-int tty_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int tty_main(int argc UNUSED_PARAM, char **argv)
+पूर्णांक tty_main(पूर्णांक argc, अक्षर **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णांक tty_main(पूर्णांक argc UNUSED_PARAM, अक्षर **argv)
 {
-	const char *s;
-	IF_INCLUDE_SUSv2(int silent;)  /* Note: No longer relevant in SUSv3. */
-	int retval;
+	स्थिर अक्षर *s;
+	IF_INCLUDE_SUSv2(पूर्णांक silent;)  /* Note: No longer relevant in SUSv3. */
+	पूर्णांक retval;
 
 	xfunc_error_retval = 2;  /* SUSv3 requires > 1 for error. */
 
@@ -50,17 +50,17 @@ int tty_main(int argc UNUSED_PARAM, char **argv)
 	/* gnu tty outputs a warning that it is ignoring all args. */
 	bb_warn_ignoring_args(argv[0]);
 
-	retval = EXIT_SUCCESS;
+	retval = निकास_सफल;
 
 	s = xmalloc_ttyname(STDIN_FILENO);
-	if (s == NULL) {
+	अगर (s == शून्य) {
 	/* According to SUSv3, ttyname can fail with EBADF or ENOTTY.
 	 * We know the file descriptor is good, so failure means not a tty. */
 		s = "not a tty";
-		retval = EXIT_FAILURE;
+		retval = निकास_त्रुटि;
 	}
-	IF_INCLUDE_SUSv2(if (!silent) puts(s);)
-	IF_NOT_INCLUDE_SUSv2(puts(s);)
+	IF_INCLUDE_SUSv2(अगर (!silent) माला_दो(s);)
+	IF_NOT_INCLUDE_SUSv2(माला_दो(s);)
 
 	fflush_stdout_and_exit(retval);
 }

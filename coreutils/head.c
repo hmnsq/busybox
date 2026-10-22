@@ -47,226 +47,226 @@
 //usage:       "root:x:0:0:root:/root:/bin/bash\n"
 //usage:       "daemon:x:1:1:daemon:/usr/sbin:/bin/sh\n"
 
-#include "libbb.h"
+#समावेश "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-#if !ENABLE_FEATURE_FANCY_HEAD
-# define print_first_N(fp,count,bytes) print_first_N(fp,count)
-#endif
-static void
-print_first_N(FILE *fp, unsigned long count, bool count_bytes)
+#अगर !ENABLE_FEATURE_FANCY_शीर्ष
+# define print_first_N(fp,गिनती,bytes) print_first_N(fp,गिनती)
+#पूर्ण_अगर
+अटल व्योम
+print_first_N(खाता *fp, अचिन्हित दीर्घ गिनती, bool गिनती_bytes)
 {
-#if !ENABLE_FEATURE_FANCY_HEAD
-	const int count_bytes = 0;
-#endif
-	while (count) {
-		int c = getc(fp);
-		if (c == EOF)
-			break;
-		if (count_bytes || (c == '\n'))
-			--count;
-		putchar(c);
+#अगर !ENABLE_FEATURE_FANCY_शीर्ष
+	स्थिर पूर्णांक गिनती_bytes = 0;
+#पूर्ण_अगर
+	जबतक (गिनती) {
+		पूर्णांक c = अ_लो(fp);
+		अगर (c == खातापूर्ण)
+			अवरोध;
+		अगर (गिनती_bytes || (c == '\n'))
+			--गिनती;
+		अक्षर_दो(c);
 	}
 }
 
-#if ENABLE_FEATURE_FANCY_HEAD
-static void
-print_except_N_last_bytes(FILE *fp, unsigned count)
+#अगर ENABLE_FEATURE_FANCY_शीर्ष
+अटल व्योम
+print_except_N_last_bytes(खाता *fp, अचिन्हित गिनती)
 {
-	unsigned char *circle = xmalloc(++count);
-	unsigned head = 0;
-	for (;;) {
-		int c;
-		c = getc(fp);
-		if (c == EOF)
-			goto ret;
-		circle[head++] = c;
-		if (head == count)
-			break;
+	अचिन्हित अक्षर *circle = xmalloc(++गिनती);
+	अचिन्हित शीर्ष = 0;
+	क्रम (;;) {
+		पूर्णांक c;
+		c = अ_लो(fp);
+		अगर (c == खातापूर्ण)
+			जाओ ret;
+		circle[शीर्ष++] = c;
+		अगर (शीर्ष == गिनती)
+			अवरोध;
 	}
-	for (;;) {
-		int c;
-		if (head == count)
-			head = 0;
-		putchar(circle[head]);
-		c = getc(fp);
-		if (c == EOF)
-			goto ret;
-		circle[head] = c;
-		head++;
+	क्रम (;;) {
+		पूर्णांक c;
+		अगर (शीर्ष == गिनती)
+			शीर्ष = 0;
+		अक्षर_दो(circle[शीर्ष]);
+		c = अ_लो(fp);
+		अगर (c == खातापूर्ण)
+			जाओ ret;
+		circle[शीर्ष] = c;
+		शीर्ष++;
 	}
  ret:
-	free(circle);
+	मुक्त(circle);
 }
 
-static void
-print_except_N_last_lines(FILE *fp, unsigned count)
+अटल व्योम
+print_except_N_last_पंक्तियाँ(खाता *fp, अचिन्हित गिनती)
 {
-	char **circle = xzalloc((++count) * sizeof(circle[0]));
-	unsigned head = 0;
-	for (;;) {
-		char *c;
+	अक्षर **circle = xzalloc((++गिनती) * माप(circle[0]));
+	अचिन्हित शीर्ष = 0;
+	क्रम (;;) {
+		अक्षर *c;
 		c = xmalloc_fgets(fp);
-		if (!c)
-			goto ret;
-		circle[head++] = c;
-		if (head == count)
-			break;
+		अगर (!c)
+			जाओ ret;
+		circle[शीर्ष++] = c;
+		अगर (शीर्ष == गिनती)
+			अवरोध;
 	}
-	for (;;) {
-		char *c;
-		if (head == count)
-			head = 0;
-		fputs_stdout(circle[head]);
+	क्रम (;;) {
+		अक्षर *c;
+		अगर (शीर्ष == गिनती)
+			शीर्ष = 0;
+		fputs_stdout(circle[शीर्ष]);
 		c = xmalloc_fgets(fp);
-		if (!c)
-			goto ret;
-		free(circle[head]);
-		circle[head++] = c;
+		अगर (!c)
+			जाओ ret;
+		मुक्त(circle[शीर्ष]);
+		circle[शीर्ष++] = c;
 	}
  ret:
-	head = 0;
-	for (;;) {
-		free(circle[head++]);
-		if (head == count)
-			break;
+	शीर्ष = 0;
+	क्रम (;;) {
+		मुक्त(circle[शीर्ष++]);
+		अगर (शीर्ष == गिनती)
+			अवरोध;
 	}
-	free(circle);
+	मुक्त(circle);
 }
-#else
+#अन्यथा
 /* Must never be called */
-void print_except_N_last_bytes(FILE *fp, unsigned count);
-void print_except_N_last_lines(FILE *fp, unsigned count);
-#endif
+व्योम print_except_N_last_bytes(खाता *fp, अचिन्हित गिनती);
+व्योम print_except_N_last_पंक्तियाँ(खाता *fp, अचिन्हित गिनती);
+#पूर्ण_अगर
 
-#if !ENABLE_FEATURE_FANCY_HEAD
-# define eat_num(negative_N,p) eat_num(p)
-#endif
-static unsigned long
-eat_num(bool *negative_N, const char *p)
+#अगर !ENABLE_FEATURE_FANCY_शीर्ष
+# define eat_अंक(negative_N,p) eat_अंक(p)
+#पूर्ण_अगर
+अटल अचिन्हित दीर्घ
+eat_अंक(bool *negative_N, स्थिर अक्षर *p)
 {
-#if ENABLE_FEATURE_FANCY_HEAD
-	if (*p == '-') {
+#अगर ENABLE_FEATURE_FANCY_शीर्ष
+	अगर (*p == '-') {
 		*negative_N = 1;
 		p++;
 	}
-#endif
-	return xatoul_sfx(p, bkm_suffixes);
+#पूर्ण_अगर
+	वापस xatoul_sfx(p, bkm_suffixes);
 }
 
-static const char head_opts[] ALIGN1 =
+अटल स्थिर अक्षर शीर्ष_opts[] ALIGN1 =
 	"n:"
-#if ENABLE_FEATURE_FANCY_HEAD
+#अगर ENABLE_FEATURE_FANCY_शीर्ष
 	"c:qv"
-#endif
+#पूर्ण_अगर
 	;
 
-#define header_fmt_str "\n==> %s <==\n"
+#घोषणा header_fmt_str "\n==> %s <==\n"
 
-int head_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int head_main(int argc, char **argv)
+पूर्णांक शीर्ष_main(पूर्णांक argc, अक्षर **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णांक शीर्ष_main(पूर्णांक argc, अक्षर **argv)
 {
-	unsigned long count = 10;
-#if ENABLE_FEATURE_FANCY_HEAD
-	int header_threshhold = 1;
-	bool count_bytes = 0;
+	अचिन्हित दीर्घ गिनती = 10;
+#अगर ENABLE_FEATURE_FANCY_शीर्ष
+	पूर्णांक header_threshhold = 1;
+	bool गिनती_bytes = 0;
 	bool negative_N = 0;
-#else
+#अन्यथा
 # define header_threshhold 1
-# define count_bytes       0
+# define गिनती_bytes       0
 # define negative_N        0
-#endif
-	FILE *fp;
-	const char *fmt;
-	char *p;
-	int opt;
-	int retval = EXIT_SUCCESS;
+#पूर्ण_अगर
+	खाता *fp;
+	स्थिर अक्षर *fmt;
+	अक्षर *p;
+	पूर्णांक opt;
+	पूर्णांक retval = निकास_सफल;
 
-#if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
+#अगर ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_शीर्ष
 	/* Allow legacy syntax of an initial numeric option without -n. */
-	if (argv[1] && argv[1][0] == '-'
-	 && isdigit(argv[1][1])
+	अगर (argv[1] && argv[1][0] == '-'
+	 && है_अंक(argv[1][1])
 	) {
 		--argc;
 		++argv;
 		p = argv[0] + 1;
-		goto GET_COUNT;
+		जाओ GET_गिनती;
 	}
-#endif
+#पूर्ण_अगर
 
 	/* No size benefit in converting this to getopt32 */
-	while ((opt = getopt(argc, argv, head_opts)) > 0) {
-		switch (opt) {
-#if ENABLE_FEATURE_FANCY_HEAD
-		case 'q':
-			header_threshhold = INT_MAX;
-			break;
-		case 'v':
+	जबतक ((opt = getopt(argc, argv, शीर्ष_opts)) > 0) {
+		चयन (opt) {
+#अगर ENABLE_FEATURE_FANCY_शीर्ष
+		हाल 'q':
+			header_threshhold = पूर्णांक_उच्च;
+			अवरोध;
+		हाल 'v':
 			header_threshhold = -1;
-			break;
-		case 'c':
-			count_bytes = 1;
+			अवरोध;
+		हाल 'c':
+			गिनती_bytes = 1;
 			/* fall through */
-#endif
-		case 'n':
+#पूर्ण_अगर
+		हाल 'n':
 			p = optarg;
-#if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
- GET_COUNT:
-#endif
-			count = eat_num(&negative_N, p);
-			break;
-		default:
+#अगर ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_शीर्ष
+ GET_गिनती:
+#पूर्ण_अगर
+			गिनती = eat_अंक(&negative_N, p);
+			अवरोध;
+		शेष:
 			bb_show_usage();
 		}
 	}
 
 	argc -= optind;
 	argv += optind;
-	if (!*argv)
-		*--argv = (char*)"-";
+	अगर (!*argv)
+		*--argv = (अक्षर*)"-";
 
 	fmt = header_fmt_str + 1;
-	if (argc <= header_threshhold) {
-#if ENABLE_FEATURE_FANCY_HEAD
+	अगर (argc <= header_threshhold) {
+#अगर ENABLE_FEATURE_FANCY_शीर्ष
 		header_threshhold = 0;
-#else
+#अन्यथा
 		fmt += 11; /* "" */
-#endif
+#पूर्ण_अगर
 	}
-	if (negative_N) {
-		if (count >= INT_MAX / sizeof(char*))
-			bb_error_msg("count is too big: %lu", count);
+	अगर (negative_N) {
+		अगर (गिनती >= पूर्णांक_उच्च / माप(अक्षर*))
+			bb_error_संदेश("count is too big: %lu", गिनती);
 	}
 
-	do {
+	करो {
 		fp = fopen_or_warn_stdin(*argv);
-		if (fp) {
-			if (fp == stdin) {
-				*argv = (char *) bb_msg_standard_input;
+		अगर (fp) {
+			अगर (fp == मानक_निवेश) {
+				*argv = (अक्षर *) bb_संदेश_standard_निवेश;
 			}
-			if (header_threshhold) {
-				printf(fmt, *argv);
+			अगर (header_threshhold) {
+				म_लिखो(fmt, *argv);
 			}
-			if (negative_N) {
-				if (count_bytes) {
-					print_except_N_last_bytes(fp, count);
-				} else {
-					print_except_N_last_lines(fp, count);
+			अगर (negative_N) {
+				अगर (गिनती_bytes) {
+					print_except_N_last_bytes(fp, गिनती);
+				} अन्यथा {
+					print_except_N_last_पंक्तियाँ(fp, गिनती);
 				}
-			} else {
-				print_first_N(fp, count, count_bytes);
+			} अन्यथा {
+				print_first_N(fp, गिनती, गिनती_bytes);
 			}
 			die_if_ferror_stdout();
-			if (fclose_if_not_stdin(fp)) {
-				bb_simple_perror_msg(*argv);
-				retval = EXIT_FAILURE;
+			अगर (fclose_if_not_stdin(fp)) {
+				bb_simple_perror_संदेश(*argv);
+				retval = निकास_त्रुटि;
 			}
-		} else {
-			retval = EXIT_FAILURE;
+		} अन्यथा {
+			retval = निकास_त्रुटि;
 		}
 		fmt = header_fmt_str;
-	} while (*++argv);
+	} जबतक (*++argv);
 
 	fflush_stdout_and_exit(retval);
 }

@@ -29,90 +29,90 @@
 //usage:     "\n	-r	Use BSD sum algorithm (1K blocks)"
 //usage:     "\n	-s	Use System V sum algorithm (512byte blocks)"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#समावेश "libbb.h"
+#समावेश "common_bufsiz.h"
 
-enum { SUM_BSD, PRINT_NAME, SUM_SYSV };
+क्रमागत { योग_BSD, PRINT_NAME, योग_SYSV };
 
 /* BSD: calculate and print the rotated checksum and the size in 1K blocks
    The checksum varies depending on sizeof (int). */
 /* SYSV: calculate and print the checksum and the size in 512-byte blocks */
 /* Return 1 if successful.  */
-static unsigned sum_file(const char *file, unsigned type)
+अटल अचिन्हित योग_file(स्थिर अक्षर *file, अचिन्हित type)
 {
-	unsigned long long total_bytes = 0;
-	int fd, r;
+	अचिन्हित दीर्घ दीर्घ योग_bytes = 0;
+	पूर्णांक fd, r;
 	/* The sum of all the input bytes, modulo (UINT_MAX + 1).  */
-	unsigned s = 0;
+	अचिन्हित s = 0;
 
-#define buf bb_common_bufsiz1
+#घोषणा buf bb_common_bufsiz1
 	setup_common_bufsiz();
 
 	fd = open_or_warn_stdin(file);
-	if (fd == -1)
-		return 0;
+	अगर (fd == -1)
+		वापस 0;
 
-	while (1) {
-		size_t bytes_read = safe_read(fd, buf, COMMON_BUFSIZE);
+	जबतक (1) {
+		माप_प्रकार bytes_read = safe_read(fd, buf, COMMON_BUFSIZE);
 
-		if ((ssize_t)bytes_read <= 0) {
-			r = (fd && close(fd) != 0);
-			if (!bytes_read && !r)
+		अगर ((ssize_t)bytes_read <= 0) {
+			r = (fd && बंद(fd) != 0);
+			अगर (!bytes_read && !r)
 				/* no error */
-				break;
-			bb_simple_perror_msg(file);
-			return 0;
+				अवरोध;
+			bb_simple_perror_संदेश(file);
+			वापस 0;
 		}
 
-		total_bytes += bytes_read;
-		if (type >= SUM_SYSV) {
-			do s += buf[--bytes_read]; while (bytes_read);
-		} else {
+		योग_bytes += bytes_read;
+		अगर (type >= योग_SYSV) {
+			करो s += buf[--bytes_read]; जबतक (bytes_read);
+		} अन्यथा {
 			r = 0;
-			do {
+			करो {
 				s = (s >> 1) + ((s & 1) << 15);
 				s += buf[r++];
 				s &= 0xffff; /* Keep it within bounds. */
-			} while (--bytes_read);
+			} जबतक (--bytes_read);
 		}
 	}
 
-	if (type < PRINT_NAME)
+	अगर (type < PRINT_NAME)
 		file = "";
-	if (type >= SUM_SYSV) {
+	अगर (type >= योग_SYSV) {
 		r = (s & 0xffff) + ((s & 0xffffffff) >> 16);
 		s = (r & 0xffff) + (r >> 16);
-		printf("%u %llu %s\n", s, (total_bytes + 511) / 512, file);
-	} else
-		printf("%05u %5llu %s\n", s, (total_bytes + 1023) / 1024, file);
-	return 1;
-#undef buf
+		म_लिखो("%u %llu %s\n", s, (योग_bytes + 511) / 512, file);
+	} अन्यथा
+		म_लिखो("%05u %5llu %s\n", s, (योग_bytes + 1023) / 1024, file);
+	वापस 1;
+#अघोषित buf
 }
 
-int sum_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int sum_main(int argc UNUSED_PARAM, char **argv)
+पूर्णांक योग_main(पूर्णांक argc, अक्षर **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णांक योग_main(पूर्णांक argc UNUSED_PARAM, अक्षर **argv)
 {
-	unsigned n;
-	unsigned type = SUM_BSD;
+	अचिन्हित n;
+	अचिन्हित type = योग_BSD;
 
 	n = getopt32(argv, "sr");
 	argv += optind;
-	if (n & 1) type = SUM_SYSV;
+	अगर (n & 1) type = योग_SYSV;
 	/* give the bsd priority over sysv func */
-	if (n & 2) type = SUM_BSD;
+	अगर (n & 2) type = योग_BSD;
 
-	if (!argv[0]) {
+	अगर (!argv[0]) {
 		/* Do not print the name */
-		n = sum_file("-", type);
-	} else {
+		n = योग_file("-", type);
+	} अन्यथा {
 		/* Need to print the name if either
 		 * - more than one file given
 		 * - doing sysv */
-		type += (argv[1] || type == SUM_SYSV);
+		type += (argv[1] || type == योग_SYSV);
 		n = 1;
-		do {
-			n &= sum_file(*argv, type);
-		} while (*++argv);
+		करो {
+			n &= योग_file(*argv, type);
+		} जबतक (*++argv);
 	}
-	return !n;
+	वापस !n;
 }

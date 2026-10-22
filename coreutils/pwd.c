@@ -25,69 +25,69 @@
 //usage:       "$ pwd\n"
 //usage:       "/root\n"
 
-#include "libbb.h"
+#समावेश "libbb.h"
 
-static int logical_getcwd(void)
+अटल पूर्णांक logical_getcwd(व्योम)
 {
-	struct stat st1;
-	struct stat st2;
-	char *wd;
-	char *p;
+	काष्ठा stat st1;
+	काष्ठा stat st2;
+	अक्षर *wd;
+	अक्षर *p;
 
-	wd = getenv("PWD");
-	if (!wd || wd[0] != '/')
-		return 0;
+	wd = दो_पर्या("PWD");
+	अगर (!wd || wd[0] != '/')
+		वापस 0;
 
 	p = wd;
-	while (*p) {
+	जबतक (*p) {
 		/* doing strstr(p, "/.") by hand is smaller and faster... */
-		if (*p++ != '/')
-			continue;
-		if (*p != '.')
-			continue;
+		अगर (*p++ != '/')
+			जारी;
+		अगर (*p != '.')
+			जारी;
 		/* we found "/.", skip to next char */
 		p++;
-		if (*p == '.')
+		अगर (*p == '.')
 			p++; /* we found "/.." */
-		if (*p == '\0' || *p == '/')
-			return 0; /* "/./" or "/../" component: bad */
+		अगर (*p == '\0' || *p == '/')
+			वापस 0; /* "/./" or "/../" component: bad */
 	}
 
-	if (stat(wd, &st1) != 0)
-		return 0;
-	if (stat(".", &st2) != 0)
-		return 0;
-	if (st1.st_ino != st2.st_ino)
-		return 0;
-	if (st1.st_dev != st2.st_dev)
-		return 0;
+	अगर (stat(wd, &st1) != 0)
+		वापस 0;
+	अगर (stat(".", &st2) != 0)
+		वापस 0;
+	अगर (st1.st_ino != st2.st_ino)
+		वापस 0;
+	अगर (st1.st_dev != st2.st_dev)
+		वापस 0;
 
-	puts(wd);
-	return 1;
+	माला_दो(wd);
+	वापस 1;
 }
 
-int pwd_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int pwd_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+पूर्णांक pwd_main(पूर्णांक argc, अक्षर **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णांक pwd_main(पूर्णांक argc UNUSED_PARAM, अक्षर **argv UNUSED_PARAM)
 {
-	char *buf;
+	अक्षर *buf;
 
-	if (ENABLE_DESKTOP) {
+	अगर (ENABLE_DESKTOP) {
 		/* TODO: assume -L if $POSIXLY_CORRECT? (coreutils does that)
 		 * Rationale:
 		 * POSIX requires a default of -L, but most scripts expect -P
 		 */
-		unsigned opt = getopt32(argv, "LP");
-		if ((opt & 1) && logical_getcwd())
-			return fflush_all();
+		अचिन्हित opt = getopt32(argv, "LP");
+		अगर ((opt & 1) && logical_getcwd())
+			वापस fflush_all();
 	}
 
-	buf = xrealloc_getcwd_or_warn(NULL);
+	buf = xrealloc_getcwd_or_warn(शून्य);
 
-	if (buf) {
-		puts(buf);
-		free(buf);
-		return fflush_all();
+	अगर (buf) {
+		माला_दो(buf);
+		मुक्त(buf);
+		वापस fflush_all();
 	}
 
-	return EXIT_FAILURE;
+	वापस निकास_त्रुटि;
 }

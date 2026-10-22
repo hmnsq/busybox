@@ -46,16 +46,16 @@
 //usage:       "$ ls -l /tmp/foo\n"
 //usage:       "-r--r--r--    1 root     root            0 Apr 12 18:25 /tmp/foo\n"
 
-#include "libbb.h"
+#समावेश "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
 
-#define OPT_RECURSE (option_mask32 & 1)
-#define OPT_VERBOSE (IF_DESKTOP(option_mask32 & 2) IF_NOT_DESKTOP(0))
-#define OPT_CHANGED (IF_DESKTOP(option_mask32 & 4) IF_NOT_DESKTOP(0))
-#define OPT_QUIET   (IF_DESKTOP(option_mask32 & 8) IF_NOT_DESKTOP(0))
-#define OPT_STR     "R" IF_DESKTOP("vcf")
+#घोषणा OPT_RECURSE (option_mask32 & 1)
+#घोषणा OPT_VERBOSE (IF_DESKTOP(option_mask32 & 2) IF_NOT_DESKTOP(0))
+#घोषणा OPT_CHANGED (IF_DESKTOP(option_mask32 & 4) IF_NOT_DESKTOP(0))
+#घोषणा OPT_QUIET   (IF_DESKTOP(option_mask32 & 8) IF_NOT_DESKTOP(0))
+#घोषणा OPT_STR     "R" IF_DESKTOP("vcf")
 
 /* coreutils:
  * chmod never changes the permissions of symbolic links; the chmod
@@ -66,64 +66,64 @@
  * symbolic links encountered during recursive directory traversals.
  */
 
-static int FAST_FUNC fileAction(struct recursive_state *state,
-		const char *fileName,
-		struct stat *statbuf)
+अटल पूर्णांक FAST_FUNC fileAction(काष्ठा recursive_state *state,
+		स्थिर अक्षर *fileName,
+		काष्ठा stat *statbuf)
 {
 	mode_t newmode;
 
 	/* match coreutils behavior */
-	if (state->depth == 0) {
+	अगर (state->depth == 0) {
 		/* statbuf holds lstat result, but we need stat (follow link) */
-		if (stat(fileName, statbuf))
-			goto err;
-	} else { /* depth > 0: skip links */
-		if (S_ISLNK(statbuf->st_mode))
-			return TRUE;
+		अगर (stat(fileName, statbuf))
+			जाओ err;
+	} अन्यथा { /* depth > 0: skip links */
+		अगर (S_ISLNK(statbuf->st_mode))
+			वापस TRUE;
 	}
 
-	newmode = bb_parse_mode((char *)state->userData, statbuf->st_mode);
-	if (newmode == (mode_t)-1)
-		bb_error_msg_and_die("invalid mode '%s'", (char *)state->userData);
+	newmode = bb_parse_mode((अक्षर *)state->user_तथ्य, statbuf->st_mode);
+	अगर (newmode == (mode_t)-1)
+		bb_error_संदेश_and_die("invalid mode '%s'", (अक्षर *)state->user_तथ्य);
 
-	if (chmod(fileName, newmode) == 0) {
-		if (OPT_VERBOSE
+	अगर (chmod(fileName, newmode) == 0) {
+		अगर (OPT_VERBOSE
 		 || (OPT_CHANGED
 		     && (statbuf->st_mode & 07777) != (newmode & 07777))
 		) {
-			char modestr[12];
-			printf("mode of '%s' changed to %04o (%s)\n", fileName,
+			अक्षर modestr[12];
+			म_लिखो("mode of '%s' changed to %04o (%s)\n", fileName,
 				newmode & 07777, bb_mode_string(modestr, newmode)+1);
 		}
-		return TRUE;
+		वापस TRUE;
 	}
  err:
-	if (!OPT_QUIET)
-		bb_simple_perror_msg(fileName);
-	return FALSE;
+	अगर (!OPT_QUIET)
+		bb_simple_perror_संदेश(fileName);
+	वापस FALSE;
 }
 
-int chmod_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int chmod_main(int argc UNUSED_PARAM, char **argv)
+पूर्णांक chmod_main(पूर्णांक argc, अक्षर **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णांक chmod_main(पूर्णांक argc UNUSED_PARAM, अक्षर **argv)
 {
-	int retval = EXIT_SUCCESS;
-	char *arg, **argp;
-	char *smode;
+	पूर्णांक retval = निकास_सफल;
+	अक्षर *arg, **argp;
+	अक्षर *smode;
 
 	/* Convert first encountered -r into ar, -w into aw etc
 	 * so that getopt would not eat it */
 	argp = argv;
-	while ((arg = *++argp)) {
+	जबतक ((arg = *++argp)) {
 		/* Mode spec must be the first arg (sans -R etc) */
 		/* (protect against mishandling e.g. "chmod 644 -r") */
-		if (arg[0] != '-') {
-			arg = NULL;
-			break;
+		अगर (arg[0] != '-') {
+			arg = शून्य;
+			अवरोध;
 		}
 		/* An option. Not a -- or valid option? */
-		if (arg[1] && !strchr("-"OPT_STR, arg[1])) {
+		अगर (arg[1] && !म_अक्षर("-"OPT_STR, arg[1])) {
 			arg[0] = 'a';
-			break;
+			अवरोध;
 		}
 	}
 
@@ -132,22 +132,22 @@ int chmod_main(int argc UNUSED_PARAM, char **argv)
 	argv += optind;
 
 	/* Restore option-like mode if needed */
-	if (arg) arg[0] = '-';
+	अगर (arg) arg[0] = '-';
 
 	/* Ok, ready to do the deed now */
 	smode = *argv++;
-	do {
-		if (!recursive_action(*argv,
+	करो {
+		अगर (!recursive_action(*argv,
 			OPT_RECURSE,    // recurse
 			fileAction,     // file action
 			fileAction,     // dir action
 			smode)          // user data
 		) {
-			retval = EXIT_FAILURE;
+			retval = निकास_त्रुटि;
 		}
-	} while (*++argv);
+	} जबतक (*++argv);
 
-	return retval;
+	वापस retval;
 }
 
 /*

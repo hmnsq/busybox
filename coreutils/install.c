@@ -38,11 +38,11 @@
 //usage:     "\n	-Z	Set security context"
 //usage:	)
 
-#include "libbb.h"
-#include "libcoreutils/coreutils.h"
+#समावेश "libbb.h"
+#समावेश "libcoreutils/coreutils.h"
 
-#if ENABLE_FEATURE_INSTALL_LONG_OPTIONS
-static const char install_longopts[] ALIGN1 =
+#अगर ENABLE_FEATURE_INSTALL_LONG_OPTIONS
+अटल स्थिर अक्षर install_longopts[] ALIGN1 =
 	IF_FEATURE_VERBOSE(
 	"verbose\0"             No_argument       "v"
 	)
@@ -55,7 +55,7 @@ static const char install_longopts[] ALIGN1 =
 	"target-directory\0"	Required_argument "t"
 /* autofs build insists of using -b --suffix=.orig */
 /* TODO? (short option for --suffix is -S) */
-# if ENABLE_SELINUX
+# अगर ENABLE_SELINUX
 	"context\0"             Required_argument "Z"
 	"preserve_context\0"    No_argument       "\xff"
 	"preserve-context\0"    No_argument       "\xff"
@@ -63,35 +63,35 @@ static const char install_longopts[] ALIGN1 =
 	;
 # define GETOPT32 getopt32long
 # define LONGOPTS install_longopts,
-#else
+#अन्यथा
 # define GETOPT32 getopt32
 # define LONGOPTS
-#endif
+#पूर्ण_अगर
 
 
-#if ENABLE_SELINUX
-static void setdefaultfilecon(const char *path)
+#अगर ENABLE_SELINUX
+अटल व्योम setdefaultfilecon(स्थिर अक्षर *path)
 {
-	struct stat s;
-	security_context_t scontext = NULL;
+	काष्ठा stat s;
+	security_context_t scontext = शून्य;
 
-	if (!is_selinux_enabled()) {
-		return;
+	अगर (!is_selinux_enabled()) {
+		वापस;
 	}
-	if (lstat(path, &s) != 0) {
-		return;
-	}
-
-	if (matchpathcon(path, s.st_mode, &scontext) < 0) {
-		goto out;
-	}
-	if (strcmp(scontext, "<<none>>") == 0) {
-		goto out;
+	अगर (lstat(path, &s) != 0) {
+		वापस;
 	}
 
-	if (lsetfilecon(path, scontext) < 0) {
-		if (errno != ENOTSUP) {
-			bb_perror_msg("warning: can't change context"
+	अगर (matchpathcon(path, s.st_mode, &scontext) < 0) {
+		जाओ out;
+	}
+	अगर (म_भेद(scontext, "<<none>>") == 0) {
+		जाओ out;
+	}
+
+	अगर (lsetfilecon(path, scontext) < 0) {
+		अगर (त्रुटि_सं != ENOTSUP) {
+			bb_perror_संदेश("warning: can't change context"
 					" of %s to %s", path, scontext);
 		}
 	}
@@ -100,29 +100,29 @@ static void setdefaultfilecon(const char *path)
 	freecon(scontext);
 }
 
-#endif
+#पूर्ण_अगर
 
-int install_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int install_main(int argc, char **argv)
+पूर्णांक install_main(पूर्णांक argc, अक्षर **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णांक install_main(पूर्णांक argc, अक्षर **argv)
 {
-	struct stat statbuf;
+	काष्ठा stat statbuf;
 	mode_t mode;
 	uid_t uid;
 	gid_t gid;
-	char *arg, *last;
-	const char *gid_str;
-	const char *uid_str;
-	const char *mode_str;
-	int mkdir_flags = FILEUTILS_RECUR;
-	int copy_flags = FILEUTILS_DEREFERENCE | FILEUTILS_FORCE;
-	int opts;
-	int ret = EXIT_SUCCESS;
-	int isdir;
-#if ENABLE_SELINUX
+	अक्षर *arg, *last;
+	स्थिर अक्षर *gid_str;
+	स्थिर अक्षर *uid_str;
+	स्थिर अक्षर *mode_str;
+	पूर्णांक mkdir_flags = FILEUTILS_RECUR;
+	पूर्णांक copy_flags = FILEUTILS_DEREFERENCE | FILEUTILS_FORCE;
+	पूर्णांक opts;
+	पूर्णांक ret = निकास_सफल;
+	पूर्णांक isdir;
+#अगर ENABLE_SELINUX
 	security_context_t scontext;
 	bool use_default_selinux_context = 1;
-#endif
-	enum {
+#पूर्ण_अगर
+	क्रमागत {
 		OPT_c             = 1 << 0,
 		OPT_v             = 1 << 1,
 		OPT_b             = 1 << 2,
@@ -134,10 +134,10 @@ int install_main(int argc, char **argv)
 		OPT_MODE          = 1 << 8,
 		OPT_OWNER         = 1 << 9,
 		OPT_TARGET        = 1 << 10,
-#if ENABLE_SELINUX
+#अगर ENABLE_SELINUX
 		OPT_SET_SECURITY_CONTEXT = 1 << 11,
 		OPT_PRESERVE_SECURITY_CONTEXT = 1 << 12,
-#endif
+#पूर्ण_अगर
 	};
 
 	/* -c exists for backwards compatibility, it's needed */
@@ -154,119 +154,119 @@ int install_main(int argc, char **argv)
 	argc -= optind;
 	argv += optind;
 
-#if ENABLE_SELINUX
-	if (opts & (OPT_PRESERVE_SECURITY_CONTEXT|OPT_SET_SECURITY_CONTEXT)) {
+#अगर ENABLE_SELINUX
+	अगर (opts & (OPT_PRESERVE_SECURITY_CONTEXT|OPT_SET_SECURITY_CONTEXT)) {
 		selinux_or_die();
 		use_default_selinux_context = 0;
-		if (opts & OPT_PRESERVE_SECURITY_CONTEXT) {
+		अगर (opts & OPT_PRESERVE_SECURITY_CONTEXT) {
 			copy_flags |= FILEUTILS_PRESERVE_SECURITY_CONTEXT;
 		}
-		if (opts & OPT_SET_SECURITY_CONTEXT) {
+		अगर (opts & OPT_SET_SECURITY_CONTEXT) {
 			setfscreatecon_or_die(scontext);
 			copy_flags |= FILEUTILS_SET_SECURITY_CONTEXT;
 		}
 	}
-#endif
+#पूर्ण_अगर
 
-	if ((opts & OPT_v) && FILEUTILS_VERBOSE) {
+	अगर ((opts & OPT_v) && FILEUTILS_VERBOSE) {
 		mkdir_flags |= FILEUTILS_VERBOSE;
 		copy_flags |= FILEUTILS_VERBOSE;
 	}
 
 	/* preserve access and modification time, this is GNU behaviour,
 	 * BSD only preserves modification time */
-	if (opts & OPT_PRESERVE_TIME) {
+	अगर (opts & OPT_PRESERVE_TIME) {
 		copy_flags |= FILEUTILS_PRESERVE_STATUS;
 	}
 	mode = 0755; /* GNU coreutils 6.10 compat */
-	if (opts & OPT_MODE)
+	अगर (opts & OPT_MODE)
 		mode = bb_parse_mode(mode_str, mode);
 	uid = (opts & OPT_OWNER) ? get_ug_id(uid_str, xuname2uid) : getuid();
 	gid = (opts & OPT_GROUP) ? get_ug_id(gid_str, xgroup2gid) : getgid();
 
 	/* If -t DIR is in use, then isdir=true, last="DIR" */
 	isdir = (opts & OPT_TARGET);
-	if (!(opts & (OPT_TARGET|OPT_DIRECTORY))) {
+	अगर (!(opts & (OPT_TARGET|OPT_DIRECTORY))) {
 		/* Neither -t DIR nor -d is in use */
 		argc--;
 		last = argv[argc];
-		argv[argc] = NULL;
+		argv[argc] = शून्य;
 		/* coreutils install resolves link in this case, don't use lstat */
 		isdir = stat(last, &statbuf) < 0 ? 0 : S_ISDIR(statbuf.st_mode);
 	}
 
-	if (argc < 1)
+	अगर (argc < 1)
 		bb_show_usage();
 
-	while ((arg = *argv++) != NULL) {
-		char *dest;
+	जबतक ((arg = *argv++) != शून्य) {
+		अक्षर *dest;
 
-		if (opts & OPT_DIRECTORY) {
+		अगर (opts & OPT_DIRECTORY) {
 			dest = arg;
 			/* GNU coreutils 6.9 does not set uid:gid
 			 * on intermediate created directories
 			 * (only on last one) */
-			if (bb_make_directory(dest, 0755, mkdir_flags)) {
-				ret = EXIT_FAILURE;
-				goto next;
+			अगर (bb_make_directory(dest, 0755, mkdir_flags)) {
+				ret = निकास_त्रुटि;
+				जाओ अग्र;
 			}
-		} else {
+		} अन्यथा {
 			dest = last;
-			if (opts & OPT_MKDIR_LEADING) {
-				char *ddir = xstrdup(dest);
+			अगर (opts & OPT_MKDIR_LEADING) {
+				अक्षर *ddir = xstrdup(dest);
 				/*
 				 * -D -t DIR1/DIR2/F3 FILE: create DIR1/DIR2/F3, copy FILE there
 				 * -D FILE DIR1/DIR2/F3: create DIR1/DIR2, copy FILE there as F3
 				 */
-				bb_make_directory((opts & OPT_TARGET) ? ddir : dirname(ddir), 0755, mkdir_flags);
+				bb_make_directory((opts & OPT_TARGET) ? ddir : स_नाम(ddir), 0755, mkdir_flags);
 				/* errors are not checked. copy_file
 				 * will fail if dir is not created.
 				 */
-				free(ddir);
+				मुक्त(ddir);
 			}
-			if (isdir)
+			अगर (isdir)
 				dest = concat_path_file(last, bb_basename(arg));
-			if (copy_file(arg, dest, copy_flags) != 0) {
+			अगर (copy_file(arg, dest, copy_flags) != 0) {
 				/* copy is not made */
-				ret = EXIT_FAILURE;
-				goto next;
+				ret = निकास_त्रुटि;
+				जाओ अग्र;
 			}
-			if (opts & OPT_STRIP) {
-				char *args[4];
-				args[0] = (char*)"strip";
-				args[1] = (char*)"-p"; /* -p --preserve-dates */
+			अगर (opts & OPT_STRIP) {
+				अक्षर *args[4];
+				args[0] = (अक्षर*)"strip";
+				args[1] = (अक्षर*)"-p"; /* -p --preserve-dates */
 				args[2] = dest;
-				args[3] = NULL;
-				if (spawn_and_wait(args)) {
-					bb_simple_perror_msg("strip");
-					ret = EXIT_FAILURE;
+				args[3] = शून्य;
+				अगर (spawn_and_wait(args)) {
+					bb_simple_perror_संदेश("strip");
+					ret = निकास_त्रुटि;
 				}
 			}
 		}
 
 		/* Set the user and group id */
 		/* (must be before chmod, or else chown may clear suid/gid bits) */
-		if ((opts & (OPT_OWNER|OPT_GROUP))
+		अगर ((opts & (OPT_OWNER|OPT_GROUP))
 		 && lchown(dest, uid, gid) == -1
 		) {
-			bb_perror_msg("can't change %s of %s", "ownership", dest);
-			ret = EXIT_FAILURE;
+			bb_perror_संदेश("can't change %s of %s", "ownership", dest);
+			ret = निकास_त्रुटि;
 		}
 
 		/* Set the file mode (always, not only with -m).
 		 * GNU coreutils 6.10 is not affected by umask. */
-		if (chmod(dest, mode) == -1) {
-			bb_perror_msg("can't change %s of %s", "permissions", dest);
-			ret = EXIT_FAILURE;
+		अगर (chmod(dest, mode) == -1) {
+			bb_perror_संदेश("can't change %s of %s", "permissions", dest);
+			ret = निकास_त्रुटि;
 		}
-#if ENABLE_SELINUX
-		if (use_default_selinux_context)
+#अगर ENABLE_SELINUX
+		अगर (use_default_selinux_context)
 			setdefaultfilecon(dest);
-#endif
- next:
-		if (ENABLE_FEATURE_CLEAN_UP && isdir)
-			free(dest);
+#पूर्ण_अगर
+ अग्र:
+		अगर (ENABLE_FEATURE_CLEAN_UP && isdir)
+			मुक्त(dest);
 	}
 
-	return ret;
+	वापस ret;
 }

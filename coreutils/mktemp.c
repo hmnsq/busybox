@@ -58,15 +58,15 @@
 //usage:       "$ ls -la /tmp/temp.mWiLjM\n"
 //usage:       "-rw-------    1 andersen andersen        0 Apr 25 17:10 /tmp/temp.mWiLjM\n"
 
-#include "libbb.h"
+#समावेश "libbb.h"
 
-int mktemp_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int mktemp_main(int argc UNUSED_PARAM, char **argv)
+पूर्णांक mktemp_main(पूर्णांक argc, अक्षर **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णांक mktemp_main(पूर्णांक argc UNUSED_PARAM, अक्षर **argv)
 {
-	const char *path;
-	char *chp;
-	unsigned opts;
-	enum {
+	स्थिर अक्षर *path;
+	अक्षर *chp;
+	अचिन्हित opts;
+	क्रमागत {
 		OPT_d = 1 << 0,
 		OPT_q = 1 << 1,
 		OPT_t = 1 << 2,
@@ -75,11 +75,11 @@ int mktemp_main(int argc UNUSED_PARAM, char **argv)
 		OPT_tmpdir = (1 << 5) * ENABLE_LONG_OPTS,
 	};
 
-	path = getenv("TMPDIR");
-	if (!path || path[0] == '\0')
+	path = दो_पर्या("TMPDIR");
+	अगर (!path || path[0] == '\0')
 		path = "/tmp";
 
-#if ENABLE_LONG_OPTS
+#अगर ENABLE_LONG_OPTS
 	opts = getopt32long(argv, "^"
 		"dqtp:u"
 		"\0"
@@ -90,44 +90,44 @@ int mktemp_main(int argc UNUSED_PARAM, char **argv)
 		"tmpdir\0"    Optional_argument "\xff"
 		, &path, &path
 	);
-#else
+#अन्यथा
 	opts = getopt32(argv, "^" "dqtp:u" "\0" "?1"/*1 arg max*/, &path);
-#endif
+#पूर्ण_अगर
 
 	chp = argv[optind];
-	if (!chp) {
+	अगर (!chp) {
 		/* GNU coreutils 8.4:
 		 * bare "mktemp" -> "mktemp -t tmp.XXXXXX"
 		 */
 		chp = xstrdup("tmp.XXXXXX");
 		opts |= OPT_t;
 	}
-#if 0
+#अगर 0
 	/* Don't allow directory separator in template */
-	if ((opts & OPT_t) && bb_basename(chp) != chp) {
-		errno = EINVAL;
-		goto error;
+	अगर ((opts & OPT_t) && bb_basename(chp) != chp) {
+		त्रुटि_सं = EINVAL;
+		जाओ error;
 	}
-#endif
-	if (opts & (OPT_t|OPT_p|OPT_tmpdir))
+#पूर्ण_अगर
+	अगर (opts & (OPT_t|OPT_p|OPT_tmpdir))
 		chp = concat_path_file(path, chp);
 
-	if (opts & OPT_u) {
+	अगर (opts & OPT_u) {
 		chp = mktemp(chp);
-		if (chp[0] == '\0')
-			goto error;
-	} else if (opts & OPT_d) {
-		if (mkdtemp(chp) == NULL)
-			goto error;
-	} else {
-		if (mkstemp(chp) < 0)
-			goto error;
+		अगर (chp[0] == '\0')
+			जाओ error;
+	} अन्यथा अगर (opts & OPT_d) {
+		अगर (mkdtemp(chp) == शून्य)
+			जाओ error;
+	} अन्यथा {
+		अगर (mkstemp(chp) < 0)
+			जाओ error;
 	}
-	puts(chp);
-	return EXIT_SUCCESS;
+	माला_दो(chp);
+	वापस निकास_सफल;
  error:
-	if (opts & OPT_q)
-		return EXIT_FAILURE;
+	अगर (opts & OPT_q)
+		वापस निकास_त्रुटि;
 	/* don't use chp as it gets mangled in case of error */
 	bb_perror_nomsg_and_die();
 }

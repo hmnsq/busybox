@@ -47,75 +47,75 @@
 //usage:     "\n	-u	dos2unix"
 //usage:     "\n	-d	unix2dos"
 
-#include "libbb.h"
+#समावेश "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-enum {
+क्रमागत {
 	CT_UNIX2DOS = 1,
 	CT_DOS2UNIX
 };
 
 /* if fn is NULL then input is stdin and output is stdout */
-static void convert(char *fn, int conv_type)
+अटल व्योम convert(अक्षर *fn, पूर्णांक conv_type)
 {
-	FILE *in, *out;
-	int ch;
-	char *temp_fn = temp_fn; /* for compiler */
-	char *resolved_fn = resolved_fn;
+	खाता *in, *out;
+	पूर्णांक ch;
+	अक्षर *अस्थायी_fn = अस्थायी_fn; /* for compiler */
+	अक्षर *resolved_fn = resolved_fn;
 
-	in = stdin;
-	out = stdout;
-	if (fn != NULL) {
-		struct stat st;
-		int fd;
+	in = मानक_निवेश;
+	out = मानक_निकास;
+	अगर (fn != शून्य) {
+		काष्ठा stat st;
+		पूर्णांक fd;
 
 		resolved_fn = xmalloc_follow_symlinks(fn);
-		if (resolved_fn == NULL)
-			bb_simple_perror_msg_and_die(fn);
+		अगर (resolved_fn == शून्य)
+			bb_simple_perror_संदेश_and_die(fn);
 		in = xfopen_for_read(resolved_fn);
 		xfstat(fileno(in), &st, resolved_fn);
 
-		temp_fn = xasprintf("%sXXXXXX", resolved_fn);
-		fd = xmkstemp(temp_fn);
-		if (fchmod(fd, st.st_mode) == -1)
-			bb_simple_perror_msg_and_die(temp_fn);
+		अस्थायी_fn = xasprintf("%sXXXXXX", resolved_fn);
+		fd = xmkstemp(अस्थायी_fn);
+		अगर (fchmod(fd, st.st_mode) == -1)
+			bb_simple_perror_संदेश_and_die(अस्थायी_fn);
 		fchown(fd, st.st_uid, st.st_gid);
 
 		out = xfdopen_for_write(fd);
 	}
 
-	while ((ch = fgetc(in)) != EOF) {
-		if (ch == '\r')
-			continue;
-		if (ch == '\n')
-			if (conv_type == CT_UNIX2DOS)
-				fputc('\r', out);
-		fputc(ch, out);
+	जबतक ((ch = ख_अक्षर_लो(in)) != खातापूर्ण) {
+		अगर (ch == '\r')
+			जारी;
+		अगर (ch == '\n')
+			अगर (conv_type == CT_UNIX2DOS)
+				ख_अक्षर_दो('\r', out);
+		ख_अक्षर_दो(ch, out);
 	}
 
-	if (fn != NULL) {
-		if (fclose(in) < 0 || fclose(out) < 0) {
-			unlink(temp_fn);
+	अगर (fn != शून्य) {
+		अगर (ख_बंद(in) < 0 || ख_बंद(out) < 0) {
+			unlink(अस्थायी_fn);
 			bb_perror_nomsg_and_die();
 		}
-		xrename(temp_fn, resolved_fn);
-		free(temp_fn);
-		free(resolved_fn);
+		xrename(अस्थायी_fn, resolved_fn);
+		मुक्त(अस्थायी_fn);
+		मुक्त(resolved_fn);
 	}
 }
 
-int dos2unix_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int dos2unix_main(int argc UNUSED_PARAM, char **argv)
+पूर्णांक dos2unix_main(पूर्णांक argc, अक्षर **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णांक dos2unix_main(पूर्णांक argc UNUSED_PARAM, अक्षर **argv)
 {
-	int o, conv_type;
+	पूर्णांक o, conv_type;
 
 	/* See if we are supposed to be doing dos2unix or unix2dos */
-	if (ENABLE_DOS2UNIX
+	अगर (ENABLE_DOS2UNIX
 	 && (!ENABLE_UNIX2DOS || applet_name[0] == 'd')
 	) {
 		conv_type = CT_DOS2UNIX;
-	} else {
+	} अन्यथा {
 		conv_type = CT_UNIX2DOS;
 	}
 
@@ -124,14 +124,14 @@ int dos2unix_main(int argc UNUSED_PARAM, char **argv)
 
 	/* Do the conversion requested by an argument else do the default
 	 * conversion depending on our name.  */
-	if (o)
+	अगर (o)
 		conv_type = o;
 
 	argv += optind;
-	do {
+	करो {
 		/* might be convert(NULL) if there is no filename given */
 		convert(*argv, conv_type);
-	} while (*argv && *++argv);
+	} जबतक (*argv && *++argv);
 
-	return 0;
+	वापस 0;
 }

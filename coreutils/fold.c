@@ -28,69 +28,69 @@
 //usage:     "\n	-s	Break at spaces"
 //usage:     "\n	-w	Use WIDTH columns instead of 80"
 
-#include "libbb.h"
-#include "unicode.h"
+#समावेश "libbb.h"
+#समावेश "unicode.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
 /* Must match getopt32 call */
-#define FLAG_COUNT_BYTES        1
-#define FLAG_BREAK_SPACES       2
-#define FLAG_WIDTH              4
+#घोषणा FLAG_गिनती_BYTES        1
+#घोषणा FLAG_BREAK_SPACES       2
+#घोषणा FLAG_WIDTH              4
 
 /* Assuming the current column is COLUMN, return the column that
    printing C will move the cursor to.
    The first column is 0. */
-static int adjust_column(unsigned column, char c)
+अटल पूर्णांक adjust_column(अचिन्हित column, अक्षर c)
 {
-	if (option_mask32 & FLAG_COUNT_BYTES)
-		return ++column;
+	अगर (option_mask32 & FLAG_गिनती_BYTES)
+		वापस ++column;
 
-	if (c == '\t')
-		return column + 8 - column % 8;
+	अगर (c == '\t')
+		वापस column + 8 - column % 8;
 
-	if (c == '\b') {
-		if ((int)--column < 0)
+	अगर (c == '\b') {
+		अगर ((पूर्णांक)--column < 0)
 			column = 0;
 	}
-	else if (c == '\r')
+	अन्यथा अगर (c == '\r')
 		column = 0;
-	else { /* just a printable char */
-		if (unicode_status != UNICODE_ON /* every byte is a new char */
+	अन्यथा { /* just a printable char */
+		अगर (unicode_status != UNICODE_ON /* every byte is a new char */
 		 || (c & 0xc0) != 0x80 /* it isn't a 2nd+ byte of a Unicode char */
 		) {
 			column++;
 		}
 	}
-	return column;
+	वापस column;
 }
 
 /* Note that this function can write NULs, unlike fputs etc. */
-static void write2stdout(const void *buf, unsigned size)
+अटल व्योम write2stdout(स्थिर व्योम *buf, अचिन्हित आकार)
 {
-	fwrite(buf, 1, size, stdout);
+	ख_डालो(buf, 1, आकार, मानक_निकास);
 }
 
-int fold_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int fold_main(int argc UNUSED_PARAM, char **argv)
+पूर्णांक fold_main(पूर्णांक argc, अक्षर **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णांक fold_main(पूर्णांक argc UNUSED_PARAM, अक्षर **argv)
 {
-	char *line_out = NULL;
-	const char *w_opt = "80";
-	unsigned width;
-	exitcode_t exitcode = EXIT_SUCCESS;
+	अक्षर *पंक्ति_out = शून्य;
+	स्थिर अक्षर *w_opt = "80";
+	अचिन्हित width;
+	exitcode_t exitcode = निकास_सफल;
 
 	init_unicode();
 
-	if (ENABLE_INCLUDE_SUSv2) {
+	अगर (ENABLE_INCLUDE_SUSv2) {
 		/* Turn any numeric options into -w options.  */
-		int i;
-		for (i = 1; argv[i]; i++) {
-			const char *a = argv[i];
-			if (*a == '-') {
+		पूर्णांक i;
+		क्रम (i = 1; argv[i]; i++) {
+			स्थिर अक्षर *a = argv[i];
+			अगर (*a == '-') {
 				a++;
-				if (*a == '-' && !a[1]) /* "--" */
-					break;
-				if (isdigit(*a))
+				अगर (*a == '-' && !a[1]) /* "--" */
+					अवरोध;
+				अगर (है_अंक(*a))
 					argv[i] = xasprintf("-w%s", a);
 			}
 		}
@@ -100,87 +100,87 @@ int fold_main(int argc UNUSED_PARAM, char **argv)
 	width = xatou_range(w_opt, 1, 10000);
 
 	argv += optind;
-	if (!*argv)
-		*--argv = (char*)"-";
+	अगर (!*argv)
+		*--argv = (अक्षर*)"-";
 
-	do {
-		FILE *istream = fopen_or_warn_stdin(*argv);
-		int c;
-		unsigned column = 0;     /* Screen column where next char will go */
-		unsigned offset_out = 0; /* Index in 'line_out' for next char */
+	करो {
+		खाता *istream = fopen_or_warn_stdin(*argv);
+		पूर्णांक c;
+		अचिन्हित column = 0;     /* Screen column where next char will go */
+		अचिन्हित offset_out = 0; /* Index in 'line_out' for next char */
 
-		if (istream == NULL) {
-			exitcode = EXIT_FAILURE;
-			continue;
+		अगर (istream == शून्य) {
+			exitcode = निकास_त्रुटि;
+			जारी;
 		}
 
-		while ((c = getc(istream)) != EOF) {
+		जबतक ((c = अ_लो(istream)) != खातापूर्ण) {
 			/* We grow line_out in chunks of 0x1000 bytes */
-			if ((offset_out & 0xfff) == 0) {
-				line_out = xrealloc(line_out, offset_out + 0x1000);
+			अगर ((offset_out & 0xfff) == 0) {
+				पंक्ति_out = xrealloc(पंक्ति_out, offset_out + 0x1000);
 			}
  rescan:
-			line_out[offset_out] = c;
-			if (c == '\n') {
-				write2stdout(line_out, offset_out + 1);
+			पंक्ति_out[offset_out] = c;
+			अगर (c == '\n') {
+				write2stdout(पंक्ति_out, offset_out + 1);
 				column = offset_out = 0;
-				continue;
+				जारी;
 			}
 			column = adjust_column(column, c);
-			if (column <= width || offset_out == 0) {
+			अगर (column <= width || offset_out == 0) {
 				/* offset_out == 0 case happens
 				 * with small width (say, 1) and tabs.
 				 * The very first tab already goes to column 8,
 				 * but we must not wrap it */
 				offset_out++;
-				continue;
+				जारी;
 			}
 
 			/* This character would make the line too long.
 			 * Print the line plus a newline, and make this character
 			 * start the next line */
-			if (option_mask32 & FLAG_BREAK_SPACES) {
-				unsigned i;
-				unsigned logical_end;
+			अगर (option_mask32 & FLAG_BREAK_SPACES) {
+				अचिन्हित i;
+				अचिन्हित logical_end;
 
 				/* Look for the last blank. */
-				for (logical_end = offset_out - 1; (int)logical_end >= 0; logical_end--) {
-					if (!isblank(line_out[logical_end]))
-						continue;
+				क्रम (logical_end = offset_out - 1; (पूर्णांक)logical_end >= 0; logical_end--) {
+					अगर (!isblank(पंक्ति_out[logical_end]))
+						जारी;
 
 					/* Found a space or tab.
 					 * Output up to and including it, and start a new line */
 					logical_end++;
 					/*line_out[logical_end] = '\n'; - NO! this nukes one buffered character */
-					write2stdout(line_out, logical_end);
-					putchar('\n');
+					write2stdout(पंक्ति_out, logical_end);
+					अक्षर_दो('\n');
 					/* Move the remainder to the beginning of the next line.
 					 * The areas being copied here might overlap. */
-					memmove(line_out, line_out + logical_end, offset_out - logical_end);
+					स_हटाओ(पंक्ति_out, पंक्ति_out + logical_end, offset_out - logical_end);
 					offset_out -= logical_end;
-					for (column = i = 0; i < offset_out; i++) {
-						column = adjust_column(column, line_out[i]);
+					क्रम (column = i = 0; i < offset_out; i++) {
+						column = adjust_column(column, पंक्ति_out[i]);
 					}
-					goto rescan;
+					जाओ rescan;
 				}
 				/* No blank found, wrap will split the overlong word */
 			}
 			/* Output what we accumulated up to now, and start a new line */
-			line_out[offset_out] = '\n';
-			write2stdout(line_out, offset_out + 1);
+			पंक्ति_out[offset_out] = '\n';
+			write2stdout(पंक्ति_out, offset_out + 1);
 			column = offset_out = 0;
-			goto rescan;
+			जाओ rescan;
 		} /* while (not EOF) */
 
-		if (offset_out) {
-			write2stdout(line_out, offset_out);
+		अगर (offset_out) {
+			write2stdout(पंक्ति_out, offset_out);
 		}
 
-		if (fclose_if_not_stdin(istream)) {
-			bb_simple_perror_msg(*argv);
-			exitcode = EXIT_FAILURE;
+		अगर (fclose_if_not_stdin(istream)) {
+			bb_simple_perror_संदेश(*argv);
+			exitcode = निकास_त्रुटि;
 		}
-	} while (*++argv);
+	} जबतक (*++argv);
 
 	fflush_stdout_and_exit(exitcode);
 }

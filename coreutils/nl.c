@@ -33,18 +33,18 @@
 
 /* By default, selects -v1 -i1 -l1 -sTAB -w6 -nrn -hn -bt -fn */
 
-#include "libbb.h"
+#समावेश "libbb.h"
 
-int nl_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int nl_main(int argc UNUSED_PARAM, char **argv)
+पूर्णांक nl_main(पूर्णांक argc, अक्षर **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णांक nl_main(पूर्णांक argc UNUSED_PARAM, अक्षर **argv)
 {
-	struct number_state ns;
-	const char *opt_b = "t";
-	enum {
+	काष्ठा संख्या_state ns;
+	स्थिर अक्षर *opt_b = "t";
+	क्रमागत {
 		OPT_p = (1 << 0),
 	};
-#if ENABLE_LONG_OPTS
-	static const char nl_longopts[] ALIGN1 =
+#अगर ENABLE_LONG_OPTS
+	अटल स्थिर अक्षर nl_longopts[] ALIGN1 =
 		"body-numbering\0"	Required_argument "b"
 	//	"footer-numbering\0"	Required_argument "f" - not implemented yet
 	//	"header-numbering\0"	Required_argument "h" - not implemented yet
@@ -57,8 +57,8 @@ int nl_main(int argc UNUSED_PARAM, char **argv)
 		"starting-line-number\0"Required_argument "v"
 		"number-width\0"	Required_argument "w"
 	;
-#endif
-	int exitcode;
+#पूर्ण_अगर
+	पूर्णांक exitcode;
 
 	ns.width = 6;
 	ns.start = 1;
@@ -68,16 +68,16 @@ int nl_main(int argc UNUSED_PARAM, char **argv)
 			&ns.width, &ns.sep, &ns.start, &ns.inc, &opt_b);
 	ns.all = (opt_b[0] == 'a');
 	ns.nonempty = (opt_b[0] == 't');
-	ns.empty_str = xasprintf("%*s", ns.width + (int)strlen(ns.sep), "");
+	ns.empty_str = xasprintf("%*s", ns.width + (पूर्णांक)म_माप(ns.sep), "");
 
 	argv += optind;
-	if (!*argv)
-		*--argv = (char*)"-";
+	अगर (!*argv)
+		*--argv = (अक्षर*)"-";
 
-	exitcode = EXIT_SUCCESS;
-	do {
-		exitcode |= print_numbered_lines(&ns, *argv);
-	} while (*++argv);
+	exitcode = निकास_सफल;
+	करो {
+		exitcode |= print_numbered_पंक्तियाँ(&ns, *argv);
+	} जबतक (*++argv);
 
 	fflush_stdout_and_exit(exitcode);
 }

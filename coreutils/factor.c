@@ -18,46 +18,46 @@
 //usage:#define factor_full_usage "\n\n"
 //usage:       "Print prime factors"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#समावेश "libbb.h"
+#समावेश "common_bufsiz.h"
 
-#if 0
-# define dbg(...) bb_error_msg(__VA_ARGS__)
-#else
-# define dbg(...) ((void)0)
-#endif
+#अगर 0
+# define dbg(...) bb_error_संदेश(__VA_ARGS__)
+#अन्यथा
+# define dbg(...) ((व्योम)0)
+#पूर्ण_अगर
 
-typedef unsigned long long wide_t;
+प्रकार अचिन्हित दीर्घ दीर्घ wide_t;
 
-#if ULLONG_MAX == (UINT_MAX * UINT_MAX + 2 * UINT_MAX)
+#अगर ULLONG_MAX == (अच_पूर्णांक_उच्च * अच_पूर्णांक_उच्च + 2 * अच_पूर्णांक_उच्च)
 /* "unsigned" is half as wide as ullong */
-typedef unsigned half_t;
-#define HALF_MAX UINT_MAX
-#define HALF_FMT ""
-#elif ULLONG_MAX == (ULONG_MAX * ULONG_MAX + 2 * ULONG_MAX)
+प्रकार अचिन्हित half_t;
+#घोषणा HALF_MAX अच_पूर्णांक_उच्च
+#घोषणा HALF_FMT ""
+#या_अगर ULLONG_MAX == (अच_दीर्घ_उच्च * अच_दीर्घ_उच्च + 2 * अच_दीर्घ_उच्च)
 /* long is half as wide as ullong */
-typedef unsigned long half_t;
-#define HALF_MAX ULONG_MAX
-#define HALF_FMT "l"
-#else
-#error Cant find an integer type which is half as wide as ullong
-#endif
+प्रकार अचिन्हित दीर्घ half_t;
+#घोषणा HALF_MAX अच_दीर्घ_उच्च
+#घोषणा HALF_FMT "l"
+#अन्यथा
+#त्रुटि Cant find an integer type which is half as wide as ullong
+#पूर्ण_अगर
 
 /* The trial divisor increment wheel.  Use it to skip over divisors that
  * are composites of 2, 3, 5, 7, or 11.
  * Larger wheels improve sieving only slightly, but quickly grow in size
  * (adding just one prime, 13, results in 5766 element sieve).
  */
-#define R(a,b,c,d,e,f,g,h,i,j,A,B,C,D,E,F,G,H,I,J,x) \
+#घोषणा R(a,b,c,d,e,f,g,h,i,j,A,B,C,D,E,F,G,H,I,J,x) \
 	(((uint64_t)(a<<0) | (b<<3) | (c<<6) | (d<<9) | (e<<12) | (f<<15) | (g<<18) | (h<<21) | (i<<24) | (j<<27)) << 1)  | \
 	(((uint64_t)(A<<0) | (B<<3) | (C<<6) | (D<<9) | (E<<12) | (F<<15) | (G<<18) | (H<<21) | (I<<24) | (J<<27)) << 31) | \
 	((uint64_t)x << 61)
-#define P(a,b,c,d,e,f,g,h,i,j,A,B,C,D,E,F,G,H,I,J,x) \
+#घोषणा P(a,b,c,d,e,f,g,h,i,j,A,B,C,D,E,F,G,H,I,J,x) \
 	R(	(a/2),(b/2),(c/2),(d/2),(e/2),(f/2),(g/2),(h/2),(i/2),(j/2), \
 		(A/2),(B/2),(C/2),(D/2),(E/2),(F/2),(G/2),(H/2),(I/2),(J/2), \
 		(x/2) \
 	)
-static const uint64_t packed_wheel[] = {
+अटल स्थिर uint64_t packed_wheel[] = {
 	/* 1, 2, */
 	P( 2, 4, 2, 4, 2, 4, 6, 2, 6, 4, 2, 4, 6, 6, 2, 6, 4, 2, 6, 4, 6),
 	P( 8, 4, 2, 4, 2, 4,14, 4, 6, 2,10, 2, 6, 6, 4, 2, 4, 6, 2,10, 2),
@@ -83,12 +83,12 @@ static const uint64_t packed_wheel[] = {
 	P( 2,10, 2, 6, 4, 2, 4, 6, 6, 2,10, 2, 6, 4,14, 4, 2, 4, 2, 4, 8),
 	P( 6, 4, 6, 2, 4, 6, 2, 6, 6, 4, 2, 4, 6, 2, 6, 4, 2, 4,12, 2,12),
 };
-#undef P
-#undef R
-#define WHEEL_START 5
-#define WHEEL_SIZE (5 + 24 * 20)
-#define square_count (((uint8_t*)&bb_common_bufsiz1)[0])
-#define wheel_tab    (((uint8_t*)&bb_common_bufsiz1) + 1)
+#अघोषित P
+#अघोषित R
+#घोषणा WHEEL_START 5
+#घोषणा WHEEL_आकार (5 + 24 * 20)
+#घोषणा square_गिनती (((uint8_t*)&bb_common_bufsiz1)[0])
+#घोषणा wheel_tab    (((uint8_t*)&bb_common_bufsiz1) + 1)
 /*
  * Why, you ask?
  * plain byte array:
@@ -98,18 +98,18 @@ static const uint64_t packed_wheel[] = {
  *	packed_wheel              -     184    +184
  *	factor_main             108     163     +55
  */
-static void unpack_wheel(void)
+अटल व्योम unpack_wheel(व्योम)
 {
-	int i;
+	पूर्णांक i;
 	uint8_t *p;
 
 	setup_common_bufsiz();
 	wheel_tab[0] = 1;
 	wheel_tab[1] = 2;
 	p = &wheel_tab[2];
-	for (i = 0; i < ARRAY_SIZE(packed_wheel); i++) {
+	क्रम (i = 0; i < ARRAY_आकार(packed_wheel); i++) {
 		uint64_t v = packed_wheel[i];
-		while ((v & 0xe) != 0) {
+		जबतक ((v & 0xe) != 0) {
 			*p = v & 0xe;
 			//printf("%2u,", *p);
 			p++;
@@ -120,21 +120,21 @@ static void unpack_wheel(void)
 }
 
 /* Prevent inlining, factorize() needs all help it can get with reducing register pressure */
-static NOINLINE void print_w(wide_t n)
+अटल NOINLINE व्योम print_w(wide_t n)
 {
-	unsigned rep = square_count;
-	do
-		printf(" %llu", n);
-	while (--rep != 0);
+	अचिन्हित rep = square_गिनती;
+	करो
+		म_लिखो(" %llu", n);
+	जबतक (--rep != 0);
 }
-static NOINLINE void print_h(half_t n)
+अटल NOINLINE व्योम print_h(half_t n)
 {
 	print_w(n);
 }
 
-static void factorize(wide_t N);
+अटल व्योम factorize(wide_t N);
 
-static half_t isqrt_odd(wide_t N)
+अटल half_t isqrt_odd(wide_t N)
 {
 	half_t s = isqrt(N);
 	/* s^2 is <= N, (s+1)^2 > N */
@@ -144,28 +144,28 @@ static half_t isqrt_odd(wide_t N)
 	 * factor 18446743988964486098 = 2 * 3037000493 * 3037000493
 	 * factor 18446743902517389507 = 3 * 2479700513 * 2479700513
 	 */
-	if ((wide_t)s * s == N) {
+	अगर ((wide_t)s * s == N) {
 		/* factorize sqrt(N), printing each factor twice */
-		square_count *= 2;
+		square_गिनती *= 2;
 		factorize(s);
 		/* Let caller know we recursed */
-		return 0;
+		वापस 0;
 	}
 
 	/* Subtract 1 from even s, odd s won't change: */
 	/* (doesnt work for zero, but we know that s != 0 here) */
 	s = (s - 1) | 1;
-	return s;
+	वापस s;
 }
 
-static NOINLINE void factorize(wide_t N)
+अटल NOINLINE व्योम factorize(wide_t N)
 {
-	unsigned w;
+	अचिन्हित w;
 	half_t factor;
 	half_t max_factor;
 
-	if (N < 4)
-		goto end;
+	अगर (N < 4)
+		जाओ end;
 
 	/* The code needs to be optimized for the case where
 	 * there are large prime factors. For example,
@@ -182,57 +182,57 @@ static NOINLINE void factorize(wide_t N)
 	 * factor 18446744073709551557 (0xffffffffffffffc5).
 	 */
 	max_factor = isqrt_odd(N);
-	if (!max_factor)
-		return; /* square was detected and recursively factored */
+	अगर (!max_factor)
+		वापस; /* square was detected and recursively factored */
 	factor = 2;
 	w = 0;
-	for (;;) {
+	क्रम (;;) {
 		half_t fw;
 
 		/* The division is the most costly part of the loop.
 		 * On 64bit CPUs, takes at best 12 cycles, often ~20.
 		 */
-		while ((N % factor) == 0) { /* not likely */
+		जबतक ((N % factor) == 0) { /* not likely */
 			N = N / factor;
 			print_h(factor);
 			max_factor = isqrt_odd(N);
-			if (!max_factor)
-				return; /* square was detected */
+			अगर (!max_factor)
+				वापस; /* square was detected */
 		}
-		if (factor >= max_factor)
-			break;
+		अगर (factor >= max_factor)
+			अवरोध;
 		fw = factor + wheel_tab[w];
-		if (fw < factor)
-			break; /* overflow */
+		अगर (fw < factor)
+			अवरोध; /* overflow */
 		factor = fw;
 		w++;
-		if (w < WHEEL_SIZE)
-			continue;
+		अगर (w < WHEEL_आकार)
+			जारी;
 		w = WHEEL_START;
 	}
  end:
-	if (N > 1)
+	अगर (N > 1)
 		print_w(N);
 	bb_putchar('\n');
 }
 
-static void factorize_numstr(const char *numstr)
+अटल व्योम factorize_numstr(स्थिर अक्षर *numstr)
 {
 	wide_t N;
 
 	/* Leading + is ok (coreutils compat) */
-	if (*numstr == '+')
+	अगर (*numstr == '+')
 		numstr++;
-	N = bb_strtoull(numstr, NULL, 10);
-	if (errno)
+	N = bb_strtoull(numstr, शून्य, 10);
+	अगर (त्रुटि_सं)
 		bb_show_usage();
-	printf("%llu:", N);
-	square_count = 1;
+	म_लिखो("%llu:", N);
+	square_गिनती = 1;
 	factorize(N);
 }
 
-int factor_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int factor_main(int argc UNUSED_PARAM, char **argv)
+पूर्णांक factor_main(पूर्णांक argc, अक्षर **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णांक factor_main(पूर्णांक argc UNUSED_PARAM, अक्षर **argv)
 {
 	unpack_wheel();
 
@@ -241,33 +241,33 @@ int factor_main(int argc UNUSED_PARAM, char **argv)
 	//argv += optind;
 	argv++;
 
-	if (!*argv) {
+	अगर (!*argv) {
 		/* Read from stdin, several numbers per line are accepted */
-		for (;;) {
-			char *numstr, *line;
-			line = xmalloc_fgetline(stdin);
-			if (!line)
-				return EXIT_SUCCESS;
-			numstr = line;
-			for (;;) {
-				char *end;
+		क्रम (;;) {
+			अक्षर *numstr, *पंक्ति;
+			पंक्ति = xmalloc_fgetline(मानक_निवेश);
+			अगर (!पंक्ति)
+				वापस निकास_सफल;
+			numstr = पंक्ति;
+			क्रम (;;) {
+				अक्षर *end;
 				numstr = skip_whitespace(numstr);
-				if (!numstr[0])
-					break;
+				अगर (!numstr[0])
+					अवरोध;
 				end = skip_non_whitespace(numstr);
-				if (*end != '\0')
+				अगर (*end != '\0')
 					*end++ = '\0';
 				factorize_numstr(numstr);
 				numstr = end;
 			}
-			free(line);
+			मुक्त(पंक्ति);
 		}
 	}
 
-	do {
+	करो {
 		/* Leading spaces are ok (coreutils compat) */
 		factorize_numstr(skip_whitespace(*argv));
-	} while (*++argv);
+	} जबतक (*++argv);
 
-	return EXIT_SUCCESS;
+	वापस निकास_सफल;
 }

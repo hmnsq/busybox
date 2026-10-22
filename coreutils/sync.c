@@ -39,71 +39,71 @@
 //usage:     "\n	-f	Sync filesystems underlying FILEs"
 //usage:    )
 
-#include "libbb.h"
+#समावेश "libbb.h"
 
 /* This is a NOFORK applet. Be very careful! */
 
-#if ENABLE_FEATURE_SYNC_FANCY || ENABLE_FSYNC
-static int sync_common(int opts, char **argv)
+#अगर ENABLE_FEATURE_SYNC_FANCY || ENABLE_FSYNC
+अटल पूर्णांक sync_common(पूर्णांक opts, अक्षर **argv)
 {
-	int ret;
-	enum {
+	पूर्णांक ret;
+	क्रमागत {
 		OPT_DATASYNC = (1 << 0),
 		OPT_SYNCFS   = (1 << 1),
 	};
 
-	ret = EXIT_SUCCESS;
-	do {
+	ret = निकास_सफल;
+	करो {
 		/* GNU "sync FILE" uses O_NONBLOCK open */
-		int fd = open_or_warn(*argv, /*O_NOATIME |*/ O_NOCTTY | O_RDONLY | O_NONBLOCK);
+		पूर्णांक fd = open_or_warn(*argv, /*O_NOATIME |*/ O_NOCTTY | O_RDONLY | O_NONBLOCK);
 		/* open(NOATIME) can only be used by owner or root, don't use NOATIME here */
 
-		if (fd < 0) {
-			ret = EXIT_FAILURE;
-			goto next;
+		अगर (fd < 0) {
+			ret = निकास_त्रुटि;
+			जाओ अग्र;
 		}
-# if ENABLE_FEATURE_SYNC_FANCY
-		if (opts & OPT_SYNCFS) {
+# अगर ENABLE_FEATURE_SYNC_FANCY
+		अगर (opts & OPT_SYNCFS) {
 			/*
 			 * syncfs is documented to only fail with EBADF,
 			 * which can't happen here. So, no error checks.
 			 */
 			syncfs(fd);
-		} else
+		} अन्यथा
 # endif
-		if (((opts & OPT_DATASYNC) ? fdatasync(fd) : fsync(fd)) != 0) {
-			bb_simple_perror_msg(*argv);
-			ret = EXIT_FAILURE;
+		अगर (((opts & OPT_DATASYNC) ? fdatasync(fd) : fsync(fd)) != 0) {
+			bb_simple_perror_संदेश(*argv);
+			ret = निकास_त्रुटि;
 		}
-		close(fd);
- next:
+		बंद(fd);
+ अग्र:
 		argv++;
-	} while (*argv);
+	} जबतक (*argv);
 
-	return ret;
+	वापस ret;
 }
-#endif
+#पूर्ण_अगर
 
-#if ENABLE_SYNC
-int sync_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int sync_main(int argc UNUSED_PARAM, char **argv IF_NOT_DESKTOP(UNUSED_PARAM))
+#अगर ENABLE_SYNC
+पूर्णांक sync_main(पूर्णांक argc, अक्षर **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णांक sync_main(पूर्णांक argc UNUSED_PARAM, अक्षर **argv IF_NOT_DESKTOP(UNUSED_PARAM))
 {
-# if !ENABLE_FEATURE_SYNC_FANCY
+# अगर !ENABLE_FEATURE_SYNC_FANCY
 	/* coreutils-6.9 compat */
 	bb_warn_ignoring_args(argv[1]);
 	sync();
-	return EXIT_SUCCESS;
-# else
-	unsigned opts = getopt32(argv, "^" "df" "\0" "d--f:f--d");
+	वापस निकास_सफल;
+# अन्यथा
+	अचिन्हित opts = getopt32(argv, "^" "df" "\0" "d--f:f--d");
 	argv += optind;
-	if (!argv[0]) {
+	अगर (!argv[0]) {
 		sync();
-		return EXIT_SUCCESS;
+		वापस निकास_सफल;
 	}
-	return sync_common(opts, argv);
+	वापस sync_common(opts, argv);
 # endif
 }
-#endif
+#पूर्ण_अगर
 
 /*
  * Mini fsync implementation for busybox
@@ -129,12 +129,12 @@ int sync_main(int argc UNUSED_PARAM, char **argv IF_NOT_DESKTOP(UNUSED_PARAM))
 //usage:       "Write all buffered blocks in FILEs to disk\n"
 //usage:     "\n	-d	Avoid syncing metadata"
 
-#if ENABLE_FSYNC
-int fsync_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int fsync_main(int argc UNUSED_PARAM, char **argv)
+#अगर ENABLE_FSYNC
+पूर्णांक fsync_main(पूर्णांक argc, अक्षर **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णांक fsync_main(पूर्णांक argc UNUSED_PARAM, अक्षर **argv)
 {
-	int opts = getopt32(argv, "^" "d" "\0" "-1"/*min 1 arg*/);
+	पूर्णांक opts = getopt32(argv, "^" "d" "\0" "-1"/*min 1 arg*/);
 	argv += optind;
-	return sync_common(opts, argv);
+	वापस sync_common(opts, argv);
 }
-#endif
+#पूर्ण_अगर

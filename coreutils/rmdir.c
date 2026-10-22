@@ -31,21 +31,21 @@
 //usage:#define rmdir_example_usage
 //usage:       "# rmdir /tmp/foo\n"
 
-#include "libbb.h"
+#समावेश "libbb.h"
 
 /* This is a NOFORK applet. Be very careful! */
 
 
-#define PARENTS          (1 << 0)
-#define VERBOSE          ((1 << 1) * ENABLE_FEATURE_VERBOSE)
-#define IGNORE_NON_EMPTY ((1 << 2) * ENABLE_LONG_OPTS)
+#घोषणा PARENTS          (1 << 0)
+#घोषणा VERBOSE          ((1 << 1) * ENABLE_FEATURE_VERBOSE)
+#घोषणा IGNORE_NON_EMPTY ((1 << 2) * ENABLE_LONG_OPTS)
 
-int rmdir_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int rmdir_main(int argc UNUSED_PARAM, char **argv)
+पूर्णांक rmdir_main(पूर्णांक argc, अक्षर **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णांक rmdir_main(पूर्णांक argc UNUSED_PARAM, अक्षर **argv)
 {
-	int status = EXIT_SUCCESS;
-	int flags;
-	char *path;
+	पूर्णांक status = निकास_सफल;
+	पूर्णांक flags;
+	अक्षर *path;
 
 	flags = getopt32long(argv, "pv",
 		"parents\0"                  No_argument "p"
@@ -58,38 +58,38 @@ int rmdir_main(int argc UNUSED_PARAM, char **argv)
 	);
 	argv += optind;
 
-	if (!*argv) {
+	अगर (!*argv) {
 		bb_show_usage();
 	}
 
-	do {
+	करो {
 		path = *argv;
 
-		while (1) {
-			if (flags & VERBOSE) {
-				printf("rmdir: removing directory, '%s'\n", path);
+		जबतक (1) {
+			अगर (flags & VERBOSE) {
+				म_लिखो("rmdir: removing directory, '%s'\n", path);
 			}
 
-			if (rmdir(path) < 0) {
-#if ENABLE_LONG_OPTS
-				if ((flags & IGNORE_NON_EMPTY) && errno == ENOTEMPTY)
-					break;
-#endif
-				bb_perror_msg("'%s'", path);  /* Match gnu rmdir msg. */
-				status = EXIT_FAILURE;
-			} else if (flags & PARENTS) {
+			अगर (सूची_हटाओ(path) < 0) {
+#अगर ENABLE_LONG_OPTS
+				अगर ((flags & IGNORE_NON_EMPTY) && त्रुटि_सं == ENOTEMPTY)
+					अवरोध;
+#पूर्ण_अगर
+				bb_perror_संदेश("'%s'", path);  /* Match gnu rmdir msg. */
+				status = निकास_त्रुटि;
+			} अन्यथा अगर (flags & PARENTS) {
 				/* Note: path was not "" since rmdir succeeded. */
-				path = dirname(path);
+				path = स_नाम(path);
 				/* Path is now just the parent component.  Dirname
 				 * returns "." if there are no parents.
 				 */
-				if (NOT_LONE_CHAR(path, '.')) {
-					continue;
+				अगर (NOT_LONE_CHAR(path, '.')) {
+					जारी;
 				}
 			}
-			break;
+			अवरोध;
 		}
-	} while (*++argv);
+	} जबतक (*++argv);
 
-	return status;
+	वापस status;
 }

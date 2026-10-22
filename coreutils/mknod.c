@@ -36,53 +36,53 @@
 //usage:       "$ mknod /dev/fd0 b 2 0\n"
 //usage:       "$ mknod -m 644 /tmp/pipe p\n"
 
-#ifdef __linux__
+#अगर_घोषित __linux__
 # include <sys/sysmacros.h>  // For makedev
-#endif
+#पूर्ण_अगर
 
-#include "libbb.h"
-#include "libcoreutils/coreutils.h"
+#समावेश "libbb.h"
+#समावेश "libcoreutils/coreutils.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-static const char modes_chars[] ALIGN1 = { 'p', 'c', 'u', 'b', 0, 1, 1, 2 };
-static const mode_t modes_cubp[] = { S_IFIFO, S_IFCHR, S_IFBLK };
+अटल स्थिर अक्षर modes_chars[] ALIGN1 = { 'p', 'c', 'u', 'b', 0, 1, 1, 2 };
+अटल स्थिर mode_t modes_cubp[] = { S_IFIFO, S_IFCHR, S_IFBLK };
 
-int mknod_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int mknod_main(int argc UNUSED_PARAM, char **argv)
+पूर्णांक mknod_main(पूर्णांक argc, अक्षर **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णांक mknod_main(पूर्णांक argc UNUSED_PARAM, अक्षर **argv)
 {
 	mode_t mode;
 	dev_t dev;
-	const char *type, *arg;
+	स्थिर अक्षर *type, *arg;
 
 	mode = getopt_mk_fifo_nod(argv);
 	argv += optind;
 	//argc -= optind;
 
-	if (!argv[0] || !argv[1])
+	अगर (!argv[0] || !argv[1])
 		bb_show_usage();
-	type = strchr(modes_chars, argv[1][0]);
-	if (!type)
+	type = म_अक्षर(modes_chars, argv[1][0]);
+	अगर (!type)
 		bb_show_usage();
 
-	mode |= modes_cubp[(int)(type[4])];
+	mode |= modes_cubp[(पूर्णांक)(type[4])];
 
 	dev = 0;
 	arg = argv[2];
-	if (*type != 'p') {
-		if (!argv[2] || !argv[3])
+	अगर (*type != 'p') {
+		अगर (!argv[2] || !argv[3])
 			bb_show_usage();
 		/* Autodetect what the system supports; these macros should
 		 * optimize out to two constants. */
-		dev = makedev(xatoul_range(argv[2], 0, major(UINT_MAX)),
-				xatoul_range(argv[3], 0, minor(UINT_MAX)));
+		dev = makedev(xatoul_range(argv[2], 0, major(अच_पूर्णांक_उच्च)),
+				xatoul_range(argv[3], 0, minor(अच_पूर्णांक_उच्च)));
 		arg = argv[4];
 	}
-	if (arg)
+	अगर (arg)
 		bb_show_usage();
 
-	if (mknod(argv[0], mode, dev) != 0) {
-		bb_simple_perror_msg_and_die(argv[0]);
+	अगर (mknod(argv[0], mode, dev) != 0) {
+		bb_simple_perror_संदेश_and_die(argv[0]);
 	}
-	return EXIT_SUCCESS;
+	वापस निकास_सफल;
 }

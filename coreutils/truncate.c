@@ -26,61 +26,61 @@
 //usage:#define truncate_example_usage
 //usage:	"$ truncate -s 1G foo"
 
-#include "libbb.h"
+#समावेश "libbb.h"
 
-#if ENABLE_LFS
+#अगर ENABLE_LFS
 # define XATOU_SFX xatoull_sfx
-#else
+#अन्यथा
 # define XATOU_SFX xatoul_sfx
-#endif
+#पूर्ण_अगर
 
 /* This is a NOFORK applet. Be very careful! */
 
-int truncate_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int truncate_main(int argc UNUSED_PARAM, char **argv)
+पूर्णांक truncate_main(पूर्णांक argc, अक्षर **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णांक truncate_main(पूर्णांक argc UNUSED_PARAM, अक्षर **argv)
 {
-	unsigned opts;
-	int flags = O_WRONLY | O_NONBLOCK;
-	int ret = EXIT_SUCCESS;
-	char *size_str;
-	off_t size;
+	अचिन्हित opts;
+	पूर्णांक flags = O_WRONLY | O_NONBLOCK;
+	पूर्णांक ret = निकास_सफल;
+	अक्षर *आकार_str;
+	off_t आकार;
 
-	enum {
+	क्रमागत {
 		OPT_NOCREATE  = (1 << 0),
-		OPT_SIZE = (1 << 1),
+		OPT_आकार = (1 << 1),
 	};
 
-	opts = getopt32(argv, "^" "cs:" "\0" "s:-1", &size_str);
+	opts = getopt32(argv, "^" "cs:" "\0" "s:-1", &आकार_str);
 
-	if (!(opts & OPT_NOCREATE))
+	अगर (!(opts & OPT_NOCREATE))
 		flags |= O_CREAT;
 
 	// TODO: coreutils 8.17 also support "m" (lowercase) suffix
 	// with truncate, but not with dd!
 	// We share kMG_suffixes[], so we can't make both tools
 	// compatible at once...
-	size = XATOU_SFX(size_str, kMG_suffixes);
+	आकार = XATOU_SFX(आकार_str, kMG_suffixes);
 
 	argv += optind;
-	while (*argv) {
-		int fd = open(*argv, flags, 0666);
-		if (fd < 0) {
-			if (errno != ENOENT || !(opts & OPT_NOCREATE)) {
-				bb_perror_msg("%s: open", *argv);
-				ret = EXIT_FAILURE;
+	जबतक (*argv) {
+		पूर्णांक fd = खोलो(*argv, flags, 0666);
+		अगर (fd < 0) {
+			अगर (त्रुटि_सं != ENOENT || !(opts & OPT_NOCREATE)) {
+				bb_perror_संदेश("%s: open", *argv);
+				ret = निकास_त्रुटि;
 			}
 			/* else: ENOENT && OPT_NOCREATE:
 			 * do not report error, exitcode is also 0.
 			 */
-		} else {
-			if (ftruncate(fd, size) == -1) {
-				bb_perror_msg("%s: truncate", *argv);
-				ret = EXIT_FAILURE;
+		} अन्यथा {
+			अगर (ftruncate(fd, आकार) == -1) {
+				bb_perror_संदेश("%s: truncate", *argv);
+				ret = निकास_त्रुटि;
 			}
 			xclose(fd);
 		}
 		++argv;
 	}
 
-	return ret;
+	वापस ret;
 }

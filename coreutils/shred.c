@@ -37,17 +37,17 @@
 --remove[=HOW]		like -u but give control on HOW to delete;  See below
 */
 
-#include "libbb.h"
+#समावेश "libbb.h"
 
-int shred_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int shred_main(int argc UNUSED_PARAM, char **argv)
+पूर्णांक shred_main(पूर्णांक argc, अक्षर **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णांक shred_main(पूर्णांक argc UNUSED_PARAM, अक्षर **argv)
 {
-	char *opt_s;
-	int rand_fd = rand_fd; /* for compiler */
-	int zero_fd;
-	unsigned num_iter = 3;
-	unsigned opt;
-	enum {
+	अक्षर *opt_s;
+	पूर्णांक rand_fd = rand_fd; /* for compiler */
+	पूर्णांक zero_fd;
+	अचिन्हित अंक_iter = 3;
+	अचिन्हित opt;
+	क्रमागत {
 		OPT_f = (1 << 0),
 		OPT_u = (1 << 1),
 		OPT_z = (1 << 2),
@@ -57,55 +57,55 @@ int shred_main(int argc UNUSED_PARAM, char **argv)
 		OPT_s = (1 << 6),
 	};
 
-	opt = getopt32(argv, "^" "fuzn:+vxs:" "\0" "-1"/*min 1 arg*/, &num_iter, &opt_s);
+	opt = getopt32(argv, "^" "fuzn:+vxs:" "\0" "-1"/*min 1 arg*/, &अंक_iter, &opt_s);
 	argv += optind;
 
 	zero_fd = xopen("/dev/zero", O_RDONLY);
-	if (num_iter != 0)
+	अगर (अंक_iter != 0)
 		rand_fd = xopen("/dev/urandom", O_RDONLY);
 
-	for (;;) {
-		struct stat sb;
-		const char *fname;
-		unsigned i;
-		int fd;
+	क्रम (;;) {
+		काष्ठा stat sb;
+		स्थिर अक्षर *fname;
+		अचिन्हित i;
+		पूर्णांक fd;
 
 		fname = *argv++;
-		if (!fname)
-			break;
+		अगर (!fname)
+			अवरोध;
 		fd = -1;
-		if (opt & OPT_f) {
-			fd = open(fname, O_WRONLY);
-			if (fd < 0)
+		अगर (opt & OPT_f) {
+			fd = खोलो(fname, O_WRONLY);
+			अगर (fd < 0)
 				chmod(fname, 0666);
 		}
-		if (fd < 0)
+		अगर (fd < 0)
 			fd = xopen(fname, O_WRONLY);
 
-		if (fstat(fd, &sb) == 0 && sb.st_size > 0) {
-			off_t size = sb.st_size;
+		अगर (ख_स्थिति(fd, &sb) == 0 && sb.st_आकार > 0) {
+			off_t आकार = sb.st_आकार;
 
-			if (opt & OPT_s) {
-				size = BB_STRTOOFF(opt_s, NULL, 0); /* accepts oct/hex */
-				if (errno || size < 0) bb_show_usage();
+			अगर (opt & OPT_s) {
+				आकार = BB_STRTOOFF(opt_s, शून्य, 0); /* accepts oct/hex */
+				अगर (त्रुटि_सं || आकार < 0) bb_show_usage();
 			}
 
-			for (i = 0; i < num_iter; i++) {
-				bb_copyfd_size(rand_fd, fd, size);
+			क्रम (i = 0; i < अंक_iter; i++) {
+				bb_copyfd_आकार(rand_fd, fd, आकार);
 				fdatasync(fd);
-				xlseek(fd, 0, SEEK_SET);
+				xlseek(fd, 0, शुरू_से);
 			}
-			if (opt & OPT_z) {
-				bb_copyfd_size(zero_fd, fd, size);
+			अगर (opt & OPT_z) {
+				bb_copyfd_आकार(zero_fd, fd, आकार);
 				fdatasync(fd);
 			}
 		}
-		if (opt & OPT_u) {
+		अगर (opt & OPT_u) {
 			ftruncate(fd, 0);
 			xunlink(fname);
 		}
 		xclose(fd);
 	}
 
-	return EXIT_SUCCESS;
+	वापस निकास_सफल;
 }

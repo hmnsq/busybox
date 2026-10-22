@@ -44,60 +44,60 @@
 //usage:       "/tmp/foo/bar/baz: No such file or directory\n"
 //usage:       "$ mkdir -p /tmp/foo/bar/baz\n"
 
-#include "libbb.h"
+#समावेश "libbb.h"
 
 /* This is a NOFORK applet. Be very careful! */
 
-int mkdir_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int mkdir_main(int argc UNUSED_PARAM, char **argv)
+पूर्णांक mkdir_main(पूर्णांक argc, अक्षर **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णांक mkdir_main(पूर्णांक argc UNUSED_PARAM, अक्षर **argv)
 {
-	long mode = -1;
-	int status = EXIT_SUCCESS;
-	int flags = 0;
-	unsigned opt;
-	char *smode;
-#if ENABLE_SELINUX
+	दीर्घ mode = -1;
+	पूर्णांक status = निकास_सफल;
+	पूर्णांक flags = 0;
+	अचिन्हित opt;
+	अक्षर *smode;
+#अगर ENABLE_SELINUX
 	security_context_t scontext;
-#endif
+#पूर्ण_अगर
 
 	opt = getopt32long(argv, "m:pv" IF_SELINUX("Z:"),
 			"mode\0"    Required_argument "m"
 			"parents\0" No_argument       "p"
-# if ENABLE_SELINUX
+# अगर ENABLE_SELINUX
 			"context\0" Required_argument "Z"
 # endif
-# if ENABLE_FEATURE_VERBOSE
+# अगर ENABLE_FEATURE_VERBOSE
 			"verbose\0" No_argument       "v"
 # endif
 			, &smode IF_SELINUX(,&scontext)
 	);
-	if (opt & 1) {
+	अगर (opt & 1) {
 		mode_t mmode = bb_parse_mode(smode, 0777);
-		if (mmode == (mode_t)-1) {
-			bb_error_msg_and_die("invalid mode '%s'", smode);
+		अगर (mmode == (mode_t)-1) {
+			bb_error_संदेश_and_die("invalid mode '%s'", smode);
 		}
 		mode = mmode;
 	}
-	if (opt & 2)
+	अगर (opt & 2)
 		flags |= FILEUTILS_RECUR;
-	if ((opt & 4) && FILEUTILS_VERBOSE)
+	अगर ((opt & 4) && FILEUTILS_VERBOSE)
 		flags |= FILEUTILS_VERBOSE;
-#if ENABLE_SELINUX
-	if (opt & 8) {
+#अगर ENABLE_SELINUX
+	अगर (opt & 8) {
 		selinux_or_die();
 		setfscreatecon_or_die(scontext);
 	}
-#endif
+#पूर्ण_अगर
 
 	argv += optind;
-	if (!argv[0])
+	अगर (!argv[0])
 		bb_show_usage();
 
-	do {
-		if (bb_make_directory(*argv, mode, flags)) {
-			status = EXIT_FAILURE;
+	करो {
+		अगर (bb_make_directory(*argv, mode, flags)) {
+			status = निकास_त्रुटि;
 		}
-	} while (*++argv);
+	} जबतक (*++argv);
 
-	return status;
+	वापस status;
 }
