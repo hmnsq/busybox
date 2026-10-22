@@ -32,14 +32,14 @@
 //usage:       "$ tty\n"
 //usage:       "/dev/tty2\n"
 
-#include "libbb.h"
+#অন্তর্ভাৱ "libbb.h"
 
-int tty_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int tty_main(int argc UNUSED_PARAM, char **argv)
+পূর্ণাঙ্ক tty_main(পূর্ণাঙ্ক argc, ৱর্ণ **argv) MAIN_EXTERNALLY_VISIBLE;
+পূর্ণাঙ্ক tty_main(পূর্ণাঙ্ক argc UNUSED_PARAM, ৱর্ণ **argv)
 {
-	const char *s;
-	IF_INCLUDE_SUSv2(int silent;)  /* Note: No longer relevant in SUSv3. */
-	int retval;
+	ধ্রুৱ ৱর্ণ *s;
+	IF_INCLUDE_SUSv2(পূর্ণাঙ্ক silent;)  /* Note: No longer relevant in SUSv3. */
+	পূর্ণাঙ্ক retval;
 
 	xfunc_error_retval = 2;  /* SUSv3 requires > 1 for error. */
 
@@ -53,13 +53,13 @@ int tty_main(int argc UNUSED_PARAM, char **argv)
 	retval = EXIT_SUCCESS;
 
 	s = xmalloc_ttyname(STDIN_FILENO);
-	if (s == NULL) {
+	যদি (s == রিক্ত) {
 	/* According to SUSv3, ttyname can fail with EBADF or ENOTTY.
 	 * We know the file descriptor is good, so failure means not a tty. */
 		s = "not a tty";
 		retval = EXIT_FAILURE;
 	}
-	IF_INCLUDE_SUSv2(if (!silent) puts(s);)
+	IF_INCLUDE_SUSv2(যদি (!silent) puts(s);)
 	IF_NOT_INCLUDE_SUSv2(puts(s);)
 
 	fflush_stdout_and_exit(retval);

@@ -52,25 +52,25 @@
 //	-p	diagnose errors writing to non pipes
 // ^^^^ this should set SIGPIPE to SIG_IGN. EPIPE is ignored (same as "warn-nopipe")
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#অন্তর্ভাৱ "libbb.h"
+#অন্তর্ভাৱ "common_bufsiz.h"
 
-int tee_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int tee_main(int argc, char **argv)
+পূর্ণাঙ্ক tee_main(পূর্ণাঙ্ক argc, ৱর্ণ **argv) MAIN_EXTERNALLY_VISIBLE;
+পূর্ণাঙ্ক tee_main(পূর্ণাঙ্ক argc, ৱর্ণ **argv)
 {
-	const char *mode = "w\0a";
+	ধ্রুৱ ৱর্ণ *mode = "w\0a";
 	FILE **files;
 	FILE **fp;
-	char **names;
-	char **np;
-	char retval;
+	ৱর্ণ **names;
+	ৱর্ণ **np;
+	ৱর্ণ retval;
 //TODO: make unconditional
-#if ENABLE_FEATURE_TEE_USE_BLOCK_IO
+#যদি ENABLE_FEATURE_TEE_USE_BLOCK_IO
 	ssize_t c;
 # define buf bb_common_bufsiz1
 	setup_common_bufsiz();
-#else
-	int c;
+#অন্যথা
+	পূর্ণাঙ্ক c;
 #endif
 	retval = getopt32(argv, "ia");	/* 'a' must be 2nd */
 	argc -= optind;
@@ -78,8 +78,8 @@ int tee_main(int argc, char **argv)
 
 	mode += (retval & 2);	/* Since 'a' is the 2nd option... */
 
-	if (retval & 1) {
-		signal(SIGINT, SIG_IGN);
+	যদি (retval & 1) {
+		সঙ্কেত(SIGINT, SIG_IGN);
 	}
 	retval = EXIT_SUCCESS;
 	/* if (opt_p || opt_output_error)
@@ -87,49 +87,49 @@ int tee_main(int argc, char **argv)
 	 */
 
 	/* Allocate an array of FILE *'s, with one extra for a sentinel. */
-	fp = files = xzalloc(sizeof(FILE *) * (argc + 2));
+	fp = files = xzalloc(পরিমাণ(FILE *) * (argc + 2));
 	np = names = argv - 1;
 
 	files[0] = stdout;
-	goto GOT_NEW_FILE;
+	গচ্ছ GOT_NEW_FILE;
 
-	do {
+	কৰা {
 		*fp = stdout;
-		if (NOT_LONE_DASH(*argv)) {
+		যদি (NOT_LONE_DASH(*argv)) {
 			*fp = fopen_or_warn(*argv, mode);
-			if (*fp == NULL) {
+			যদি (*fp == রিক্ত) {
 				retval = EXIT_FAILURE;
 				argv++;
-				continue;
+				অনুৱর্ত;
 			}
 		}
 		*np = *argv++;
  GOT_NEW_FILE:
-		setbuf(*fp, NULL);	/* tee must not buffer output. */
+		setbuf(*fp, রিক্ত);	/* tee must not buffer output. */
 		fp++;
 		np++;
-	} while (*argv);
+	} যেতিয়ালৈ (*argv);
 	/* names[0] will be filled later */
 
-#if ENABLE_FEATURE_TEE_USE_BLOCK_IO
-	while ((c = safe_read(STDIN_FILENO, buf, COMMON_BUFSIZE)) > 0) {
+#যদি ENABLE_FEATURE_TEE_USE_BLOCK_IO
+	যেতিয়ালৈ ((c = safe_read(STDIN_FILENO, buf, COMMON_BUFSIZE)) > 0) {
 		fp = files;
-		do
+		কৰা
 			fwrite(buf, 1, c, *fp);
 			/* if (opt_p && fwrite() != c && !EPIPE) bb_error_msg("..."); */
-		while (*++fp);
+		যেতিয়ালৈ (*++fp);
 	}
-	if (c < 0) {		/* Make sure read errors are signaled. */
+	যদি (c < 0) {		/* Make sure read errors are signaled. */
 		retval = EXIT_FAILURE;
 	}
-#else
-	setvbuf(stdout, NULL, _IONBF, 0);
-	while ((c = getchar()) != EOF) {
+#অন্যথা
+	setvbuf(stdout, রিক্ত, _IONBF, 0);
+	যেতিয়ালৈ ((c = getchar()) != EOF) {
 		fp = files;
-		do
+		কৰা
 			putc(c, *fp);
 			/* if (opt_p && putc() == EOF && !EPIPE) bb_error_msg("..."); */
-		while (*++fp);
+		যেতিয়ালৈ (*++fp);
 	}
 #endif
 
@@ -141,13 +141,13 @@ int tee_main(int argc, char **argv)
 	 * is unnecessary here. */
 	np = names;
 	fp = files;
-	names[0] = (char *) bb_msg_standard_input;
+	names[0] = (ৱর্ণ *) bb_বাৰ্তা_standard_প্ৰবেশ;
 	files[0] = stdin;
-	do {	/* Now check for input and output errors. */
+	কৰা {	/* Now check for input and output errors. */
 		/* Checking ferror should be sufficient, but we may want to fclose.
 		 * If we do, remember not to close stdin! */
 		die_if_ferror(*fp++, *np++);
-	} while (*fp);
+	} যেতিয়ালৈ (*fp);
 
 	fflush_stdout_and_exit(retval);
 }

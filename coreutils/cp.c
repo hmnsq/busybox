@@ -105,30 +105,30 @@
 //usage:     "\n	-t DIR	Copy all SOURCEs into DIR"
 //usage:     "\n	-u	Copy only newer files"
 
-#include "libbb.h"
-#include "libcoreutils/coreutils.h"
+#অন্তর্ভাৱ "libbb.h"
+#অন্তর্ভাৱ "libcoreutils/coreutils.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-int cp_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int cp_main(int argc, char **argv)
+পূর্ণাঙ্ক cp_main(পূর্ণাঙ্ক argc, ৱর্ণ **argv) MAIN_EXTERNALLY_VISIBLE;
+পূর্ণাঙ্ক cp_main(পূর্ণাঙ্ক argc, ৱর্ণ **argv)
 {
-	struct stat source_stat;
-	struct stat dest_stat;
-	const char *last;
-	const char *dest;
-	int s_flags;
-	int d_flags;
-	int flags;
-	int status;
-#if ENABLE_FEATURE_CP_LONG_OPTIONS
-	enum {
+	সংরচনা stat source_stat;
+	সংরচনা stat dest_stat;
+	ধ্রুৱ ৱর্ণ *last;
+	ধ্রুৱ ৱর্ণ *dest;
+	পূর্ণাঙ্ক s_flags;
+	পূর্ণাঙ্ক d_flags;
+	পূর্ণাঙ্ক flags;
+	পূর্ণাঙ্ক status;
+#যদি ENABLE_FEATURE_CP_LONG_OPTIONS
+	গণনা {
 		/*OPT_rmdest  = FILEUTILS_RMDEST = 1 << FILEUTILS_CP_OPTBITS */
 		OPT_parents = 1 << (FILEUTILS_CP_OPTBITS+1),
 		OPT_reflink = 1 << (FILEUTILS_CP_OPTBITS+2),
 	};
-# if ENABLE_FEATURE_CP_REFLINK
-	char *reflink = NULL;
+# যদি ENABLE_FEATURE_CP_REFLINK
+	ৱর্ণ *reflink = রিক্ত;
 # endif
 	flags = getopt32long(argv, "^"
 		FILEUTILS_CP_OPTSTR
@@ -156,26 +156,26 @@ int cp_main(int argc, char **argv)
 		"update\0"         No_argument "u"
 		"remove-destination\0" No_argument "\xff"
 		"parents\0"        No_argument "\xfe"
-# if ENABLE_FEATURE_CP_REFLINK
+# যদি ENABLE_FEATURE_CP_REFLINK
 		"reflink\0"        Optional_argument "\xfd"
 # endif
 		, &last
-# if ENABLE_FEATURE_CP_REFLINK
+# যদি ENABLE_FEATURE_CP_REFLINK
 		, &reflink
 # endif
 	);
-# if ENABLE_FEATURE_CP_REFLINK
-	BUILD_BUG_ON((int)OPT_reflink != (int)FILEUTILS_REFLINK);
-	if (flags & FILEUTILS_REFLINK) {
-		if (!reflink)
+# যদি ENABLE_FEATURE_CP_REFLINK
+	BUILD_BUG_ON((পূর্ণাঙ্ক)OPT_reflink != (পূর্ণাঙ্ক)FILEUTILS_REFLINK);
+	যদি (flags & FILEUTILS_REFLINK) {
+		যদি (!reflink)
 			flags |= FILEUTILS_REFLINK_ALWAYS;
-		else if (strcmp(reflink, "always") == 0)
+		অন্যথা যদি (strcmp(reflink, "always") == 0)
 			flags |= FILEUTILS_REFLINK_ALWAYS;
-		else if (strcmp(reflink, "auto") != 0)
+		অন্যথা যদি (strcmp(reflink, "auto") != 0)
 			bb_show_usage();
 	}
 # endif
-#else
+#অন্যথা
 	flags = getopt32(argv, "^"
 		FILEUTILS_CP_OPTSTR
 		"\0"
@@ -191,95 +191,95 @@ int cp_main(int argc, char **argv)
 	 * by default, "cp" derefs symlinks (creates regular dest files),
 	 * but "cp -R" does not. We switch off deref if -r or -R (see above).
 	 * However, "cp -RL" must still deref symlinks: */
-	if (flags & FILEUTILS_DEREF_SOFTLINK) /* -L */
+	যদি (flags & FILEUTILS_DEREF_SOFTLINK) /* -L */
 		flags |= FILEUTILS_DEREFERENCE;
 
-#if ENABLE_SELINUX
-	if (flags & FILEUTILS_PRESERVE_SECURITY_CONTEXT) {
+#যদি ENABLE_SELINUX
+	যদি (flags & FILEUTILS_PRESERVE_SECURITY_CONTEXT) {
 		selinux_or_die();
 	}
 #endif
 
 	status = EXIT_SUCCESS;
-	if (!(flags & FILEUTILS_TARGET_DIR)) {
+	যদি (!(flags & FILEUTILS_TARGET_DIR)) {
 		last = argv[argc - 1];
-		if (argc < 2)
+		যদি (argc < 2)
 			bb_show_usage();
-		if (argc != 2) {
-			if (flags & FILEUTILS_NO_TARGET_DIR)
+		যদি (argc != 2) {
+			যদি (flags & FILEUTILS_NO_TARGET_DIR)
 				bb_show_usage();
 			/* "cp A B C... DIR" - target must be dir */
-		} else /* argc == 2 */ {
+		} অন্যথা /* argc == 2 */ {
 			/* "cp A B" - only case where target can be not a dir */
 			s_flags = cp_mv_stat2(*argv, &source_stat,
 					(flags & FILEUTILS_DEREFERENCE) ? stat : lstat);
-			if (s_flags < 0) /* error other than ENOENT */
-				return EXIT_FAILURE;
+			যদি (s_flags < 0) /* error other than ENOENT */
+				ঘূৰাই EXIT_FAILURE;
 			d_flags = cp_mv_stat(last, &dest_stat);
-			if (d_flags < 0) /* error other than ENOENT */
-				return EXIT_FAILURE;
+			যদি (d_flags < 0) /* error other than ENOENT */
+				ঘূৰাই EXIT_FAILURE;
 
-			if (flags & FILEUTILS_NO_TARGET_DIR) { /* -T */
-				if (!(s_flags & 2) && (d_flags & 2))
+			যদি (flags & FILEUTILS_NO_TARGET_DIR) { /* -T */
+				যদি (!(s_flags & 2) && (d_flags & 2))
 					/* cp -T NOTDIR DIR */
-					bb_error_msg_and_die("'%s' is a directory", last);
+					bb_error_বাৰ্তা_and_die("'%s' is a directory", last);
 			}
 
-#if ENABLE_FEATURE_CP_LONG_OPTIONS
+#যদি ENABLE_FEATURE_CP_LONG_OPTIONS
 			//bb_error_msg("flags:%x FILEUTILS_RMDEST:%x OPT_parents:%x",
 			//	flags, FILEUTILS_RMDEST, OPT_parents);
-			if (flags & OPT_parents) {
-				if (!(d_flags & 2)) {
-					bb_simple_error_msg_and_die("with --parents, the destination must be a directory");
+			যদি (flags & OPT_parents) {
+				যদি (!(d_flags & 2)) {
+					bb_simple_error_বাৰ্তা_and_die("with --parents, the destination must be a directory");
 				}
 			}
-			if (flags & FILEUTILS_RMDEST) {
+			যদি (flags & FILEUTILS_RMDEST) {
 				flags |= FILEUTILS_FORCE;
 			}
 #endif
 
 			/* ...if neither is a directory...  */
-			if (!((s_flags | d_flags) & 2)
+			যদি (!((s_flags | d_flags) & 2)
 			    /* ...or: recursing, the 1st is a directory, and the 2nd doesn't exist... */
 			 || ((flags & FILEUTILS_RECUR) && (s_flags & 2) && !d_flags)
 			 || (flags & FILEUTILS_NO_TARGET_DIR)
 			) {
 				/* Do a simple copy */
 				dest = last;
-				goto DO_COPY; /* NB: argc==2 -> *++argv==last */
+				গচ্ছ DO_COPY; /* NB: argc==2 -> *++argv==last */
 			}
 		}
 	}
 	/* else: last is DIR from "-t DIR" */
 
-	while (1) {
-#if ENABLE_FEATURE_CP_LONG_OPTIONS
-		if (flags & OPT_parents) {
-			char *dest_dup;
-			char *dest_dir;
+	যেতিয়ালৈ (1) {
+#যদি ENABLE_FEATURE_CP_LONG_OPTIONS
+		যদি (flags & OPT_parents) {
+			ৱর্ণ *dest_dup;
+			ৱর্ণ *dest_dir;
 			dest = concat_path_file(last, *argv);
 			dest_dup = xstrdup(dest);
 			dest_dir = dirname(dest_dup);
-			if (bb_make_directory(dest_dir, -1, FILEUTILS_RECUR)) {
-				return EXIT_FAILURE;
+			যদি (bb_make_directory(dest_dir, -1, FILEUTILS_RECUR)) {
+				ঘূৰাই EXIT_FAILURE;
 			}
-			free(dest_dup);
-			goto DO_COPY;
+			মুক্ত(dest_dup);
+			গচ্ছ DO_COPY;
 		}
 #endif
 		dest = concat_path_file(last, bb_get_last_path_component_strip(*argv));
  DO_COPY:
-		if (copy_file(*argv, dest, flags) < 0) {
+		যদি (copy_file(*argv, dest, flags) < 0) {
 			status = EXIT_FAILURE;
 		}
-		if (!*++argv || *argv == last) {
+		যদি (!*++argv || *argv == last) {
 			/* possibly leaking dest... */
-			break;
+			ভঙ্গ;
 		}
 		/* don't move up: dest may be == last and not malloced! */
-		free((void*)dest);
+		মুক্ত((শূন্য*)dest);
 	}
 
 	/* Exit. We are NOEXEC, not NOFORK. We do exit at the end of main() */
-	return status;
+	ঘূৰাই status;
 }

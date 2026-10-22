@@ -37,7 +37,7 @@
 //usage:       "$ ls -l /tmp/ls\n"
 //usage:       "lrwxrwxrwx    1 root     root            7 Apr 12 18:39 ls -> BusyBox*\n"
 
-#include "libbb.h"
+#অন্তর্ভাৱ "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
@@ -49,17 +49,17 @@
 #define LN_VERBOSE          (1 << 5)
 #define LN_LINKFILE         (1 << 6)
 
-int ln_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int ln_main(int argc, char **argv)
+পূর্ণাঙ্ক ln_main(পূর্ণাঙ্ক argc, ৱর্ণ **argv) MAIN_EXTERNALLY_VISIBLE;
+পূর্ণাঙ্ক ln_main(পূর্ণাঙ্ক argc, ৱর্ণ **argv)
 {
 	exitcode_t status = EXIT_SUCCESS;
-	int opts;
-	char *last;
-	char *src_name;
-	char *src;
-	char *suffix = (char*)"~";
-	struct stat statbuf;
-	int (*link_func)(const char *, const char *);
+	পূর্ণাঙ্ক opts;
+	ৱর্ণ *last;
+	ৱর্ণ *src_name;
+	ৱর্ণ *src;
+	ৱর্ণ *suffix = (ৱর্ণ*)"~";
+	সংরচনা stat statbuf;
+	পূর্ণাঙ্ক (*link_func)(ধ্রুৱ ৱর্ণ *, ধ্রুৱ ৱর্ণ *);
 
 	opts = getopt32(argv, "^" "sfnbS:vT" "\0" "-1", &suffix);
 /*
@@ -82,11 +82,11 @@ int ln_main(int argc, char **argv)
 	argv += optind;
 	argc -= optind;
 
-	if ((opts & LN_LINKFILE) && argc > 2) {
-		bb_simple_error_msg_and_die("-T accepts 2 args max");
+	যদি ((opts & LN_LINKFILE) && argc > 2) {
+		bb_simple_error_বাৰ্তা_and_die("-T accepts 2 args max");
 	}
 
-	if (!argv[1]) {
+	যদি (!argv[1]) {
 		/* "ln PATH/TO/FILE" -> "ln PATH/TO/FILE FILE" */
 		*--argv = last;
 		/* xstrdup is needed: "ln -s PATH/TO/FILE/" is equivalent to
@@ -95,71 +95,71 @@ int ln_main(int argc, char **argv)
 		last = bb_get_last_path_component_strip(xstrdup(last));
 	}
 
-	do {
-		src_name = NULL;
+	কৰা {
+		src_name = রিক্ত;
 		src = last;
 
-		if (is_directory(src,
+		যদি (is_directory(src,
 				/*followlinks:*/ !(opts & (LN_NODEREFERENCE|LN_LINKFILE))
 				/* Why LN_LINKFILE does not follow links:
 				 * -T/--no-target-directory implies -n/--no-dereference
 				 */
 				)
 		) {
-			if (opts & LN_LINKFILE) {
-				bb_error_msg_and_die("'%s' is a directory", src);
+			যদি (opts & LN_LINKFILE) {
+				bb_error_বাৰ্তা_and_die("'%s' is a directory", src);
 			}
 			src_name = xstrdup(*argv);
 			src = concat_path_file(src, bb_get_last_path_component_strip(src_name));
-			free(src_name);
+			মুক্ত(src_name);
 			src_name = src;
 		}
-		if (!(opts & LN_SYMLINK) && stat(*argv, &statbuf)) {
+		যদি (!(opts & LN_SYMLINK) && stat(*argv, &statbuf)) {
 			// coreutils: "ln dangling_symlink new_hardlink" works
-			if (lstat(*argv, &statbuf) || !S_ISLNK(statbuf.st_mode)) {
-				bb_simple_perror_msg(*argv);
+			যদি (lstat(*argv, &statbuf) || !S_ISLNK(statbuf.st_mode)) {
+				bb_simple_perror_বাৰ্তা(*argv);
 				status = EXIT_FAILURE;
-				free(src_name);
-				continue;
+				মুক্ত(src_name);
+				অনুৱর্ত;
 			}
 		}
 
-		if (opts & LN_BACKUP) {
-			char *backup;
+		যদি (opts & LN_BACKUP) {
+			ৱর্ণ *backup;
 			backup = xasprintf("%s%s", src, suffix);
-			if (rename(src, backup) < 0 && errno != ENOENT) {
-				bb_simple_perror_msg(src);
+			যদি (rename(src, backup) < 0 && errno != ENOENT) {
+				bb_simple_perror_বাৰ্তা(src);
 				status = EXIT_FAILURE;
-				free(backup);
-				continue;
+				মুক্ত(backup);
+				অনুৱর্ত;
 			}
-			free(backup);
+			মুক্ত(backup);
 			/*
 			 * When the source and dest are both hard links to the same
 			 * inode, a rename may succeed even though nothing happened.
 			 * Therefore, always unlink().
 			 */
 			unlink(src);
-		} else if (opts & LN_FORCE) {
+		} অন্যথা যদি (opts & LN_FORCE) {
 			unlink(src);
 		}
 
 		link_func = link;
-		if (opts & LN_SYMLINK) {
+		যদি (opts & LN_SYMLINK) {
 			link_func = symlink;
 		}
 
-		if (opts & LN_VERBOSE) {
+		যদি (opts & LN_VERBOSE) {
 			printf("'%s' -> '%s'\n", src, *argv);
 		}
 
-		if (link_func(*argv, src) != 0) {
-			bb_simple_perror_msg(src);
+		যদি (link_func(*argv, src) != 0) {
+			bb_simple_perror_বাৰ্তা(src);
 			status = EXIT_FAILURE;
 		}
 
-		free(src_name);
-	} while ((++argv)[1]);
+		মুক্ত(src_name);
+	} যেতিয়ালৈ ((++argv)[1]);
 
-	return status;
+	ঘূৰাই status;
 }

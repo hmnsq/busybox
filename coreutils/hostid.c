@@ -24,19 +24,19 @@
 //usage:#define hostid_full_usage "\n\n"
 //usage:       "Print out a unique 32-bit identifier for the machine"
 
-#include "libbb.h"
+#অন্তর্ভাৱ "libbb.h"
 
 /* This is a NOFORK applet. Be very careful! */
 
-int hostid_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int hostid_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+পূর্ণাঙ্ক hostid_main(পূর্ণাঙ্ক argc, ৱর্ণ **argv) MAIN_EXTERNALLY_VISIBLE;
+পূর্ণাঙ্ক hostid_main(পূর্ণাঙ্ক argc UNUSED_PARAM, ৱর্ণ **argv UNUSED_PARAM)
 {
-	if (argv[1]) {
+	যদি (argv[1]) {
 		bb_show_usage();
 	}
 
 	/* POSIX says gethostid returns a "32-bit identifier" */
 	printf("%08x\n", (unsigned)(uint32_t)gethostid());
 
-	return fflush_all();
+	ঘূৰাই fflush_all();
 }
