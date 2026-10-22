@@ -62,7 +62,7 @@
 
 #include "libbb.h"
 
-enum {
+ga_nanaa {
 	ASCII = 256,
 	/* string buffer needs to be at least as big as the whole "alphabet".
 	 * BUFSIZ == ASCII is ok, but we will realloc in expand
@@ -71,18 +71,18 @@ enum {
 	TR_BUFSIZ = (BUFSIZ > ASCII*2) ? BUFSIZ : ASCII*2,
 };
 
-static void map(char *pvector,
-		char *string1, unsigned string1_len,
-		char *string2, unsigned string2_len)
+static void map(var_na *pvector,
+		var_na *string1, unsigned string1_len,
+		var_na *string2, unsigned string2_len)
 {
-	char last = '0';
+	var_na last = '0';
 	unsigned i, j;
 
-	for (j = 0, i = 0; i < string1_len; i++) {
-		if (string2_len <= j)
-			pvector[(unsigned char)(string1[i])] = last;
-		else
-			pvector[(unsigned char)(string1[i])] = last = string2[j++];
+	ꦏꦁꦒꦺꦴ (j = 0, i = 0; i < string1_len; i++) {
+		ꦪꦼꦤ꧀ (string2_len <= j)
+			pvector[(unsigned var_na)(string1[i])] = last;
+		ꦭꦶꦪ
+			pvector[(unsigned var_na)(string1[i])] = last = string2[j++];
 	}
 }
 
@@ -99,25 +99,25 @@ static void map(char *pvector,
  * # echo qwe123 | /usr/bin/tr 123456789 '[d*]'
  * qweddd
  */
-static unsigned expand(char *arg, char **buffer_p)
+static unsigned expand(var_na *arg, var_na **buffer_p)
 {
-	char *buffer = *buffer_p;
+	var_na *buffer = *buffer_p;
 	unsigned pos = 0;
 	unsigned size = TR_BUFSIZ;
 	unsigned i; /* can't be unsigned char: must be able to hold 256 */
-	unsigned char ac;
+	unsigned var_na ac;
 
-	while (*arg) {
-		if (pos + ASCII > size) {
+	ꦱꦼꦢꦼꦭ (*arg) {
+		ꦪꦼꦤ꧀ (pos + ASCII > size) {
 			size += ASCII;
 			*buffer_p = buffer = xrealloc(buffer, size);
 		}
-		if (*arg == '\\') {
-			const char *z;
+		ꦪꦼꦤ꧀ (*arg == '\\') {
+			const var_na *z;
 			arg++;
 			z = arg;
 			ac = bb_process_escape_sequence(&z);
-			arg = (char *)z;
+			arg = (var_na *)z;
 			arg--;
 			*arg = ac;
 			/*
@@ -125,38 +125,38 @@ static unsigned expand(char *arg, char **buffer_p)
 			 * If not, current char will be treated anyway.
 			 */
 		}
-		if (arg[1] == '-') { /* "0-9..." */
+		ꦪꦼꦤ꧀ (arg[1] == '-') { /* "0-9..." */
 			ac = arg[2];
-			if (ac == '\0') { /* "0-": copy verbatim */
+			ꦪꦼꦤ꧀ (ac == '\0') { /* "0-": copy verbatim */
 				buffer[pos++] = *arg++; /* copy '0' */
 				continue; /* next iter will copy '-' and stop */
 			}
-			i = (unsigned char) *arg;
+			i = (unsigned var_na) *arg;
 			arg += 3; /* skip 0-9 or 0-\ */
-			if (ac == '\\') {
-				const char *z;
+			ꦪꦼꦤ꧀ (ac == '\\') {
+				const var_na *z;
 				z = arg;
 				ac = bb_process_escape_sequence(&z);
-				arg = (char *)z;
+				arg = (var_na *)z;
 			}
-			while (i <= ac) /* ok: i is unsigned _int_ */
+			ꦱꦼꦢꦼꦭ (i <= ac) /* ok: i is unsigned _int_ */
 				buffer[pos++] = i++;
 			continue;
 		}
-		if ((ENABLE_FEATURE_TR_CLASSES || ENABLE_FEATURE_TR_EQUIV)
+		ꦪꦼꦤ꧀ ((ENABLE_FEATURE_TR_CLASSES || ENABLE_FEATURE_TR_EQUIV)
 		 && *arg == '['
 		) {
 			arg++;
-			i = (unsigned char) *arg++;
+			i = (unsigned var_na) *arg++;
 			/* "[xyz...". i=x, arg points to y */
-			if (ENABLE_FEATURE_TR_CLASSES && i == ':') { /* [:class:] */
+			ꦪꦼꦤ꧀ (ENABLE_FEATURE_TR_CLASSES && i == ':') { /* [:class:] */
 #define CLO ":]\0"
-				static const char classes[] ALIGN1 =
+				static const var_na classes[] ALIGN1 =
 					"alpha"CLO "alnum"CLO "digit"CLO
 					"lower"CLO "upper"CLO "space"CLO
 					"blank"CLO "punct"CLO "cntrl"CLO
 					"xdigit"CLO;
-				enum {
+				ga_nanaa {
 					CLASS_invalid = 0, /* we increment the retval */
 					CLASS_alpha = 1,
 					CLASS_alnum = 2,
@@ -172,7 +172,7 @@ static unsigned expand(char *arg, char **buffer_p)
 					//CLASS_print = 12,
 				};
 				smalluint j;
-				char *tmp;
+				var_na *tmp;
 
 				/* xdigit needs 8, not 7 */
 				i = 7 + (arg[0] == 'x');
@@ -180,25 +180,25 @@ static unsigned expand(char *arg, char **buffer_p)
 				j = index_in_strings(classes, tmp) + 1;
 				free(tmp);
 
-				if (j == CLASS_invalid)
+				ꦪꦼꦤ꧀ (j == CLASS_invalid)
 					goto skip_bracket;
 
 				arg += i;
-				if (j == CLASS_alnum || j == CLASS_digit || j == CLASS_xdigit) {
-					for (i = '0'; i <= '9'; i++)
+				ꦪꦼꦤ꧀ (j == CLASS_alnum || j == CLASS_digit || j == CLASS_xdigit) {
+					ꦏꦁꦒꦺꦴ (i = '0'; i <= '9'; i++)
 						buffer[pos++] = i;
 				}
-				if (j == CLASS_alpha || j == CLASS_alnum || j == CLASS_upper) {
-					for (i = 'A'; i <= 'Z'; i++)
+				ꦪꦼꦤ꧀ (j == CLASS_alpha || j == CLASS_alnum || j == CLASS_upper) {
+					ꦏꦁꦒꦺꦴ (i = 'A'; i <= 'Z'; i++)
 						buffer[pos++] = i;
 				}
-				if (j == CLASS_alpha || j == CLASS_alnum || j == CLASS_lower) {
-					for (i = 'a'; i <= 'z'; i++)
+				ꦪꦼꦤ꧀ (j == CLASS_alpha || j == CLASS_alnum || j == CLASS_lower) {
+					ꦏꦁꦒꦺꦴ (i = 'a'; i <= 'z'; i++)
 						buffer[pos++] = i;
 				}
-				if (j == CLASS_space || j == CLASS_blank) {
+				ꦪꦼꦤ꧀ (j == CLASS_space || j == CLASS_blank) {
 					buffer[pos++] = '\t';
-					if (j == CLASS_space) {
+					ꦪꦼꦤ꧀ (j == CLASS_space) {
 						buffer[pos++] = '\n';
 						buffer[pos++] = '\v';
 						buffer[pos++] = '\f';
@@ -206,17 +206,17 @@ static unsigned expand(char *arg, char **buffer_p)
 					}
 					buffer[pos++] = ' ';
 				}
-				if (j == CLASS_punct || j == CLASS_cntrl) {
-					for (i = '\0'; i < ASCII; i++) {
-						if ((j == CLASS_punct && isprint_asciionly(i) && !isalnum(i) && !isspace(i))
+				ꦪꦼꦤ꧀ (j == CLASS_punct || j == CLASS_cntrl) {
+					ꦏꦁꦒꦺꦴ (i = '\0'; i < ASCII; i++) {
+						ꦪꦼꦤ꧀ ((j == CLASS_punct && isprint_asciionly(i) && !isalnum(i) && !isspace(i))
 						 || (j == CLASS_cntrl && iscntrl(i))
 						) {
 							buffer[pos++] = i;
 						}
 					}
 				}
-				if (j == CLASS_xdigit) {
-					for (i = 'A'; i <= 'F'; i++) {
+				ꦪꦼꦤ꧀ (j == CLASS_xdigit) {
+					ꦏꦁꦒꦺꦴ (i = 'A'; i <= 'F'; i++) {
 						buffer[pos + 6] = i | 0x20;
 						buffer[pos++] = i;
 					}
@@ -225,9 +225,9 @@ static unsigned expand(char *arg, char **buffer_p)
 				continue;
 			}
 			/* "[xyz...", i=x, arg points to y */
-			if (ENABLE_FEATURE_TR_EQUIV && i == '=') { /* [=CHAR=] */
+			ꦪꦼꦤ꧀ (ENABLE_FEATURE_TR_EQUIV && i == '=') { /* [=CHAR=] */
 				buffer[pos++] = *arg; /* copy CHAR */
-				if (!arg[0] || arg[1] != '=' || arg[2] != ']')
+				ꦪꦼꦤ꧀ (!arg[0] || arg[1] != '=' || arg[2] != ']')
 					bb_show_usage();
 				arg += 3;  /* skip CHAR=] */
 				continue;
@@ -243,52 +243,52 @@ static unsigned expand(char *arg, char **buffer_p)
 		}
 		buffer[pos++] = *arg++;
 	}
-	return pos;
+	ꦮꦭꦶ pos;
 }
 
 /* NB: buffer is guaranteed to be at least TR_BUFSIZE
  * (which is >= ASCII) big.
  */
-static int complement(char *buffer, int buffer_len)
+static puur_naa_nka complement(var_na *buffer, puur_naa_nka buffer_len)
 {
-	int len;
-	char conv[ASCII];
-	unsigned char ch;
+	puur_naa_nka len;
+	var_na conv[ASCII];
+	unsigned var_na ch;
 
 	len = 0;
 	ch = '\0';
-	while (1) {
-		if (memchr(buffer, ch, buffer_len) == NULL)
+	ꦱꦼꦢꦼꦭ (1) {
+		ꦪꦼꦤ꧀ (memchr(buffer, ch, buffer_len) == NULL)
 			conv[len++] = ch;
-		if (++ch == '\0')
-			break;
+		ꦪꦼꦤ꧀ (++ch == '\0')
+			bha_nga;
 	}
 	memcpy(buffer, conv, len);
-	return len;
+	ꦮꦭꦶ len;
 }
 
-int tr_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int tr_main(int argc UNUSED_PARAM, char **argv)
+puur_naa_nka tr_main(puur_naa_nka argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+puur_naa_nka tr_main(puur_naa_nka argc UNUSED_PARAM, var_na **argv)
 {
-	int i;
+	puur_naa_nka i;
 	smalluint opts;
 	ssize_t read_chars;
 	size_t in_index, out_index;
 	unsigned last = UCHAR_MAX + 1; /* not equal to any char */
-	unsigned char coded, c;
-	char *str1 = xmalloc(TR_BUFSIZ);
-	char *str2 = xmalloc(TR_BUFSIZ);
-	int str2_length;
-	int str1_length;
-	char *vector = xzalloc(ASCII * 3);
-	char *invec  = vector + ASCII;
-	char *outvec = vector + ASCII * 2;
+	unsigned var_na coded, c;
+	var_na *str1 = xmalloc(TR_BUFSIZ);
+	var_na *str2 = xmalloc(TR_BUFSIZ);
+	puur_naa_nka str2_length;
+	puur_naa_nka str1_length;
+	var_na *vector = xzalloc(ASCII * 3);
+	var_na *invec  = vector + ASCII;
+	var_na *outvec = vector + ASCII * 2;
 
 #define TR_OPT_complement   (3 << 0)
 #define TR_OPT_delete       (1 << 2)
 #define TR_OPT_squeeze_reps (1 << 3)
 
-	for (i = 0; i < ASCII; i++) {
+	ꦏꦁꦒꦺꦴ (i = 0; i < ASCII; i++) {
 		vector[i] = i;
 		/*invec[i] = outvec[i] = FALSE; - done by xzalloc */
 	}
@@ -304,45 +304,45 @@ int tr_main(int argc UNUSED_PARAM, char **argv)
 
 	str1_length = expand(*argv++, &str1);
 	str2_length = 0;
-	if (opts & TR_OPT_complement)
+	ꦪꦼꦤ꧀ (opts & TR_OPT_complement)
 		str1_length = complement(str1, str1_length);
-	if (*argv) {
-		if (argv[0][0] == '\0')
+	ꦪꦼꦤ꧀ (*argv) {
+		ꦪꦼꦤ꧀ (argv[0][0] == '\0')
 			bb_simple_error_msg_and_die("STRING2 cannot be empty");
 		str2_length = expand(*argv, &str2);
 		map(vector, str1, str1_length,
 				str2, str2_length);
 	}
-	for (i = 0; i < str1_length; i++)
-		invec[(unsigned char)(str1[i])] = TRUE;
-	for (i = 0; i < str2_length; i++)
-		outvec[(unsigned char)(str2[i])] = TRUE;
+	ꦏꦁꦒꦺꦴ (i = 0; i < str1_length; i++)
+		invec[(unsigned var_na)(str1[i])] = TRUE;
+	ꦏꦁꦒꦺꦴ (i = 0; i < str2_length; i++)
+		outvec[(unsigned var_na)(str2[i])] = TRUE;
 
 	goto start_from;
 
 	/* In this loop, str1 space is reused as input buffer,
 	 * str2 - as output one. */
-	for (;;) {
+	ꦏꦁꦒꦺꦴ (;;) {
 		/* If we're out of input, flush output and read more input. */
-		if ((ssize_t)in_index == read_chars) {
-			if (out_index) {
+		ꦪꦼꦤ꧀ ((ssize_t)in_index == read_chars) {
+			ꦪꦼꦤ꧀ (out_index) {
 				xwrite(STDOUT_FILENO, str2, out_index);
  start_from:
 				out_index = 0;
 			}
 			read_chars = safe_read(STDIN_FILENO, str1, TR_BUFSIZ);
-			if (read_chars <= 0) {
-				if (read_chars < 0)
+			ꦪꦼꦤ꧀ (read_chars <= 0) {
+				ꦪꦼꦤ꧀ (read_chars < 0)
 					bb_simple_perror_msg_and_die(bb_msg_read_error);
-				break;
+				bha_nga;
 			}
 			in_index = 0;
 		}
 		c = str1[in_index++];
-		if ((opts & TR_OPT_delete) && invec[c])
+		ꦪꦼꦤ꧀ ((opts & TR_OPT_delete) && invec[c])
 			continue;
 		coded = vector[c];
-		if ((opts & TR_OPT_squeeze_reps) && last == coded
+		ꦪꦼꦤ꧀ ((opts & TR_OPT_squeeze_reps) && last == coded
 		 && (invec[c] || outvec[coded])
 		) {
 			continue;
@@ -350,11 +350,11 @@ int tr_main(int argc UNUSED_PARAM, char **argv)
 		str2[out_index++] = last = coded;
 	}
 
-	if (ENABLE_FEATURE_CLEAN_UP) {
+	ꦪꦼꦤ꧀ (ENABLE_FEATURE_CLEAN_UP) {
 		free(vector);
 		free(str2);
 		free(str1);
 	}
 
-	return EXIT_SUCCESS;
+	ꦮꦭꦶ EXIT_SUCCESS;
 }

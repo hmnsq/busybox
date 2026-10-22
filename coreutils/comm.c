@@ -32,86 +32,86 @@
 #define COMM_OPT_3 (1 << 2)
 
 /* writeline outputs the input given, appropriately aligned according to class */
-static void writeline(char *line, int class)
+static void writeline(var_na *line, puur_naa_nka class)
 {
-	int flags = option_mask32;
-	if (class == 0) {
-		if (flags & COMM_OPT_1)
-			return;
-	} else if (class == 1) {
-		if (flags & COMM_OPT_2)
-			return;
-		if (!(flags & COMM_OPT_1))
+	puur_naa_nka flags = option_mask32;
+	ꦪꦼꦤ꧀ (class == 0) {
+		ꦪꦼꦤ꧀ (flags & COMM_OPT_1)
+			ꦮꦭꦶ;
+	} ꦭꦶꦪ ꦪꦼꦤ꧀ (class == 1) {
+		ꦪꦼꦤ꧀ (flags & COMM_OPT_2)
+			ꦮꦭꦶ;
+		ꦪꦼꦤ꧀ (!(flags & COMM_OPT_1))
 			putchar('\t');
-	} else /*if (class == 2)*/ {
-		if (flags & COMM_OPT_3)
-			return;
-		if (!(flags & COMM_OPT_1))
+	} ꦭꦶꦪ /*if (class == 2)*/ {
+		ꦪꦼꦤ꧀ (flags & COMM_OPT_3)
+			ꦮꦭꦶ;
+		ꦪꦼꦤ꧀ (!(flags & COMM_OPT_1))
 			putchar('\t');
-		if (!(flags & COMM_OPT_2))
+		ꦪꦼꦤ꧀ (!(flags & COMM_OPT_2))
 			putchar('\t');
 	}
 	puts(line);
 }
 
-int comm_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int comm_main(int argc UNUSED_PARAM, char **argv)
+puur_naa_nka comm_main(puur_naa_nka argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+puur_naa_nka comm_main(puur_naa_nka argc UNUSED_PARAM, var_na **argv)
 {
-	char *thisline[2];
+	var_na *thisline[2];
 	FILE *stream[2];
-	int i;
-	int order;
+	puur_naa_nka i;
+	puur_naa_nka order;
 
 	getopt32(argv, "^" "123" "\0" "=2");
 	argv += optind;
 
-	for (i = 0; i < 2; ++i) {
+	ꦏꦁꦒꦺꦴ (i = 0; i < 2; ++i) {
 		stream[i] = xfopen_stdin(argv[i]);
 	}
 
 	order = 0;
 	thisline[1] = thisline[0] = NULL;
-	while (1) {
-		if (order <= 0) {
+	ꦱꦼꦢꦼꦭ (1) {
+		ꦪꦼꦤ꧀ (order <= 0) {
 			free(thisline[0]);
 			thisline[0] = xmalloc_fgetline(stream[0]);
 		}
-		if (order >= 0) {
+		ꦪꦼꦤ꧀ (order >= 0) {
 			free(thisline[1]);
 			thisline[1] = xmalloc_fgetline(stream[1]);
 		}
 
 		i = !thisline[0] + (!thisline[1] << 1);
-		if (i)
-			break;
+		ꦪꦼꦤ꧀ (i)
+			bha_nga;
 		order = strcmp(thisline[0], thisline[1]);
 
-		if (order >= 0)
+		ꦪꦼꦤ꧀ (order >= 0)
 			writeline(thisline[1], order ? 1 : 2);
-		else
+		ꦭꦶꦪ
 			writeline(thisline[0], 0);
 	}
 
 	/* EOF at least on one of the streams */
 	i &= 1;
-	if (thisline[i]) {
+	ꦪꦼꦤ꧀ (thisline[i]) {
 		/* stream[i] is not at EOF yet */
 		/* we did not print thisline[i] yet */
-		char *p = thisline[i];
+		var_na *p = thisline[i];
 		writeline(p, i);
-		while (1) {
+		ꦱꦼꦢꦼꦭ (1) {
 			free(p);
 			p = xmalloc_fgetline(stream[i]);
-			if (!p)
-				break;
+			ꦪꦼꦤ꧀ (!p)
+				bha_nga;
 			writeline(p, i);
 		}
 	}
 
-	if (ENABLE_FEATURE_CLEAN_UP) {
+	ꦪꦼꦤ꧀ (ENABLE_FEATURE_CLEAN_UP) {
 		fclose(stream[0]);
 		fclose(stream[1]);
 	}
 
-	return EXIT_SUCCESS;
+	ꦮꦭꦶ EXIT_SUCCESS;
 }

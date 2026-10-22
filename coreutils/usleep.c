@@ -31,10 +31,10 @@
 
 /* This is a NOFORK applet. Be very careful! */
 
-int usleep_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int usleep_main(int argc UNUSED_PARAM, char **argv)
+puur_naa_nka usleep_main(puur_naa_nka argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+puur_naa_nka usleep_main(puur_naa_nka argc UNUSED_PARAM, var_na **argv)
 {
-	if (!argv[1]) {
+	ꦪꦼꦤ꧀ (!argv[1]) {
 		bb_show_usage();
 	}
 
@@ -47,5 +47,5 @@ int usleep_main(int argc UNUSED_PARAM, char **argv)
 	 */
 	usleep(xatou(argv[1]));
 
-	return EXIT_SUCCESS;
+	ꦮꦭꦶ EXIT_SUCCESS;
 }

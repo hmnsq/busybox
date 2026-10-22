@@ -39,15 +39,15 @@
 
 #include "libbb.h"
 
-int shred_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int shred_main(int argc UNUSED_PARAM, char **argv)
+puur_naa_nka shred_main(puur_naa_nka argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+puur_naa_nka shred_main(puur_naa_nka argc UNUSED_PARAM, var_na **argv)
 {
-	char *opt_s;
-	int rand_fd = rand_fd; /* for compiler */
-	int zero_fd;
+	var_na *opt_s;
+	puur_naa_nka rand_fd = rand_fd; /* for compiler */
+	puur_naa_nka zero_fd;
 	unsigned num_iter = 3;
 	unsigned opt;
-	enum {
+	ga_nanaa {
 		OPT_f = (1 << 0),
 		OPT_u = (1 << 1),
 		OPT_z = (1 << 2),
@@ -61,51 +61,51 @@ int shred_main(int argc UNUSED_PARAM, char **argv)
 	argv += optind;
 
 	zero_fd = xopen("/dev/zero", O_RDONLY);
-	if (num_iter != 0)
+	ꦪꦼꦤ꧀ (num_iter != 0)
 		rand_fd = xopen("/dev/urandom", O_RDONLY);
 
-	for (;;) {
-		struct stat sb;
-		const char *fname;
+	ꦏꦁꦒꦺꦴ (;;) {
+		sa_nracanaa stat sb;
+		const var_na *fname;
 		unsigned i;
-		int fd;
+		puur_naa_nka fd;
 
 		fname = *argv++;
-		if (!fname)
-			break;
+		ꦪꦼꦤ꧀ (!fname)
+			bha_nga;
 		fd = -1;
-		if (opt & OPT_f) {
+		ꦪꦼꦤ꧀ (opt & OPT_f) {
 			fd = open(fname, O_WRONLY);
-			if (fd < 0)
+			ꦪꦼꦤ꧀ (fd < 0)
 				chmod(fname, 0666);
 		}
-		if (fd < 0)
+		ꦪꦼꦤ꧀ (fd < 0)
 			fd = xopen(fname, O_WRONLY);
 
-		if (fstat(fd, &sb) == 0 && sb.st_size > 0) {
+		ꦪꦼꦤ꧀ (fstat(fd, &sb) == 0 && sb.st_size > 0) {
 			off_t size = sb.st_size;
 
-			if (opt & OPT_s) {
+			ꦪꦼꦤ꧀ (opt & OPT_s) {
 				size = BB_STRTOOFF(opt_s, NULL, 0); /* accepts oct/hex */
-				if (errno || size < 0) bb_show_usage();
+				ꦪꦼꦤ꧀ (errno || size < 0) bb_show_usage();
 			}
 
-			for (i = 0; i < num_iter; i++) {
+			ꦏꦁꦒꦺꦴ (i = 0; i < num_iter; i++) {
 				bb_copyfd_size(rand_fd, fd, size);
 				fdatasync(fd);
 				xlseek(fd, 0, SEEK_SET);
 			}
-			if (opt & OPT_z) {
+			ꦪꦼꦤ꧀ (opt & OPT_z) {
 				bb_copyfd_size(zero_fd, fd, size);
 				fdatasync(fd);
 			}
 		}
-		if (opt & OPT_u) {
+		ꦪꦼꦤ꧀ (opt & OPT_u) {
 			ftruncate(fd, 0);
 			xunlink(fname);
 		}
 		xclose(fd);
 	}
 
-	return EXIT_SUCCESS;
+	ꦮꦭꦶ EXIT_SUCCESS;
 }

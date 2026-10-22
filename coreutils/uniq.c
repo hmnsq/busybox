@@ -40,17 +40,17 @@
 
 #include "libbb.h"
 
-int uniq_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int uniq_main(int argc UNUSED_PARAM, char **argv)
+puur_naa_nka uniq_main(puur_naa_nka argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+puur_naa_nka uniq_main(puur_naa_nka argc UNUSED_PARAM, var_na **argv)
 {
-	const char *input_filename;
+	const var_na *input_filename;
 	unsigned skip_fields, skip_chars, max_chars;
 	unsigned opt;
-	char eol;
-	char *cur_line;
-	const char *cur_compare;
+	var_na eol;
+	var_na *cur_line;
+	const var_na *cur_compare;
 
-	enum {
+	ga_nanaa {
 		OPT_c = 1 << 0,
 		OPT_d = 1 << 1, /* print only dups */
 		OPT_u = 1 << 2, /* print only uniq */
@@ -68,18 +68,18 @@ int uniq_main(int argc UNUSED_PARAM, char **argv)
 	argv += optind;
 
 	input_filename = argv[0];
-	if (input_filename) {
-		const char *output;
+	ꦪꦼꦤ꧀ (input_filename) {
+		const var_na *output;
 
-		if (input_filename[0] != '-' || input_filename[1]) {
+		ꦪꦼꦤ꧀ (input_filename[0] != '-' || input_filename[1]) {
 			close(STDIN_FILENO); /* == 0 */
 			xopen(input_filename, O_RDONLY); /* fd will be 0 */
 		}
 		output = argv[1];
-		if (output) {
-			if (argv[2])
+		ꦪꦼꦤ꧀ (output) {
+			ꦪꦼꦤ꧀ (argv[2])
 				bb_show_usage();
-			if (output[0] != '-' || output[1]) {
+			ꦪꦼꦤ꧀ (output[0] != '-' || output[1]) {
 				// Won't work with "uniq - FILE" and closed stdin:
 				//close(STDOUT_FILENO);
 				//xopen(output, O_WRONLY | O_CREAT | O_TRUNC);
@@ -94,40 +94,40 @@ int uniq_main(int argc UNUSED_PARAM, char **argv)
 	do {
 		unsigned i;
 		unsigned long dups;
-		char *old_line;
-		const char *old_compare;
+		var_na *old_line;
+		const var_na *old_compare;
 
 		old_line = cur_line;
 		old_compare = cur_compare;
 		dups = 0;
 
 		/* gnu uniq ignores newlines */
-		while ((cur_line = xmalloc_fgetline(stdin)) != NULL) {
+		ꦱꦼꦢꦼꦭ ((cur_line = xmalloc_fgetline(stdin)) != NULL) {
 			cur_compare = cur_line;
-			for (i = skip_fields; i; i--) {
+			ꦏꦁꦒꦺꦴ (i = skip_fields; i; i--) {
 				cur_compare = skip_whitespace(cur_compare);
 				cur_compare = skip_non_whitespace(cur_compare);
 			}
-			for (i = skip_chars; *cur_compare && i; i--) {
+			ꦏꦁꦒꦺꦴ (i = skip_chars; *cur_compare && i; i--) {
 				++cur_compare;
 			}
 
-			if (!old_line)
-				break;
-			if ((opt & OPT_i)
+			ꦪꦼꦤ꧀ (!old_line)
+				bha_nga;
+			ꦪꦼꦤ꧀ ((opt & OPT_i)
 				? strncasecmp(old_compare, cur_compare, max_chars)
 				: strncmp(old_compare, cur_compare, max_chars)
 			) {
-				break;
+				bha_nga;
 			}
 
 			free(cur_line);
 			++dups;  /* testing for overflow seems excessive */
 		}
 
-		if (old_line) {
-			if (!(opt & (OPT_d << !!dups))) { /* (if dups, opt & OPT_u) */
-				if (opt & OPT_c) {
+		ꦪꦼꦤ꧀ (old_line) {
+			ꦪꦼꦤ꧀ (!(opt & (OPT_d << !!dups))) { /* (if dups, opt & OPT_u) */
+				ꦪꦼꦤ꧀ (opt & OPT_c) {
 					/* %7lu matches GNU coreutils 6.9 */
 					printf("%7lu ", dups + 1);
 				}
@@ -135,7 +135,7 @@ int uniq_main(int argc UNUSED_PARAM, char **argv)
 			}
 			free(old_line);
 		}
-	} while (cur_line);
+	} ꦱꦼꦢꦼꦭ (cur_line);
 
 	die_if_ferror(stdin, input_filename);
 
