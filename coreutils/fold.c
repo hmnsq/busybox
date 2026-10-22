@@ -41,28 +41,28 @@
 /* Assuming the current column is COLUMN, return the column that
    printing C will move the cursor to.
    The first column is 0. */
-static int adjust_column(unsigned column, char c)
+static 整数 adjust_column(unsigned column, char c)
 {
-	if (option_mask32 & FLAG_COUNT_BYTES)
-		return ++column;
+	如果 (option_mask32 & FLAG_COUNT_BYTES)
+		返回 ++column;
 
-	if (c == '\t')
-		return column + 8 - column % 8;
+	如果 (c == '\t')
+		返回 column + 8 - column % 8;
 
-	if (c == '\b') {
-		if ((int)--column < 0)
+	如果 (c == '\b') {
+		如果 ((整数)--column < 0)
 			column = 0;
 	}
-	else if (c == '\r')
+	否则 如果 (c == '\r')
 		column = 0;
-	else { /* just a printable char */
-		if (unicode_status != UNICODE_ON /* every byte is a new char */
+	否则 { /* just a printable char */
+		如果 (unicode_status != UNICODE_ON /* every byte is a new char */
 		 || (c & 0xc0) != 0x80 /* it isn't a 2nd+ byte of a Unicode char */
 		) {
 			column++;
 		}
 	}
-	return column;
+	返回 column;
 }
 
 /* Note that this function can write NULs, unlike fputs etc. */
@@ -71,8 +71,8 @@ static void write2stdout(const void *buf, unsigned size)
 	fwrite(buf, 1, size, stdout);
 }
 
-int fold_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int fold_main(int argc UNUSED_PARAM, char **argv)
+整数 fold_main(整数 argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+整数 fold_main(整数 argc UNUSED_PARAM, char **argv)
 {
 	char *line_out = NULL;
 	const char *w_opt = "80";
@@ -81,16 +81,16 @@ int fold_main(int argc UNUSED_PARAM, char **argv)
 
 	init_unicode();
 
-	if (ENABLE_INCLUDE_SUSv2) {
+	如果 (ENABLE_INCLUDE_SUSv2) {
 		/* Turn any numeric options into -w options.  */
-		int i;
-		for (i = 1; argv[i]; i++) {
+		整数 i;
+		为 (i = 1; argv[i]; i++) {
 			const char *a = argv[i];
-			if (*a == '-') {
+			如果 (*a == '-') {
 				a++;
-				if (*a == '-' && !a[1]) /* "--" */
+				如果 (*a == '-' && !a[1]) /* "--" */
 					break;
-				if (isdigit(*a))
+				如果 (isdigit(*a))
 					argv[i] = xasprintf("-w%s", a);
 			}
 		}
@@ -100,34 +100,34 @@ int fold_main(int argc UNUSED_PARAM, char **argv)
 	width = xatou_range(w_opt, 1, 10000);
 
 	argv += optind;
-	if (!*argv)
+	如果 (!*argv)
 		*--argv = (char*)"-";
 
 	do {
 		FILE *istream = fopen_or_warn_stdin(*argv);
-		int c;
+		整数 c;
 		unsigned column = 0;     /* Screen column where next char will go */
 		unsigned offset_out = 0; /* Index in 'line_out' for next char */
 
-		if (istream == NULL) {
+		如果 (istream == NULL) {
 			exitcode = EXIT_FAILURE;
 			continue;
 		}
 
-		while ((c = getc(istream)) != EOF) {
+		当 ((c = getc(istream)) != EOF) {
 			/* We grow line_out in chunks of 0x1000 bytes */
-			if ((offset_out & 0xfff) == 0) {
+			如果 ((offset_out & 0xfff) == 0) {
 				line_out = xrealloc(line_out, offset_out + 0x1000);
 			}
  rescan:
 			line_out[offset_out] = c;
-			if (c == '\n') {
+			如果 (c == '\n') {
 				write2stdout(line_out, offset_out + 1);
 				column = offset_out = 0;
 				continue;
 			}
 			column = adjust_column(column, c);
-			if (column <= width || offset_out == 0) {
+			如果 (column <= width || offset_out == 0) {
 				/* offset_out == 0 case happens
 				 * with small width (say, 1) and tabs.
 				 * The very first tab already goes to column 8,
@@ -139,13 +139,13 @@ int fold_main(int argc UNUSED_PARAM, char **argv)
 			/* This character would make the line too long.
 			 * Print the line plus a newline, and make this character
 			 * start the next line */
-			if (option_mask32 & FLAG_BREAK_SPACES) {
+			如果 (option_mask32 & FLAG_BREAK_SPACES) {
 				unsigned i;
 				unsigned logical_end;
 
 				/* Look for the last blank. */
-				for (logical_end = offset_out - 1; (int)logical_end >= 0; logical_end--) {
-					if (!isblank(line_out[logical_end]))
+				为 (logical_end = offset_out - 1; (整数)logical_end >= 0; logical_end--) {
+					如果 (!isblank(line_out[logical_end]))
 						continue;
 
 					/* Found a space or tab.
@@ -158,7 +158,7 @@ int fold_main(int argc UNUSED_PARAM, char **argv)
 					 * The areas being copied here might overlap. */
 					memmove(line_out, line_out + logical_end, offset_out - logical_end);
 					offset_out -= logical_end;
-					for (column = i = 0; i < offset_out; i++) {
+					为 (column = i = 0; i < offset_out; i++) {
 						column = adjust_column(column, line_out[i]);
 					}
 					goto rescan;
@@ -172,15 +172,15 @@ int fold_main(int argc UNUSED_PARAM, char **argv)
 			goto rescan;
 		} /* while (not EOF) */
 
-		if (offset_out) {
+		如果 (offset_out) {
 			write2stdout(line_out, offset_out);
 		}
 
-		if (fclose_if_not_stdin(istream)) {
+		如果 (fclose_if_not_stdin(istream)) {
 			bb_simple_perror_msg(*argv);
 			exitcode = EXIT_FAILURE;
 		}
-	} while (*++argv);
+	} 当 (*++argv);
 
 	fflush_stdout_and_exit(exitcode);
 }

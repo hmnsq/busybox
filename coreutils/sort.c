@@ -128,7 +128,7 @@ static const char sort_opt_str[] ALIGN1 = "^"
  */
 #define OPT_STR (sort_opt_str + 1)
 
-#if ENABLE_FEATURE_SORT_BIG
+#如果 ENABLE_FEATURE_SORT_BIG
 static char key_separator;
 
 static struct sort_key {
@@ -141,52 +141,52 @@ static struct sort_key {
 /* This is a NOEXEC applet. Be very careful! */
 
 
-static char *get_key(char *str, struct sort_key *key, int flags)
+static char *get_key(char *str, struct sort_key *key, 整数 flags)
 {
-	int start = start; /* for compiler */
-	int end;
-	int len, j;
+	整数 start = start; /* for compiler */
+	整数 end;
+	整数 len, j;
 	unsigned i;
 
 	/* Special case whole string, so we don't have to make a copy */
-	if (key->range[0] == 1 && !key->range[1] && !key->range[2] && !key->range[3]
+	如果 (key->range[0] == 1 && !key->range[1] && !key->range[2] && !key->range[3]
 	 && !(flags & (FLAG_b | FLAG_d | FLAG_f | FLAG_i | FLAG_bb))
 	) {
-		return str;
+		返回 str;
 	}
 
 	/* Find start of key on first pass, end on second pass */
 	len = strlen(str);
-	for (j = 0; j < 2; j++) {
-		if (!key->range[2*j])
+	为 (j = 0; j < 2; j++) {
+		如果 (!key->range[2*j])
 			end = len;
 		/* Loop through fields */
-		else {
+		否则 {
 			unsigned char ch = 0;
 
 			end = 0;
-			for (i = 1; i < key->range[2*j] + j; i++) {
-				if (key_separator) {
+			为 (i = 1; i < key->range[2*j] + j; i++) {
+				如果 (key_separator) {
 					/* Skip body of key and separator */
-					while ((ch = str[end]) != '\0') {
+					当 ((ch = str[end]) != '\0') {
 							end++;
-						if (ch == key_separator)
+						如果 (ch == key_separator)
 							break;
 					}
-				} else {
+				} 否则 {
 					/* Skip leading blanks */
-					while (isspace(str[end]))
+					当 (isspace(str[end]))
 						end++;
 					/* Skip body of key */
-					while (str[end] != '\0') {
-						if (isspace(str[end]))
+					当 (str[end] != '\0') {
+						如果 (isspace(str[end]))
 							break;
 						end++;
 					}
 				}
 			}
 			/* Remove last delim: "abc:def:" => "abc:def" */
-			if (j && ch) {
+			如果 (j && ch) {
 				//if (str[end-1] != key_separator)
 				//  bb_error_msg(_and_die("BUG! "
 				//  "str[start:%d,end:%d]:'%.*s'",
@@ -194,101 +194,101 @@ static char *get_key(char *str, struct sort_key *key, int flags)
 				end--;
 			}
 		}
-		if (!j) start = end;
+		如果 (!j) start = end;
 	}
 	/* Strip leading whitespace if necessary */
-	if (flags & FLAG_b)
+	如果 (flags & FLAG_b)
 		/* not using skip_whitespace() for speed */
-		while (isspace(str[start])) start++;
+		当 (isspace(str[start])) start++;
 	/* Strip trailing whitespace if necessary */
-	if (flags & FLAG_bb)
-		while (end > start && isspace(str[end-1])) end--;
+	如果 (flags & FLAG_bb)
+		当 (end > start && isspace(str[end-1])) end--;
 	/* -kSTART,N.ENDCHAR: honor ENDCHAR (1-based) */
-	if (key->range[3]) {
+	如果 (key->range[3]) {
 		end = key->range[3];
-		if (end > len) end = len;
+		如果 (end > len) end = len;
 	}
 	/* -kN.STARTCHAR[,...]: honor STARTCHAR (1-based) */
-	if (key->range[1]) {
+	如果 (key->range[1]) {
 		start += key->range[1] - 1;
-		if (start > len) start = len;
+		如果 (start > len) start = len;
 	}
 	/* Make the copy */
-	if (end < start)
+	如果 (end < start)
 		end = start;
 	str = xstrndup(str+start, end-start);
 	/* Handle -d */
-	if (flags & FLAG_d) {
-		for (start = end = 0; str[end]; end++)
-			if (isspace(str[end]) || isalnum(str[end]))
+	如果 (flags & FLAG_d) {
+		为 (start = end = 0; str[end]; end++)
+			如果 (isspace(str[end]) || isalnum(str[end]))
 				str[start++] = str[end];
 		str[start] = '\0';
 	}
 	/* Handle -i */
-	if (flags & FLAG_i) {
-		for (start = end = 0; str[end]; end++)
-			if (isprint_asciionly(str[end]))
+	如果 (flags & FLAG_i) {
+		为 (start = end = 0; str[end]; end++)
+			如果 (isprint_asciionly(str[end]))
 				str[start++] = str[end];
 		str[start] = '\0';
 	}
 	/* Handle -f */
-	if (flags & FLAG_f)
-		for (i = 0; str[i]; i++)
+	如果 (flags & FLAG_f)
+		为 (i = 0; str[i]; i++)
 			str[i] = toupper(str[i]);
 
-	return str;
+	返回 str;
 }
 
 static struct sort_key *add_key(void)
 {
 	struct sort_key **pkey = &key_list;
-	while (*pkey)
+	当 (*pkey)
 		pkey = &((*pkey)->next_key);
-	return *pkey = xzalloc(sizeof(struct sort_key));
+	返回 *pkey = xzalloc(sizeof(struct sort_key));
 }
 
 #define GET_LINE(fp) \
 	((option_mask32 & FLAG_z) \
 	? bb_get_chunk_from_file(fp, NULL) \
 	: xmalloc_fgetline(fp))
-#else
+#否则
 #define GET_LINE(fp) xmalloc_fgetline(fp)
 #endif
 
-#if ENABLE_FEATURE_SORT_BIG
-static int scale_suffix(const char *tail)
+#如果 ENABLE_FEATURE_SORT_BIG
+static 整数 scale_suffix(const char *tail)
 {
 	static const char suffix[] ALIGN1 = "kmgtpezy";
 	const char *s;
-	int n;
+	整数 n;
 
-	if (!tail[0])
-		return -1;
+	如果 (!tail[0])
+		返回 -1;
 	s = strchr(suffix, tail[0] | 0x20);
-	if (!s)
-		return -1;
+	如果 (!s)
+		返回 -1;
 	n = s - suffix;
-	if (n != 0 && tail[0] >= 'a')
-		return -1; /* mg... not accepted, only MG... */
-	return n;
+	如果 (n != 0 && tail[0] >= 'a')
+		返回 -1; /* mg... not accepted, only MG... */
+	返回 n;
 }
 #endif
 
 /* Iterate through keys list and perform comparisons */
-static int compare_keys(const void *xarg, const void *yarg)
+static 整数 compare_keys(const void *xarg, const void *yarg)
 {
-	int flags = option_mask32, retval = 0;
+	整数 flags = option_mask32, retval = 0;
 	char *x, *y;
 
-#if ENABLE_FEATURE_SORT_BIG
+#如果 ENABLE_FEATURE_SORT_BIG
 	struct sort_key *key;
 
-	for (key = key_list; !retval && key; key = key->next_key) {
+	为 (key = key_list; !retval && key; key = key->next_key) {
 		flags = key->flags ? key->flags : option_mask32;
 		/* Chop out and modify key chunks, handling -dfib */
 		x = get_key(*(char **)xarg, key, flags);
 		y = get_key(*(char **)yarg, key, flags);
-#else
+#否则
 	/* This curly bracket serves no purpose but to match the nesting
 	 * level of the for () loop we're not using */
 	{
@@ -300,20 +300,20 @@ static int compare_keys(const void *xarg, const void *yarg)
 		default:
 			bb_simple_error_msg_and_die("unknown sort type");
 			break;
-#if defined(HAVE_STRVERSCMP) && HAVE_STRVERSCMP == 1
+#如果 defined(HAVE_STRVERSCMP) && HAVE_STRVERSCMP == 1
 		case FLAG_V:
 			retval = strverscmp(x, y);
 			break;
 #endif
 		/* Ascii sort */
 		case 0:
-#if ENABLE_LOCALE_SUPPORT
+#如果 ENABLE_LOCALE_SUPPORT
 			retval = strcoll(x, y);
-#else
+#否则
 			retval = strcmp(x, y);
 #endif
 			break;
-#if ENABLE_FEATURE_SORT_BIG
+#如果 ENABLE_FEATURE_SORT_BIG
 		case FLAG_g:
 		case FLAG_h: {
 			char *xx, *yy;
@@ -321,50 +321,50 @@ static int compare_keys(const void *xarg, const void *yarg)
 			double dx = strtod(x, &xx);
 			double dy = strtod(y, &yy);
 			/* not numbers < NaN < -infinity < numbers < +infinity) */
-			if (x == xx)
+			如果 (x == xx)
 				retval = (y == yy ? 0 : -1);
-			else if (y == yy)
+			否则 如果 (y == yy)
 				retval = 1;
 			/* Check for isnan */
-			else if (dx != dx)
+			否则 如果 (dx != dx)
 				retval = (dy != dy) ? 0 : -1;
-			else if (dy != dy)
+			否则 如果 (dy != dy)
 				retval = 1;
-			else {
-				if (flags & FLAG_h) {
-					int xs = scale_suffix(xx);
-					int ys = scale_suffix(yy);
-					if (xs != ys) {
+			否则 {
+				如果 (flags & FLAG_h) {
+					整数 xs = scale_suffix(xx);
+					整数 ys = scale_suffix(yy);
+					如果 (xs != ys) {
 						retval = xs - ys;
 						break;
 					}
 				}
 				/* Check for infinity.  Could underflow, but it avoids libm. */
-				if (1.0 / dx == 0.0) {
-					if (dx < 0)
+				如果 (1.0 / dx == 0.0) {
+					如果 (dx < 0)
 						retval = (1.0 / dy == 0.0 && dy < 0) ? 0 : -1;
-					else
+					否则
 						retval = (1.0 / dy == 0.0 && dy > 0) ? 0 : 1;
-				} else if (1.0 / dy == 0.0)
+				} 否则 如果 (1.0 / dy == 0.0)
 					retval = (dy < 0) ? 1 : -1;
-				else
+				否则
 					retval = (dx > dy) ? 1 : ((dx < dy) ? -1 : 0);
 			}
 			break;
 		}
 		case FLAG_M: {
 			struct tm thyme;
-			int dx;
+			整数 dx;
 			char *xx, *yy;
 
 			xx = strptime(skip_whitespace(x), "%b", &thyme);
 			dx = thyme.tm_mon;
 			yy = strptime(skip_whitespace(y), "%b", &thyme);
-			if (!xx)
+			如果 (!xx)
 				retval = (!yy) ? 0 : -1;
-			else if (!yy)
+			否则 如果 (!yy)
 				retval = 1;
-			else
+			否则
 				retval = dx - thyme.tm_mon;
 			break;
 		}
@@ -377,10 +377,10 @@ static int compare_keys(const void *xarg, const void *yarg)
 		}
 		} /* switch */
 		/* Free key copies. */
-		if (x != *(char **)xarg) free(x);
-		if (y != *(char **)yarg) free(y);
+		如果 (x != *(char **)xarg) free(x);
+		如果 (y != *(char **)yarg) free(y);
 		/* if (retval) break; - done by for () anyway */
-#else
+#否则
 		/* Integer version of -n for tiny systems */
 		case FLAG_n:
 			retval = atoi(x) - atoi(y);
@@ -389,10 +389,10 @@ static int compare_keys(const void *xarg, const void *yarg)
 #endif
 	} /* for */
 
-	if (retval == 0) {
+	如果 (retval == 0) {
 		/* So far lines are "the same" */
 
-		if (option_mask32 & FLAG_s) {
+		如果 (option_mask32 & FLAG_s) {
 			/* "Stable sort": later line is "greater than",
 			 * IOW: do not allow qsort() to swap equal lines.
 			 */
@@ -413,44 +413,44 @@ static int compare_keys(const void *xarg, const void *yarg)
 			/* If x > y, 1, else -1 */
 			retval = (x32 > y32) * 2 - 1;
 			/* Here, -r has no effect! */
-			return retval;
+			返回 retval;
 		}
-		if (!(option_mask32 & FLAG_no_tie_break)) {
+		如果 (!(option_mask32 & FLAG_no_tie_break)) {
 			/* fallback sort */
 			flags = option_mask32;
 			retval = strcmp(*(char **)xarg, *(char **)yarg);
 		}
 	}
 
-	if (flags & FLAG_r)
-		return -retval;
+	如果 (flags & FLAG_r)
+		返回 -retval;
 
-	return retval;
+	返回 retval;
 }
 
-#if ENABLE_FEATURE_SORT_BIG
+#如果 ENABLE_FEATURE_SORT_BIG
 static unsigned str2u(char **str)
 {
 	unsigned long lu;
-	if (!isdigit((*str)[0]))
+	如果 (!isdigit((*str)[0]))
 		bb_simple_error_msg_and_die("bad field specification");
 	lu = strtoul(*str, str, 10);
-	if ((sizeof(long) > sizeof(int) && lu > INT_MAX) || !lu)
+	如果 ((sizeof(long) > sizeof(整数) && lu > INT_MAX) || !lu)
 		bb_simple_error_msg_and_die("bad field specification");
-	return lu;
+	返回 lu;
 }
 #endif
 
-int sort_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int sort_main(int argc UNUSED_PARAM, char **argv)
+整数 sort_main(整数 argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+整数 sort_main(整数 argc UNUSED_PARAM, char **argv)
 {
 	char **lines;
 	char *str_ignored, *str_o, *str_t;
 	llist_t *lst_k = NULL;
-	int i;
-	int linecount;
+	整数 i;
+	整数 linecount;
 	unsigned opts;
-#if ENABLE_FEATURE_SORT_OPTIMIZE_MEMORY
+#如果 ENABLE_FEATURE_SORT_OPTIMIZE_MEMORY
 	bool can_drop_dups;
 	size_t prev_len = 0;
 	char *prev_line = (char*) "";
@@ -467,7 +467,7 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 			sort_opt_str,
 			&str_ignored, &str_ignored, &str_o, &lst_k, &str_t
 	);
-#if ENABLE_FEATURE_SORT_OPTIMIZE_MEMORY
+#如果 ENABLE_FEATURE_SORT_OPTIMIZE_MEMORY
 	/* Can drop dups only if -u but no "complicating" options,
 	 * IOW: if we do a full line compares. Safe options:
 	 * -o FILE Output to FILE
@@ -487,15 +487,15 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 	/* Stable sort needs every line to be uniquely allocated,
 	 * disable optimization to reuse strings:
 	 */
-	if (opts & FLAG_s)
+	如果 (opts & FLAG_s)
 		count_to_optimize_dups = (size_t)-1L;
 #endif
 	/* global b strips leading and trailing spaces */
-	if (opts & FLAG_b)
+	如果 (opts & FLAG_b)
 		option_mask32 |= FLAG_bb;
-#if ENABLE_FEATURE_SORT_BIG
-	if (opts & FLAG_t) {
-		if (!str_t[0] || str_t[1])
+#如果 ENABLE_FEATURE_SORT_BIG
+	如果 (opts & FLAG_t) {
+		如果 (!str_t[0] || str_t[1])
 			bb_simple_error_msg_and_die("bad -t parameter");
 		key_separator = str_t[0];
 	}
@@ -503,7 +503,7 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 	 * since that reduces register pressure and makes code smaller */
 
 	/* Parse sort key */
-	while (lst_k) {
+	当 (lst_k) {
 		enum {
 			FLAG_allowed_for_k =
 				FLAG_n | /* Numeric sort */
@@ -521,31 +521,31 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 		char *str_k = llist_pop(&lst_k);
 
 		i = 0; /* i==0 before comma, 1 after (-k3,6) */
-		while (*str_k) {
+		当 (*str_k) {
 			/* Start of range */
 			/* Cannot use bb_strtou - suffix can be a letter */
 			key->range[2*i] = str2u(&str_k);
-			if (*str_k == '.') {
+			如果 (*str_k == '.') {
 				str_k++;
 				key->range[2*i+1] = str2u(&str_k);
 			}
-			while (*str_k) {
-				int flag;
+			当 (*str_k) {
+				整数 flag;
 				const char *idx;
 
-				if (*str_k == ',' && !i++) {
+				如果 (*str_k == ',' && !i++) {
 					str_k++;
 					break;
 				} /* no else needed: fall through to syntax error
 					because comma isn't in OPT_STR */
 				idx = strchr(OPT_STR, *str_k);
-				if (!idx)
+				如果 (!idx)
 					bb_simple_error_msg_and_die("unknown key option");
 				flag = 1 << (idx - OPT_STR);
-				if (flag & ~FLAG_allowed_for_k)
+				如果 (flag & ~FLAG_allowed_for_k)
 					bb_simple_error_msg_and_die("unknown sort type");
 				/* b after ',' means strip _trailing_ space */
-				if (i && flag == FLAG_b)
+				如果 (i && flag == FLAG_b)
 					flag = FLAG_bb;
 				key->flags |= flag;
 				str_k++;
@@ -556,7 +556,7 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 
 	/* Open input files and read data */
 	argv += optind;
-	if (!*argv)
+	如果 (!*argv)
 		*--argv = (char*)"-";
 	linecount = 0;
 	lines = NULL;
@@ -564,15 +564,15 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 		/* coreutils 6.9 compat: abort on first open error,
 		 * do not continue to next file: */
 		FILE *fp = xfopen_stdin(*argv);
-		for (;;) {
+		为 (;;) {
 			char *line = GET_LINE(fp);
-			if (!line)
+			如果 (!line)
 				break;
 
-#if ENABLE_FEATURE_SORT_OPTIMIZE_MEMORY
-			if (count_to_optimize_dups != 0)
+#如果 ENABLE_FEATURE_SORT_OPTIMIZE_MEMORY
+			如果 (count_to_optimize_dups != 0)
 				count_to_optimize_dups--;
-			if (count_to_optimize_dups == 0) {
+			如果 (count_to_optimize_dups == 0) {
 				size_t len;
 				char *new_line;
 
@@ -582,11 +582,11 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 				 * goes down from 1900Mb to 380 Mb.
 				 */
 				len = strlen(line);
-				if (len <= prev_len) {
+				如果 (len <= prev_len) {
 					new_line = prev_line + (prev_len - len);
-					if (strcmp(line, new_line) == 0) {
+					如果 (strcmp(line, new_line) == 0) {
 						/* it's a tail of the prev line */
-						if (can_drop_dups && prev_len == len) {
+						如果 (can_drop_dups && prev_len == len) {
 							/* it's identical to prev line */
 							free(line);
 							continue;
@@ -603,35 +603,35 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 				prev_line = line;
  skip: ;
 			}
-#else
+#否则
 //TODO: lighter version which only drops total dups if can_drop_dups == true
 #endif
 			lines = xrealloc_vector(lines, 6, linecount);
 			lines[linecount++] = line;
 		}
 		fclose_if_not_stdin(fp);
-	} while (*++argv);
+	} 当 (*++argv);
 
-#if ENABLE_FEATURE_SORT_BIG
+#如果 ENABLE_FEATURE_SORT_BIG
 	/* If no key, perform alphabetic sort */
-	if (!key_list)
+	如果 (!key_list)
 		add_key()->range[0] = 1;
 	/* Handle -c */
-	if (option_mask32 & FLAG_c) {
-		int j = (option_mask32 & FLAG_u) ? -1 : 0;
-		for (i = 1; i < linecount; i++) {
-			if (compare_keys(&lines[i-1], &lines[i]) > j) {
+	如果 (option_mask32 & FLAG_c) {
+		整数 j = (option_mask32 & FLAG_u) ? -1 : 0;
+		为 (i = 1; i < linecount; i++) {
+			如果 (compare_keys(&lines[i-1], &lines[i]) > j) {
 				fprintf(stderr, "Check line %u\n", i);
-				return EXIT_FAILURE;
+				返回 EXIT_FAILURE;
 			}
 		}
-		return EXIT_SUCCESS;
+		返回 EXIT_SUCCESS;
 	}
 #endif
 
 	/* For stable sort, store original line position beyond terminating NUL */
-	if (option_mask32 & FLAG_s) {
-		for (i = 0; i < linecount; i++) {
+	如果 (option_mask32 & FLAG_s) {
+		为 (i = 0; i < linecount; i++) {
 			uint32_t *p32;
 			char *line;
 			unsigned len;
@@ -650,33 +650,33 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 	qsort(lines, linecount, sizeof(lines[0]), compare_keys);
 
 	/* Handle -u */
-	if (option_mask32 & FLAG_u) {
-		int j = 0;
+	如果 (option_mask32 & FLAG_u) {
+		整数 j = 0;
 		/* coreutils 6.3 drop lines for which only key is the same:
 		 * - disabling last-resort compare, or else compare_keys()
 		 * will be the same only for completely identical lines
 		 * - disabling -s (same reasons)
 		 */
 		option_mask32 = (option_mask32 | FLAG_no_tie_break) & (~FLAG_s);
-		for (i = 1; i < linecount; i++) {
-			if (compare_keys(&lines[j], &lines[i]) == 0)
+		为 (i = 1; i < linecount; i++) {
+			如果 (compare_keys(&lines[j], &lines[i]) == 0)
 				free(lines[i]);
-			else
+			否则
 				lines[++j] = lines[i];
 		}
-		if (linecount)
+		如果 (linecount)
 			linecount = j+1;
 	}
 
 	/* Print it */
-#if ENABLE_FEATURE_SORT_BIG
+#如果 ENABLE_FEATURE_SORT_BIG
 	/* Open output file _after_ we read all input ones */
-	if (option_mask32 & FLAG_o)
+	如果 (option_mask32 & FLAG_o)
 		xmove_fd(xopen(str_o, O_WRONLY|O_CREAT|O_TRUNC), STDOUT_FILENO);
 #endif
 	{
-		int ch = (option_mask32 & FLAG_z) ? '\0' : '\n';
-		for (i = 0; i < linecount; i++)
+		整数 ch = (option_mask32 & FLAG_z) ? '\0' : '\n';
+		为 (i = 0; i < linecount; i++)
 			printf("%s%c", lines[i], ch);
 	}
 

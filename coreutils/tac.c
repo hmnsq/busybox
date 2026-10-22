@@ -32,20 +32,20 @@
 /* This is a NOEXEC applet. Be very careful! */
 
 struct lstring {
-	int size;
+	整数 size;
 	char buf[1];
 };
 
-int tac_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int tac_main(int argc UNUSED_PARAM, char **argv)
+整数 tac_main(整数 argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+整数 tac_main(整数 argc UNUSED_PARAM, char **argv)
 {
 	char **name;
 	FILE *f;
 	struct lstring *line = NULL;
 	llist_t *list = NULL;
-	int retval = EXIT_SUCCESS;
+	整数 retval = EXIT_SUCCESS;
 
-#if ENABLE_DESKTOP
+#如果 ENABLE_DESKTOP
 /* tac from coreutils 6.9 supports:
        -b, --before
               attach the separator before instead of after
@@ -57,22 +57,22 @@ We support none, but at least we will complain or handle "--":
 */
 	getopt32(argv, "");
 	argv += optind;
-#else
+#否则
 	argv++;
 #endif
-	if (!*argv)
+	如果 (!*argv)
 		*--argv = (char *)"-";
 	/* We will read from last file to first */
 	name = argv;
-	while (*name)
+	当 (*name)
 		name++;
 
 	do {
-		int ch, i;
+		整数 ch, i;
 
 		name--;
 		f = fopen_or_warn_stdin(*name);
-		if (f == NULL) {
+		如果 (f == NULL) {
 			/* error message is printed by fopen_or_warn_stdin */
 			retval = EXIT_FAILURE;
 			continue;
@@ -81,37 +81,37 @@ We support none, but at least we will complain or handle "--":
 		errno = i = 0;
 		do {
 			ch = fgetc(f);
-			if (ch != EOF) {
-				if (!(i & 0x7f))
+			如果 (ch != EOF) {
+				如果 (!(i & 0x7f))
 					/* Grow on every 128th char */
-					line = xrealloc(line, i + 0x7f + sizeof(int) + 1);
+					line = xrealloc(line, i + 0x7f + sizeof(整数) + 1);
 				line->buf[i++] = ch;
 			}
-			if (ch == '\n' || (ch == EOF && i != 0)) {
-				line = xrealloc(line, i + sizeof(int));
+			如果 (ch == '\n' || (ch == EOF && i != 0)) {
+				line = xrealloc(line, i + sizeof(整数));
 				line->size = i;
 				llist_add_to(&list, line);
 				line = NULL;
 				i = 0;
 			}
-		} while (ch != EOF);
+		} 当 (ch != EOF);
 		/* fgetc sets errno to ENOENT on EOF, we don't want
 		 * to warn on this non-error! */
-		if (errno && errno != ENOENT) {
+		如果 (errno && errno != ENOENT) {
 			bb_simple_perror_msg(*name);
 			retval = EXIT_FAILURE;
 		}
-	} while (name != argv);
+	} 当 (name != argv);
 
-	while (list) {
+	当 (list) {
 		line = (struct lstring *)list->data;
 		xwrite(STDOUT_FILENO, line->buf, line->size);
-		if (ENABLE_FEATURE_CLEAN_UP) {
+		如果 (ENABLE_FEATURE_CLEAN_UP) {
 			free(llist_pop(&list));
-		} else {
+		} 否则 {
 			list = list->link;
 		}
 	}
 
-	return retval;
+	返回 retval;
 }

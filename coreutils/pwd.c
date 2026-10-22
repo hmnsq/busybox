@@ -27,7 +27,7 @@
 
 #include "libbb.h"
 
-static int logical_getcwd(void)
+static 整数 logical_getcwd(void)
 {
 	struct stat st1;
 	struct stat st2;
@@ -35,59 +35,59 @@ static int logical_getcwd(void)
 	char *p;
 
 	wd = getenv("PWD");
-	if (!wd || wd[0] != '/')
-		return 0;
+	如果 (!wd || wd[0] != '/')
+		返回 0;
 
 	p = wd;
-	while (*p) {
+	当 (*p) {
 		/* doing strstr(p, "/.") by hand is smaller and faster... */
-		if (*p++ != '/')
+		如果 (*p++ != '/')
 			continue;
-		if (*p != '.')
+		如果 (*p != '.')
 			continue;
 		/* we found "/.", skip to next char */
 		p++;
-		if (*p == '.')
+		如果 (*p == '.')
 			p++; /* we found "/.." */
-		if (*p == '\0' || *p == '/')
-			return 0; /* "/./" or "/../" component: bad */
+		如果 (*p == '\0' || *p == '/')
+			返回 0; /* "/./" or "/../" component: bad */
 	}
 
-	if (stat(wd, &st1) != 0)
-		return 0;
-	if (stat(".", &st2) != 0)
-		return 0;
-	if (st1.st_ino != st2.st_ino)
-		return 0;
-	if (st1.st_dev != st2.st_dev)
-		return 0;
+	如果 (stat(wd, &st1) != 0)
+		返回 0;
+	如果 (stat(".", &st2) != 0)
+		返回 0;
+	如果 (st1.st_ino != st2.st_ino)
+		返回 0;
+	如果 (st1.st_dev != st2.st_dev)
+		返回 0;
 
 	puts(wd);
-	return 1;
+	返回 1;
 }
 
-int pwd_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int pwd_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+整数 pwd_main(整数 argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+整数 pwd_main(整数 argc UNUSED_PARAM, char **argv UNUSED_PARAM)
 {
 	char *buf;
 
-	if (ENABLE_DESKTOP) {
+	如果 (ENABLE_DESKTOP) {
 		/* TODO: assume -L if $POSIXLY_CORRECT? (coreutils does that)
 		 * Rationale:
 		 * POSIX requires a default of -L, but most scripts expect -P
 		 */
 		unsigned opt = getopt32(argv, "LP");
-		if ((opt & 1) && logical_getcwd())
-			return fflush_all();
+		如果 ((opt & 1) && logical_getcwd())
+			返回 fflush_all();
 	}
 
 	buf = xrealloc_getcwd_or_warn(NULL);
 
-	if (buf) {
+	如果 (buf) {
 		puts(buf);
 		free(buf);
-		return fflush_all();
+		返回 fflush_all();
 	}
 
-	return EXIT_FAILURE;
+	返回 EXIT_FAILURE;
 }

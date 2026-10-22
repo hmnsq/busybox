@@ -148,11 +148,11 @@
 
 #define TEST_DEBUG 0
 
-#if ENABLE_TEST2 \
+#如果 ENABLE_TEST2 \
  || (ENABLE_ASH_BASH_COMPAT && ENABLE_ASH_TEST) \
  || (ENABLE_HUSH_BASH_COMPAT && ENABLE_HUSH_TEST)
 # define BASH_TEST2 1
-#else
+#否则
 # define BASH_TEST2 0
 #endif
 
@@ -194,7 +194,7 @@ enum token {
 	STRLT,
 	STRGT,
 
-#if BASH_TEST2
+#如果 BASH_TEST2
 	REGEX,
 #endif
 
@@ -219,29 +219,29 @@ enum token {
 #define is_file_type(a)   (((unsigned char)((a) - FILREG)) <= 5)
 #define is_file_bit(a)    (((unsigned char)((a) - FILSUID)) <= 2)
 
-#if TEST_DEBUG
-int depth;
+#如果 TEST_DEBUG
+整数 depth;
 #define nest_msg(...) do { \
 	depth++; \
 	fprintf(stderr, "%*s", depth*2, ""); \
 	fprintf(stderr, __VA_ARGS__); \
-} while (0)
+} 当 (0)
 #define unnest_msg(...) do { \
 	fprintf(stderr, "%*s", depth*2, ""); \
 	fprintf(stderr, __VA_ARGS__); \
 	depth--; \
-} while (0)
+} 当 (0)
 #define dbg_msg(...) do { \
 	fprintf(stderr, "%*s", depth*2, ""); \
 	fprintf(stderr, __VA_ARGS__); \
-} while (0)
+} 当 (0)
 #define unnest_msg_and_return(expr, ...) do { \
 	number_t __res = (expr); \
 	fprintf(stderr, "%*s", depth*2, ""); \
 	fprintf(stderr, __VA_ARGS__, res); \
 	depth--; \
-	return __res; \
-} while (0)
+	返回 __res; \
+} 当 (0)
 static const char *const TOKSTR[] ALIGN_PTR = {
 	"EOI",
 	"FILRD",
@@ -271,7 +271,7 @@ static const char *const TOKSTR[] ALIGN_PTR = {
 	"STRNE",
 	"STRLT",
 	"STRGT",
-#if BASH_TEST2
+#如果 BASH_TEST2
 	"REGEX",
 #endif
 	"INTEQ",
@@ -287,11 +287,11 @@ static const char *const TOKSTR[] ALIGN_PTR = {
 	"RPAREN",
 	"OPERAND"
 };
-#else
+#否则
 #define nest_msg(...)   ((void)0)
 #define unnest_msg(...) ((void)0)
 #define dbg_msg(...)    ((void)0)
-#define unnest_msg_and_return(expr, ...) return expr
+#define unnest_msg_and_return(expr, ...) 返回 expr
 #endif
 
 enum {
@@ -337,7 +337,7 @@ static const struct operator_t ops_table[] ALIGN2 = {
 	{ /* "!=" */ STRNE   , BINOP  },
 	{ /* "<"  */ STRLT   , BINOP  },
 	{ /* ">"  */ STRGT   , BINOP  },
-#if BASH_TEST2
+#如果 BASH_TEST2
 	{ /* "=~" */ REGEX   , BINOP  },
 #endif
 	{ /* "-eq"*/ INTEQ   , BINOP  },
@@ -352,7 +352,7 @@ static const struct operator_t ops_table[] ALIGN2 = {
 	{ /* "!"  */ UNOT    , BUNOP  },
 	{ /* "-a" */ BAND    , BBINOP },
 	{ /* "-o" */ BOR     , BBINOP },
-#if BASH_TEST2
+#如果 BASH_TEST2
 	{ /* "&&" */ BAND    , BBINOP },
 	{ /* "||" */ BOR     , BBINOP },
 #endif
@@ -389,7 +389,7 @@ static const char ops_texts[] ALIGN1 =
 	"!="  "\0"
 	"<"   "\0"
 	">"   "\0"
-#if BASH_TEST2
+#如果 BASH_TEST2
 	"=~"  "\0"
 #endif
 	"-eq" "\0"
@@ -404,7 +404,7 @@ static const char ops_texts[] ALIGN1 =
 	"!"   "\0"
 	"-a"  "\0"
 	"-o"  "\0"
-#if BASH_TEST2
+#如果 BASH_TEST2
 	"&&"  "\0"
 	"||"  "\0"
 #endif
@@ -413,10 +413,10 @@ static const char ops_texts[] ALIGN1 =
 ;
 
 
-#if ENABLE_FEATURE_TEST_64
+#如果 ENABLE_FEATURE_TEST_64
 typedef int64_t number_t;
-#else
-typedef int number_t;
+#否则
+typedef 整数 number_t;
 #endif
 
 
@@ -427,8 +427,8 @@ struct test_statics {
 	 * or points to matching operator_t struct. Never NULL. */
 	const struct operator_t *last_operator;
 	gid_t *group_array;
-	int ngroups;
-#if BASH_TEST2
+	整数 ngroups;
+#如果 BASH_TEST2
 	bool bash_test2;
 #endif
 	jmp_buf leaving;
@@ -447,20 +447,20 @@ extern struct test_statics *BB_GLOBAL_CONST test_ptr_to_statics;
 
 #define INIT_S() do { \
 	XZALLOC_CONST_PTR(&test_ptr_to_statics, sizeof(S)); \
-} while (0)
+} 当 (0)
 #define DEINIT_S() do { \
 	free(group_array); \
 	free(test_ptr_to_statics); \
-} while (0)
+} 当 (0)
 
 static number_t primary(enum token n);
 
 static void syntax(const char *op, const char *msg) NORETURN;
 static void syntax(const char *op, const char *msg)
 {
-	if (op && *op) {
+	如果 (op && *op) {
 		bb_error_msg("%s: %s", op, msg);
-	} else {
+	} 否则 {
 		bb_error_msg("%s: %s"+4, msg);
 	}
 	longjmp(leaving, 2);
@@ -471,26 +471,26 @@ static void syntax(const char *op, const char *msg)
 static number_t getn(const char *s)
 {
 	char *p;
-#if ENABLE_FEATURE_TEST_64
+#如果 ENABLE_FEATURE_TEST_64
 	long long r;
-#else
+#否则
 	long r;
 #endif
 
 	errno = 0;
-#if ENABLE_FEATURE_TEST_64
+#如果 ENABLE_FEATURE_TEST_64
 	r = strtoll(s, &p, 10);
-#else
+#否则
 	r = strtol(s, &p, 10);
 #endif
 
-	if (errno != 0)
+	如果 (errno != 0)
 		syntax(s, "out of range");
 
-	if (p == s || *(skip_whitespace(p)) != '\0')
+	如果 (p == s || *(skip_whitespace(p)) != '\0')
 		syntax(s, "bad number");
 
-	return r;
+	返回 r;
 }
 
 /* UNUSED
@@ -527,34 +527,34 @@ static enum token check_operator(const char *s)
 		.op_num = -1,
 		.op_type = -1
 	};
-	int n;
+	整数 n;
 
 	last_operator = &no_op;
-	if (s == NULL)
-		return EOI;
+	如果 (s == NULL)
+		返回 EOI;
 	n = index_in_strings(ops_texts, s);
-	if (n < 0)
-		return OPERAND;
+	如果 (n < 0)
+		返回 OPERAND;
 
-#if BASH_TEST2
-	if (ops_table[n].op_num == REGEX && !bash_test2) {
+#如果 BASH_TEST2
+	如果 (ops_table[n].op_num == REGEX && !bash_test2) {
 		/* =~ is only for [[ ]] */
-		return OPERAND;
+		返回 OPERAND;
 	}
-	if (ops_table[n].op_num == BAND || ops_table[n].op_num == BOR) {
+	如果 (ops_table[n].op_num == BAND || ops_table[n].op_num == BOR) {
 		/* [ ]   accepts -a and -o but not && and || */
 		/* [[ ]] accepts && and || but not -a and -o */
-		if (bash_test2 == (s[0] == '-'))
-			return OPERAND;
+		如果 (bash_test2 == (s[0] == '-'))
+			返回 OPERAND;
 	}
 #endif
 
 	last_operator = &ops_table[n];
-	return ops_table[n].op_num;
+	返回 ops_table[n].op_num;
 }
 
 
-static int binop(void)
+static 整数 binop(void)
 {
 	const char *opnd1, *opnd2;
 	const struct operator_t *op;
@@ -565,58 +565,58 @@ static int binop(void)
 	op = last_operator;
 
 	opnd2 = *++args;
-	if (opnd2 == NULL)
+	如果 (opnd2 == NULL)
 		syntax(args[-1], "argument expected");
 
-	if (is_int_op(op->op_num)) {
+	如果 (is_int_op(op->op_num)) {
 		val1 = getn(opnd1);
 		val2 = getn(opnd2);
-		if (op->op_num == INTEQ)
-			return val1 == val2;
-		if (op->op_num == INTNE)
-			return val1 != val2;
-		if (op->op_num == INTGE)
-			return val1 >= val2;
-		if (op->op_num == INTGT)
-			return val1 >  val2;
-		if (op->op_num == INTLE)
-			return val1 <= val2;
+		如果 (op->op_num == INTEQ)
+			返回 val1 == val2;
+		如果 (op->op_num == INTNE)
+			返回 val1 != val2;
+		如果 (op->op_num == INTGE)
+			返回 val1 >= val2;
+		如果 (op->op_num == INTGT)
+			返回 val1 >  val2;
+		如果 (op->op_num == INTLE)
+			返回 val1 <= val2;
 		/*if (op->op_num == INTLT)*/
-		return val1 <  val2;
+		返回 val1 <  val2;
 	}
-#if BASH_TEST2
-	if (bash_test2) {
-		if (op->op_num == STREQ) {
+#如果 BASH_TEST2
+	如果 (bash_test2) {
+		如果 (op->op_num == STREQ) {
 			val1 = fnmatch(opnd2, opnd1, 0);
-			return val1 == 0;
+			返回 val1 == 0;
 		}
-		if (op->op_num == STRNE) {
+		如果 (op->op_num == STRNE) {
 			val1 = fnmatch(opnd2, opnd1, 0);
-			return val1 != 0;
+			返回 val1 != 0;
 		}
-		if (op->op_num == REGEX) {
+		如果 (op->op_num == REGEX) {
 			regex_t re_buffer;
 			memset(&re_buffer, 0, sizeof(re_buffer));
-			if (regcomp(&re_buffer, opnd2, REG_EXTENDED)) { // REG_NEWLINE?
+			如果 (regcomp(&re_buffer, opnd2, REG_EXTENDED)) { // REG_NEWLINE?
 				/* Bad regex */
 				longjmp(leaving, 2); /* [[ a =~ * ]]; echo $? - prints 2 (silently, no error msg) */
 			}
 			val1 = regexec(&re_buffer, opnd1, 0, NULL, 0);
 			regfree(&re_buffer);
-			return val1 == 0;
+			返回 val1 == 0;
 		}
 	}
 #endif
-	if (is_str_op(op->op_num)) {
+	如果 (is_str_op(op->op_num)) {
 		val1 = strcmp(opnd1, opnd2);
-		if (op->op_num == STREQ)
-			return val1 == 0;
-		if (op->op_num == STRNE)
-			return val1 != 0;
-		if (op->op_num == STRLT)
-			return val1 < 0;
+		如果 (op->op_num == STREQ)
+			返回 val1 == 0;
+		如果 (op->op_num == STRNE)
+			返回 val1 != 0;
+		如果 (op->op_num == STRLT)
+			返回 val1 < 0;
 		/*if (op->op_num == STRGT)*/
-		return val1 > 0;
+		返回 val1 > 0;
 	}
 	/* We are sure that these three are by now the only binops we didn't check
 	 * yet, so we do not check if the class is correct:
@@ -625,14 +625,14 @@ static int binop(void)
 	{
 		struct stat b1, b2;
 
-		if (stat(opnd1, &b1) || stat(opnd2, &b2))
-			return 0; /* false, since at least one stat failed */
-		if (op->op_num == FILNT)
-			return b1.st_mtime > b2.st_mtime;
-		if (op->op_num == FILOT)
-			return b1.st_mtime < b2.st_mtime;
+		如果 (stat(opnd1, &b1) || stat(opnd2, &b2))
+			返回 0; /* false, since at least one stat failed */
+		如果 (op->op_num == FILNT)
+			返回 b1.st_mtime > b2.st_mtime;
+		如果 (op->op_num == FILOT)
+			返回 b1.st_mtime < b2.st_mtime;
 		/*if (op->op_num == FILEQ)*/
-		return b1.st_dev == b2.st_dev && b1.st_ino == b2.st_ino;
+		返回 b1.st_dev == b2.st_dev && b1.st_ino == b2.st_ino;
 	}
 	/*return 1; - NOTREACHED */
 }
@@ -646,126 +646,126 @@ static void initialize_group_array(void)
 //XXX: FIXME: duplicate of existing libbb function?
 // see toplevel TODO file:
 // possible code duplication ingroup() and is_a_group_member()
-static int is_a_group_member(gid_t gid)
+static 整数 is_a_group_member(gid_t gid)
 {
-	int i;
+	整数 i;
 
 	/* Short-circuit if possible, maybe saving a call to getgroups(). */
-	if (gid == getgid() || gid == getegid())
-		return 1;
+	如果 (gid == getgid() || gid == getegid())
+		返回 1;
 
-	if (ngroups == 0)
+	如果 (ngroups == 0)
 		initialize_group_array();
 
 	/* Search through the list looking for GID. */
-	for (i = 0; i < ngroups; i++)
-		if (gid == group_array[i])
-			return 1;
+	为 (i = 0; i < ngroups; i++)
+		如果 (gid == group_array[i])
+			返回 1;
 
-	return 0;
+	返回 0;
 }
 
 
 /* Do the same thing access(2) does, but use the effective uid and gid,
    and don't make the mistake of telling root that any file is
    executable. */
-static int test_eaccess(struct stat *st, int mode)
+static 整数 test_eaccess(struct stat *st, 整数 mode)
 {
-	unsigned int euid = geteuid();
+	unsigned 整数 euid = geteuid();
 
-	if (euid == 0) {
+	如果 (euid == 0) {
 		/* Root can read or write any file. */
-		if (mode != X_OK)
-			return 0;
+		如果 (mode != X_OK)
+			返回 0;
 
 		/* Root can execute any file that has any one of the execute
 		 * bits set. */
-		if (st->st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))
-			return 0;
+		如果 (st->st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))
+			返回 0;
 	}
 
-	if (st->st_uid == euid)  /* owner */
+	如果 (st->st_uid == euid)  /* owner */
 		mode <<= 6;
-	else if (is_a_group_member(st->st_gid))
+	否则 如果 (is_a_group_member(st->st_gid))
 		mode <<= 3;
 
-	if (st->st_mode & mode)
-		return 0;
+	如果 (st->st_mode & mode)
+		返回 0;
 
-	return -1;
+	返回 -1;
 }
 
 
-static int filstat(char *nm, enum token mode)
+static 整数 filstat(char *nm, enum token mode)
 {
 	struct stat s;
 	unsigned i = i; /* gcc 3.x thinks it can be used uninitialized */
 
-	if (mode == FILSYM) {
+	如果 (mode == FILSYM) {
 #ifdef S_IFLNK
-		if (lstat(nm, &s) == 0) {
+		如果 (lstat(nm, &s) == 0) {
 			i = S_IFLNK;
 			goto filetype;
 		}
 #endif
-		return 0;
+		返回 0;
 	}
 
-	if (stat(nm, &s) != 0)
-		return 0;
-	if (mode == FILEXIST)
-		return 1;
-	if (is_file_access(mode)) {
-		if (mode == FILRD)
+	如果 (stat(nm, &s) != 0)
+		返回 0;
+	如果 (mode == FILEXIST)
+		返回 1;
+	如果 (is_file_access(mode)) {
+		如果 (mode == FILRD)
 			i = R_OK;
-		if (mode == FILWR)
+		如果 (mode == FILWR)
 			i = W_OK;
-		if (mode == FILEX)
+		如果 (mode == FILEX)
 			i = X_OK;
-		return test_eaccess(&s, i) == 0;
+		返回 test_eaccess(&s, i) == 0;
 	}
-	if (is_file_type(mode)) {
-		if (mode == FILREG)
+	如果 (is_file_type(mode)) {
+		如果 (mode == FILREG)
 			i = S_IFREG;
-		if (mode == FILDIR)
+		如果 (mode == FILDIR)
 			i = S_IFDIR;
-		if (mode == FILCDEV)
+		如果 (mode == FILCDEV)
 			i = S_IFCHR;
-		if (mode == FILBDEV)
+		如果 (mode == FILBDEV)
 			i = S_IFBLK;
-		if (mode == FILFIFO) {
+		如果 (mode == FILFIFO) {
 #ifdef S_IFIFO
 			i = S_IFIFO;
-#else
-			return 0;
+#否则
+			返回 0;
 #endif
 		}
-		if (mode == FILSOCK) {
+		如果 (mode == FILSOCK) {
 #ifdef S_IFSOCK
 			i = S_IFSOCK;
-#else
-			return 0;
+#否则
+			返回 0;
 #endif
 		}
  filetype:
-		return ((s.st_mode & S_IFMT) == i);
+		返回 ((s.st_mode & S_IFMT) == i);
 	}
-	if (is_file_bit(mode)) {
-		if (mode == FILSUID)
+	如果 (is_file_bit(mode)) {
+		如果 (mode == FILSUID)
 			i = S_ISUID;
-		if (mode == FILSGID)
+		如果 (mode == FILSGID)
 			i = S_ISGID;
-		if (mode == FILSTCK)
+		如果 (mode == FILSTCK)
 			i = S_ISVTX;
-		return ((s.st_mode & i) != 0);
+		返回 ((s.st_mode & i) != 0);
 	}
-	if (mode == FILGZ)
-		return s.st_size > 0L;
-	if (mode == FILUID)
-		return s.st_uid == geteuid();
-	if (mode == FILGID)
-		return s.st_gid == getegid();
-	return 1; /* NOTREACHED */
+	如果 (mode == FILGZ)
+		返回 s.st_size > 0L;
+	如果 (mode == FILUID)
+		返回 s.st_uid == geteuid();
+	如果 (mode == FILGID)
+		返回 s.st_gid == getegid();
+	返回 1; /* NOTREACHED */
 }
 
 
@@ -774,22 +774,22 @@ static number_t nexpr(enum token n)
 	number_t res;
 
 	nest_msg(">nexpr(%s)\n", TOKSTR[n]);
-	if (n == UNOT) {
+	如果 (n == UNOT) {
 		n = check_operator(*++args);
-		if (n == EOI) {
+		如果 (n == EOI) {
 			/* special case: [ ! ], [ a -a ! ] are valid */
 			/* IOW, "! ARG" may miss ARG */
 			args--;
 			unnest_msg("<nexpr:1 (!EOI), args:%s(%p)\n", args[0], &args[0]);
-			return 1;
+			返回 1;
 		}
 		res = !nexpr(n);
 		unnest_msg("<nexpr:%lld\n", res);
-		return res;
+		返回 res;
 	}
 	res = primary(n);
 	unnest_msg("<nexpr:%lld\n", res);
-	return res;
+	返回 res;
 }
 
 
@@ -800,15 +800,15 @@ static number_t aexpr(enum token n)
 	nest_msg(">aexpr(%s)\n", TOKSTR[n]);
 	res = nexpr(n);
 	dbg_msg("aexpr: nexpr:%lld, next args:%s(%p)\n", res, args[1], &args[1]);
-	if (check_operator(*++args) == BAND) {
+	如果 (check_operator(*++args) == BAND) {
 		dbg_msg("aexpr: arg is AND, next args:%s(%p)\n", args[1], &args[1]);
 		res = aexpr(check_operator(*++args)) && res;
 		unnest_msg("<aexpr:%lld\n", res);
-		return res;
+		返回 res;
 	}
 	args--;
 	unnest_msg("<aexpr:%lld, args:%s(%p)\n", res, args[0], &args[0]);
-	return res;
+	返回 res;
 }
 
 
@@ -819,70 +819,70 @@ static number_t oexpr(enum token n)
 	nest_msg(">oexpr(%s)\n", TOKSTR[n]);
 	res = aexpr(n);
 	dbg_msg("oexpr: aexpr:%lld, next args:%s(%p)\n", res, args[1], &args[1]);
-	if (check_operator(*++args) == BOR) {
+	如果 (check_operator(*++args) == BOR) {
 		dbg_msg("oexpr: next arg is OR, next args:%s(%p)\n", args[1], &args[1]);
 		res = oexpr(check_operator(*++args)) || res;
 		unnest_msg("<oexpr:%lld\n", res);
-		return res;
+		返回 res;
 	}
 	args--;
 	unnest_msg("<oexpr:%lld, args:%s(%p)\n", res, args[0], &args[0]);
-	return res;
+	返回 res;
 }
 
 
 static number_t primary(enum token n)
 {
-#if TEST_DEBUG
+#如果 TEST_DEBUG
 	number_t res = res; /* for compiler */
-#else
+#否则
 	number_t res;
 #endif
 	const struct operator_t *args0_op;
 
 	nest_msg(">primary(%s)\n", TOKSTR[n]);
-	if (n == EOI) {
+	如果 (n == EOI) {
 		syntax(NULL, "argument expected");
 	}
-	if (n == LPAREN) {
+	如果 (n == LPAREN) {
 		res = oexpr(check_operator(*++args));
-		if (check_operator(*++args) != RPAREN)
+		如果 (check_operator(*++args) != RPAREN)
 			syntax(NULL, "closing paren expected");
 		unnest_msg("<primary:%lld\n", res);
-		return res;
+		返回 res;
 	}
 
 	/* coreutils 6.9 checks "is args[1] binop and args[2] exist?" first,
 	 * do the same */
 	args0_op = last_operator;
 	/* last_operator = operator at args[1] */
-	if (check_operator(args[1]) != EOI) { /* if args[1] != NULL */
-		if (args[2]) {
+	如果 (check_operator(args[1]) != EOI) { /* if args[1] != NULL */
+		如果 (args[2]) {
 			// coreutils also does this:
 			// if (args[3] && args[0] = "-l" && args[2] is BINOP)
 			//	return binop(1 /* prepended by -l */);
-			if (last_operator->op_type == BINOP)
+			如果 (last_operator->op_type == BINOP)
 				unnest_msg_and_return(binop(), "<primary: binop:%lld\n");
 		}
 	}
 	/* check "is args[0] unop?" second */
-	if (args0_op->op_type == UNOP) {
+	如果 (args0_op->op_type == UNOP) {
 		/* unary expression */
-		if (args[1] == NULL)
+		如果 (args[1] == NULL)
 //			syntax(args0_op->op_text, "argument expected");
 			goto check_emptiness;
 		args++;
-		if (n == STREZ)
+		如果 (n == STREZ)
 			unnest_msg_and_return(args[0][0] == '\0', "<primary:%lld\n");
-		if (n == STRNZ)
+		如果 (n == STRNZ)
 			unnest_msg_and_return(args[0][0] != '\0', "<primary:%lld\n");
-		if (n == FILTT)
+		如果 (n == FILTT)
 			unnest_msg_and_return(isatty(getn(*args)), "<primary: isatty(%s)%lld\n", *args);
 		unnest_msg_and_return(filstat(*args, n), "<primary: filstat(%s):%lld\n", *args);
 	}
 
 	/*check_operator(args[1]); - already done */
-	if (last_operator->op_type == BINOP) {
+	如果 (last_operator->op_type == BINOP) {
 		/* args[2] is known to be NULL, isn't it bound to fail? */
 		unnest_msg_and_return(binop(), "<primary:%lld\n");
 	}
@@ -891,30 +891,30 @@ static number_t primary(enum token n)
 }
 
 
-int test_main(int argc, char **argv)
+整数 test_main(整数 argc, char **argv)
 {
-	int res;
+	整数 res;
 	const char *arg0;
-#if BASH_TEST2
+#如果 BASH_TEST2
 	bool bt2 = 0;
 #endif
 
 	arg0 = bb_basename(argv[0]);
-	if ((ENABLE_TEST1 || ENABLE_TEST2 || ENABLE_ASH_TEST || ENABLE_HUSH_TEST)
+	如果 ((ENABLE_TEST1 || ENABLE_TEST2 || ENABLE_ASH_TEST || ENABLE_HUSH_TEST)
 	 && (arg0[0] == '[')
 	) {
 		--argc;
-		if (!arg0[1]) { /* "[" ? */
-			if (NOT_LONE_CHAR(argv[argc], ']')) {
+		如果 (!arg0[1]) { /* "[" ? */
+			如果 (NOT_LONE_CHAR(argv[argc], ']')) {
 				bb_simple_error_msg("missing ]");
-				return 2;
+				返回 2;
 			}
-		} else { /* assuming "[[" */
-			if (strcmp(argv[argc], "]]") != 0) {
+		} 否则 { /* assuming "[[" */
+			如果 (strcmp(argv[argc], "]]") != 0) {
 				bb_simple_error_msg("missing ]]");
-				return 2;
+				返回 2;
 			}
-#if BASH_TEST2
+#如果 BASH_TEST2
 			bt2 = 1;
 #endif
 		}
@@ -925,12 +925,12 @@ int test_main(int argc, char **argv)
 	/* We must do DEINIT_S() prior to returning */
 	INIT_S();
 
-#if BASH_TEST2
+#如果 BASH_TEST2
 	bash_test2 = bt2;
 #endif
 
 	res = setjmp(leaving);
-	if (res)
+	如果 (res)
 		goto ret;
 
 	/* resetting ngroups is probably unnecessary.  it will
@@ -950,21 +950,21 @@ int test_main(int argc, char **argv)
 	 * Testcase: "test '(' = '('"
 	 * The general parser would misinterpret '(' as group start.
 	 */
-	if (1) {
-		int negate = 0;
+	如果 (1) {
+		整数 negate = 0;
  again:
-		if (!argv[0]) {
+		如果 (!argv[0]) {
 			/* "test" */
 			res = 1;
 			goto ret_special;
 		}
-		if (!argv[1]) {
+		如果 (!argv[1]) {
 			/* "test [!] arg" */
 			res = (argv[0][0] == '\0');
 			goto ret_special;
 		}
-		if (argv[2]) {
-			if (!argv[3]) {
+		如果 (argv[2]) {
+			如果 (!argv[3]) {
 				/*
 				 * http://pubs.opengroup.org/onlinepubs/009695399/utilities/test.html
 				 * """ 3 arguments:
@@ -972,7 +972,7 @@ int test_main(int argc, char **argv)
 				 * """
 				 */
 				check_operator(argv[1]);
-				if (last_operator->op_type == BINOP) {
+				如果 (last_operator->op_type == BINOP) {
 					/* "test [!] arg1 <binary_op> arg2" */
 					args = argv;
 					res = (binop() == 0);
@@ -987,7 +987,7 @@ int test_main(int argc, char **argv)
 				goto check_negate;
 			}
 			/* argv[3] exists (at least 4 args), is it exactly 4 args? */
-			if (!argv[4]) {
+			如果 (!argv[4]) {
 				/*
 				 * """ 4 arguments:
 				 * If $1 is '!', negate the three-argument test of $2, $3, and $4.
@@ -995,7 +995,7 @@ int test_main(int argc, char **argv)
 				 * """
 				 * Example why code below is necessary: test '(' ! -e ')'
 				 */
-				if (LONE_CHAR(argv[0], '(')
+				如果 (LONE_CHAR(argv[0], '(')
 				 && LONE_CHAR(argv[3], ')')
 				) {
 					/* "test [!] ( x y )" */
@@ -1005,7 +1005,7 @@ int test_main(int argc, char **argv)
 			}
 		}
  check_negate:
-		if (LONE_CHAR(argv[0], '!')) {
+		如果 (LONE_CHAR(argv[0], '!')) {
 			argv++;
 			negate ^= 1;
 			goto again;
@@ -1014,7 +1014,7 @@ int test_main(int argc, char **argv)
 
 	res = !oexpr(check_operator(*args));
 
-	if (*args != NULL && *++args != NULL) {
+	如果 (*args != NULL && *++args != NULL) {
 		/* Examples:
 		 * test 3 -lt 5 6
 		 * test -t 1 2
@@ -1024,5 +1024,5 @@ int test_main(int argc, char **argv)
 	}
  ret:
 	DEINIT_S();
-	return res;
+	返回 res;
 }

@@ -27,30 +27,30 @@
 
 /* This is a NOFORK applet. Be very careful! */
 
-int printenv_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int printenv_main(int argc UNUSED_PARAM, char **argv)
+整数 printenv_main(整数 argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+整数 printenv_main(整数 argc UNUSED_PARAM, char **argv)
 {
-	int exit_code = EXIT_SUCCESS;
+	整数 exit_code = EXIT_SUCCESS;
 
 	/* no variables specified, show whole env */
-	if (!argv[1]) {
+	如果 (!argv[1]) {
 		char **e = environ;
 
 		/* environ can be NULL! (for example, after clearenv())
 		 * Check for that:
 		 */
-		if (e)
-			while (*e)
+		如果 (e)
+			当 (*e)
 				puts(*e++);
-	} else {
+	} 否则 {
 		/* search for specified variables and print them out if found */
 		char *arg, *env;
 
-		while ((arg = *++argv) != NULL) {
+		当 ((arg = *++argv) != NULL) {
 			env = getenv(arg);
-			if (env)
+			如果 (env)
 				puts(env);
-			else
+			否则
 				exit_code = EXIT_FAILURE;
 		}
 	}

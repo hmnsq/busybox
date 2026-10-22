@@ -70,66 +70,66 @@
 #ifndef CSUSP
 # define CSUSP Control('z')
 #endif
-#if defined(VEOL2) && !defined(CEOL2)
+#如果 defined(VEOL2) && !defined(CEOL2)
 # define CEOL2 _POSIX_VDISABLE
 #endif
 /* glibc-2.12.1 uses only VSWTC name */
-#if defined(VSWTC) && !defined(VSWTCH)
+#如果 defined(VSWTC) && !defined(VSWTCH)
 # define VSWTCH VSWTC
 #endif
 /* ISC renamed swtch to susp for termios, but we'll accept either name */
-#if defined(VSUSP) && !defined(VSWTCH)
+#如果 defined(VSUSP) && !defined(VSWTCH)
 # define VSWTCH VSUSP
 # define CSWTCH CSUSP
 #endif
-#if defined(VSWTCH) && !defined(CSWTCH)
+#如果 defined(VSWTCH) && !defined(CSWTCH)
 # define CSWTCH _POSIX_VDISABLE
 #endif
 
 /* SunOS 5.3 loses (^Z doesn't work) if 'swtch' is the same as 'susp'.
    So the default is to disable 'swtch.'  */
-#if defined(__sparc__) && defined(__svr4__)
+#如果 defined(__sparc__) && defined(__svr4__)
 # undef CSWTCH
 # define CSWTCH _POSIX_VDISABLE
 #endif
 
-#if defined(VWERSE) && !defined(VWERASE)       /* AIX-3.2.5 */
+#如果 defined(VWERSE) && !defined(VWERASE)       /* AIX-3.2.5 */
 # define VWERASE VWERSE
 #endif
-#if defined(VDSUSP) && !defined(CDSUSP)
+#如果 defined(VDSUSP) && !defined(CDSUSP)
 # define CDSUSP Control('y')
 #endif
-#if !defined(VREPRINT) && defined(VRPRNT)       /* Irix 4.0.5 */
+#如果 !defined(VREPRINT) && defined(VRPRNT)       /* Irix 4.0.5 */
 # define VREPRINT VRPRNT
 #endif
-#if defined(VREPRINT) && !defined(CRPRNT)
+#如果 defined(VREPRINT) && !defined(CRPRNT)
 # define CRPRNT Control('r')
 #endif
-#if defined(VWERASE) && !defined(CWERASE)
+#如果 defined(VWERASE) && !defined(CWERASE)
 # define CWERASE Control('w')
 #endif
-#if defined(VLNEXT) && !defined(CLNEXT)
+#如果 defined(VLNEXT) && !defined(CLNEXT)
 # define CLNEXT Control('v')
 #endif
-#if defined(VDISCARD) && !defined(VFLUSHO)
+#如果 defined(VDISCARD) && !defined(VFLUSHO)
 # define VFLUSHO VDISCARD
 #endif
-#if defined(VFLUSH) && !defined(VFLUSHO)        /* Ultrix 4.2 */
+#如果 defined(VFLUSH) && !defined(VFLUSHO)        /* Ultrix 4.2 */
 # define VFLUSHO VFLUSH
 #endif
-#if defined(CTLECH) && !defined(ECHOCTL)        /* Ultrix 4.3 */
+#如果 defined(CTLECH) && !defined(ECHOCTL)        /* Ultrix 4.3 */
 # define ECHOCTL CTLECH
 #endif
-#if defined(TCTLECH) && !defined(ECHOCTL)       /* Ultrix 4.2 */
+#如果 defined(TCTLECH) && !defined(ECHOCTL)       /* Ultrix 4.2 */
 # define ECHOCTL TCTLECH
 #endif
-#if defined(CRTKIL) && !defined(ECHOKE)         /* Ultrix 4.2 and 4.3 */
+#如果 defined(CRTKIL) && !defined(ECHOKE)         /* Ultrix 4.2 and 4.3 */
 # define ECHOKE CRTKIL
 #endif
-#if defined(VFLUSHO) && !defined(CFLUSHO)
+#如果 defined(VFLUSHO) && !defined(CFLUSHO)
 # define CFLUSHO Control('o')
 #endif
-#if defined(VSTATUS) && !defined(CSTATUS)
+#如果 defined(VSTATUS) && !defined(CSTATUS)
 # define CSTATUS Control('t')
 #endif
 
@@ -263,10 +263,10 @@ static tcflag_t *get_ptr_to_tcflag(unsigned type, const struct termios *mode)
 		offsetof(struct termios, c_oflag), /* output */
 		offsetof(struct termios, c_lflag)  /* local */
 	};
-	if (type <= local) {
-		return (tcflag_t*) (((char*)mode) + tcflag_offsets[type]);
+	如果 (type <= local) {
+		返回 (tcflag_t*) (((char*)mode) + tcflag_offsets[type]);
 	}
-	return NULL;
+	返回 NULL;
 }
 
 /* Flags for 'struct mode_info' */
@@ -283,11 +283,11 @@ struct mode_info {
 	const uint8_t type;           /* Which structure element to change    */
 	const uint8_t flags;          /* Setting and display options          */
 	/* only these values are ever used, so... */
-#if   (CSIZE | NLDLY | CRDLY | TABDLY | BSDLY | VTDLY | FFDLY) < 0x100
+#如果   (CSIZE | NLDLY | CRDLY | TABDLY | BSDLY | VTDLY | FFDLY) < 0x100
 	const uint8_t mask;
 #elif (CSIZE | NLDLY | CRDLY | TABDLY | BSDLY | VTDLY | FFDLY) < 0x10000
 	const uint16_t mask;
-#else
+#否则
 	const tcflag_t mask;          /* Other bits to turn off for this mode */
 #endif
 	/* was using short here, but ppc32 was unhappy */
@@ -309,13 +309,13 @@ enum {
 	IDX_cbreak,
 	IDX_crt,
 	IDX_dec,
-#if IXANY
+#如果 IXANY
 	IDX_decctlq,
 #endif
-#if TABDLY || OXTABS
+#如果 TABDLY || OXTABS
 	IDX_tabs,
 #endif
-#if XCASE && IUCLC && OLCUC
+#如果 XCASE && IUCLC && OLCUC
 	IDX_lcase,
 	IDX_LCASE,
 #endif
@@ -338,19 +338,19 @@ static const char mode_name[] ALIGN1 =
 	MI_ENTRY("cbreak",   combination, REV        | OMIT, 0,          0 )
 	MI_ENTRY("crt",      combination, OMIT,              0,          0 )
 	MI_ENTRY("dec",      combination, OMIT,              0,          0 )
-#if IXANY
+#如果 IXANY
 	MI_ENTRY("decctlq",  combination, REV        | OMIT, 0,          0 )
 #endif
-#if TABDLY || OXTABS
+#如果 TABDLY || OXTABS
 	MI_ENTRY("tabs",     combination, REV        | OMIT, 0,          0 )
 #endif
-#if XCASE && IUCLC && OLCUC
+#如果 XCASE && IUCLC && OLCUC
 	MI_ENTRY("lcase",    combination, REV        | OMIT, 0,          0 )
 	MI_ENTRY("LCASE",    combination, REV        | OMIT, 0,          0 )
 #endif
 	MI_ENTRY("parenb",   control,     REV,               PARENB,     0 )
 	MI_ENTRY("parodd",   control,     REV,               PARODD,     0 )
-#if CMSPAR
+#如果 CMSPAR
 	MI_ENTRY("cmspar",   control,     REV,               CMSPAR,     0 )
 #endif
 	MI_ENTRY("cs5",      control,     0,                 CS5,     CSIZE)
@@ -362,7 +362,7 @@ static const char mode_name[] ALIGN1 =
 	MI_ENTRY("cstopb",   control,     REV,               CSTOPB,     0 )
 	MI_ENTRY("cread",    control,     SANE_SET   | REV,  CREAD,      0 )
 	MI_ENTRY("clocal",   control,     REV,               CLOCAL,     0 )
-#if CRTSCTS
+#如果 CRTSCTS
 	MI_ENTRY("crtscts",  control,     REV,               CRTSCTS,    0 )
 #endif
 	MI_ENTRY("ignbrk",   input,       SANE_UNSET | REV,  IGNBRK,     0 )
@@ -377,81 +377,81 @@ static const char mode_name[] ALIGN1 =
 	MI_ENTRY("ixon",     input,       REV,               IXON,       0 )
 	MI_ENTRY("ixoff",    input,       SANE_UNSET | REV,  IXOFF,      0 )
 	MI_ENTRY("tandem",   input,       OMIT       | REV,  IXOFF,      0 )
-#if IUCLC
+#如果 IUCLC
 	MI_ENTRY("iuclc",    input,       SANE_UNSET | REV,  IUCLC,      0 )
 #endif
-#if IXANY
+#如果 IXANY
 	MI_ENTRY("ixany",    input,       SANE_UNSET | REV,  IXANY,      0 )
 #endif
-#if IMAXBEL
+#如果 IMAXBEL
 	MI_ENTRY("imaxbel",  input,       SANE_SET   | REV,  IMAXBEL,    0 )
 #endif
-#if IUTF8
+#如果 IUTF8
 	MI_ENTRY("iutf8",    input,       SANE_UNSET | REV,  IUTF8,      0 )
 #endif
 	MI_ENTRY("opost",    output,      SANE_SET   | REV,  OPOST,      0 )
-#if OLCUC
+#如果 OLCUC
 	MI_ENTRY("olcuc",    output,      SANE_UNSET | REV,  OLCUC,      0 )
 #endif
-#if OCRNL
+#如果 OCRNL
 	MI_ENTRY("ocrnl",    output,      SANE_UNSET | REV,  OCRNL,      0 )
 #endif
-#if ONLCR
+#如果 ONLCR
 	MI_ENTRY("onlcr",    output,      SANE_SET   | REV,  ONLCR,      0 )
 #endif
-#if ONOCR
+#如果 ONOCR
 	MI_ENTRY("onocr",    output,      SANE_UNSET | REV,  ONOCR,      0 )
 #endif
-#if ONLRET
+#如果 ONLRET
 	MI_ENTRY("onlret",   output,      SANE_UNSET | REV,  ONLRET,     0 )
 #endif
-#if OFILL
+#如果 OFILL
 	MI_ENTRY("ofill",    output,      SANE_UNSET | REV,  OFILL,      0 )
 #endif
-#if OFDEL
+#如果 OFDEL
 	MI_ENTRY("ofdel",    output,      SANE_UNSET | REV,  OFDEL,      0 )
 #endif
-#if NLDLY
+#如果 NLDLY
 	MI_ENTRY("nl1",      output,      SANE_UNSET,        NL1,     NLDLY)
 	MI_ENTRY("nl0",      output,      SANE_SET,          NL0,     NLDLY)
 #endif
-#if CRDLY
+#如果 CRDLY
 	MI_ENTRY("cr3",      output,      SANE_UNSET,        CR3,     CRDLY)
 	MI_ENTRY("cr2",      output,      SANE_UNSET,        CR2,     CRDLY)
 	MI_ENTRY("cr1",      output,      SANE_UNSET,        CR1,     CRDLY)
 	MI_ENTRY("cr0",      output,      SANE_SET,          CR0,     CRDLY)
 #endif
 
-#if TABDLY
+#如果 TABDLY
 	MI_ENTRY("tab3",     output,      SANE_UNSET,        TAB3,   TABDLY)
-# if TAB2
+# 如果 TAB2
 	MI_ENTRY("tab2",     output,      SANE_UNSET,        TAB2,   TABDLY)
 # endif
-# if TAB1
+# 如果 TAB1
 	MI_ENTRY("tab1",     output,      SANE_UNSET,        TAB1,   TABDLY)
 # endif
 	MI_ENTRY("tab0",     output,      SANE_SET,          TAB0,   TABDLY)
-#else
-# if OXTABS
+#否则
+# 如果 OXTABS
 	MI_ENTRY("tab3",     output,      SANE_UNSET,        OXTABS,     0 )
 # endif
 #endif
 
-#if BSDLY
+#如果 BSDLY
 	MI_ENTRY("bs1",      output,      SANE_UNSET,        BS1,     BSDLY)
 	MI_ENTRY("bs0",      output,      SANE_SET,          BS0,     BSDLY)
 #endif
-#if VTDLY
+#如果 VTDLY
 	MI_ENTRY("vt1",      output,      SANE_UNSET,        VT1,     VTDLY)
 	MI_ENTRY("vt0",      output,      SANE_SET,          VT0,     VTDLY)
 #endif
-#if FFDLY
+#如果 FFDLY
 	MI_ENTRY("ff1",      output,      SANE_UNSET,        FF1,     FFDLY)
 	MI_ENTRY("ff0",      output,      SANE_SET,          FF0,     FFDLY)
 #endif
 	MI_ENTRY("isig",     local,       SANE_SET   | REV,  ISIG,       0 )
 	MI_ENTRY("icanon",   local,       SANE_SET   | REV,  ICANON,     0 )
-#if IEXTEN
+#如果 IEXTEN
 	MI_ENTRY("iexten",   local,       SANE_SET   | REV,  IEXTEN,     0 )
 #endif
 	MI_ENTRY("echo",     local,       SANE_SET   | REV,  ECHO,       0 )
@@ -460,21 +460,21 @@ static const char mode_name[] ALIGN1 =
 	MI_ENTRY("echok",    local,       SANE_SET   | REV,  ECHOK,      0 )
 	MI_ENTRY("echonl",   local,       SANE_UNSET | REV,  ECHONL,     0 )
 	MI_ENTRY("noflsh",   local,       SANE_UNSET | REV,  NOFLSH,     0 )
-#if XCASE
+#如果 XCASE
 	MI_ENTRY("xcase",    local,       SANE_UNSET | REV,  XCASE,      0 )
 #endif
-#if TOSTOP
+#如果 TOSTOP
 	MI_ENTRY("tostop",   local,       SANE_UNSET | REV,  TOSTOP,     0 )
 #endif
-#if ECHOPRT
+#如果 ECHOPRT
 	MI_ENTRY("echoprt",  local,       SANE_UNSET | REV,  ECHOPRT,    0 )
 	MI_ENTRY("prterase", local,       OMIT       | REV,  ECHOPRT,    0 )
 #endif
-#if ECHOCTL
+#如果 ECHOCTL
 	MI_ENTRY("echoctl",  local,       SANE_SET   | REV,  ECHOCTL,    0 )
 	MI_ENTRY("ctlecho",  local,       OMIT       | REV,  ECHOCTL,    0 )
 #endif
-#if ECHOKE
+#如果 ECHOKE
 	MI_ENTRY("echoke",   local,       SANE_SET   | REV,  ECHOKE,     0 )
 	MI_ENTRY("crtkill",  local,       OMIT       | REV,  ECHOKE,     0 )
 #endif
@@ -502,19 +502,19 @@ static const struct mode_info mode_info[] ALIGN4 = {
 	MI_ENTRY("cbreak",   combination, REV        | OMIT, 0,          0 )
 	MI_ENTRY("crt",      combination, OMIT,              0,          0 )
 	MI_ENTRY("dec",      combination, OMIT,              0,          0 )
-#if IXANY
+#如果 IXANY
 	MI_ENTRY("decctlq",  combination, REV        | OMIT, 0,          0 )
 #endif
-#if TABDLY || OXTABS
+#如果 TABDLY || OXTABS
 	MI_ENTRY("tabs",     combination, REV        | OMIT, 0,          0 )
 #endif
-#if XCASE && IUCLC && OLCUC
+#如果 XCASE && IUCLC && OLCUC
 	MI_ENTRY("lcase",    combination, REV        | OMIT, 0,          0 )
 	MI_ENTRY("LCASE",    combination, REV        | OMIT, 0,          0 )
 #endif
 	MI_ENTRY("parenb",   control,     REV,               PARENB,     0 )
 	MI_ENTRY("parodd",   control,     REV,               PARODD,     0 )
-#if CMSPAR
+#如果 CMSPAR
 	MI_ENTRY("cmspar",   control,     REV,               CMSPAR,     0 )
 #endif
 	MI_ENTRY("cs5",      control,     0,                 CS5,     CSIZE)
@@ -526,7 +526,7 @@ static const struct mode_info mode_info[] ALIGN4 = {
 	MI_ENTRY("cstopb",   control,     REV,               CSTOPB,     0 )
 	MI_ENTRY("cread",    control,     SANE_SET   | REV,  CREAD,      0 )
 	MI_ENTRY("clocal",   control,     REV,               CLOCAL,     0 )
-#if CRTSCTS
+#如果 CRTSCTS
 	MI_ENTRY("crtscts",  control,     REV,               CRTSCTS,    0 )
 #endif
 	MI_ENTRY("ignbrk",   input,       SANE_UNSET | REV,  IGNBRK,     0 )
@@ -541,81 +541,81 @@ static const struct mode_info mode_info[] ALIGN4 = {
 	MI_ENTRY("ixon",     input,       REV,               IXON,       0 )
 	MI_ENTRY("ixoff",    input,       SANE_UNSET | REV,  IXOFF,      0 )
 	MI_ENTRY("tandem",   input,       OMIT       | REV,  IXOFF,      0 )
-#if IUCLC
+#如果 IUCLC
 	MI_ENTRY("iuclc",    input,       SANE_UNSET | REV,  IUCLC,      0 )
 #endif
-#if IXANY
+#如果 IXANY
 	MI_ENTRY("ixany",    input,       SANE_UNSET | REV,  IXANY,      0 )
 #endif
-#if IMAXBEL
+#如果 IMAXBEL
 	MI_ENTRY("imaxbel",  input,       SANE_SET   | REV,  IMAXBEL,    0 )
 #endif
-#if IUTF8
+#如果 IUTF8
 	MI_ENTRY("iutf8",    input,       SANE_UNSET | REV,  IUTF8,      0 )
 #endif
 	MI_ENTRY("opost",    output,      SANE_SET   | REV,  OPOST,      0 )
-#if OLCUC
+#如果 OLCUC
 	MI_ENTRY("olcuc",    output,      SANE_UNSET | REV,  OLCUC,      0 )
 #endif
-#if OCRNL
+#如果 OCRNL
 	MI_ENTRY("ocrnl",    output,      SANE_UNSET | REV,  OCRNL,      0 )
 #endif
-#if ONLCR
+#如果 ONLCR
 	MI_ENTRY("onlcr",    output,      SANE_SET   | REV,  ONLCR,      0 )
 #endif
-#if ONOCR
+#如果 ONOCR
 	MI_ENTRY("onocr",    output,      SANE_UNSET | REV,  ONOCR,      0 )
 #endif
-#if ONLRET
+#如果 ONLRET
 	MI_ENTRY("onlret",   output,      SANE_UNSET | REV,  ONLRET,     0 )
 #endif
-#if OFILL
+#如果 OFILL
 	MI_ENTRY("ofill",    output,      SANE_UNSET | REV,  OFILL,      0 )
 #endif
-#if OFDEL
+#如果 OFDEL
 	MI_ENTRY("ofdel",    output,      SANE_UNSET | REV,  OFDEL,      0 )
 #endif
-#if NLDLY
+#如果 NLDLY
 	MI_ENTRY("nl1",      output,      SANE_UNSET,        NL1,     NLDLY)
 	MI_ENTRY("nl0",      output,      SANE_SET,          NL0,     NLDLY)
 #endif
-#if CRDLY
+#如果 CRDLY
 	MI_ENTRY("cr3",      output,      SANE_UNSET,        CR3,     CRDLY)
 	MI_ENTRY("cr2",      output,      SANE_UNSET,        CR2,     CRDLY)
 	MI_ENTRY("cr1",      output,      SANE_UNSET,        CR1,     CRDLY)
 	MI_ENTRY("cr0",      output,      SANE_SET,          CR0,     CRDLY)
 #endif
 
-#if TABDLY
+#如果 TABDLY
 	MI_ENTRY("tab3",     output,      SANE_UNSET,        TAB3,   TABDLY)
-# if TAB2
+# 如果 TAB2
 	MI_ENTRY("tab2",     output,      SANE_UNSET,        TAB2,   TABDLY)
 # endif
-# if TAB1
+# 如果 TAB1
 	MI_ENTRY("tab1",     output,      SANE_UNSET,        TAB1,   TABDLY)
 # endif
 	MI_ENTRY("tab0",     output,      SANE_SET,          TAB0,   TABDLY)
-#else
-# if OXTABS
+#否则
+# 如果 OXTABS
 	MI_ENTRY("tab3",     output,      SANE_UNSET,        OXTABS,     0 )
 # endif
 #endif
 
-#if BSDLY
+#如果 BSDLY
 	MI_ENTRY("bs1",      output,      SANE_UNSET,        BS1,     BSDLY)
 	MI_ENTRY("bs0",      output,      SANE_SET,          BS0,     BSDLY)
 #endif
-#if VTDLY
+#如果 VTDLY
 	MI_ENTRY("vt1",      output,      SANE_UNSET,        VT1,     VTDLY)
 	MI_ENTRY("vt0",      output,      SANE_SET,          VT0,     VTDLY)
 #endif
-#if FFDLY
+#如果 FFDLY
 	MI_ENTRY("ff1",      output,      SANE_UNSET,        FF1,     FFDLY)
 	MI_ENTRY("ff0",      output,      SANE_SET,          FF0,     FFDLY)
 #endif
 	MI_ENTRY("isig",     local,       SANE_SET   | REV,  ISIG,       0 )
 	MI_ENTRY("icanon",   local,       SANE_SET   | REV,  ICANON,     0 )
-#if IEXTEN
+#如果 IEXTEN
 	MI_ENTRY("iexten",   local,       SANE_SET   | REV,  IEXTEN,     0 )
 #endif
 	MI_ENTRY("echo",     local,       SANE_SET   | REV,  ECHO,       0 )
@@ -624,21 +624,21 @@ static const struct mode_info mode_info[] ALIGN4 = {
 	MI_ENTRY("echok",    local,       SANE_SET   | REV,  ECHOK,      0 )
 	MI_ENTRY("echonl",   local,       SANE_UNSET | REV,  ECHONL,     0 )
 	MI_ENTRY("noflsh",   local,       SANE_UNSET | REV,  NOFLSH,     0 )
-#if XCASE
+#如果 XCASE
 	MI_ENTRY("xcase",    local,       SANE_UNSET | REV,  XCASE,      0 )
 #endif
-#if TOSTOP
+#如果 TOSTOP
 	MI_ENTRY("tostop",   local,       SANE_UNSET | REV,  TOSTOP,     0 )
 #endif
-#if ECHOPRT
+#如果 ECHOPRT
 	MI_ENTRY("echoprt",  local,       SANE_UNSET | REV,  ECHOPRT,    0 )
 	MI_ENTRY("prterase", local,       OMIT       | REV,  ECHOPRT,    0 )
 #endif
-#if ECHOCTL
+#如果 ECHOCTL
 	MI_ENTRY("echoctl",  local,       SANE_SET   | REV,  ECHOCTL,    0 )
 	MI_ENTRY("ctlecho",  local,       OMIT       | REV,  ECHOCTL,    0 )
 #endif
-#if ECHOKE
+#如果 ECHOKE
 	MI_ENTRY("echoke",   local,       SANE_SET   | REV,  ECHOKE,     0 )
 	MI_ENTRY("crtkill",  local,       OMIT       | REV,  ECHOKE,     0 )
 #endif
@@ -667,31 +667,31 @@ enum {
 	CIDX_kill,
 	CIDX_eof,
 	CIDX_eol,
-#if VEOL2
+#如果 VEOL2
 	CIDX_eol2,
 #endif
-#if VSWTCH
+#如果 VSWTCH
 	CIDX_swtch,
 #endif
 	CIDX_start,
 	CIDX_stop,
 	CIDX_susp,
-#if VDSUSP
+#如果 VDSUSP
 	CIDX_dsusp,
 #endif
-#if VREPRINT
+#如果 VREPRINT
 	CIDX_rprnt,
 #endif
-#if VWERASE
+#如果 VWERASE
 	CIDX_werase,
 #endif
-#if VLNEXT
+#如果 VLNEXT
 	CIDX_lnext,
 #endif
-#if VFLUSHO
+#如果 VFLUSHO
 	CIDX_flush,
 #endif
-#if VSTATUS
+#如果 VSTATUS
 	CIDX_status,
 #endif
 	CIDX_min,
@@ -708,31 +708,31 @@ static const char control_name[] ALIGN1 =
 	CI_ENTRY("kill",     CKILL,   VKILL   )
 	CI_ENTRY("eof",      CEOF,    VEOF    )
 	CI_ENTRY("eol",      CEOL,    VEOL    )
-#if VEOL2
+#如果 VEOL2
 	CI_ENTRY("eol2",     CEOL2,   VEOL2   )
 #endif
-#if VSWTCH
+#如果 VSWTCH
 	CI_ENTRY("swtch",    CSWTCH,  VSWTCH  )
 #endif
 	CI_ENTRY("start",    CSTART,  VSTART  )
 	CI_ENTRY("stop",     CSTOP,   VSTOP   )
 	CI_ENTRY("susp",     CSUSP,   VSUSP   )
-#if VDSUSP
+#如果 VDSUSP
 	CI_ENTRY("dsusp",    CDSUSP,  VDSUSP  )
 #endif
-#if VREPRINT
+#如果 VREPRINT
 	CI_ENTRY("rprnt",    CRPRNT,  VREPRINT)
 #endif
-#if VWERASE
+#如果 VWERASE
 	CI_ENTRY("werase",   CWERASE, VWERASE )
 #endif
-#if VLNEXT
+#如果 VLNEXT
 	CI_ENTRY("lnext",    CLNEXT,  VLNEXT  )
 #endif
-#if VFLUSHO
+#如果 VFLUSHO
 	CI_ENTRY("flush",    CFLUSHO, VFLUSHO )
 #endif
-#if VSTATUS
+#如果 VSTATUS
 	CI_ENTRY("status",   CSTATUS, VSTATUS )
 #endif
 	/* These must be last because of the display routines */
@@ -751,31 +751,31 @@ static const struct control_info control_info[] ALIGN2 = {
 	CI_ENTRY("kill",     CKILL,   VKILL   )
 	CI_ENTRY("eof",      CEOF,    VEOF    )
 	CI_ENTRY("eol",      CEOL,    VEOL    )
-#if VEOL2
+#如果 VEOL2
 	CI_ENTRY("eol2",     CEOL2,   VEOL2   )
 #endif
-#if VSWTCH
+#如果 VSWTCH
 	CI_ENTRY("swtch",    CSWTCH,  VSWTCH  )
 #endif
 	CI_ENTRY("start",    CSTART,  VSTART  )
 	CI_ENTRY("stop",     CSTOP,   VSTOP   )
 	CI_ENTRY("susp",     CSUSP,   VSUSP   )
-#if VDSUSP
+#如果 VDSUSP
 	CI_ENTRY("dsusp",    CDSUSP,  VDSUSP  )
 #endif
-#if VREPRINT
+#如果 VREPRINT
 	CI_ENTRY("rprnt",    CRPRNT,  VREPRINT)
 #endif
-#if VWERASE
+#如果 VWERASE
 	CI_ENTRY("werase",   CWERASE, VWERASE )
 #endif
-#if VLNEXT
+#如果 VLNEXT
 	CI_ENTRY("lnext",    CLNEXT,  VLNEXT  )
 #endif
-#if VFLUSHO
+#如果 VFLUSHO
 	CI_ENTRY("flush",    CFLUSHO, VFLUSHO )
 #endif
-#if VSTATUS
+#如果 VSTATUS
 	CI_ENTRY("status",   CSTATUS, VSTATUS )
 #endif
 	/* These must be last because of the display routines */
@@ -801,7 +801,7 @@ struct globals {
 	G.device_name = bb_msg_standard_input; \
 	G.max_col = 80; \
 	G.current_col = 0; /* we are noexec, must clear */ \
-} while (0)
+} 当 (0)
 
 static void set_speed_or_die(enum speed_setting type, const char *arg,
 					struct termios *mode)
@@ -810,10 +810,10 @@ static void set_speed_or_die(enum speed_setting type, const char *arg,
 
 	baud = tty_value_to_baud(xatou(arg));
 
-	if (type != output_speed) {     /* either input or both */
+	如果 (type != output_speed) {     /* either input or both */
 		cfsetispeed(mode, baud);
 	}
-	if (type != input_speed) {      /* either output or both */
+	如果 (type != input_speed) {      /* either output or both */
 		cfsetospeed(mode, baud);
 	}
 }
@@ -842,64 +842,64 @@ static void wrapf(const char *message, ...)
 	va_end(args);
 	/* We seem to be called only with suitable lengths, but check if
 	   somebody failed to adhere to this assumption just to be sure.  */
-	if (!buflen || buflen >= sizeof(buf)) return;
+	如果 (!buflen || buflen >= sizeof(buf)) 返回;
 
-	if (G.current_col > 0) {
+	如果 (G.current_col > 0) {
 		G.current_col++;
-		if (buf[0] != '\n') {
-			if (G.current_col + buflen >= G.max_col) {
+		如果 (buf[0] != '\n') {
+			如果 (G.current_col + buflen >= G.max_col) {
 				G.current_col = 0;
 				bb_putchar('\n');
-			} else {
+			} 否则 {
 				bb_putchar(' ');
 			}
 		}
 	}
 	fputs_stdout(buf);
 	G.current_col += buflen;
-	if (buf[buflen-1] == '\n')
+	如果 (buf[buflen-1] == '\n')
 		G.current_col = 0;
 }
 
 static void newline(void)
 {
-	if (G.current_col != 0)
+	如果 (G.current_col != 0)
 		wrapf("\n");
 }
 
 #ifdef TIOCGWINSZ
-static void set_window_size(int rows, int cols)
+static void set_window_size(整数 rows, 整数 cols)
 {
 	struct winsize win = { 0, 0, 0, 0 };
 
-	if (ioctl(STDIN_FILENO, TIOCGWINSZ, &win)) {
-		if (errno != EINVAL) {
+	如果 (ioctl(STDIN_FILENO, TIOCGWINSZ, &win)) {
+		如果 (errno != EINVAL) {
 			goto bail;
 		}
 		memset(&win, 0, sizeof(win));
 	}
 
-	if (rows >= 0)
+	如果 (rows >= 0)
 		win.ws_row = rows;
-	if (cols >= 0)
+	如果 (cols >= 0)
 		win.ws_col = cols;
 
-	if (ioctl(STDIN_FILENO, TIOCSWINSZ, (char *) &win))
+	如果 (ioctl(STDIN_FILENO, TIOCSWINSZ, (char *) &win))
 bail:
 		perror_on_device("%s");
 }
 #endif
 
-static void display_window_size(int fancy)
+static void display_window_size(整数 fancy)
 {
 	const char *fmt_str = "%s\0%s: no size information for this device";
 	unsigned width, height;
 
-	if (get_terminal_width_height(STDIN_FILENO, &width, &height)) {
-		if ((errno != EINVAL) || ((fmt_str += 2), !fancy)) {
+	如果 (get_terminal_width_height(STDIN_FILENO, &width, &height)) {
+		如果 ((errno != EINVAL) || ((fmt_str += 2), !fancy)) {
 			perror_on_device(fmt_str);
 		}
-	} else {
+	} 否则 {
 		wrapf(fancy ? "rows %u; columns %u;" : "%u %u\n",
 				height, width);
 	}
@@ -914,14 +914,14 @@ static const struct suffix_mult stty_suffixes[] ALIGN_SUFFIX = {
 
 static const struct mode_info *find_mode(const char *name)
 {
-	int i = index_in_strings(mode_name, name);
-	return i >= 0 ? &mode_info[i] : NULL;
+	整数 i = index_in_strings(mode_name, name);
+	返回 i >= 0 ? &mode_info[i] : NULL;
 }
 
 static const struct control_info *find_control(const char *name)
 {
-	int i = index_in_strings(control_name, name);
-	return i >= 0 ? &control_info[i] : NULL;
+	整数 i = index_in_strings(control_name, name);
+	返回 i >= 0 ? &control_info[i] : NULL;
 }
 
 enum {
@@ -936,7 +936,7 @@ enum {
 	param_ospeed  = 8 | 0x80,
 };
 
-static int find_param(const char *name)
+static 整数 find_param(const char *name)
 {
 	static const char params[] ALIGN1 =
 		"line\0"    /* 1 */
@@ -947,57 +947,57 @@ static int find_param(const char *name)
 		"speed\0"   /* 6 */
 		"ispeed\0"
 		"ospeed\0";
-	int i = index_in_strings(params, name) + 1;
-	if (i == 0)
-		return 0;
-	if (i != 5 && i != 6)
+	整数 i = index_in_strings(params, name) + 1;
+	如果 (i == 0)
+		返回 0;
+	如果 (i != 5 && i != 6)
 		i |= 0x80;
-	return i;
+	返回 i;
 }
 
-static int recover_mode(const char *arg, struct termios *mode)
+static 整数 recover_mode(const char *arg, struct termios *mode)
 {
-	int i, n;
+	整数 i, n;
 	unsigned chr;
 	unsigned long iflag, oflag, cflag, lflag;
 
 	/* Scan into temporaries since it is too much trouble to figure out
 	   the right format for 'tcflag_t' */
-	if (sscanf(arg, "%lx:%lx:%lx:%lx%n",
+	如果 (sscanf(arg, "%lx:%lx:%lx:%lx%n",
 			   &iflag, &oflag, &cflag, &lflag, &n) != 4)
-		return 0;
+		返回 0;
 	mode->c_iflag = iflag;
 	mode->c_oflag = oflag;
 	mode->c_cflag = cflag;
 	mode->c_lflag = lflag;
 	arg += n;
-	for (i = 0; i < NCCS; ++i) {
-		if (sscanf(arg, ":%x%n", &chr, &n) != 1)
-			return 0;
+	为 (i = 0; i < NCCS; ++i) {
+		如果 (sscanf(arg, ":%x%n", &chr, &n) != 1)
+			返回 0;
 		mode->c_cc[i] = chr;
 		arg += n;
 	}
 
 	/* Fail if there are too many fields */
-	if (*arg != '\0')
-		return 0;
+	如果 (*arg != '\0')
+		返回 0;
 
-	return 1;
+	返回 1;
 }
 
 static void display_recoverable(const struct termios *mode,
-				int UNUSED_PARAM dummy)
+				整数 UNUSED_PARAM dummy)
 {
-	int i;
+	整数 i;
 	printf("%lx:%lx:%lx:%lx",
 		   (unsigned long) mode->c_iflag, (unsigned long) mode->c_oflag,
 		   (unsigned long) mode->c_cflag, (unsigned long) mode->c_lflag);
-	for (i = 0; i < NCCS; ++i)
-		printf(":%x", (unsigned int) mode->c_cc[i]);
+	为 (i = 0; i < NCCS; ++i)
+		printf(":%x", (unsigned 整数) mode->c_cc[i]);
 	bb_putchar('\n');
 }
 
-static void display_speed(const struct termios *mode, int fancy)
+static void display_speed(const struct termios *mode, 整数 fancy)
 {
 	//____________________ 01234567 8 9
 	const char *fmt_str = "%lu %lu\n\0ispeed %lu baud; ospeed %lu baud;";
@@ -1005,76 +1005,76 @@ static void display_speed(const struct termios *mode, int fancy)
 
 	ispeed = cfgetispeed(mode);
 	ospeed = cfgetospeed(mode);
-	if (ispeed == 0 || ispeed == ospeed) {
+	如果 (ispeed == 0 || ispeed == ospeed) {
 		ispeed = ospeed;                /* in case ispeed was 0 */
 		//________ 0123 4 5 6 7 8 9
 		fmt_str = "%lu\n\0\0\0\0\0speed %lu baud;";
 	}
-	if (fancy) fmt_str += 9;
+	如果 (fancy) fmt_str += 9;
 	wrapf(fmt_str, tty_baud_to_value(ispeed), tty_baud_to_value(ospeed));
 }
 
-static void do_display(const struct termios *mode, int all)
+static void do_display(const struct termios *mode, 整数 all)
 {
-	int i;
+	整数 i;
 	tcflag_t *bitsp;
 	unsigned long mask;
-	int prev_type = control;
+	整数 prev_type = control;
 
 	display_speed(mode, 1);
-	if (all)
+	如果 (all)
 		display_window_size(1);
 #ifdef __linux__
 	wrapf("line = %u;\n", mode->c_line);
-#else
+#否则
 	newline();
 #endif
 
-	for (i = 0; i != CIDX_min; ++i) {
+	为 (i = 0; i != CIDX_min; ++i) {
 		char ch;
 		char buf10[10];
 
 		/* If swtch is the same as susp, don't print both */
-#if VSWTCH == VSUSP
-		if (i == CIDX_swtch)
+#如果 VSWTCH == VSUSP
+		如果 (i == CIDX_swtch)
 			continue;
 #endif
 		/* If eof uses the same slot as min, only print whichever applies */
-#if VEOF == VMIN
-		if (!(mode->c_lflag & ICANON)
+#如果 VEOF == VMIN
+		如果 (!(mode->c_lflag & ICANON)
 		 && (i == CIDX_eof || i == CIDX_eol)
 		) {
 			continue;
 		}
 #endif
 		ch = mode->c_cc[control_info[i].offset];
-		if (ch == _POSIX_VDISABLE)
+		如果 (ch == _POSIX_VDISABLE)
 			strcpy(buf10, "<undef>");
-		else
+		否则
 			visible(ch, buf10, 0);
 		wrapf("%s = %s;", nth_string(control_name, i), buf10);
 	}
-#if VEOF == VMIN
-	if ((mode->c_lflag & ICANON) == 0)
+#如果 VEOF == VMIN
+	如果 ((mode->c_lflag & ICANON) == 0)
 #endif
 		wrapf("min = %u; time = %u;", mode->c_cc[VMIN], mode->c_cc[VTIME]);
 	newline();
 
-	for (i = 0; i < NUM_mode_info; ++i) {
-		if (mode_info[i].flags & OMIT)
+	为 (i = 0; i < NUM_mode_info; ++i) {
+		如果 (mode_info[i].flags & OMIT)
 			continue;
-		if (mode_info[i].type != prev_type) {
+		如果 (mode_info[i].type != prev_type) {
 			newline();
 			prev_type = mode_info[i].type;
 		}
 
 		bitsp = get_ptr_to_tcflag(mode_info[i].type, mode);
 		mask = mode_info[i].mask ? mode_info[i].mask : mode_info[i].bits;
-		if ((*bitsp & mask) == mode_info[i].bits) {
-			if (all || (mode_info[i].flags & SANE_UNSET))
+		如果 ((*bitsp & mask) == mode_info[i].bits) {
+			如果 (all || (mode_info[i].flags & SANE_UNSET))
 				wrapf("-%s"+1, nth_string(mode_name, i));
-		} else {
-			if ((all && mode_info[i].flags & REV)
+		} 否则 {
+			如果 ((all && mode_info[i].flags & REV)
 			 || (!all && (mode_info[i].flags & (SANE_SET | REV)) == (SANE_SET | REV))
 			) {
 				wrapf("-%s", nth_string(mode_name, i));
@@ -1086,110 +1086,110 @@ static void do_display(const struct termios *mode, int all)
 
 static void sane_mode(struct termios *mode)
 {
-	int i;
+	整数 i;
 
-	for (i = 0; i < NUM_control_info; ++i) {
-#if VMIN == VEOF
-		if (i == CIDX_min)
+	为 (i = 0; i < NUM_control_info; ++i) {
+#如果 VMIN == VEOF
+		如果 (i == CIDX_min)
 			break;
 #endif
 		mode->c_cc[control_info[i].offset] = control_info[i].saneval;
 	}
 
-	for (i = 0; i < NUM_mode_info; ++i) {
+	为 (i = 0; i < NUM_mode_info; ++i) {
 		tcflag_t val;
 		tcflag_t *bitsp = get_ptr_to_tcflag(mode_info[i].type, mode);
 
-		if (!bitsp)
+		如果 (!bitsp)
 			continue;
 		val = *bitsp & ~((unsigned long)mode_info[i].mask);
-		if (mode_info[i].flags & SANE_SET) {
+		如果 (mode_info[i].flags & SANE_SET) {
 			*bitsp = val | mode_info[i].bits;
-		} else
-		if (mode_info[i].flags & SANE_UNSET) {
+		} 否则
+		如果 (mode_info[i].flags & SANE_UNSET) {
 			*bitsp = val & ~mode_info[i].bits;
 		}
 	}
 }
 
-static void set_mode(const struct mode_info *info, int reversed,
+static void set_mode(const struct mode_info *info, 整数 reversed,
 					struct termios *mode)
 {
 	tcflag_t *bitsp;
 
 	bitsp = get_ptr_to_tcflag(info->type, mode);
 
-	if (bitsp) {
+	如果 (bitsp) {
 		tcflag_t val = *bitsp & ~info->mask;
-		if (reversed)
+		如果 (reversed)
 			*bitsp = val & ~info->bits;
-		else
+		否则
 			*bitsp = val | info->bits;
-		return;
+		返回;
 	}
 
 	/* !bitsp - it's a "combination" mode */
-	if (info == &mode_info[IDX_evenp] || info == &mode_info[IDX_parity]) {
-		if (reversed)
+	如果 (info == &mode_info[IDX_evenp] || info == &mode_info[IDX_parity]) {
+		如果 (reversed)
 			mode->c_cflag = (mode->c_cflag & ~PARENB & ~CSIZE) | CS8;
-		else
+		否则
 			mode->c_cflag = (mode->c_cflag & ~PARODD & ~CSIZE) | PARENB | CS7;
-	} else if (info == &mode_info[IDX_oddp]) {
-		if (reversed)
+	} 否则 如果 (info == &mode_info[IDX_oddp]) {
+		如果 (reversed)
 			mode->c_cflag = (mode->c_cflag & ~PARENB & ~CSIZE) | CS8;
-		else
+		否则
 			mode->c_cflag = (mode->c_cflag & ~CSIZE) | CS7 | PARODD | PARENB;
-	} else if (info == &mode_info[IDX_nl]) {
-		if (reversed) {
+	} 否则 如果 (info == &mode_info[IDX_nl]) {
+		如果 (reversed) {
 			mode->c_iflag = (mode->c_iflag | ICRNL) & ~INLCR & ~IGNCR;
 			mode->c_oflag = (mode->c_oflag | ONLCR) & ~OCRNL & ~ONLRET;
-		} else {
+		} 否则 {
 			mode->c_iflag = mode->c_iflag & ~ICRNL;
-			if (ONLCR) mode->c_oflag = mode->c_oflag & ~ONLCR;
+			如果 (ONLCR) mode->c_oflag = mode->c_oflag & ~ONLCR;
 		}
-	} else if (info == &mode_info[IDX_ek]) {
+	} 否则 如果 (info == &mode_info[IDX_ek]) {
 		mode->c_cc[VERASE] = CERASE;
 		mode->c_cc[VKILL] = CKILL;
-	} else if (info == &mode_info[IDX_sane]) {
+	} 否则 如果 (info == &mode_info[IDX_sane]) {
 		sane_mode(mode);
-	} else if (info == &mode_info[IDX_cbreak]) {
-		if (reversed)
+	} 否则 如果 (info == &mode_info[IDX_cbreak]) {
+		如果 (reversed)
 			mode->c_lflag |= ICANON;
-		else
+		否则
 			mode->c_lflag &= ~ICANON;
-	} else if (info == &mode_info[IDX_pass8]) {
-		if (reversed) {
+	} 否则 如果 (info == &mode_info[IDX_pass8]) {
+		如果 (reversed) {
 			mode->c_cflag = (mode->c_cflag & ~CSIZE) | CS7 | PARENB;
 			mode->c_iflag |= ISTRIP;
-		} else {
+		} 否则 {
 			mode->c_cflag = (mode->c_cflag & ~PARENB & ~CSIZE) | CS8;
 			mode->c_iflag &= ~ISTRIP;
 		}
-	} else if (info == &mode_info[IDX_litout]) {
-		if (reversed) {
+	} 否则 如果 (info == &mode_info[IDX_litout]) {
+		如果 (reversed) {
 			mode->c_cflag = (mode->c_cflag & ~CSIZE) | CS7 | PARENB;
 			mode->c_iflag |= ISTRIP;
 			mode->c_oflag |= OPOST;
-		} else {
+		} 否则 {
 			mode->c_cflag = (mode->c_cflag & ~PARENB & ~CSIZE) | CS8;
 			mode->c_iflag &= ~ISTRIP;
 			mode->c_oflag &= ~OPOST;
 		}
-	} else if (info == &mode_info[IDX_raw] || info == &mode_info[IDX_cooked]) {
-		if ((info == &mode_info[IDX_raw] && reversed)
+	} 否则 如果 (info == &mode_info[IDX_raw] || info == &mode_info[IDX_cooked]) {
+		如果 ((info == &mode_info[IDX_raw] && reversed)
 		 || (info == &mode_info[IDX_cooked] && !reversed)
 		) {
 			/* Cooked mode */
 			mode->c_iflag |= BRKINT | IGNPAR | ISTRIP | ICRNL | IXON;
 			mode->c_oflag |= OPOST;
 			mode->c_lflag |= ISIG | ICANON;
-#if VMIN == VEOF
+#如果 VMIN == VEOF
 			mode->c_cc[VEOF] = CEOF;
 #endif
-#if VTIME == VEOL
+#如果 VTIME == VEOL
 			mode->c_cc[VEOL] = CEOL;
 #endif
-		} else {
+		} 否则 {
 			/* Raw mode */
 			mode->c_iflag = 0;
 			mode->c_oflag &= ~OPOST;
@@ -1198,51 +1198,51 @@ static void set_mode(const struct mode_info *info, int reversed,
 			mode->c_cc[VTIME] = 0;
 		}
 	}
-#if IXANY
-	else if (info == &mode_info[IDX_decctlq]) {
-		if (reversed)
+#如果 IXANY
+	否则 如果 (info == &mode_info[IDX_decctlq]) {
+		如果 (reversed)
 			mode->c_iflag |= IXANY;
-		else
+		否则
 			mode->c_iflag &= ~IXANY;
 	}
 #endif
-#if TABDLY
-	else if (info == &mode_info[IDX_tabs]) {
-		if (reversed)
+#如果 TABDLY
+	否则 如果 (info == &mode_info[IDX_tabs]) {
+		如果 (reversed)
 			mode->c_oflag = (mode->c_oflag & ~TABDLY) | TAB3;
-		else
+		否则
 			mode->c_oflag = (mode->c_oflag & ~TABDLY) | TAB0;
 	}
 #endif
-#if OXTABS
-	else if (info == &mode_info[IDX_tabs]) {
-		if (reversed)
+#如果 OXTABS
+	否则 如果 (info == &mode_info[IDX_tabs]) {
+		如果 (reversed)
 			mode->c_oflag |= OXTABS;
-		else
+		否则
 			mode->c_oflag &= ~OXTABS;
 	}
 #endif
-#if XCASE && IUCLC && OLCUC
-	else if (info==&mode_info[IDX_lcase] || info==&mode_info[IDX_LCASE]) {
-		if (reversed) {
+#如果 XCASE && IUCLC && OLCUC
+	否则 如果 (info==&mode_info[IDX_lcase] || info==&mode_info[IDX_LCASE]) {
+		如果 (reversed) {
 			mode->c_lflag &= ~XCASE;
 			mode->c_iflag &= ~IUCLC;
 			mode->c_oflag &= ~OLCUC;
-		} else {
+		} 否则 {
 			mode->c_lflag |= XCASE;
 			mode->c_iflag |= IUCLC;
 			mode->c_oflag |= OLCUC;
 		}
 	}
 #endif
-	else if (info == &mode_info[IDX_crt]) {
+	否则 如果 (info == &mode_info[IDX_crt]) {
 		mode->c_lflag |= ECHOE | ECHOCTL | ECHOKE;
-	} else if (info == &mode_info[IDX_dec]) {
+	} 否则 如果 (info == &mode_info[IDX_dec]) {
 		mode->c_cc[VINTR] = 3; /* ^C */
 		mode->c_cc[VERASE] = 127; /* DEL */
 		mode->c_cc[VKILL] = 21; /* ^U */
 		mode->c_lflag |= ECHOE | ECHOCTL | ECHOKE;
-		if (IXANY) mode->c_iflag &= ~IXANY;
+		如果 (IXANY) mode->c_iflag &= ~IXANY;
 	}
 }
 
@@ -1251,17 +1251,17 @@ static void set_control_char_or_die(const struct control_info *info,
 {
 	unsigned char value;
 
-	if (info == &control_info[CIDX_min] || info == &control_info[CIDX_time])
+	如果 (info == &control_info[CIDX_min] || info == &control_info[CIDX_time])
 		value = xatoul_range_sfx(arg, 0, 0xff, stty_suffixes);
-	else if (arg[0] == '\0' || arg[1] == '\0')
+	否则 如果 (arg[0] == '\0' || arg[1] == '\0')
 		value = arg[0];
-	else if (strcmp(arg, "^-") == 0 || strcmp(arg, "undef") == 0)
+	否则 如果 (strcmp(arg, "^-") == 0 || strcmp(arg, "undef") == 0)
 		value = _POSIX_VDISABLE;
-	else if (arg[0] == '^') { /* Ignore any trailing junk (^Cjunk) */
+	否则 如果 (arg[0] == '^') { /* Ignore any trailing junk (^Cjunk) */
 		value = arg[1] & 0x1f; /* Non-letters get weird results */
-		if (arg[1] == '?')
+		如果 (arg[1] == '?')
 			value = 127;
-	} else
+	} 否则
 		value = xatoul_range_sfx(arg, 0, 0xff, stty_suffixes);
 	mode->c_cc[info->offset] = value;
 }
@@ -1272,15 +1272,15 @@ static void set_control_char_or_die(const struct control_info *info,
 #define STTY_recoverable_output (1 << 3)
 #define STTY_noargs             (1 << 4)
 
-int stty_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int stty_main(int argc UNUSED_PARAM, char **argv)
+整数 stty_main(整数 argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+整数 stty_main(整数 argc UNUSED_PARAM, char **argv)
 {
 	struct termios mode;
-	void (*output_func)(const struct termios *, int);
+	void (*output_func)(const struct termios *, 整数);
 	const char *file_name = NULL;
-	int display_all = 0;
-	int stty_state;
-	int k;
+	整数 display_all = 0;
+	整数 stty_state;
+	整数 k;
 
 	INIT_G();
 
@@ -1289,25 +1289,25 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 
 	/* First pass: only parse/verify command line params */
 	k = 0;
-	while (argv[++k]) {
+	当 (argv[++k]) {
 		const struct mode_info *mp;
 		const struct control_info *cp;
 		const char *arg = argv[k];
 		const char *argnext = argv[k+1];
-		int param;
+		整数 param;
 
-		if (arg[0] == '-') {
-			int i;
+		如果 (arg[0] == '-') {
+			整数 i;
 			mp = find_mode(arg+1);
-			if (mp) {
-				if (!(mp->flags & REV))
+			如果 (mp) {
+				如果 (!(mp->flags & REV))
 					goto invalid_argument;
 				stty_state &= ~STTY_noargs;
 				continue;
 			}
 			/* It is an option - parse it */
 			i = 0;
-			while (arg[++i]) {
+			当 (arg[++i]) {
 				switch (arg[i]) {
 				case 'a':
 					stty_state |= STTY_verbose_output;
@@ -1319,16 +1319,16 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 					output_func = display_recoverable;
 					break;
 				case 'F':
-					if (file_name)
+					如果 (file_name)
 						bb_simple_error_msg_and_die("only one device may be specified");
 					file_name = &arg[i+1]; /* "-Fdevice" ? */
-					if (!file_name[0]) { /* nope, "-F device" */
-						int p = k+1; /* argv[p] is argnext */
+					如果 (!file_name[0]) { /* nope, "-F device" */
+						整数 p = k+1; /* argv[p] is argnext */
 						file_name = argnext;
-						if (!file_name)
+						如果 (!file_name)
 							bb_error_msg_and_die(bb_msg_requires_arg, "-F");
 						/* remove -F param from arg[vc] */
-						while (argv[p]) {
+						当 (argv[p]) {
 							argv[p] = argv[p+1];
 							++p;
 						}
@@ -1343,14 +1343,14 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 		}
 
 		mp = find_mode(arg);
-		if (mp) {
+		如果 (mp) {
 			stty_state &= ~STTY_noargs;
 			continue;
 		}
 
 		cp = find_control(arg);
-		if (cp) {
-			if (!argnext)
+		如果 (cp) {
+			如果 (!argnext)
 				bb_error_msg_and_die(bb_msg_requires_arg, arg);
 			/* called for the side effect of xfunc death only */
 			set_control_char_or_die(cp, argnext, &mode);
@@ -1360,8 +1360,8 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 		}
 
 		param = find_param(arg);
-		if (param & param_need_arg) {
-			if (!argnext)
+		如果 (param & param_need_arg) {
+			如果 (!argnext)
 				bb_error_msg_and_die(bb_msg_requires_arg, arg);
 			++k;
 		}
@@ -1393,8 +1393,8 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 			set_speed_or_die(output_speed, argnext, &mode);
 			break;
 		default:
-			if (recover_mode(arg, &mode) == 1) break;
-			if (tty_value_to_baud(xatou(arg)) != (speed_t) -1) break;
+			如果 (recover_mode(arg, &mode) == 1) break;
+			如果 (tty_value_to_baud(xatou(arg)) != (speed_t) -1) break;
  invalid_argument:
 			bb_error_msg_and_die("invalid argument '%s'", arg);
 		}
@@ -1402,20 +1402,20 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 	}
 
 	/* Specifying both -a and -g is an error */
-	if ((stty_state & (STTY_verbose_output | STTY_recoverable_output)) ==
+	如果 ((stty_state & (STTY_verbose_output | STTY_recoverable_output)) ==
 		(STTY_verbose_output | STTY_recoverable_output)
 	) {
 		bb_simple_error_msg_and_die("-a and -g are mutually exclusive");
 	}
 	/* Specifying -a or -g with non-options is an error */
-	if ((stty_state & (STTY_verbose_output | STTY_recoverable_output))
+	如果 ((stty_state & (STTY_verbose_output | STTY_recoverable_output))
 	 && !(stty_state & STTY_noargs)
 	) {
 		bb_simple_error_msg_and_die("modes may not be set when -a or -g is used");
 	}
 
 	/* Now it is safe to start doing things */
-	if (file_name) {
+	如果 (file_name) {
 		G.device_name = file_name;
 		xmove_fd(xopen_nonblocking(G.device_name), STDIN_FILENO);
 		ndelay_off(STDIN_FILENO);
@@ -1424,27 +1424,27 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 	/* Initialize to all zeroes so there is no risk memcmp will report a
 	   spurious difference in an uninitialized portion of the structure */
 	memset(&mode, 0, sizeof(mode));
-	if (tcgetattr(STDIN_FILENO, &mode))
+	如果 (tcgetattr(STDIN_FILENO, &mode))
 		perror_on_device_and_die("%s");
 
-	if (stty_state & (STTY_verbose_output | STTY_recoverable_output | STTY_noargs)) {
+	如果 (stty_state & (STTY_verbose_output | STTY_recoverable_output | STTY_noargs)) {
 		G.max_col = get_terminal_width(STDOUT_FILENO);
 		output_func(&mode, display_all);
-		return EXIT_SUCCESS;
+		返回 EXIT_SUCCESS;
 	}
 
 	/* Second pass: perform actions */
 	k = 0;
-	while (argv[++k]) {
+	当 (argv[++k]) {
 		const struct mode_info *mp;
 		const struct control_info *cp;
 		const char *arg = argv[k];
 		const char *argnext = argv[k+1];
-		int param;
+		整数 param;
 
-		if (arg[0] == '-') {
+		如果 (arg[0] == '-') {
 			mp = find_mode(arg+1);
-			if (mp) {
+			如果 (mp) {
 				set_mode(mp, 1 /* reversed */, &mode);
 				stty_state |= STTY_require_set_attr;
 			}
@@ -1453,14 +1453,14 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 		}
 
 		mp = find_mode(arg);
-		if (mp) {
+		如果 (mp) {
 			set_mode(mp, 0 /* non-reversed */, &mode);
 			stty_state |= STTY_require_set_attr;
 			continue;
 		}
 
 		cp = find_control(arg);
-		if (cp) {
+		如果 (cp) {
 			++k;
 			set_control_char_or_die(cp, argnext, &mode);
 			stty_state |= STTY_require_set_attr;
@@ -1468,7 +1468,7 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 		}
 
 		param = find_param(arg);
-		if (param & param_need_arg) {
+		如果 (param & param_need_arg) {
 			++k;
 		}
 
@@ -1503,9 +1503,9 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 			stty_state |= (STTY_require_set_attr | STTY_speed_was_set);
 			break;
 		default:
-			if (recover_mode(arg, &mode) == 1)
+			如果 (recover_mode(arg, &mode) == 1)
 				stty_state |= STTY_require_set_attr;
-			else /* true: if (tty_value_to_baud(xatou(arg)) != (speed_t) -1) */{
+			否则 /* true: if (tty_value_to_baud(xatou(arg)) != (speed_t) -1) */{
 				set_speed_or_die(both_speeds, arg, &mode);
 				stty_state |= (STTY_require_set_attr | STTY_speed_was_set);
 			} /* else - impossible (caught in the first pass):
@@ -1513,10 +1513,10 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 		}
 	}
 
-	if (stty_state & STTY_require_set_attr) {
+	如果 (stty_state & STTY_require_set_attr) {
 		struct termios new_mode;
 
-		if (tcsetattr(STDIN_FILENO, TCSADRAIN, &mode))
+		如果 (tcsetattr(STDIN_FILENO, TCSADRAIN, &mode))
 			perror_on_device_and_die("%s");
 
 		/* POSIX (according to Zlotnick's book) tcsetattr returns zero if
@@ -1529,16 +1529,16 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 		/* Initialize to all zeroes so there is no risk memcmp will report a
 		   spurious difference in an uninitialized portion of the structure */
 		memset(&new_mode, 0, sizeof(new_mode));
-		if (tcgetattr(STDIN_FILENO, &new_mode))
+		如果 (tcgetattr(STDIN_FILENO, &new_mode))
 			perror_on_device_and_die("%s");
 
-		if (memcmp(&mode, &new_mode, sizeof(mode)) != 0) {
+		如果 (memcmp(&mode, &new_mode, sizeof(mode)) != 0) {
 /*
  * I think the below chunk is not necessary on Linux.
  * If you are deleting it, also delete STTY_speed_was_set bit -
  * it is only ever checked here.
  */
-#if 0 /* was "if CIBAUD" */
+#如果 0 /* was "if CIBAUD" */
 			/* SunOS 4.1.3 (at least) has the problem that after this sequence,
 			   tcgetattr (&m1); tcsetattr (&m1); tcgetattr (&m2);
 			   sometimes (m1 != m2).  The only difference is in the four bits
@@ -1549,12 +1549,12 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 			   error for a true failure to set the baud rate */
 
 			new_mode.c_cflag &= (~CIBAUD);
-			if ((stty_state & STTY_speed_was_set)
+			如果 ((stty_state & STTY_speed_was_set)
 			 || memcmp(&mode, &new_mode, sizeof(mode)) != 0)
 #endif
 				perror_on_device_and_die("%s: cannot perform all requested operations");
 		}
 	}
 
-	return EXIT_SUCCESS;
+	返回 EXIT_SUCCESS;
 }

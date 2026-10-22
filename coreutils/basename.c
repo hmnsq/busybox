@@ -47,8 +47,8 @@
 
 /* This is a NOFORK applet. Be very careful! */
 
-int basename_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int basename_main(int argc UNUSED_PARAM, char **argv)
+整数 basename_main(整数 argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+整数 basename_main(整数 argc UNUSED_PARAM, char **argv)
 {
 	unsigned opts;
 	const char *suffix = NULL;
@@ -67,16 +67,16 @@ int basename_main(int argc UNUSED_PARAM, char **argv)
 		/* It should strip slash: /abc/def/ -> def */
 		s = bb_get_last_path_component_strip(*argv++);
 		m = strlen(s);
-		if (!opts) {
-			if (*argv) {
+		如果 (!opts) {
+			如果 (*argv) {
 				suffix = *argv;
-				if (argv[1])
+				如果 (argv[1])
 					bb_show_usage();
 			}
 		}
-		if (suffix) {
+		如果 (suffix) {
 			size_t n = strlen(suffix);
-			if ((m > n) && (strcmp(s + m - n, suffix) == 0)) {
+			如果 ((m > n) && (strcmp(s + m - n, suffix) == 0)) {
 				m -= n;
 				/*s[m] = '\0'; - redundant */
 			}
@@ -84,9 +84,9 @@ int basename_main(int argc UNUSED_PARAM, char **argv)
 		/* puts(s) will do, but we can do without stdio this way: */
 		s[m++] = '\n';
 		/* NB: != is correct here: */
-		if (full_write(STDOUT_FILENO, s, m) != (ssize_t)m)
-			return EXIT_FAILURE;
-	} while (opts && *argv);
+		如果 (full_write(STDOUT_FILENO, s, m) != (ssize_t)m)
+			返回 EXIT_FAILURE;
+	} 当 (opts && *argv);
 
-	return EXIT_SUCCESS;
+	返回 EXIT_SUCCESS;
 }
