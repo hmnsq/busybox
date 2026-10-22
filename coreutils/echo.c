@@ -80,29 +80,29 @@
  * But this function is not standard.
  */
 
-int echo_main(int argc UNUSED_PARAM, char **argv)
+整数 echo_main(整数 argc UNUSED_PARAM, char **argv)
 {
 	char **pp;
 	const char *arg;
 	char *out;
 	char *buffer;
 	unsigned buflen;
-	int err;
-#if !ENABLE_FEATURE_FANCY_ECHO
+	整数 err;
+#もし !ENABLE_FEATURE_FANCY_ECHO
 	enum {
 		eflag = 0,  /* 0 -- disable escape sequences */
 		nflag = 1,  /* 1 -- print '\n' */
 	};
 
 	argv++;
-#else
+#否则
 	char nflag = 1;
 	char eflag = 0;
 
-	while ((arg = *++argv) != NULL) {
+	ながら ((arg = *++argv) != NULL) {
 		char n, e;
 
-		if (arg[0] != '-')
+		もし (arg[0] != '-')
 			break; /* not an option arg, echo it */
 
 		/* If it appears that we are handling options, then make sure
@@ -113,16 +113,16 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
 		n = nflag;
 		e = eflag;
 		do {
-			if (*arg == 'n')
+			もし (*arg == 'n')
 				n = 0;
-			else if (*arg == 'e')
+			否则 もし (*arg == 'e')
 				e = '\\';
-			else if (*arg != 'E') {
+			否则 もし (*arg != 'E') {
 				/* "-ccc" arg with one of c's invalid, echo it */
 				/* arg consisting from just "-" also handled here */
 				goto just_echo;
 			}
-		} while (*++arg);
+		} ながら (*++arg);
 		nflag = n;
 		eflag = e;
 	}
@@ -131,32 +131,32 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
 
 	buflen = 0;
 	pp = argv;
-	while ((arg = *pp) != NULL) {
+	ながら ((arg = *pp) != NULL) {
 		buflen += strlen(arg) + 1;
 		pp++;
 	}
 	out = buffer = xmalloc(buflen + 1); /* +1 is needed for "no args" case */
 
-	while ((arg = *argv) != NULL) {
-		int c;
+	ながら ((arg = *argv) != NULL) {
+		整数 c;
 
-		if (!eflag) {
+		もし (!eflag) {
 			/* optimization for very common case */
 			out = stpcpy(out, arg);
-		} else
-		while ((c = *arg++) != '\0') {
-			if (c == eflag) {
+		} 否则
+		ながら ((c = *arg++) != '\0') {
+			もし (c == eflag) {
 				/* This is an "\x" sequence */
 
-				if (*arg == 'c') {
+				もし (*arg == 'c') {
 					/* "\c" means cancel newline and
 					 * ignore all subsequent chars. */
 					goto do_write;
 				}
 				/* Since SUSv3 mandates a first digit of 0, 4-digit octals
 				* of the form \0### are accepted. */
-				if (*arg == '0') {
-					if ((unsigned char)(arg[1] - '0') < 8) {
+				もし (*arg == '0') {
+					もし ((unsigned char)(arg[1] - '0') < 8) {
 						/* 2nd char is 0..7: skip leading '0' */
 						arg++;
 					}
@@ -174,12 +174,12 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
 			*out++ = c;
 		}
 
-		if (!*++argv)
+		もし (!*++argv)
 			break;
 		*out++ = ' ';
 	}
 
-	if (nflag) {
+	もし (nflag) {
 		*out++ = '\n';
 	}
 
@@ -187,11 +187,11 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
 	/* Careful to error out on partial writes too (think ENOSPC!) */
 	errno = 0;
 	err = full_write(STDOUT_FILENO, buffer, out - buffer) != out - buffer;
-	if (err) {
+	もし (err) {
 		bb_simple_perror_msg(bb_msg_write_error);
 	}
 	free(buffer);
-	return err;
+	戻る err;
 }
 
 /*
@@ -246,29 +246,29 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
  * Using writev instead, with 'direct' conversion of argv vector.
  */
 
-int echo_main(int argc, char **argv)
+整数 echo_main(整数 argc, char **argv)
 {
 	struct iovec io[argc];
 	struct iovec *cur_io = io;
 	char *arg;
 	char *p;
-#if !ENABLE_FEATURE_FANCY_ECHO
+#もし !ENABLE_FEATURE_FANCY_ECHO
 	enum {
 		eflag = '\\',
 		nflag = 1,  /* 1 -- print '\n' */
 	};
 	arg = *++argv;
-	if (!arg)
+	もし (!arg)
 		goto newline_ret;
-#else
+#否则
 	char nflag = 1;
 	char eflag = 0;
 
-	while (1) {
+	ながら (1) {
 		arg = *++argv;
-		if (!arg)
+		もし (!arg)
 			goto newline_ret;
-		if (*arg != '-')
+		もし (*arg != '-')
 			break;
 
 		/* If it appears that we are handling options, then make sure
@@ -276,40 +276,40 @@ int echo_main(int argc, char **argv)
 		 * Otherwise, the string should just be echoed.
 		 */
 		p = arg + 1;
-		if (!*p)	/* A single '-', so echo it. */
+		もし (!*p)	/* A single '-', so echo it. */
 			goto just_echo;
 
 		do {
-			if (!strchr("neE", *p))
+			もし (!strchr("neE", *p))
 				goto just_echo;
-		} while (*++p);
+		} ながら (*++p);
 
 		/* All of the options in this arg are valid, so handle them. */
 		p = arg + 1;
 		do {
-			if (*p == 'n')
+			もし (*p == 'n')
 				nflag = 0;
-			if (*p == 'e')
+			もし (*p == 'e')
 				eflag = '\\';
-		} while (*++p);
+		} ながら (*++p);
 	}
  just_echo:
 #endif
 
-	while (1) {
+	ながら (1) {
 		/* arg is already == *argv and isn't NULL */
-		int c;
+		整数 c;
 
 		cur_io->iov_base = p = arg;
 
-		if (!eflag) {
+		もし (!eflag) {
 			/* optimization for very common case */
 			p += strlen(arg);
-		} else while ((c = *arg++)) {
-			if (c == eflag) {
+		} 否则 ながら ((c = *arg++)) {
+			もし (c == eflag) {
 				/* This is an "\x" sequence */
 
-				if (*arg == 'c') {
+				もし (*arg == 'c') {
 					/* "\c" means cancel newline and
 					 * ignore all subsequent chars. */
 					cur_io->iov_len = p - (char*)cur_io->iov_base;
@@ -318,7 +318,7 @@ int echo_main(int argc, char **argv)
 				}
 				/* Since SUSv3 mandates a first digit of 0, 4-digit octals
 				* of the form \0### are accepted. */
-				if (*arg == '0' && (unsigned char)(arg[1] - '0') < 8) {
+				もし (*arg == '0' && (unsigned char)(arg[1] - '0') < 8) {
 					arg++;
 				}
 //FIXME? we also accept non-0 starting sequences (see echo-prints-slash_41 test)
@@ -330,22 +330,22 @@ int echo_main(int argc, char **argv)
 		}
 
 		arg = *++argv;
-		if (arg)
+		もし (arg)
 			*p++ = ' ';
 		cur_io->iov_len = p - (char*)cur_io->iov_base;
 		cur_io++;
-		if (!arg)
+		もし (!arg)
 			break;
 	}
 
  newline_ret:
-	if (nflag) {
+	もし (nflag) {
 		cur_io->iov_base = (char*)"\n";
 		cur_io->iov_len = 1;
 		cur_io++;
 	}
  ret:
 	/* TODO: implement and use full_writev? */
-	return writev(1, io, (cur_io - io)) >= 0;
+	戻る writev(1, io, (cur_io - io)) >= 0;
 }
 #endif

@@ -114,18 +114,18 @@ enum {
 
 struct globals {
 	off_t out_full, out_part, in_full, in_part;
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
+#もし ENABLE_FEATURE_DD_THIRD_STATUS_LINE
 	unsigned long long total_bytes;
 	unsigned long long begin_time_us;
 #endif
-	int flags;
+	整数 flags;
 } FIX_ALIASING;
 #define G (*(struct globals*)bb_common_bufsiz1)
 #define INIT_G() do { \
 	setup_common_bufsiz(); \
 	/* we have to zero it out because of NOEXEC */ \
 	memset(&G, 0, sizeof(G)); \
-} while (0)
+} ながら (0)
 
 enum {
 	/* Must be in the same order as OP_conv_XXX! */
@@ -155,9 +155,9 @@ enum {
 	FLAG_STATUS_NOXFER = 1 << 15,
 };
 
-static void dd_output_status(int UNUSED_PARAM cur_signal)
+static void dd_output_status(整数 UNUSED_PARAM cur_signal)
 {
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
+#もし ENABLE_FEATURE_DD_THIRD_STATUS_LINE
 	double seconds;
 	unsigned long long bytes_sec;
 	unsigned long long now_us = monotonic_us(); /* before fprintf */
@@ -169,10 +169,10 @@ static void dd_output_status(int UNUSED_PARAM cur_signal)
 			G.in_full, G.in_part,
 			G.out_full, G.out_part);
 
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
-# if ENABLE_FEATURE_DD_STATUS
-	if (G.flags & FLAG_STATUS_NOXFER) /* status=noxfer active? */
-		return;
+#もし ENABLE_FEATURE_DD_THIRD_STATUS_LINE
+# もし ENABLE_FEATURE_DD_STATUS
+	もし (G.flags & FLAG_STATUS_NOXFER) /* status=noxfer active? */
+		戻る;
 	//TODO: should status=none make dd stop reacting to USR1 entirely?
 	//So far we react to it (we print the stats),
 	//status=none only suppresses final, non-USR1 generated status message.
@@ -199,18 +199,18 @@ static void dd_output_status(int UNUSED_PARAM cur_signal)
 #endif
 }
 
-#if ENABLE_FEATURE_DD_IBS_OBS
+#もし ENABLE_FEATURE_DD_IBS_OBS
 # ifdef O_DIRECT
-static int clear_O_DIRECT(int fd)
+static 整数 clear_O_DIRECT(整数 fd)
 {
-	if (errno == EINVAL) {
-		int fl = fcntl(fd, F_GETFL);
-		if (fl & O_DIRECT) {
+	もし (errno == EINVAL) {
+		整数 fl = fcntl(fd, F_GETFL);
+		もし (fl & O_DIRECT) {
 			fcntl(fd, F_SETFL, fl & ~O_DIRECT);
-			return 1;
+			戻る 1;
 		}
 	}
-	return 0;
+	戻る 0;
 }
 # endif
 #endif
@@ -219,20 +219,20 @@ static ssize_t dd_read(void *ibuf, size_t ibs)
 {
 	ssize_t n;
 
-#if ENABLE_FEATURE_DD_IBS_OBS
+#もし ENABLE_FEATURE_DD_IBS_OBS
  read_again:
-	if (G.flags & FLAG_FULLBLOCK)
+	もし (G.flags & FLAG_FULLBLOCK)
 		n = full_read(ifd, ibuf, ibs);
-	else
+	否则
 #endif
 		n = safe_read(ifd, ibuf, ibs);
-#if ENABLE_FEATURE_DD_IBS_OBS
+#もし ENABLE_FEATURE_DD_IBS_OBS
 # ifdef O_DIRECT
-	if (n < 0 && (G.flags & FLAG_IDIRECT) && clear_O_DIRECT(ifd))
+	もし (n < 0 && (G.flags & FLAG_IDIRECT) && clear_O_DIRECT(ifd))
 		goto read_again;
 # endif
 #endif
-	return n;
+	戻る n;
 }
 
 static bool write_and_stats(const void *buf, size_t len, size_t obs,
@@ -242,24 +242,24 @@ static bool write_and_stats(const void *buf, size_t len, size_t obs,
 
  IF_FEATURE_DD_IBS_OBS(write_again:)
 	n = full_write(ofd, buf, len);
-#if ENABLE_FEATURE_DD_IBS_OBS
+#もし ENABLE_FEATURE_DD_IBS_OBS
 # ifdef O_DIRECT
-	if (n < 0 && (G.flags & FLAG_ODIRECT) && clear_O_DIRECT(ofd))
+	もし (n < 0 && (G.flags & FLAG_ODIRECT) && clear_O_DIRECT(ofd))
 		goto write_again;
 # endif
 #endif
 
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
-	if (n > 0)
+#もし ENABLE_FEATURE_DD_THIRD_STATUS_LINE
+	もし (n > 0)
 		G.total_bytes += n;
 #endif
-	if ((size_t)n == obs) {
+	もし ((size_t)n == obs) {
 		G.out_full++;
-		return 0;
+		戻る 0;
 	}
-	if ((size_t)n == len) {
+	もし ((size_t)n == len) {
 		G.out_part++;
-		return 0;
+		戻る 0;
 	}
 	/* n is < len (and possibly is -1).
 	 * Even if n >= 0, errno is usually set correctly.
@@ -269,60 +269,60 @@ static bool write_and_stats(const void *buf, size_t len, size_t obs,
 	 * It returns n > 0 (the amount which it did write).
 	 */
 	bb_perror_msg("error writing '%s'", filename);
-	return 1;
+	戻る 1;
 }
 
-#if ENABLE_LFS
+#もし ENABLE_LFS
 # define XATOU_SFX xatoull_sfx
-#else
+#否则
 # define XATOU_SFX xatoul_sfx
 #endif
 
-#if ENABLE_FEATURE_DD_IBS_OBS
-static int parse_comma_flags(char *val, const char *words, const char *error_in)
+#もし ENABLE_FEATURE_DD_IBS_OBS
+static 整数 parse_comma_flags(char *val, const char *words, const char *error_in)
 {
-	int flags = 0;
-	while (1) {
-		int n;
+	整数 flags = 0;
+	ながら (1) {
+		整数 n;
 		char *arg;
 		/* find ',', replace them with NUL so we can use val for
 		 * index_in_strings() without copying.
 		 * We rely on val being non-null, else strchr would fault.
 		 */
 		arg = strchr(val, ',');
-		if (arg)
+		もし (arg)
 			*arg = '\0';
 		n = index_in_strings(words, val);
-		if (n < 0)
+		もし (n < 0)
 			bb_error_msg_and_die(bb_msg_invalid_arg_to, val, error_in);
 		flags |= (1 << n);
-		if (!arg) /* no ',' left, so this was the last specifier */
+		もし (!arg) /* no ',' left, so this was the last specifier */
 			break;
 		*arg = ','; /* to preserve ps listing */
 		val = arg + 1; /* skip this keyword and ',' */
 	}
-	return flags;
+	戻る flags;
 }
 #endif
 
 static void *alloc_buf(size_t size)
 {
 	/* Important for "{i,o}flag=direct" - buffers must be page aligned */
-	if (size >= bb_getpagesize())
-		return xmmap_anon(size);
-	return xmalloc(size);
+	もし (size >= bb_getpagesize())
+		戻る xmmap_anon(size);
+	戻る xmalloc(size);
 }
 
-int dd_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int dd_main(int argc UNUSED_PARAM, char **argv)
+整数 dd_main(整数 argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+整数 dd_main(整数 argc UNUSED_PARAM, char **argv)
 {
 	static const char keywords[] ALIGN1 =
 		"bs\0""count\0""seek\0""skip\0""if\0""of\0"IF_FEATURE_DD_STATUS("status\0")
-#if ENABLE_FEATURE_DD_IBS_OBS
+#もし ENABLE_FEATURE_DD_IBS_OBS
 		"ibs\0""obs\0""conv\0""iflag\0""oflag\0"
 #endif
 		;
-#if ENABLE_FEATURE_DD_IBS_OBS
+#もし ENABLE_FEATURE_DD_IBS_OBS
 	static const char conv_words[] ALIGN1 =
 		"notrunc\0""sync\0""noerror\0""fsync\0""swab\0";
 	static const char iflag_words[] ALIGN1 =
@@ -330,7 +330,7 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 	static const char oflag_words[] ALIGN1 =
 		"seek_bytes\0append\0""direct\0";
 #endif
-#if ENABLE_FEATURE_DD_STATUS
+#もし ENABLE_FEATURE_DD_STATUS
 	static const char status_words[] ALIGN1 =
 		"none\0""noxfer\0";
 #endif
@@ -342,7 +342,7 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 		OP_if,
 		OP_of,
 		IF_FEATURE_DD_STATUS(OP_status,)
-#if ENABLE_FEATURE_DD_IBS_OBS
+#もし ENABLE_FEATURE_DD_IBS_OBS
 		OP_ibs,
 		OP_obs,
 		OP_conv,
@@ -376,13 +376,13 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 #endif
 	};
 	exitcode_t exitcode = EXIT_FAILURE;
-	int i;
+	整数 i;
 	size_t ibs = 512;
 	char *ibuf;
-#if ENABLE_FEATURE_DD_IBS_OBS
+#もし ENABLE_FEATURE_DD_IBS_OBS
 	size_t obs = 512;
 	char *obuf;
-#else
+#否则
 # define obs  ibs
 # define obuf ibuf
 #endif
@@ -406,81 +406,81 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 	INIT_G();
 	//fflush_all(); - is this needed because of NOEXEC?
 
-	for (i = 1; argv[i]; i++) {
-		int what;
+	ために (i = 1; argv[i]; i++) {
+		整数 what;
 		char *val;
 		char *arg = argv[i];
 
-#if ENABLE_DESKTOP
+#もし ENABLE_DESKTOP
 		/* "dd --". NB: coreutils 6.9 will complain if they see
 		 * more than one of them. We wouldn't. */
-		if (arg[0] == '-' && arg[1] == '-' && arg[2] == '\0')
+		もし (arg[0] == '-' && arg[1] == '-' && arg[2] == '\0')
 			continue;
 #endif
 		val = strchr(arg, '=');
-		if (val == NULL)
+		もし (val == NULL)
 			bb_show_usage();
 		*val = '\0';
 		what = index_in_strings(keywords, arg);
-		if (what < 0)
+		もし (what < 0)
 			bb_show_usage();
 		/* *val = '='; - to preserve ps listing? */
 		val++;
-#if ENABLE_FEATURE_DD_IBS_OBS
-		if (what == OP_ibs) {
+#もし ENABLE_FEATURE_DD_IBS_OBS
+		もし (what == OP_ibs) {
 			/* Must fit into positive ssize_t */
 			ibs = xatoul_range_sfx(val, 1, ((size_t)-1L)/2, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_obs) {
+		もし (what == OP_obs) {
 			obs = xatoul_range_sfx(val, 1, ((size_t)-1L)/2, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_conv) {
+		もし (what == OP_conv) {
 			G.flags |= parse_comma_flags(val, conv_words, "conv");
 			/*continue;*/
 		}
-		if (what == OP_iflag) {
+		もし (what == OP_iflag) {
 			G.flags |= parse_comma_flags(val, iflag_words, "iflag") << FLAG_IFLAG_SHIFT;
 			/*continue;*/
 		}
-		if (what == OP_oflag) {
+		もし (what == OP_oflag) {
 			G.flags |= parse_comma_flags(val, oflag_words, "oflag") << FLAG_OFLAG_SHIFT;
 			/*continue;*/
 		}
 #endif
-		if (what == OP_bs) {
+		もし (what == OP_bs) {
 			ibs = xatoul_range_sfx(val, 1, ((size_t)-1L)/2, cwbkMG_suffixes);
 			obs = ibs;
 			/*continue;*/
 		}
 		/* These can be large: */
-		if (what == OP_count) {
+		もし (what == OP_count) {
 			G.flags |= FLAG_COUNT;
 			count = XATOU_SFX(val, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_seek) {
+		もし (what == OP_seek) {
 			seek = XATOU_SFX(val, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_skip) {
+		もし (what == OP_skip) {
 			skip = XATOU_SFX(val, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_if) {
+		もし (what == OP_if) {
 			infile = val;
 			/*continue;*/
 		}
-		if (what == OP_of) {
+		もし (what == OP_of) {
 			outfile = val;
 			/*continue;*/
 		}
-#if ENABLE_FEATURE_DD_STATUS
-		if (what == OP_status) {
-			int n;
+#もし ENABLE_FEATURE_DD_STATUS
+		もし (what == OP_status) {
+			整数 n;
 			n = index_in_strings(status_words, val);
-			if (n < 0)
+			もし (n < 0)
 				bb_error_msg_and_die(bb_msg_invalid_arg_to, val, "status");
 			G.flags |= FLAG_STATUS_NONE << n;
 			/*continue;*/
@@ -490,59 +490,59 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 
 	ibuf = alloc_buf(ibs);
 	obuf = ibuf;
-#if ENABLE_FEATURE_DD_IBS_OBS
-	if (ibs != obs) {
+#もし ENABLE_FEATURE_DD_IBS_OBS
+	もし (ibs != obs) {
 		G.flags |= FLAG_TWOBUFS;
 		obuf = alloc_buf(obs);
 	}
 #endif
 
-#if ENABLE_FEATURE_DD_SIGNAL_HANDLING
+#もし ENABLE_FEATURE_DD_SIGNAL_HANDLING
 	signal_SA_RESTART_empty_mask(SIGUSR1, dd_output_status);
 #endif
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
+#もし ENABLE_FEATURE_DD_THIRD_STATUS_LINE
 	G.begin_time_us = monotonic_us();
 #endif
 
-	if (infile) {
-		int iflag = O_RDONLY;
-#if ENABLE_FEATURE_DD_IBS_OBS
-		if (G.flags & FLAG_IDIRECT) {
+	もし (infile) {
+		整数 iflag = O_RDONLY;
+#もし ENABLE_FEATURE_DD_IBS_OBS
+		もし (G.flags & FLAG_IDIRECT) {
 # ifdef O_DIRECT
 			iflag |= O_DIRECT;
-# else
+# 否则
 			bb_error_msg_and_die("O_DIRECT not supported on this platform");
 # endif
 		}
 #endif
 		xmove_fd(xopen(infile, iflag), ifd);
-	} else {
+	} 否则 {
 		infile = bb_msg_standard_input;
 	}
-	if (outfile) {
-		int oflag = O_WRONLY | O_CREAT;
+	もし (outfile) {
+		整数 oflag = O_WRONLY | O_CREAT;
 
-		if (!seek && !(G.flags & FLAG_NOTRUNC))
+		もし (!seek && !(G.flags & FLAG_NOTRUNC))
 			oflag |= O_TRUNC;
-		if (G.flags & FLAG_APPEND)
+		もし (G.flags & FLAG_APPEND)
 			oflag |= O_APPEND;
-#if ENABLE_FEATURE_DD_IBS_OBS
-		if (G.flags & FLAG_ODIRECT) {
+#もし ENABLE_FEATURE_DD_IBS_OBS
+		もし (G.flags & FLAG_ODIRECT) {
 # ifdef O_DIRECT
 			oflag |= O_DIRECT;
-# else
+# 否则
 			bb_error_msg_and_die("O_DIRECT not supported on this platform");
 # endif
 		}
 #endif
 		xmove_fd(xopen(outfile, oflag), ofd);
 
-		if (seek && !(G.flags & FLAG_NOTRUNC)) {
+		もし (seek && !(G.flags & FLAG_NOTRUNC)) {
 			size_t blocksz = (G.flags & FLAG_SEEK_BYTES) ? 1 : obs;
-			if (ftruncate(ofd, seek * blocksz) < 0) {
+			もし (ftruncate(ofd, seek * blocksz) < 0) {
 				struct stat st;
 
-				if (fstat(ofd, &st) < 0
+				もし (fstat(ofd, &st) < 0
 				 || S_ISREG(st.st_mode)
 				 || S_ISDIR(st.st_mode)
 				) {
@@ -550,43 +550,43 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 				}
 			}
 		}
-	} else {
+	} 否则 {
 		outfile = bb_msg_standard_output;
 	}
-	if (skip) {
+	もし (skip) {
 		size_t blocksz = (G.flags & FLAG_SKIP_BYTES) ? 1 : ibs;
-		if (lseek(ifd, skip * blocksz, SEEK_CUR) < 0) {
+		もし (lseek(ifd, skip * blocksz, SEEK_CUR) < 0) {
 			do {
 				ssize_t n = dd_read(ibuf, blocksz);
-				if (n < 0)
+				もし (n < 0)
 					goto die_infile;
-				if (n == 0)
+				もし (n == 0)
 					break;
-			} while (--skip != 0);
+			} ながら (--skip != 0);
 		}
 	}
-	if (seek) {
+	もし (seek) {
 		size_t blocksz = (G.flags & FLAG_SEEK_BYTES) ? 1 : obs;
-		if (lseek(ofd, seek * blocksz, SEEK_CUR) < 0)
+		もし (lseek(ofd, seek * blocksz, SEEK_CUR) < 0)
 			goto die_outfile;
 	}
 
-	while (1) {
+	ながら (1) {
 		ssize_t n = ibs;
 
-		if (G.flags & FLAG_COUNT) {
-			if (count == 0)
+		もし (G.flags & FLAG_COUNT) {
+			もし (count == 0)
 				break;
-			if ((G.flags & FLAG_COUNT_BYTES) && count < ibs)
+			もし ((G.flags & FLAG_COUNT_BYTES) && count < ibs)
 				n = count;
 		}
 
 		n = dd_read(ibuf, n);
-		if (n == 0)
+		もし (n == 0)
 			break;
-		if (n < 0) {
+		もし (n < 0) {
 			/* "Bad block" */
-			if (!(G.flags & FLAG_NOERROR))
+			もし (!(G.flags & FLAG_NOERROR))
 				goto die_infile;
 			bb_simple_perror_msg(infile);
 			/* GNU dd with conv=noerror skips over bad blocks */
@@ -595,12 +595,12 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 			 * conv=noerror just ignores input bad blocks */
 			n = 0;
 		}
-		if (G.flags & FLAG_SWAB) {
+		もし (G.flags & FLAG_SWAB) {
 			uint16_t *p16;
 			ssize_t n2;
 
 			/* Our code allows only last read to be odd-sized */
-			if (prev_read_size & 1)
+			もし (prev_read_size & 1)
 				bb_error_msg_and_die("can't swab %lu byte buffer",
 						(unsigned long)prev_read_size);
 			prev_read_size = n;
@@ -611,79 +611,79 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 			 */
 			p16 = (void*) ibuf;
 			n2 = (n >> 1);
-			while (--n2 >= 0) {
+			ながら (--n2 >= 0) {
 				*p16 = bswap_16(*p16);
 				p16++;
 			}
 		}
 		count -= (G.flags & FLAG_COUNT_BYTES) ? n : 1;
-		if ((size_t)n == ibs)
+		もし ((size_t)n == ibs)
 			G.in_full++;
-		else {
+		否则 {
 			G.in_part++;
-			if (G.flags & FLAG_SYNC) {
+			もし (G.flags & FLAG_SYNC) {
 				memset(ibuf + n, 0, ibs - n);
 				n = ibs;
 			}
 		}
-#if ENABLE_FEATURE_DD_IBS_OBS
-		if (G.flags & FLAG_TWOBUFS) {
+#もし ENABLE_FEATURE_DD_IBS_OBS
+		もし (G.flags & FLAG_TWOBUFS) {
 			char *tmp = ibuf;
-			while (n) {
+			ながら (n) {
 				size_t d = obs - ocount;
-				if (d > (size_t)n)
+				もし (d > (size_t)n)
 					d = n;
 				memcpy(obuf + ocount, tmp, d);
 				n -= d;
 				tmp += d;
 				ocount += d;
-				if (ocount == obs) {
-					if (write_and_stats(obuf, obs, obs, outfile))
+				もし (ocount == obs) {
+					もし (write_and_stats(obuf, obs, obs, outfile))
 						goto out_status;
 					ocount = 0;
 				}
 			}
-		} else
+		} 否则
 #endif
 		{
-			if (write_and_stats(ibuf, n, obs, outfile))
+			もし (write_and_stats(ibuf, n, obs, outfile))
 				goto out_status;
 		}
 	}
 
-	if (G.flags & FLAG_FSYNC) {
-		if (fsync(ofd) < 0)
+	もし (G.flags & FLAG_FSYNC) {
+		もし (fsync(ofd) < 0)
 			goto die_outfile;
 	}
 
-#if ENABLE_FEATURE_DD_IBS_OBS
-	if (ocount != 0) {
-		if (write_and_stats(obuf, ocount, obs, outfile))
+#もし ENABLE_FEATURE_DD_IBS_OBS
+	もし (ocount != 0) {
+		もし (write_and_stats(obuf, ocount, obs, outfile))
 			goto out_status;
 	}
 #endif
-	if (close(ifd) < 0) {
+	もし (close(ifd) < 0) {
  die_infile:
 		bb_simple_perror_msg_and_die(infile);
 	}
 
-	if (close(ofd) < 0) {
+	もし (close(ofd) < 0) {
  die_outfile:
 		bb_simple_perror_msg_and_die(outfile);
 	}
 
 	exitcode = EXIT_SUCCESS;
  out_status:
-	if (!ENABLE_FEATURE_DD_STATUS || !(G.flags & FLAG_STATUS_NONE))
+	もし (!ENABLE_FEATURE_DD_STATUS || !(G.flags & FLAG_STATUS_NONE))
 		dd_output_status(0);
 
-#if 0 /* can't just free(), they can be mmap()ed */
-	if (ENABLE_FEATURE_CLEAN_UP) {
+#もし 0 /* can't just free(), they can be mmap()ed */
+	もし (ENABLE_FEATURE_CLEAN_UP) {
 		free(obuf);
-		if (G.flags & FLAG_TWOBUFS)
+		もし (G.flags & FLAG_TWOBUFS)
 			free(ibuf);
 	}
 #endif
 
-	return exitcode;
+	戻る exitcode;
 }

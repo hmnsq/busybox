@@ -29,8 +29,8 @@
 
 /* This is a NOEXEC applet. Be very careful! */
 
-int seq_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int seq_main(int argc, char **argv)
+整数 seq_main(整数 argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+整数 seq_main(整数 argc, char **argv)
 {
 	enum {
 		OPT_w = (1 << 0),
@@ -44,7 +44,7 @@ int seq_main(int argc, char **argv)
 	char *saved;
 	unsigned opt;
 
-#if ENABLE_LOCALE_SUPPORT
+#もし ENABLE_LOCALE_SUPPORT
 	/* Undo busybox.c: on input, we want to use dot
 	 * as fractional separator, regardless of current locale */
 	setlocale(LC_NUMERIC, "C");
@@ -52,19 +52,19 @@ int seq_main(int argc, char **argv)
 
 	/* Cater for negative arguments: if we see one, truncate argv[] on it */
 	n = 0;
-	for (;;) {
+	ために (;;) {
 		char c;
 		saved = argv[++n];
-		if (!saved)
+		もし (!saved)
 			break;
-		if (saved[0] != '-') {
+		もし (saved[0] != '-') {
 			// break; // "seq -s : -1 1" won't be treated correctly
 			continue;
 		}
 // "seq -s -1 1 9" is not treated correctly, but such usage
 // (delimiter string which looks like negative number) is very unlikely
 		c = saved[1];
-		if (c == '.' || (c >= '0' && c <= '9')) {
+		もし (c == '.' || (c >= '0' && c <= '9')) {
 			argv[n] = NULL;
 			break;
 		}
@@ -87,56 +87,56 @@ int seq_main(int argc, char **argv)
 			errno |= *pp;
 		case 1:
 			last = strtod(argv[argc-1], &pp);
-			if (!errno && *pp == '\0')
+			もし (!errno && *pp == '\0')
 				break;
 		default:
 			bb_show_usage();
 	}
 
-#if ENABLE_LOCALE_SUPPORT
+#もし ENABLE_LOCALE_SUPPORT
 	setlocale(LC_NUMERIC, "");
 #endif
 
 	/* Last checked to be compatible with: coreutils-6.10 */
 	width = 0;
 	frac_part = 0;
-	while (1) {
+	ながら (1) {
 		char *dot = strchrnul(*argv, '.');
-		int w = (dot - *argv);
-		int f = strlen(dot);
-		if (width < w)
+		整数 w = (dot - *argv);
+		整数 f = strlen(dot);
+		もし (width < w)
 			width = w;
 		argv++;
-		if (!*argv)
+		もし (!*argv)
 			break;
 		/* Why do the above _before_ frac check below?
 		 * Try "seq 1 2.0" and "seq 1.0 2.0":
 		 * coreutils never pay attention to the number
 		 * of fractional digits in last arg. */
-		if (frac_part < f)
+		もし (frac_part < f)
 			frac_part = f;
 	}
-	if (frac_part) {
+	もし (frac_part) {
 		frac_part--;
-		if (frac_part)
+		もし (frac_part)
 			width += frac_part + 1;
 	}
-	if (!(opt & OPT_w))
+	もし (!(opt & OPT_w))
 		width = 0;
 
 	sep = "";
 	v = first;
 	n = 0;
-	while (increment >= 0 ? v <= last : v >= last) {
-		if (printf("%s%0*.*f", sep, width, frac_part, v) < 0)
+	ながら (increment >= 0 ? v <= last : v >= last) {
+		もし (printf("%s%0*.*f", sep, width, frac_part, v) < 0)
 			break; /* I/O error, bail out (yes, this really happens) */
 		sep = opt_s;
 		/* v += increment; - would accumulate floating point errors */
 		n++;
 		v = first + n * increment;
 	}
-	if (n) /* if while loop executed at least once */
+	もし (n) /* if while loop executed at least once */
 		bb_putchar('\n');
 
-	return fflush_all();
+	戻る fflush_all();
 }

@@ -34,17 +34,17 @@
 
 #include "libbb.h"
 
-int chroot_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int chroot_main(int argc UNUSED_PARAM, char **argv)
+整数 chroot_main(整数 argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+整数 chroot_main(整数 argc UNUSED_PARAM, char **argv)
 {
 	++argv;
-	if (!*argv)
+	もし (!*argv)
 		bb_show_usage();
 
 	xchroot(*argv);
 
 	++argv;
-	if (!*argv) { /* no 2nd param (PROG), use shell */
+	もし (!*argv) { /* no 2nd param (PROG), use shell */
 		argv -= 2;
 		argv[0] = (char *) get_shell_name();
 		argv[1] = (char *) "-i"; /* GNU coreutils 8.4 compat */

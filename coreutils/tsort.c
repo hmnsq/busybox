@@ -47,7 +47,7 @@ struct globals {
 	BUILD_BUG_ON(sizeof(G) > COMMON_BUFSIZE); \
 	G.nodes = NULL; \
 	G.nodes_len = 0; \
-} while (0)
+} ながら (0)
 
 static struct node *
 get_node(const char *name)
@@ -57,14 +57,14 @@ get_node(const char *name)
 	unsigned b = G.nodes_len;
 
 	/* Binary search for name */
-	while (a != b) {
+	ながら (a != b) {
 		unsigned m = (a + b) / 2;
-		int cmp = strcmp(name, G.nodes[m]->name);
-		if (cmp == 0)
-			return G.nodes[m]; /* found */
-		if (cmp < 0) {
+		整数 cmp = strcmp(name, G.nodes[m]->name);
+		もし (cmp == 0)
+			戻る G.nodes[m]; /* found */
+		もし (cmp < 0) {
 			b = m;
-		} else {
+		} 否则 {
 			a = m + 1;
 		}
 	}
@@ -82,7 +82,7 @@ get_node(const char *name)
 		(G.nodes_len - a) * sizeof(*G.nodes));
 	G.nodes[a] = n;
 	G.nodes_len++;
-	return n;
+	戻る n;
 }
 
 static void
@@ -93,25 +93,25 @@ add_edge(struct node *a, struct node *b)
 	b->in_count++;
 }
 
-int tsort_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int tsort_main(int argc UNUSED_PARAM, char **argv)
+整数 tsort_main(整数 argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+整数 tsort_main(整数 argc UNUSED_PARAM, char **argv)
 {
 	char *line;
 	size_t linesz;
 	ssize_t len;
 	struct node *a;
-	int cycles;
+	整数 cycles;
 	unsigned i;
-#if ENABLE_FEATURE_CLEAN_UP
+#もし ENABLE_FEATURE_CLEAN_UP
 	unsigned max_len;
 #endif
 
 	INIT_G();
 
-	if (argv[1]) {
-		if (argv[2])
+	もし (argv[1]) {
+		もし (argv[2])
 			bb_show_usage();
-		if (NOT_LONE_DASH(argv[1])) {
+		もし (NOT_LONE_DASH(argv[1])) {
 			close(STDIN_FILENO); /* == 0 */
 			xopen(argv[1], O_RDONLY); /* fd will be 0 */
 		}
@@ -121,23 +121,23 @@ int tsort_main(int argc UNUSED_PARAM, char **argv)
 	a = NULL;
 	line = NULL;
 	linesz = 0;
-	while ((len = getline(&line, &linesz, stdin)) != -1) {
+	ながら ((len = getline(&line, &linesz, stdin)) != -1) {
 		char *s = line;
-		while (*(s = skip_whitespace(s)) != '\0') {
+		ながら (*(s = skip_whitespace(s)) != '\0') {
 			struct node *b;
 			char *word;
 
 			word = s;
 			s = skip_non_whitespace(s);
-			if (*s)
+			もし (*s)
 				*s++ = '\0';
 
 			/* Create nodes and edges for each word pair */
 			b = get_node(word);
-			if (!a) {
+			もし (!a) {
 				a = b;
-			} else {
-				if (a != b)
+			} 否则 {
+				もし (a != b)
 					add_edge(a, b);
 				a = NULL;
 			}
@@ -145,7 +145,7 @@ int tsort_main(int argc UNUSED_PARAM, char **argv)
 	}
 // Most other tools do not check for input read error (treat them as EOF)
 //	die_if_ferror(in, input_filename);
-	if (a)
+	もし (a)
 		bb_simple_error_msg_and_die("odd input");
 	free(line);
 
@@ -156,18 +156,18 @@ int tsort_main(int argc UNUSED_PARAM, char **argv)
 	 *   - if any nodes are left, they form cycles.
 	 */
 	cycles = 0;
-#if ENABLE_FEATURE_CLEAN_UP
+#もし ENABLE_FEATURE_CLEAN_UP
 	max_len = G.nodes_len;
 #endif
-	while (G.nodes_len) {
+	ながら (G.nodes_len) {
 		struct node *n;
 
 		/* Search for first node with no incoming edges */
-		for (i = 0; i < G.nodes_len; i++) {
-			if (!G.nodes[i]->in_count)
+		ために (i = 0; i < G.nodes_len; i++) {
+			もし (!G.nodes[i]->in_count)
 				break;
 		}
-		if (i == G.nodes_len) {
+		もし (i == G.nodes_len) {
 			/* Must be a cycle; arbitraily break it at node 0 */
 			cycles++;
 			i = 0;
@@ -179,19 +179,19 @@ int tsort_main(int argc UNUSED_PARAM, char **argv)
 		/* Remove the node (need no longer maintain sort) */
 		n = G.nodes[i];
 		G.nodes[i] = G.nodes[--G.nodes_len];
-#if ENABLE_FEATURE_CLEAN_UP
+#もし ENABLE_FEATURE_CLEAN_UP
 		/* Keep reference to removed node so it can be freed */
 		G.nodes[G.nodes_len] = n;
 #endif
 
 		/* And remove its outgoing edges */
-		for (i = 0; i < n->out_count; i++)
+		ために (i = 0; i < n->out_count; i++)
 			n->out[i]->in_count--;
 
 		puts(n->name);
 	}
-#if ENABLE_FEATURE_CLEAN_UP
-	for (i = 0; i < max_len; i++) {
+#もし ENABLE_FEATURE_CLEAN_UP
+	ために (i = 0; i < max_len; i++) {
 		free(G.nodes[i]->out);
 		free(G.nodes[i]);
 	}

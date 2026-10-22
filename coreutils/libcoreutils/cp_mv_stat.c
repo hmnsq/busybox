@@ -21,28 +21,28 @@
 #include "libbb.h"
 #include "coreutils.h"
 
-int FAST_FUNC cp_mv_stat2(const char *fn, struct stat *fn_stat, stat_func sf)
+整数 FAST_FUNC cp_mv_stat2(const char *fn, struct stat *fn_stat, stat_func sf)
 {
-	if (sf(fn, fn_stat) < 0) {
-		if (errno != ENOENT) {
-#if ENABLE_FEATURE_VERBOSE_CP_MESSAGE
-			if (errno == ENOTDIR) {
+	もし (sf(fn, fn_stat) < 0) {
+		もし (errno != ENOENT) {
+#もし ENABLE_FEATURE_VERBOSE_CP_MESSAGE
+			もし (errno == ENOTDIR) {
 				bb_error_msg("can't stat '%s': Path has non-directory component", fn);
-				return -1;
+				戻る -1;
 			}
 #endif
 			bb_perror_msg("can't stat '%s'", fn);
-			return -1;
+			戻る -1;
 		}
-		return 0;
+		戻る 0;
 	}
-	if (S_ISDIR(fn_stat->st_mode)) {
-		return 3;
+	もし (S_ISDIR(fn_stat->st_mode)) {
+		戻る 3;
 	}
-	return 1;
+	戻る 1;
 }
 
-int FAST_FUNC cp_mv_stat(const char *fn, struct stat *fn_stat)
+整数 FAST_FUNC cp_mv_stat(const char *fn, struct stat *fn_stat)
 {
-	return cp_mv_stat2(fn, fn_stat, stat);
+	戻る cp_mv_stat2(fn, fn_stat, stat);
 }

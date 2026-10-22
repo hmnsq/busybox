@@ -13,7 +13,7 @@ struct test_statics;
  * but here we make it live in R/W memory */
 struct test_statics *test_ptr_to_statics;
 
-#else
+#否则
 
 /* gcc -combine will see through and complain */
 /* Using alternative method which is more likely to break

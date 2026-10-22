@@ -27,7 +27,7 @@
 
 #include "libbb.h"
 
-static int logical_getcwd(void)
+static 整数 logical_getcwd(void)
 {
 	struct stat st1;
 	struct stat st2;
@@ -35,59 +35,59 @@ static int logical_getcwd(void)
 	char *p;
 
 	wd = getenv("PWD");
-	if (!wd || wd[0] != '/')
-		return 0;
+	もし (!wd || wd[0] != '/')
+		戻る 0;
 
 	p = wd;
-	while (*p) {
+	ながら (*p) {
 		/* doing strstr(p, "/.") by hand is smaller and faster... */
-		if (*p++ != '/')
+		もし (*p++ != '/')
 			continue;
-		if (*p != '.')
+		もし (*p != '.')
 			continue;
 		/* we found "/.", skip to next char */
 		p++;
-		if (*p == '.')
+		もし (*p == '.')
 			p++; /* we found "/.." */
-		if (*p == '\0' || *p == '/')
-			return 0; /* "/./" or "/../" component: bad */
+		もし (*p == '\0' || *p == '/')
+			戻る 0; /* "/./" or "/../" component: bad */
 	}
 
-	if (stat(wd, &st1) != 0)
-		return 0;
-	if (stat(".", &st2) != 0)
-		return 0;
-	if (st1.st_ino != st2.st_ino)
-		return 0;
-	if (st1.st_dev != st2.st_dev)
-		return 0;
+	もし (stat(wd, &st1) != 0)
+		戻る 0;
+	もし (stat(".", &st2) != 0)
+		戻る 0;
+	もし (st1.st_ino != st2.st_ino)
+		戻る 0;
+	もし (st1.st_dev != st2.st_dev)
+		戻る 0;
 
 	puts(wd);
-	return 1;
+	戻る 1;
 }
 
-int pwd_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int pwd_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+整数 pwd_main(整数 argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+整数 pwd_main(整数 argc UNUSED_PARAM, char **argv UNUSED_PARAM)
 {
 	char *buf;
 
-	if (ENABLE_DESKTOP) {
+	もし (ENABLE_DESKTOP) {
 		/* TODO: assume -L if $POSIXLY_CORRECT? (coreutils does that)
 		 * Rationale:
 		 * POSIX requires a default of -L, but most scripts expect -P
 		 */
 		unsigned opt = getopt32(argv, "LP");
-		if ((opt & 1) && logical_getcwd())
-			return fflush_all();
+		もし ((opt & 1) && logical_getcwd())
+			戻る fflush_all();
 	}
 
 	buf = xrealloc_getcwd_or_warn(NULL);
 
-	if (buf) {
+	もし (buf) {
 		puts(buf);
 		free(buf);
-		return fflush_all();
+		戻る fflush_all();
 	}
 
-	return EXIT_FAILURE;
+	戻る EXIT_FAILURE;
 }

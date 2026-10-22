@@ -34,12 +34,12 @@
 
 #include "libbb.h"
 
-int tty_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int tty_main(int argc UNUSED_PARAM, char **argv)
+整数 tty_main(整数 argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+整数 tty_main(整数 argc UNUSED_PARAM, char **argv)
 {
 	const char *s;
-	IF_INCLUDE_SUSv2(int silent;)  /* Note: No longer relevant in SUSv3. */
-	int retval;
+	IF_INCLUDE_SUSv2(整数 silent;)  /* Note: No longer relevant in SUSv3. */
+	整数 retval;
 
 	xfunc_error_retval = 2;  /* SUSv3 requires > 1 for error. */
 
@@ -53,13 +53,13 @@ int tty_main(int argc UNUSED_PARAM, char **argv)
 	retval = EXIT_SUCCESS;
 
 	s = xmalloc_ttyname(STDIN_FILENO);
-	if (s == NULL) {
+	もし (s == NULL) {
 	/* According to SUSv3, ttyname can fail with EBADF or ENOTTY.
 	 * We know the file descriptor is good, so failure means not a tty. */
 		s = "not a tty";
 		retval = EXIT_FAILURE;
 	}
-	IF_INCLUDE_SUSv2(if (!silent) puts(s);)
+	IF_INCLUDE_SUSv2(もし (!silent) puts(s);)
 	IF_NOT_INCLUDE_SUSv2(puts(s);)
 
 	fflush_stdout_and_exit(retval);

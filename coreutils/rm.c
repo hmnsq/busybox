@@ -39,38 +39,38 @@
 
 /* This is a NOEXEC applet. Be very careful! */
 
-int rm_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int rm_main(int argc UNUSED_PARAM, char **argv)
+整数 rm_main(整数 argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+整数 rm_main(整数 argc UNUSED_PARAM, char **argv)
 {
-	int status = 0;
-	int flags = 0;
+	整数 status = 0;
+	整数 flags = 0;
 	unsigned opt;
 
 	opt = getopt32(argv, "^" "fiRrv" "\0" "f-i:i-f");
 	argv += optind;
-	if (opt & 1)
+	もし (opt & 1)
 		flags |= FILEUTILS_FORCE;
-	if (opt & 2)
+	もし (opt & 2)
 		flags |= FILEUTILS_INTERACTIVE;
-	if (opt & (8|4))
+	もし (opt & (8|4))
 		flags |= FILEUTILS_RECUR;
-	if ((opt & 16) && FILEUTILS_VERBOSE)
+	もし ((opt & 16) && FILEUTILS_VERBOSE)
 		flags |= FILEUTILS_VERBOSE;
 
-	if (*argv != NULL) {
+	もし (*argv != NULL) {
 		do {
 			const char *base = bb_get_last_path_component_strip(*argv);
 
-			if (DOT_OR_DOTDOT(base)) {
+			もし (DOT_OR_DOTDOT(base)) {
 				bb_simple_error_msg("can't remove '.' or '..'");
-			} else if (remove_file(*argv, flags) >= 0) {
+			} 否则 もし (remove_file(*argv, flags) >= 0) {
 				continue;
 			}
 			status = 1;
-		} while (*++argv);
-	} else if (!(flags & FILEUTILS_FORCE)) {
+		} ながら (*++argv);
+	} 否则 もし (!(flags & FILEUTILS_FORCE)) {
 		bb_show_usage();
 	}
 
-	return status;
+	戻る status;
 }
