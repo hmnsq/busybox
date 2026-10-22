@@ -47,226 +47,226 @@
 //usage:       "root:x:0:0:root:/root:/bin/bash\n"
 //usage:       "daemon:x:1:1:daemon:/usr/sbin:/bin/sh\n"
 
-#include "libbb.h"
+#ضمن "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-#if !ENABLE_FEATURE_FANCY_HEAD
+#ܐܢ !ENABLE_FEATURE_FANCY_HEAD
 # define print_first_N(fp,count,bytes) print_first_N(fp,count)
 #endif
-static void
+ساكن فراغ
 print_first_N(FILE *fp, unsigned long count, bool count_bytes)
 {
-#if !ENABLE_FEATURE_FANCY_HEAD
-	const int count_bytes = 0;
+#ܐܢ !ENABLE_FEATURE_FANCY_HEAD
+	ثابت صحيح count_bytes = 0;
 #endif
-	while (count) {
-		int c = getc(fp);
-		if (c == EOF)
-			break;
-		if (count_bytes || (c == '\n'))
+	ܟܡܐ (count) {
+		صحيح c = getc(fp);
+		ܐܢ (c == EOF)
+			اكسر;
+		ܐܢ (count_bytes || (c == '\n'))
 			--count;
 		putchar(c);
 	}
 }
 
-#if ENABLE_FEATURE_FANCY_HEAD
-static void
+#ܐܢ ENABLE_FEATURE_FANCY_HEAD
+ساكن فراغ
 print_except_N_last_bytes(FILE *fp, unsigned count)
 {
-	unsigned char *circle = xmalloc(++count);
+	unsigned حرف *circle = xmalloc(++count);
 	unsigned head = 0;
-	for (;;) {
-		int c;
+	لكل (;;) {
+		صحيح c;
 		c = getc(fp);
-		if (c == EOF)
-			goto ret;
+		ܐܢ (c == EOF)
+			اذهب ret;
 		circle[head++] = c;
-		if (head == count)
-			break;
+		ܐܢ (head == count)
+			اكسر;
 	}
-	for (;;) {
-		int c;
-		if (head == count)
+	لكل (;;) {
+		صحيح c;
+		ܐܢ (head == count)
 			head = 0;
 		putchar(circle[head]);
 		c = getc(fp);
-		if (c == EOF)
-			goto ret;
+		ܐܢ (c == EOF)
+			اذهب ret;
 		circle[head] = c;
 		head++;
 	}
  ret:
-	free(circle);
+	حرر(circle);
 }
 
-static void
+ساكن فراغ
 print_except_N_last_lines(FILE *fp, unsigned count)
 {
-	char **circle = xzalloc((++count) * sizeof(circle[0]));
+	حرف **circle = xzalloc((++count) * حجم(circle[0]));
 	unsigned head = 0;
-	for (;;) {
-		char *c;
+	لكل (;;) {
+		حرف *c;
 		c = xmalloc_fgets(fp);
-		if (!c)
-			goto ret;
+		ܐܢ (!c)
+			اذهب ret;
 		circle[head++] = c;
-		if (head == count)
-			break;
+		ܐܢ (head == count)
+			اكسر;
 	}
-	for (;;) {
-		char *c;
-		if (head == count)
+	لكل (;;) {
+		حرف *c;
+		ܐܢ (head == count)
 			head = 0;
 		fputs_stdout(circle[head]);
 		c = xmalloc_fgets(fp);
-		if (!c)
-			goto ret;
-		free(circle[head]);
+		ܐܢ (!c)
+			اذهب ret;
+		حرر(circle[head]);
 		circle[head++] = c;
 	}
  ret:
 	head = 0;
-	for (;;) {
-		free(circle[head++]);
-		if (head == count)
-			break;
+	لكل (;;) {
+		حرر(circle[head++]);
+		ܐܢ (head == count)
+			اكسر;
 	}
-	free(circle);
+	حرر(circle);
 }
-#else
+#ܐܚܪܢܐ
 /* Must never be called */
-void print_except_N_last_bytes(FILE *fp, unsigned count);
-void print_except_N_last_lines(FILE *fp, unsigned count);
+فراغ print_except_N_last_bytes(FILE *fp, unsigned count);
+فراغ print_except_N_last_lines(FILE *fp, unsigned count);
 #endif
 
-#if !ENABLE_FEATURE_FANCY_HEAD
+#ܐܢ !ENABLE_FEATURE_FANCY_HEAD
 # define eat_num(negative_N,p) eat_num(p)
 #endif
-static unsigned long
-eat_num(bool *negative_N, const char *p)
+ساكن unsigned long
+eat_num(bool *negative_N, ثابت حرف *p)
 {
-#if ENABLE_FEATURE_FANCY_HEAD
-	if (*p == '-') {
+#ܐܢ ENABLE_FEATURE_FANCY_HEAD
+	ܐܢ (*p == '-') {
 		*negative_N = 1;
 		p++;
 	}
 #endif
-	return xatoul_sfx(p, bkm_suffixes);
+	ܦܢܐ xatoul_sfx(p, bkm_suffixes);
 }
 
-static const char head_opts[] ALIGN1 =
+ساكن ثابت حرف head_opts[] ALIGN1 =
 	"n:"
-#if ENABLE_FEATURE_FANCY_HEAD
+#ܐܢ ENABLE_FEATURE_FANCY_HEAD
 	"c:qv"
 #endif
 	;
 
 #define header_fmt_str "\n==> %s <==\n"
 
-int head_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int head_main(int argc, char **argv)
+صحيح head_main(صحيح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحيح head_main(صحيح argc, حرف **argv)
 {
 	unsigned long count = 10;
-#if ENABLE_FEATURE_FANCY_HEAD
-	int header_threshhold = 1;
+#ܐܢ ENABLE_FEATURE_FANCY_HEAD
+	صحيح header_threshhold = 1;
 	bool count_bytes = 0;
 	bool negative_N = 0;
-#else
+#ܐܚܪܢܐ
 # define header_threshhold 1
 # define count_bytes       0
 # define negative_N        0
 #endif
 	FILE *fp;
-	const char *fmt;
-	char *p;
-	int opt;
-	int retval = EXIT_SUCCESS;
+	ثابت حرف *fmt;
+	حرف *p;
+	صحيح opt;
+	صحيح retval = EXIT_SUCCESS;
 
-#if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
+#ܐܢ ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
 	/* Allow legacy syntax of an initial numeric option without -n. */
-	if (argv[1] && argv[1][0] == '-'
+	ܐܢ (argv[1] && argv[1][0] == '-'
 	 && isdigit(argv[1][1])
 	) {
 		--argc;
 		++argv;
 		p = argv[0] + 1;
-		goto GET_COUNT;
+		اذهب GET_COUNT;
 	}
 #endif
 
 	/* No size benefit in converting this to getopt32 */
-	while ((opt = getopt(argc, argv, head_opts)) > 0) {
-		switch (opt) {
-#if ENABLE_FEATURE_FANCY_HEAD
-		case 'q':
+	ܟܡܐ ((opt = getopt(argc, argv, head_opts)) > 0) {
+		بدل (opt) {
+#ܐܢ ENABLE_FEATURE_FANCY_HEAD
+		حالة 'q':
 			header_threshhold = INT_MAX;
-			break;
-		case 'v':
+			اكسر;
+		حالة 'v':
 			header_threshhold = -1;
-			break;
-		case 'c':
+			اكسر;
+		حالة 'c':
 			count_bytes = 1;
 			/* fall through */
 #endif
-		case 'n':
+		حالة 'n':
 			p = optarg;
-#if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
+#ܐܢ ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
  GET_COUNT:
 #endif
 			count = eat_num(&negative_N, p);
-			break;
-		default:
+			اكسر;
+		افتراضي:
 			bb_show_usage();
 		}
 	}
 
 	argc -= optind;
 	argv += optind;
-	if (!*argv)
-		*--argv = (char*)"-";
+	ܐܢ (!*argv)
+		*--argv = (حرف*)"-";
 
 	fmt = header_fmt_str + 1;
-	if (argc <= header_threshhold) {
-#if ENABLE_FEATURE_FANCY_HEAD
+	ܐܢ (argc <= header_threshhold) {
+#ܐܢ ENABLE_FEATURE_FANCY_HEAD
 		header_threshhold = 0;
-#else
+#ܐܚܪܢܐ
 		fmt += 11; /* "" */
 #endif
 	}
-	if (negative_N) {
-		if (count >= INT_MAX / sizeof(char*))
+	ܐܢ (negative_N) {
+		ܐܢ (count >= INT_MAX / حجم(حرف*))
 			bb_error_msg("count is too big: %lu", count);
 	}
 
-	do {
+	ܥܒܕ {
 		fp = fopen_or_warn_stdin(*argv);
-		if (fp) {
-			if (fp == stdin) {
-				*argv = (char *) bb_msg_standard_input;
+		ܐܢ (fp) {
+			ܐܢ (fp == stdin) {
+				*argv = (حرف *) bb_msg_standard_input;
 			}
-			if (header_threshhold) {
+			ܐܢ (header_threshhold) {
 				printf(fmt, *argv);
 			}
-			if (negative_N) {
-				if (count_bytes) {
+			ܐܢ (negative_N) {
+				ܐܢ (count_bytes) {
 					print_except_N_last_bytes(fp, count);
-				} else {
+				} ܐܚܪܢܐ {
 					print_except_N_last_lines(fp, count);
 				}
-			} else {
+			} ܐܚܪܢܐ {
 				print_first_N(fp, count, count_bytes);
 			}
 			die_if_ferror_stdout();
-			if (fclose_if_not_stdin(fp)) {
+			ܐܢ (fclose_if_not_stdin(fp)) {
 				bb_simple_perror_msg(*argv);
 				retval = EXIT_FAILURE;
 			}
-		} else {
+		} ܐܚܪܢܐ {
 			retval = EXIT_FAILURE;
 		}
 		fmt = header_fmt_str;
-	} while (*++argv);
+	} ܟܡܐ (*++argv);
 
 	fflush_stdout_and_exit(retval);
 }

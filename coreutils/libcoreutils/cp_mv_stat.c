@@ -18,31 +18,31 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-#include "libbb.h"
-#include "coreutils.h"
+#ضمن "libbb.h"
+#ضمن "coreutils.h"
 
-int FAST_FUNC cp_mv_stat2(const char *fn, struct stat *fn_stat, stat_func sf)
+صحيح FAST_FUNC cp_mv_stat2(ثابت حرف *fn, بنية stat *fn_stat, stat_func sf)
 {
-	if (sf(fn, fn_stat) < 0) {
-		if (errno != ENOENT) {
-#if ENABLE_FEATURE_VERBOSE_CP_MESSAGE
-			if (errno == ENOTDIR) {
+	ܐܢ (sf(fn, fn_stat) < 0) {
+		ܐܢ (errno != ENOENT) {
+#ܐܢ ENABLE_FEATURE_VERBOSE_CP_MESSAGE
+			ܐܢ (errno == ENOTDIR) {
 				bb_error_msg("can't stat '%s': Path has non-directory component", fn);
-				return -1;
+				ܦܢܐ -1;
 			}
 #endif
 			bb_perror_msg("can't stat '%s'", fn);
-			return -1;
+			ܦܢܐ -1;
 		}
-		return 0;
+		ܦܢܐ 0;
 	}
-	if (S_ISDIR(fn_stat->st_mode)) {
-		return 3;
+	ܐܢ (S_ISDIR(fn_stat->st_mode)) {
+		ܦܢܐ 3;
 	}
-	return 1;
+	ܦܢܐ 1;
 }
 
-int FAST_FUNC cp_mv_stat(const char *fn, struct stat *fn_stat)
+صحيح FAST_FUNC cp_mv_stat(ثابت حرف *fn, بنية stat *fn_stat)
 {
-	return cp_mv_stat2(fn, fn_stat, stat);
+	ܦܢܐ cp_mv_stat2(fn, fn_stat, stat);
 }

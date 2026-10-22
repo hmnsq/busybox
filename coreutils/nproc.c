@@ -23,50 +23,50 @@
 //usage:     "\n	--ignore=N	Exclude N CPUs"
 //usage:	)
 
-#include "libbb.h"
+#ضمن "libbb.h"
 
-int nproc_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int nproc_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+صحيح nproc_main(صحيح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحيح nproc_main(صحيح argc UNUSED_PARAM, حرف **argv UNUSED_PARAM)
 {
-	int count = 0;
-#if ENABLE_LONG_OPTS
-	int ignore = 0;
-	int opts = getopt32long(argv, "\xfe:+",
+	صحيح count = 0;
+#ܐܢ ENABLE_LONG_OPTS
+	صحيح ignore = 0;
+	صحيح opts = getopt32long(argv, "\xfe:+",
 			"ignore\0" Required_argument "\xfe"
 			"all\0"    No_argument       "\xff"
 			, &ignore
 	);
 
-	if (opts & (1 << 1)) {
+	ܐܢ (opts & (1 << 1)) {
 		DIR *cpusd = opendir("/sys/devices/system/cpu");
-		if (cpusd) {
-			struct dirent *de;
-			while (NULL != (de = readdir(cpusd))) {
-				char *cpuid = strstr(de->d_name, "cpu");
-				if (cpuid && isdigit(cpuid[strlen(cpuid) - 1]))
+		ܐܢ (cpusd) {
+			بنية dirent *de;
+			ܟܡܐ (عدم != (de = readdir(cpusd))) {
+				حرف *cpuid = strstr(de->d_name, "cpu");
+				ܐܢ (cpuid && isdigit(cpuid[strlen(cpuid) - 1]))
 					count++;
 			}
 			IF_FEATURE_CLEAN_UP(closedir(cpusd);)
 		}
-	} else
+	} ܐܚܪܢܐ
 #endif
 	{
-		int i;
+		صحيح i;
 		unsigned sz = 2 * 1024;
 		unsigned long *mask = get_malloc_cpu_affinity(0, &sz);
-		sz /= sizeof(long);
-		for (i = 0; i < sz; i++) {
-			if (mask[i] != 0) /* most mask[i] are usually 0 */
+		sz /= حجم(long);
+		لكل (i = 0; i < sz; i++) {
+			ܐܢ (mask[i] != 0) /* most mask[i] are usually 0 */
 				count += bb_popcnt_long(mask[i]);
 		}
-		IF_FEATURE_CLEAN_UP(free(mask);)
+		IF_FEATURE_CLEAN_UP(حرر(mask);)
 	}
 
 	IF_LONG_OPTS(count -= ignore;)
-	if (count <= 0)
+	ܐܢ (count <= 0)
 		count = 1;
 
 	printf("%u\n", count);
 
-	return 0;
+	ܦܢܐ 0;
 }

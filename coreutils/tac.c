@@ -27,25 +27,25 @@
 //usage:#define tac_full_usage "\n\n"
 //usage:	"Concatenate FILEs and print them in reverse"
 
-#include "libbb.h"
+#ضمن "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-struct lstring {
-	int size;
-	char buf[1];
+بنية lstring {
+	صحيح size;
+	حرف buf[1];
 };
 
-int tac_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int tac_main(int argc UNUSED_PARAM, char **argv)
+صحيح tac_main(صحيح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحيح tac_main(صحيح argc UNUSED_PARAM, حرف **argv)
 {
-	char **name;
+	حرف **name;
 	FILE *f;
-	struct lstring *line = NULL;
-	llist_t *list = NULL;
-	int retval = EXIT_SUCCESS;
+	بنية lstring *line = عدم;
+	llist_t *list = عدم;
+	صحيح retval = EXIT_SUCCESS;
 
-#if ENABLE_DESKTOP
+#ܐܢ ENABLE_DESKTOP
 /* tac from coreutils 6.9 supports:
        -b, --before
               attach the separator before instead of after
@@ -57,61 +57,61 @@ We support none, but at least we will complain or handle "--":
 */
 	getopt32(argv, "");
 	argv += optind;
-#else
+#ܐܚܪܢܐ
 	argv++;
 #endif
-	if (!*argv)
-		*--argv = (char *)"-";
+	ܐܢ (!*argv)
+		*--argv = (حرف *)"-";
 	/* We will read from last file to first */
 	name = argv;
-	while (*name)
+	ܟܡܐ (*name)
 		name++;
 
-	do {
-		int ch, i;
+	ܥܒܕ {
+		صحيح ch, i;
 
 		name--;
 		f = fopen_or_warn_stdin(*name);
-		if (f == NULL) {
+		ܐܢ (f == عدم) {
 			/* error message is printed by fopen_or_warn_stdin */
 			retval = EXIT_FAILURE;
-			continue;
+			استمر;
 		}
 
 		errno = i = 0;
-		do {
+		ܥܒܕ {
 			ch = fgetc(f);
-			if (ch != EOF) {
-				if (!(i & 0x7f))
+			ܐܢ (ch != EOF) {
+				ܐܢ (!(i & 0x7f))
 					/* Grow on every 128th char */
-					line = xrealloc(line, i + 0x7f + sizeof(int) + 1);
+					line = xrealloc(line, i + 0x7f + حجم(صحيح) + 1);
 				line->buf[i++] = ch;
 			}
-			if (ch == '\n' || (ch == EOF && i != 0)) {
-				line = xrealloc(line, i + sizeof(int));
+			ܐܢ (ch == '\n' || (ch == EOF && i != 0)) {
+				line = xrealloc(line, i + حجم(صحيح));
 				line->size = i;
 				llist_add_to(&list, line);
-				line = NULL;
+				line = عدم;
 				i = 0;
 			}
-		} while (ch != EOF);
+		} ܟܡܐ (ch != EOF);
 		/* fgetc sets errno to ENOENT on EOF, we don't want
 		 * to warn on this non-error! */
-		if (errno && errno != ENOENT) {
+		ܐܢ (errno && errno != ENOENT) {
 			bb_simple_perror_msg(*name);
 			retval = EXIT_FAILURE;
 		}
-	} while (name != argv);
+	} ܟܡܐ (name != argv);
 
-	while (list) {
-		line = (struct lstring *)list->data;
+	ܟܡܐ (list) {
+		line = (بنية lstring *)list->data;
 		xwrite(STDOUT_FILENO, line->buf, line->size);
-		if (ENABLE_FEATURE_CLEAN_UP) {
-			free(llist_pop(&list));
-		} else {
+		ܐܢ (ENABLE_FEATURE_CLEAN_UP) {
+			حرر(llist_pop(&list));
+		} ܐܚܪܢܐ {
 			list = list->link;
 		}
 	}
 
-	return retval;
+	ܦܢܐ retval;
 }
