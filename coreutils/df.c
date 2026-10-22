@@ -102,15 +102,15 @@
 #include "libbb.h"
 #include "unicode.h"
 
-#if !ENABLE_FEATURE_HUMAN_READABLE
+#ако !ENABLE_FEATURE_HUMAN_READABLE
 static unsigned long kscale(unsigned long b, unsigned long bs)
 {
-	return (b * (unsigned long long) bs + 1024/2) / 1024;
+	врати (b * (unsigned long long) bs + 1024/2) / 1024;
 }
 #endif
 
-int df_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int df_main(int argc UNUSED_PARAM, char **argv)
+цео df_main(цео argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+цео df_main(цео argc UNUSED_PARAM, char **argv)
 {
 	unsigned long df_disp_hr = 1024;
 	exitcode_t status = EXIT_SUCCESS;
@@ -139,7 +139,7 @@ int df_main(int argc UNUSED_PARAM, char **argv)
 	 * Disk space is shown in 1K blocks by default, unless the environment
 	 * variable POSIXLY_CORRECT is set, in which case 512-byte blocks are used.
 	 */
-	if (getenv("POSIXLY_CORRECT")) /* TODO - a new libbb function? */
+	ако (getenv("POSIXLY_CORRECT")) /* TODO - a new libbb function? */
 		df_disp_hr = 512;
 
 	opt = getopt32(argv, "^"
@@ -147,7 +147,7 @@ int df_main(int argc UNUSED_PARAM, char **argv)
 			IF_FEATURE_DF_FANCY("aiB:")
 			IF_FEATURE_HUMAN_READABLE("hHm")
 			"\0"
-#if ENABLE_FEATURE_HUMAN_READABLE && ENABLE_FEATURE_DF_FANCY
+#ако ENABLE_FEATURE_HUMAN_READABLE && ENABLE_FEATURE_DF_FANCY
 			"k-mB:m-Bk:B-km"
 #elif ENABLE_FEATURE_HUMAN_READABLE
 			"k-m:m-k"
@@ -155,14 +155,14 @@ int df_main(int argc UNUSED_PARAM, char **argv)
 			, &opt_t
 			IF_FEATURE_DF_FANCY(, &chp)
 	);
-	if (opt & OPT_MEGA)
+	ако (opt & OPT_MEGA)
 		df_disp_hr = 1024*1024;
 
-	if (opt & OPT_BSIZE) {
+	ако (opt & OPT_BSIZE) {
 		/* GNU coreutils 8.25 accepts "-BMiB" form too */
-		int i;
-		for (i = 0; kmg_i_suffixes[i].suffix[0]; i++) {
-			if (strcmp(kmg_i_suffixes[i].suffix, chp) == 0) {
+		цео i;
+		за (i = 0; kmg_i_suffixes[i].suffix[0]; i++) {
+			ако (strcmp(kmg_i_suffixes[i].suffix, chp) == 0) {
 				df_disp_hr = kmg_i_suffixes[i].mult;
 				goto got_it;
 			}
@@ -172,24 +172,24 @@ int df_main(int argc UNUSED_PARAM, char **argv)
  got_it: ;
 	}
 
-	if (opt & (OPT_HUMAN|OPT_HUMANDEC)) {
+	ако (opt & (OPT_HUMAN|OPT_HUMANDEC)) {
 		df_disp_hr = 0;
 //TODO: need to add support in make_human_readable_str() for "decimal human readable"
 		//if (opt & OPT_HUMANDEC)
 		//	df_disp_hr--;
 		disp_units_hdr = "     Size";
 	}
-	if (opt & OPT_INODE)
+	ако (opt & OPT_INODE)
 		disp_units_hdr = "   Inodes";
 
-	if (disp_units_hdr == NULL) {
-#if ENABLE_FEATURE_HUMAN_READABLE
+	ако (disp_units_hdr == NULL) {
+#ако ENABLE_FEATURE_HUMAN_READABLE
 		disp_units_hdr = xasprintf("%s-blocks",
 			/* print df_disp_hr, show no fractionals,
 			 * use suffixes if OPT_POSIX is set in opt */
 			make_human_readable_str(df_disp_hr, 0, !!(opt & OPT_POSIX))
 		);
-#else
+#инако
 		disp_units_hdr = xasprintf("%lu-blocks", df_disp_hr);
 #endif
 	}
@@ -201,29 +201,29 @@ int df_main(int argc UNUSED_PARAM, char **argv)
 
 	mount_table = NULL;
 	argv += optind;
-	if (!argv[0]) {
+	ако (!argv[0]) {
 		mount_table = setmntent(bb_path_mtab_file, "r");
-		if (!mount_table)
+		ако (!mount_table)
 			bb_simple_perror_msg_and_die(bb_path_mtab_file);
 	}
 
-	while (1) {
+	док (1) {
 		const char *device;
 		const char *mount_point;
 		const char *fs_type;
 
-		if (mount_table) {
+		ако (mount_table) {
 			mount_entry = getmntent(mount_table);
-			if (!mount_entry) {
+			ако (!mount_entry) {
 				endmntent(mount_table);
 				break;
 			}
-		} else {
+		} инако {
 			mount_point = *argv++;
-			if (!mount_point)
+			ако (!mount_point)
 				break;
 			mount_entry = find_mount_point(mount_point, 1);
-			if (!mount_entry) {
+			ако (!mount_entry) {
 				bb_error_msg("%s: can't find mount point", mount_point);
  set_error:
 				status = EXIT_FAILURE;
@@ -234,46 +234,46 @@ int df_main(int argc UNUSED_PARAM, char **argv)
 		device = mount_entry->mnt_fsname;
 
 		/* GNU coreutils 6.10 skips certain mounts, try to be compatible */
-		if (ENABLE_FEATURE_SKIP_ROOTFS && strcmp(device, "rootfs") == 0)
+		ако (ENABLE_FEATURE_SKIP_ROOTFS && strcmp(device, "rootfs") == 0)
 			continue;
 
 		mount_point = mount_entry->mnt_dir;
 		fs_type = mount_entry->mnt_type;
 
-		if (opt & OPT_t) {
-			if (strcmp(fs_type, opt_t) != 0)
+		ако (opt & OPT_t) {
+			ако (strcmp(fs_type, opt_t) != 0)
 				continue;
 		}
 
-		if (statvfs(mount_point, &s) != 0) {
+		ако (statvfs(mount_point, &s) != 0) {
 			bb_simple_perror_msg(mount_point);
 			goto set_error;
 		}
 		/* Some uclibc versions were seen to lose f_frsize
 		 * (kernel does return it, but then uclibc does not copy it)
 		 */
-		if (s.f_frsize == 0)
+		ако (s.f_frsize == 0)
 			s.f_frsize = s.f_bsize;
 
-		if ((s.f_blocks > 0) || !mount_table || (opt & OPT_ALL)) {
+		ако ((s.f_blocks > 0) || !mount_table || (opt & OPT_ALL)) {
 			unsigned long long blocks_used;
 			unsigned long long blocks_total;
 			unsigned blocks_percent_used;
 
-			if (opt & OPT_INODE) {
+			ако (opt & OPT_INODE) {
 				s.f_blocks = s.f_files;
 				s.f_bavail = s.f_bfree = s.f_ffree;
 				s.f_frsize = 1;
-				if (df_disp_hr)
+				ако (df_disp_hr)
 					df_disp_hr = 1;
 			}
 			blocks_used = s.f_blocks - s.f_bfree;
 			blocks_total = blocks_used + s.f_bavail;
 			blocks_percent_used = blocks_total; /* 0% if blocks_total == 0, else... */
-			if (blocks_total != 0) {
+			ако (blocks_total != 0) {
 				/* Downscale sizes for narrower division */
 				unsigned u;
-				while (blocks_total >= INT_MAX / 101) {
+				док (blocks_total >= INT_MAX / 101) {
 					blocks_total >>= 1;
 					blocks_used >>= 1;
 				}
@@ -282,45 +282,45 @@ int df_main(int argc UNUSED_PARAM, char **argv)
 			}
 
 #ifdef WHY_WE_DO_IT_FOR_DEV_ROOT_ONLY
-			if (strcmp(device, "/dev/root") == 0) {
+			ако (strcmp(device, "/dev/root") == 0) {
 				/* Adjusts device to be the real root device,
 				 * or leaves device alone if it can't find it */
 				device = find_block_device("/");
-				if (!device) {
+				ако (!device) {
 					goto set_error;
 				}
 			}
 #endif
 
-#if ENABLE_UNICODE_SUPPORT
+#ако ENABLE_UNICODE_SUPPORT
 			{
 				uni_stat_t uni_stat;
 				char *uni_dev = unicode_conv_to_printable(&uni_stat, device);
-				if (uni_stat.unicode_width > 20 && !(opt & OPT_POSIX)) {
+				ако (uni_stat.unicode_width > 20 && !(opt & OPT_POSIX)) {
 					printf("%s\n%20s", uni_dev, "");
-				} else {
-					printf("%s%*s", uni_dev, 20 - (int)uni_stat.unicode_width, "");
+				} инако {
+					printf("%s%*s", uni_dev, 20 - (цео)uni_stat.unicode_width, "");
 				}
 				free(uni_dev);
-				if (opt & OPT_FSTYPE) {
+				ако (opt & OPT_FSTYPE) {
 					char *uni_type = unicode_conv_to_printable(&uni_stat, fs_type);
-					if (uni_stat.unicode_width > 10 && !(opt & OPT_POSIX))
+					ако (uni_stat.unicode_width > 10 && !(opt & OPT_POSIX))
 						printf(" %s\n%31s", uni_type, "");
-					else
-						printf(" %s%*s", uni_type, 10 - (int)uni_stat.unicode_width, "");
+					инако
+						printf(" %s%*s", uni_type, 10 - (цео)uni_stat.unicode_width, "");
 					free(uni_type);
 				}
 			}
-#else
-			if (printf("\n%-20s" + 1, device) > 20 && !(opt & OPT_POSIX))
+#инако
+			ако (printf("\n%-20s" + 1, device) > 20 && !(opt & OPT_POSIX))
 				printf("\n%-20s", "");
-			if (opt & OPT_FSTYPE) {
-				if (printf(" %-10s", fs_type) > 11 && !(opt & OPT_POSIX))
+			ако (opt & OPT_FSTYPE) {
+				ако (printf(" %-10s", fs_type) > 11 && !(opt & OPT_POSIX))
 					printf("\n%-30s", "");
 			}
 #endif
 
-#if ENABLE_FEATURE_HUMAN_READABLE
+#ако ENABLE_FEATURE_HUMAN_READABLE
 			printf(" %9s ",
 				/* f_blocks x f_frsize / df_disp_hr, show one fractional,
 				 * use suffixes if df_disp_hr == 0 */
@@ -337,7 +337,7 @@ int df_main(int argc UNUSED_PARAM, char **argv)
 				 * use suffixes if df_disp_hr == 0 */
 				make_human_readable_str(s.f_bavail, s.f_frsize, df_disp_hr),
 				blocks_percent_used, mount_point);
-#else
+#инако
 			printf(" %9lu %9lu %9lu %3u%% %s\n",
 				kscale(s.f_blocks, s.f_frsize),
 				kscale(s.f_blocks - s.f_bfree, s.f_frsize),
@@ -347,5 +347,5 @@ int df_main(int argc UNUSED_PARAM, char **argv)
 		}
 	}
 
-	return status;
+	врати status;
 }

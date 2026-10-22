@@ -64,8 +64,8 @@
  * behavior which means we'd have to implement the full stack ourselves :(.
  */
 
-int readlink_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int readlink_main(int argc UNUSED_PARAM, char **argv)
+цео readlink_main(цео argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+цео readlink_main(цео argc UNUSED_PARAM, char **argv)
 {
 	char *buf;
 	unsigned opt;
@@ -75,18 +75,18 @@ int readlink_main(int argc UNUSED_PARAM, char **argv)
                        "\0" "=1");
 
 	/* compat: coreutils readlink reports errors silently via exit code */
-	if (!(opt & 4)) /* not -v */
+	ако (!(opt & 4)) /* not -v */
 		logmode = LOGMODE_NONE;
 
 	/* NOFORK: only one alloc is allowed; must free */
-	if (opt & 2) { /* -f */
+	ако (opt & 2) { /* -f */
 		buf = xmalloc_realpath_coreutils(argv[optind]);
-	} else {
+	} инако {
 		buf = xmalloc_readlink_or_warn(argv[optind]);
 	}
 
-	if (!buf)
-		return EXIT_FAILURE;
+	ако (!buf)
+		врати EXIT_FAILURE;
 	printf("%s%s", buf, &"\n"[opt & 1]);
 	free(buf);
 

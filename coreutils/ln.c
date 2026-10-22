@@ -49,17 +49,17 @@
 #define LN_VERBOSE          (1 << 5)
 #define LN_LINKFILE         (1 << 6)
 
-int ln_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int ln_main(int argc, char **argv)
+цео ln_main(цео argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+цео ln_main(цео argc, char **argv)
 {
 	exitcode_t status = EXIT_SUCCESS;
-	int opts;
+	цео opts;
 	char *last;
 	char *src_name;
 	char *src;
 	char *suffix = (char*)"~";
 	struct stat statbuf;
-	int (*link_func)(const char *, const char *);
+	цео (*link_func)(const char *, const char *);
 
 	opts = getopt32(argv, "^" "sfnbS:vT" "\0" "-1", &suffix);
 /*
@@ -82,11 +82,11 @@ int ln_main(int argc, char **argv)
 	argv += optind;
 	argc -= optind;
 
-	if ((opts & LN_LINKFILE) && argc > 2) {
+	ако ((opts & LN_LINKFILE) && argc > 2) {
 		bb_simple_error_msg_and_die("-T accepts 2 args max");
 	}
 
-	if (!argv[1]) {
+	ако (!argv[1]) {
 		/* "ln PATH/TO/FILE" -> "ln PATH/TO/FILE FILE" */
 		*--argv = last;
 		/* xstrdup is needed: "ln -s PATH/TO/FILE/" is equivalent to
@@ -99,14 +99,14 @@ int ln_main(int argc, char **argv)
 		src_name = NULL;
 		src = last;
 
-		if (is_directory(src,
+		ако (is_directory(src,
 				/*followlinks:*/ !(opts & (LN_NODEREFERENCE|LN_LINKFILE))
 				/* Why LN_LINKFILE does not follow links:
 				 * -T/--no-target-directory implies -n/--no-dereference
 				 */
 				)
 		) {
-			if (opts & LN_LINKFILE) {
+			ако (opts & LN_LINKFILE) {
 				bb_error_msg_and_die("'%s' is a directory", src);
 			}
 			src_name = xstrdup(*argv);
@@ -114,9 +114,9 @@ int ln_main(int argc, char **argv)
 			free(src_name);
 			src_name = src;
 		}
-		if (!(opts & LN_SYMLINK) && stat(*argv, &statbuf)) {
+		ако (!(opts & LN_SYMLINK) && stat(*argv, &statbuf)) {
 			// coreutils: "ln dangling_symlink new_hardlink" works
-			if (lstat(*argv, &statbuf) || !S_ISLNK(statbuf.st_mode)) {
+			ако (lstat(*argv, &statbuf) || !S_ISLNK(statbuf.st_mode)) {
 				bb_simple_perror_msg(*argv);
 				status = EXIT_FAILURE;
 				free(src_name);
@@ -124,10 +124,10 @@ int ln_main(int argc, char **argv)
 			}
 		}
 
-		if (opts & LN_BACKUP) {
+		ако (opts & LN_BACKUP) {
 			char *backup;
 			backup = xasprintf("%s%s", src, suffix);
-			if (rename(src, backup) < 0 && errno != ENOENT) {
+			ако (rename(src, backup) < 0 && errno != ENOENT) {
 				bb_simple_perror_msg(src);
 				status = EXIT_FAILURE;
 				free(backup);
@@ -140,26 +140,26 @@ int ln_main(int argc, char **argv)
 			 * Therefore, always unlink().
 			 */
 			unlink(src);
-		} else if (opts & LN_FORCE) {
+		} инако ако (opts & LN_FORCE) {
 			unlink(src);
 		}
 
 		link_func = link;
-		if (opts & LN_SYMLINK) {
+		ако (opts & LN_SYMLINK) {
 			link_func = symlink;
 		}
 
-		if (opts & LN_VERBOSE) {
+		ако (opts & LN_VERBOSE) {
 			printf("'%s' -> '%s'\n", src, *argv);
 		}
 
-		if (link_func(*argv, src) != 0) {
+		ако (link_func(*argv, src) != 0) {
 			bb_simple_perror_msg(src);
 			status = EXIT_FAILURE;
 		}
 
 		free(src_name);
-	} while ((++argv)[1]);
+	} док ((++argv)[1]);
 
-	return status;
+	врати status;
 }

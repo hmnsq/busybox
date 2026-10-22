@@ -32,20 +32,20 @@
 /* This is a NOEXEC applet. Be very careful! */
 
 struct lstring {
-	int size;
+	цео size;
 	char buf[1];
 };
 
-int tac_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int tac_main(int argc UNUSED_PARAM, char **argv)
+цео tac_main(цео argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+цео tac_main(цео argc UNUSED_PARAM, char **argv)
 {
 	char **name;
 	FILE *f;
 	struct lstring *line = NULL;
 	llist_t *list = NULL;
-	int retval = EXIT_SUCCESS;
+	цео retval = EXIT_SUCCESS;
 
-#if ENABLE_DESKTOP
+#ако ENABLE_DESKTOP
 /* tac from coreutils 6.9 supports:
        -b, --before
               attach the separator before instead of after
@@ -57,22 +57,22 @@ We support none, but at least we will complain or handle "--":
 */
 	getopt32(argv, "");
 	argv += optind;
-#else
+#инако
 	argv++;
 #endif
-	if (!*argv)
+	ако (!*argv)
 		*--argv = (char *)"-";
 	/* We will read from last file to first */
 	name = argv;
-	while (*name)
+	док (*name)
 		name++;
 
 	do {
-		int ch, i;
+		цео ch, i;
 
 		name--;
 		f = fopen_or_warn_stdin(*name);
-		if (f == NULL) {
+		ако (f == NULL) {
 			/* error message is printed by fopen_or_warn_stdin */
 			retval = EXIT_FAILURE;
 			continue;
@@ -81,37 +81,37 @@ We support none, but at least we will complain or handle "--":
 		errno = i = 0;
 		do {
 			ch = fgetc(f);
-			if (ch != EOF) {
-				if (!(i & 0x7f))
+			ако (ch != EOF) {
+				ако (!(i & 0x7f))
 					/* Grow on every 128th char */
-					line = xrealloc(line, i + 0x7f + sizeof(int) + 1);
+					line = xrealloc(line, i + 0x7f + sizeof(цео) + 1);
 				line->buf[i++] = ch;
 			}
-			if (ch == '\n' || (ch == EOF && i != 0)) {
-				line = xrealloc(line, i + sizeof(int));
+			ако (ch == '\n' || (ch == EOF && i != 0)) {
+				line = xrealloc(line, i + sizeof(цео));
 				line->size = i;
 				llist_add_to(&list, line);
 				line = NULL;
 				i = 0;
 			}
-		} while (ch != EOF);
+		} док (ch != EOF);
 		/* fgetc sets errno to ENOENT on EOF, we don't want
 		 * to warn on this non-error! */
-		if (errno && errno != ENOENT) {
+		ако (errno && errno != ENOENT) {
 			bb_simple_perror_msg(*name);
 			retval = EXIT_FAILURE;
 		}
-	} while (name != argv);
+	} док (name != argv);
 
-	while (list) {
+	док (list) {
 		line = (struct lstring *)list->data;
 		xwrite(STDOUT_FILENO, line->buf, line->size);
-		if (ENABLE_FEATURE_CLEAN_UP) {
+		ако (ENABLE_FEATURE_CLEAN_UP) {
 			free(llist_pop(&list));
-		} else {
+		} инако {
 			list = list->link;
 		}
 	}
 
-	return retval;
+	врати retval;
 }

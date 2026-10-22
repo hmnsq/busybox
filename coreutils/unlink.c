@@ -23,11 +23,11 @@
 
 #include "libbb.h"
 
-int unlink_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int unlink_main(int argc UNUSED_PARAM, char **argv)
+цео unlink_main(цео argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+цео unlink_main(цео argc UNUSED_PARAM, char **argv)
 {
 	getopt32(argv, "^" "" "\0" "=1");
 	argv += optind;
 	xunlink(argv[0]);
-	return 0;
+	врати 0;
 }

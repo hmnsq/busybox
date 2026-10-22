@@ -57,45 +57,45 @@ enum {
 };
 
 /* if fn is NULL then input is stdin and output is stdout */
-static void convert(char *fn, int conv_type)
+static void convert(char *fn, цео conv_type)
 {
 	FILE *in, *out;
-	int ch;
+	цео ch;
 	char *temp_fn = temp_fn; /* for compiler */
 	char *resolved_fn = resolved_fn;
 
 	in = stdin;
 	out = stdout;
-	if (fn != NULL) {
+	ако (fn != NULL) {
 		struct stat st;
-		int fd;
+		цео fd;
 
 		resolved_fn = xmalloc_follow_symlinks(fn);
-		if (resolved_fn == NULL)
+		ако (resolved_fn == NULL)
 			bb_simple_perror_msg_and_die(fn);
 		in = xfopen_for_read(resolved_fn);
 		xfstat(fileno(in), &st, resolved_fn);
 
 		temp_fn = xasprintf("%sXXXXXX", resolved_fn);
 		fd = xmkstemp(temp_fn);
-		if (fchmod(fd, st.st_mode) == -1)
+		ако (fchmod(fd, st.st_mode) == -1)
 			bb_simple_perror_msg_and_die(temp_fn);
 		fchown(fd, st.st_uid, st.st_gid);
 
 		out = xfdopen_for_write(fd);
 	}
 
-	while ((ch = fgetc(in)) != EOF) {
-		if (ch == '\r')
+	док ((ch = fgetc(in)) != EOF) {
+		ако (ch == '\r')
 			continue;
-		if (ch == '\n')
-			if (conv_type == CT_UNIX2DOS)
+		ако (ch == '\n')
+			ако (conv_type == CT_UNIX2DOS)
 				fputc('\r', out);
 		fputc(ch, out);
 	}
 
-	if (fn != NULL) {
-		if (fclose(in) < 0 || fclose(out) < 0) {
+	ако (fn != NULL) {
+		ако (fclose(in) < 0 || fclose(out) < 0) {
 			unlink(temp_fn);
 			bb_perror_nomsg_and_die();
 		}
@@ -105,17 +105,17 @@ static void convert(char *fn, int conv_type)
 	}
 }
 
-int dos2unix_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int dos2unix_main(int argc UNUSED_PARAM, char **argv)
+цео dos2unix_main(цео argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+цео dos2unix_main(цео argc UNUSED_PARAM, char **argv)
 {
-	int o, conv_type;
+	цео o, conv_type;
 
 	/* See if we are supposed to be doing dos2unix or unix2dos */
-	if (ENABLE_DOS2UNIX
+	ако (ENABLE_DOS2UNIX
 	 && (!ENABLE_UNIX2DOS || applet_name[0] == 'd')
 	) {
 		conv_type = CT_DOS2UNIX;
-	} else {
+	} инако {
 		conv_type = CT_UNIX2DOS;
 	}
 
@@ -124,14 +124,14 @@ int dos2unix_main(int argc UNUSED_PARAM, char **argv)
 
 	/* Do the conversion requested by an argument else do the default
 	 * conversion depending on our name.  */
-	if (o)
+	ако (o)
 		conv_type = o;
 
 	argv += optind;
 	do {
 		/* might be convert(NULL) if there is no filename given */
 		convert(*argv, conv_type);
-	} while (*argv && *++argv);
+	} док (*argv && *++argv);
 
-	return 0;
+	врати 0;
 }

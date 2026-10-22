@@ -80,29 +80,29 @@
  * But this function is not standard.
  */
 
-int echo_main(int argc UNUSED_PARAM, char **argv)
+цео echo_main(цео argc UNUSED_PARAM, char **argv)
 {
 	char **pp;
 	const char *arg;
 	char *out;
 	char *buffer;
 	unsigned buflen;
-	int err;
-#if !ENABLE_FEATURE_FANCY_ECHO
+	цео err;
+#ако !ENABLE_FEATURE_FANCY_ECHO
 	enum {
 		eflag = 0,  /* 0 -- disable escape sequences */
 		nflag = 1,  /* 1 -- print '\n' */
 	};
 
 	argv++;
-#else
+#инако
 	char nflag = 1;
 	char eflag = 0;
 
-	while ((arg = *++argv) != NULL) {
+	док ((arg = *++argv) != NULL) {
 		char n, e;
 
-		if (arg[0] != '-')
+		ако (arg[0] != '-')
 			break; /* not an option arg, echo it */
 
 		/* If it appears that we are handling options, then make sure
@@ -113,16 +113,16 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
 		n = nflag;
 		e = eflag;
 		do {
-			if (*arg == 'n')
+			ако (*arg == 'n')
 				n = 0;
-			else if (*arg == 'e')
+			инако ако (*arg == 'e')
 				e = '\\';
-			else if (*arg != 'E') {
+			инако ако (*arg != 'E') {
 				/* "-ccc" arg with one of c's invalid, echo it */
 				/* arg consisting from just "-" also handled here */
 				goto just_echo;
 			}
-		} while (*++arg);
+		} док (*++arg);
 		nflag = n;
 		eflag = e;
 	}
@@ -131,32 +131,32 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
 
 	buflen = 0;
 	pp = argv;
-	while ((arg = *pp) != NULL) {
+	док ((arg = *pp) != NULL) {
 		buflen += strlen(arg) + 1;
 		pp++;
 	}
 	out = buffer = xmalloc(buflen + 1); /* +1 is needed for "no args" case */
 
-	while ((arg = *argv) != NULL) {
-		int c;
+	док ((arg = *argv) != NULL) {
+		цео c;
 
-		if (!eflag) {
+		ако (!eflag) {
 			/* optimization for very common case */
 			out = stpcpy(out, arg);
-		} else
-		while ((c = *arg++) != '\0') {
-			if (c == eflag) {
+		} инако
+		док ((c = *arg++) != '\0') {
+			ако (c == eflag) {
 				/* This is an "\x" sequence */
 
-				if (*arg == 'c') {
+				ако (*arg == 'c') {
 					/* "\c" means cancel newline and
 					 * ignore all subsequent chars. */
 					goto do_write;
 				}
 				/* Since SUSv3 mandates a first digit of 0, 4-digit octals
 				* of the form \0### are accepted. */
-				if (*arg == '0') {
-					if ((unsigned char)(arg[1] - '0') < 8) {
+				ако (*arg == '0') {
+					ако ((unsigned char)(arg[1] - '0') < 8) {
 						/* 2nd char is 0..7: skip leading '0' */
 						arg++;
 					}
@@ -174,12 +174,12 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
 			*out++ = c;
 		}
 
-		if (!*++argv)
+		ако (!*++argv)
 			break;
 		*out++ = ' ';
 	}
 
-	if (nflag) {
+	ако (nflag) {
 		*out++ = '\n';
 	}
 
@@ -187,11 +187,11 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
 	/* Careful to error out on partial writes too (think ENOSPC!) */
 	errno = 0;
 	err = full_write(STDOUT_FILENO, buffer, out - buffer) != out - buffer;
-	if (err) {
+	ако (err) {
 		bb_simple_perror_msg(bb_msg_write_error);
 	}
 	free(buffer);
-	return err;
+	врати err;
 }
 
 /*
@@ -246,29 +246,29 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
  * Using writev instead, with 'direct' conversion of argv vector.
  */
 
-int echo_main(int argc, char **argv)
+цео echo_main(цео argc, char **argv)
 {
 	struct iovec io[argc];
 	struct iovec *cur_io = io;
 	char *arg;
 	char *p;
-#if !ENABLE_FEATURE_FANCY_ECHO
+#ако !ENABLE_FEATURE_FANCY_ECHO
 	enum {
 		eflag = '\\',
 		nflag = 1,  /* 1 -- print '\n' */
 	};
 	arg = *++argv;
-	if (!arg)
+	ако (!arg)
 		goto newline_ret;
-#else
+#инако
 	char nflag = 1;
 	char eflag = 0;
 
-	while (1) {
+	док (1) {
 		arg = *++argv;
-		if (!arg)
+		ако (!arg)
 			goto newline_ret;
-		if (*arg != '-')
+		ако (*arg != '-')
 			break;
 
 		/* If it appears that we are handling options, then make sure
@@ -276,40 +276,40 @@ int echo_main(int argc, char **argv)
 		 * Otherwise, the string should just be echoed.
 		 */
 		p = arg + 1;
-		if (!*p)	/* A single '-', so echo it. */
+		ако (!*p)	/* A single '-', so echo it. */
 			goto just_echo;
 
 		do {
-			if (!strchr("neE", *p))
+			ако (!strchr("neE", *p))
 				goto just_echo;
-		} while (*++p);
+		} док (*++p);
 
 		/* All of the options in this arg are valid, so handle them. */
 		p = arg + 1;
 		do {
-			if (*p == 'n')
+			ако (*p == 'n')
 				nflag = 0;
-			if (*p == 'e')
+			ако (*p == 'e')
 				eflag = '\\';
-		} while (*++p);
+		} док (*++p);
 	}
  just_echo:
 #endif
 
-	while (1) {
+	док (1) {
 		/* arg is already == *argv and isn't NULL */
-		int c;
+		цео c;
 
 		cur_io->iov_base = p = arg;
 
-		if (!eflag) {
+		ако (!eflag) {
 			/* optimization for very common case */
 			p += strlen(arg);
-		} else while ((c = *arg++)) {
-			if (c == eflag) {
+		} инако док ((c = *arg++)) {
+			ако (c == eflag) {
 				/* This is an "\x" sequence */
 
-				if (*arg == 'c') {
+				ако (*arg == 'c') {
 					/* "\c" means cancel newline and
 					 * ignore all subsequent chars. */
 					cur_io->iov_len = p - (char*)cur_io->iov_base;
@@ -318,7 +318,7 @@ int echo_main(int argc, char **argv)
 				}
 				/* Since SUSv3 mandates a first digit of 0, 4-digit octals
 				* of the form \0### are accepted. */
-				if (*arg == '0' && (unsigned char)(arg[1] - '0') < 8) {
+				ако (*arg == '0' && (unsigned char)(arg[1] - '0') < 8) {
 					arg++;
 				}
 //FIXME? we also accept non-0 starting sequences (see echo-prints-slash_41 test)
@@ -330,22 +330,22 @@ int echo_main(int argc, char **argv)
 		}
 
 		arg = *++argv;
-		if (arg)
+		ако (arg)
 			*p++ = ' ';
 		cur_io->iov_len = p - (char*)cur_io->iov_base;
 		cur_io++;
-		if (!arg)
+		ако (!arg)
 			break;
 	}
 
  newline_ret:
-	if (nflag) {
+	ако (nflag) {
 		cur_io->iov_base = (char*)"\n";
 		cur_io->iov_len = 1;
 		cur_io++;
 	}
  ret:
 	/* TODO: implement and use full_writev? */
-	return writev(1, io, (cur_io - io)) >= 0;
+	врати writev(1, io, (cur_io - io)) >= 0;
 }
 #endif

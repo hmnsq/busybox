@@ -51,16 +51,16 @@
 /* This is a NOEXEC applet. Be very careful! */
 
 
-int chgrp_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int chgrp_main(int argc, char **argv)
+цео chgrp_main(цео argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+цео chgrp_main(цео argc, char **argv)
 {
 	/* "chgrp [opts] abc file(s)" == "chown [opts] :abc file(s)" */
 	char **p = argv;
-	while (*++p) {
-		if (p[0][0] != '-') {
+	док (*++p) {
+		ако (p[0][0] != '-') {
 			p[0] = xasprintf(":%s", p[0]);
 			break;
 		}
 	}
-	return chown_main(argc, argv);
+	врати chown_main(argc, argv);
 }
