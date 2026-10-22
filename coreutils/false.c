@@ -27,12 +27,12 @@
 //usage:       "$ echo $?\n"
 //usage:       "1\n"
 
-#include "libbb.h"
+#ضمن "libbb.h"
 
 /* This is a NOFORK applet. Be very careful! */
 
-int false_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int false_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+صحيح false_main(صحيح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحيح false_main(صحيح argc اڻ_استعمال_ٿيل_PARAM, حرف **argv اڻ_استعمال_ٿيل_PARAM)
 {
-	return EXIT_FAILURE;
+	أرجع EXIT_FAILURE;
 }

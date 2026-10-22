@@ -84,60 +84,60 @@
 //usage:     "\n	-a	Show all"
 //usage:     "\n	-H	Print column headers"
 
-#include "libbb.h"
+#ضمن "libbb.h"
 
-static void idle_string(char *str6, time_t t)
+ساكن فراغ idle_string(حرف *str6, وقت_t t)
 {
-	t = time(NULL) - t;
+	t = وقت(عدم) - t;
 
 	/*if (t < 60) {
 		str6[0] = '.';
 		str6[1] = '\0';
 		return;
 	}*/
-	if (t >= 0 && t < (24 * 60 * 60)) {
+	إذا (t >= 0 && t < (24 * 60 * 60)) {
 		sprintf(str6, "%02d:%02d",
-				(int) (t / (60 * 60)),
-				(int) ((t % (60 * 60)) / 60));
-		return;
+				(صحيح) (t / (60 * 60)),
+				(صحيح) ((t % (60 * 60)) / 60));
+		أرجع;
 	}
 	strcpy(str6, "old");
 }
 
-int who_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int who_main(int argc UNUSED_PARAM, char **argv)
+صحيح who_main(صحيح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحيح who_main(صحيح argc اڻ_استعمال_ٿيل_PARAM, حرف **argv)
 {
-#define CNT_APPLET (ENABLE_USERS + ENABLE_W + ENABLE_WHO)
-	int do_users = (ENABLE_USERS && (CNT_APPLET == 1 || applet_name[0] == 'u'));
-	int do_w     = (ENABLE_W     && (CNT_APPLET == 1 || applet_name[1] == '\0'));
-	int do_who   = (ENABLE_WHO   && (CNT_APPLET == 1 || applet_name[1] == 'h'));
-	struct utmpx *ut;
-	unsigned opt;
-	const char *fmt = "%s";
+#وصف_ڪريو CNT_APPLET (ENABLE_USERS + ENABLE_W + ENABLE_WHO)
+	صحيح do_users = (ENABLE_USERS && (CNT_APPLET == 1 || applet_name[0] == 'u'));
+	صحيح do_w     = (ENABLE_W     && (CNT_APPLET == 1 || applet_name[1] == '\0'));
+	صحيح do_who   = (ENABLE_WHO   && (CNT_APPLET == 1 || applet_name[1] == 'h'));
+	بنية utmpx *ut;
+	بنانشان opt;
+	ثابت حرف *fmt = "%s";
 
 	opt = getopt32(argv, do_who ? "^" "aH" "\0" "=0": "^" "" "\0" "=0");
-	if ((opt & 2) || do_w) /* -H or we are w */
+	إذا ((opt & 2) || do_w) /* -H or we are w */
 		puts("USER\t\tTTY\t\tIDLE\tTIME\t\t HOST");
 
 	setutxent();
-	while ((ut = getutxent()) != NULL) {
-		if (ut->ut_user[0]
+	طالما ((ut = getutxent()) != عدم) {
+		إذا (ut->ut_user[0]
 		 && ((opt & 1) || ut->ut_type == USER_PROCESS)
 		) {
-			if (!do_users) {
-				char str6[6];
-				char name[sizeof("/dev/") + sizeof(ut->ut_line) + 1];
-				struct stat st;
-				time_t seconds;
+			إذا (!do_users) {
+				حرف str6[6];
+				حرف name[حجم("/dev/") + حجم(ut->ut_سٽ) + 1];
+				بنية stat st;
+				وقت_t seconds;
 
 				str6[0] = '?';
 				str6[1] = '\0';
 				strcpy(name, "/dev/");
-				safe_strncpy(ut->ut_line[0] == '/' ? name : name + sizeof("/dev/")-1,
-					ut->ut_line,
-					sizeof(ut->ut_line)+1
+				محفوظ_strncpy(ut->ut_سٽ[0] == '/' ? name : name + حجم("/dev/")-1,
+					ut->ut_سٽ,
+					حجم(ut->ut_سٽ)+1
 				);
-				if (stat(name, &st) == 0)
+				إذا (stat(name, &st) == 0)
 					idle_string(str6, st.st_atime);
 				/* manpages say ut_tv.tv_sec *is* time_t,
 				 * but some systems have it wrong */
@@ -146,25 +146,25 @@ int who_main(int argc UNUSED_PARAM, char **argv)
 				 * "Nov 10 19:33:20": 15 chars
 				 * "2010-11-10 19:33": 16 chars
 				 */
-				printf("%-15.*s %-15.*s %-7s %-16.16s %.*s\n",
-						(int)sizeof(ut->ut_user), ut->ut_user,
-						(int)sizeof(ut->ut_line), ut->ut_line,
+				لکو("%-15.*s %-15.*s %-7s %-16.16s %.*s\n",
+						(صحيح)حجم(ut->ut_user), ut->ut_user,
+						(صحيح)حجم(ut->ut_سٽ), ut->ut_سٽ,
 						str6,
 // TODO: with LANG=en_US.UTF-8, who from coreutils 8.25 shows
 // TIME col as "2017-04-06 18:47" (the default format is "Apr  6 18:47").
 // The former format looks saner to me. Switch to it unconditionally?
 						ctime(&seconds) + 4,
-						(int)sizeof(ut->ut_host), ut->ut_host
+						(صحيح)حجم(ut->ut_host), ut->ut_host
 				);
-			} else {
-				printf(fmt, ut->ut_user);
+			} وإلا {
+				لکو(fmt, ut->ut_user);
 				fmt = " %s";
 			}
 		}
 	}
-	if (do_users)
+	إذا (do_users)
 		bb_putchar('\n');
-	if (ENABLE_FEATURE_CLEAN_UP)
+	إذا (ENABLE_FEATURE_CLEAN_مٿي)
 		endutxent();
-	return EXIT_SUCCESS;
+	أرجع EXIT_SUCCESS;
 }

@@ -20,8 +20,8 @@
 
 
 /* #include "libbb.h" - done in od.c */
-#include "common_bufsiz.h"
-#define assert(a) ((void)0)
+#ضمن "common_bufsiz.h"
+#وصف_ڪريو أكد(a) ((فراغ)0)
 
 
 //usage:#if ENABLE_DESKTOP
@@ -38,7 +38,7 @@
 //usage:       "Print FILEs (or stdin) unambiguously, as octal bytes by default"
 //usage:#endif
 
-enum {
+تعداد {
 	OPT_A = 1 << 0,
 	OPT_N = 1 << 1,
 	OPT_a = 1 << 2,
@@ -70,48 +70,48 @@ enum {
 	OPT_traditional = (1 << 25) * ENABLE_LONG_OPTS,
 };
 
-#define OD_GETOPT32() getopt32long(argv, \
+#وصف_ڪريو OD_GETOPT32() getopt32long(argv, \
 	"A:N:abcdDfhHiIj:lLoOBt:*vxXsS:w:+:", od_longopts, \
 	/* -w with optional param */ \
 	/* -S was -s and also had optional parameter */ \
 	/* but in coreutils 6.3 it was renamed and now has */ \
 	/* _mandatory_ parameter */ \
-	&str_A, &str_N, &str_j, &lst_t, &str_S, &G.bytes_per_block)
+	&str_A, &str_N, &str_j, &lst_t, &str_S, &G.بائيٽون_في_بلاڪ)
 
 
 /* Check for 0x7f is a coreutils 6.3 addition */
-#define ISPRINT(c) (((c) >= ' ') && (c) < 0x7f)
+#وصف_ڪريو ISPRINT(c) (((c) >= ' ') && (c) < 0x7f)
 
-typedef long double longdouble_t;
-typedef unsigned long long ulonglong_t;
-typedef long long llong;
+تعريفنوع ڊگهو مزدوج longdouble_t;
+تعريفنوع بنانشان ڊگهو ڊگهو ulonglong_t;
+تعريفنوع ڊگهو ڊگهو llong;
 
-#if ENABLE_LFS
+#إذا ENABLE_LFS
 # define xstrtooff_sfx xstrtoull_sfx
-#else
+#وإلا
 # define xstrtooff_sfx xstrtoul_sfx
-#endif
+#جيڪڏهن_پورو
 
 /* The default number of input bytes per output line.  */
-#define DEFAULT_BYTES_PER_BLOCK 16
+#وصف_ڪريو DEFAULT_بائيٽون_في_بلاڪ 16
 
 /* The number of decimal digits of precision in a float.  */
-#ifndef FLT_DIG
+#جيڪڏهن_وصف_نه_ٿيل FLT_DIG
 # define FLT_DIG 7
-#endif
+#جيڪڏهن_پورو
 
 /* The number of decimal digits of precision in a double.  */
-#ifndef DBL_DIG
+#جيڪڏهن_وصف_نه_ٿيل DBL_DIG
 # define DBL_DIG 15
-#endif
+#جيڪڏهن_پورو
 
 /* The number of decimal digits of precision in a long double.  */
-#ifndef LDBL_DIG
+#جيڪڏهن_وصف_نه_ٿيل LDBL_DIG
 # define LDBL_DIG DBL_DIG
-#endif
+#جيڪڏهن_پورو
 
-enum size_spec {
-	NO_SIZE,
+تعداد سائيز_spec {
+	NO_سائيز,
 	CHAR,
 	SHORT,
 	INT,
@@ -120,28 +120,28 @@ enum size_spec {
 	FLOAT_SINGLE,
 	FLOAT_DOUBLE,
 	FLOAT_LONG_DOUBLE,
-	N_SIZE_SPECS
+	N_سائيز_SPECS
 };
 
-enum output_format {
+تعداد output_format {
 	SIGNED_DECIMAL,
 	UNSIGNED_DECIMAL,
 	OCTAL,
 	HEXADECIMAL,
-	FLOATING_POINT,
+	FLOATING_نقطو,
 	NAMED_CHARACTER,
 	CHARACTER
 };
 
 /* Each output format specification (from '-t spec' or from
    old-style options) is represented by one of these structures.  */
-struct tspec {
-	enum output_format fmt;
-	enum size_spec size;
-	void (*print_function) (size_t, const char *, const char *);
-	char *fmt_string;
-	int hexl_mode_trailer;
-	int field_width;
+بنية tspec {
+	تعداد output_format fmt;
+	تعداد سائيز_spec سائيز;
+	فراغ (*print_function) (سائيز_t, ثابت حرف *, ثابت حرف *);
+	حرف *fmt_string;
+	صحيح hexl_گهڻائي_trailer;
+	صحيح ميدان_ويڪر;
 };
 
 /* Convert the number of 8-bit bytes of a binary representation to
@@ -154,55 +154,55 @@ struct tspec {
    10	unsigned decimal
    8	unsigned hexadecimal  */
 
-static const uint8_t bytes_to_oct_digits[] ALIGN1 =
+ساكن ثابت uint8_t بائيٽون_منزل_oct_digits[] ALIGN1 =
 {0, 3, 6, 8, 11, 14, 16, 19, 22, 25, 27, 30, 32, 35, 38, 41, 43};
 
-static const uint8_t bytes_to_signed_dec_digits[] ALIGN1 =
+ساكن ثابت uint8_t بائيٽون_منزل_signed_dec_digits[] ALIGN1 =
 {1, 4, 6, 8, 11, 13, 16, 18, 20, 23, 25, 28, 30, 33, 35, 37, 40};
 
-static const uint8_t bytes_to_unsigned_dec_digits[] ALIGN1 =
+ساكن ثابت uint8_t بائيٽون_منزل_unsigned_dec_digits[] ALIGN1 =
 {0, 3, 5, 8, 10, 13, 15, 17, 20, 22, 25, 27, 29, 32, 34, 37, 39};
 
-static const uint8_t bytes_to_hex_digits[] ALIGN1 =
+ساكن ثابت uint8_t بائيٽون_منزل_hex_digits[] ALIGN1 =
 {0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32};
 
 /* Convert enum size_spec to the size of the named type.  */
-static const signed char width_bytes[] ALIGN1 = {
+ساكن ثابت نشانوارو حرف ويڪر_بائيٽون[] ALIGN1 = {
 	-1,
-	sizeof(char),
-	sizeof(short),
-	sizeof(int),
-	sizeof(long),
-	sizeof(ulonglong_t),
-	sizeof(float),
-	sizeof(double),
-	sizeof(longdouble_t)
+	حجم(حرف),
+	حجم(ننڍو),
+	حجم(صحيح),
+	حجم(ڊگهو),
+	حجم(ulonglong_t),
+	حجم(عائم),
+	حجم(مزدوج),
+	حجم(longdouble_t)
 };
 /* Ensure that for each member of 'enum size_spec' there is an
    initializer in the width_bytes array.  */
-struct ERR_width_bytes_has_bad_size {
-	char ERR_width_bytes_has_bad_size[ARRAY_SIZE(width_bytes) == N_SIZE_SPECS ? 1 : -1];
+بنية ERR_ويڪر_بائيٽون_has_bad_سائيز {
+	حرف ERR_ويڪر_بائيٽون_has_bad_سائيز[ARRAY_سائيز(ويڪر_بائيٽون) == N_سائيز_SPECS ? 1 : -1];
 };
 
-struct globals {
-	smallint exit_code;
+بنية globals {
+	smallint exit_ڪوڊ;
 
-	unsigned string_min;
+	بنانشان string_min;
 
 	/* An array of specs describing how to format each input block.  */
-	unsigned n_specs;
-	struct tspec *spec;
+	بنانشان n_specs;
+	بنية tspec *spec;
 
 	/* Function that accepts an address and an optional following char,
 	   and prints the address and char to stdout.  */
-	void (*format_address)(off_t, char);
+	فراغ (*format_پتو)(off_t, حرف);
 
 	/* The difference between the old-style pseudo starting address and
 	   the number of bytes to skip.  */
-#if ENABLE_LONG_OPTS
-	off_t pseudo_offset;
-# define G_pseudo_offset G.pseudo_offset
-#endif
+#إذا ENABLE_LONG_OPTS
+	off_t pseudo_وٿي;
+# define G_pseudo_وٿي G.pseudo_وٿي
+#جيڪڏهن_پورو
 	/* When zero, MAX_BYTES_TO_FORMAT and END_OFFSET are ignored, and all
 	   input is formatted.  */
 
@@ -210,196 +210,196 @@ struct globals {
 	   a multiple of the least common multiple of the sizes associated with
 	   the specified output types.  It should be as large as possible, but
 	   no larger than 16 -- unless specified with the -w option.  */
-	unsigned bytes_per_block; /* have to use unsigned, not size_t */
+	بنانشان بائيٽون_في_بلاڪ; /* have to use unsigned, not size_t */
 
 	/* A NULL-terminated list of the file-arguments from the command line.  */
-	const char *const *file_list;
+	ثابت حرف *ثابت *file_list;
 
 	/* The input stream associated with the current file.  */
-	FILE *in_stream;
+	FILE *اندريون_وهڪرو;
 
-	bool not_first;
+	bool not_پهريون;
 	bool prev_pair_equal;
 
-	char address_fmt[sizeof("%0n"OFF_FMT"xc")];
+	حرف پتو_fmt[حجم("%0n"OFF_FMT"xc")];
 } FIX_ALIASING;
 /* Corresponds to 'x' above */
-#define address_base_char G.address_fmt[sizeof(G.address_fmt)-3]
+#وصف_ڪريو پتو_بنياد_char G.پتو_fmt[حجم(G.پتو_fmt)-3]
 /* Corresponds to 'n' above */
-#define address_pad_len_char G.address_fmt[2]
+#وصف_ڪريو پتو_pad_len_char G.پتو_fmt[2]
 
-#if !ENABLE_LONG_OPTS
-enum { G_pseudo_offset = 0 };
-#endif
-#define G (*(struct globals*)bb_common_bufsiz1)
-#define INIT_G() do { \
-	setup_common_bufsiz(); \
-	BUILD_BUG_ON(sizeof(G) > COMMON_BUFSIZE); \
-	G.bytes_per_block = 32; \
-	strcpy(G.address_fmt, "%0n"OFF_FMT"xc"); \
-} while (0)
+#إذا !ENABLE_LONG_OPTS
+تعداد { G_pseudo_وٿي = 0 };
+#جيڪڏهن_پورو
+#وصف_ڪريو G (*(بنية globals*)bb_common_bufsiz1)
+#وصف_ڪريو INIT_G() افعل { \
+	تياري_common_bufsiz(); \
+	BUILD_BUG_ON(حجم(G) > COMMON_BUFSIZE); \
+	G.بائيٽون_في_بلاڪ = 32; \
+	strcpy(G.پتو_fmt, "%0n"OFF_FMT"xc"); \
+} طالما (0)
 
 
-#define MAX_INTEGRAL_TYPE_SIZE sizeof(ulonglong_t)
-static const unsigned char integral_type_size[MAX_INTEGRAL_TYPE_SIZE + 1] ALIGN1 = {
-	[sizeof(char)] = CHAR,
-#if USHRT_MAX != UCHAR_MAX
-	[sizeof(short)] = SHORT,
-#endif
-#if UINT_MAX != USHRT_MAX
-	[sizeof(int)] = INT,
-#endif
-#if ULONG_MAX != UINT_MAX
-	[sizeof(long)] = LONG,
-#endif
-#if ULLONG_MAX != ULONG_MAX
-	[sizeof(ulonglong_t)] = LONG_LONG,
-#endif
+#وصف_ڪريو MAX_INTEGRAL_TYPE_سائيز حجم(ulonglong_t)
+ساكن ثابت بنانشان حرف integral_type_سائيز[MAX_INTEGRAL_TYPE_سائيز + 1] ALIGN1 = {
+	[حجم(حرف)] = CHAR,
+#إذا USHRT_MAX != UCHAR_MAX
+	[حجم(ننڍو)] = SHORT,
+#جيڪڏهن_پورو
+#إذا UINT_MAX != USHRT_MAX
+	[حجم(صحيح)] = INT,
+#جيڪڏهن_پورو
+#إذا ULONG_MAX != UINT_MAX
+	[حجم(ڊگهو)] = LONG,
+#جيڪڏهن_پورو
+#إذا ULLONG_MAX != ULONG_MAX
+	[حجم(ulonglong_t)] = LONG_LONG,
+#جيڪڏهن_پورو
 };
 
-#define MAX_FP_TYPE_SIZE sizeof(longdouble_t)
-static const unsigned char fp_type_size[MAX_FP_TYPE_SIZE + 1] ALIGN1 = {
+#وصف_ڪريو MAX_FP_TYPE_سائيز حجم(longdouble_t)
+ساكن ثابت بنانشان حرف fp_type_سائيز[MAX_FP_TYPE_سائيز + 1] ALIGN1 = {
 	/* gcc seems to allow repeated indexes. Last one wins */
-	[sizeof(longdouble_t)] = FLOAT_LONG_DOUBLE,
-	[sizeof(double)] = FLOAT_DOUBLE,
-	[sizeof(float)] = FLOAT_SINGLE
+	[حجم(longdouble_t)] = FLOAT_LONG_DOUBLE,
+	[حجم(مزدوج)] = FLOAT_DOUBLE,
+	[حجم(عائم)] = FLOAT_SINGLE
 };
 
 
-static unsigned
-gcd(unsigned u, unsigned v)
+ساكن بنانشان
+وڏو_گڏيل_ونڊيندڙ(بنانشان u, بنانشان v)
 {
-	unsigned t;
-	while (v != 0) {
+	بنانشان t;
+	طالما (v != 0) {
 		t = u % v;
 		u = v;
 		v = t;
 	}
-	return u;
+	أرجع u;
 }
 
 /* Compute the least common multiple of U and V.  */
-static unsigned
-lcm(unsigned u, unsigned v) {
-	unsigned t = gcd(u, v);
-	if (t == 0)
-		return 0;
-	return u * v / t;
+ساكن بنانشان
+lcm(بنانشان u, بنانشان v) {
+	بنانشان t = وڏو_گڏيل_ونڊيندڙ(u, v);
+	إذا (t == 0)
+		أرجع 0;
+	أرجع u * v / t;
 }
 
-static void
-print_s_char(size_t n_bytes, const char *block, const char *fmt_string)
+ساكن فراغ
+print_s_char(سائيز_t n_بائيٽون, ثابت حرف *بلاڪ, ثابت حرف *fmt_string)
 {
-	while (n_bytes--) {
-		int tmp = *(signed char *) block;
-		printf(fmt_string, tmp);
-		block += sizeof(unsigned char);
+	طالما (n_بائيٽون--) {
+		صحيح tmp = *(نشانوارو حرف *) بلاڪ;
+		لکو(fmt_string, tmp);
+		بلاڪ += حجم(بنانشان حرف);
 	}
 }
 
-static void
-print_char(size_t n_bytes, const char *block, const char *fmt_string)
+ساكن فراغ
+print_char(سائيز_t n_بائيٽون, ثابت حرف *بلاڪ, ثابت حرف *fmt_string)
 {
-	while (n_bytes--) {
-		unsigned tmp = *(unsigned char *) block;
-		printf(fmt_string, tmp);
-		block += sizeof(unsigned char);
+	طالما (n_بائيٽون--) {
+		بنانشان tmp = *(بنانشان حرف *) بلاڪ;
+		لکو(fmt_string, tmp);
+		بلاڪ += حجم(بنانشان حرف);
 	}
 }
 
-static void
-print_s_short(size_t n_bytes, const char *block, const char *fmt_string)
+ساكن فراغ
+print_s_short(سائيز_t n_بائيٽون, ثابت حرف *بلاڪ, ثابت حرف *fmt_string)
 {
-	n_bytes /= sizeof(signed short);
-	while (n_bytes--) {
-		int tmp = *(signed short *) block;
-		printf(fmt_string, tmp);
-		block += sizeof(unsigned short);
+	n_بائيٽون /= حجم(نشانوارو ننڍو);
+	طالما (n_بائيٽون--) {
+		صحيح tmp = *(نشانوارو ننڍو *) بلاڪ;
+		لکو(fmt_string, tmp);
+		بلاڪ += حجم(بنانشان ننڍو);
 	}
 }
 
-static void
-print_short(size_t n_bytes, const char *block, const char *fmt_string)
+ساكن فراغ
+print_short(سائيز_t n_بائيٽون, ثابت حرف *بلاڪ, ثابت حرف *fmt_string)
 {
-	n_bytes /= sizeof(unsigned short);
-	while (n_bytes--) {
-		unsigned tmp = *(unsigned short *) block;
-		printf(fmt_string, tmp);
-		block += sizeof(unsigned short);
+	n_بائيٽون /= حجم(بنانشان ننڍو);
+	طالما (n_بائيٽون--) {
+		بنانشان tmp = *(بنانشان ننڍو *) بلاڪ;
+		لکو(fmt_string, tmp);
+		بلاڪ += حجم(بنانشان ننڍو);
 	}
 }
 
-static void
-print_int(size_t n_bytes, const char *block, const char *fmt_string)
+ساكن فراغ
+print_int(سائيز_t n_بائيٽون, ثابت حرف *بلاڪ, ثابت حرف *fmt_string)
 {
-	n_bytes /= sizeof(unsigned);
-	while (n_bytes--) {
-		unsigned tmp = *(unsigned *) block;
-		printf(fmt_string, tmp);
-		block += sizeof(unsigned);
+	n_بائيٽون /= حجم(بنانشان);
+	طالما (n_بائيٽون--) {
+		بنانشان tmp = *(بنانشان *) بلاڪ;
+		لکو(fmt_string, tmp);
+		بلاڪ += حجم(بنانشان);
 	}
 }
 
-#if UINT_MAX == ULONG_MAX
+#إذا UINT_MAX == ULONG_MAX
 # define print_long print_int
-#else
-static void
-print_long(size_t n_bytes, const char *block, const char *fmt_string)
+#وإلا
+ساكن فراغ
+print_long(سائيز_t n_بائيٽون, ثابت حرف *بلاڪ, ثابت حرف *fmt_string)
 {
-	n_bytes /= sizeof(unsigned long);
-	while (n_bytes--) {
-		unsigned long tmp = *(unsigned long *) block;
-		printf(fmt_string, tmp);
-		block += sizeof(unsigned long);
+	n_بائيٽون /= حجم(بنانشان ڊگهو);
+	طالما (n_بائيٽون--) {
+		بنانشان ڊگهو tmp = *(بنانشان ڊگهو *) بلاڪ;
+		لکو(fmt_string, tmp);
+		بلاڪ += حجم(بنانشان ڊگهو);
 	}
 }
-#endif
+#جيڪڏهن_پورو
 
-#if ULONG_MAX == ULLONG_MAX
+#إذا ULONG_MAX == ULLONG_MAX
 # define print_long_long print_long
-#else
-static void
-print_long_long(size_t n_bytes, const char *block, const char *fmt_string)
+#وإلا
+ساكن فراغ
+print_long_long(سائيز_t n_بائيٽون, ثابت حرف *بلاڪ, ثابت حرف *fmt_string)
 {
-	n_bytes /= sizeof(ulonglong_t);
-	while (n_bytes--) {
-		ulonglong_t tmp = *(ulonglong_t *) block;
-		printf(fmt_string, tmp);
-		block += sizeof(ulonglong_t);
+	n_بائيٽون /= حجم(ulonglong_t);
+	طالما (n_بائيٽون--) {
+		ulonglong_t tmp = *(ulonglong_t *) بلاڪ;
+		لکو(fmt_string, tmp);
+		بلاڪ += حجم(ulonglong_t);
 	}
 }
-#endif
+#جيڪڏهن_پورو
 
-static void
-print_float(size_t n_bytes, const char *block, const char *fmt_string)
+ساكن فراغ
+print_float(سائيز_t n_بائيٽون, ثابت حرف *بلاڪ, ثابت حرف *fmt_string)
 {
-	n_bytes /= sizeof(float);
-	while (n_bytes--) {
-		float tmp = *(float *) block;
-		printf(fmt_string, tmp);
-		block += sizeof(float);
-	}
-}
-
-static void
-print_double(size_t n_bytes, const char *block, const char *fmt_string)
-{
-	n_bytes /= sizeof(double);
-	while (n_bytes--) {
-		double tmp = *(double *) block;
-		printf(fmt_string, tmp);
-		block += sizeof(double);
+	n_بائيٽون /= حجم(عائم);
+	طالما (n_بائيٽون--) {
+		عائم tmp = *(عائم *) بلاڪ;
+		لکو(fmt_string, tmp);
+		بلاڪ += حجم(عائم);
 	}
 }
 
-static void
-print_long_double(size_t n_bytes, const char *block, const char *fmt_string)
+ساكن فراغ
+print_double(سائيز_t n_بائيٽون, ثابت حرف *بلاڪ, ثابت حرف *fmt_string)
 {
-	n_bytes /= sizeof(longdouble_t);
-	while (n_bytes--) {
-		longdouble_t tmp = *(longdouble_t *) block;
-		printf(fmt_string, tmp);
-		block += sizeof(longdouble_t);
+	n_بائيٽون /= حجم(مزدوج);
+	طالما (n_بائيٽون--) {
+		مزدوج tmp = *(مزدوج *) بلاڪ;
+		لکو(fmt_string, tmp);
+		بلاڪ += حجم(مزدوج);
+	}
+}
+
+ساكن فراغ
+print_long_double(سائيز_t n_بائيٽون, ثابت حرف *بلاڪ, ثابت حرف *fmt_string)
+{
+	n_بائيٽون /= حجم(longdouble_t);
+	طالما (n_بائيٽون--) {
+		longdouble_t tmp = *(longdouble_t *) بلاڪ;
+		لکو(fmt_string, tmp);
+		بلاڪ += حجم(longdouble_t);
 	}
 }
 
@@ -407,12 +407,12 @@ print_long_double(size_t n_bytes, const char *block, const char *fmt_string)
  * Remember, someday you may want to pump gigabytes through this thing.
  * Saving a dozen of .text bytes here is counter-productive */
 
-static void
-print_named_ascii(size_t n_bytes, const char *block,
-		const char *unused_fmt_string UNUSED_PARAM)
+ساكن فراغ
+print_named_ascii(سائيز_t n_بائيٽون, ثابت حرف *بلاڪ,
+		ثابت حرف *اڻ_استعمال_ٿيل_fmt_string اڻ_استعمال_ٿيل_PARAM)
 {
 	/* Names for some non-printing characters.  */
-	static const char charname[33][3] ALIGN1 = {
+	ساكن ثابت حرف charname[33][3] ALIGN1 = {
 		"nul", "soh", "stx", "etx", "eot", "enq", "ack", "bel",
 		" bs", " ht", " nl", " vt", " ff", " cr", " so", " si",
 		"dle", "dc1", "dc2", "dc3", "dc4", "nak", "syn", "etb",
@@ -420,24 +420,24 @@ print_named_ascii(size_t n_bytes, const char *block,
 		" sp"
 	};
 	// buf[N] pos:  01234 56789
-	char buf[12] = "   x\0 xxx\0";
+	حرف buf[12] = "   x\0 xxx\0";
 	// [12] because we take three 32bit stack slots anyway, and
 	// gcc is too dumb to initialize with constant stores,
 	// it copies initializer from rodata. Oh well.
 	// https://gcc.gnu.org/bugzilla/show_bug.cgi?id=65410
 
-	while (n_bytes--) {
-		unsigned masked_c = *(unsigned char *) block++;
+	طالما (n_بائيٽون--) {
+		بنانشان masked_c = *(بنانشان حرف *) بلاڪ++;
 
 		masked_c &= 0x7f;
-		if (masked_c == 0x7f) {
+		إذا (masked_c == 0x7f) {
 			fputs_stdout(" del");
-			continue;
+			استمر;
 		}
-		if (masked_c > ' ') {
+		إذا (masked_c > ' ') {
 			buf[3] = masked_c;
 			fputs_stdout(buf);
-			continue;
+			استمر;
 		}
 		/* Why? Because printf(" %3.3s") is much slower... */
 		buf[6] = charname[masked_c][0];
@@ -447,48 +447,48 @@ print_named_ascii(size_t n_bytes, const char *block,
 	}
 }
 
-static void
-print_ascii(size_t n_bytes, const char *block,
-		const char *unused_fmt_string UNUSED_PARAM)
+ساكن فراغ
+print_ascii(سائيز_t n_بائيٽون, ثابت حرف *بلاڪ,
+		ثابت حرف *اڻ_استعمال_ٿيل_fmt_string اڻ_استعمال_ٿيل_PARAM)
 {
 	// buf[N] pos:  01234 56789
-	char buf[12] = "   x\0 xxx\0";
+	حرف buf[12] = "   x\0 xxx\0";
 
-	while (n_bytes--) {
-		const char *s;
-		unsigned c = *(unsigned char *) block++;
+	طالما (n_بائيٽون--) {
+		ثابت حرف *s;
+		بنانشان c = *(بنانشان حرف *) بلاڪ++;
 
-		if (ISPRINT(c)) {
+		إذا (ISPRINT(c)) {
 			buf[3] = c;
 			fputs_stdout(buf);
-			continue;
+			استمر;
 		}
-		switch (c) {
-		case '\0':
+		بدل (c) {
+		حالة '\0':
 			s = "  \\0";
-			break;
-		case '\007':
+			اكسر;
+		حالة '\007':
 			s = "  \\a";
-			break;
-		case '\b':
+			اكسر;
+		حالة '\b':
 			s = "  \\b";
-			break;
-		case '\f':
+			اكسر;
+		حالة '\f':
 			s = "  \\f";
-			break;
-		case '\n':
+			اكسر;
+		حالة '\n':
 			s = "  \\n";
-			break;
-		case '\r':
+			اكسر;
+		حالة '\r':
 			s = "  \\r";
-			break;
-		case '\t':
+			اكسر;
+		حالة '\t':
 			s = "  \\t";
-			break;
-		case '\v':
+			اكسر;
+		حالة '\v':
 			s = "  \\v";
-			break;
-		default:
+			اكسر;
+		افتراضي:
 			buf[6] = (c >> 6 & 3) + '0';
 			buf[7] = (c >> 3 & 7) + '0';
 			buf[8] = (c & 7) + '0';
@@ -505,21 +505,21 @@ print_ascii(size_t n_bytes, const char *block,
    interpreted as standard input.  If any file open fails, give an error
    message and return nonzero.  */
 
-static void
-open_next_file(void)
+ساكن فراغ
+open_ايندڙ_file(فراغ)
 {
-	while (1) {
-		if (!*G.file_list)
-			return;
-		G.in_stream = fopen_or_warn_stdin(*G.file_list++);
-		if (G.in_stream) {
-			break;
+	طالما (1) {
+		إذا (!*G.file_list)
+			أرجع;
+		G.اندريون_وهڪرو = fopen_or_warn_stdin(*G.file_list++);
+		إذا (G.اندريون_وهڪرو) {
+			اكسر;
 		}
-		G.exit_code = 1;
+		G.exit_ڪوڊ = 1;
 	}
 
-	if ((option_mask32 & (OPT_N|OPT_S)) == OPT_N)
-		setbuf(G.in_stream, NULL);
+	إذا ((option_mask32 & (OPT_N|OPT_S)) == OPT_N)
+		setbuf(G.اندريون_وهڪرو, عدم);
 }
 
 /* Test whether there have been errors on in_stream, and close it if
@@ -529,23 +529,23 @@ open_next_file(void)
    have occurred.  IN_ERRNO, if nonzero, is the error number
    corresponding to the most recent action for IN_STREAM.  */
 
-static void
-check_and_close(void)
+ساكن فراغ
+check_and_close(فراغ)
 {
-	if (G.in_stream) {
-		if (ferror(G.in_stream))	{
-			bb_error_msg("%s: read error", (G.in_stream == stdin)
-					? bb_msg_standard_input
+	إذا (G.اندريون_وهڪرو) {
+		إذا (ferror(G.اندريون_وهڪرو))	{
+			bb_error_نياپو("%s: read error", (G.اندريون_وهڪرو == stdin)
+					? bb_نياپو_standard_داخلا
 					: G.file_list[-1]
 			);
-			G.exit_code = 1;
+			G.exit_ڪوڊ = 1;
 		}
-		fclose_if_not_stdin(G.in_stream);
-		G.in_stream = NULL;
+		fclose_if_not_stdin(G.اندريون_وهڪرو);
+		G.اندريون_وهڪرو = عدم;
 	}
 
-	if (ferror(stdout)) {
-		bb_simple_error_msg_and_die(bb_msg_write_error);
+	إذا (ferror(stdout)) {
+		bb_simple_error_نياپو_and_die(bb_نياپو_write_error);
 	}
 }
 
@@ -563,80 +563,80 @@ check_and_close(void)
    S_ORIG is solely for reporting errors.  It should be the full format
    string argument. */
 
-static NOINLINE const char *
-decode_one_format(const char *s_orig, const char *s, struct tspec *tspec)
+ساكن NOINLINE ثابت حرف *
+decode_one_format(ثابت حرف *s_orig, ثابت حرف *s, بنية tspec *tspec)
 {
-	enum size_spec size_spec;
-	unsigned size;
-	enum output_format fmt;
-	const char *p;
-	char *end;
-	char *fmt_string = NULL;
-	void (*print_function) (size_t, const char *, const char *);
-	unsigned c;
-	unsigned field_width = 0;
-	int pos;
+	تعداد سائيز_spec سائيز_spec;
+	بنانشان سائيز;
+	تعداد output_format fmt;
+	ثابت حرف *p;
+	حرف *پڇاڙي;
+	حرف *fmt_string = عدم;
+	فراغ (*print_function) (سائيز_t, ثابت حرف *, ثابت حرف *);
+	بنانشان c;
+	بنانشان ميدان_ويڪر = 0;
+	صحيح pos;
 
-	switch (*s) {
-	case 'd':
-	case 'o':
-	case 'u':
-	case 'x': {
-		static const char CSIL[] ALIGN1 = "CSIL";
+	بدل (*s) {
+	حالة 'd':
+	حالة 'o':
+	حالة 'u':
+	حالة 'x': {
+		ساكن ثابت حرف CSIL[] ALIGN1 = "CSIL";
 
 		c = *s++;
 		p = strchr(CSIL, *s);
 		/* if *s == NUL, p != NULL! Testcase: "od -tx" */
-		if (!p || *p == '\0') {
-			size = sizeof(int);
-			if (isdigit(s[0])) {
-				size = bb_strtou(s, &end, 0);
-				if (errno == ERANGE
-				 || MAX_INTEGRAL_TYPE_SIZE < size
-				 || integral_type_size[size] == NO_SIZE
+		إذا (!p || *p == '\0') {
+			سائيز = حجم(صحيح);
+			إذا (انگ_آهي(s[0])) {
+				سائيز = bb_strtou(s, &پڇاڙي, 0);
+				إذا (errno == ERANGE
+				 || MAX_INTEGRAL_TYPE_سائيز < سائيز
+				 || integral_type_سائيز[سائيز] == NO_سائيز
 				) {
-					bb_error_msg_and_die("invalid type string '%s'; "
+					bb_error_نياپو_and_die("invalid type string '%s'; "
 						"%u-byte %s type is not supported",
-						s_orig, size, "integral");
+						s_orig, سائيز, "integral");
 				}
-				s = end;
+				s = پڇاڙي;
 			}
-		} else {
-			static const uint8_t CSIL_sizeof[4] = {
-				sizeof(char),
-				sizeof(short),
-				sizeof(int),
-				sizeof(long),
+		} وإلا {
+			ساكن ثابت uint8_t CSIL_sizeof[4] = {
+				حجم(حرف),
+				حجم(ننڍو),
+				حجم(صحيح),
+				حجم(ڊگهو),
 			};
-			size = CSIL_sizeof[p - CSIL];
+			سائيز = CSIL_sizeof[p - CSIL];
 			s++; /* skip C/S/I/L */
 		}
 
-#define ISPEC_TO_FORMAT(Spec, Min_format, Long_format, Max_format) \
+#وصف_ڪريو ISPEC_منزل_FORMAT(Spec, Min_format, Long_format, Max_format) \
 	((Spec) == LONG_LONG ? (Max_format) \
 	: ((Spec) == LONG ? (Long_format) : (Min_format)))
 
-#define FMT_BYTES_ALLOCATED 9
-		size_spec = integral_type_size[size];
+#وصف_ڪريو FMT_بائيٽون_ALLOCATED 9
+		سائيز_spec = integral_type_سائيز[سائيز];
 
 		{
-			static const char doux[] ALIGN1 = "doux";
-			static const char doux_fmt_letter[][4] = {
+			ساكن ثابت حرف doux[] ALIGN1 = "doux";
+			ساكن ثابت حرف doux_fmt_letter[][4] = {
 				"lld", "llo", "llu", "llx"
 			};
-			static const enum output_format doux_fmt[] = {
+			ساكن ثابت تعداد output_format doux_fmt[] = {
 				SIGNED_DECIMAL,
 				OCTAL,
 				UNSIGNED_DECIMAL,
 				HEXADECIMAL,
 			};
-			static const uint8_t *const doux_bytes_to_XXX[] = {
-				bytes_to_signed_dec_digits,
-				bytes_to_oct_digits,
-				bytes_to_unsigned_dec_digits,
-				bytes_to_hex_digits,
+			ساكن ثابت uint8_t *ثابت doux_بائيٽون_منزل_XXX[] = {
+				بائيٽون_منزل_signed_dec_digits,
+				بائيٽون_منزل_oct_digits,
+				بائيٽون_منزل_unsigned_dec_digits,
+				بائيٽون_منزل_hex_digits,
 			};
-			static const char doux_fmtstring[][sizeof(" %%0%u%s")] ALIGN1 = {
+			ساكن ثابت حرف doux_fmtstring[][حجم(" %%0%u%s")] ALIGN1 = {
 				" %%%u%s",
 				" %%0%u%s",
 				" %%%u%s",
@@ -645,141 +645,141 @@ decode_one_format(const char *s_orig, const char *s, struct tspec *tspec)
 
 			pos = strchr(doux, c) - doux;
 			fmt = doux_fmt[pos];
-			field_width = doux_bytes_to_XXX[pos][size];
+			ميدان_ويڪر = doux_بائيٽون_منزل_XXX[pos][سائيز];
 			p = doux_fmt_letter[pos] + 2;
-			if (size_spec == LONG) p--;
-			if (size_spec == LONG_LONG) p -= 2;
-			fmt_string = xasprintf(doux_fmtstring[pos], field_width, p);
+			إذا (سائيز_spec == LONG) p--;
+			إذا (سائيز_spec == LONG_LONG) p -= 2;
+			fmt_string = xasprintf(doux_fmtstring[pos], ميدان_ويڪر, p);
 		}
 
-		switch (size_spec) {
-		case CHAR:
+		بدل (سائيز_spec) {
+		حالة CHAR:
 			print_function = (fmt == SIGNED_DECIMAL
 				    ? print_s_char
 				    : print_char);
-			break;
-		case SHORT:
+			اكسر;
+		حالة SHORT:
 			print_function = (fmt == SIGNED_DECIMAL
 				    ? print_s_short
 				    : print_short);
-			break;
-		case INT:
+			اكسر;
+		حالة INT:
 			print_function = print_int;
-			break;
-		case LONG:
+			اكسر;
+		حالة LONG:
 			print_function = print_long;
-			break;
-		default: /* case LONG_LONG: */
+			اكسر;
+		افتراضي: /* case LONG_LONG: */
 			print_function = print_long_long;
-			break;
+			اكسر;
 		}
-		break;
+		اكسر;
 	}
 
-	case 'f': {
-		static const char FDL[] ALIGN1 = "FDL";
+	حالة 'f': {
+		ساكن ثابت حرف FDL[] ALIGN1 = "FDL";
 
-		fmt = FLOATING_POINT;
+		fmt = FLOATING_نقطو;
 		++s;
 		p = strchr(FDL, *s);
-		if (!p || *p == '\0') {
-			size = sizeof(double);
-			if (isdigit(s[0])) {
-				size = bb_strtou(s, &end, 0);
-				if (errno == ERANGE || size > MAX_FP_TYPE_SIZE
-				 || fp_type_size[size] == NO_SIZE
+		إذا (!p || *p == '\0') {
+			سائيز = حجم(مزدوج);
+			إذا (انگ_آهي(s[0])) {
+				سائيز = bb_strtou(s, &پڇاڙي, 0);
+				إذا (errno == ERANGE || سائيز > MAX_FP_TYPE_سائيز
+				 || fp_type_سائيز[سائيز] == NO_سائيز
 				) {
-					bb_error_msg_and_die("invalid type string '%s'; "
+					bb_error_نياپو_and_die("invalid type string '%s'; "
 						"%u-byte %s type is not supported",
-						s_orig, size, "floating point");
+						s_orig, سائيز, "floating point");
 				}
-				s = end;
+				s = پڇاڙي;
 			}
-		} else {
-			static const uint8_t FDL_sizeof[] = {
-				sizeof(float),
-				sizeof(double),
-				sizeof(longdouble_t),
+		} وإلا {
+			ساكن ثابت uint8_t FDL_sizeof[] = {
+				حجم(عائم),
+				حجم(مزدوج),
+				حجم(longdouble_t),
 			};
 
-			size = FDL_sizeof[p - FDL];
+			سائيز = FDL_sizeof[p - FDL];
 			s++; /* skip F/D/L */
 		}
 
-		size_spec = fp_type_size[size];
+		سائيز_spec = fp_type_سائيز[سائيز];
 
-		switch (size_spec) {
-		case FLOAT_SINGLE:
+		بدل (سائيز_spec) {
+		حالة FLOAT_SINGLE:
 			print_function = print_float;
-			field_width = FLT_DIG + 8;
+			ميدان_ويڪر = FLT_DIG + 8;
 			/* Don't use %#e; not all systems support it.  */
-			fmt_string = xasprintf(" %%%d.%de", field_width, FLT_DIG);
-			break;
-		case FLOAT_DOUBLE:
+			fmt_string = xasprintf(" %%%d.%de", ميدان_ويڪر, FLT_DIG);
+			اكسر;
+		حالة FLOAT_DOUBLE:
 			print_function = print_double;
-			field_width = DBL_DIG + 8;
-			fmt_string = xasprintf(" %%%d.%de", field_width, DBL_DIG);
-			break;
-		default: /* case FLOAT_LONG_DOUBLE: */
+			ميدان_ويڪر = DBL_DIG + 8;
+			fmt_string = xasprintf(" %%%d.%de", ميدان_ويڪر, DBL_DIG);
+			اكسر;
+		افتراضي: /* case FLOAT_LONG_DOUBLE: */
 			print_function = print_long_double;
-			field_width = LDBL_DIG + 8;
-			fmt_string = xasprintf(" %%%d.%dLe", field_width, LDBL_DIG);
-			break;
+			ميدان_ويڪر = LDBL_DIG + 8;
+			fmt_string = xasprintf(" %%%d.%dLe", ميدان_ويڪر, LDBL_DIG);
+			اكسر;
 		}
-		break;
+		اكسر;
 	}
 
-	case 'a':
+	حالة 'a':
 		++s;
 		fmt = NAMED_CHARACTER;
-		size_spec = CHAR;
+		سائيز_spec = CHAR;
 		print_function = print_named_ascii;
-		field_width = 3;
-		break;
-	case 'c':
+		ميدان_ويڪر = 3;
+		اكسر;
+	حالة 'c':
 		++s;
 		fmt = CHARACTER;
-		size_spec = CHAR;
+		سائيز_spec = CHAR;
 		print_function = print_ascii;
-		field_width = 3;
-		break;
-	default:
-		bb_error_msg_and_die("invalid character '%c' "
+		ميدان_ويڪر = 3;
+		اكسر;
+	افتراضي:
+		bb_error_نياپو_and_die("invalid character '%c' "
 				"in type string '%s'", *s, s_orig);
 	}
 
-	tspec->size = size_spec;
+	tspec->سائيز = سائيز_spec;
 	tspec->fmt = fmt;
 	tspec->print_function = print_function;
 	tspec->fmt_string = fmt_string;
 
-	tspec->field_width = field_width;
-	tspec->hexl_mode_trailer = (*s == 'z');
-	if (tspec->hexl_mode_trailer)
+	tspec->ميدان_ويڪر = ميدان_ويڪر;
+	tspec->hexl_گهڻائي_trailer = (*s == 'z');
+	إذا (tspec->hexl_گهڻائي_trailer)
 		s++;
 
-	return s;
+	أرجع s;
 }
 
 /* Decode the modern od format string S.  Append the decoded
    representation to the global array SPEC, reallocating SPEC if
    necessary.  */
 
-static void
-decode_format_string(const char *s)
+ساكن فراغ
+decode_format_string(ثابت حرف *s)
 {
-	const char *s_orig = s;
+	ثابت حرف *s_orig = s;
 
-	while (*s != '\0') {
-		struct tspec tspec;
-		const char *next;
+	طالما (*s != '\0') {
+		بنية tspec tspec;
+		ثابت حرف *ايندڙ;
 
-		next = decode_one_format(s_orig, s, &tspec);
+		ايندڙ = decode_one_format(s_orig, s, &tspec);
 
-		assert(s != next);
-		s = next;
-		G.spec = xrealloc_vector(G.spec, 4, G.n_specs);
-		memcpy(&G.spec[G.n_specs], &tspec, sizeof(G.spec[0]));
+		أكد(s != ايندڙ);
+		s = ايندڙ;
+		G.spec = xrealloc_ويڪٽر(G.spec, 4, G.n_specs);
+		يادگيري_نقل(&G.spec[G.n_specs], &tspec, حجم(G.spec[0]));
 		G.n_specs++;
 	}
 }
@@ -791,14 +791,14 @@ decode_format_string(const char *s)
    nonzero.  When possible, use seek rather than read operations to
    advance IN_STREAM.  */
 
-static void
+ساكن فراغ
 skip(off_t n_skip)
 {
-	if (n_skip == 0)
-		return;
+	إذا (n_skip == 0)
+		أرجع;
 
-	while (G.in_stream) { /* !EOF */
-		struct stat file_stats;
+	طالما (G.اندريون_وهڪرو) { /* !EOF */
+		بنية stat file_stats;
 
 		/* First try seeking.  For large offsets, this extra work is
 		   worthwhile.  If the offset is below some threshold it may be
@@ -815,88 +815,88 @@ skip(off_t n_skip)
 			   If the number of bytes left to skip is at least
 			   as large as the size of the current file, we can
 			   decrement n_skip and go on to the next file.  */
-		if (fstat(fileno(G.in_stream), &file_stats) == 0
-		 && S_ISREG(file_stats.st_mode) && file_stats.st_size > 0
+		إذا (fstat(fileno(G.اندريون_وهڪرو), &file_stats) == 0
+		 && S_ISREG(file_stats.st_گهڻائي) && file_stats.st_سائيز > 0
 		) {
-			if (file_stats.st_size < n_skip) {
-				n_skip -= file_stats.st_size;
+			إذا (file_stats.st_سائيز < n_skip) {
+				n_skip -= file_stats.st_سائيز;
 				/* take "check & close / open_next" route */
-			} else {
-				if (fseeko(G.in_stream, n_skip, SEEK_CUR) != 0)
-					G.exit_code = 1;
-				return;
+			} وإلا {
+				إذا (fseeko(G.اندريون_وهڪرو, n_skip, SEEK_CUR) != 0)
+					G.exit_ڪوڊ = 1;
+				أرجع;
 			}
-		} else {
+		} وإلا {
 			/* If it's not a regular file with positive size,
 			   position the file pointer by reading.  */
-			char buf[1024];
-			size_t n_bytes_to_read = 1024;
-			size_t n_bytes_read;
+			حرف buf[1024];
+			سائيز_t n_بائيٽون_منزل_read = 1024;
+			سائيز_t n_بائيٽون_read;
 
-			while (n_skip > 0) {
-				if (n_skip < n_bytes_to_read)
-					n_bytes_to_read = n_skip;
-				n_bytes_read = fread(buf, 1, n_bytes_to_read, G.in_stream);
-				n_skip -= n_bytes_read;
-				if (n_bytes_read != n_bytes_to_read)
-					break; /* EOF on this file or error */
+			طالما (n_skip > 0) {
+				إذا (n_skip < n_بائيٽون_منزل_read)
+					n_بائيٽون_منزل_read = n_skip;
+				n_بائيٽون_read = fread(buf, 1, n_بائيٽون_منزل_read, G.اندريون_وهڪرو);
+				n_skip -= n_بائيٽون_read;
+				إذا (n_بائيٽون_read != n_بائيٽون_منزل_read)
+					اكسر; /* EOF on this file or error */
 			}
 		}
-		if (n_skip == 0)
-			return;
+		إذا (n_skip == 0)
+			أرجع;
 
 		check_and_close();
-		open_next_file();
+		open_ايندڙ_file();
 	}
 
-	if (n_skip)
-		bb_simple_error_msg_and_die("can't skip past end of combined input");
+	إذا (n_skip)
+		bb_simple_error_نياپو_and_die("can't skip past end of combined input");
 }
 
 
-typedef void FN_format_address(off_t address, char c);
+تعريفنوع فراغ FN_format_پتو(off_t پتو, حرف c);
 
-static void
-format_address_none(off_t address UNUSED_PARAM, char c UNUSED_PARAM)
+ساكن فراغ
+format_پتو_none(off_t پتو اڻ_استعمال_ٿيل_PARAM, حرف c اڻ_استعمال_ٿيل_PARAM)
 {
 }
 
-static void
-format_address_std(off_t address, char c)
+ساكن فراغ
+format_پتو_std(off_t پتو, حرف c)
 {
 	/* Corresponds to 'c' */
-	G.address_fmt[sizeof(G.address_fmt)-2] = c;
-	printf(G.address_fmt, address);
+	G.پتو_fmt[حجم(G.پتو_fmt)-2] = c;
+	لکو(G.پتو_fmt, پتو);
 }
 
-#if ENABLE_LONG_OPTS
+#إذا ENABLE_LONG_OPTS
 /* only used with --traditional */
-static void
-format_address_paren(off_t address, char c)
+ساكن فراغ
+format_پتو_paren(off_t پتو, حرف c)
 {
-	putchar('(');
-	format_address_std(address, ')');
-	if (c) putchar(c);
+	اکر_لکو('(');
+	format_پتو_std(پتو, ')');
+	إذا (c) اکر_لکو(c);
 }
 
-static void
-format_address_label(off_t address, char c)
+ساكن فراغ
+format_پتو_label(off_t پتو, حرف c)
 {
-	format_address_std(address, ' ');
-	format_address_paren(address + G_pseudo_offset, c);
+	format_پتو_std(پتو, ' ');
+	format_پتو_paren(پتو + G_pseudo_وٿي, c);
 }
-#endif
+#جيڪڏهن_پورو
 
-static void
-dump_hexl_mode_trailer(size_t n_bytes, const char *block)
+ساكن فراغ
+dump_hexl_گهڻائي_trailer(سائيز_t n_بائيٽون, ثابت حرف *بلاڪ)
 {
 	fputs_stdout("  >");
-	while (n_bytes--) {
-		unsigned c = *(unsigned char *) block++;
+	طالما (n_بائيٽون--) {
+		بنانشان c = *(بنانشان حرف *) بلاڪ++;
 		c = (ISPRINT(c) ? c : '.');
-		putchar(c);
+		اکر_لکو(c);
 	}
-	putchar('<');
+	اکر_لکو('<');
 }
 
 /* Write N_BYTES bytes from CURR_BLOCK to standard output once for each
@@ -910,83 +910,83 @@ dump_hexl_mode_trailer(size_t n_bytes, const char *block)
    That condition may be false only for the last input block -- and then
    only when it has not been padded to length BYTES_PER_BLOCK.  */
 
-static void
-write_block(off_t current_offset, size_t n_bytes,
-		const char *prev_block, const char *curr_block)
+ساكن فراغ
+write_بلاڪ(off_t current_وٿي, سائيز_t n_بائيٽون,
+		ثابت حرف *prev_بلاڪ, ثابت حرف *curr_بلاڪ)
 {
-	unsigned i;
+	بنانشان i;
 
-	if (!(option_mask32 & OPT_v)
-	 && G.not_first
-	 && n_bytes == G.bytes_per_block
-	 && memcmp(prev_block, curr_block, G.bytes_per_block) == 0
+	إذا (!(option_mask32 & OPT_v)
+	 && G.not_پهريون
+	 && n_بائيٽون == G.بائيٽون_في_بلاڪ
+	 && memcmp(prev_بلاڪ, curr_بلاڪ, G.بائيٽون_في_بلاڪ) == 0
 	) {
-		if (G.prev_pair_equal) {
+		إذا (G.prev_pair_equal) {
 			/* The two preceding blocks were equal, and the current
 			   block is the same as the last one, so print nothing.  */
-		} else {
+		} وإلا {
 			puts("*");
 			G.prev_pair_equal = 1;
 		}
-	} else {
-		G.not_first = 1;
+	} وإلا {
+		G.not_پهريون = 1;
 		G.prev_pair_equal = 0;
-		for (i = 0; i < G.n_specs; i++) {
-			if (i == 0)
-				G.format_address(current_offset, '\0');
-			else
-				printf("%*s", address_pad_len_char - '0', "");
-			(*G.spec[i].print_function) (n_bytes, curr_block, G.spec[i].fmt_string);
-			if (G.spec[i].hexl_mode_trailer) {
+		لكل (i = 0; i < G.n_specs; i++) {
+			إذا (i == 0)
+				G.format_پتو(current_وٿي, '\0');
+			وإلا
+				لکو("%*s", پتو_pad_len_char - '0', "");
+			(*G.spec[i].print_function) (n_بائيٽون, curr_بلاڪ, G.spec[i].fmt_string);
+			إذا (G.spec[i].hexl_گهڻائي_trailer) {
 				/* space-pad out to full line width, then dump the trailer */
-				unsigned datum_width = width_bytes[G.spec[i].size];
-				unsigned blank_fields = (G.bytes_per_block - n_bytes) / datum_width;
-				unsigned field_width = G.spec[i].field_width + 1;
-				printf("%*s", blank_fields * field_width, "");
-				dump_hexl_mode_trailer(n_bytes, curr_block);
+				بنانشان datum_ويڪر = ويڪر_بائيٽون[G.spec[i].سائيز];
+				بنانشان blank_fields = (G.بائيٽون_في_بلاڪ - n_بائيٽون) / datum_ويڪر;
+				بنانشان ميدان_ويڪر = G.spec[i].ميدان_ويڪر + 1;
+				لکو("%*s", blank_fields * ميدان_ويڪر, "");
+				dump_hexl_گهڻائي_trailer(n_بائيٽون, curr_بلاڪ);
 			}
-			putchar('\n');
+			اکر_لکو('\n');
 		}
 	}
 }
 
-static void
-read_block(size_t n, char *block, size_t *n_bytes_in_buffer)
+ساكن فراغ
+read_بلاڪ(سائيز_t n, حرف *بلاڪ, سائيز_t *n_بائيٽون_اندريون_بفر)
 {
-	assert(0 < n && n <= G.bytes_per_block);
+	أكد(0 < n && n <= G.بائيٽون_في_بلاڪ);
 
-	*n_bytes_in_buffer = 0;
+	*n_بائيٽون_اندريون_بفر = 0;
 
-	if (n == 0)
-		return;
+	إذا (n == 0)
+		أرجع;
 
-	while (G.in_stream != NULL) { /* EOF.  */
-		size_t n_needed;
-		size_t n_read;
+	طالما (G.اندريون_وهڪرو != عدم) { /* EOF.  */
+		سائيز_t n_needed;
+		سائيز_t n_read;
 
-		n_needed = n - *n_bytes_in_buffer;
-		n_read = fread(block + *n_bytes_in_buffer, 1, n_needed, G.in_stream);
-		*n_bytes_in_buffer += n_read;
-		if (n_read == n_needed)
-			break;
+		n_needed = n - *n_بائيٽون_اندريون_بفر;
+		n_read = fread(بلاڪ + *n_بائيٽون_اندريون_بفر, 1, n_needed, G.اندريون_وهڪرو);
+		*n_بائيٽون_اندريون_بفر += n_read;
+		إذا (n_read == n_needed)
+			اكسر;
 		/* error check is done in check_and_close */
 		check_and_close();
-		open_next_file();
+		open_ايندڙ_file();
 	}
 }
 
 /* Return the least common multiple of the sizes associated
    with the format specs.  */
 
-static int
-get_lcm(void)
+ساكن صحيح
+get_lcm(فراغ)
 {
-	size_t i;
-	int l_c_m = 1;
+	سائيز_t i;
+	صحيح l_c_m = 1;
 
-	for (i = 0; i < G.n_specs; i++)
-		l_c_m = lcm(l_c_m, width_bytes[(int) G.spec[i].size]);
-	return l_c_m;
+	لكل (i = 0; i < G.n_specs; i++)
+		l_c_m = lcm(l_c_m, ويڪر_بائيٽون[(صحيح) G.spec[i].سائيز]);
+	أرجع l_c_m;
 }
 
 /* Read a chunk of size BYTES_PER_BLOCK from the input files, write the
@@ -999,67 +999,67 @@ get_lcm(void)
    write on a line by itself the offset of the byte after the last byte
    read.  */
 
-static void
-dump(off_t current_offset, off_t end_offset)
+ساكن فراغ
+dump(off_t current_وٿي, off_t پڇاڙي_وٿي)
 {
-	char *block[2];
-	int idx;
-	size_t n_bytes_read;
+	حرف *بلاڪ[2];
+	صحيح idx;
+	سائيز_t n_بائيٽون_read;
 
-	block[0] = xmalloc(2 * G.bytes_per_block);
-	block[1] = block[0] + G.bytes_per_block;
+	بلاڪ[0] = xmalloc(2 * G.بائيٽون_في_بلاڪ);
+	بلاڪ[1] = بلاڪ[0] + G.بائيٽون_في_بلاڪ;
 
 	idx = 0;
-	if (option_mask32 & OPT_N) {
-		while (1) {
-			size_t n_needed;
-			if (current_offset >= end_offset) {
-				n_bytes_read = 0;
-				break;
+	إذا (option_mask32 & OPT_N) {
+		طالما (1) {
+			سائيز_t n_needed;
+			إذا (current_وٿي >= پڇاڙي_وٿي) {
+				n_بائيٽون_read = 0;
+				اكسر;
 			}
-			n_needed = MIN(end_offset - current_offset, (off_t) G.bytes_per_block);
-			read_block(n_needed, block[idx], &n_bytes_read);
-			if (n_bytes_read < G.bytes_per_block)
-				break;
-			assert(n_bytes_read == G.bytes_per_block);
-			write_block(current_offset, n_bytes_read, block[idx ^ 1], block[idx]);
-			current_offset += n_bytes_read;
+			n_needed = MIN(پڇاڙي_وٿي - current_وٿي, (off_t) G.بائيٽون_في_بلاڪ);
+			read_بلاڪ(n_needed, بلاڪ[idx], &n_بائيٽون_read);
+			إذا (n_بائيٽون_read < G.بائيٽون_في_بلاڪ)
+				اكسر;
+			أكد(n_بائيٽون_read == G.بائيٽون_في_بلاڪ);
+			write_بلاڪ(current_وٿي, n_بائيٽون_read, بلاڪ[idx ^ 1], بلاڪ[idx]);
+			current_وٿي += n_بائيٽون_read;
 			idx ^= 1;
 		}
-	} else {
-		while (1) {
-			read_block(G.bytes_per_block, block[idx], &n_bytes_read);
-			if (n_bytes_read < G.bytes_per_block)
-				break;
-			assert(n_bytes_read == G.bytes_per_block);
-			write_block(current_offset, n_bytes_read, block[idx ^ 1], block[idx]);
-			current_offset += n_bytes_read;
+	} وإلا {
+		طالما (1) {
+			read_بلاڪ(G.بائيٽون_في_بلاڪ, بلاڪ[idx], &n_بائيٽون_read);
+			إذا (n_بائيٽون_read < G.بائيٽون_في_بلاڪ)
+				اكسر;
+			أكد(n_بائيٽون_read == G.بائيٽون_في_بلاڪ);
+			write_بلاڪ(current_وٿي, n_بائيٽون_read, بلاڪ[idx ^ 1], بلاڪ[idx]);
+			current_وٿي += n_بائيٽون_read;
 			idx ^= 1;
 		}
 	}
 
-	if (n_bytes_read > 0) {
-		int l_c_m;
-		size_t bytes_to_write;
+	إذا (n_بائيٽون_read > 0) {
+		صحيح l_c_m;
+		سائيز_t بائيٽون_منزل_write;
 
 		l_c_m = get_lcm();
 
 		/* Make bytes_to_write the smallest multiple of l_c_m that
 		   is at least as large as n_bytes_read.  */
-		bytes_to_write = l_c_m * ((n_bytes_read + l_c_m - 1) / l_c_m);
+		بائيٽون_منزل_write = l_c_m * ((n_بائيٽون_read + l_c_m - 1) / l_c_m);
 
-		memset(block[idx] + n_bytes_read, 0, bytes_to_write - n_bytes_read);
-		write_block(current_offset, bytes_to_write,
-				block[idx ^ 1], block[idx]);
-		current_offset += n_bytes_read;
+		memset(بلاڪ[idx] + n_بائيٽون_read, 0, بائيٽون_منزل_write - n_بائيٽون_read);
+		write_بلاڪ(current_وٿي, بائيٽون_منزل_write,
+				بلاڪ[idx ^ 1], بلاڪ[idx]);
+		current_وٿي += n_بائيٽون_read;
 	}
 
-	G.format_address(current_offset, '\n');
+	G.format_پتو(current_وٿي, '\n');
 
-	if ((option_mask32 & OPT_N) && current_offset >= end_offset)
+	إذا ((option_mask32 & OPT_N) && current_وٿي >= پڇاڙي_وٿي)
 		check_and_close();
 
-	free(block[0]);
+	حرر(بلاڪ[0]);
 }
 
 /* Read N bytes into BLOCK from the concatenation of the input files
@@ -1082,197 +1082,197 @@ dump(off_t current_offset, off_t end_offset)
    Based on a function written by Richard Stallman for a
    traditional version of od.  */
 
-static void
-dump_strings(off_t address, off_t end_offset)
+ساكن فراغ
+dump_لڙيون(off_t پتو, off_t پڇاڙي_وٿي)
 {
-	unsigned bufsize = MAX(100, G.string_min);
-	unsigned char *buf = xmalloc(bufsize);
+	بنانشان bufsize = MAX(100, G.string_min);
+	بنانشان حرف *buf = xmalloc(bufsize);
 
-	while (1) {
-		size_t i;
-		int c;
+	طالما (1) {
+		سائيز_t i;
+		صحيح c;
 
 		/* See if the next 'G.string_min' chars are all printing chars.  */
  tryline:
-		if ((option_mask32 & OPT_N) && (end_offset - G.string_min <= address))
-			break;
+		إذا ((option_mask32 & OPT_N) && (پڇاڙي_وٿي - G.string_min <= پتو))
+			اكسر;
 		i = 0;
-		while (!(option_mask32 & OPT_N) || address < end_offset) {
-			if (i == bufsize) {
+		طالما (!(option_mask32 & OPT_N) || پتو < پڇاڙي_وٿي) {
+			إذا (i == bufsize) {
 				bufsize += bufsize/8;
 				buf = xrealloc(buf, bufsize);
 			}
 
-			while (G.in_stream) { /* !EOF */
-				c = fgetc(G.in_stream);
-				if (c != EOF)
-					goto got_char;
+			طالما (G.اندريون_وهڪرو) { /* !EOF */
+				c = fgetc(G.اندريون_وهڪرو);
+				إذا (c != EOF)
+					اذهب got_char;
 				check_and_close();
-				open_next_file();
+				open_ايندڙ_file();
 			}
 			/* EOF */
-			goto ret;
+			اذهب ret;
  got_char:
-			address++;
-			if (!c)
-				break;
-			if (!ISPRINT(c))
-				goto tryline;	/* It isn't; give up on this string.  */
+			پتو++;
+			إذا (!c)
+				اكسر;
+			إذا (!ISPRINT(c))
+				اذهب tryline;	/* It isn't; give up on this string.  */
 			buf[i++] = c;		/* String continues; store it all.  */
 		}
 
-		if (i < G.string_min)		/* Too short! */
-			goto tryline;
+		إذا (i < G.string_min)		/* Too short! */
+			اذهب tryline;
 
 		/* If we get here, the string is all printable and NUL-terminated */
 		buf[i] = 0;
-		G.format_address(address - i - 1, ' ');
+		G.format_پتو(پتو - i - 1, ' ');
 
-		for (i = 0; (c = buf[i]); i++) {
-			switch (c) {
-			case '\007': fputs_stdout("\\a"); break;
-			case '\b': fputs_stdout("\\b"); break;
-			case '\f': fputs_stdout("\\f"); break;
-			case '\n': fputs_stdout("\\n"); break;
-			case '\r': fputs_stdout("\\r"); break;
-			case '\t': fputs_stdout("\\t"); break;
-			case '\v': fputs_stdout("\\v"); break;
-			default: putchar(c);
+		لكل (i = 0; (c = buf[i]); i++) {
+			بدل (c) {
+			حالة '\007': fputs_stdout("\\a"); اكسر;
+			حالة '\b': fputs_stdout("\\b"); اكسر;
+			حالة '\f': fputs_stdout("\\f"); اكسر;
+			حالة '\n': fputs_stdout("\\n"); اكسر;
+			حالة '\r': fputs_stdout("\\r"); اكسر;
+			حالة '\t': fputs_stdout("\\t"); اكسر;
+			حالة '\v': fputs_stdout("\\v"); اكسر;
+			افتراضي: اکر_لکو(c);
 			}
 		}
-		putchar('\n');
+		اکر_لکو('\n');
 	}
 
 	/* We reach this point only if we search through
 	   (max_bytes_to_format - G.string_min) bytes before reaching EOF.  */
 	check_and_close();
  ret:
-	free(buf);
+	حرر(buf);
 }
 
-#if ENABLE_LONG_OPTS
+#إذا ENABLE_LONG_OPTS
 /* If S is a valid traditional offset specification with an optional
    leading '+' return nonzero and set *OFFSET to the offset it denotes.  */
 
-static int
-parse_old_offset(const char *s, off_t *offset)
+ساكن صحيح
+parse_old_وٿي(ثابت حرف *s, off_t *وٿي)
 {
-	static const struct suffix_mult Bb[] ALIGN_SUFFIX = {
+	ساكن ثابت بنية suffix_mult Bb[] ALIGN_SUFFIX = {
 		{ "B", 1024 },
 		{ "b", 512 },
 		{ "", 0 }
 	};
-	char *p;
-	int radix;
+	حرف *p;
+	صحيح radix;
 
 	/* Skip over any leading '+'. */
-	if (s[0] == '+') ++s;
-	if (!isdigit(s[0])) return 0; /* not a number */
+	إذا (s[0] == '+') ++s;
+	إذا (!انگ_آهي(s[0])) أرجع 0; /* not a number */
 
 	/* Determine the radix we'll use to interpret S.  If there is a '.',
 	 * it's decimal, otherwise, if the string begins with '0X'or '0x',
 	 * it's hexadecimal, else octal.  */
 	p = strchr(s, '.');
 	radix = 8;
-	if (p) {
+	إذا (p) {
 		p[0] = '\0'; /* cheating */
 		radix = 10;
-	} else if (s[0] == '0' && (s[1] == 'x' || s[1] == 'X'))
+	} وإلا إذا (s[0] == '0' && (s[1] == 'x' || s[1] == 'X'))
 		radix = 16;
 
-	*offset = xstrtooff_sfx(s, radix, Bb);
-	if (p) p[0] = '.';
+	*وٿي = xstrtooff_sfx(s, radix, Bb);
+	إذا (p) p[0] = '.';
 
-	return (*offset >= 0);
+	أرجع (*وٿي >= 0);
 }
-#endif
+#جيڪڏهن_پورو
 
-int od_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int od_main(int argc UNUSED_PARAM, char **argv)
+صحيح od_main(صحيح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحيح od_main(صحيح argc اڻ_استعمال_ٿيل_PARAM, حرف **argv)
 {
-#if ENABLE_LONG_OPTS
-	static const char od_longopts[] ALIGN1 =
-		"skip-bytes\0"        Required_argument "j"
-		"address-radix\0"     Required_argument "A"
-		"read-bytes\0"        Required_argument "N"
-		"format\0"            Required_argument "t"
-		"output-duplicates\0" No_argument       "v"
+#إذا ENABLE_LONG_OPTS
+	ساكن ثابت حرف od_longopts[] ALIGN1 =
+		"skip-bytes\0"        Required_دليل "j"
+		"address-radix\0"     Required_دليل "A"
+		"read-bytes\0"        Required_دليل "N"
+		"format\0"            Required_دليل "t"
+		"output-duplicates\0" No_دليل       "v"
 		/* Yes, it's true: -S NUM, but --strings[=NUM]!
 		 * that is, NUM is mandatory for -S but optional for --strings!
 		 */
-		"strings\0"           Optional_argument "S"
-		"width\0"             Optional_argument "w"
-		"traditional\0"       No_argument       "\xff"
+		"strings\0"           Optional_دليل "S"
+		"width\0"             Optional_دليل "w"
+		"traditional\0"       No_دليل       "\xff"
 		;
-#endif
-	const char *str_A, *str_N, *str_j, *str_S = "3";
-	llist_t *lst_t = NULL;
-	unsigned opt;
-	int l_c_m;
+#جيڪڏهن_پورو
+	ثابت حرف *str_A, *str_N, *str_j, *str_S = "3";
+	llist_t *lst_t = عدم;
+	بنانشان opt;
+	صحيح l_c_m;
 	/* The number of input bytes to skip before formatting and writing.  */
-	off_t n_bytes_to_skip = 0;
+	off_t n_بائيٽون_منزل_skip = 0;
 	/* The offset of the first byte after the last byte to be formatted.  */
-	off_t end_offset = 0;
+	off_t پڇاڙي_وٿي = 0;
 	/* The maximum number of bytes that will be formatted.  */
-	off_t max_bytes_to_format = 0;
+	off_t max_بائيٽون_منزل_format = 0;
 
 	INIT_G();
 
 	/*G.spec = NULL; - already is */
-	G.format_address = format_address_std;
-	address_base_char = 'o';
-	address_pad_len_char = '7';
+	G.format_پتو = format_پتو_std;
+	پتو_بنياد_char = 'o';
+	پتو_pad_len_char = '7';
 
 	/* Parse command line */
 	opt = OD_GETOPT32();
 	argv += optind;
-	if (opt & OPT_A) {
-		static const char doxn[] ALIGN1 = "doxn";
-		static const char doxn_address_base_char[] ALIGN1 = {
+	إذا (opt & OPT_A) {
+		ساكن ثابت حرف doxn[] ALIGN1 = "doxn";
+		ساكن ثابت حرف doxn_پتو_بنياد_char[] ALIGN1 = {
 			'u', 'o', 'x', /* '?' fourth one is not important */
 		};
-		static const uint8_t doxn_address_pad_len_char[] ALIGN1 = {
+		ساكن ثابت uint8_t doxn_پتو_pad_len_char[] ALIGN1 = {
 			'7', '7', '6', /* '?' */
 		};
-		char *p;
-		int pos;
+		حرف *p;
+		صحيح pos;
 		p = strchr(doxn, str_A[0]);
-		if (!p)
-			bb_error_msg_and_die("bad output address radix "
+		إذا (!p)
+			bb_error_نياپو_and_die("bad output address radix "
 				"'%c' (must be [doxn])", str_A[0]);
 		pos = p - doxn;
-		if (pos == 3) G.format_address = format_address_none;
-		address_base_char = doxn_address_base_char[pos];
-		address_pad_len_char = doxn_address_pad_len_char[pos];
+		إذا (pos == 3) G.format_پتو = format_پتو_none;
+		پتو_بنياد_char = doxn_پتو_بنياد_char[pos];
+		پتو_pad_len_char = doxn_پتو_pad_len_char[pos];
 	}
-	if (opt & OPT_N) {
-		max_bytes_to_format = xstrtooff_sfx(str_N, 0, bkm_suffixes);
+	إذا (opt & OPT_N) {
+		max_بائيٽون_منزل_format = xstrtooff_sfx(str_N, 0, bkm_suffixes);
 	}
 
-	if (opt & OPT_a) decode_format_string("a");
-	if (opt & OPT_b) decode_format_string("oC");
-	if (opt & OPT_c) decode_format_string("c");
-	if (opt & OPT_d) decode_format_string("u2");
-	if (opt & OPT_D) decode_format_string("uI");
-	if (opt & OPT_f) decode_format_string("fF");
-	if (opt & (OPT_h|OPT_x)) decode_format_string("x2");
-	if (opt & (OPT_H|OPT_X)) decode_format_string("xI");
+	إذا (opt & OPT_a) decode_format_string("a");
+	إذا (opt & OPT_b) decode_format_string("oC");
+	إذا (opt & OPT_c) decode_format_string("c");
+	إذا (opt & OPT_d) decode_format_string("u2");
+	إذا (opt & OPT_D) decode_format_string("uI");
+	إذا (opt & OPT_f) decode_format_string("fF");
+	إذا (opt & (OPT_h|OPT_x)) decode_format_string("x2");
+	إذا (opt & (OPT_H|OPT_X)) decode_format_string("xI");
 	/* -I,L,l: depend on word width of the arch (what is "long"?) */
-#if ULONG_MAX > 0xffffffff
-	if (opt & OPT_i) decode_format_string("dI");
-	if (opt & (OPT_I|OPT_l|OPT_L)) decode_format_string("dL");
-#else
+#إذا ULONG_MAX > 0xffffffff
+	إذا (opt & OPT_i) decode_format_string("dI");
+	إذا (opt & (OPT_I|OPT_l|OPT_L)) decode_format_string("dL");
+#وإلا
 	/* 32-bit arch: -I,L,l are the same as -i */
-	if (opt & (OPT_i|OPT_I|OPT_l|OPT_L)) decode_format_string("dI");
-#endif
-	if (opt & OPT_j) n_bytes_to_skip = xstrtooff_sfx(str_j, 0, bkm_suffixes);
-	if (opt & (OPT_o|OPT_B)) decode_format_string("o2");
-	if (opt & OPT_O) decode_format_string("oI");
-	while (lst_t) {
-		decode_format_string(llist_pop(&lst_t));
+	إذا (opt & (OPT_i|OPT_I|OPT_l|OPT_L)) decode_format_string("dI");
+#جيڪڏهن_پورو
+	إذا (opt & OPT_j) n_بائيٽون_منزل_skip = xstrtooff_sfx(str_j, 0, bkm_suffixes);
+	إذا (opt & (OPT_o|OPT_B)) decode_format_string("o2");
+	إذا (opt & OPT_O) decode_format_string("oI");
+	طالما (lst_t) {
+		decode_format_string(llist_ڪڍو(&lst_t));
 	}
-	if (opt & OPT_s) decode_format_string("d2");
-	if (opt & OPT_S) {
+	إذا (opt & OPT_s) decode_format_string("d2");
+	إذا (opt & OPT_S) {
 		G.string_min = xstrtou_sfx(str_S, 0, bkm_suffixes);
 	}
 
@@ -1289,71 +1289,71 @@ int od_main(int argc UNUSED_PARAM, char **argv)
 	 * FIXME: POSIX 1003.1-2001 with XSI requires support for the
 	 * traditional syntax even if --traditional is not given.  */
 
-#if ENABLE_LONG_OPTS
-	if (opt & OPT_traditional) {
-		if (argv[0]) {
-			off_t pseudo_start = -1;
+#إذا ENABLE_LONG_OPTS
+	إذا (opt & OPT_traditional) {
+		إذا (argv[0]) {
+			off_t pseudo_شروعات = -1;
 			off_t o1, o2;
 
-			if (!argv[1]) { /* one arg */
-				if (parse_old_offset(argv[0], &o1)) {
+			إذا (!argv[1]) { /* one arg */
+				إذا (parse_old_وٿي(argv[0], &o1)) {
 					/* od --traditional OFFSET */
-					n_bytes_to_skip = o1;
+					n_بائيٽون_منزل_skip = o1;
 					argv++;
 				}
 				/* od --traditional FILE */
-			} else if (!argv[2]) { /* two args */
-				if (parse_old_offset(argv[0], &o1)
-				 && parse_old_offset(argv[1], &o2)
+			} وإلا إذا (!argv[2]) { /* two args */
+				إذا (parse_old_وٿي(argv[0], &o1)
+				 && parse_old_وٿي(argv[1], &o2)
 				) {
 					/* od --traditional OFFSET LABEL */
-					n_bytes_to_skip = o1;
-					pseudo_start = o2;
+					n_بائيٽون_منزل_skip = o1;
+					pseudo_شروعات = o2;
 					argv += 2;
-				} else if (parse_old_offset(argv[1], &o2)) {
+				} وإلا إذا (parse_old_وٿي(argv[1], &o2)) {
 					/* od --traditional FILE OFFSET */
-					n_bytes_to_skip = o2;
-					argv[1] = NULL;
-				} else {
-					bb_error_msg_and_die("invalid second argument '%s'", argv[1]);
+					n_بائيٽون_منزل_skip = o2;
+					argv[1] = عدم;
+				} وإلا {
+					bb_error_نياپو_and_die("invalid second argument '%s'", argv[1]);
 				}
-			} else if (!argv[3]) { /* three args */
-				if (parse_old_offset(argv[1], &o1)
-				 && parse_old_offset(argv[2], &o2)
+			} وإلا إذا (!argv[3]) { /* three args */
+				إذا (parse_old_وٿي(argv[1], &o1)
+				 && parse_old_وٿي(argv[2], &o2)
 				) {
 					/* od --traditional FILE OFFSET LABEL */
-					n_bytes_to_skip = o1;
-					pseudo_start = o2;
-					argv[1] = NULL;
-				} else {
-					bb_simple_error_msg_and_die("the last two arguments must be offsets");
+					n_بائيٽون_منزل_skip = o1;
+					pseudo_شروعات = o2;
+					argv[1] = عدم;
+				} وإلا {
+					bb_simple_error_نياپو_and_die("the last two arguments must be offsets");
 				}
-			} else { /* >3 args */
-				bb_simple_error_msg_and_die("too many arguments");
+			} وإلا { /* >3 args */
+				bb_simple_error_نياپو_and_die("too many arguments");
 			}
 
-			if (pseudo_start >= 0) {
-				if (G.format_address == format_address_none) {
-					address_base_char = 'o';
-					address_pad_len_char = '7';
-					G.format_address = format_address_paren;
-				} else {
-					G.format_address = format_address_label;
+			إذا (pseudo_شروعات >= 0) {
+				إذا (G.format_پتو == format_پتو_none) {
+					پتو_بنياد_char = 'o';
+					پتو_pad_len_char = '7';
+					G.format_پتو = format_پتو_paren;
+				} وإلا {
+					G.format_پتو = format_پتو_label;
 				}
-				G_pseudo_offset = pseudo_start - n_bytes_to_skip;
+				G_pseudo_وٿي = pseudo_شروعات - n_بائيٽون_منزل_skip;
 			}
 		}
 		/* else: od --traditional (without args) */
 	}
-#endif
+#جيڪڏهن_پورو
 
-	if (option_mask32 & OPT_N) {
-		end_offset = n_bytes_to_skip + max_bytes_to_format;
-		if (end_offset < n_bytes_to_skip)
-			bb_simple_error_msg_and_die("SKIP + SIZE is too large");
+	إذا (option_mask32 & OPT_N) {
+		پڇاڙي_وٿي = n_بائيٽون_منزل_skip + max_بائيٽون_منزل_format;
+		إذا (پڇاڙي_وٿي < n_بائيٽون_منزل_skip)
+			bb_simple_error_نياپو_and_die("SKIP + SIZE is too large");
 	}
 
-	if (G.n_specs == 0) {
+	إذا (G.n_specs == 0) {
 		decode_format_string("o2");
 		/*G.n_specs = 1; - done by decode_format_string */
 	}
@@ -1362,52 +1362,52 @@ int od_main(int argc UNUSED_PARAM, char **argv)
 	   set the global pointer FILE_LIST so that it
 	   references the null-terminated list of one name: "-".  */
 	G.file_list = bb_argv_dash;
-	if (argv[0]) {
+	إذا (argv[0]) {
 		/* Set the global pointer FILE_LIST so that it
 		   references the first file-argument on the command-line.  */
-		G.file_list = (char const *const *) argv;
+		G.file_list = (حرف ثابت *ثابت *) argv;
 	}
 
 	/* Open the first input file */
-	open_next_file();
+	open_ايندڙ_file();
 	/* Skip over any unwanted header bytes */
-	skip(n_bytes_to_skip);
-	if (!G.in_stream)
-		return EXIT_FAILURE;
+	skip(n_بائيٽون_منزل_skip);
+	إذا (!G.اندريون_وهڪرو)
+		أرجع EXIT_FAILURE;
 
 	/* Compute output block length */
 	l_c_m = get_lcm();
 
-	if (opt & OPT_w) { /* -w: width */
-		if (!G.bytes_per_block || G.bytes_per_block % l_c_m != 0) {
-			bb_error_msg("warning: invalid width %u; using %d instead",
-					(unsigned)G.bytes_per_block, l_c_m);
-			G.bytes_per_block = l_c_m;
+	إذا (opt & OPT_w) { /* -w: width */
+		إذا (!G.بائيٽون_في_بلاڪ || G.بائيٽون_في_بلاڪ % l_c_m != 0) {
+			bb_error_نياپو("warning: invalid width %u; using %d instead",
+					(بنانشان)G.بائيٽون_في_بلاڪ, l_c_m);
+			G.بائيٽون_في_بلاڪ = l_c_m;
 		}
-	} else {
-		G.bytes_per_block = l_c_m;
-		if (l_c_m < DEFAULT_BYTES_PER_BLOCK)
-			G.bytes_per_block *= DEFAULT_BYTES_PER_BLOCK / l_c_m;
+	} وإلا {
+		G.بائيٽون_في_بلاڪ = l_c_m;
+		إذا (l_c_m < DEFAULT_بائيٽون_في_بلاڪ)
+			G.بائيٽون_في_بلاڪ *= DEFAULT_بائيٽون_في_بلاڪ / l_c_m;
 	}
 
-#ifdef DEBUG
+#جيڪڏهن_وصف_ٿيل DEBUG
 	{
-		int i;
-		for (i = 0; i < G.n_specs; i++) {
-			printf("%d: fmt='%s' width=%d\n",
+		صحيح i;
+		لكل (i = 0; i < G.n_specs; i++) {
+			لکو("%d: fmt='%s' width=%d\n",
 				i, G.spec[i].fmt_string,
-				width_bytes[G.spec[i].size]);
+				ويڪر_بائيٽون[G.spec[i].سائيز]);
 		}
 	}
-#endif
+#جيڪڏهن_پورو
 
-	if (option_mask32 & OPT_S)
-		dump_strings(n_bytes_to_skip, end_offset);
-	else
-		dump(n_bytes_to_skip, end_offset);
+	إذا (option_mask32 & OPT_S)
+		dump_لڙيون(n_بائيٽون_منزل_skip, پڇاڙي_وٿي);
+	وإلا
+		dump(n_بائيٽون_منزل_skip, پڇاڙي_وٿي);
 
-	if (fclose(stdin))
-		bb_simple_perror_msg_and_die(bb_msg_standard_input);
+	إذا (fclose(stdin))
+		bb_simple_perror_نياپو_and_die(bb_نياپو_standard_داخلا);
 
-	return G.exit_code;
+	أرجع G.exit_ڪوڊ;
 }

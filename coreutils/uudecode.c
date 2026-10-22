@@ -31,131 +31,131 @@
 //usage:       "$ ls -l busybox\n"
 //usage:       "-rwxr-xr-x   1 ams      ams        245264 Jun  7 21:35 busybox\n"
 
-#include "libbb.h"
+#ضمن "libbb.h"
 
-#if ENABLE_UUDECODE
-static void FAST_FUNC read_stduu(FILE *src_stream, FILE *dst_stream, int flags UNUSED_PARAM)
+#إذا ENABLE_UUDECODE
+ساكن فراغ FAST_FUNC read_stduu(FILE *src_وهڪرو, FILE *dst_وهڪرو, صحيح flags اڻ_استعمال_ٿيل_PARAM)
 {
-	char *line;
+	حرف *سٽ;
 
-	for (;;) {
-		int encoded_len, str_len;
-		char *line_ptr, *dst;
-		size_t line_len;
+	لكل (;;) {
+		صحيح encoded_len, str_len;
+		حرف *سٽ_ptr, *dst;
+		سائيز_t سٽ_len;
 
-		line_len = 64 * 1024;
-		line = xmalloc_fgets_str_len(src_stream, "\n", &line_len);
-		if (!line)
-			break;
+		سٽ_len = 64 * 1024;
+		سٽ = xmalloc_fgets_str_len(src_وهڪرو, "\n", &سٽ_len);
+		إذا (!سٽ)
+			اكسر;
 		/* Handle both Unix and MSDOS text.
 		 * Note: space should not be trimmed, some encoders use it instead of "`"
 		 * for padding of last incomplete 4-char block.
 		 */
-		str_len = line_len;
-		while (--str_len >= 0
-		 && (line[str_len] == '\n' || line[str_len] == '\r')
+		str_len = سٽ_len;
+		طالما (--str_len >= 0
+		 && (سٽ[str_len] == '\n' || سٽ[str_len] == '\r')
 		) {
-			line[str_len] = '\0';
+			سٽ[str_len] = '\0';
 		}
 
-		if (strcmp(line, "end") == 0) {
-			return; /* the only non-error exit */
+		إذا (strcmp(سٽ, "end") == 0) {
+			أرجع; /* the only non-error exit */
 		}
 
-		line_ptr = line;
-		while (*line_ptr) {
-			*line_ptr = (*line_ptr - 0x20) & 0x3f;
-			line_ptr++;
+		سٽ_ptr = سٽ;
+		طالما (*سٽ_ptr) {
+			*سٽ_ptr = (*سٽ_ptr - 0x20) & 0x3f;
+			سٽ_ptr++;
 		}
-		str_len = line_ptr - line;
+		str_len = سٽ_ptr - سٽ;
 
-		encoded_len = line[0] * 4 / 3;
+		encoded_len = سٽ[0] * 4 / 3;
 		/* Check that line is not too short. (we tolerate
 		 * overly _long_ line to accommodate possible extra "`").
 		 * Empty line case is also caught here. */
-		if (str_len <= encoded_len) {
-			break; /* go to bb_error_msg_and_die("short file"); */
+		إذا (str_len <= encoded_len) {
+			اكسر; /* go to bb_error_msg_and_die("short file"); */
 		}
-		if (encoded_len <= 0) {
+		إذا (encoded_len <= 0) {
 			/* Ignore the "`\n" line, why is it even in the encode file ? */
-			free(line);
-			continue;
+			حرر(سٽ);
+			استمر;
 		}
-		if (encoded_len > 60) {
-			bb_simple_error_msg_and_die("line too long");
+		إذا (encoded_len > 60) {
+			bb_simple_error_نياپو_and_die("line too long");
 		}
 
-		dst = line;
-		line_ptr = line + 1;
-		do {
+		dst = سٽ;
+		سٽ_ptr = سٽ + 1;
+		افعل {
 			/* Merge four 6 bit chars to three 8 bit chars */
-			*dst++ = line_ptr[0] << 2 | line_ptr[1] >> 4;
+			*dst++ = سٽ_ptr[0] << 2 | سٽ_ptr[1] >> 4;
 			encoded_len--;
-			if (encoded_len == 0) {
-				break;
+			إذا (encoded_len == 0) {
+				اكسر;
 			}
 
-			*dst++ = line_ptr[1] << 4 | line_ptr[2] >> 2;
+			*dst++ = سٽ_ptr[1] << 4 | سٽ_ptr[2] >> 2;
 			encoded_len--;
-			if (encoded_len == 0) {
-				break;
+			إذا (encoded_len == 0) {
+				اكسر;
 			}
 
-			*dst++ = line_ptr[2] << 6 | line_ptr[3];
-			line_ptr += 4;
+			*dst++ = سٽ_ptr[2] << 6 | سٽ_ptr[3];
+			سٽ_ptr += 4;
 			encoded_len -= 2;
-		} while (encoded_len > 0);
-		fwrite(line, 1, dst - line, dst_stream);
-		free(line);
+		} طالما (encoded_len > 0);
+		fwrite(سٽ, 1, dst - سٽ, dst_وهڪرو);
+		حرر(سٽ);
 	}
-	bb_simple_error_msg_and_die("short file");
+	bb_simple_error_نياپو_and_die("short file");
 }
 
-int uudecode_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int uudecode_main(int argc UNUSED_PARAM, char **argv)
+صحيح uudecode_main(صحيح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحيح uudecode_main(صحيح argc اڻ_استعمال_ٿيل_PARAM, حرف **argv)
 {
-	FILE *src_stream;
-	char *outname = NULL;
-	char *line;
+	FILE *src_وهڪرو;
+	حرف *outname = عدم;
+	حرف *سٽ;
 
 	getopt32(argv, "^" "o:" "\0" "?1"/* 1 arg max*/, &outname);
 	argv += optind;
 
-	if (!argv[0])
-		*--argv = (char*)"-";
-	src_stream = xfopen_stdin(argv[0]);
+	إذا (!argv[0])
+		*--argv = (حرف*)"-";
+	src_وهڪرو = xfopen_stdin(argv[0]);
 
 	/* Search for the start of the encoding */
-	while ((line = xmalloc_fgetline(src_stream)) != NULL) {
-		void FAST_FUNC (*decode_fn_ptr)(FILE *src, FILE *dst, int flags);
-		char *line_ptr;
-		FILE *dst_stream;
-		int mode;
+	طالما ((سٽ = xmalloc_fgetline(src_وهڪرو)) != عدم) {
+		فراغ FAST_FUNC (*decode_fn_ptr)(FILE *src, FILE *dst, صحيح flags);
+		حرف *سٽ_ptr;
+		FILE *dst_وهڪرو;
+		صحيح گهڻائي;
 
-		if (is_prefixed_with(line, "begin-base64 ")) {
-			line_ptr = line + 13;
+		إذا (is_prefixed_with(سٽ, "begin-base64 ")) {
+			سٽ_ptr = سٽ + 13;
 			decode_fn_ptr = read_base64;
-		} else if (is_prefixed_with(line, "begin ")) {
-			line_ptr = line + 6;
+		} وإلا إذا (is_prefixed_with(سٽ, "begin ")) {
+			سٽ_ptr = سٽ + 6;
 			decode_fn_ptr = read_stduu;
-		} else {
-			free(line);
-			continue;
+		} وإلا {
+			حرر(سٽ);
+			استمر;
 		}
 
 		/* begin line found. decode and exit */
-		mode = bb_strtou(line_ptr, NULL, 8);
-		if (outname == NULL) {
-			outname = strchr(line_ptr, ' ');
-			if (!outname)
-				break;
+		گهڻائي = bb_strtou(سٽ_ptr, عدم, 8);
+		إذا (outname == عدم) {
+			outname = strchr(سٽ_ptr, ' ');
+			إذا (!outname)
+				اكسر;
 			outname++;
 			trim(outname); /* remove trailing space (and '\r' for DOS text) */
-			if (!outname[0])
-				break;
+			إذا (!outname[0])
+				اكسر;
 		}
-		dst_stream = stdout;
-		if (NOT_LONE_DASH(outname)
+		dst_وهڪرو = stdout;
+		إذا (NOT_LONE_DASH(outname)
 /* https://pubs.opengroup.org/onlinepubs/9699919799/utilities/uudecode.html
  * https://pubs.opengroup.org/onlinepubs/9699919799/utilities/uuencode.html
  * The above says that output file name specified in input file
@@ -165,17 +165,17 @@ int uudecode_main(int argc UNUSED_PARAM, char **argv)
  */
 		 && (!ENABLE_DESKTOP || strcmp(outname, "/dev/stdout") != 0)
 		) {
-			dst_stream = xfopen_for_write(outname);
-			fchmod(fileno(dst_stream), mode & (S_IRWXU | S_IRWXG | S_IRWXO));
+			dst_وهڪرو = xfopen_for_write(outname);
+			fchmod(fileno(dst_وهڪرو), گهڻائي & (S_IRWXU | S_IRWXG | S_IRWXO));
 		}
-		free(line);
-		decode_fn_ptr(src_stream, dst_stream, /*flags:*/ BASE64_FLAG_UU_STOP + BASE64_FLAG_NO_STOP_CHAR);
+		حرر(سٽ);
+		decode_fn_ptr(src_وهڪرو, dst_وهڪرو, /*flags:*/ BASE64_FLAG_UU_STOP + BASE64_FLAG_NO_STOP_CHAR);
 		/* fclose_if_not_stdin(src_stream); - redundant */
-		return EXIT_SUCCESS;
+		أرجع EXIT_SUCCESS;
 	}
-	bb_simple_error_msg_and_die("no 'begin' line");
+	bb_simple_error_نياپو_and_die("no 'begin' line");
 }
-#endif
+#جيڪڏهن_پورو
 
 //config:config BASE32
 //config:	bool "base32 (5.5 kb)"
@@ -214,147 +214,147 @@ int uudecode_main(int argc UNUSED_PARAM, char **argv)
 //kbuild:lib-$(CONFIG_BASE64) += uudecode.o
 //kbuild:lib-$(CONFIG_BASE32) += uudecode.o
 
-#if ENABLE_BASE32 || ENABLE_BASE64
+#إذا ENABLE_BASE32 || ENABLE_BASE64
 
-# if ENABLE_BASE32
-static void bb_b32encode(char *p, const void *src, int length)
+# إذا ENABLE_BASE32
+ساكن فراغ bb_b32encode(حرف *p, ثابت فراغ *src, صحيح ڊيگهائي)
 {
-#define tbl bb_uuenc_tbl_base32
-	const unsigned char *s = src;
+#وصف_ڪريو tbl bb_uuenc_tbl_base32
+	ثابت بنانشان حرف *s = src;
 
 	/* Transform 5x8 bits to 8x5 bits */
-	while (length > 0) {
-		unsigned cur, next;
+	طالما (ڊيگهائي > 0) {
+		بنانشان cur, ايندڙ;
 
-		length--;
+		ڊيگهائي--;
 		cur = *s++;
 		*p++ = tbl[cur >> 3];			// xxxxx--- -------- -------- -------- --------
 		cur &= 7;
 
-		next = 0;
-		if (--length >= 0)
-			next = *s++;
-		*p++ = tbl[(cur << 2) + (next >> 6)];	// -----xxx xx------ -------- -------- --------
-		cur = next & 0x3f;
+		ايندڙ = 0;
+		إذا (--ڊيگهائي >= 0)
+			ايندڙ = *s++;
+		*p++ = tbl[(cur << 2) + (ايندڙ >> 6)];	// -----xxx xx------ -------- -------- --------
+		cur = ايندڙ & 0x3f;
 
 		*p++ = tbl[cur >> 1];			// -------- --xxxxx- -------- -------- --------
 		cur &= 1;
 
-		next = 0;
-		if (--length >= 0)
-			next = *s++;
-		*p++ = tbl[(cur << 4) + (next >> 4)];	// -------- -------x xxxx---- -------- --------
-		cur = next & 0xf;
+		ايندڙ = 0;
+		إذا (--ڊيگهائي >= 0)
+			ايندڙ = *s++;
+		*p++ = tbl[(cur << 4) + (ايندڙ >> 4)];	// -------- -------x xxxx---- -------- --------
+		cur = ايندڙ & 0xf;
 
-		next = 0;
-		if (--length >= 0)
-			next = *s++;
-		*p++ = tbl[(cur << 1) + (next >> 7)];	// -------- -------- ----xxxx x------- --------
-		cur = next & 0x7f;
+		ايندڙ = 0;
+		إذا (--ڊيگهائي >= 0)
+			ايندڙ = *s++;
+		*p++ = tbl[(cur << 1) + (ايندڙ >> 7)];	// -------- -------- ----xxxx x------- --------
+		cur = ايندڙ & 0x7f;
 
 		*p++ = tbl[cur >> 2];			// -------- -------- -------- -xxxxx-- --------
 		cur &= 3;
 
-		next = 0;
-		if (--length >= 0)
-			next = *s++;
-		*p++ = tbl[(cur << 3) + (next >> 5)];	// -------- -------- -------- ------xx xxx-----
-		cur = next & 0x1f;
+		ايندڙ = 0;
+		إذا (--ڊيگهائي >= 0)
+			ايندڙ = *s++;
+		*p++ = tbl[(cur << 3) + (ايندڙ >> 5)];	// -------- -------- -------- ------xx xxx-----
+		cur = ايندڙ & 0x1f;
 
 		*p++ = tbl[cur];			// -------- -------- -------- -------- ---xxxxx
 	}
-#undef tbl
+#وصف_رد tbl
 	/* Zero-terminate */
 	*p = '\0';
 	/* Pad as necessary */
-	length = ((-length) * 3) >> 1; /* -4 => 6 pad chars, -3 => 4, -2 => 3, -1 => 1 */
-	while (length--) {
+	ڊيگهائي = ((-ڊيگهائي) * 3) >> 1; /* -4 => 6 pad chars, -3 => 4, -2 => 3, -1 => 1 */
+	طالما (ڊيگهائي--) {
 		*--p = '=';
 	}
 }
-# else
-void bb_b32encode(char *p, const void *src, int length); /* undefined */
+# وإلا
+فراغ bb_b32encode(حرف *p, ثابت فراغ *src, صحيح ڊيگهائي); /* undefined */
 # endif
 
-int baseNUM_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int baseNUM_main(int argc UNUSED_PARAM, char **argv)
+صحيح بنياد_انگ_main(صحيح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحيح بنياد_انگ_main(صحيح argc اڻ_استعمال_ٿيل_PARAM, حرف **argv)
 {
-	FILE *src_stream;
-	unsigned opts;
-	unsigned col = 76;
+	FILE *src_وهڪرو;
+	بنانشان opts;
+	بنانشان کانو = 76;
 
-	opts = getopt32(argv, "^" "diw:+" "\0" "?1"/* 1 arg max*/, &col);
+	opts = getopt32(argv, "^" "diw:+" "\0" "?1"/* 1 arg max*/, &کانو);
 	argv += optind;
 
-	if (!argv[0])
-		*--argv = (char*)"-";
-	src_stream = xfopen_stdin(argv[0]);
-	if (opts & 1) {
+	إذا (!argv[0])
+		*--argv = (حرف*)"-";
+	src_وهڪرو = xfopen_stdin(argv[0]);
+	إذا (opts & 1) {
 		/* -d: decode */
-		int flags = (unsigned char)EOF;
-		if (ENABLE_BASE32 && (!ENABLE_BASE64 || applet_name[4] == '3'))
-			flags = ((unsigned char)EOF) | BASE64_32;
-		read_base64(src_stream, stdout, flags);
-	} else {
-		enum {
-			SRC_BUF_SIZE = 3 * 5 * 32, /* this *MUST* be a multiple of 3 and 5 */
-			DST_BUF_SIZE = 8 * ((SRC_BUF_SIZE + 4) / 5), /* max growth on encode (base32 case) */
+		صحيح flags = (بنانشان حرف)EOF;
+		إذا (ENABLE_BASE32 && (!ENABLE_BASE64 || applet_name[4] == '3'))
+			flags = ((بنانشان حرف)EOF) | BASE64_32;
+		read_base64(src_وهڪرو, stdout, flags);
+	} وإلا {
+		تعداد {
+			SRC_BUF_سائيز = 3 * 5 * 32, /* this *MUST* be a multiple of 3 and 5 */
+			DST_BUF_سائيز = 8 * ((SRC_BUF_سائيز + 4) / 5), /* max growth on encode (base32 case) */
 		};
 		/* Use one buffer for both input and output:
 		 * encoding reads input "left-to-right",
 		 * it's safe to place source at the end of the buffer and
 		 * overwrite it while encoding, just be careful to have a gap.
 		 */
-		char dst_buf[((DST_BUF_SIZE + /*gap:*/ 16) /*round up to 16:*/ | 0xf) + 1];
-#define src_buf (dst_buf + sizeof(dst_buf) - SRC_BUF_SIZE)
-		int src_fd, rem;
+		حرف dst_buf[((DST_BUF_سائيز + /*gap:*/ 16) /*round up to 16:*/ | 0xf) + 1];
+#وصف_ڪريو src_buf (dst_buf + حجم(dst_buf) - SRC_BUF_سائيز)
+		صحيح src_fd, rem;
 
-		src_fd = fileno(src_stream);
+		src_fd = fileno(src_وهڪرو);
 		rem = 0;
-		while (1) {
-			size_t size = full_read(src_fd, src_buf, SRC_BUF_SIZE);
-			if ((ssize_t)size < 0)
-				bb_simple_perror_msg_and_die(bb_msg_read_error);
-			if (size == 0) {
-				if (rem != 0) bb_putchar('\n');
-				break;
+		طالما (1) {
+			سائيز_t سائيز = ڀريل_read(src_fd, src_buf, SRC_BUF_سائيز);
+			إذا ((ssize_t)سائيز < 0)
+				bb_simple_perror_نياپو_and_die(bb_نياپو_read_error);
+			إذا (سائيز == 0) {
+				إذا (rem != 0) bb_putchar('\n');
+				اكسر;
 			}
 
 			/* Encode the buffer we just read in */
-			if (ENABLE_BASE32 && (!ENABLE_BASE64 || applet_name[4] == '3')) {
-				bb_b32encode(dst_buf, src_buf, size);
-				size = 8 * ((size + 4) / 5);
-			} else {
-				bb_uuencode(dst_buf, src_buf, size, bb_uuenc_tbl_base64);
-				size = 4 * ((size + 2) / 3);
+			إذا (ENABLE_BASE32 && (!ENABLE_BASE64 || applet_name[4] == '3')) {
+				bb_b32encode(dst_buf, src_buf, سائيز);
+				سائيز = 8 * ((سائيز + 4) / 5);
+			} وإلا {
+				bb_uuencode(dst_buf, src_buf, سائيز, bb_uuenc_tbl_base64);
+				سائيز = 4 * ((سائيز + 2) / 3);
 			}
 
-			if (col == 0) {
+			إذا (کانو == 0) {
 				fputs_stdout(dst_buf);
-			} else {
-				char *result = dst_buf;
-				if (rem == 0)
-					rem = col;
-				while (1) {
-					int out = size < rem ? size : rem;
-					rem -= out;
-					printf(rem != 0 ? "%.*s" : "%.*s\n", out, result);
-					if (rem != 0)
-						break;
-					size -= out;
-					if (size == 0)
-						break;
-					result += out;
-					rem = col;
+			} وإلا {
+				حرف *نتيجو = dst_buf;
+				إذا (rem == 0)
+					rem = کانو;
+				طالما (1) {
+					صحيح ٻاهريون = سائيز < rem ? سائيز : rem;
+					rem -= ٻاهريون;
+					لکو(rem != 0 ? "%.*s" : "%.*s\n", ٻاهريون, نتيجو);
+					إذا (rem != 0)
+						اكسر;
+					سائيز -= ٻاهريون;
+					إذا (سائيز == 0)
+						اكسر;
+					نتيجو += ٻاهريون;
+					rem = کانو;
 				}
 			}
 		}
-#undef src_buf
+#وصف_رد src_buf
 	}
 
 	fflush_stdout_and_exit_SUCCESS();
 }
-#endif
+#جيڪڏهن_پورو
 
 /* Test script.
 Put this into an empty dir with busybox binary, an run.
@@ -375,16 +375,16 @@ for f in A*; do
     echo uuencode $f
     ./uuencode    $f <$f >u_$f
     ./uuencode -m $f <$f >m_$f
-done
+پورو
 mkdir unpk_u unpk_m 2>/dev/null
 for f in u_*; do
     ./uudecode <$f -o unpk_u/${f:2}
     diff -a ${f:2} unpk_u/${f:2} >/dev/null 2>&1
     echo uudecode $f: $?
-done
+پورو
 for f in m_*; do
     ./uudecode <$f -o unpk_m/${f:2}
     diff -a ${f:2} unpk_m/${f:2} >/dev/null 2>&1
     echo uudecode $f: $?
-done
+پورو
 */

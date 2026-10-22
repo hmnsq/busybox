@@ -27,127 +27,127 @@
 //usage:       "b\n"
 //usage:       "c\n"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#ضمن "libbb.h"
+#ضمن "common_bufsiz.h"
 
-struct node {
-	unsigned in_count;
-	unsigned out_count;
-	struct node **out;
-	char name[1];
+بنية ڳنڍ {
+	بنانشان اندريون_ڳڻپ;
+	بنانشان ٻاهريون_ڳڻپ;
+	بنية ڳنڍ **ٻاهريون;
+	حرف name[1];
 };
 
-struct globals {
-	struct node **nodes;
-	unsigned nodes_len;
+بنية globals {
+	بنية ڳنڍ **nodes;
+	بنانشان nodes_len;
 };
-#define G (*(struct globals*)bb_common_bufsiz1)
-#define INIT_G() do { \
-	setup_common_bufsiz(); \
-	BUILD_BUG_ON(sizeof(G) > COMMON_BUFSIZE); \
-	G.nodes = NULL; \
+#وصف_ڪريو G (*(بنية globals*)bb_common_bufsiz1)
+#وصف_ڪريو INIT_G() افعل { \
+	تياري_common_bufsiz(); \
+	BUILD_BUG_ON(حجم(G) > COMMON_BUFSIZE); \
+	G.nodes = عدم; \
 	G.nodes_len = 0; \
-} while (0)
+} طالما (0)
 
-static struct node *
-get_node(const char *name)
+ساكن بنية ڳنڍ *
+get_ڳنڍ(ثابت حرف *name)
 {
-	struct node *n;
-	unsigned a = 0;
-	unsigned b = G.nodes_len;
+	بنية ڳنڍ *n;
+	بنانشان a = 0;
+	بنانشان b = G.nodes_len;
 
 	/* Binary search for name */
-	while (a != b) {
-		unsigned m = (a + b) / 2;
-		int cmp = strcmp(name, G.nodes[m]->name);
-		if (cmp == 0)
-			return G.nodes[m]; /* found */
-		if (cmp < 0) {
+	طالما (a != b) {
+		بنانشان m = (a + b) / 2;
+		صحيح cmp = strcmp(name, G.nodes[m]->name);
+		إذا (cmp == 0)
+			أرجع G.nodes[m]; /*مليو*/
+		إذا (cmp < 0) {
 			b = m;
-		} else {
+		} وإلا {
 			a = m + 1;
 		}
 	}
 
 	/* Allocate new node */
-	n = xzalloc(sizeof(*n) + strlen(name));
+	n = xzalloc(حجم(*n) + لڙي_ڊيگهه(name));
 	//n->in_count = 0;
 	//n->out_count = 0;
 	//n->out = NULL;
 	strcpy(n->name, name);
 
 	/* Insert to maintain sort */
-	G.nodes = xrealloc(G.nodes, (G.nodes_len + 1) * sizeof(*G.nodes));
+	G.nodes = xrealloc(G.nodes, (G.nodes_len + 1) * حجم(*G.nodes));
 	memmove(&G.nodes[a + 1], &G.nodes[a],
-		(G.nodes_len - a) * sizeof(*G.nodes));
+		(G.nodes_len - a) * حجم(*G.nodes));
 	G.nodes[a] = n;
 	G.nodes_len++;
-	return n;
+	أرجع n;
 }
 
-static void
-add_edge(struct node *a, struct node *b)
+ساكن فراغ
+جوڙيو_ڪنارو(بنية ڳنڍ *a, بنية ڳنڍ *b)
 {
-	a->out = xrealloc_vector(a->out, 6, a->out_count);
-	a->out[a->out_count++] = b;
-	b->in_count++;
+	a->ٻاهريون = xrealloc_ويڪٽر(a->ٻاهريون, 6, a->ٻاهريون_ڳڻپ);
+	a->ٻاهريون[a->ٻاهريون_ڳڻپ++] = b;
+	b->اندريون_ڳڻپ++;
 }
 
-int tsort_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int tsort_main(int argc UNUSED_PARAM, char **argv)
+صحيح tsort_main(صحيح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحيح tsort_main(صحيح argc اڻ_استعمال_ٿيل_PARAM, حرف **argv)
 {
-	char *line;
-	size_t linesz;
+	حرف *سٽ;
+	سائيز_t linesz;
 	ssize_t len;
-	struct node *a;
-	int cycles;
-	unsigned i;
-#if ENABLE_FEATURE_CLEAN_UP
-	unsigned max_len;
-#endif
+	بنية ڳنڍ *a;
+	صحيح چڪرن;
+	بنانشان i;
+#إذا ENABLE_FEATURE_CLEAN_مٿي
+	بنانشان max_len;
+#جيڪڏهن_پورو
 
 	INIT_G();
 
-	if (argv[1]) {
-		if (argv[2])
+	إذا (argv[1]) {
+		إذا (argv[2])
 			bb_show_usage();
-		if (NOT_LONE_DASH(argv[1])) {
+		إذا (NOT_LONE_DASH(argv[1])) {
 			close(STDIN_FILENO); /* == 0 */
 			xopen(argv[1], O_RDONLY); /* fd will be 0 */
 		}
 	}
 
 	/* Read in words separated by <blank>s */
-	a = NULL;
-	line = NULL;
+	a = عدم;
+	سٽ = عدم;
 	linesz = 0;
-	while ((len = getline(&line, &linesz, stdin)) != -1) {
-		char *s = line;
-		while (*(s = skip_whitespace(s)) != '\0') {
-			struct node *b;
-			char *word;
+	طالما ((len = getline(&سٽ, &linesz, stdin)) != -1) {
+		حرف *s = سٽ;
+		طالما (*(s = skip_whitespace(s)) != '\0') {
+			بنية ڳنڍ *b;
+			حرف *لفظ_2;
 
-			word = s;
+			لفظ_2 = s;
 			s = skip_non_whitespace(s);
-			if (*s)
+			إذا (*s)
 				*s++ = '\0';
 
 			/* Create nodes and edges for each word pair */
-			b = get_node(word);
-			if (!a) {
+			b = get_ڳنڍ(لفظ_2);
+			إذا (!a) {
 				a = b;
-			} else {
-				if (a != b)
-					add_edge(a, b);
-				a = NULL;
+			} وإلا {
+				إذا (a != b)
+					جوڙيو_ڪنارو(a, b);
+				a = عدم;
 			}
 		}
 	}
 // Most other tools do not check for input read error (treat them as EOF)
 //	die_if_ferror(in, input_filename);
-	if (a)
-		bb_simple_error_msg_and_die("odd input");
-	free(line);
+	إذا (a)
+		bb_simple_error_نياپو_and_die("odd input");
+	حرر(سٽ);
 
 	/*
 	 * Kahn's algorithm:
@@ -155,48 +155,48 @@ int tsort_main(int argc UNUSED_PARAM, char **argv)
 	 *   - repeat until the graph is empty
 	 *   - if any nodes are left, they form cycles.
 	 */
-	cycles = 0;
-#if ENABLE_FEATURE_CLEAN_UP
+	چڪرن = 0;
+#إذا ENABLE_FEATURE_CLEAN_مٿي
 	max_len = G.nodes_len;
-#endif
-	while (G.nodes_len) {
-		struct node *n;
+#جيڪڏهن_پورو
+	طالما (G.nodes_len) {
+		بنية ڳنڍ *n;
 
 		/* Search for first node with no incoming edges */
-		for (i = 0; i < G.nodes_len; i++) {
-			if (!G.nodes[i]->in_count)
-				break;
+		لكل (i = 0; i < G.nodes_len; i++) {
+			إذا (!G.nodes[i]->اندريون_ڳڻپ)
+				اكسر;
 		}
-		if (i == G.nodes_len) {
+		إذا (i == G.nodes_len) {
 			/* Must be a cycle; arbitraily break it at node 0 */
-			cycles++;
+			چڪرن++;
 			i = 0;
-#ifndef TINY
-			bb_error_msg("cycle at %s", G.nodes[i]->name);
-#endif
+#جيڪڏهن_وصف_نه_ٿيل TINY
+			bb_error_نياپو("cycle at %s", G.nodes[i]->name);
+#جيڪڏهن_پورو
 		}
 
 		/* Remove the node (need no longer maintain sort) */
 		n = G.nodes[i];
 		G.nodes[i] = G.nodes[--G.nodes_len];
-#if ENABLE_FEATURE_CLEAN_UP
+#إذا ENABLE_FEATURE_CLEAN_مٿي
 		/* Keep reference to removed node so it can be freed */
 		G.nodes[G.nodes_len] = n;
-#endif
+#جيڪڏهن_پورو
 
 		/* And remove its outgoing edges */
-		for (i = 0; i < n->out_count; i++)
-			n->out[i]->in_count--;
+		لكل (i = 0; i < n->ٻاهريون_ڳڻپ; i++)
+			n->ٻاهريون[i]->اندريون_ڳڻپ--;
 
 		puts(n->name);
 	}
-#if ENABLE_FEATURE_CLEAN_UP
-	for (i = 0; i < max_len; i++) {
-		free(G.nodes[i]->out);
-		free(G.nodes[i]);
+#إذا ENABLE_FEATURE_CLEAN_مٿي
+	لكل (i = 0; i < max_len; i++) {
+		حرر(G.nodes[i]->ٻاهريون);
+		حرر(G.nodes[i]);
 	}
-	free(G.nodes);
-#endif
+	حرر(G.nodes);
+#جيڪڏهن_پورو
 
-	fflush_stdout_and_exit(cycles ? 1 : 0);
+	fflush_stdout_and_exit(چڪرن ? 1 : 0);
 }

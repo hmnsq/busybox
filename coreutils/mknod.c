@@ -36,41 +36,41 @@
 //usage:       "$ mknod /dev/fd0 b 2 0\n"
 //usage:       "$ mknod -m 644 /tmp/pipe p\n"
 
-#ifdef __linux__
+#جيڪڏهن_وصف_ٿيل __linux__
 # include <sys/sysmacros.h>  // For makedev
-#endif
+#جيڪڏهن_پورو
 
-#include "libbb.h"
-#include "libcoreutils/coreutils.h"
+#ضمن "libbb.h"
+#ضمن "libcoreutils/coreutils.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-static const char modes_chars[] ALIGN1 = { 'p', 'c', 'u', 'b', 0, 1, 1, 2 };
-static const mode_t modes_cubp[] = { S_IFIFO, S_IFCHR, S_IFBLK };
+ساكن ثابت حرف modes_chars[] ALIGN1 = { 'p', 'c', 'u', 'b', 0, 1, 1, 2 };
+ساكن ثابت گهڻائي_t modes_cubp[] = { S_IFIFO, S_IFCHR, S_IFBLK };
 
-int mknod_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int mknod_main(int argc UNUSED_PARAM, char **argv)
+صحيح mknod_main(صحيح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحيح mknod_main(صحيح argc اڻ_استعمال_ٿيل_PARAM, حرف **argv)
 {
-	mode_t mode;
+	گهڻائي_t گهڻائي;
 	dev_t dev;
-	const char *type, *arg;
+	ثابت حرف *type, *arg;
 
-	mode = getopt_mk_fifo_nod(argv);
+	گهڻائي = getopt_mk_fifo_nod(argv);
 	argv += optind;
 	//argc -= optind;
 
-	if (!argv[0] || !argv[1])
+	إذا (!argv[0] || !argv[1])
 		bb_show_usage();
 	type = strchr(modes_chars, argv[1][0]);
-	if (!type)
+	إذا (!type)
 		bb_show_usage();
 
-	mode |= modes_cubp[(int)(type[4])];
+	گهڻائي |= modes_cubp[(صحيح)(type[4])];
 
 	dev = 0;
 	arg = argv[2];
-	if (*type != 'p') {
-		if (!argv[2] || !argv[3])
+	إذا (*type != 'p') {
+		إذا (!argv[2] || !argv[3])
 			bb_show_usage();
 		/* Autodetect what the system supports; these macros should
 		 * optimize out to two constants. */
@@ -78,11 +78,11 @@ int mknod_main(int argc UNUSED_PARAM, char **argv)
 				xatoul_range(argv[3], 0, minor(UINT_MAX)));
 		arg = argv[4];
 	}
-	if (arg)
+	إذا (arg)
 		bb_show_usage();
 
-	if (mknod(argv[0], mode, dev) != 0) {
-		bb_simple_perror_msg_and_die(argv[0]);
+	إذا (mknod(argv[0], گهڻائي, dev) != 0) {
+		bb_simple_perror_نياپو_and_die(argv[0]);
 	}
-	return EXIT_SUCCESS;
+	أرجع EXIT_SUCCESS;
 }

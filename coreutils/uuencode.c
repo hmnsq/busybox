@@ -30,53 +30,53 @@
 //usage:       "$ uudecode busybox busybox > busybox.uu\n"
 //usage:       "$\n"
 
-#include "libbb.h"
+#ضمن "libbb.h"
 
-enum {
-	SRC_BUF_SIZE = 15*3,  /* This *MUST* be a multiple of 3 */
-	DST_BUF_SIZE = 4 * ((SRC_BUF_SIZE + 2) / 3),
+تعداد {
+	SRC_BUF_سائيز = 15*3,  /* This *MUST* be a multiple of 3 */
+	DST_BUF_سائيز = 4 * ((SRC_BUF_سائيز + 2) / 3),
 };
 
-int uuencode_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int uuencode_main(int argc UNUSED_PARAM, char **argv)
+صحيح uuencode_main(صحيح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحيح uuencode_main(صحيح argc اڻ_استعمال_ٿيل_PARAM, حرف **argv)
 {
-	struct stat stat_buf;
-	int src_fd = STDIN_FILENO;
-	const char *tbl;
-	mode_t mode;
-	char src_buf[SRC_BUF_SIZE];
-	char dst_buf[DST_BUF_SIZE + 1];
+	بنية stat stat_buf;
+	صحيح src_fd = STDIN_FILENO;
+	ثابت حرف *tbl;
+	گهڻائي_t گهڻائي;
+	حرف src_buf[SRC_BUF_سائيز];
+	حرف dst_buf[DST_BUF_سائيز + 1];
 
 	tbl = bb_uuenc_tbl_std;
-	mode = 0666 & ~umask(0666);
-	if (getopt32(argv, "^" "m" "\0" "-1:?2"/*must have 1 or 2 args*/)) {
+	گهڻائي = 0666 & ~umask(0666);
+	إذا (getopt32(argv, "^" "m" "\0" "-1:?2"/*must have 1 or 2 args*/)) {
 		tbl = bb_uuenc_tbl_base64;
 	}
 	argv += optind;
-	if (argv[1]) {
+	إذا (argv[1]) {
 		src_fd = xopen(argv[0], O_RDONLY);
 		fstat(src_fd, &stat_buf);
-		mode = stat_buf.st_mode & (S_IRWXU | S_IRWXG | S_IRWXO);
+		گهڻائي = stat_buf.st_گهڻائي & (S_IRWXU | S_IRWXG | S_IRWXO);
 		argv++;
 	}
 
-	printf("begin%s %o %s", tbl == bb_uuenc_tbl_std ? "" : "-base64", mode, *argv);
-	while (1) {
-		size_t size = full_read(src_fd, src_buf, SRC_BUF_SIZE);
-		if (!size)
-			break;
-		if ((ssize_t)size < 0)
-			bb_simple_perror_msg_and_die(bb_msg_read_error);
+	لکو("begin%s %o %s", tbl == bb_uuenc_tbl_std ? "" : "-base64", گهڻائي, *argv);
+	طالما (1) {
+		سائيز_t سائيز = ڀريل_read(src_fd, src_buf, SRC_BUF_سائيز);
+		إذا (!سائيز)
+			اكسر;
+		إذا ((ssize_t)سائيز < 0)
+			bb_simple_perror_نياپو_and_die(bb_نياپو_read_error);
 		/* Encode the buffer we just read in */
-		bb_uuencode(dst_buf, src_buf, size, tbl);
+		bb_uuencode(dst_buf, src_buf, سائيز, tbl);
 		bb_putchar('\n');
-		if (tbl == bb_uuenc_tbl_std) {
-			bb_putchar(tbl[size]);
+		إذا (tbl == bb_uuenc_tbl_std) {
+			bb_putchar(tbl[سائيز]);
 		}
 		fflush(stdout);
-		xwrite(STDOUT_FILENO, dst_buf, 4 * ((size + 2) / 3));
+		xwrite(STDOUT_FILENO, dst_buf, 4 * ((سائيز + 2) / 3));
 	}
-	printf(tbl == bb_uuenc_tbl_std ? "\n`\nend\n" : "\n====\n");
+	لکو(tbl == bb_uuenc_tbl_std ? "\n`\nend\n" : "\n====\n");
 
 	fflush_stdout_and_exit_SUCCESS();
 }

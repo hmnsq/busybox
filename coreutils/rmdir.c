@@ -31,65 +31,65 @@
 //usage:#define rmdir_example_usage
 //usage:       "# rmdir /tmp/foo\n"
 
-#include "libbb.h"
+#ضمن "libbb.h"
 
 /* This is a NOFORK applet. Be very careful! */
 
 
-#define PARENTS          (1 << 0)
-#define VERBOSE          ((1 << 1) * ENABLE_FEATURE_VERBOSE)
-#define IGNORE_NON_EMPTY ((1 << 2) * ENABLE_LONG_OPTS)
+#وصف_ڪريو PARENTS          (1 << 0)
+#وصف_ڪريو VERBOSE          ((1 << 1) * ENABLE_FEATURE_VERBOSE)
+#وصف_ڪريو IGNORE_NON_خالي_جايون ((1 << 2) * ENABLE_LONG_OPTS)
 
-int rmdir_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int rmdir_main(int argc UNUSED_PARAM, char **argv)
+صحيح rmdir_main(صحيح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحيح rmdir_main(صحيح argc اڻ_استعمال_ٿيل_PARAM, حرف **argv)
 {
-	int status = EXIT_SUCCESS;
-	int flags;
-	char *path;
+	صحيح حالت = EXIT_SUCCESS;
+	صحيح flags;
+	حرف *رستو;
 
 	flags = getopt32long(argv, "pv",
-		"parents\0"                  No_argument "p"
+		"parents\0"                  No_دليل "p"
 		/* Debian etch: many packages fail to be purged or installed
 		 * because they desperately want this option: */
-		"ignore-fail-on-non-empty\0" No_argument "\xff"
+		"ignore-fail-on-non-empty\0" No_دليل "\xff"
 		IF_FEATURE_VERBOSE(
-		"verbose\0"                  No_argument "v"
+		"verbose\0"                  No_دليل "v"
 		)
 	);
 	argv += optind;
 
-	if (!*argv) {
+	إذا (!*argv) {
 		bb_show_usage();
 	}
 
-	do {
-		path = *argv;
+	افعل {
+		رستو = *argv;
 
-		while (1) {
-			if (flags & VERBOSE) {
-				printf("rmdir: removing directory, '%s'\n", path);
+		طالما (1) {
+			إذا (flags & VERBOSE) {
+				لکو("rmdir: removing directory, '%s'\n", رستو);
 			}
 
-			if (rmdir(path) < 0) {
-#if ENABLE_LONG_OPTS
-				if ((flags & IGNORE_NON_EMPTY) && errno == ENOTEMPTY)
-					break;
-#endif
-				bb_perror_msg("'%s'", path);  /* Match gnu rmdir msg. */
-				status = EXIT_FAILURE;
-			} else if (flags & PARENTS) {
+			إذا (rmdir(رستو) < 0) {
+#إذا ENABLE_LONG_OPTS
+				إذا ((flags & IGNORE_NON_خالي_جايون) && errno == ENOTEMPTY)
+					اكسر;
+#جيڪڏهن_پورو
+				bb_perror_نياپو("'%s'", رستو);  /* Match gnu rmdir msg. */
+				حالت = EXIT_FAILURE;
+			} وإلا إذا (flags & PARENTS) {
 				/* Note: path was not "" since rmdir succeeded. */
-				path = dirname(path);
+				رستو = dirname(رستو);
 				/* Path is now just the parent component.  Dirname
 				 * returns "." if there are no parents.
 				 */
-				if (NOT_LONE_CHAR(path, '.')) {
-					continue;
+				إذا (NOT_LONE_CHAR(رستو, '.')) {
+					استمر;
 				}
 			}
-			break;
+			اكسر;
 		}
-	} while (*++argv);
+	} طالما (*++argv);
 
-	return status;
+	أرجع حالت;
 }
