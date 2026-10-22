@@ -46,7 +46,7 @@
 //usage:       "$ ls -l /tmp/foo\n"
 //usage:       "-r--r--r--    1 root     root            0 Apr 12 18:25 /tmp/foo\n"
 
-#include "libbb.h"
+#ضمن "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
@@ -66,64 +66,64 @@
  * symbolic links encountered during recursive directory traversals.
  */
 
-static int FAST_FUNC fileAction(struct recursive_state *state,
-		const char *fileName,
-		struct stat *statbuf)
+ساكن صحيح FAST_FUNC fileAction(بنية recursive_state *state,
+		ثابت حرف *fileName,
+		بنية stat *statbuf)
 {
 	mode_t newmode;
 
 	/* match coreutils behavior */
-	if (state->depth == 0) {
+	إذا (state->depth == 0) {
 		/* statbuf holds lstat result, but we need stat (follow link) */
-		if (stat(fileName, statbuf))
-			goto err;
-	} else { /* depth > 0: skip links */
-		if (S_ISLNK(statbuf->st_mode))
-			return TRUE;
+		إذا (stat(fileName, statbuf))
+			اذهب err;
+	} وإلا { /* depth > 0: skip links */
+		إذا (S_ISLNK(statbuf->st_mode))
+			إرجاع TRUE;
 	}
 
-	newmode = bb_parse_mode((char *)state->userData, statbuf->st_mode);
-	if (newmode == (mode_t)-1)
-		bb_error_msg_and_die("invalid mode '%s'", (char *)state->userData);
+	newmode = bb_parse_mode((حرف *)state->userData, statbuf->st_mode);
+	إذا (newmode == (mode_t)-1)
+		bb_error_رسالة_and_die("invalid mode '%s'", (حرف *)state->userData);
 
-	if (chmod(fileName, newmode) == 0) {
-		if (OPT_VERBOSE
+	إذا (chmod(fileName, newmode) == 0) {
+		إذا (OPT_VERBOSE
 		 || (OPT_CHANGED
 		     && (statbuf->st_mode & 07777) != (newmode & 07777))
 		) {
-			char modestr[12];
+			حرف modestr[12];
 			printf("mode of '%s' changed to %04o (%s)\n", fileName,
 				newmode & 07777, bb_mode_string(modestr, newmode)+1);
 		}
-		return TRUE;
+		إرجاع TRUE;
 	}
  err:
-	if (!OPT_QUIET)
-		bb_simple_perror_msg(fileName);
-	return FALSE;
+	إذا (!OPT_QUIET)
+		bb_simple_perror_رسالة(fileName);
+	إرجاع FALSE;
 }
 
-int chmod_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int chmod_main(int argc UNUSED_PARAM, char **argv)
+صحيح chmod_main(صحيح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحيح chmod_main(صحيح argc UNUSED_PARAM, حرف **argv)
 {
-	int retval = EXIT_SUCCESS;
-	char *arg, **argp;
-	char *smode;
+	صحيح retval = EXIT_SUCCESS;
+	حرف *arg, **argp;
+	حرف *smode;
 
 	/* Convert first encountered -r into ar, -w into aw etc
 	 * so that getopt would not eat it */
 	argp = argv;
-	while ((arg = *++argp)) {
+	بينما ((arg = *++argp)) {
 		/* Mode spec must be the first arg (sans -R etc) */
 		/* (protect against mishandling e.g. "chmod 644 -r") */
-		if (arg[0] != '-') {
-			arg = NULL;
-			break;
+		إذا (arg[0] != '-') {
+			arg = عدم;
+			اكسر;
 		}
 		/* An option. Not a -- or valid option? */
-		if (arg[1] && !strchr("-"OPT_STR, arg[1])) {
+		إذا (arg[1] && !strchr("-"OPT_STR, arg[1])) {
 			arg[0] = 'a';
-			break;
+			اكسر;
 		}
 	}
 
@@ -132,12 +132,12 @@ int chmod_main(int argc UNUSED_PARAM, char **argv)
 	argv += optind;
 
 	/* Restore option-like mode if needed */
-	if (arg) arg[0] = '-';
+	إذا (arg) arg[0] = '-';
 
 	/* Ok, ready to do the deed now */
 	smode = *argv++;
-	do {
-		if (!recursive_action(*argv,
+	افعل {
+		إذا (!recursive_action(*argv,
 			OPT_RECURSE,    // recurse
 			fileAction,     // file action
 			fileAction,     // dir action
@@ -145,9 +145,9 @@ int chmod_main(int argc UNUSED_PARAM, char **argv)
 		) {
 			retval = EXIT_FAILURE;
 		}
-	} while (*++argv);
+	} بينما (*++argv);
 
-	return retval;
+	إرجاع retval;
 }
 
 /*
