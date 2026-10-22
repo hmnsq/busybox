@@ -46,16 +46,16 @@
 //usage:       "$ ls -l /tmp/foo\n"
 //usage:       "-r--r--r--    1 root     root            0 Apr 12 18:25 /tmp/foo\n"
 
-#include "libbb.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
 
-#define OPT_RECURSE (option_mask32 & 1)
-#define OPT_VERBOSE (IF_DESKTOP(option_mask32 & 2) IF_NOT_DESKTOP(0))
-#define OPT_CHANGED (IF_DESKTOP(option_mask32 & 4) IF_NOT_DESKTOP(0))
-#define OPT_QUIET   (IF_DESKTOP(option_mask32 & 8) IF_NOT_DESKTOP(0))
-#define OPT_STR     "R" IF_DESKTOP("vcf")
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ OPT_RECURSE (option_mask32 & 1)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ OPT_VERBOSE (IF_DESKTOP(option_mask32 & 2) IF_NOT_DESKTOP(0))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ OPT_ਬਦਲਿਆ (IF_DESKTOP(option_mask32 & 4) IF_NOT_DESKTOP(0))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ OPT_QUIET   (IF_DESKTOP(option_mask32 & 8) IF_NOT_DESKTOP(0))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ OPT_STR     "R" IF_DESKTOP("vcf")
 
 /* coreutils:
  * chmod never changes the permissions of symbolic links; the chmod
@@ -66,64 +66,64 @@
  * symbolic links encountered during recursive directory traversals.
  */
 
-static int FAST_FUNC fileAction(struct recursive_state *state,
-		const char *fileName,
-		struct stat *statbuf)
+ਸਥਿਰ ਪੂਰਨ FAST_FUNC fileAction(ਬਣਤਰ recursive_state *state,
+		ਅਚਲ ਅੱਖਰ *fileName,
+		ਬਣਤਰ stat *statbuf)
 {
-	mode_t newmode;
+	ਬਹੁਲਕ_t newmode;
 
 	/* match coreutils behavior */
-	if (state->depth == 0) {
+	ਜੇ (state->ਡੂੰਘਾਈ == 0) {
 		/* statbuf holds lstat result, but we need stat (follow link) */
-		if (stat(fileName, statbuf))
-			goto err;
-	} else { /* depth > 0: skip links */
-		if (S_ISLNK(statbuf->st_mode))
-			return TRUE;
+		ਜੇ (stat(fileName, statbuf))
+			ਜਾਓ err;
+	} ਨਹੀਂਤਾਂ { /* depth > 0: skip links */
+		ਜੇ (S_ISLNK(statbuf->st_ਬਹੁਲਕ))
+			ਵਾਪਸ TRUE;
 	}
 
-	newmode = bb_parse_mode((char *)state->userData, statbuf->st_mode);
-	if (newmode == (mode_t)-1)
-		bb_error_msg_and_die("invalid mode '%s'", (char *)state->userData);
+	newmode = bb_parse_ਬਹੁਲਕ((ਅੱਖਰ *)state->user_ਅੰਕੜੇ, statbuf->st_ਬਹੁਲਕ);
+	ਜੇ (newmode == (ਬਹੁਲਕ_t)-1)
+		bb_error_ਸੁਨੇਹਾ_and_die("invalid mode '%s'", (ਅੱਖਰ *)state->user_ਅੰਕੜੇ);
 
-	if (chmod(fileName, newmode) == 0) {
-		if (OPT_VERBOSE
-		 || (OPT_CHANGED
-		     && (statbuf->st_mode & 07777) != (newmode & 07777))
+	ਜੇ (chmod(fileName, newmode) == 0) {
+		ਜੇ (OPT_VERBOSE
+		 || (OPT_ਬਦਲਿਆ
+		     && (statbuf->st_ਬਹੁਲਕ & 07777) != (newmode & 07777))
 		) {
-			char modestr[12];
-			printf("mode of '%s' changed to %04o (%s)\n", fileName,
-				newmode & 07777, bb_mode_string(modestr, newmode)+1);
+			ਅੱਖਰ modestr[12];
+			ਲਿਖੋ("mode of '%s' changed to %04o (%s)\n", fileName,
+				newmode & 07777, bb_ਬਹੁਲਕ_string(modestr, newmode)+1);
 		}
-		return TRUE;
+		ਵਾਪਸ TRUE;
 	}
  err:
-	if (!OPT_QUIET)
-		bb_simple_perror_msg(fileName);
-	return FALSE;
+	ਜੇ (!OPT_QUIET)
+		bb_simple_perror_ਸੁਨੇਹਾ(fileName);
+	ਵਾਪਸ FALSE;
 }
 
-int chmod_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int chmod_main(int argc UNUSED_PARAM, char **argv)
+ਪੂਰਨ chmod_main(ਪੂਰਨ argc, ਅੱਖਰ **argv) MAIN_EXTERNALLY_VISIBLE;
+ਪੂਰਨ chmod_main(ਪੂਰਨ argc ਅਣਵਰਤਿਆ_PARAM, ਅੱਖਰ **argv)
 {
-	int retval = EXIT_SUCCESS;
-	char *arg, **argp;
-	char *smode;
+	ਪੂਰਨ retval = EXIT_SUCCESS;
+	ਅੱਖਰ *arg, **argp;
+	ਅੱਖਰ *smode;
 
 	/* Convert first encountered -r into ar, -w into aw etc
 	 * so that getopt would not eat it */
 	argp = argv;
-	while ((arg = *++argp)) {
+	ਜਦੋਂ ((arg = *++argp)) {
 		/* Mode spec must be the first arg (sans -R etc) */
 		/* (protect against mishandling e.g. "chmod 644 -r") */
-		if (arg[0] != '-') {
-			arg = NULL;
-			break;
+		ਜੇ (arg[0] != '-') {
+			arg = ਨਿਰਾ;
+			ਰੋਕੋ;
 		}
 		/* An option. Not a -- or valid option? */
-		if (arg[1] && !strchr("-"OPT_STR, arg[1])) {
+		ਜੇ (arg[1] && !strchr("-"OPT_STR, arg[1])) {
 			arg[0] = 'a';
-			break;
+			ਰੋਕੋ;
 		}
 	}
 
@@ -132,12 +132,12 @@ int chmod_main(int argc UNUSED_PARAM, char **argv)
 	argv += optind;
 
 	/* Restore option-like mode if needed */
-	if (arg) arg[0] = '-';
+	ਜੇ (arg) arg[0] = '-';
 
 	/* Ok, ready to do the deed now */
 	smode = *argv++;
-	do {
-		if (!recursive_action(*argv,
+	ਕਰੋ {
+		ਜੇ (!recursive_action(*argv,
 			OPT_RECURSE,    // recurse
 			fileAction,     // file action
 			fileAction,     // dir action
@@ -145,9 +145,9 @@ int chmod_main(int argc UNUSED_PARAM, char **argv)
 		) {
 			retval = EXIT_FAILURE;
 		}
-	} while (*++argv);
+	} ਜਦੋਂ (*++argv);
 
-	return retval;
+	ਵਾਪਸ retval;
 }
 
 /*

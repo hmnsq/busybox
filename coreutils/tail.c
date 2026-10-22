@@ -68,259 +68,259 @@
 //usage:       "$ tail -n 1 /etc/resolv.conf\n"
 //usage:       "nameserver 10.0.0.1\n"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "libbb.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "common_bufsiz.h"
 
-struct globals {
-	bool from_top;
+ਬਣਤਰ globals {
+	bool from_ਸਿਖਰ;
 	bool exitcode;
 } FIX_ALIASING;
-#define G (*(struct globals*)bb_common_bufsiz1)
-#define INIT_G() do { setup_common_bufsiz(); } while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ G (*(ਬਣਤਰ globals*)bb_common_bufsiz1)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ INIT_G() ਕਰੋ { ਤਿਆਰੀ_common_bufsiz(); } ਜਦੋਂ (0)
 
-static void tail_xprint_header(const char *fmt, const char *filename)
+ਸਥਿਰ ਖਾਲੀ ਪੂਛ_xprint_ਸਿਰਲੇਖ(ਅਚਲ ਅੱਖਰ *fmt, ਅਚਲ ਅੱਖਰ *filename)
 {
-	if (fdprintf(STDOUT_FILENO, fmt, filename) < 0)
+	ਜੇ (fdprintf(STDOUT_FILENO, fmt, filename) < 0)
 		bb_perror_nomsg_and_die();
 }
 
-static ssize_t tail_read(int fd, char *buf, size_t count)
+ਸਥਿਰ ssize_t ਪੂਛ_read(ਪੂਰਨ fd, ਅੱਖਰ *buf, ਮਾਪ_t ਗਿਣਤੀ_2)
 {
 	ssize_t r;
 
-	r = full_read(fd, buf, count);
-	if (r < 0) {
-		bb_simple_perror_msg(bb_msg_read_error);
+	r = ਭਰਿਆ_read(fd, buf, ਗਿਣਤੀ_2);
+	ਜੇ (r < 0) {
+		bb_simple_perror_ਸੁਨੇਹਾ(bb_ਸੁਨੇਹਾ_read_error);
 		G.exitcode = EXIT_FAILURE;
 	}
 
-	return r;
+	ਵਾਪਸ r;
 }
 
-#define header_fmt_str "\n==> %s <==\n"
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਸਿਰਲੇਖ_fmt_str "\n==> %s <==\n"
 
-static unsigned eat_num(const char *p)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ eat_ਅੰਕ(ਅਚਲ ਅੱਖਰ *p)
 {
-	if (*p == '-')
+	ਜੇ (*p == '-')
 		p++;
-	else if (*p == '+') {
+	ਨਹੀਂਤਾਂ ਜੇ (*p == '+') {
 		p++;
-		G.from_top = 1;
+		G.from_ਸਿਖਰ = 1;
 	}
-	return xatou_sfx(p, bkm_suffixes);
+	ਵਾਪਸ xatou_sfx(p, bkm_suffixes);
 }
 
-int tail_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int tail_main(int argc, char **argv)
+ਪੂਰਨ ਪੂਛ_main(ਪੂਰਨ argc, ਅੱਖਰ **argv) MAIN_EXTERNALLY_VISIBLE;
+ਪੂਰਨ ਪੂਛ_main(ਪੂਰਨ argc, ਅੱਖਰ **argv)
 {
-	unsigned count = 10;
-	unsigned sleep_period = 1;
-	const char *str_c, *str_n;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਗਿਣਤੀ_2 = 10;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ sleep_period = 1;
+	ਅਚਲ ਅੱਖਰ *str_c, *str_n;
 
-	char *tailbuf;
-	size_t tailbufsize;
-	unsigned header_threshold = 1;
-	unsigned nfiles;
-	int i, opt;
+	ਅੱਖਰ *tailbuf;
+	ਮਾਪ_t tailbufsize;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਸਿਰਲੇਖ_ਹੱਦ = 1;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ nfiles;
+	ਪੂਰਨ i, opt;
 
-	int *fds;
-	const char *fmt;
-	int prev_fd;
+	ਪੂਰਨ *fds;
+	ਅਚਲ ਅੱਖਰ *fmt;
+	ਪੂਰਨ prev_fd;
 
 	INIT_G();
 
-#if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_TAIL
+#ਜੇ ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_ਪੂਛ
 	/* Allow legacy syntax of an initial numeric option without -n. */
-	if (argv[1] && (argv[1][0] == '+' || argv[1][0] == '-')
-	 && isdigit(argv[1][1])
+	ਜੇ (argv[1] && (argv[1][0] == '+' || argv[1][0] == '-')
+	 && ਅੰਕ_ਹੈ(argv[1][1])
 	) {
-		count = eat_num(argv[1]);
+		ਗਿਣਤੀ_2 = eat_ਅੰਕ(argv[1]);
 		argv++;
 		argc--;
 	}
-#endif
+#ਜੇ_ਅੰਤ
 
 	/* -s NUM, -F imlies -f */
-	opt = getopt32(argv, IF_FEATURE_FANCY_TAIL("^")
-			"fc:n:"IF_FEATURE_FANCY_TAIL("qs:+vF")
-			IF_FEATURE_FANCY_TAIL("\0" "Ff"),
-			&str_c, &str_n IF_FEATURE_FANCY_TAIL(,&sleep_period)
+	opt = getopt32(argv, IF_FEATURE_FANCY_ਪੂਛ("^")
+			"fc:n:"IF_FEATURE_FANCY_ਪੂਛ("qs:+vF")
+			IF_FEATURE_FANCY_ਪੂਛ("\0" "Ff"),
+			&str_c, &str_n IF_FEATURE_FANCY_ਪੂਛ(,&sleep_period)
 	);
-#define FOLLOW (opt & 0x1)
-#define COUNT_BYTES (opt & 0x2)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ FOLLOW (opt & 0x1)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਗਿਣਤੀ_ਬਾਈਟਾਂ_2 (opt & 0x2)
 	//if (opt & 0x1) // -f
-	if (opt & 0x2) count = eat_num(str_c); // -c
-	if (opt & 0x4) count = eat_num(str_n); // -n
-#if ENABLE_FEATURE_FANCY_TAIL
+	ਜੇ (opt & 0x2) ਗਿਣਤੀ_2 = eat_ਅੰਕ(str_c); // -c
+	ਜੇ (opt & 0x4) ਗਿਣਤੀ_2 = eat_ਅੰਕ(str_n); // -n
+#ਜੇ ENABLE_FEATURE_FANCY_ਪੂਛ
 	/* q: make it impossible for nfiles to be > header_threshold */
-	if (opt & 0x8) header_threshold = UINT_MAX; // -q
+	ਜੇ (opt & 0x8) ਸਿਰਲੇਖ_ਹੱਦ = UINT_MAX; // -q
 	//if (opt & 0x10) // -s
-	if (opt & 0x20) header_threshold = 0; // -v
+	ਜੇ (opt & 0x20) ਸਿਰਲੇਖ_ਹੱਦ = 0; // -v
 # define FOLLOW_RETRY (opt & 0x40)
-#else
+#ਨਹੀਂਤਾਂ
 # define FOLLOW_RETRY 0
-#endif
+#ਜੇ_ਅੰਤ
 	argc -= optind;
 	argv += optind;
 
 	/* open all the files */
-	fds = xmalloc(sizeof(fds[0]) * (argc + 1));
-	if (!argv[0]) {
-		struct stat statbuf;
+	fds = xmalloc(ਆਕਾਰ(fds[0]) * (argc + 1));
+	ਜੇ (!argv[0]) {
+		ਬਣਤਰ stat statbuf;
 
-		if (fstat(STDIN_FILENO, &statbuf) == 0
-		 && S_ISFIFO(statbuf.st_mode)
+		ਜੇ (fstat(STDIN_FILENO, &statbuf) == 0
+		 && S_ISFIFO(statbuf.st_ਬਹੁਲਕ)
 		) {
 			opt &= ~1; /* clear FOLLOW */
 		}
-		argv[0] = (char *) bb_msg_standard_input;
+		argv[0] = (ਅੱਖਰ *) bb_ਸੁਨੇਹਾ_standard_ਨਿਵੇਸ਼;
 	}
 	nfiles = i = 0;
-	do {
-		int fd = open_or_warn_stdin(argv[i]);
-		if (fd < 0 && !FOLLOW_RETRY) {
+	ਕਰੋ {
+		ਪੂਰਨ fd = open_or_warn_stdin(argv[i]);
+		ਜੇ (fd < 0 && !FOLLOW_RETRY) {
 			G.exitcode = EXIT_FAILURE;
-			continue;
+			ਜਾਰੀ;
 		}
 		fds[nfiles] = fd;
 		argv[nfiles++] = argv[i];
-	} while (++i < argc);
+	} ਜਦੋਂ (++i < argc);
 
-	if (!nfiles)
-		bb_simple_error_msg_and_die("no files");
+	ਜੇ (!nfiles)
+		bb_simple_error_ਸੁਨੇਹਾ_and_die("no files");
 
 	/* prepare the buffer */
 	tailbufsize = BUFSIZ;
-	if (!G.from_top && COUNT_BYTES) {
-		if (tailbufsize < count + BUFSIZ) {
-			tailbufsize = count + BUFSIZ;
+	ਜੇ (!G.from_ਸਿਖਰ && ਗਿਣਤੀ_ਬਾਈਟਾਂ_2) {
+		ਜੇ (tailbufsize < ਗਿਣਤੀ_2 + BUFSIZ) {
+			tailbufsize = ਗਿਣਤੀ_2 + BUFSIZ;
 		}
 	}
 	/* tail -c1024m REGULAR_FILE doesn't really need 1G mem block.
 	 * (In fact, it doesn't need ANY memory). So delay allocation.
 	 */
-	tailbuf = NULL;
+	tailbuf = ਨਿਰਾ;
 
 	/* tail the files */
 
-	fmt = header_fmt_str + 1; /* skip leading newline in the header on the first output */
+	fmt = ਸਿਰਲੇਖ_fmt_str + 1; /* skip leading newline in the header on the first output */
 	i = 0;
-	do {
-		char *buf;
-		int taillen;
-		int newlines_seen;
-		unsigned seen;
-		int nread;
-		int fd = fds[i];
+	ਕਰੋ {
+		ਅੱਖਰ *buf;
+		ਪੂਰਨ taillen;
+		ਪੂਰਨ newlines_ਵੇਖਿਆ;
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਵੇਖਿਆ;
+		ਪੂਰਨ nread;
+		ਪੂਰਨ fd = fds[i];
 
-		if (ENABLE_FEATURE_FANCY_TAIL && fd < 0)
-			continue; /* may happen with -F */
+		ਜੇ (ENABLE_FEATURE_FANCY_ਪੂਛ && fd < 0)
+			ਜਾਰੀ; /* may happen with -F */
 
-		if (nfiles > header_threshold) {
-			tail_xprint_header(fmt, argv[i]);
-			fmt = header_fmt_str;
+		ਜੇ (nfiles > ਸਿਰਲੇਖ_ਹੱਦ) {
+			ਪੂਛ_xprint_ਸਿਰਲੇਖ(fmt, argv[i]);
+			fmt = ਸਿਰਲੇਖ_fmt_str;
 		}
 
-		if (!G.from_top) {
-			off_t current = lseek(fd, 0, SEEK_END);
-			if (current > 0) {
-				unsigned off;
-				if (COUNT_BYTES) {
+		ਜੇ (!G.from_ਸਿਖਰ) {
+			off_t current = lseek(fd, 0, SEEK_ਸਿਰਾ);
+			ਜੇ (current > 0) {
+				ਬਿਨਾਨਿਸ਼ਾਨੀ off;
+				ਜੇ (ਗਿਣਤੀ_ਬਾਈਟਾਂ_2) {
 				/* Optimizing count-bytes case if the file is seekable.
 				 * Beware of backing up too far.
 				 * Also we exclude files with size 0 (because of /proc/xxx) */
-					if (count == 0)
-						continue; /* showing zero bytes is easy :) */
-					current -= count;
-					if (current < 0)
+					ਜੇ (ਗਿਣਤੀ_2 == 0)
+						ਜਾਰੀ; /* showing zero bytes is easy :) */
+					current -= ਗਿਣਤੀ_2;
+					ਜੇ (current < 0)
 						current = 0;
-					xlseek(fd, current, SEEK_SET);
-					bb_copyfd_size(fd, STDOUT_FILENO, count);
-					continue;
+					xlseek(fd, current, SEEK_ਸੈੱਟ);
+					bb_copyfd_ਮਾਪ(fd, STDOUT_FILENO, ਗਿਣਤੀ_2);
+					ਜਾਰੀ;
 				}
-#if 1 /* This is technically incorrect for *LONG* strings, but very useful */
+#ਜੇ 1 /* This is technically incorrect for *LONG* strings, but very useful */
 				/* Optimizing count-lines case if the file is seekable.
 				 * We assume the lines are <64k.
 				 * (Users complain that tail takes too long
 				 * on multi-gigabyte files) */
-				off = (count | 0xf); /* for small counts, be more paranoid */
-				if (off > (INT_MAX / (64*1024)))
-					off = (INT_MAX / (64*1024));
+				off = (ਗਿਣਤੀ_2 | 0xf); /* for small counts, be more paranoid */
+				ਜੇ (off > (ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ / (64*1024)))
+					off = (ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ / (64*1024));
 				current -= off * (64*1024);
-				if (current < 0)
+				ਜੇ (current < 0)
 					current = 0;
-				xlseek(fd, current, SEEK_SET);
-#endif
+				xlseek(fd, current, SEEK_ਸੈੱਟ);
+#ਜੇ_ਅੰਤ
 			}
 		}
 
-		if (!tailbuf)
+		ਜੇ (!tailbuf)
 			tailbuf = xmalloc(tailbufsize);
 
 		buf = tailbuf;
 		taillen = 0;
 		/* "We saw 1st line/byte".
 		 * Used only by +N code ("start from Nth", 1-based): */
-		seen = 1;
-		newlines_seen = 0;
-		while ((nread = tail_read(fd, buf, tailbufsize - taillen)) > 0) {
-			if (G.from_top) {
-				int nwrite = nread;
-				if (seen < count) {
+		ਵੇਖਿਆ = 1;
+		newlines_ਵੇਖਿਆ = 0;
+		ਜਦੋਂ ((nread = ਪੂਛ_read(fd, buf, tailbufsize - taillen)) > 0) {
+			ਜੇ (G.from_ਸਿਖਰ) {
+				ਪੂਰਨ nwrite = nread;
+				ਜੇ (ਵੇਖਿਆ < ਗਿਣਤੀ_2) {
 					/* We need to skip a few more bytes/lines */
-					if (COUNT_BYTES) {
-						nwrite -= (count - seen);
-						seen += nread;
-					} else {
-						char *s = buf;
-						do {
+					ਜੇ (ਗਿਣਤੀ_ਬਾਈਟਾਂ_2) {
+						nwrite -= (ਗਿਣਤੀ_2 - ਵੇਖਿਆ);
+						ਵੇਖਿਆ += nread;
+					} ਨਹੀਂਤਾਂ {
+						ਅੱਖਰ *s = buf;
+						ਕਰੋ {
 							--nwrite;
-							if (*s++ == '\n' && ++seen == count) {
-								break;
+							ਜੇ (*s++ == '\n' && ++ਵੇਖਿਆ == ਗਿਣਤੀ_2) {
+								ਰੋਕੋ;
 							}
-						} while (nwrite);
+						} ਜਦੋਂ (nwrite);
 					}
 				}
-				if (nwrite > 0)
+				ਜੇ (nwrite > 0)
 					xwrite(STDOUT_FILENO, buf + nread - nwrite, nwrite);
-			} else if (count) {
-				if (COUNT_BYTES) {
+			} ਨਹੀਂਤਾਂ ਜੇ (ਗਿਣਤੀ_2) {
+				ਜੇ (ਗਿਣਤੀ_ਬਾਈਟਾਂ_2) {
 					taillen += nread;
-					if (taillen > (int)count) {
-						memmove(tailbuf, tailbuf + taillen - count, count);
-						taillen = count;
+					ਜੇ (taillen > (ਪੂਰਨ)ਗਿਣਤੀ_2) {
+						memmove(tailbuf, tailbuf + taillen - ਗਿਣਤੀ_2, ਗਿਣਤੀ_2);
+						taillen = ਗਿਣਤੀ_2;
 					}
-				} else {
-					int k = nread;
-					int newlines_in_buf = 0;
+				} ਨਹੀਂਤਾਂ {
+					ਪੂਰਨ k = nread;
+					ਪੂਰਨ newlines_ਵਿੱਚ_buf = 0;
 
-					do { /* count '\n' in last read */
+					ਕਰੋ { /* count '\n' in last read */
 						k--;
-						if (buf[k] == '\n') {
-							newlines_in_buf++;
+						ਜੇ (buf[k] == '\n') {
+							newlines_ਵਿੱਚ_buf++;
 						}
-					} while (k);
+					} ਜਦੋਂ (k);
 
-					if (newlines_seen + newlines_in_buf < (int)count) {
-						newlines_seen += newlines_in_buf;
+					ਜੇ (newlines_ਵੇਖਿਆ + newlines_ਵਿੱਚ_buf < (ਪੂਰਨ)ਗਿਣਤੀ_2) {
+						newlines_ਵੇਖਿਆ += newlines_ਵਿੱਚ_buf;
 						taillen += nread;
-					} else {
-						int extra = (buf[nread-1] != '\n');
-						char *s;
+					} ਨਹੀਂਤਾਂ {
+						ਪੂਰਨ extra = (buf[nread-1] != '\n');
+						ਅੱਖਰ *s;
 
-						k = newlines_seen + newlines_in_buf + extra - count;
+						k = newlines_ਵੇਖਿਆ + newlines_ਵਿੱਚ_buf + extra - ਗਿਣਤੀ_2;
 						s = tailbuf;
-						while (k) {
-							if (*s == '\n') {
+						ਜਦੋਂ (k) {
+							ਜੇ (*s == '\n') {
 								k--;
 							}
 							s++;
 						}
 						taillen += nread - (s - tailbuf);
 						memmove(tailbuf, s, taillen);
-						newlines_seen = count - extra;
+						newlines_ਵੇਖਿਆ = ਗਿਣਤੀ_2 - extra;
 					}
-					if (tailbufsize < (size_t)taillen + BUFSIZ) {
+					ਜੇ (tailbufsize < (ਮਾਪ_t)taillen + BUFSIZ) {
 						tailbufsize = taillen + BUFSIZ;
 						tailbuf = xrealloc(tailbuf, tailbufsize);
 					}
@@ -328,31 +328,31 @@ int tail_main(int argc, char **argv)
 				buf = tailbuf + taillen;
 			}
 		} /* while (tail_read() > 0) */
-		if (!G.from_top) {
+		ਜੇ (!G.from_ਸਿਖਰ) {
 			xwrite(STDOUT_FILENO, tailbuf, taillen);
 		}
-	} while (++i < nfiles);
+	} ਜਦੋਂ (++i < nfiles);
 	prev_fd = fds[i-1];
 
 	tailbuf = xrealloc(tailbuf, BUFSIZ);
 
-	fmt = NULL;
+	fmt = ਨਿਰਾ;
 
-	if (FOLLOW) while (1) {
+	ਜੇ (FOLLOW) ਜਦੋਂ (1) {
 		sleep(sleep_period);
 
 		i = 0;
-		do {
-			int nread;
-			const char *filename = argv[i];
-			int fd = fds[i];
-			int new_fd = -1;
-			struct stat sbuf;
+		ਕਰੋ {
+			ਪੂਰਨ nread;
+			ਅਚਲ ਅੱਖਰ *filename = argv[i];
+			ਪੂਰਨ fd = fds[i];
+			ਪੂਰਨ new_fd = -1;
+			ਬਣਤਰ stat sbuf;
 
-			if (FOLLOW_RETRY) {
-				struct stat fsbuf;
+			ਜੇ (FOLLOW_RETRY) {
+				ਬਣਤਰ stat fsbuf;
 
-				if (fd < 0
+				ਜੇ (fd < 0
 				 || fstat(fd, &fsbuf) < 0
 				 || stat(filename, &sbuf) < 0
 				 || fsbuf.st_dev != sbuf.st_dev
@@ -360,62 +360,62 @@ int tail_main(int argc, char **argv)
 				) {
 					/* Looks like file has been created/renamed/deleted */
 					new_fd = open(filename, O_RDONLY);
-					if (new_fd >= 0) {
-						bb_error_msg("%s has %s; following end of new file",
+					ਜੇ (new_fd >= 0) {
+						bb_error_ਸੁਨੇਹਾ("%s has %s; following end of new file",
 							filename, (fd < 0) ? "appeared" : "been replaced"
 						);
-						if (fd < 0) {
+						ਜੇ (fd < 0) {
 							/* No previously open fd for this file,
 							 * start using new_fd immediately. */
 							fds[i] = fd = new_fd;
 							new_fd = -1;
 						}
-					} else if (fd >= 0) {
-						bb_perror_msg("%s has been renamed or deleted", filename);
+					} ਨਹੀਂਤਾਂ ਜੇ (fd >= 0) {
+						bb_perror_ਸੁਨੇਹਾ("%s has been renamed or deleted", filename);
 					}
 				}
 			}
-			if (ENABLE_FEATURE_FANCY_TAIL && fd < 0)
-				continue;
-			if (nfiles > header_threshold) {
-				fmt = header_fmt_str;
+			ਜੇ (ENABLE_FEATURE_FANCY_ਪੂਛ && fd < 0)
+				ਜਾਰੀ;
+			ਜੇ (nfiles > ਸਿਰਲੇਖ_ਹੱਦ) {
+				fmt = ਸਿਰਲੇਖ_fmt_str;
 			}
-			for (;;) {
+			ਲਈ (;;) {
 				/* tail -f keeps following files even if they are truncated */
 				/* /proc files report zero st_size, don't lseek them */
-				if (fstat(fd, &sbuf) == 0
+				ਜੇ (fstat(fd, &sbuf) == 0
 				 /* && S_ISREG(sbuf.st_mode) TODO? */
-				 && sbuf.st_size > 0
+				 && sbuf.st_ਮਾਪ > 0
 				) {
 					off_t current = lseek(fd, 0, SEEK_CUR);
-					if (sbuf.st_size < current) {
+					ਜੇ (sbuf.st_ਮਾਪ < current) {
 						//bb_perror_msg("%s: file truncated", filename); - says coreutils 8.32
-						xlseek(fd, 0, SEEK_SET);
+						xlseek(fd, 0, SEEK_ਸੈੱਟ);
 					}
 				}
 
-				nread = tail_read(fd, tailbuf, BUFSIZ);
-				if (nread <= 0) {
-					if (new_fd < 0)
-						break;
+				nread = ਪੂਛ_read(fd, tailbuf, BUFSIZ);
+				ਜੇ (nread <= 0) {
+					ਜੇ (new_fd < 0)
+						ਰੋਕੋ;
 					/* Switch to "tail -F"ing the new file */
 					xmove_fd(new_fd, fd);
 					new_fd = -1;
-					continue;
+					ਜਾਰੀ;
 				}
-				if (fmt && (fd != prev_fd)) {
-					tail_xprint_header(fmt, filename);
-					fmt = NULL;
+				ਜੇ (fmt && (fd != prev_fd)) {
+					ਪੂਛ_xprint_ਸਿਰਲੇਖ(fmt, filename);
+					fmt = ਨਿਰਾ;
 					prev_fd = fd;
 				}
 				xwrite(STDOUT_FILENO, tailbuf, nread);
 			}
-		} while (++i < nfiles);
+		} ਜਦੋਂ (++i < nfiles);
 	} /* while (1) */
 
-	if (ENABLE_FEATURE_CLEAN_UP) {
-		free(fds);
-		free(tailbuf);
+	ਜੇ (ENABLE_FEATURE_CLEAN_ਉੱਪਰ) {
+		ਮੁਕਤ(fds);
+		ਮੁਕਤ(tailbuf);
 	}
-	return G.exitcode;
+	ਵਾਪਸ G.exitcode;
 }

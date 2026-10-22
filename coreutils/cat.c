@@ -69,10 +69,10 @@
 //usage:       "$ cat /proc/uptime\n"
 //usage:       "110716.72 17.67"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "libbb.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "common_bufsiz.h"
 
-#if ENABLE_FEATURE_CATV
+#ਜੇ ENABLE_FEATURE_CATV
 /*
  * cat -v implementation for busybox
  *
@@ -101,78 +101,78 @@
  * to achieve "cat -v" effect. The actual effect would be "users pissed off
  * by gratuitous incompatibility".
  */
-#define CAT_OPT_e (1<<0)
-#define CAT_OPT_t (1<<1)
-#define CAT_OPT_v (1<<2)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ CAT_OPT_e (1<<0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ CAT_OPT_t (1<<1)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ CAT_OPT_v (1<<2)
 /* -A occupies bit (1<<3) */
-#define CAT_OPT_n ((1<<4) * ENABLE_FEATURE_CATN)
-#define CAT_OPT_b ((1<<5) * ENABLE_FEATURE_CATN)
-static int catv(unsigned opts, char **argv)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ CAT_OPT_n ((1<<4) * ENABLE_FEATURE_CATN)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ CAT_OPT_b ((1<<5) * ENABLE_FEATURE_CATN)
+ਸਥਿਰ ਪੂਰਨ catv(ਬਿਨਾਨਿਸ਼ਾਨੀ opts, ਅੱਖਰ **argv)
 {
-	int retval = EXIT_SUCCESS;
-	int fd;
-#if ENABLE_FEATURE_CATN
-	bool eol_seen = (opts & (CAT_OPT_n|CAT_OPT_b));
-	unsigned eol_char = (eol_seen ? '\n' : 0x100);
-	unsigned skip_num_on = (opts & CAT_OPT_b) ? '\n' : 0x100;
-	unsigned lineno = 0;
-#endif
+	ਪੂਰਨ retval = EXIT_SUCCESS;
+	ਪੂਰਨ fd;
+#ਜੇ ENABLE_FEATURE_CATN
+	bool eol_ਵੇਖਿਆ = (opts & (CAT_OPT_n|CAT_OPT_b));
+	ਬਿਨਾਨਿਸ਼ਾਨੀ eol_char = (eol_ਵੇਖਿਆ ? '\n' : 0x100);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ skip_ਅੰਕ_on = (opts & CAT_OPT_b) ? '\n' : 0x100;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ lineno = 0;
+#ਜੇ_ਅੰਤ
 
 	BUILD_BUG_ON(CAT_OPT_e != VISIBLE_ENDLINE);
 	BUILD_BUG_ON(CAT_OPT_t != VISIBLE_SHOW_TABS);
-#if 0 /* These consts match, we can just pass "opts" to visible() */
-	if (opts & CAT_OPT_e)
+#ਜੇ 0 /* These consts match, we can just pass "opts" to visible() */
+	ਜੇ (opts & CAT_OPT_e)
 		flags |= VISIBLE_ENDLINE;
-	if (opts & CAT_OPT_t)
+	ਜੇ (opts & CAT_OPT_t)
 		flags |= VISIBLE_SHOW_TABS;
-#endif
+#ਜੇ_ਅੰਤ
 
-#define read_buf bb_common_bufsiz1
-	setup_common_bufsiz();
-	do {
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ read_buf bb_common_bufsiz1
+	ਤਿਆਰੀ_common_bufsiz();
+	ਕਰੋ {
 		fd = open_or_warn_stdin(*argv);
-		if (fd < 0) {
+		ਜੇ (fd < 0) {
 			retval = EXIT_FAILURE;
-			continue;
+			ਜਾਰੀ;
 		}
-		for (;;) {
-			int i, res;
+		ਲਈ (;;) {
+			ਪੂਰਨ i, res;
 
-			res = read(fd, read_buf, COMMON_BUFSIZE);
-			if (res < 0)
+			res = ਪਠ(fd, read_buf, COMMON_BUFSIZE);
+			ਜੇ (res < 0)
 				retval = EXIT_FAILURE;
-			if (res <= 0)
-				break;
-			for (i = 0; i < res; i++) {
-				unsigned char c = read_buf[i];
-				char buf[sizeof("M-^c")];
-#if ENABLE_FEATURE_CATN
-				if (eol_seen && c != skip_num_on)
-					printf("%6u  ", ++lineno);
-				eol_seen = (c == eol_char);
-#endif
+			ਜੇ (res <= 0)
+				ਰੋਕੋ;
+			ਲਈ (i = 0; i < res; i++) {
+				ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ c = read_buf[i];
+				ਅੱਖਰ buf[ਆਕਾਰ("M-^c")];
+#ਜੇ ENABLE_FEATURE_CATN
+				ਜੇ (eol_ਵੇਖਿਆ && c != skip_ਅੰਕ_on)
+					ਲਿਖੋ("%6u  ", ++lineno);
+				eol_ਵੇਖਿਆ = (c == eol_char);
+#ਜੇ_ਅੰਤ
 				visible(c, buf, opts);
 				fputs_stdout(buf);
 			}
 		}
-		if (ENABLE_FEATURE_CLEAN_UP && fd)
+		ਜੇ (ENABLE_FEATURE_CLEAN_ਉੱਪਰ && fd)
 			close(fd);
-	} while (*++argv);
+	} ਜਦੋਂ (*++argv);
 
 	fflush_stdout_and_exit(retval);
 }
-#undef CAT_OPT_n
-#undef CAT_OPT_b
-#endif
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ CAT_OPT_n
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ CAT_OPT_b
+#ਜੇ_ਅੰਤ
 
-int cat_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int cat_main(int argc UNUSED_PARAM, char **argv)
+ਪੂਰਨ cat_main(ਪੂਰਨ argc, ਅੱਖਰ **argv) MAIN_EXTERNALLY_VISIBLE;
+ਪੂਰਨ cat_main(ਪੂਰਨ argc ਅਣਵਰਤਿਆ_PARAM, ਅੱਖਰ **argv)
 {
-#if ENABLE_FEATURE_CATV || ENABLE_FEATURE_CATN
-	unsigned opts;
+#ਜੇ ENABLE_FEATURE_CATV || ENABLE_FEATURE_CATN
+	ਬਿਨਾਨਿਸ਼ਾਨੀ opts;
 
 	opts =
-#endif
+#ਜੇ_ਅੰਤ
 	getopt32(argv, IF_FEATURE_CATV("^")
 		/* -u is ignored ("unbuffered") */
 		IF_FEATURE_CATV("etvA")IF_FEATURE_CATN("nb")"u"
@@ -181,37 +181,37 @@ int cat_main(int argc UNUSED_PARAM, char **argv)
 	argv += optind;
 
 	/* Read from stdin if there's nothing else to do. */
-	if (!argv[0])
-		*--argv = (char*)"-";
+	ਜੇ (!argv[0])
+		*--argv = (ਅੱਖਰ*)"-";
 
-#if ENABLE_FEATURE_CATV
-	if (opts & 7)
-		return catv(opts, argv);
+#ਜੇ ENABLE_FEATURE_CATV
+	ਜੇ (opts & 7)
+		ਵਾਪਸ catv(opts, argv);
 	opts >>= 4;
-#endif
+#ਜੇ_ਅੰਤ
 
-#if ENABLE_FEATURE_CATN
+#ਜੇ ENABLE_FEATURE_CATN
 # define CAT_OPT_n (1<<0)
 # define CAT_OPT_b (1<<1)
-	if (opts & (CAT_OPT_n|CAT_OPT_b)) { /* -n or -b */
-		struct number_state ns;
-		int exitcode;
+	ਜੇ (opts & (CAT_OPT_n|CAT_OPT_b)) { /* -n or -b */
+		ਬਣਤਰ ਸੰਖਿਆ_state ns;
+		ਪੂਰਨ exitcode;
 
-		ns.width = 6;
-		ns.start = 1;
+		ns.ਚੌੜਾਈ = 6;
+		ns.ਸ਼ੁਰੂ = 1;
 		ns.inc = 1;
 		ns.sep = "\t";
-		ns.empty_str = NULL;
+		ns.ਖਾਲੀ_ਥਾਵਾਂ_str = ਨਿਰਾ;
 		ns.all = !(opts & CAT_OPT_b); /* -n without -b */
 		ns.nonempty = (opts & CAT_OPT_b); /* -b (with or without -n) */
 		exitcode = EXIT_SUCCESS;
-		do {
-			exitcode |= print_numbered_lines(&ns, *argv);
-		} while (*++argv);
+		ਕਰੋ {
+			exitcode |= print_numbered_ਸਤਰਾਂ(&ns, *argv);
+		} ਜਦੋਂ (*++argv);
 		fflush_stdout_and_exit(exitcode);
 	}
 	/*opts >>= 2;*/
-#endif
+#ਜੇ_ਅੰਤ
 
-	return bb_cat(argv);
+	ਵਾਪਸ bb_cat(argv);
 }

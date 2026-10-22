@@ -101,33 +101,33 @@
 //usage:       "4+0 records in\n"
 //usage:       "4+0 records out\n"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "libbb.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "common_bufsiz.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
 
-enum {
+ਗਿਣਤੀ {
 	ifd = STDIN_FILENO,
 	ofd = STDOUT_FILENO,
 };
 
-struct globals {
-	off_t out_full, out_part, in_full, in_part;
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
-	unsigned long long total_bytes;
-	unsigned long long begin_time_us;
-#endif
-	int flags;
+ਬਣਤਰ globals {
+	off_t ਬਾਹਰਲਾ_ਭਰਿਆ, ਬਾਹਰਲਾ_part, ਵਿੱਚ_ਭਰਿਆ, ਵਿੱਚ_part;
+#ਜੇ ENABLE_FEATURE_DD_ਤੀਜਾ_ਸਥਿਤੀ_ਸਤਰ
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ ਕੁੱਲ_ਬਾਈਟਾਂ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ begin_ਸਮਾਂ_us;
+#ਜੇ_ਅੰਤ
+	ਪੂਰਨ flags;
 } FIX_ALIASING;
-#define G (*(struct globals*)bb_common_bufsiz1)
-#define INIT_G() do { \
-	setup_common_bufsiz(); \
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ G (*(ਬਣਤਰ globals*)bb_common_bufsiz1)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ INIT_G() ਕਰੋ { \
+	ਤਿਆਰੀ_common_bufsiz(); \
 	/* we have to zero it out because of NOEXEC */ \
-	memset(&G, 0, sizeof(G)); \
-} while (0)
+	memset(&G, 0, ਆਕਾਰ(G)); \
+} ਜਦੋਂ (0)
 
-enum {
+ਗਿਣਤੀ {
 	/* Must be in the same order as OP_conv_XXX! */
 	/* (see "flags |= (1 << what)" below) */
 	FLAG_NOTRUNC = (1 << 0) * ENABLE_FEATURE_DD_IBS_OBS,
@@ -137,51 +137,51 @@ enum {
 	FLAG_SWAB    = (1 << 4) * ENABLE_FEATURE_DD_IBS_OBS,
 	/* end of conv flags */
 	/* start of input flags */
-	FLAG_IFLAG_SHIFT   = 5,
-	FLAG_SKIP_BYTES    = (1 << 5) * ENABLE_FEATURE_DD_IBS_OBS,
-	FLAG_COUNT_BYTES   = (1 << 6) * ENABLE_FEATURE_DD_IBS_OBS,
+	FLAG_IFLAG_ਖਿਸਕਾਓ   = 5,
+	FLAG_SKIP_ਬਾਈਟਾਂ    = (1 << 5) * ENABLE_FEATURE_DD_IBS_OBS,
+	FLAG_ਗਿਣਤੀ_ਬਾਈਟਾਂ   = (1 << 6) * ENABLE_FEATURE_DD_IBS_OBS,
 	FLAG_FULLBLOCK     = (1 << 7) * ENABLE_FEATURE_DD_IBS_OBS,
 	FLAG_IDIRECT       = (1 << 8) * ENABLE_FEATURE_DD_IBS_OBS,
 	/* end of input flags */
 	/* start of output flags */
-	FLAG_OFLAG_SHIFT   = 9,
-	FLAG_SEEK_BYTES    = (1 << 9) * ENABLE_FEATURE_DD_IBS_OBS,
+	FLAG_OFLAG_ਖਿਸਕਾਓ   = 9,
+	FLAG_SEEK_ਬਾਈਟਾਂ    = (1 << 9) * ENABLE_FEATURE_DD_IBS_OBS,
 	FLAG_APPEND        = (1 << 10) * ENABLE_FEATURE_DD_IBS_OBS,
 	FLAG_ODIRECT       = (1 << 11) * ENABLE_FEATURE_DD_IBS_OBS,
 	/* end of output flags */
 	FLAG_TWOBUFS       = (1 << 12) * ENABLE_FEATURE_DD_IBS_OBS,
-	FLAG_COUNT         = 1 << 13,
-	FLAG_STATUS_NONE   = 1 << 14,
-	FLAG_STATUS_NOXFER = 1 << 15,
+	FLAG_ਗਿਣਤੀ         = 1 << 13,
+	FLAG_ਸਥਿਤੀ_NONE   = 1 << 14,
+	FLAG_ਸਥਿਤੀ_NOXFER = 1 << 15,
 };
 
-static void dd_output_status(int UNUSED_PARAM cur_signal)
+ਸਥਿਰ ਖਾਲੀ dd_output_ਸਥਿਤੀ(ਪੂਰਨ ਅਣਵਰਤਿਆ_PARAM cur_signal)
 {
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
-	double seconds;
-	unsigned long long bytes_sec;
-	unsigned long long now_us = monotonic_us(); /* before fprintf */
-#endif
+#ਜੇ ENABLE_FEATURE_DD_ਤੀਜਾ_ਸਥਿਤੀ_ਸਤਰ
+	ਦੁੱਗਣਾ seconds;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ ਬਾਈਟਾਂ_sec;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ now_us = monotonic_us(); /* before fprintf */
+#ਜੇ_ਅੰਤ
 
 	/* Deliberately using %u, not %d */
 	fprintf(stderr, "%"OFF_FMT"u+%"OFF_FMT"u records in\n"
 			"%"OFF_FMT"u+%"OFF_FMT"u records out\n",
-			G.in_full, G.in_part,
-			G.out_full, G.out_part);
+			G.ਵਿੱਚ_ਭਰਿਆ, G.ਵਿੱਚ_part,
+			G.ਬਾਹਰਲਾ_ਭਰਿਆ, G.ਬਾਹਰਲਾ_part);
 
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
-# if ENABLE_FEATURE_DD_STATUS
-	if (G.flags & FLAG_STATUS_NOXFER) /* status=noxfer active? */
-		return;
+#ਜੇ ENABLE_FEATURE_DD_ਤੀਜਾ_ਸਥਿਤੀ_ਸਤਰ
+# ਜੇ ENABLE_FEATURE_DD_ਸਥਿਤੀ
+	ਜੇ (G.flags & FLAG_ਸਥਿਤੀ_NOXFER) /* status=noxfer active? */
+		ਵਾਪਸ;
 	//TODO: should status=none make dd stop reacting to USR1 entirely?
 	//So far we react to it (we print the stats),
 	//status=none only suppresses final, non-USR1 generated status message.
 # endif
 	fprintf(stderr, /*G.total_bytes < 1024
 				? "%llu bytes copied, " : */ "%llu bytes (%sB) copied, "
-			, G.total_bytes,
+			, G.ਕੁੱਲ_ਬਾਈਟਾਂ,
 			/* show fractional digit, use suffixes */
-			make_human_readable_str(G.total_bytes, 1, 0)
+			make_human_readable_str(G.ਕੁੱਲ_ਬਾਈਟਾਂ, 1, 0)
 	);
 	/* Corner cases:
 	 * ./busybox dd </dev/null >/dev/null
@@ -189,77 +189,77 @@ static void dd_output_status(int UNUSED_PARAM cur_signal)
 	 * (echo DONE) | ./busybox dd >/dev/null
 	 * (sleep 1; echo DONE) | ./busybox dd >/dev/null
 	 */
-	seconds = (now_us - G.begin_time_us) / 1000000.0;
-	bytes_sec = G.total_bytes / seconds;
+	seconds = (now_us - G.begin_ਸਮਾਂ_us) / 1000000.0;
+	ਬਾਈਟਾਂ_sec = G.ਕੁੱਲ_ਬਾਈਟਾਂ / seconds;
 	fprintf(stderr, "%f seconds, %sB/s\n",
 			seconds,
 			/* show fractional digit, use suffixes */
-			make_human_readable_str(bytes_sec, 1, 0)
+			make_human_readable_str(ਬਾਈਟਾਂ_sec, 1, 0)
 	);
-#endif
+#ਜੇ_ਅੰਤ
 }
 
-#if ENABLE_FEATURE_DD_IBS_OBS
-# ifdef O_DIRECT
-static int clear_O_DIRECT(int fd)
+#ਜੇ ENABLE_FEATURE_DD_IBS_OBS
+# ifdef O_ਸਿੱਧਾ
+ਸਥਿਰ ਪੂਰਨ clear_O_ਸਿੱਧਾ(ਪੂਰਨ fd)
 {
-	if (errno == EINVAL) {
-		int fl = fcntl(fd, F_GETFL);
-		if (fl & O_DIRECT) {
-			fcntl(fd, F_SETFL, fl & ~O_DIRECT);
-			return 1;
+	ਜੇ (errno == EINVAL) {
+		ਪੂਰਨ fl = fcntl(fd, F_GETFL);
+		ਜੇ (fl & O_ਸਿੱਧਾ) {
+			fcntl(fd, F_SETFL, fl & ~O_ਸਿੱਧਾ);
+			ਵਾਪਸ 1;
 		}
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 # endif
-#endif
+#ਜੇ_ਅੰਤ
 
-static ssize_t dd_read(void *ibuf, size_t ibs)
+ਸਥਿਰ ssize_t dd_read(ਖਾਲੀ *ibuf, ਮਾਪ_t ibs)
 {
 	ssize_t n;
 
-#if ENABLE_FEATURE_DD_IBS_OBS
+#ਜੇ ENABLE_FEATURE_DD_IBS_OBS
  read_again:
-	if (G.flags & FLAG_FULLBLOCK)
-		n = full_read(ifd, ibuf, ibs);
-	else
-#endif
-		n = safe_read(ifd, ibuf, ibs);
-#if ENABLE_FEATURE_DD_IBS_OBS
-# ifdef O_DIRECT
-	if (n < 0 && (G.flags & FLAG_IDIRECT) && clear_O_DIRECT(ifd))
-		goto read_again;
+	ਜੇ (G.flags & FLAG_FULLBLOCK)
+		n = ਭਰਿਆ_read(ifd, ibuf, ibs);
+	ਨਹੀਂਤਾਂ
+#ਜੇ_ਅੰਤ
+		n = ਸੁਰੱਖਿਅਤ_read(ifd, ibuf, ibs);
+#ਜੇ ENABLE_FEATURE_DD_IBS_OBS
+# ifdef O_ਸਿੱਧਾ
+	ਜੇ (n < 0 && (G.flags & FLAG_IDIRECT) && clear_O_ਸਿੱਧਾ(ifd))
+		ਜਾਓ read_again;
 # endif
-#endif
-	return n;
+#ਜੇ_ਅੰਤ
+	ਵਾਪਸ n;
 }
 
-static bool write_and_stats(const void *buf, size_t len, size_t obs,
-	const char *filename)
+ਸਥਿਰ bool write_and_stats(ਅਚਲ ਖਾਲੀ *buf, ਮਾਪ_t len, ਮਾਪ_t obs,
+	ਅਚਲ ਅੱਖਰ *filename)
 {
 	ssize_t n;
 
  IF_FEATURE_DD_IBS_OBS(write_again:)
-	n = full_write(ofd, buf, len);
-#if ENABLE_FEATURE_DD_IBS_OBS
-# ifdef O_DIRECT
-	if (n < 0 && (G.flags & FLAG_ODIRECT) && clear_O_DIRECT(ofd))
-		goto write_again;
+	n = ਭਰਿਆ_write(ofd, buf, len);
+#ਜੇ ENABLE_FEATURE_DD_IBS_OBS
+# ifdef O_ਸਿੱਧਾ
+	ਜੇ (n < 0 && (G.flags & FLAG_ODIRECT) && clear_O_ਸਿੱਧਾ(ofd))
+		ਜਾਓ write_again;
 # endif
-#endif
+#ਜੇ_ਅੰਤ
 
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
-	if (n > 0)
-		G.total_bytes += n;
-#endif
-	if ((size_t)n == obs) {
-		G.out_full++;
-		return 0;
+#ਜੇ ENABLE_FEATURE_DD_ਤੀਜਾ_ਸਥਿਤੀ_ਸਤਰ
+	ਜੇ (n > 0)
+		G.ਕੁੱਲ_ਬਾਈਟਾਂ += n;
+#ਜੇ_ਅੰਤ
+	ਜੇ ((ਮਾਪ_t)n == obs) {
+		G.ਬਾਹਰਲਾ_ਭਰਿਆ++;
+		ਵਾਪਸ 0;
 	}
-	if ((size_t)n == len) {
-		G.out_part++;
-		return 0;
+	ਜੇ ((ਮਾਪ_t)n == len) {
+		G.ਬਾਹਰਲਾ_part++;
+		ਵਾਪਸ 0;
 	}
 	/* n is < len (and possibly is -1).
 	 * Even if n >= 0, errno is usually set correctly.
@@ -268,81 +268,81 @@ static bool write_and_stats(const void *buf, size_t len, size_t obs,
 	 * the remainder and gets errno set to ENOSPC.
 	 * It returns n > 0 (the amount which it did write).
 	 */
-	bb_perror_msg("error writing '%s'", filename);
-	return 1;
+	bb_perror_ਸੁਨੇਹਾ("error writing '%s'", filename);
+	ਵਾਪਸ 1;
 }
 
-#if ENABLE_LFS
+#ਜੇ ENABLE_LFS
 # define XATOU_SFX xatoull_sfx
-#else
+#ਨਹੀਂਤਾਂ
 # define XATOU_SFX xatoul_sfx
-#endif
+#ਜੇ_ਅੰਤ
 
-#if ENABLE_FEATURE_DD_IBS_OBS
-static int parse_comma_flags(char *val, const char *words, const char *error_in)
+#ਜੇ ENABLE_FEATURE_DD_IBS_OBS
+ਸਥਿਰ ਪੂਰਨ parse_comma_flags(ਅੱਖਰ *val, ਅਚਲ ਅੱਖਰ *ਸ਼ਬਦ, ਅਚਲ ਅੱਖਰ *error_ਵਿੱਚ)
 {
-	int flags = 0;
-	while (1) {
-		int n;
-		char *arg;
+	ਪੂਰਨ flags = 0;
+	ਜਦੋਂ (1) {
+		ਪੂਰਨ n;
+		ਅੱਖਰ *arg;
 		/* find ',', replace them with NUL so we can use val for
 		 * index_in_strings() without copying.
 		 * We rely on val being non-null, else strchr would fault.
 		 */
 		arg = strchr(val, ',');
-		if (arg)
+		ਜੇ (arg)
 			*arg = '\0';
-		n = index_in_strings(words, val);
-		if (n < 0)
-			bb_error_msg_and_die(bb_msg_invalid_arg_to, val, error_in);
+		n = ਸੂਚਕਾਂਕ_ਵਿੱਚ_ਲੜੀਆਂ(ਸ਼ਬਦ, val);
+		ਜੇ (n < 0)
+			bb_error_ਸੁਨੇਹਾ_and_die(bb_ਸੁਨੇਹਾ_invalid_arg_ਮੰਜ਼ਿਲ, val, error_ਵਿੱਚ);
 		flags |= (1 << n);
-		if (!arg) /* no ',' left, so this was the last specifier */
-			break;
+		ਜੇ (!arg) /* no ',' left, so this was the last specifier */
+			ਰੋਕੋ;
 		*arg = ','; /* to preserve ps listing */
 		val = arg + 1; /* skip this keyword and ',' */
 	}
-	return flags;
+	ਵਾਪਸ flags;
 }
-#endif
+#ਜੇ_ਅੰਤ
 
-static void *alloc_buf(size_t size)
+ਸਥਿਰ ਖਾਲੀ *alloc_buf(ਮਾਪ_t ਮਾਪ)
 {
 	/* Important for "{i,o}flag=direct" - buffers must be page aligned */
-	if (size >= bb_getpagesize())
-		return xmmap_anon(size);
-	return xmalloc(size);
+	ਜੇ (ਮਾਪ >= bb_getpagesize())
+		ਵਾਪਸ xmmap_anon(ਮਾਪ);
+	ਵਾਪਸ xmalloc(ਮਾਪ);
 }
 
-int dd_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int dd_main(int argc UNUSED_PARAM, char **argv)
+ਪੂਰਨ dd_main(ਪੂਰਨ argc, ਅੱਖਰ **argv) MAIN_EXTERNALLY_VISIBLE;
+ਪੂਰਨ dd_main(ਪੂਰਨ argc ਅਣਵਰਤਿਆ_PARAM, ਅੱਖਰ **argv)
 {
-	static const char keywords[] ALIGN1 =
-		"bs\0""count\0""seek\0""skip\0""if\0""of\0"IF_FEATURE_DD_STATUS("status\0")
-#if ENABLE_FEATURE_DD_IBS_OBS
+	ਸਥਿਰ ਅਚਲ ਅੱਖਰ keywords[] ALIGN1 =
+		"bs\0""count\0""seek\0""skip\0""if\0""of\0"IF_FEATURE_DD_ਸਥਿਤੀ("status\0")
+#ਜੇ ENABLE_FEATURE_DD_IBS_OBS
 		"ibs\0""obs\0""conv\0""iflag\0""oflag\0"
-#endif
+#ਜੇ_ਅੰਤ
 		;
-#if ENABLE_FEATURE_DD_IBS_OBS
-	static const char conv_words[] ALIGN1 =
+#ਜੇ ENABLE_FEATURE_DD_IBS_OBS
+	ਸਥਿਰ ਅਚਲ ਅੱਖਰ conv_ਸ਼ਬਦ[] ALIGN1 =
 		"notrunc\0""sync\0""noerror\0""fsync\0""swab\0";
-	static const char iflag_words[] ALIGN1 =
+	ਸਥਿਰ ਅਚਲ ਅੱਖਰ iflag_ਸ਼ਬਦ[] ALIGN1 =
 		"skip_bytes\0""count_bytes\0""fullblock\0""direct\0";
-	static const char oflag_words[] ALIGN1 =
+	ਸਥਿਰ ਅਚਲ ਅੱਖਰ oflag_ਸ਼ਬਦ[] ALIGN1 =
 		"seek_bytes\0append\0""direct\0";
-#endif
-#if ENABLE_FEATURE_DD_STATUS
-	static const char status_words[] ALIGN1 =
+#ਜੇ_ਅੰਤ
+#ਜੇ ENABLE_FEATURE_DD_ਸਥਿਤੀ
+	ਸਥਿਰ ਅਚਲ ਅੱਖਰ ਸਥਿਤੀ_ਸ਼ਬਦ[] ALIGN1 =
 		"none\0""noxfer\0";
-#endif
-	enum {
+#ਜੇ_ਅੰਤ
+	ਗਿਣਤੀ {
 		OP_bs = 0,
-		OP_count,
+		OP_ਗਿਣਤੀ,
 		OP_seek,
 		OP_skip,
 		OP_if,
-		OP_of,
-		IF_FEATURE_DD_STATUS(OP_status,)
-#if ENABLE_FEATURE_DD_IBS_OBS
+		OP_ਦਾ,
+		IF_FEATURE_DD_ਸਥਿਤੀ(OP_ਸਥਿਤੀ,)
+#ਜੇ ENABLE_FEATURE_DD_IBS_OBS
 		OP_ibs,
 		OP_obs,
 		OP_conv,
@@ -367,323 +367,323 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 	//ibm           from ASCII to alternate EBCDIC
 	/* Partially implemented: */
 	//swab          swap every pair of input bytes: will abort on non-even reads
-		OP_iflag_skip_bytes,
-		OP_iflag_count_bytes,
+		OP_iflag_skip_ਬਾਈਟਾਂ,
+		OP_iflag_ਗਿਣਤੀ_ਬਾਈਟਾਂ,
 		OP_iflag_fullblock,
-		OP_iflag_direct,
-		OP_oflag_seek_bytes,
-		OP_oflag_direct,
-#endif
+		OP_iflag_ਸਿੱਧਾ,
+		OP_oflag_seek_ਬਾਈਟਾਂ,
+		OP_oflag_ਸਿੱਧਾ,
+#ਜੇ_ਅੰਤ
 	};
 	exitcode_t exitcode = EXIT_FAILURE;
-	int i;
-	size_t ibs = 512;
-	char *ibuf;
-#if ENABLE_FEATURE_DD_IBS_OBS
-	size_t obs = 512;
-	char *obuf;
-#else
+	ਪੂਰਨ i;
+	ਮਾਪ_t ibs = 512;
+	ਅੱਖਰ *ibuf;
+#ਜੇ ENABLE_FEATURE_DD_IBS_OBS
+	ਮਾਪ_t obs = 512;
+	ਅੱਖਰ *obuf;
+#ਨਹੀਂਤਾਂ
 # define obs  ibs
 # define obuf ibuf
-#endif
+#ਜੇ_ਅੰਤ
 	/* These are all zeroed at once! */
-	struct {
-		IF_FEATURE_DD_IBS_OBS(size_t ocount;)
-		ssize_t prev_read_size; /* for detecting swab failure */
-		off_t count;
+	ਬਣਤਰ {
+		IF_FEATURE_DD_IBS_OBS(ਮਾਪ_t ocount;)
+		ssize_t prev_read_ਮਾਪ; /* for detecting swab failure */
+		off_t ਗਿਣਤੀ_2;
 		off_t seek, skip;
-		const char *infile, *outfile;
+		ਅਚਲ ਅੱਖਰ *infile, *outfile;
 	} Z;
-#define ocount  (Z.ocount )
-#define prev_read_size (Z.prev_read_size)
-#define count   (Z.count  )
-#define seek    (Z.seek   )
-#define skip    (Z.skip   )
-#define infile  (Z.infile )
-#define outfile (Z.outfile)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ocount  (Z.ocount )
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ prev_read_ਮਾਪ (Z.prev_read_ਮਾਪ)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਗਿਣਤੀ_2   (Z.ਗਿਣਤੀ_2  )
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ seek    (Z.seek   )
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ skip    (Z.skip   )
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ infile  (Z.infile )
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ outfile (Z.outfile)
 
-	memset(&Z, 0, sizeof(Z));
+	memset(&Z, 0, ਆਕਾਰ(Z));
 	INIT_G();
 	//fflush_all(); - is this needed because of NOEXEC?
 
-	for (i = 1; argv[i]; i++) {
-		int what;
-		char *val;
-		char *arg = argv[i];
+	ਲਈ (i = 1; argv[i]; i++) {
+		ਪੂਰਨ what;
+		ਅੱਖਰ *val;
+		ਅੱਖਰ *arg = argv[i];
 
-#if ENABLE_DESKTOP
+#ਜੇ ENABLE_DESKTOP
 		/* "dd --". NB: coreutils 6.9 will complain if they see
 		 * more than one of them. We wouldn't. */
-		if (arg[0] == '-' && arg[1] == '-' && arg[2] == '\0')
-			continue;
-#endif
+		ਜੇ (arg[0] == '-' && arg[1] == '-' && arg[2] == '\0')
+			ਜਾਰੀ;
+#ਜੇ_ਅੰਤ
 		val = strchr(arg, '=');
-		if (val == NULL)
+		ਜੇ (val == ਨਿਰਾ)
 			bb_show_usage();
 		*val = '\0';
-		what = index_in_strings(keywords, arg);
-		if (what < 0)
+		what = ਸੂਚਕਾਂਕ_ਵਿੱਚ_ਲੜੀਆਂ(keywords, arg);
+		ਜੇ (what < 0)
 			bb_show_usage();
 		/* *val = '='; - to preserve ps listing? */
 		val++;
-#if ENABLE_FEATURE_DD_IBS_OBS
-		if (what == OP_ibs) {
+#ਜੇ ENABLE_FEATURE_DD_IBS_OBS
+		ਜੇ (what == OP_ibs) {
 			/* Must fit into positive ssize_t */
-			ibs = xatoul_range_sfx(val, 1, ((size_t)-1L)/2, cwbkMG_suffixes);
+			ibs = xatoul_range_sfx(val, 1, ((ਮਾਪ_t)-1L)/2, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_obs) {
-			obs = xatoul_range_sfx(val, 1, ((size_t)-1L)/2, cwbkMG_suffixes);
+		ਜੇ (what == OP_obs) {
+			obs = xatoul_range_sfx(val, 1, ((ਮਾਪ_t)-1L)/2, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_conv) {
-			G.flags |= parse_comma_flags(val, conv_words, "conv");
+		ਜੇ (what == OP_conv) {
+			G.flags |= parse_comma_flags(val, conv_ਸ਼ਬਦ, "conv");
 			/*continue;*/
 		}
-		if (what == OP_iflag) {
-			G.flags |= parse_comma_flags(val, iflag_words, "iflag") << FLAG_IFLAG_SHIFT;
+		ਜੇ (what == OP_iflag) {
+			G.flags |= parse_comma_flags(val, iflag_ਸ਼ਬਦ, "iflag") << FLAG_IFLAG_ਖਿਸਕਾਓ;
 			/*continue;*/
 		}
-		if (what == OP_oflag) {
-			G.flags |= parse_comma_flags(val, oflag_words, "oflag") << FLAG_OFLAG_SHIFT;
+		ਜੇ (what == OP_oflag) {
+			G.flags |= parse_comma_flags(val, oflag_ਸ਼ਬਦ, "oflag") << FLAG_OFLAG_ਖਿਸਕਾਓ;
 			/*continue;*/
 		}
-#endif
-		if (what == OP_bs) {
-			ibs = xatoul_range_sfx(val, 1, ((size_t)-1L)/2, cwbkMG_suffixes);
+#ਜੇ_ਅੰਤ
+		ਜੇ (what == OP_bs) {
+			ibs = xatoul_range_sfx(val, 1, ((ਮਾਪ_t)-1L)/2, cwbkMG_suffixes);
 			obs = ibs;
 			/*continue;*/
 		}
 		/* These can be large: */
-		if (what == OP_count) {
-			G.flags |= FLAG_COUNT;
-			count = XATOU_SFX(val, cwbkMG_suffixes);
+		ਜੇ (what == OP_ਗਿਣਤੀ) {
+			G.flags |= FLAG_ਗਿਣਤੀ;
+			ਗਿਣਤੀ_2 = XATOU_SFX(val, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_seek) {
+		ਜੇ (what == OP_seek) {
 			seek = XATOU_SFX(val, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_skip) {
+		ਜੇ (what == OP_skip) {
 			skip = XATOU_SFX(val, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_if) {
+		ਜੇ (what == OP_if) {
 			infile = val;
 			/*continue;*/
 		}
-		if (what == OP_of) {
+		ਜੇ (what == OP_ਦਾ) {
 			outfile = val;
 			/*continue;*/
 		}
-#if ENABLE_FEATURE_DD_STATUS
-		if (what == OP_status) {
-			int n;
-			n = index_in_strings(status_words, val);
-			if (n < 0)
-				bb_error_msg_and_die(bb_msg_invalid_arg_to, val, "status");
-			G.flags |= FLAG_STATUS_NONE << n;
+#ਜੇ ENABLE_FEATURE_DD_ਸਥਿਤੀ
+		ਜੇ (what == OP_ਸਥਿਤੀ) {
+			ਪੂਰਨ n;
+			n = ਸੂਚਕਾਂਕ_ਵਿੱਚ_ਲੜੀਆਂ(ਸਥਿਤੀ_ਸ਼ਬਦ, val);
+			ਜੇ (n < 0)
+				bb_error_ਸੁਨੇਹਾ_and_die(bb_ਸੁਨੇਹਾ_invalid_arg_ਮੰਜ਼ਿਲ, val, "status");
+			G.flags |= FLAG_ਸਥਿਤੀ_NONE << n;
 			/*continue;*/
 		}
-#endif
+#ਜੇ_ਅੰਤ
 	} /* end of "for (argv[i])" */
 
 	ibuf = alloc_buf(ibs);
 	obuf = ibuf;
-#if ENABLE_FEATURE_DD_IBS_OBS
-	if (ibs != obs) {
+#ਜੇ ENABLE_FEATURE_DD_IBS_OBS
+	ਜੇ (ibs != obs) {
 		G.flags |= FLAG_TWOBUFS;
 		obuf = alloc_buf(obs);
 	}
-#endif
+#ਜੇ_ਅੰਤ
 
-#if ENABLE_FEATURE_DD_SIGNAL_HANDLING
-	signal_SA_RESTART_empty_mask(SIGUSR1, dd_output_status);
-#endif
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
-	G.begin_time_us = monotonic_us();
-#endif
+#ਜੇ ENABLE_FEATURE_DD_SIGNAL_HANDLING
+	signal_SA_RESTART_ਖਾਲੀ_ਥਾਵਾਂ_ਨਕਾਬ(SIGUSR1, dd_output_ਸਥਿਤੀ);
+#ਜੇ_ਅੰਤ
+#ਜੇ ENABLE_FEATURE_DD_ਤੀਜਾ_ਸਥਿਤੀ_ਸਤਰ
+	G.begin_ਸਮਾਂ_us = monotonic_us();
+#ਜੇ_ਅੰਤ
 
-	if (infile) {
-		int iflag = O_RDONLY;
-#if ENABLE_FEATURE_DD_IBS_OBS
-		if (G.flags & FLAG_IDIRECT) {
-# ifdef O_DIRECT
-			iflag |= O_DIRECT;
-# else
-			bb_error_msg_and_die("O_DIRECT not supported on this platform");
+	ਜੇ (infile) {
+		ਪੂਰਨ iflag = O_RDONLY;
+#ਜੇ ENABLE_FEATURE_DD_IBS_OBS
+		ਜੇ (G.flags & FLAG_IDIRECT) {
+# ifdef O_ਸਿੱਧਾ
+			iflag |= O_ਸਿੱਧਾ;
+# ਨਹੀਂਤਾਂ
+			bb_error_ਸੁਨੇਹਾ_and_die("O_DIRECT not supported on this platform");
 # endif
 		}
-#endif
+#ਜੇ_ਅੰਤ
 		xmove_fd(xopen(infile, iflag), ifd);
-	} else {
-		infile = bb_msg_standard_input;
+	} ਨਹੀਂਤਾਂ {
+		infile = bb_ਸੁਨੇਹਾ_standard_ਨਿਵੇਸ਼;
 	}
-	if (outfile) {
-		int oflag = O_WRONLY | O_CREAT;
+	ਜੇ (outfile) {
+		ਪੂਰਨ oflag = O_WRONLY | O_CREAT;
 
-		if (!seek && !(G.flags & FLAG_NOTRUNC))
+		ਜੇ (!seek && !(G.flags & FLAG_NOTRUNC))
 			oflag |= O_TRUNC;
-		if (G.flags & FLAG_APPEND)
+		ਜੇ (G.flags & FLAG_APPEND)
 			oflag |= O_APPEND;
-#if ENABLE_FEATURE_DD_IBS_OBS
-		if (G.flags & FLAG_ODIRECT) {
-# ifdef O_DIRECT
-			oflag |= O_DIRECT;
-# else
-			bb_error_msg_and_die("O_DIRECT not supported on this platform");
+#ਜੇ ENABLE_FEATURE_DD_IBS_OBS
+		ਜੇ (G.flags & FLAG_ODIRECT) {
+# ifdef O_ਸਿੱਧਾ
+			oflag |= O_ਸਿੱਧਾ;
+# ਨਹੀਂਤਾਂ
+			bb_error_ਸੁਨੇਹਾ_and_die("O_DIRECT not supported on this platform");
 # endif
 		}
-#endif
+#ਜੇ_ਅੰਤ
 		xmove_fd(xopen(outfile, oflag), ofd);
 
-		if (seek && !(G.flags & FLAG_NOTRUNC)) {
-			size_t blocksz = (G.flags & FLAG_SEEK_BYTES) ? 1 : obs;
-			if (ftruncate(ofd, seek * blocksz) < 0) {
-				struct stat st;
+		ਜੇ (seek && !(G.flags & FLAG_NOTRUNC)) {
+			ਮਾਪ_t blocksz = (G.flags & FLAG_SEEK_ਬਾਈਟਾਂ) ? 1 : obs;
+			ਜੇ (ftruncate(ofd, seek * blocksz) < 0) {
+				ਬਣਤਰ stat st;
 
-				if (fstat(ofd, &st) < 0
-				 || S_ISREG(st.st_mode)
-				 || S_ISDIR(st.st_mode)
+				ਜੇ (fstat(ofd, &st) < 0
+				 || S_ISREG(st.st_ਬਹੁਲਕ)
+				 || S_ISDIR(st.st_ਬਹੁਲਕ)
 				) {
-					goto die_outfile;
+					ਜਾਓ die_outfile;
 				}
 			}
 		}
-	} else {
-		outfile = bb_msg_standard_output;
+	} ਨਹੀਂਤਾਂ {
+		outfile = bb_ਸੁਨੇਹਾ_standard_output;
 	}
-	if (skip) {
-		size_t blocksz = (G.flags & FLAG_SKIP_BYTES) ? 1 : ibs;
-		if (lseek(ifd, skip * blocksz, SEEK_CUR) < 0) {
-			do {
+	ਜੇ (skip) {
+		ਮਾਪ_t blocksz = (G.flags & FLAG_SKIP_ਬਾਈਟਾਂ) ? 1 : ibs;
+		ਜੇ (lseek(ifd, skip * blocksz, SEEK_CUR) < 0) {
+			ਕਰੋ {
 				ssize_t n = dd_read(ibuf, blocksz);
-				if (n < 0)
-					goto die_infile;
-				if (n == 0)
-					break;
-			} while (--skip != 0);
+				ਜੇ (n < 0)
+					ਜਾਓ die_infile;
+				ਜੇ (n == 0)
+					ਰੋਕੋ;
+			} ਜਦੋਂ (--skip != 0);
 		}
 	}
-	if (seek) {
-		size_t blocksz = (G.flags & FLAG_SEEK_BYTES) ? 1 : obs;
-		if (lseek(ofd, seek * blocksz, SEEK_CUR) < 0)
-			goto die_outfile;
+	ਜੇ (seek) {
+		ਮਾਪ_t blocksz = (G.flags & FLAG_SEEK_ਬਾਈਟਾਂ) ? 1 : obs;
+		ਜੇ (lseek(ofd, seek * blocksz, SEEK_CUR) < 0)
+			ਜਾਓ die_outfile;
 	}
 
-	while (1) {
+	ਜਦੋਂ (1) {
 		ssize_t n = ibs;
 
-		if (G.flags & FLAG_COUNT) {
-			if (count == 0)
-				break;
-			if ((G.flags & FLAG_COUNT_BYTES) && count < ibs)
-				n = count;
+		ਜੇ (G.flags & FLAG_ਗਿਣਤੀ) {
+			ਜੇ (ਗਿਣਤੀ_2 == 0)
+				ਰੋਕੋ;
+			ਜੇ ((G.flags & FLAG_ਗਿਣਤੀ_ਬਾਈਟਾਂ) && ਗਿਣਤੀ_2 < ibs)
+				n = ਗਿਣਤੀ_2;
 		}
 
 		n = dd_read(ibuf, n);
-		if (n == 0)
-			break;
-		if (n < 0) {
+		ਜੇ (n == 0)
+			ਰੋਕੋ;
+		ਜੇ (n < 0) {
 			/* "Bad block" */
-			if (!(G.flags & FLAG_NOERROR))
-				goto die_infile;
-			bb_simple_perror_msg(infile);
+			ਜੇ (!(G.flags & FLAG_NOERROR))
+				ਜਾਓ die_infile;
+			bb_simple_perror_ਸੁਨੇਹਾ(infile);
 			/* GNU dd with conv=noerror skips over bad blocks */
 			xlseek(ifd, ibs, SEEK_CUR);
 			/* conv=noerror,sync writes NULs,
 			 * conv=noerror just ignores input bad blocks */
 			n = 0;
 		}
-		if (G.flags & FLAG_SWAB) {
+		ਜੇ (G.flags & FLAG_SWAB) {
 			uint16_t *p16;
 			ssize_t n2;
 
 			/* Our code allows only last read to be odd-sized */
-			if (prev_read_size & 1)
-				bb_error_msg_and_die("can't swab %lu byte buffer",
-						(unsigned long)prev_read_size);
-			prev_read_size = n;
+			ਜੇ (prev_read_ਮਾਪ & 1)
+				bb_error_ਸੁਨੇਹਾ_and_die("can't swab %lu byte buffer",
+						(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ)prev_read_ਮਾਪ);
+			prev_read_ਮਾਪ = n;
 
 			/* If n is odd, last byte is not swapped:
 			 *  echo -n "qwe" | dd conv=swab
 			 * prints "wqe".
 			 */
-			p16 = (void*) ibuf;
+			p16 = (ਖਾਲੀ*) ibuf;
 			n2 = (n >> 1);
-			while (--n2 >= 0) {
+			ਜਦੋਂ (--n2 >= 0) {
 				*p16 = bswap_16(*p16);
 				p16++;
 			}
 		}
-		count -= (G.flags & FLAG_COUNT_BYTES) ? n : 1;
-		if ((size_t)n == ibs)
-			G.in_full++;
-		else {
-			G.in_part++;
-			if (G.flags & FLAG_SYNC) {
+		ਗਿਣਤੀ_2 -= (G.flags & FLAG_ਗਿਣਤੀ_ਬਾਈਟਾਂ) ? n : 1;
+		ਜੇ ((ਮਾਪ_t)n == ibs)
+			G.ਵਿੱਚ_ਭਰਿਆ++;
+		ਨਹੀਂਤਾਂ {
+			G.ਵਿੱਚ_part++;
+			ਜੇ (G.flags & FLAG_SYNC) {
 				memset(ibuf + n, 0, ibs - n);
 				n = ibs;
 			}
 		}
-#if ENABLE_FEATURE_DD_IBS_OBS
-		if (G.flags & FLAG_TWOBUFS) {
-			char *tmp = ibuf;
-			while (n) {
-				size_t d = obs - ocount;
-				if (d > (size_t)n)
+#ਜੇ ENABLE_FEATURE_DD_IBS_OBS
+		ਜੇ (G.flags & FLAG_TWOBUFS) {
+			ਅੱਖਰ *tmp = ibuf;
+			ਜਦੋਂ (n) {
+				ਮਾਪ_t d = obs - ocount;
+				ਜੇ (d > (ਮਾਪ_t)n)
 					d = n;
-				memcpy(obuf + ocount, tmp, d);
+				ਸਮ੍ਰਿਤੀ_ਨਕਲ(obuf + ocount, tmp, d);
 				n -= d;
 				tmp += d;
 				ocount += d;
-				if (ocount == obs) {
-					if (write_and_stats(obuf, obs, obs, outfile))
-						goto out_status;
+				ਜੇ (ocount == obs) {
+					ਜੇ (write_and_stats(obuf, obs, obs, outfile))
+						ਜਾਓ ਬਾਹਰਲਾ_ਸਥਿਤੀ;
 					ocount = 0;
 				}
 			}
-		} else
-#endif
+		} ਨਹੀਂਤਾਂ
+#ਜੇ_ਅੰਤ
 		{
-			if (write_and_stats(ibuf, n, obs, outfile))
-				goto out_status;
+			ਜੇ (write_and_stats(ibuf, n, obs, outfile))
+				ਜਾਓ ਬਾਹਰਲਾ_ਸਥਿਤੀ;
 		}
 	}
 
-	if (G.flags & FLAG_FSYNC) {
-		if (fsync(ofd) < 0)
-			goto die_outfile;
+	ਜੇ (G.flags & FLAG_FSYNC) {
+		ਜੇ (fsync(ofd) < 0)
+			ਜਾਓ die_outfile;
 	}
 
-#if ENABLE_FEATURE_DD_IBS_OBS
-	if (ocount != 0) {
-		if (write_and_stats(obuf, ocount, obs, outfile))
-			goto out_status;
+#ਜੇ ENABLE_FEATURE_DD_IBS_OBS
+	ਜੇ (ocount != 0) {
+		ਜੇ (write_and_stats(obuf, ocount, obs, outfile))
+			ਜਾਓ ਬਾਹਰਲਾ_ਸਥਿਤੀ;
 	}
-#endif
-	if (close(ifd) < 0) {
+#ਜੇ_ਅੰਤ
+	ਜੇ (close(ifd) < 0) {
  die_infile:
-		bb_simple_perror_msg_and_die(infile);
+		bb_simple_perror_ਸੁਨੇਹਾ_and_die(infile);
 	}
 
-	if (close(ofd) < 0) {
+	ਜੇ (close(ofd) < 0) {
  die_outfile:
-		bb_simple_perror_msg_and_die(outfile);
+		bb_simple_perror_ਸੁਨੇਹਾ_and_die(outfile);
 	}
 
 	exitcode = EXIT_SUCCESS;
- out_status:
-	if (!ENABLE_FEATURE_DD_STATUS || !(G.flags & FLAG_STATUS_NONE))
-		dd_output_status(0);
+ ਬਾਹਰਲਾ_ਸਥਿਤੀ:
+	ਜੇ (!ENABLE_FEATURE_DD_ਸਥਿਤੀ || !(G.flags & FLAG_ਸਥਿਤੀ_NONE))
+		dd_output_ਸਥਿਤੀ(0);
 
-#if 0 /* can't just free(), they can be mmap()ed */
-	if (ENABLE_FEATURE_CLEAN_UP) {
-		free(obuf);
-		if (G.flags & FLAG_TWOBUFS)
-			free(ibuf);
+#ਜੇ 0 /* can't just free(), they can be mmap()ed */
+	ਜੇ (ENABLE_FEATURE_CLEAN_ਉੱਪਰ) {
+		ਮੁਕਤ(obuf);
+		ਜੇ (G.flags & FLAG_TWOBUFS)
+			ਮੁਕਤ(ibuf);
 	}
-#endif
+#ਜੇ_ਅੰਤ
 
-	return exitcode;
+	ਵਾਪਸ exitcode;
 }

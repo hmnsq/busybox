@@ -37,17 +37,17 @@
 --remove[=HOW]		like -u but give control on HOW to delete;  See below
 */
 
-#include "libbb.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "libbb.h"
 
-int shred_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int shred_main(int argc UNUSED_PARAM, char **argv)
+ਪੂਰਨ shred_main(ਪੂਰਨ argc, ਅੱਖਰ **argv) MAIN_EXTERNALLY_VISIBLE;
+ਪੂਰਨ shred_main(ਪੂਰਨ argc ਅਣਵਰਤਿਆ_PARAM, ਅੱਖਰ **argv)
 {
-	char *opt_s;
-	int rand_fd = rand_fd; /* for compiler */
-	int zero_fd;
-	unsigned num_iter = 3;
-	unsigned opt;
-	enum {
+	ਅੱਖਰ *opt_s;
+	ਪੂਰਨ rand_fd = rand_fd; /* for compiler */
+	ਪੂਰਨ zero_fd;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੰਕ_iter = 3;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ opt;
+	ਗਿਣਤੀ {
 		OPT_f = (1 << 0),
 		OPT_u = (1 << 1),
 		OPT_z = (1 << 2),
@@ -57,55 +57,55 @@ int shred_main(int argc UNUSED_PARAM, char **argv)
 		OPT_s = (1 << 6),
 	};
 
-	opt = getopt32(argv, "^" "fuzn:+vxs:" "\0" "-1"/*min 1 arg*/, &num_iter, &opt_s);
+	opt = getopt32(argv, "^" "fuzn:+vxs:" "\0" "-1"/*min 1 arg*/, &ਅੰਕ_iter, &opt_s);
 	argv += optind;
 
 	zero_fd = xopen("/dev/zero", O_RDONLY);
-	if (num_iter != 0)
+	ਜੇ (ਅੰਕ_iter != 0)
 		rand_fd = xopen("/dev/urandom", O_RDONLY);
 
-	for (;;) {
-		struct stat sb;
-		const char *fname;
-		unsigned i;
-		int fd;
+	ਲਈ (;;) {
+		ਬਣਤਰ stat sb;
+		ਅਚਲ ਅੱਖਰ *fname;
+		ਬਿਨਾਨਿਸ਼ਾਨੀ i;
+		ਪੂਰਨ fd;
 
 		fname = *argv++;
-		if (!fname)
-			break;
+		ਜੇ (!fname)
+			ਰੋਕੋ;
 		fd = -1;
-		if (opt & OPT_f) {
+		ਜੇ (opt & OPT_f) {
 			fd = open(fname, O_WRONLY);
-			if (fd < 0)
+			ਜੇ (fd < 0)
 				chmod(fname, 0666);
 		}
-		if (fd < 0)
+		ਜੇ (fd < 0)
 			fd = xopen(fname, O_WRONLY);
 
-		if (fstat(fd, &sb) == 0 && sb.st_size > 0) {
-			off_t size = sb.st_size;
+		ਜੇ (fstat(fd, &sb) == 0 && sb.st_ਮਾਪ > 0) {
+			off_t ਮਾਪ = sb.st_ਮਾਪ;
 
-			if (opt & OPT_s) {
-				size = BB_STRTOOFF(opt_s, NULL, 0); /* accepts oct/hex */
-				if (errno || size < 0) bb_show_usage();
+			ਜੇ (opt & OPT_s) {
+				ਮਾਪ = BB_STRTOOFF(opt_s, ਨਿਰਾ, 0); /* accepts oct/hex */
+				ਜੇ (errno || ਮਾਪ < 0) bb_show_usage();
 			}
 
-			for (i = 0; i < num_iter; i++) {
-				bb_copyfd_size(rand_fd, fd, size);
+			ਲਈ (i = 0; i < ਅੰਕ_iter; i++) {
+				bb_copyfd_ਮਾਪ(rand_fd, fd, ਮਾਪ);
 				fdatasync(fd);
-				xlseek(fd, 0, SEEK_SET);
+				xlseek(fd, 0, SEEK_ਸੈੱਟ);
 			}
-			if (opt & OPT_z) {
-				bb_copyfd_size(zero_fd, fd, size);
+			ਜੇ (opt & OPT_z) {
+				bb_copyfd_ਮਾਪ(zero_fd, fd, ਮਾਪ);
 				fdatasync(fd);
 			}
 		}
-		if (opt & OPT_u) {
+		ਜੇ (opt & OPT_u) {
 			ftruncate(fd, 0);
 			xunlink(fname);
 		}
 		xclose(fd);
 	}
 
-	return EXIT_SUCCESS;
+	ਵਾਪਸ EXIT_SUCCESS;
 }

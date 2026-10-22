@@ -31,65 +31,65 @@
 //usage:#define rmdir_example_usage
 //usage:       "# rmdir /tmp/foo\n"
 
-#include "libbb.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "libbb.h"
 
 /* This is a NOFORK applet. Be very careful! */
 
 
-#define PARENTS          (1 << 0)
-#define VERBOSE          ((1 << 1) * ENABLE_FEATURE_VERBOSE)
-#define IGNORE_NON_EMPTY ((1 << 2) * ENABLE_LONG_OPTS)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ PARENTS          (1 << 0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ VERBOSE          ((1 << 1) * ENABLE_FEATURE_VERBOSE)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ IGNORE_NON_ਖਾਲੀ_ਥਾਵਾਂ ((1 << 2) * ENABLE_LONG_OPTS)
 
-int rmdir_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int rmdir_main(int argc UNUSED_PARAM, char **argv)
+ਪੂਰਨ rmdir_main(ਪੂਰਨ argc, ਅੱਖਰ **argv) MAIN_EXTERNALLY_VISIBLE;
+ਪੂਰਨ rmdir_main(ਪੂਰਨ argc ਅਣਵਰਤਿਆ_PARAM, ਅੱਖਰ **argv)
 {
-	int status = EXIT_SUCCESS;
-	int flags;
-	char *path;
+	ਪੂਰਨ ਸਥਿਤੀ = EXIT_SUCCESS;
+	ਪੂਰਨ flags;
+	ਅੱਖਰ *ਰਸਤਾ;
 
 	flags = getopt32long(argv, "pv",
-		"parents\0"                  No_argument "p"
+		"parents\0"                  No_ਦਲੀਲ "p"
 		/* Debian etch: many packages fail to be purged or installed
 		 * because they desperately want this option: */
-		"ignore-fail-on-non-empty\0" No_argument "\xff"
+		"ignore-fail-on-non-empty\0" No_ਦਲੀਲ "\xff"
 		IF_FEATURE_VERBOSE(
-		"verbose\0"                  No_argument "v"
+		"verbose\0"                  No_ਦਲੀਲ "v"
 		)
 	);
 	argv += optind;
 
-	if (!*argv) {
+	ਜੇ (!*argv) {
 		bb_show_usage();
 	}
 
-	do {
-		path = *argv;
+	ਕਰੋ {
+		ਰਸਤਾ = *argv;
 
-		while (1) {
-			if (flags & VERBOSE) {
-				printf("rmdir: removing directory, '%s'\n", path);
+		ਜਦੋਂ (1) {
+			ਜੇ (flags & VERBOSE) {
+				ਲਿਖੋ("rmdir: removing directory, '%s'\n", ਰਸਤਾ);
 			}
 
-			if (rmdir(path) < 0) {
-#if ENABLE_LONG_OPTS
-				if ((flags & IGNORE_NON_EMPTY) && errno == ENOTEMPTY)
-					break;
-#endif
-				bb_perror_msg("'%s'", path);  /* Match gnu rmdir msg. */
-				status = EXIT_FAILURE;
-			} else if (flags & PARENTS) {
+			ਜੇ (rmdir(ਰਸਤਾ) < 0) {
+#ਜੇ ENABLE_LONG_OPTS
+				ਜੇ ((flags & IGNORE_NON_ਖਾਲੀ_ਥਾਵਾਂ) && errno == ENOTEMPTY)
+					ਰੋਕੋ;
+#ਜੇ_ਅੰਤ
+				bb_perror_ਸੁਨੇਹਾ("'%s'", ਰਸਤਾ);  /* Match gnu rmdir msg. */
+				ਸਥਿਤੀ = EXIT_FAILURE;
+			} ਨਹੀਂਤਾਂ ਜੇ (flags & PARENTS) {
 				/* Note: path was not "" since rmdir succeeded. */
-				path = dirname(path);
+				ਰਸਤਾ = dirname(ਰਸਤਾ);
 				/* Path is now just the parent component.  Dirname
 				 * returns "." if there are no parents.
 				 */
-				if (NOT_LONE_CHAR(path, '.')) {
-					continue;
+				ਜੇ (NOT_LONE_CHAR(ਰਸਤਾ, '.')) {
+					ਜਾਰੀ;
 				}
 			}
-			break;
+			ਰੋਕੋ;
 		}
-	} while (*++argv);
+	} ਜਦੋਂ (*++argv);
 
-	return status;
+	ਵਾਪਸ ਸਥਿਤੀ;
 }

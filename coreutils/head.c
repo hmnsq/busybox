@@ -47,226 +47,226 @@
 //usage:       "root:x:0:0:root:/root:/bin/bash\n"
 //usage:       "daemon:x:1:1:daemon:/usr/sbin:/bin/sh\n"
 
-#include "libbb.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-#if !ENABLE_FEATURE_FANCY_HEAD
-# define print_first_N(fp,count,bytes) print_first_N(fp,count)
-#endif
-static void
-print_first_N(FILE *fp, unsigned long count, bool count_bytes)
+#ਜੇ !ENABLE_FEATURE_FANCY_ਸਿਰ
+# define print_ਪਹਿਲਾ_N(fp,ਗਿਣਤੀ_2,ਬਾਈਟਾਂ) print_ਪਹਿਲਾ_N(fp,ਗਿਣਤੀ_2)
+#ਜੇ_ਅੰਤ
+ਸਥਿਰ ਖਾਲੀ
+print_ਪਹਿਲਾ_N(FILE *fp, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਗਿਣਤੀ_2, bool ਗਿਣਤੀ_ਬਾਈਟਾਂ)
 {
-#if !ENABLE_FEATURE_FANCY_HEAD
-	const int count_bytes = 0;
-#endif
-	while (count) {
-		int c = getc(fp);
-		if (c == EOF)
-			break;
-		if (count_bytes || (c == '\n'))
-			--count;
-		putchar(c);
+#ਜੇ !ENABLE_FEATURE_FANCY_ਸਿਰ
+	ਅਚਲ ਪੂਰਨ ਗਿਣਤੀ_ਬਾਈਟਾਂ = 0;
+#ਜੇ_ਅੰਤ
+	ਜਦੋਂ (ਗਿਣਤੀ_2) {
+		ਪੂਰਨ c = getc(fp);
+		ਜੇ (c == EOF)
+			ਰੋਕੋ;
+		ਜੇ (ਗਿਣਤੀ_ਬਾਈਟਾਂ || (c == '\n'))
+			--ਗਿਣਤੀ_2;
+		ਅੱਖਰ_ਲਿਖੋ(c);
 	}
 }
 
-#if ENABLE_FEATURE_FANCY_HEAD
-static void
-print_except_N_last_bytes(FILE *fp, unsigned count)
+#ਜੇ ENABLE_FEATURE_FANCY_ਸਿਰ
+ਸਥਿਰ ਖਾਲੀ
+print_except_N_ਆਖਰੀ_ਬਾਈਟਾਂ(FILE *fp, ਬਿਨਾਨਿਸ਼ਾਨੀ ਗਿਣਤੀ_2)
 {
-	unsigned char *circle = xmalloc(++count);
-	unsigned head = 0;
-	for (;;) {
-		int c;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *circle = xmalloc(++ਗਿਣਤੀ_2);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਸਿਰ = 0;
+	ਲਈ (;;) {
+		ਪੂਰਨ c;
 		c = getc(fp);
-		if (c == EOF)
-			goto ret;
-		circle[head++] = c;
-		if (head == count)
-			break;
+		ਜੇ (c == EOF)
+			ਜਾਓ ret;
+		circle[ਸਿਰ++] = c;
+		ਜੇ (ਸਿਰ == ਗਿਣਤੀ_2)
+			ਰੋਕੋ;
 	}
-	for (;;) {
-		int c;
-		if (head == count)
-			head = 0;
-		putchar(circle[head]);
+	ਲਈ (;;) {
+		ਪੂਰਨ c;
+		ਜੇ (ਸਿਰ == ਗਿਣਤੀ_2)
+			ਸਿਰ = 0;
+		ਅੱਖਰ_ਲਿਖੋ(circle[ਸਿਰ]);
 		c = getc(fp);
-		if (c == EOF)
-			goto ret;
-		circle[head] = c;
-		head++;
+		ਜੇ (c == EOF)
+			ਜਾਓ ret;
+		circle[ਸਿਰ] = c;
+		ਸਿਰ++;
 	}
  ret:
-	free(circle);
+	ਮੁਕਤ(circle);
 }
 
-static void
-print_except_N_last_lines(FILE *fp, unsigned count)
+ਸਥਿਰ ਖਾਲੀ
+print_except_N_ਆਖਰੀ_ਸਤਰਾਂ(FILE *fp, ਬਿਨਾਨਿਸ਼ਾਨੀ ਗਿਣਤੀ_2)
 {
-	char **circle = xzalloc((++count) * sizeof(circle[0]));
-	unsigned head = 0;
-	for (;;) {
-		char *c;
+	ਅੱਖਰ **circle = xzalloc((++ਗਿਣਤੀ_2) * ਆਕਾਰ(circle[0]));
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਸਿਰ = 0;
+	ਲਈ (;;) {
+		ਅੱਖਰ *c;
 		c = xmalloc_fgets(fp);
-		if (!c)
-			goto ret;
-		circle[head++] = c;
-		if (head == count)
-			break;
+		ਜੇ (!c)
+			ਜਾਓ ret;
+		circle[ਸਿਰ++] = c;
+		ਜੇ (ਸਿਰ == ਗਿਣਤੀ_2)
+			ਰੋਕੋ;
 	}
-	for (;;) {
-		char *c;
-		if (head == count)
-			head = 0;
-		fputs_stdout(circle[head]);
+	ਲਈ (;;) {
+		ਅੱਖਰ *c;
+		ਜੇ (ਸਿਰ == ਗਿਣਤੀ_2)
+			ਸਿਰ = 0;
+		fputs_stdout(circle[ਸਿਰ]);
 		c = xmalloc_fgets(fp);
-		if (!c)
-			goto ret;
-		free(circle[head]);
-		circle[head++] = c;
+		ਜੇ (!c)
+			ਜਾਓ ret;
+		ਮੁਕਤ(circle[ਸਿਰ]);
+		circle[ਸਿਰ++] = c;
 	}
  ret:
-	head = 0;
-	for (;;) {
-		free(circle[head++]);
-		if (head == count)
-			break;
+	ਸਿਰ = 0;
+	ਲਈ (;;) {
+		ਮੁਕਤ(circle[ਸਿਰ++]);
+		ਜੇ (ਸਿਰ == ਗਿਣਤੀ_2)
+			ਰੋਕੋ;
 	}
-	free(circle);
+	ਮੁਕਤ(circle);
 }
-#else
+#ਨਹੀਂਤਾਂ
 /* Must never be called */
-void print_except_N_last_bytes(FILE *fp, unsigned count);
-void print_except_N_last_lines(FILE *fp, unsigned count);
-#endif
+ਖਾਲੀ print_except_N_ਆਖਰੀ_ਬਾਈਟਾਂ(FILE *fp, ਬਿਨਾਨਿਸ਼ਾਨੀ ਗਿਣਤੀ_2);
+ਖਾਲੀ print_except_N_ਆਖਰੀ_ਸਤਰਾਂ(FILE *fp, ਬਿਨਾਨਿਸ਼ਾਨੀ ਗਿਣਤੀ_2);
+#ਜੇ_ਅੰਤ
 
-#if !ENABLE_FEATURE_FANCY_HEAD
-# define eat_num(negative_N,p) eat_num(p)
-#endif
-static unsigned long
-eat_num(bool *negative_N, const char *p)
+#ਜੇ !ENABLE_FEATURE_FANCY_ਸਿਰ
+# define eat_ਅੰਕ(negative_N,p) eat_ਅੰਕ(p)
+#ਜੇ_ਅੰਤ
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ
+eat_ਅੰਕ(bool *negative_N, ਅਚਲ ਅੱਖਰ *p)
 {
-#if ENABLE_FEATURE_FANCY_HEAD
-	if (*p == '-') {
+#ਜੇ ENABLE_FEATURE_FANCY_ਸਿਰ
+	ਜੇ (*p == '-') {
 		*negative_N = 1;
 		p++;
 	}
-#endif
-	return xatoul_sfx(p, bkm_suffixes);
+#ਜੇ_ਅੰਤ
+	ਵਾਪਸ xatoul_sfx(p, bkm_suffixes);
 }
 
-static const char head_opts[] ALIGN1 =
+ਸਥਿਰ ਅਚਲ ਅੱਖਰ ਸਿਰ_opts[] ALIGN1 =
 	"n:"
-#if ENABLE_FEATURE_FANCY_HEAD
+#ਜੇ ENABLE_FEATURE_FANCY_ਸਿਰ
 	"c:qv"
-#endif
+#ਜੇ_ਅੰਤ
 	;
 
-#define header_fmt_str "\n==> %s <==\n"
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਸਿਰਲੇਖ_fmt_str "\n==> %s <==\n"
 
-int head_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int head_main(int argc, char **argv)
+ਪੂਰਨ ਸਿਰ_main(ਪੂਰਨ argc, ਅੱਖਰ **argv) MAIN_EXTERNALLY_VISIBLE;
+ਪੂਰਨ ਸਿਰ_main(ਪੂਰਨ argc, ਅੱਖਰ **argv)
 {
-	unsigned long count = 10;
-#if ENABLE_FEATURE_FANCY_HEAD
-	int header_threshhold = 1;
-	bool count_bytes = 0;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਗਿਣਤੀ_2 = 10;
+#ਜੇ ENABLE_FEATURE_FANCY_ਸਿਰ
+	ਪੂਰਨ ਸਿਰਲੇਖ_threshhold = 1;
+	bool ਗਿਣਤੀ_ਬਾਈਟਾਂ = 0;
 	bool negative_N = 0;
-#else
-# define header_threshhold 1
-# define count_bytes       0
+#ਨਹੀਂਤਾਂ
+# define ਸਿਰਲੇਖ_threshhold 1
+# define ਗਿਣਤੀ_ਬਾਈਟਾਂ       0
 # define negative_N        0
-#endif
+#ਜੇ_ਅੰਤ
 	FILE *fp;
-	const char *fmt;
-	char *p;
-	int opt;
-	int retval = EXIT_SUCCESS;
+	ਅਚਲ ਅੱਖਰ *fmt;
+	ਅੱਖਰ *p;
+	ਪੂਰਨ opt;
+	ਪੂਰਨ retval = EXIT_SUCCESS;
 
-#if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
+#ਜੇ ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_ਸਿਰ
 	/* Allow legacy syntax of an initial numeric option without -n. */
-	if (argv[1] && argv[1][0] == '-'
-	 && isdigit(argv[1][1])
+	ਜੇ (argv[1] && argv[1][0] == '-'
+	 && ਅੰਕ_ਹੈ(argv[1][1])
 	) {
 		--argc;
 		++argv;
 		p = argv[0] + 1;
-		goto GET_COUNT;
+		ਜਾਓ GET_ਗਿਣਤੀ;
 	}
-#endif
+#ਜੇ_ਅੰਤ
 
 	/* No size benefit in converting this to getopt32 */
-	while ((opt = getopt(argc, argv, head_opts)) > 0) {
-		switch (opt) {
-#if ENABLE_FEATURE_FANCY_HEAD
-		case 'q':
-			header_threshhold = INT_MAX;
-			break;
-		case 'v':
-			header_threshhold = -1;
-			break;
-		case 'c':
-			count_bytes = 1;
+	ਜਦੋਂ ((opt = getopt(argc, argv, ਸਿਰ_opts)) > 0) {
+		ਚੋਣ (opt) {
+#ਜੇ ENABLE_FEATURE_FANCY_ਸਿਰ
+		ਹਾਲਤ 'q':
+			ਸਿਰਲੇਖ_threshhold = ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ;
+			ਰੋਕੋ;
+		ਹਾਲਤ 'v':
+			ਸਿਰਲੇਖ_threshhold = -1;
+			ਰੋਕੋ;
+		ਹਾਲਤ 'c':
+			ਗਿਣਤੀ_ਬਾਈਟਾਂ = 1;
 			/* fall through */
-#endif
-		case 'n':
+#ਜੇ_ਅੰਤ
+		ਹਾਲਤ 'n':
 			p = optarg;
-#if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
- GET_COUNT:
-#endif
-			count = eat_num(&negative_N, p);
-			break;
-		default:
+#ਜੇ ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_ਸਿਰ
+ GET_ਗਿਣਤੀ:
+#ਜੇ_ਅੰਤ
+			ਗਿਣਤੀ_2 = eat_ਅੰਕ(&negative_N, p);
+			ਰੋਕੋ;
+		ਮੂਲ:
 			bb_show_usage();
 		}
 	}
 
 	argc -= optind;
 	argv += optind;
-	if (!*argv)
-		*--argv = (char*)"-";
+	ਜੇ (!*argv)
+		*--argv = (ਅੱਖਰ*)"-";
 
-	fmt = header_fmt_str + 1;
-	if (argc <= header_threshhold) {
-#if ENABLE_FEATURE_FANCY_HEAD
-		header_threshhold = 0;
-#else
+	fmt = ਸਿਰਲੇਖ_fmt_str + 1;
+	ਜੇ (argc <= ਸਿਰਲੇਖ_threshhold) {
+#ਜੇ ENABLE_FEATURE_FANCY_ਸਿਰ
+		ਸਿਰਲੇਖ_threshhold = 0;
+#ਨਹੀਂਤਾਂ
 		fmt += 11; /* "" */
-#endif
+#ਜੇ_ਅੰਤ
 	}
-	if (negative_N) {
-		if (count >= INT_MAX / sizeof(char*))
-			bb_error_msg("count is too big: %lu", count);
+	ਜੇ (negative_N) {
+		ਜੇ (ਗਿਣਤੀ_2 >= ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ / ਆਕਾਰ(ਅੱਖਰ*))
+			bb_error_ਸੁਨੇਹਾ("count is too big: %lu", ਗਿਣਤੀ_2);
 	}
 
-	do {
+	ਕਰੋ {
 		fp = fopen_or_warn_stdin(*argv);
-		if (fp) {
-			if (fp == stdin) {
-				*argv = (char *) bb_msg_standard_input;
+		ਜੇ (fp) {
+			ਜੇ (fp == stdin) {
+				*argv = (ਅੱਖਰ *) bb_ਸੁਨੇਹਾ_standard_ਨਿਵੇਸ਼;
 			}
-			if (header_threshhold) {
-				printf(fmt, *argv);
+			ਜੇ (ਸਿਰਲੇਖ_threshhold) {
+				ਲਿਖੋ(fmt, *argv);
 			}
-			if (negative_N) {
-				if (count_bytes) {
-					print_except_N_last_bytes(fp, count);
-				} else {
-					print_except_N_last_lines(fp, count);
+			ਜੇ (negative_N) {
+				ਜੇ (ਗਿਣਤੀ_ਬਾਈਟਾਂ) {
+					print_except_N_ਆਖਰੀ_ਬਾਈਟਾਂ(fp, ਗਿਣਤੀ_2);
+				} ਨਹੀਂਤਾਂ {
+					print_except_N_ਆਖਰੀ_ਸਤਰਾਂ(fp, ਗਿਣਤੀ_2);
 				}
-			} else {
-				print_first_N(fp, count, count_bytes);
+			} ਨਹੀਂਤਾਂ {
+				print_ਪਹਿਲਾ_N(fp, ਗਿਣਤੀ_2, ਗਿਣਤੀ_ਬਾਈਟਾਂ);
 			}
 			die_if_ferror_stdout();
-			if (fclose_if_not_stdin(fp)) {
-				bb_simple_perror_msg(*argv);
+			ਜੇ (fclose_if_not_stdin(fp)) {
+				bb_simple_perror_ਸੁਨੇਹਾ(*argv);
 				retval = EXIT_FAILURE;
 			}
-		} else {
+		} ਨਹੀਂਤਾਂ {
 			retval = EXIT_FAILURE;
 		}
-		fmt = header_fmt_str;
-	} while (*++argv);
+		fmt = ਸਿਰਲੇਖ_fmt_str;
+	} ਜਦੋਂ (*++argv);
 
 	fflush_stdout_and_exit(retval);
 }

@@ -36,26 +36,26 @@
 //usage:#define mv_example_usage
 //usage:       "$ mv /tmp/foo /bin/bar\n"
 
-#include "libbb.h"
-#include "libcoreutils/coreutils.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "libbb.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "libcoreutils/coreutils.h"
 
-int mv_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int mv_main(int argc, char **argv)
+ਪੂਰਨ mv_main(ਪੂਰਨ argc, ਅੱਖਰ **argv) MAIN_EXTERNALLY_VISIBLE;
+ਪੂਰਨ mv_main(ਪੂਰਨ argc, ਅੱਖਰ **argv)
 {
-	struct stat statbuf;
-	const char *last;
-	const char *dest;
-	unsigned flags;
-	int dest_exists;
-	int status = 0;
-	int copy_flag = 0;
+	ਬਣਤਰ stat statbuf;
+	ਅਚਲ ਅੱਖਰ *ਆਖਰੀ;
+	ਅਚਲ ਅੱਖਰ *dest;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ flags;
+	ਪੂਰਨ dest_exists;
+	ਪੂਰਨ ਸਥਿਤੀ = 0;
+	ਪੂਰਨ copy_flag = 0;
 
-#define OPT_FORCE       (1 << 0)
-#define OPT_INTERACTIVE (1 << 1)
-#define OPT_NOCLOBBER   (1 << 2)
-#define OPT_DESTNOTDIR  (1 << 3)
-#define OPT_DESTDIR     (1 << 4)
-#define OPT_VERBOSE     ((1 << 5) * ENABLE_FEATURE_VERBOSE)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ OPT_FORCE       (1 << 0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ OPT_INTERACTIVE (1 << 1)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ OPT_NOCLOBBER   (1 << 2)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ OPT_DESTNOTDIR  (1 << 3)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ OPT_DESTDIR     (1 << 4)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ OPT_VERBOSE     ((1 << 5) * ENABLE_FEATURE_VERBOSE)
 	flags = getopt32long(argv, "^"
 			"finTt:v"
 			"\0"
@@ -65,127 +65,127 @@ int mv_main(int argc, char **argv)
 			":f-in:i-fn:n-fi"
 	/* -t and -T don't mix */
 			":t--T:T--t",
-			"interactive\0" No_argument "i"
-			"force\0"       No_argument "f"
-			"no-clobber\0"  No_argument "n"
-			"no-target-directory\0" No_argument "T"
-			"target-directory\0" Required_argument "t"
+			"interactive\0" No_ਦਲੀਲ "i"
+			"force\0"       No_ਦਲੀਲ "f"
+			"no-clobber\0"  No_ਦਲੀਲ "n"
+			"no-target-directory\0" No_ਦਲੀਲ "T"
+			"target-directory\0" Required_ਦਲੀਲ "t"
 			IF_FEATURE_VERBOSE(
-			"verbose\0"     No_argument "v"
+			"verbose\0"     No_ਦਲੀਲ "v"
 			)
-			, &last
+			, &ਆਖਰੀ
 	);
 	argc -= optind;
 	argv += optind;
 
-	if (!(flags & OPT_DESTDIR)) {
-		last = argv[argc - 1];
-		if (argc < 2)
+	ਜੇ (!(flags & OPT_DESTDIR)) {
+		ਆਖਰੀ = argv[argc - 1];
+		ਜੇ (argc < 2)
 			bb_show_usage();
-		if (argc != 2) {
-			if (flags & OPT_DESTNOTDIR)
+		ਜੇ (argc != 2) {
+			ਜੇ (flags & OPT_DESTNOTDIR)
 				bb_show_usage();
 			/* "mv A B C... DIR" - target must be dir */
-		} else /* argc == 2 */ {
+		} ਨਹੀਂਤਾਂ /* argc == 2 */ {
 			/* "mv A B" - only case where target can be not a dir */
-			dest_exists = cp_mv_stat(last, &statbuf);
-			if (dest_exists < 0) { /* error other than ENOENT */
-				return EXIT_FAILURE;
+			dest_exists = cp_mv_stat(ਆਖਰੀ, &statbuf);
+			ਜੇ (dest_exists < 0) { /* error other than ENOENT */
+				ਵਾਪਸ EXIT_FAILURE;
 			}
-			if (!(dest_exists & 2)) {
+			ਜੇ (!(dest_exists & 2)) {
 				/* last is not a directory */
-				dest = last;
-				goto DO_MOVE;
+				dest = ਆਖਰੀ;
+				ਜਾਓ DO_MOVE;
 			}
 			/* last is a directory */
-			if (flags & OPT_DESTNOTDIR) {
-				if (stat(argv[0], &statbuf) == 0 && !S_ISDIR(statbuf.st_mode))
-					bb_error_msg_and_die("'%s' is a directory", last);
+			ਜੇ (flags & OPT_DESTNOTDIR) {
+				ਜੇ (stat(argv[0], &statbuf) == 0 && !S_ISDIR(statbuf.st_ਬਹੁਲਕ))
+					bb_error_ਸੁਨੇਹਾ_and_die("'%s' is a directory", ਆਖਰੀ);
 				/* "mv -T DIR1 DIR2" is allowed (renames a dir) */
-				dest = last;
-				goto DO_MOVE;
+				dest = ਆਖਰੀ;
+				ਜਾਓ DO_MOVE;
 			}
 			/* else: fall through into "do { move SRC to DIR/SRC } while" loop */
 		}
 	}
 	/* else: last is DIR from "-t DIR" */
 
-	do {
-		dest = concat_path_file(last, bb_get_last_path_component_strip(*argv));
+	ਕਰੋ {
+		dest = concat_ਰਸਤਾ_file(ਆਖਰੀ, bb_get_ਆਖਰੀ_ਰਸਤਾ_component_strip(*argv));
 		dest_exists = cp_mv_stat(dest, &statbuf);
-		if (dest_exists < 0) {
-			goto RET_1;
+		ਜੇ (dest_exists < 0) {
+			ਜਾਓ RET_1;
 		}
 
  DO_MOVE:
-		if (dest_exists) {
-			if (flags & OPT_NOCLOBBER)
-				goto RET_0;
-			if (!(flags & OPT_FORCE)
+		ਜੇ (dest_exists) {
+			ਜੇ (flags & OPT_NOCLOBBER)
+				ਜਾਓ RET_0;
+			ਜੇ (!(flags & OPT_FORCE)
 			 && ((access(dest, W_OK) < 0 && isatty(0))
 			    || (flags & OPT_INTERACTIVE))
 			) {
-				if (fprintf(stderr, "mv: overwrite '%s'? ", dest) < 0) {
-					goto RET_1;  /* Ouch! fprintf failed! */
+				ਜੇ (fprintf(stderr, "mv: overwrite '%s'? ", dest) < 0) {
+					ਜਾਓ RET_1;  /* Ouch! fprintf failed! */
 				}
-				if (!bb_ask_y_confirmation()) {
-					goto RET_0;
+				ਜੇ (!bb_ask_y_confirmation()) {
+					ਜਾਓ RET_0;
 				}
 			}
 		}
 
-		if (rename(*argv, dest) < 0) {
-			int source_exists;
+		ਜੇ (rename(*argv, dest) < 0) {
+			ਪੂਰਨ ਸਰੋਤ_exists;
 
-			if (errno != EXDEV
-			 || (source_exists = cp_mv_stat2(*argv, &statbuf, lstat)) < 1
+			ਜੇ (errno != EXDEV
+			 || (ਸਰੋਤ_exists = cp_mv_stat2(*argv, &statbuf, lstat)) < 1
 			) {
-				bb_perror_msg("can't rename '%s'", *argv);
-			} else {
-				static const char fmt[] ALIGN1 =
+				bb_perror_ਸੁਨੇਹਾ("can't rename '%s'", *argv);
+			} ਨਹੀਂਤਾਂ {
+				ਸਥਿਰ ਅਚਲ ਅੱਖਰ fmt[] ALIGN1 =
 					"can't overwrite %sdirectory with %sdirectory";
 
-				if (dest_exists) {
-					if (dest_exists == 3) {
-						if (source_exists != 3) {
-							bb_error_msg(fmt, "", "non-");
-							goto RET_1;
+				ਜੇ (dest_exists) {
+					ਜੇ (dest_exists == 3) {
+						ਜੇ (ਸਰੋਤ_exists != 3) {
+							bb_error_ਸੁਨੇਹਾ(fmt, "", "non-");
+							ਜਾਓ RET_1;
 						}
-					} else {
-						if (source_exists == 3) {
-							bb_error_msg(fmt, "non-", "");
-							goto RET_1;
+					} ਨਹੀਂਤਾਂ {
+						ਜੇ (ਸਰੋਤ_exists == 3) {
+							bb_error_ਸੁਨੇਹਾ(fmt, "non-", "");
+							ਜਾਓ RET_1;
 						}
 					}
-					if (unlink(dest) < 0) {
-						bb_perror_msg("can't remove '%s'", dest);
-						goto RET_1;
+					ਜੇ (unlink(dest) < 0) {
+						bb_perror_ਸੁਨੇਹਾ("can't remove '%s'", dest);
+						ਜਾਓ RET_1;
 					}
 				}
 				/* FILEUTILS_RECUR also prevents nasties like
 				 * "read from device and write contents to dst"
 				 * instead of "create same device node" */
-				copy_flag = FILEUTILS_RECUR | FILEUTILS_PRESERVE_STATUS;
-#if ENABLE_SELINUX
+				copy_flag = FILEUTILS_RECUR | FILEUTILS_PRESERVE_ਸਥਿਤੀ;
+#ਜੇ ENABLE_SELINUX
 				copy_flag |= FILEUTILS_PRESERVE_SECURITY_CONTEXT;
-#endif
-				if ((copy_file(*argv, dest, copy_flag) >= 0)
+#ਜੇ_ਅੰਤ
+				ਜੇ ((copy_file(*argv, dest, copy_flag) >= 0)
 				 && (remove_file(*argv, FILEUTILS_RECUR | FILEUTILS_FORCE) >= 0)
 				) {
-					goto RET_0;
+					ਜਾਓ RET_0;
 				}
 			}
  RET_1:
-			status = 1;
+			ਸਥਿਤੀ = 1;
 		}
  RET_0:
-		if (flags & OPT_VERBOSE) {
-			printf("'%s' -> '%s'\n", *argv, dest);
+		ਜੇ (flags & OPT_VERBOSE) {
+			ਲਿਖੋ("'%s' -> '%s'\n", *argv, dest);
 		}
-		if (dest != last) {
-			free((void *) dest);
+		ਜੇ (dest != ਆਖਰੀ) {
+			ਮੁਕਤ((ਖਾਲੀ *) dest);
 		}
-	} while (*++argv && *argv != last);
+	} ਜਦੋਂ (*++argv && *argv != ਆਖਰੀ);
 
-	return status;
+	ਵਾਪਸ ਸਥਿਤੀ;
 }

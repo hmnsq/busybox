@@ -25,48 +25,48 @@
 //usage:     "\n	-w	Pad with leading zeros"
 //usage:     "\n	-s SEP	String separator"
 
-#include "libbb.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-int seq_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int seq_main(int argc, char **argv)
+ਪੂਰਨ seq_main(ਪੂਰਨ argc, ਅੱਖਰ **argv) MAIN_EXTERNALLY_VISIBLE;
+ਪੂਰਨ seq_main(ਪੂਰਨ argc, ਅੱਖਰ **argv)
 {
-	enum {
+	ਗਿਣਤੀ {
 		OPT_w = (1 << 0),
 		OPT_s = (1 << 1),
 	};
-	double first, last, increment, v;
-	unsigned n;
-	unsigned width;
-	unsigned frac_part;
-	const char *sep, *opt_s = "\n";
-	char *saved;
-	unsigned opt;
+	ਦੁੱਗਣਾ ਪਹਿਲਾ, ਆਖਰੀ, increment, v;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ n;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਚੌੜਾਈ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ frac_part;
+	ਅਚਲ ਅੱਖਰ *sep, *opt_s = "\n";
+	ਅੱਖਰ *saved;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ opt;
 
-#if ENABLE_LOCALE_SUPPORT
+#ਜੇ ENABLE_LOCALE_SUPPORT
 	/* Undo busybox.c: on input, we want to use dot
 	 * as fractional separator, regardless of current locale */
 	setlocale(LC_NUMERIC, "C");
-#endif
+#ਜੇ_ਅੰਤ
 
 	/* Cater for negative arguments: if we see one, truncate argv[] on it */
 	n = 0;
-	for (;;) {
-		char c;
+	ਲਈ (;;) {
+		ਅੱਖਰ c;
 		saved = argv[++n];
-		if (!saved)
-			break;
-		if (saved[0] != '-') {
+		ਜੇ (!saved)
+			ਰੋਕੋ;
+		ਜੇ (saved[0] != '-') {
 			// break; // "seq -s : -1 1" won't be treated correctly
-			continue;
+			ਜਾਰੀ;
 		}
 // "seq -s -1 1 9" is not treated correctly, but such usage
 // (delimiter string which looks like negative number) is very unlikely
 		c = saved[1];
-		if (c == '.' || (c >= '0' && c <= '9')) {
-			argv[n] = NULL;
-			break;
+		ਜੇ (c == '.' || (c >= '0' && c <= '9')) {
+			argv[n] = ਨਿਰਾ;
+			ਰੋਕੋ;
 		}
 	}
 	opt = getopt32(argv, "+ws:", &opt_s); /* "+": stop at first non-option */
@@ -75,68 +75,68 @@ int seq_main(int argc, char **argv)
 
 	argc -= optind;
 	argv += optind;
-	first = increment = 1;
+	ਪਹਿਲਾ = increment = 1;
 	errno = 0;
-	switch (argc) {
-			char *pp;
-		case 3:
+	ਚੋਣ (argc) {
+			ਅੱਖਰ *pp;
+		ਹਾਲਤ 3:
 			increment = strtod(argv[1], &pp);
 			errno |= *pp;
-		case 2:
-			first = strtod(argv[0], &pp);
+		ਹਾਲਤ 2:
+			ਪਹਿਲਾ = strtod(argv[0], &pp);
 			errno |= *pp;
-		case 1:
-			last = strtod(argv[argc-1], &pp);
-			if (!errno && *pp == '\0')
-				break;
-		default:
+		ਹਾਲਤ 1:
+			ਆਖਰੀ = strtod(argv[argc-1], &pp);
+			ਜੇ (!errno && *pp == '\0')
+				ਰੋਕੋ;
+		ਮੂਲ:
 			bb_show_usage();
 	}
 
-#if ENABLE_LOCALE_SUPPORT
+#ਜੇ ENABLE_LOCALE_SUPPORT
 	setlocale(LC_NUMERIC, "");
-#endif
+#ਜੇ_ਅੰਤ
 
 	/* Last checked to be compatible with: coreutils-6.10 */
-	width = 0;
+	ਚੌੜਾਈ = 0;
 	frac_part = 0;
-	while (1) {
-		char *dot = strchrnul(*argv, '.');
-		int w = (dot - *argv);
-		int f = strlen(dot);
-		if (width < w)
-			width = w;
+	ਜਦੋਂ (1) {
+		ਅੱਖਰ *dot = strchrnul(*argv, '.');
+		ਪੂਰਨ w = (dot - *argv);
+		ਪੂਰਨ f = ਲੜੀ_ਲੰਬਾਈ(dot);
+		ਜੇ (ਚੌੜਾਈ < w)
+			ਚੌੜਾਈ = w;
 		argv++;
-		if (!*argv)
-			break;
+		ਜੇ (!*argv)
+			ਰੋਕੋ;
 		/* Why do the above _before_ frac check below?
 		 * Try "seq 1 2.0" and "seq 1.0 2.0":
 		 * coreutils never pay attention to the number
 		 * of fractional digits in last arg. */
-		if (frac_part < f)
+		ਜੇ (frac_part < f)
 			frac_part = f;
 	}
-	if (frac_part) {
+	ਜੇ (frac_part) {
 		frac_part--;
-		if (frac_part)
-			width += frac_part + 1;
+		ਜੇ (frac_part)
+			ਚੌੜਾਈ += frac_part + 1;
 	}
-	if (!(opt & OPT_w))
-		width = 0;
+	ਜੇ (!(opt & OPT_w))
+		ਚੌੜਾਈ = 0;
 
 	sep = "";
-	v = first;
+	v = ਪਹਿਲਾ;
 	n = 0;
-	while (increment >= 0 ? v <= last : v >= last) {
-		if (printf("%s%0*.*f", sep, width, frac_part, v) < 0)
-			break; /* I/O error, bail out (yes, this really happens) */
+	ਜਦੋਂ (increment >= 0 ? v <= ਆਖਰੀ : v >= ਆਖਰੀ) {
+		ਜੇ (ਲਿਖੋ("%s%0*.*f", sep, ਚੌੜਾਈ, frac_part, v) < 0)
+			ਰੋਕੋ; /* I/O error, bail out (yes, this really happens) */
 		sep = opt_s;
 		/* v += increment; - would accumulate floating point errors */
 		n++;
-		v = first + n * increment;
+		v = ਪਹਿਲਾ + n * increment;
 	}
-	if (n) /* if while loop executed at least once */
+	ਜੇ (n) /* if while loop executed at least once */
 		bb_putchar('\n');
 
-	return fflush_all();
+	ਵਾਪਸ fflush_all();
 }

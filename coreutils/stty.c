@@ -34,267 +34,267 @@
  * are done on the specified device, or stdin if none was specified.
  */
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "libbb.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "common_bufsiz.h"
 
-#ifndef _POSIX_VDISABLE
-# define _POSIX_VDISABLE ((unsigned char) 0)
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ _POSIX_VDISABLE
+# define _POSIX_VDISABLE ((ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ) 0)
+#ਜੇ_ਅੰਤ
 
-#define Control(c) ((c) & 0x1f)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ Control(c) ((c) & 0x1f)
 /* Canonical values for control characters */
-#ifndef CINTR
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ CINTR
 # define CINTR Control('c')
-#endif
-#ifndef CQUIT
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ CQUIT
 # define CQUIT 28
-#endif
-#ifndef CERASE
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ CERASE
 # define CERASE 127
-#endif
-#ifndef CKILL
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ CKILL
 # define CKILL Control('u')
-#endif
-#ifndef CEOF
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ CEOF
 # define CEOF Control('d')
-#endif
-#ifndef CEOL
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ CEOL
 # define CEOL _POSIX_VDISABLE
-#endif
-#ifndef CSTART
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ CSTART
 # define CSTART Control('q')
-#endif
-#ifndef CSTOP
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ CSTOP
 # define CSTOP Control('s')
-#endif
-#ifndef CSUSP
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ CSUSP
 # define CSUSP Control('z')
-#endif
-#if defined(VEOL2) && !defined(CEOL2)
+#ਜੇ_ਅੰਤ
+#ਜੇ defined(VEOL2) && !defined(CEOL2)
 # define CEOL2 _POSIX_VDISABLE
-#endif
+#ਜੇ_ਅੰਤ
 /* glibc-2.12.1 uses only VSWTC name */
-#if defined(VSWTC) && !defined(VSWTCH)
+#ਜੇ defined(VSWTC) && !defined(VSWTCH)
 # define VSWTCH VSWTC
-#endif
+#ਜੇ_ਅੰਤ
 /* ISC renamed swtch to susp for termios, but we'll accept either name */
-#if defined(VSUSP) && !defined(VSWTCH)
+#ਜੇ defined(VSUSP) && !defined(VSWTCH)
 # define VSWTCH VSUSP
 # define CSWTCH CSUSP
-#endif
-#if defined(VSWTCH) && !defined(CSWTCH)
+#ਜੇ_ਅੰਤ
+#ਜੇ defined(VSWTCH) && !defined(CSWTCH)
 # define CSWTCH _POSIX_VDISABLE
-#endif
+#ਜੇ_ਅੰਤ
 
 /* SunOS 5.3 loses (^Z doesn't work) if 'swtch' is the same as 'susp'.
    So the default is to disable 'swtch.'  */
-#if defined(__sparc__) && defined(__svr4__)
+#ਜੇ defined(__sparc__) && defined(__svr4__)
 # undef CSWTCH
 # define CSWTCH _POSIX_VDISABLE
-#endif
+#ਜੇ_ਅੰਤ
 
-#if defined(VWERSE) && !defined(VWERASE)       /* AIX-3.2.5 */
+#ਜੇ defined(VWERSE) && !defined(VWERASE)       /* AIX-3.2.5 */
 # define VWERASE VWERSE
-#endif
-#if defined(VDSUSP) && !defined(CDSUSP)
+#ਜੇ_ਅੰਤ
+#ਜੇ defined(VDSUSP) && !defined(CDSUSP)
 # define CDSUSP Control('y')
-#endif
-#if !defined(VREPRINT) && defined(VRPRNT)       /* Irix 4.0.5 */
+#ਜੇ_ਅੰਤ
+#ਜੇ !defined(VREPRINT) && defined(VRPRNT)       /* Irix 4.0.5 */
 # define VREPRINT VRPRNT
-#endif
-#if defined(VREPRINT) && !defined(CRPRNT)
+#ਜੇ_ਅੰਤ
+#ਜੇ defined(VREPRINT) && !defined(CRPRNT)
 # define CRPRNT Control('r')
-#endif
-#if defined(VWERASE) && !defined(CWERASE)
+#ਜੇ_ਅੰਤ
+#ਜੇ defined(VWERASE) && !defined(CWERASE)
 # define CWERASE Control('w')
-#endif
-#if defined(VLNEXT) && !defined(CLNEXT)
+#ਜੇ_ਅੰਤ
+#ਜੇ defined(VLNEXT) && !defined(CLNEXT)
 # define CLNEXT Control('v')
-#endif
-#if defined(VDISCARD) && !defined(VFLUSHO)
+#ਜੇ_ਅੰਤ
+#ਜੇ defined(VDISCARD) && !defined(VFLUSHO)
 # define VFLUSHO VDISCARD
-#endif
-#if defined(VFLUSH) && !defined(VFLUSHO)        /* Ultrix 4.2 */
+#ਜੇ_ਅੰਤ
+#ਜੇ defined(VFLUSH) && !defined(VFLUSHO)        /* Ultrix 4.2 */
 # define VFLUSHO VFLUSH
-#endif
-#if defined(CTLECH) && !defined(ECHOCTL)        /* Ultrix 4.3 */
+#ਜੇ_ਅੰਤ
+#ਜੇ defined(CTLECH) && !defined(ECHOCTL)        /* Ultrix 4.3 */
 # define ECHOCTL CTLECH
-#endif
-#if defined(TCTLECH) && !defined(ECHOCTL)       /* Ultrix 4.2 */
+#ਜੇ_ਅੰਤ
+#ਜੇ defined(TCTLECH) && !defined(ECHOCTL)       /* Ultrix 4.2 */
 # define ECHOCTL TCTLECH
-#endif
-#if defined(CRTKIL) && !defined(ECHOKE)         /* Ultrix 4.2 and 4.3 */
+#ਜੇ_ਅੰਤ
+#ਜੇ defined(CRTKIL) && !defined(ECHOKE)         /* Ultrix 4.2 and 4.3 */
 # define ECHOKE CRTKIL
-#endif
-#if defined(VFLUSHO) && !defined(CFLUSHO)
+#ਜੇ_ਅੰਤ
+#ਜੇ defined(VFLUSHO) && !defined(CFLUSHO)
 # define CFLUSHO Control('o')
-#endif
-#if defined(VSTATUS) && !defined(CSTATUS)
+#ਜੇ_ਅੰਤ
+#ਜੇ defined(VSTATUS) && !defined(CSTATUS)
 # define CSTATUS Control('t')
-#endif
+#ਜੇ_ਅੰਤ
 
 /* Save us from #ifdef forest plague */
-#ifndef BSDLY
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ BSDLY
 # define BSDLY 0
-#endif
-#ifndef CIBAUD
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ CIBAUD
 # define CIBAUD 0
-#endif
-#ifndef CRDLY
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ CRDLY
 # define CRDLY 0
-#endif
-#ifndef CMSPAR
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ CMSPAR
 # define CMSPAR 0
-#endif
-#ifndef CRTSCTS
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ CRTSCTS
 # define CRTSCTS 0
-#endif
-#ifndef ECHOCTL
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ ECHOCTL
 # define ECHOCTL 0
-#endif
-#ifndef ECHOKE
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ ECHOKE
 # define ECHOKE 0
-#endif
-#ifndef ECHOPRT
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ ECHOPRT
 # define ECHOPRT 0
-#endif
-#ifndef FFDLY
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ FFDLY
 # define FFDLY 0
-#endif
-#ifndef IEXTEN
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ IEXTEN
 # define IEXTEN 0
-#endif
-#ifndef IMAXBEL
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ IMAXBEL
 # define IMAXBEL 0
-#endif
-#ifndef IUCLC
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ IUCLC
 # define IUCLC 0
-#endif
-#ifndef IXANY
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ IXANY
 # define IXANY 0
-#endif
-#ifndef NLDLY
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ NLDLY
 # define NLDLY 0
-#endif
-#ifndef OCRNL
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ OCRNL
 # define OCRNL 0
-#endif
-#ifndef OFDEL
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ OFDEL
 # define OFDEL 0
-#endif
-#ifndef OFILL
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ OFILL
 # define OFILL 0
-#endif
-#ifndef OLCUC
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ OLCUC
 # define OLCUC 0
-#endif
-#ifndef ONLCR
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ ONLCR
 # define ONLCR 0
-#endif
-#ifndef ONLRET
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ ONLRET
 # define ONLRET 0
-#endif
-#ifndef ONOCR
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ ONOCR
 # define ONOCR 0
-#endif
-#ifndef OXTABS
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ OXTABS
 # define OXTABS 0
-#endif
-#ifndef TABDLY
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ TABDLY
 # define TABDLY 0
-#endif
-#ifndef TAB1
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ TAB1
 # define TAB1 0
-#endif
-#ifndef TAB2
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ TAB2
 # define TAB2 0
-#endif
-#ifndef TOSTOP
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ TOSTOP
 # define TOSTOP 0
-#endif
-#ifndef VDSUSP
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ VDSUSP
 # define VDSUSP 0
-#endif
-#ifndef VEOL2
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ VEOL2
 # define VEOL2 0
-#endif
-#ifndef VFLUSHO
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ VFLUSHO
 # define VFLUSHO 0
-#endif
-#ifndef VLNEXT
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ VLNEXT
 # define VLNEXT 0
-#endif
-#ifndef VREPRINT
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ VREPRINT
 # define VREPRINT 0
-#endif
-#ifndef VSTATUS
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ VSTATUS
 # define VSTATUS 0
-#endif
-#ifndef VSWTCH
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ VSWTCH
 # define VSWTCH 0
-#endif
-#ifndef VTDLY
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ VTDLY
 # define VTDLY 0
-#endif
-#ifndef VWERASE
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ VWERASE
 # define VWERASE 0
-#endif
-#ifndef XCASE
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ XCASE
 # define XCASE 0
-#endif
-#ifndef IUTF8
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ IUTF8
 # define IUTF8 0
-#endif
+#ਜੇ_ਅੰਤ
 
 /* Which speeds to set */
-enum speed_setting {
-	input_speed, output_speed, both_speeds
+ਗਿਣਤੀ ਰਫਤਾਰ_setting {
+	ਨਿਵੇਸ਼_ਰਫਤਾਰ, output_ਰਫਤਾਰ, both_speeds
 };
 
 /* Which member(s) of 'struct termios' a mode uses */
-enum {
-	control, input, output, local, combination
+ਗਿਣਤੀ {
+	control, ਨਿਵੇਸ਼, output, local, combination
 };
-static tcflag_t *get_ptr_to_tcflag(unsigned type, const struct termios *mode)
+ਸਥਿਰ tcflag_t *get_ptr_ਮੰਜ਼ਿਲ_tcflag(ਬਿਨਾਨਿਸ਼ਾਨੀ type, ਅਚਲ ਬਣਤਰ termios *ਬਹੁਲਕ)
 {
-	static const uint8_t tcflag_offsets[] ALIGN1 = {
-		offsetof(struct termios, c_cflag), /* control */
-		offsetof(struct termios, c_iflag), /* input */
-		offsetof(struct termios, c_oflag), /* output */
-		offsetof(struct termios, c_lflag)  /* local */
+	ਸਥਿਰ ਅਚਲ uint8_t tcflag_offsets[] ALIGN1 = {
+		offsetof(ਬਣਤਰ termios, c_cflag), /* control */
+		offsetof(ਬਣਤਰ termios, c_iflag), /*ਨਿਵੇਸ਼*/
+		offsetof(ਬਣਤਰ termios, c_oflag), /* output */
+		offsetof(ਬਣਤਰ termios, c_lflag)  /* local */
 	};
-	if (type <= local) {
-		return (tcflag_t*) (((char*)mode) + tcflag_offsets[type]);
+	ਜੇ (type <= local) {
+		ਵਾਪਸ (tcflag_t*) (((ਅੱਖਰ*)ਬਹੁਲਕ) + tcflag_offsets[type]);
 	}
-	return NULL;
+	ਵਾਪਸ ਨਿਰਾ;
 }
 
 /* Flags for 'struct mode_info' */
-#define SANE_SET 1              /* Set in 'sane' mode                  */
-#define SANE_UNSET 2            /* Unset in 'sane' mode                */
-#define REV 4                   /* Can be turned off by prepending '-' */
-#define OMIT 8                  /* Don't display value                 */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SANE_ਸੈੱਟ 1              /* Set in 'sane' mode                  */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SANE_UNSET 2            /* Unset in 'sane' mode                */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ REV 4                   /* Can be turned off by prepending '-' */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ OMIT 8                  /* Don't display value                 */
 
 
 /* Each mode.
  * This structure should be kept as small as humanly possible.
  */
-struct mode_info {
-	const uint8_t type;           /* Which structure element to change    */
-	const uint8_t flags;          /* Setting and display options          */
+ਬਣਤਰ ਬਹੁਲਕ_info {
+	ਅਚਲ uint8_t type;           /* Which structure element to change    */
+	ਅਚਲ uint8_t flags;          /* Setting and display options          */
 	/* only these values are ever used, so... */
-#if   (CSIZE | NLDLY | CRDLY | TABDLY | BSDLY | VTDLY | FFDLY) < 0x100
-	const uint8_t mask;
-#elif (CSIZE | NLDLY | CRDLY | TABDLY | BSDLY | VTDLY | FFDLY) < 0x10000
-	const uint16_t mask;
-#else
-	const tcflag_t mask;          /* Other bits to turn off for this mode */
-#endif
+#ਜੇ   (CSIZE | NLDLY | CRDLY | TABDLY | BSDLY | VTDLY | FFDLY) < 0x100
+	ਅਚਲ uint8_t ਨਕਾਬ;
+#ਜਾਂਜੇ (CSIZE | NLDLY | CRDLY | TABDLY | BSDLY | VTDLY | FFDLY) < 0x10000
+	ਅਚਲ uint16_t ਨਕਾਬ;
+#ਨਹੀਂਤਾਂ
+	ਅਚਲ tcflag_t ਨਕਾਬ;          /* Other bits to turn off for this mode */
+#ਜੇ_ਅੰਤ
 	/* was using short here, but ppc32 was unhappy */
-	const tcflag_t bits;          /* Bits to set for this mode            */
+	ਅਚਲ tcflag_t ਬਿੱਟ;          /* Bits to set for this mode            */
 };
 
-enum {
+ਗਿਣਤੀ {
 	/* Must match mode_name[] and mode_info[] order! */
 	IDX_evenp = 0,
 	IDX_parity,
@@ -309,357 +309,357 @@ enum {
 	IDX_cbreak,
 	IDX_crt,
 	IDX_dec,
-#if IXANY
+#ਜੇ IXANY
 	IDX_decctlq,
-#endif
-#if TABDLY || OXTABS
+#ਜੇ_ਅੰਤ
+#ਜੇ TABDLY || OXTABS
 	IDX_tabs,
-#endif
-#if XCASE && IUCLC && OLCUC
+#ਜੇ_ਅੰਤ
+#ਜੇ XCASE && IUCLC && OLCUC
 	IDX_lcase,
 	IDX_LCASE,
-#endif
+#ਜੇ_ਅੰਤ
 };
 
-#define MI_ENTRY(N,T,F,B,M) N "\0"
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ MI_ਇੰਦਰਾਜ(N,T,F,B,M) N "\0"
 
 /* Mode names given on command line */
-static const char mode_name[] ALIGN1 =
-	MI_ENTRY("evenp",    combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("parity",   combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("oddp",     combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("nl",       combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("ek",       combination, OMIT,              0,          0 )
-	MI_ENTRY("sane",     combination, OMIT,              0,          0 )
-	MI_ENTRY("cooked",   combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("raw",      combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("pass8",    combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("litout",   combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("cbreak",   combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("crt",      combination, OMIT,              0,          0 )
-	MI_ENTRY("dec",      combination, OMIT,              0,          0 )
-#if IXANY
-	MI_ENTRY("decctlq",  combination, REV        | OMIT, 0,          0 )
-#endif
-#if TABDLY || OXTABS
-	MI_ENTRY("tabs",     combination, REV        | OMIT, 0,          0 )
-#endif
-#if XCASE && IUCLC && OLCUC
-	MI_ENTRY("lcase",    combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("LCASE",    combination, REV        | OMIT, 0,          0 )
-#endif
-	MI_ENTRY("parenb",   control,     REV,               PARENB,     0 )
-	MI_ENTRY("parodd",   control,     REV,               PARODD,     0 )
-#if CMSPAR
-	MI_ENTRY("cmspar",   control,     REV,               CMSPAR,     0 )
-#endif
-	MI_ENTRY("cs5",      control,     0,                 CS5,     CSIZE)
-	MI_ENTRY("cs6",      control,     0,                 CS6,     CSIZE)
-	MI_ENTRY("cs7",      control,     0,                 CS7,     CSIZE)
-	MI_ENTRY("cs8",      control,     0,                 CS8,     CSIZE)
-	MI_ENTRY("hupcl",    control,     REV,               HUPCL,      0 )
-	MI_ENTRY("hup",      control,     REV        | OMIT, HUPCL,      0 )
-	MI_ENTRY("cstopb",   control,     REV,               CSTOPB,     0 )
-	MI_ENTRY("cread",    control,     SANE_SET   | REV,  CREAD,      0 )
-	MI_ENTRY("clocal",   control,     REV,               CLOCAL,     0 )
-#if CRTSCTS
-	MI_ENTRY("crtscts",  control,     REV,               CRTSCTS,    0 )
-#endif
-	MI_ENTRY("ignbrk",   input,       SANE_UNSET | REV,  IGNBRK,     0 )
-	MI_ENTRY("brkint",   input,       SANE_SET   | REV,  BRKINT,     0 )
-	MI_ENTRY("ignpar",   input,       REV,               IGNPAR,     0 )
-	MI_ENTRY("parmrk",   input,       REV,               PARMRK,     0 )
-	MI_ENTRY("inpck",    input,       REV,               INPCK,      0 )
-	MI_ENTRY("istrip",   input,       REV,               ISTRIP,     0 )
-	MI_ENTRY("inlcr",    input,       SANE_UNSET | REV,  INLCR,      0 )
-	MI_ENTRY("igncr",    input,       SANE_UNSET | REV,  IGNCR,      0 )
-	MI_ENTRY("icrnl",    input,       SANE_SET   | REV,  ICRNL,      0 )
-	MI_ENTRY("ixon",     input,       REV,               IXON,       0 )
-	MI_ENTRY("ixoff",    input,       SANE_UNSET | REV,  IXOFF,      0 )
-	MI_ENTRY("tandem",   input,       OMIT       | REV,  IXOFF,      0 )
-#if IUCLC
-	MI_ENTRY("iuclc",    input,       SANE_UNSET | REV,  IUCLC,      0 )
-#endif
-#if IXANY
-	MI_ENTRY("ixany",    input,       SANE_UNSET | REV,  IXANY,      0 )
-#endif
-#if IMAXBEL
-	MI_ENTRY("imaxbel",  input,       SANE_SET   | REV,  IMAXBEL,    0 )
-#endif
-#if IUTF8
-	MI_ENTRY("iutf8",    input,       SANE_UNSET | REV,  IUTF8,      0 )
-#endif
-	MI_ENTRY("opost",    output,      SANE_SET   | REV,  OPOST,      0 )
-#if OLCUC
-	MI_ENTRY("olcuc",    output,      SANE_UNSET | REV,  OLCUC,      0 )
-#endif
-#if OCRNL
-	MI_ENTRY("ocrnl",    output,      SANE_UNSET | REV,  OCRNL,      0 )
-#endif
-#if ONLCR
-	MI_ENTRY("onlcr",    output,      SANE_SET   | REV,  ONLCR,      0 )
-#endif
-#if ONOCR
-	MI_ENTRY("onocr",    output,      SANE_UNSET | REV,  ONOCR,      0 )
-#endif
-#if ONLRET
-	MI_ENTRY("onlret",   output,      SANE_UNSET | REV,  ONLRET,     0 )
-#endif
-#if OFILL
-	MI_ENTRY("ofill",    output,      SANE_UNSET | REV,  OFILL,      0 )
-#endif
-#if OFDEL
-	MI_ENTRY("ofdel",    output,      SANE_UNSET | REV,  OFDEL,      0 )
-#endif
-#if NLDLY
-	MI_ENTRY("nl1",      output,      SANE_UNSET,        NL1,     NLDLY)
-	MI_ENTRY("nl0",      output,      SANE_SET,          NL0,     NLDLY)
-#endif
-#if CRDLY
-	MI_ENTRY("cr3",      output,      SANE_UNSET,        CR3,     CRDLY)
-	MI_ENTRY("cr2",      output,      SANE_UNSET,        CR2,     CRDLY)
-	MI_ENTRY("cr1",      output,      SANE_UNSET,        CR1,     CRDLY)
-	MI_ENTRY("cr0",      output,      SANE_SET,          CR0,     CRDLY)
-#endif
+ਸਥਿਰ ਅਚਲ ਅੱਖਰ ਬਹੁਲਕ_name[] ALIGN1 =
+	MI_ਇੰਦਰਾਜ("evenp",    combination, REV        | OMIT, 0,          0 )
+	MI_ਇੰਦਰਾਜ("parity",   combination, REV        | OMIT, 0,          0 )
+	MI_ਇੰਦਰਾਜ("oddp",     combination, REV        | OMIT, 0,          0 )
+	MI_ਇੰਦਰਾਜ("nl",       combination, REV        | OMIT, 0,          0 )
+	MI_ਇੰਦਰਾਜ("ek",       combination, OMIT,              0,          0 )
+	MI_ਇੰਦਰਾਜ("sane",     combination, OMIT,              0,          0 )
+	MI_ਇੰਦਰਾਜ("cooked",   combination, REV        | OMIT, 0,          0 )
+	MI_ਇੰਦਰਾਜ("raw",      combination, REV        | OMIT, 0,          0 )
+	MI_ਇੰਦਰਾਜ("pass8",    combination, REV        | OMIT, 0,          0 )
+	MI_ਇੰਦਰਾਜ("litout",   combination, REV        | OMIT, 0,          0 )
+	MI_ਇੰਦਰਾਜ("cbreak",   combination, REV        | OMIT, 0,          0 )
+	MI_ਇੰਦਰਾਜ("crt",      combination, OMIT,              0,          0 )
+	MI_ਇੰਦਰਾਜ("dec",      combination, OMIT,              0,          0 )
+#ਜੇ IXANY
+	MI_ਇੰਦਰਾਜ("decctlq",  combination, REV        | OMIT, 0,          0 )
+#ਜੇ_ਅੰਤ
+#ਜੇ TABDLY || OXTABS
+	MI_ਇੰਦਰਾਜ("tabs",     combination, REV        | OMIT, 0,          0 )
+#ਜੇ_ਅੰਤ
+#ਜੇ XCASE && IUCLC && OLCUC
+	MI_ਇੰਦਰਾਜ("lcase",    combination, REV        | OMIT, 0,          0 )
+	MI_ਇੰਦਰਾਜ("LCASE",    combination, REV        | OMIT, 0,          0 )
+#ਜੇ_ਅੰਤ
+	MI_ਇੰਦਰਾਜ("parenb",   control,     REV,               PARENB,     0 )
+	MI_ਇੰਦਰਾਜ("parodd",   control,     REV,               PARODD,     0 )
+#ਜੇ CMSPAR
+	MI_ਇੰਦਰਾਜ("cmspar",   control,     REV,               CMSPAR,     0 )
+#ਜੇ_ਅੰਤ
+	MI_ਇੰਦਰਾਜ("cs5",      control,     0,                 CS5,     CSIZE)
+	MI_ਇੰਦਰਾਜ("cs6",      control,     0,                 CS6,     CSIZE)
+	MI_ਇੰਦਰਾਜ("cs7",      control,     0,                 CS7,     CSIZE)
+	MI_ਇੰਦਰਾਜ("cs8",      control,     0,                 CS8,     CSIZE)
+	MI_ਇੰਦਰਾਜ("hupcl",    control,     REV,               HUPCL,      0 )
+	MI_ਇੰਦਰਾਜ("hup",      control,     REV        | OMIT, HUPCL,      0 )
+	MI_ਇੰਦਰਾਜ("cstopb",   control,     REV,               CSTOPB,     0 )
+	MI_ਇੰਦਰਾਜ("cread",    control,     SANE_ਸੈੱਟ   | REV,  CREAD,      0 )
+	MI_ਇੰਦਰਾਜ("clocal",   control,     REV,               CLOCAL,     0 )
+#ਜੇ CRTSCTS
+	MI_ਇੰਦਰਾਜ("crtscts",  control,     REV,               CRTSCTS,    0 )
+#ਜੇ_ਅੰਤ
+	MI_ਇੰਦਰਾਜ("ignbrk",   ਨਿਵੇਸ਼,       SANE_UNSET | REV,  IGNBRK,     0 )
+	MI_ਇੰਦਰਾਜ("brkint",   ਨਿਵੇਸ਼,       SANE_ਸੈੱਟ   | REV,  BRKINT,     0 )
+	MI_ਇੰਦਰਾਜ("ignpar",   ਨਿਵੇਸ਼,       REV,               IGNPAR,     0 )
+	MI_ਇੰਦਰਾਜ("parmrk",   ਨਿਵੇਸ਼,       REV,               PARMRK,     0 )
+	MI_ਇੰਦਰਾਜ("inpck",    ਨਿਵੇਸ਼,       REV,               INPCK,      0 )
+	MI_ਇੰਦਰਾਜ("istrip",   ਨਿਵੇਸ਼,       REV,               ISTRIP,     0 )
+	MI_ਇੰਦਰਾਜ("inlcr",    ਨਿਵੇਸ਼,       SANE_UNSET | REV,  INLCR,      0 )
+	MI_ਇੰਦਰਾਜ("igncr",    ਨਿਵੇਸ਼,       SANE_UNSET | REV,  IGNCR,      0 )
+	MI_ਇੰਦਰਾਜ("icrnl",    ਨਿਵੇਸ਼,       SANE_ਸੈੱਟ   | REV,  ICRNL,      0 )
+	MI_ਇੰਦਰਾਜ("ixon",     ਨਿਵੇਸ਼,       REV,               IXON,       0 )
+	MI_ਇੰਦਰਾਜ("ixoff",    ਨਿਵੇਸ਼,       SANE_UNSET | REV,  IXOFF,      0 )
+	MI_ਇੰਦਰਾਜ("tandem",   ਨਿਵੇਸ਼,       OMIT       | REV,  IXOFF,      0 )
+#ਜੇ IUCLC
+	MI_ਇੰਦਰਾਜ("iuclc",    ਨਿਵੇਸ਼,       SANE_UNSET | REV,  IUCLC,      0 )
+#ਜੇ_ਅੰਤ
+#ਜੇ IXANY
+	MI_ਇੰਦਰਾਜ("ixany",    ਨਿਵੇਸ਼,       SANE_UNSET | REV,  IXANY,      0 )
+#ਜੇ_ਅੰਤ
+#ਜੇ IMAXBEL
+	MI_ਇੰਦਰਾਜ("imaxbel",  ਨਿਵੇਸ਼,       SANE_ਸੈੱਟ   | REV,  IMAXBEL,    0 )
+#ਜੇ_ਅੰਤ
+#ਜੇ IUTF8
+	MI_ਇੰਦਰਾਜ("iutf8",    ਨਿਵੇਸ਼,       SANE_UNSET | REV,  IUTF8,      0 )
+#ਜੇ_ਅੰਤ
+	MI_ਇੰਦਰਾਜ("opost",    output,      SANE_ਸੈੱਟ   | REV,  OPOST,      0 )
+#ਜੇ OLCUC
+	MI_ਇੰਦਰਾਜ("olcuc",    output,      SANE_UNSET | REV,  OLCUC,      0 )
+#ਜੇ_ਅੰਤ
+#ਜੇ OCRNL
+	MI_ਇੰਦਰਾਜ("ocrnl",    output,      SANE_UNSET | REV,  OCRNL,      0 )
+#ਜੇ_ਅੰਤ
+#ਜੇ ONLCR
+	MI_ਇੰਦਰਾਜ("onlcr",    output,      SANE_ਸੈੱਟ   | REV,  ONLCR,      0 )
+#ਜੇ_ਅੰਤ
+#ਜੇ ONOCR
+	MI_ਇੰਦਰਾਜ("onocr",    output,      SANE_UNSET | REV,  ONOCR,      0 )
+#ਜੇ_ਅੰਤ
+#ਜੇ ONLRET
+	MI_ਇੰਦਰਾਜ("onlret",   output,      SANE_UNSET | REV,  ONLRET,     0 )
+#ਜੇ_ਅੰਤ
+#ਜੇ OFILL
+	MI_ਇੰਦਰਾਜ("ofill",    output,      SANE_UNSET | REV,  OFILL,      0 )
+#ਜੇ_ਅੰਤ
+#ਜੇ OFDEL
+	MI_ਇੰਦਰਾਜ("ofdel",    output,      SANE_UNSET | REV,  OFDEL,      0 )
+#ਜੇ_ਅੰਤ
+#ਜੇ NLDLY
+	MI_ਇੰਦਰਾਜ("nl1",      output,      SANE_UNSET,        NL1,     NLDLY)
+	MI_ਇੰਦਰਾਜ("nl0",      output,      SANE_ਸੈੱਟ,          NL0,     NLDLY)
+#ਜੇ_ਅੰਤ
+#ਜੇ CRDLY
+	MI_ਇੰਦਰਾਜ("cr3",      output,      SANE_UNSET,        CR3,     CRDLY)
+	MI_ਇੰਦਰਾਜ("cr2",      output,      SANE_UNSET,        CR2,     CRDLY)
+	MI_ਇੰਦਰਾਜ("cr1",      output,      SANE_UNSET,        CR1,     CRDLY)
+	MI_ਇੰਦਰਾਜ("cr0",      output,      SANE_ਸੈੱਟ,          CR0,     CRDLY)
+#ਜੇ_ਅੰਤ
 
-#if TABDLY
-	MI_ENTRY("tab3",     output,      SANE_UNSET,        TAB3,   TABDLY)
-# if TAB2
-	MI_ENTRY("tab2",     output,      SANE_UNSET,        TAB2,   TABDLY)
+#ਜੇ TABDLY
+	MI_ਇੰਦਰਾਜ("tab3",     output,      SANE_UNSET,        TAB3,   TABDLY)
+# ਜੇ TAB2
+	MI_ਇੰਦਰਾਜ("tab2",     output,      SANE_UNSET,        TAB2,   TABDLY)
 # endif
-# if TAB1
-	MI_ENTRY("tab1",     output,      SANE_UNSET,        TAB1,   TABDLY)
+# ਜੇ TAB1
+	MI_ਇੰਦਰਾਜ("tab1",     output,      SANE_UNSET,        TAB1,   TABDLY)
 # endif
-	MI_ENTRY("tab0",     output,      SANE_SET,          TAB0,   TABDLY)
-#else
-# if OXTABS
-	MI_ENTRY("tab3",     output,      SANE_UNSET,        OXTABS,     0 )
+	MI_ਇੰਦਰਾਜ("tab0",     output,      SANE_ਸੈੱਟ,          TAB0,   TABDLY)
+#ਨਹੀਂਤਾਂ
+# ਜੇ OXTABS
+	MI_ਇੰਦਰਾਜ("tab3",     output,      SANE_UNSET,        OXTABS,     0 )
 # endif
-#endif
+#ਜੇ_ਅੰਤ
 
-#if BSDLY
-	MI_ENTRY("bs1",      output,      SANE_UNSET,        BS1,     BSDLY)
-	MI_ENTRY("bs0",      output,      SANE_SET,          BS0,     BSDLY)
-#endif
-#if VTDLY
-	MI_ENTRY("vt1",      output,      SANE_UNSET,        VT1,     VTDLY)
-	MI_ENTRY("vt0",      output,      SANE_SET,          VT0,     VTDLY)
-#endif
-#if FFDLY
-	MI_ENTRY("ff1",      output,      SANE_UNSET,        FF1,     FFDLY)
-	MI_ENTRY("ff0",      output,      SANE_SET,          FF0,     FFDLY)
-#endif
-	MI_ENTRY("isig",     local,       SANE_SET   | REV,  ISIG,       0 )
-	MI_ENTRY("icanon",   local,       SANE_SET   | REV,  ICANON,     0 )
-#if IEXTEN
-	MI_ENTRY("iexten",   local,       SANE_SET   | REV,  IEXTEN,     0 )
-#endif
-	MI_ENTRY("echo",     local,       SANE_SET   | REV,  ECHO,       0 )
-	MI_ENTRY("echoe",    local,       SANE_SET   | REV,  ECHOE,      0 )
-	MI_ENTRY("crterase", local,       OMIT       | REV,  ECHOE,      0 )
-	MI_ENTRY("echok",    local,       SANE_SET   | REV,  ECHOK,      0 )
-	MI_ENTRY("echonl",   local,       SANE_UNSET | REV,  ECHONL,     0 )
-	MI_ENTRY("noflsh",   local,       SANE_UNSET | REV,  NOFLSH,     0 )
-#if XCASE
-	MI_ENTRY("xcase",    local,       SANE_UNSET | REV,  XCASE,      0 )
-#endif
-#if TOSTOP
-	MI_ENTRY("tostop",   local,       SANE_UNSET | REV,  TOSTOP,     0 )
-#endif
-#if ECHOPRT
-	MI_ENTRY("echoprt",  local,       SANE_UNSET | REV,  ECHOPRT,    0 )
-	MI_ENTRY("prterase", local,       OMIT       | REV,  ECHOPRT,    0 )
-#endif
-#if ECHOCTL
-	MI_ENTRY("echoctl",  local,       SANE_SET   | REV,  ECHOCTL,    0 )
-	MI_ENTRY("ctlecho",  local,       OMIT       | REV,  ECHOCTL,    0 )
-#endif
-#if ECHOKE
-	MI_ENTRY("echoke",   local,       SANE_SET   | REV,  ECHOKE,     0 )
-	MI_ENTRY("crtkill",  local,       OMIT       | REV,  ECHOKE,     0 )
-#endif
-	MI_ENTRY("flusho",   local,       SANE_UNSET | REV,  FLUSHO,     0 )
-#ifdef EXTPROC
-	MI_ENTRY("extproc",  local,       SANE_UNSET | REV,  EXTPROC,    0 )
-#endif
+#ਜੇ BSDLY
+	MI_ਇੰਦਰਾਜ("bs1",      output,      SANE_UNSET,        BS1,     BSDLY)
+	MI_ਇੰਦਰਾਜ("bs0",      output,      SANE_ਸੈੱਟ,          BS0,     BSDLY)
+#ਜੇ_ਅੰਤ
+#ਜੇ VTDLY
+	MI_ਇੰਦਰਾਜ("vt1",      output,      SANE_UNSET,        VT1,     VTDLY)
+	MI_ਇੰਦਰਾਜ("vt0",      output,      SANE_ਸੈੱਟ,          VT0,     VTDLY)
+#ਜੇ_ਅੰਤ
+#ਜੇ FFDLY
+	MI_ਇੰਦਰਾਜ("ff1",      output,      SANE_UNSET,        FF1,     FFDLY)
+	MI_ਇੰਦਰਾਜ("ff0",      output,      SANE_ਸੈੱਟ,          FF0,     FFDLY)
+#ਜੇ_ਅੰਤ
+	MI_ਇੰਦਰਾਜ("isig",     local,       SANE_ਸੈੱਟ   | REV,  ISIG,       0 )
+	MI_ਇੰਦਰਾਜ("icanon",   local,       SANE_ਸੈੱਟ   | REV,  ICANON,     0 )
+#ਜੇ IEXTEN
+	MI_ਇੰਦਰਾਜ("iexten",   local,       SANE_ਸੈੱਟ   | REV,  IEXTEN,     0 )
+#ਜੇ_ਅੰਤ
+	MI_ਇੰਦਰਾਜ("echo",     local,       SANE_ਸੈੱਟ   | REV,  ECHO,       0 )
+	MI_ਇੰਦਰਾਜ("echoe",    local,       SANE_ਸੈੱਟ   | REV,  ECHOE,      0 )
+	MI_ਇੰਦਰਾਜ("crterase", local,       OMIT       | REV,  ECHOE,      0 )
+	MI_ਇੰਦਰਾਜ("echok",    local,       SANE_ਸੈੱਟ   | REV,  ECHOK,      0 )
+	MI_ਇੰਦਰਾਜ("echonl",   local,       SANE_UNSET | REV,  ECHONL,     0 )
+	MI_ਇੰਦਰਾਜ("noflsh",   local,       SANE_UNSET | REV,  NOFLSH,     0 )
+#ਜੇ XCASE
+	MI_ਇੰਦਰਾਜ("xcase",    local,       SANE_UNSET | REV,  XCASE,      0 )
+#ਜੇ_ਅੰਤ
+#ਜੇ TOSTOP
+	MI_ਇੰਦਰਾਜ("tostop",   local,       SANE_UNSET | REV,  TOSTOP,     0 )
+#ਜੇ_ਅੰਤ
+#ਜੇ ECHOPRT
+	MI_ਇੰਦਰਾਜ("echoprt",  local,       SANE_UNSET | REV,  ECHOPRT,    0 )
+	MI_ਇੰਦਰਾਜ("prterase", local,       OMIT       | REV,  ECHOPRT,    0 )
+#ਜੇ_ਅੰਤ
+#ਜੇ ECHOCTL
+	MI_ਇੰਦਰਾਜ("echoctl",  local,       SANE_ਸੈੱਟ   | REV,  ECHOCTL,    0 )
+	MI_ਇੰਦਰਾਜ("ctlecho",  local,       OMIT       | REV,  ECHOCTL,    0 )
+#ਜੇ_ਅੰਤ
+#ਜੇ ECHOKE
+	MI_ਇੰਦਰਾਜ("echoke",   local,       SANE_ਸੈੱਟ   | REV,  ECHOKE,     0 )
+	MI_ਇੰਦਰਾਜ("crtkill",  local,       OMIT       | REV,  ECHOKE,     0 )
+#ਜੇ_ਅੰਤ
+	MI_ਇੰਦਰਾਜ("flusho",   local,       SANE_UNSET | REV,  FLUSHO,     0 )
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ EXTPROC
+	MI_ਇੰਦਰਾਜ("extproc",  local,       SANE_UNSET | REV,  EXTPROC,    0 )
+#ਜੇ_ਅੰਤ
 	;
 
-#undef MI_ENTRY
-#define MI_ENTRY(N,T,F,B,M) { T, F, M, B },
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ MI_ਇੰਦਰਾਜ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ MI_ਇੰਦਰਾਜ(N,T,F,B,M) { T, F, M, B },
 
-static const struct mode_info mode_info[] ALIGN4 = {
+ਸਥਿਰ ਅਚਲ ਬਣਤਰ ਬਹੁਲਕ_info ਬਹੁਲਕ_info[] ALIGN4 = {
 	/* This should be verbatim cut-n-paste copy of the above MI_ENTRYs */
-	MI_ENTRY("evenp",    combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("parity",   combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("oddp",     combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("nl",       combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("ek",       combination, OMIT,              0,          0 )
-	MI_ENTRY("sane",     combination, OMIT,              0,          0 )
-	MI_ENTRY("cooked",   combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("raw",      combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("pass8",    combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("litout",   combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("cbreak",   combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("crt",      combination, OMIT,              0,          0 )
-	MI_ENTRY("dec",      combination, OMIT,              0,          0 )
-#if IXANY
-	MI_ENTRY("decctlq",  combination, REV        | OMIT, 0,          0 )
-#endif
-#if TABDLY || OXTABS
-	MI_ENTRY("tabs",     combination, REV        | OMIT, 0,          0 )
-#endif
-#if XCASE && IUCLC && OLCUC
-	MI_ENTRY("lcase",    combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("LCASE",    combination, REV        | OMIT, 0,          0 )
-#endif
-	MI_ENTRY("parenb",   control,     REV,               PARENB,     0 )
-	MI_ENTRY("parodd",   control,     REV,               PARODD,     0 )
-#if CMSPAR
-	MI_ENTRY("cmspar",   control,     REV,               CMSPAR,     0 )
-#endif
-	MI_ENTRY("cs5",      control,     0,                 CS5,     CSIZE)
-	MI_ENTRY("cs6",      control,     0,                 CS6,     CSIZE)
-	MI_ENTRY("cs7",      control,     0,                 CS7,     CSIZE)
-	MI_ENTRY("cs8",      control,     0,                 CS8,     CSIZE)
-	MI_ENTRY("hupcl",    control,     REV,               HUPCL,      0 )
-	MI_ENTRY("hup",      control,     REV        | OMIT, HUPCL,      0 )
-	MI_ENTRY("cstopb",   control,     REV,               CSTOPB,     0 )
-	MI_ENTRY("cread",    control,     SANE_SET   | REV,  CREAD,      0 )
-	MI_ENTRY("clocal",   control,     REV,               CLOCAL,     0 )
-#if CRTSCTS
-	MI_ENTRY("crtscts",  control,     REV,               CRTSCTS,    0 )
-#endif
-	MI_ENTRY("ignbrk",   input,       SANE_UNSET | REV,  IGNBRK,     0 )
-	MI_ENTRY("brkint",   input,       SANE_SET   | REV,  BRKINT,     0 )
-	MI_ENTRY("ignpar",   input,       REV,               IGNPAR,     0 )
-	MI_ENTRY("parmrk",   input,       REV,               PARMRK,     0 )
-	MI_ENTRY("inpck",    input,       REV,               INPCK,      0 )
-	MI_ENTRY("istrip",   input,       REV,               ISTRIP,     0 )
-	MI_ENTRY("inlcr",    input,       SANE_UNSET | REV,  INLCR,      0 )
-	MI_ENTRY("igncr",    input,       SANE_UNSET | REV,  IGNCR,      0 )
-	MI_ENTRY("icrnl",    input,       SANE_SET   | REV,  ICRNL,      0 )
-	MI_ENTRY("ixon",     input,       REV,               IXON,       0 )
-	MI_ENTRY("ixoff",    input,       SANE_UNSET | REV,  IXOFF,      0 )
-	MI_ENTRY("tandem",   input,       OMIT       | REV,  IXOFF,      0 )
-#if IUCLC
-	MI_ENTRY("iuclc",    input,       SANE_UNSET | REV,  IUCLC,      0 )
-#endif
-#if IXANY
-	MI_ENTRY("ixany",    input,       SANE_UNSET | REV,  IXANY,      0 )
-#endif
-#if IMAXBEL
-	MI_ENTRY("imaxbel",  input,       SANE_SET   | REV,  IMAXBEL,    0 )
-#endif
-#if IUTF8
-	MI_ENTRY("iutf8",    input,       SANE_UNSET | REV,  IUTF8,      0 )
-#endif
-	MI_ENTRY("opost",    output,      SANE_SET   | REV,  OPOST,      0 )
-#if OLCUC
-	MI_ENTRY("olcuc",    output,      SANE_UNSET | REV,  OLCUC,      0 )
-#endif
-#if OCRNL
-	MI_ENTRY("ocrnl",    output,      SANE_UNSET | REV,  OCRNL,      0 )
-#endif
-#if ONLCR
-	MI_ENTRY("onlcr",    output,      SANE_SET   | REV,  ONLCR,      0 )
-#endif
-#if ONOCR
-	MI_ENTRY("onocr",    output,      SANE_UNSET | REV,  ONOCR,      0 )
-#endif
-#if ONLRET
-	MI_ENTRY("onlret",   output,      SANE_UNSET | REV,  ONLRET,     0 )
-#endif
-#if OFILL
-	MI_ENTRY("ofill",    output,      SANE_UNSET | REV,  OFILL,      0 )
-#endif
-#if OFDEL
-	MI_ENTRY("ofdel",    output,      SANE_UNSET | REV,  OFDEL,      0 )
-#endif
-#if NLDLY
-	MI_ENTRY("nl1",      output,      SANE_UNSET,        NL1,     NLDLY)
-	MI_ENTRY("nl0",      output,      SANE_SET,          NL0,     NLDLY)
-#endif
-#if CRDLY
-	MI_ENTRY("cr3",      output,      SANE_UNSET,        CR3,     CRDLY)
-	MI_ENTRY("cr2",      output,      SANE_UNSET,        CR2,     CRDLY)
-	MI_ENTRY("cr1",      output,      SANE_UNSET,        CR1,     CRDLY)
-	MI_ENTRY("cr0",      output,      SANE_SET,          CR0,     CRDLY)
-#endif
+	MI_ਇੰਦਰਾਜ("evenp",    combination, REV        | OMIT, 0,          0 )
+	MI_ਇੰਦਰਾਜ("parity",   combination, REV        | OMIT, 0,          0 )
+	MI_ਇੰਦਰਾਜ("oddp",     combination, REV        | OMIT, 0,          0 )
+	MI_ਇੰਦਰਾਜ("nl",       combination, REV        | OMIT, 0,          0 )
+	MI_ਇੰਦਰਾਜ("ek",       combination, OMIT,              0,          0 )
+	MI_ਇੰਦਰਾਜ("sane",     combination, OMIT,              0,          0 )
+	MI_ਇੰਦਰਾਜ("cooked",   combination, REV        | OMIT, 0,          0 )
+	MI_ਇੰਦਰਾਜ("raw",      combination, REV        | OMIT, 0,          0 )
+	MI_ਇੰਦਰਾਜ("pass8",    combination, REV        | OMIT, 0,          0 )
+	MI_ਇੰਦਰਾਜ("litout",   combination, REV        | OMIT, 0,          0 )
+	MI_ਇੰਦਰਾਜ("cbreak",   combination, REV        | OMIT, 0,          0 )
+	MI_ਇੰਦਰਾਜ("crt",      combination, OMIT,              0,          0 )
+	MI_ਇੰਦਰਾਜ("dec",      combination, OMIT,              0,          0 )
+#ਜੇ IXANY
+	MI_ਇੰਦਰਾਜ("decctlq",  combination, REV        | OMIT, 0,          0 )
+#ਜੇ_ਅੰਤ
+#ਜੇ TABDLY || OXTABS
+	MI_ਇੰਦਰਾਜ("tabs",     combination, REV        | OMIT, 0,          0 )
+#ਜੇ_ਅੰਤ
+#ਜੇ XCASE && IUCLC && OLCUC
+	MI_ਇੰਦਰਾਜ("lcase",    combination, REV        | OMIT, 0,          0 )
+	MI_ਇੰਦਰਾਜ("LCASE",    combination, REV        | OMIT, 0,          0 )
+#ਜੇ_ਅੰਤ
+	MI_ਇੰਦਰਾਜ("parenb",   control,     REV,               PARENB,     0 )
+	MI_ਇੰਦਰਾਜ("parodd",   control,     REV,               PARODD,     0 )
+#ਜੇ CMSPAR
+	MI_ਇੰਦਰਾਜ("cmspar",   control,     REV,               CMSPAR,     0 )
+#ਜੇ_ਅੰਤ
+	MI_ਇੰਦਰਾਜ("cs5",      control,     0,                 CS5,     CSIZE)
+	MI_ਇੰਦਰਾਜ("cs6",      control,     0,                 CS6,     CSIZE)
+	MI_ਇੰਦਰਾਜ("cs7",      control,     0,                 CS7,     CSIZE)
+	MI_ਇੰਦਰਾਜ("cs8",      control,     0,                 CS8,     CSIZE)
+	MI_ਇੰਦਰਾਜ("hupcl",    control,     REV,               HUPCL,      0 )
+	MI_ਇੰਦਰਾਜ("hup",      control,     REV        | OMIT, HUPCL,      0 )
+	MI_ਇੰਦਰਾਜ("cstopb",   control,     REV,               CSTOPB,     0 )
+	MI_ਇੰਦਰਾਜ("cread",    control,     SANE_ਸੈੱਟ   | REV,  CREAD,      0 )
+	MI_ਇੰਦਰਾਜ("clocal",   control,     REV,               CLOCAL,     0 )
+#ਜੇ CRTSCTS
+	MI_ਇੰਦਰਾਜ("crtscts",  control,     REV,               CRTSCTS,    0 )
+#ਜੇ_ਅੰਤ
+	MI_ਇੰਦਰਾਜ("ignbrk",   ਨਿਵੇਸ਼,       SANE_UNSET | REV,  IGNBRK,     0 )
+	MI_ਇੰਦਰਾਜ("brkint",   ਨਿਵੇਸ਼,       SANE_ਸੈੱਟ   | REV,  BRKINT,     0 )
+	MI_ਇੰਦਰਾਜ("ignpar",   ਨਿਵੇਸ਼,       REV,               IGNPAR,     0 )
+	MI_ਇੰਦਰਾਜ("parmrk",   ਨਿਵੇਸ਼,       REV,               PARMRK,     0 )
+	MI_ਇੰਦਰਾਜ("inpck",    ਨਿਵੇਸ਼,       REV,               INPCK,      0 )
+	MI_ਇੰਦਰਾਜ("istrip",   ਨਿਵੇਸ਼,       REV,               ISTRIP,     0 )
+	MI_ਇੰਦਰਾਜ("inlcr",    ਨਿਵੇਸ਼,       SANE_UNSET | REV,  INLCR,      0 )
+	MI_ਇੰਦਰਾਜ("igncr",    ਨਿਵੇਸ਼,       SANE_UNSET | REV,  IGNCR,      0 )
+	MI_ਇੰਦਰਾਜ("icrnl",    ਨਿਵੇਸ਼,       SANE_ਸੈੱਟ   | REV,  ICRNL,      0 )
+	MI_ਇੰਦਰਾਜ("ixon",     ਨਿਵੇਸ਼,       REV,               IXON,       0 )
+	MI_ਇੰਦਰਾਜ("ixoff",    ਨਿਵੇਸ਼,       SANE_UNSET | REV,  IXOFF,      0 )
+	MI_ਇੰਦਰਾਜ("tandem",   ਨਿਵੇਸ਼,       OMIT       | REV,  IXOFF,      0 )
+#ਜੇ IUCLC
+	MI_ਇੰਦਰਾਜ("iuclc",    ਨਿਵੇਸ਼,       SANE_UNSET | REV,  IUCLC,      0 )
+#ਜੇ_ਅੰਤ
+#ਜੇ IXANY
+	MI_ਇੰਦਰਾਜ("ixany",    ਨਿਵੇਸ਼,       SANE_UNSET | REV,  IXANY,      0 )
+#ਜੇ_ਅੰਤ
+#ਜੇ IMAXBEL
+	MI_ਇੰਦਰਾਜ("imaxbel",  ਨਿਵੇਸ਼,       SANE_ਸੈੱਟ   | REV,  IMAXBEL,    0 )
+#ਜੇ_ਅੰਤ
+#ਜੇ IUTF8
+	MI_ਇੰਦਰਾਜ("iutf8",    ਨਿਵੇਸ਼,       SANE_UNSET | REV,  IUTF8,      0 )
+#ਜੇ_ਅੰਤ
+	MI_ਇੰਦਰਾਜ("opost",    output,      SANE_ਸੈੱਟ   | REV,  OPOST,      0 )
+#ਜੇ OLCUC
+	MI_ਇੰਦਰਾਜ("olcuc",    output,      SANE_UNSET | REV,  OLCUC,      0 )
+#ਜੇ_ਅੰਤ
+#ਜੇ OCRNL
+	MI_ਇੰਦਰਾਜ("ocrnl",    output,      SANE_UNSET | REV,  OCRNL,      0 )
+#ਜੇ_ਅੰਤ
+#ਜੇ ONLCR
+	MI_ਇੰਦਰਾਜ("onlcr",    output,      SANE_ਸੈੱਟ   | REV,  ONLCR,      0 )
+#ਜੇ_ਅੰਤ
+#ਜੇ ONOCR
+	MI_ਇੰਦਰਾਜ("onocr",    output,      SANE_UNSET | REV,  ONOCR,      0 )
+#ਜੇ_ਅੰਤ
+#ਜੇ ONLRET
+	MI_ਇੰਦਰਾਜ("onlret",   output,      SANE_UNSET | REV,  ONLRET,     0 )
+#ਜੇ_ਅੰਤ
+#ਜੇ OFILL
+	MI_ਇੰਦਰਾਜ("ofill",    output,      SANE_UNSET | REV,  OFILL,      0 )
+#ਜੇ_ਅੰਤ
+#ਜੇ OFDEL
+	MI_ਇੰਦਰਾਜ("ofdel",    output,      SANE_UNSET | REV,  OFDEL,      0 )
+#ਜੇ_ਅੰਤ
+#ਜੇ NLDLY
+	MI_ਇੰਦਰਾਜ("nl1",      output,      SANE_UNSET,        NL1,     NLDLY)
+	MI_ਇੰਦਰਾਜ("nl0",      output,      SANE_ਸੈੱਟ,          NL0,     NLDLY)
+#ਜੇ_ਅੰਤ
+#ਜੇ CRDLY
+	MI_ਇੰਦਰਾਜ("cr3",      output,      SANE_UNSET,        CR3,     CRDLY)
+	MI_ਇੰਦਰਾਜ("cr2",      output,      SANE_UNSET,        CR2,     CRDLY)
+	MI_ਇੰਦਰਾਜ("cr1",      output,      SANE_UNSET,        CR1,     CRDLY)
+	MI_ਇੰਦਰਾਜ("cr0",      output,      SANE_ਸੈੱਟ,          CR0,     CRDLY)
+#ਜੇ_ਅੰਤ
 
-#if TABDLY
-	MI_ENTRY("tab3",     output,      SANE_UNSET,        TAB3,   TABDLY)
-# if TAB2
-	MI_ENTRY("tab2",     output,      SANE_UNSET,        TAB2,   TABDLY)
+#ਜੇ TABDLY
+	MI_ਇੰਦਰਾਜ("tab3",     output,      SANE_UNSET,        TAB3,   TABDLY)
+# ਜੇ TAB2
+	MI_ਇੰਦਰਾਜ("tab2",     output,      SANE_UNSET,        TAB2,   TABDLY)
 # endif
-# if TAB1
-	MI_ENTRY("tab1",     output,      SANE_UNSET,        TAB1,   TABDLY)
+# ਜੇ TAB1
+	MI_ਇੰਦਰਾਜ("tab1",     output,      SANE_UNSET,        TAB1,   TABDLY)
 # endif
-	MI_ENTRY("tab0",     output,      SANE_SET,          TAB0,   TABDLY)
-#else
-# if OXTABS
-	MI_ENTRY("tab3",     output,      SANE_UNSET,        OXTABS,     0 )
+	MI_ਇੰਦਰਾਜ("tab0",     output,      SANE_ਸੈੱਟ,          TAB0,   TABDLY)
+#ਨਹੀਂਤਾਂ
+# ਜੇ OXTABS
+	MI_ਇੰਦਰਾਜ("tab3",     output,      SANE_UNSET,        OXTABS,     0 )
 # endif
-#endif
+#ਜੇ_ਅੰਤ
 
-#if BSDLY
-	MI_ENTRY("bs1",      output,      SANE_UNSET,        BS1,     BSDLY)
-	MI_ENTRY("bs0",      output,      SANE_SET,          BS0,     BSDLY)
-#endif
-#if VTDLY
-	MI_ENTRY("vt1",      output,      SANE_UNSET,        VT1,     VTDLY)
-	MI_ENTRY("vt0",      output,      SANE_SET,          VT0,     VTDLY)
-#endif
-#if FFDLY
-	MI_ENTRY("ff1",      output,      SANE_UNSET,        FF1,     FFDLY)
-	MI_ENTRY("ff0",      output,      SANE_SET,          FF0,     FFDLY)
-#endif
-	MI_ENTRY("isig",     local,       SANE_SET   | REV,  ISIG,       0 )
-	MI_ENTRY("icanon",   local,       SANE_SET   | REV,  ICANON,     0 )
-#if IEXTEN
-	MI_ENTRY("iexten",   local,       SANE_SET   | REV,  IEXTEN,     0 )
-#endif
-	MI_ENTRY("echo",     local,       SANE_SET   | REV,  ECHO,       0 )
-	MI_ENTRY("echoe",    local,       SANE_SET   | REV,  ECHOE,      0 )
-	MI_ENTRY("crterase", local,       OMIT       | REV,  ECHOE,      0 )
-	MI_ENTRY("echok",    local,       SANE_SET   | REV,  ECHOK,      0 )
-	MI_ENTRY("echonl",   local,       SANE_UNSET | REV,  ECHONL,     0 )
-	MI_ENTRY("noflsh",   local,       SANE_UNSET | REV,  NOFLSH,     0 )
-#if XCASE
-	MI_ENTRY("xcase",    local,       SANE_UNSET | REV,  XCASE,      0 )
-#endif
-#if TOSTOP
-	MI_ENTRY("tostop",   local,       SANE_UNSET | REV,  TOSTOP,     0 )
-#endif
-#if ECHOPRT
-	MI_ENTRY("echoprt",  local,       SANE_UNSET | REV,  ECHOPRT,    0 )
-	MI_ENTRY("prterase", local,       OMIT       | REV,  ECHOPRT,    0 )
-#endif
-#if ECHOCTL
-	MI_ENTRY("echoctl",  local,       SANE_SET   | REV,  ECHOCTL,    0 )
-	MI_ENTRY("ctlecho",  local,       OMIT       | REV,  ECHOCTL,    0 )
-#endif
-#if ECHOKE
-	MI_ENTRY("echoke",   local,       SANE_SET   | REV,  ECHOKE,     0 )
-	MI_ENTRY("crtkill",  local,       OMIT       | REV,  ECHOKE,     0 )
-#endif
-	MI_ENTRY("flusho",   local,       SANE_UNSET | REV,  FLUSHO,     0 )
-#ifdef EXTPROC
-	MI_ENTRY("extproc",  local,       SANE_UNSET | REV,  EXTPROC,    0 )
-#endif
+#ਜੇ BSDLY
+	MI_ਇੰਦਰਾਜ("bs1",      output,      SANE_UNSET,        BS1,     BSDLY)
+	MI_ਇੰਦਰਾਜ("bs0",      output,      SANE_ਸੈੱਟ,          BS0,     BSDLY)
+#ਜੇ_ਅੰਤ
+#ਜੇ VTDLY
+	MI_ਇੰਦਰਾਜ("vt1",      output,      SANE_UNSET,        VT1,     VTDLY)
+	MI_ਇੰਦਰਾਜ("vt0",      output,      SANE_ਸੈੱਟ,          VT0,     VTDLY)
+#ਜੇ_ਅੰਤ
+#ਜੇ FFDLY
+	MI_ਇੰਦਰਾਜ("ff1",      output,      SANE_UNSET,        FF1,     FFDLY)
+	MI_ਇੰਦਰਾਜ("ff0",      output,      SANE_ਸੈੱਟ,          FF0,     FFDLY)
+#ਜੇ_ਅੰਤ
+	MI_ਇੰਦਰਾਜ("isig",     local,       SANE_ਸੈੱਟ   | REV,  ISIG,       0 )
+	MI_ਇੰਦਰਾਜ("icanon",   local,       SANE_ਸੈੱਟ   | REV,  ICANON,     0 )
+#ਜੇ IEXTEN
+	MI_ਇੰਦਰਾਜ("iexten",   local,       SANE_ਸੈੱਟ   | REV,  IEXTEN,     0 )
+#ਜੇ_ਅੰਤ
+	MI_ਇੰਦਰਾਜ("echo",     local,       SANE_ਸੈੱਟ   | REV,  ECHO,       0 )
+	MI_ਇੰਦਰਾਜ("echoe",    local,       SANE_ਸੈੱਟ   | REV,  ECHOE,      0 )
+	MI_ਇੰਦਰਾਜ("crterase", local,       OMIT       | REV,  ECHOE,      0 )
+	MI_ਇੰਦਰਾਜ("echok",    local,       SANE_ਸੈੱਟ   | REV,  ECHOK,      0 )
+	MI_ਇੰਦਰਾਜ("echonl",   local,       SANE_UNSET | REV,  ECHONL,     0 )
+	MI_ਇੰਦਰਾਜ("noflsh",   local,       SANE_UNSET | REV,  NOFLSH,     0 )
+#ਜੇ XCASE
+	MI_ਇੰਦਰਾਜ("xcase",    local,       SANE_UNSET | REV,  XCASE,      0 )
+#ਜੇ_ਅੰਤ
+#ਜੇ TOSTOP
+	MI_ਇੰਦਰਾਜ("tostop",   local,       SANE_UNSET | REV,  TOSTOP,     0 )
+#ਜੇ_ਅੰਤ
+#ਜੇ ECHOPRT
+	MI_ਇੰਦਰਾਜ("echoprt",  local,       SANE_UNSET | REV,  ECHOPRT,    0 )
+	MI_ਇੰਦਰਾਜ("prterase", local,       OMIT       | REV,  ECHOPRT,    0 )
+#ਜੇ_ਅੰਤ
+#ਜੇ ECHOCTL
+	MI_ਇੰਦਰਾਜ("echoctl",  local,       SANE_ਸੈੱਟ   | REV,  ECHOCTL,    0 )
+	MI_ਇੰਦਰਾਜ("ctlecho",  local,       OMIT       | REV,  ECHOCTL,    0 )
+#ਜੇ_ਅੰਤ
+#ਜੇ ECHOKE
+	MI_ਇੰਦਰਾਜ("echoke",   local,       SANE_ਸੈੱਟ   | REV,  ECHOKE,     0 )
+	MI_ਇੰਦਰਾਜ("crtkill",  local,       OMIT       | REV,  ECHOKE,     0 )
+#ਜੇ_ਅੰਤ
+	MI_ਇੰਦਰਾਜ("flusho",   local,       SANE_UNSET | REV,  FLUSHO,     0 )
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ EXTPROC
+	MI_ਇੰਦਰਾਜ("extproc",  local,       SANE_UNSET | REV,  EXTPROC,    0 )
+#ਜੇ_ਅੰਤ
 };
 
-enum {
-	NUM_mode_info = ARRAY_SIZE(mode_info)
+ਗਿਣਤੀ {
+	ਅੰਕ_ਬਹੁਲਕ_info = ARRAY_ਮਾਪ(ਬਹੁਲਕ_info)
 };
 
 
 /* Control characters */
-struct control_info {
-	const uint8_t saneval;  /* Value to set for 'stty sane' */
-	const uint8_t offset;   /* Offset in c_cc */
+ਬਣਤਰ control_info {
+	ਅਚਲ uint8_t saneval;  /* Value to set for 'stty sane' */
+	ਅਚਲ uint8_t ਵਿੱਥ;   /* Offset in c_cc */
 };
 
-enum {
+ਗਿਣਤੀ {
 	/* Must match control_name[] and control_info[] order! */
 	CIDX_intr = 0,
 	CIDX_quit,
@@ -667,278 +667,278 @@ enum {
 	CIDX_kill,
 	CIDX_eof,
 	CIDX_eol,
-#if VEOL2
+#ਜੇ VEOL2
 	CIDX_eol2,
-#endif
-#if VSWTCH
+#ਜੇ_ਅੰਤ
+#ਜੇ VSWTCH
 	CIDX_swtch,
-#endif
-	CIDX_start,
+#ਜੇ_ਅੰਤ
+	CIDX_ਸ਼ੁਰੂ,
 	CIDX_stop,
 	CIDX_susp,
-#if VDSUSP
+#ਜੇ VDSUSP
 	CIDX_dsusp,
-#endif
-#if VREPRINT
+#ਜੇ_ਅੰਤ
+#ਜੇ VREPRINT
 	CIDX_rprnt,
-#endif
-#if VWERASE
+#ਜੇ_ਅੰਤ
+#ਜੇ VWERASE
 	CIDX_werase,
-#endif
-#if VLNEXT
+#ਜੇ_ਅੰਤ
+#ਜੇ VLNEXT
 	CIDX_lnext,
-#endif
-#if VFLUSHO
+#ਜੇ_ਅੰਤ
+#ਜੇ VFLUSHO
 	CIDX_flush,
-#endif
-#if VSTATUS
-	CIDX_status,
-#endif
+#ਜੇ_ਅੰਤ
+#ਜੇ VSTATUS
+	CIDX_ਸਥਿਤੀ,
+#ਜੇ_ਅੰਤ
 	CIDX_min,
-	CIDX_time,
+	CIDX_ਸਮਾਂ,
 };
 
-#define CI_ENTRY(n,s,o) n "\0"
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ CI_ਇੰਦਰਾਜ(n,s,o) n "\0"
 
 /* Name given on command line */
-static const char control_name[] ALIGN1 =
-	CI_ENTRY("intr",     CINTR,   VINTR   )
-	CI_ENTRY("quit",     CQUIT,   VQUIT   )
-	CI_ENTRY("erase",    CERASE,  VERASE  )
-	CI_ENTRY("kill",     CKILL,   VKILL   )
-	CI_ENTRY("eof",      CEOF,    VEOF    )
-	CI_ENTRY("eol",      CEOL,    VEOL    )
-#if VEOL2
-	CI_ENTRY("eol2",     CEOL2,   VEOL2   )
-#endif
-#if VSWTCH
-	CI_ENTRY("swtch",    CSWTCH,  VSWTCH  )
-#endif
-	CI_ENTRY("start",    CSTART,  VSTART  )
-	CI_ENTRY("stop",     CSTOP,   VSTOP   )
-	CI_ENTRY("susp",     CSUSP,   VSUSP   )
-#if VDSUSP
-	CI_ENTRY("dsusp",    CDSUSP,  VDSUSP  )
-#endif
-#if VREPRINT
-	CI_ENTRY("rprnt",    CRPRNT,  VREPRINT)
-#endif
-#if VWERASE
-	CI_ENTRY("werase",   CWERASE, VWERASE )
-#endif
-#if VLNEXT
-	CI_ENTRY("lnext",    CLNEXT,  VLNEXT  )
-#endif
-#if VFLUSHO
-	CI_ENTRY("flush",    CFLUSHO, VFLUSHO )
-#endif
-#if VSTATUS
-	CI_ENTRY("status",   CSTATUS, VSTATUS )
-#endif
+ਸਥਿਰ ਅਚਲ ਅੱਖਰ control_name[] ALIGN1 =
+	CI_ਇੰਦਰਾਜ("intr",     CINTR,   VINTR   )
+	CI_ਇੰਦਰਾਜ("quit",     CQUIT,   VQUIT   )
+	CI_ਇੰਦਰਾਜ("erase",    CERASE,  VERASE  )
+	CI_ਇੰਦਰਾਜ("kill",     CKILL,   VKILL   )
+	CI_ਇੰਦਰਾਜ("eof",      CEOF,    VEOF    )
+	CI_ਇੰਦਰਾਜ("eol",      CEOL,    VEOL    )
+#ਜੇ VEOL2
+	CI_ਇੰਦਰਾਜ("eol2",     CEOL2,   VEOL2   )
+#ਜੇ_ਅੰਤ
+#ਜੇ VSWTCH
+	CI_ਇੰਦਰਾਜ("swtch",    CSWTCH,  VSWTCH  )
+#ਜੇ_ਅੰਤ
+	CI_ਇੰਦਰਾਜ("start",    CSTART,  VSTART  )
+	CI_ਇੰਦਰਾਜ("stop",     CSTOP,   VSTOP   )
+	CI_ਇੰਦਰਾਜ("susp",     CSUSP,   VSUSP   )
+#ਜੇ VDSUSP
+	CI_ਇੰਦਰਾਜ("dsusp",    CDSUSP,  VDSUSP  )
+#ਜੇ_ਅੰਤ
+#ਜੇ VREPRINT
+	CI_ਇੰਦਰਾਜ("rprnt",    CRPRNT,  VREPRINT)
+#ਜੇ_ਅੰਤ
+#ਜੇ VWERASE
+	CI_ਇੰਦਰਾਜ("werase",   CWERASE, VWERASE )
+#ਜੇ_ਅੰਤ
+#ਜੇ VLNEXT
+	CI_ਇੰਦਰਾਜ("lnext",    CLNEXT,  VLNEXT  )
+#ਜੇ_ਅੰਤ
+#ਜੇ VFLUSHO
+	CI_ਇੰਦਰਾਜ("flush",    CFLUSHO, VFLUSHO )
+#ਜੇ_ਅੰਤ
+#ਜੇ VSTATUS
+	CI_ਇੰਦਰਾਜ("status",   CSTATUS, VSTATUS )
+#ਜੇ_ਅੰਤ
 	/* These must be last because of the display routines */
-	CI_ENTRY("min",      1,       VMIN    )
-	CI_ENTRY("time",     0,       VTIME   )
+	CI_ਇੰਦਰਾਜ("min",      1,       VMIN    )
+	CI_ਇੰਦਰਾਜ("time",     0,       VTIME   )
 	;
 
-#undef CI_ENTRY
-#define CI_ENTRY(n,s,o) { s, o },
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ CI_ਇੰਦਰਾਜ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ CI_ਇੰਦਰਾਜ(n,s,o) { s, o },
 
-static const struct control_info control_info[] ALIGN2 = {
+ਸਥਿਰ ਅਚਲ ਬਣਤਰ control_info control_info[] ALIGN2 = {
 	/* This should be verbatim cut-n-paste copy of the above CI_ENTRYs */
-	CI_ENTRY("intr",     CINTR,   VINTR   )
-	CI_ENTRY("quit",     CQUIT,   VQUIT   )
-	CI_ENTRY("erase",    CERASE,  VERASE  )
-	CI_ENTRY("kill",     CKILL,   VKILL   )
-	CI_ENTRY("eof",      CEOF,    VEOF    )
-	CI_ENTRY("eol",      CEOL,    VEOL    )
-#if VEOL2
-	CI_ENTRY("eol2",     CEOL2,   VEOL2   )
-#endif
-#if VSWTCH
-	CI_ENTRY("swtch",    CSWTCH,  VSWTCH  )
-#endif
-	CI_ENTRY("start",    CSTART,  VSTART  )
-	CI_ENTRY("stop",     CSTOP,   VSTOP   )
-	CI_ENTRY("susp",     CSUSP,   VSUSP   )
-#if VDSUSP
-	CI_ENTRY("dsusp",    CDSUSP,  VDSUSP  )
-#endif
-#if VREPRINT
-	CI_ENTRY("rprnt",    CRPRNT,  VREPRINT)
-#endif
-#if VWERASE
-	CI_ENTRY("werase",   CWERASE, VWERASE )
-#endif
-#if VLNEXT
-	CI_ENTRY("lnext",    CLNEXT,  VLNEXT  )
-#endif
-#if VFLUSHO
-	CI_ENTRY("flush",    CFLUSHO, VFLUSHO )
-#endif
-#if VSTATUS
-	CI_ENTRY("status",   CSTATUS, VSTATUS )
-#endif
+	CI_ਇੰਦਰਾਜ("intr",     CINTR,   VINTR   )
+	CI_ਇੰਦਰਾਜ("quit",     CQUIT,   VQUIT   )
+	CI_ਇੰਦਰਾਜ("erase",    CERASE,  VERASE  )
+	CI_ਇੰਦਰਾਜ("kill",     CKILL,   VKILL   )
+	CI_ਇੰਦਰਾਜ("eof",      CEOF,    VEOF    )
+	CI_ਇੰਦਰਾਜ("eol",      CEOL,    VEOL    )
+#ਜੇ VEOL2
+	CI_ਇੰਦਰਾਜ("eol2",     CEOL2,   VEOL2   )
+#ਜੇ_ਅੰਤ
+#ਜੇ VSWTCH
+	CI_ਇੰਦਰਾਜ("swtch",    CSWTCH,  VSWTCH  )
+#ਜੇ_ਅੰਤ
+	CI_ਇੰਦਰਾਜ("start",    CSTART,  VSTART  )
+	CI_ਇੰਦਰਾਜ("stop",     CSTOP,   VSTOP   )
+	CI_ਇੰਦਰਾਜ("susp",     CSUSP,   VSUSP   )
+#ਜੇ VDSUSP
+	CI_ਇੰਦਰਾਜ("dsusp",    CDSUSP,  VDSUSP  )
+#ਜੇ_ਅੰਤ
+#ਜੇ VREPRINT
+	CI_ਇੰਦਰਾਜ("rprnt",    CRPRNT,  VREPRINT)
+#ਜੇ_ਅੰਤ
+#ਜੇ VWERASE
+	CI_ਇੰਦਰਾਜ("werase",   CWERASE, VWERASE )
+#ਜੇ_ਅੰਤ
+#ਜੇ VLNEXT
+	CI_ਇੰਦਰਾਜ("lnext",    CLNEXT,  VLNEXT  )
+#ਜੇ_ਅੰਤ
+#ਜੇ VFLUSHO
+	CI_ਇੰਦਰਾਜ("flush",    CFLUSHO, VFLUSHO )
+#ਜੇ_ਅੰਤ
+#ਜੇ VSTATUS
+	CI_ਇੰਦਰਾਜ("status",   CSTATUS, VSTATUS )
+#ਜੇ_ਅੰਤ
 	/* These must be last because of the display routines */
-	CI_ENTRY("min",      1,       VMIN    )
-	CI_ENTRY("time",     0,       VTIME   )
+	CI_ਇੰਦਰਾਜ("min",      1,       VMIN    )
+	CI_ਇੰਦਰਾਜ("time",     0,       VTIME   )
 };
 
-enum {
-	NUM_control_info = ARRAY_SIZE(control_info)
+ਗਿਣਤੀ {
+	ਅੰਕ_control_info = ARRAY_ਮਾਪ(control_info)
 };
 
 
-struct globals {
-	const char *device_name;
+ਬਣਤਰ globals {
+	ਅਚਲ ਅੱਖਰ *device_name;
 	/* The width of the screen, for output wrapping */
-	unsigned max_col;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ max_ਖਾਨਾ;
 	/* Current position, to know when to wrap */
-	unsigned current_col;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ current_ਖਾਨਾ;
 } FIX_ALIASING;
-#define G (*(struct globals*)bb_common_bufsiz1)
-#define INIT_G() do { \
-	setup_common_bufsiz(); \
-	G.device_name = bb_msg_standard_input; \
-	G.max_col = 80; \
-	G.current_col = 0; /* we are noexec, must clear */ \
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ G (*(ਬਣਤਰ globals*)bb_common_bufsiz1)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ INIT_G() ਕਰੋ { \
+	ਤਿਆਰੀ_common_bufsiz(); \
+	G.device_name = bb_ਸੁਨੇਹਾ_standard_ਨਿਵੇਸ਼; \
+	G.max_ਖਾਨਾ = 80; \
+	G.current_ਖਾਨਾ = 0; /* we are noexec, must clear */ \
+} ਜਦੋਂ (0)
 
-static void set_speed_or_die(enum speed_setting type, const char *arg,
-					struct termios *mode)
+ਸਥਿਰ ਖਾਲੀ ਸੈੱਟ_ਰਫਤਾਰ_or_die(ਗਿਣਤੀ ਰਫਤਾਰ_setting type, ਅਚਲ ਅੱਖਰ *arg,
+					ਬਣਤਰ termios *ਬਹੁਲਕ)
 {
-	speed_t baud;
+	ਰਫਤਾਰ_t baud;
 
-	baud = tty_value_to_baud(xatou(arg));
+	baud = tty_ਮੁੱਲ_ਮੰਜ਼ਿਲ_baud(xatou(arg));
 
-	if (type != output_speed) {     /* either input or both */
-		cfsetispeed(mode, baud);
+	ਜੇ (type != output_ਰਫਤਾਰ) {     /* either input or both */
+		cfsetispeed(ਬਹੁਲਕ, baud);
 	}
-	if (type != input_speed) {      /* either output or both */
-		cfsetospeed(mode, baud);
+	ਜੇ (type != ਨਿਵੇਸ਼_ਰਫਤਾਰ) {      /* either output or both */
+		cfsetospeed(ਬਹੁਲਕ, baud);
 	}
 }
 
-static NORETURN void perror_on_device_and_die(const char *fmt)
+ਸਥਿਰ NORETURN ਖਾਲੀ perror_on_device_and_die(ਅਚਲ ਅੱਖਰ *fmt)
 {
-	bb_perror_msg_and_die(fmt, G.device_name);
+	bb_perror_ਸੁਨੇਹਾ_and_die(fmt, G.device_name);
 }
 
-static void perror_on_device(const char *fmt)
+ਸਥਿਰ ਖਾਲੀ perror_on_device(ਅਚਲ ਅੱਖਰ *fmt)
 {
-	bb_perror_msg(fmt, G.device_name);
+	bb_perror_ਸੁਨੇਹਾ(fmt, G.device_name);
 }
 
 /* Print format string MESSAGE and optional args.
    Wrap to next line first if it won't fit.
    Print a space first unless MESSAGE will start a new line */
-static void wrapf(const char *message, ...)
+ਸਥਿਰ ਖਾਲੀ wrapf(ਅਚਲ ਅੱਖਰ *ਸੁਨੇਹਾ_2, ...)
 {
-	char buf[128];
-	va_list args;
-	unsigned buflen;
+	ਅੱਖਰ buf[128];
+	va_list ਦਲੀਲਾਂ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ buflen;
 
-	va_start(args, message);
-	buflen = vsnprintf(buf, sizeof(buf), message, args);
-	va_end(args);
+	va_ਸ਼ੁਰੂ(ਦਲੀਲਾਂ, ਸੁਨੇਹਾ_2);
+	buflen = vsnprintf(buf, ਆਕਾਰ(buf), ਸੁਨੇਹਾ_2, ਦਲੀਲਾਂ);
+	va_ਸਿਰਾ(ਦਲੀਲਾਂ);
 	/* We seem to be called only with suitable lengths, but check if
 	   somebody failed to adhere to this assumption just to be sure.  */
-	if (!buflen || buflen >= sizeof(buf)) return;
+	ਜੇ (!buflen || buflen >= ਆਕਾਰ(buf)) ਵਾਪਸ;
 
-	if (G.current_col > 0) {
-		G.current_col++;
-		if (buf[0] != '\n') {
-			if (G.current_col + buflen >= G.max_col) {
-				G.current_col = 0;
+	ਜੇ (G.current_ਖਾਨਾ > 0) {
+		G.current_ਖਾਨਾ++;
+		ਜੇ (buf[0] != '\n') {
+			ਜੇ (G.current_ਖਾਨਾ + buflen >= G.max_ਖਾਨਾ) {
+				G.current_ਖਾਨਾ = 0;
 				bb_putchar('\n');
-			} else {
+			} ਨਹੀਂਤਾਂ {
 				bb_putchar(' ');
 			}
 		}
 	}
 	fputs_stdout(buf);
-	G.current_col += buflen;
-	if (buf[buflen-1] == '\n')
-		G.current_col = 0;
+	G.current_ਖਾਨਾ += buflen;
+	ਜੇ (buf[buflen-1] == '\n')
+		G.current_ਖਾਨਾ = 0;
 }
 
-static void newline(void)
+ਸਥਿਰ ਖਾਲੀ newline(ਖਾਲੀ)
 {
-	if (G.current_col != 0)
+	ਜੇ (G.current_ਖਾਨਾ != 0)
 		wrapf("\n");
 }
 
-#ifdef TIOCGWINSZ
-static void set_window_size(int rows, int cols)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ TIOCGWINSZ
+ਸਥਿਰ ਖਾਲੀ ਸੈੱਟ_ਖਿੜਕੀ_ਮਾਪ(ਪੂਰਨ ਪੰਕਤੀਆਂ, ਪੂਰਨ ਖਾਨੇ_ਗਿਣਤੀ)
 {
-	struct winsize win = { 0, 0, 0, 0 };
+	ਬਣਤਰ winsize win = { 0, 0, 0, 0 };
 
-	if (ioctl(STDIN_FILENO, TIOCGWINSZ, &win)) {
-		if (errno != EINVAL) {
-			goto bail;
+	ਜੇ (ioctl(STDIN_FILENO, TIOCGWINSZ, &win)) {
+		ਜੇ (errno != EINVAL) {
+			ਜਾਓ bail;
 		}
-		memset(&win, 0, sizeof(win));
+		memset(&win, 0, ਆਕਾਰ(win));
 	}
 
-	if (rows >= 0)
-		win.ws_row = rows;
-	if (cols >= 0)
-		win.ws_col = cols;
+	ਜੇ (ਪੰਕਤੀਆਂ >= 0)
+		win.ws_ਪੰਕਤੀ = ਪੰਕਤੀਆਂ;
+	ਜੇ (ਖਾਨੇ_ਗਿਣਤੀ >= 0)
+		win.ws_ਖਾਨਾ = ਖਾਨੇ_ਗਿਣਤੀ;
 
-	if (ioctl(STDIN_FILENO, TIOCSWINSZ, (char *) &win))
+	ਜੇ (ioctl(STDIN_FILENO, TIOCSWINSZ, (ਅੱਖਰ *) &win))
 bail:
 		perror_on_device("%s");
 }
-#endif
+#ਜੇ_ਅੰਤ
 
-static void display_window_size(int fancy)
+ਸਥਿਰ ਖਾਲੀ display_ਖਿੜਕੀ_ਮਾਪ(ਪੂਰਨ fancy)
 {
-	const char *fmt_str = "%s\0%s: no size information for this device";
-	unsigned width, height;
+	ਅਚਲ ਅੱਖਰ *fmt_str = "%s\0%s: no size information for this device";
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਚੌੜਾਈ, ਉਚਾਈ;
 
-	if (get_terminal_width_height(STDIN_FILENO, &width, &height)) {
-		if ((errno != EINVAL) || ((fmt_str += 2), !fancy)) {
+	ਜੇ (get_terminal_ਚੌੜਾਈ_ਉਚਾਈ(STDIN_FILENO, &ਚੌੜਾਈ, &ਉਚਾਈ)) {
+		ਜੇ ((errno != EINVAL) || ((fmt_str += 2), !fancy)) {
 			perror_on_device(fmt_str);
 		}
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		wrapf(fancy ? "rows %u; columns %u;" : "%u %u\n",
-				height, width);
+				ਉਚਾਈ, ਚੌੜਾਈ);
 	}
 }
 
-static const struct suffix_mult stty_suffixes[] ALIGN_SUFFIX = {
+ਸਥਿਰ ਅਚਲ ਬਣਤਰ suffix_mult stty_suffixes[] ALIGN_SUFFIX = {
 	{ "b",  512 },
 	{ "k", 1024 },
 	{ "B", 1024 },
 	{ "", 0 }
 };
 
-static const struct mode_info *find_mode(const char *name)
+ਸਥਿਰ ਅਚਲ ਬਣਤਰ ਬਹੁਲਕ_info *ਲੱਭੋ_ਬਹੁਲਕ(ਅਚਲ ਅੱਖਰ *name)
 {
-	int i = index_in_strings(mode_name, name);
-	return i >= 0 ? &mode_info[i] : NULL;
+	ਪੂਰਨ i = ਸੂਚਕਾਂਕ_ਵਿੱਚ_ਲੜੀਆਂ(ਬਹੁਲਕ_name, name);
+	ਵਾਪਸ i >= 0 ? &ਬਹੁਲਕ_info[i] : ਨਿਰਾ;
 }
 
-static const struct control_info *find_control(const char *name)
+ਸਥਿਰ ਅਚਲ ਬਣਤਰ control_info *ਲੱਭੋ_control(ਅਚਲ ਅੱਖਰ *name)
 {
-	int i = index_in_strings(control_name, name);
-	return i >= 0 ? &control_info[i] : NULL;
+	ਪੂਰਨ i = ਸੂਚਕਾਂਕ_ਵਿੱਚ_ਲੜੀਆਂ(control_name, name);
+	ਵਾਪਸ i >= 0 ? &control_info[i] : ਨਿਰਾ;
 }
 
-enum {
+ਗਿਣਤੀ {
 	param_need_arg = 0x80,
-	param_line    = 1 | 0x80,
-	param_rows    = 2 | 0x80,
-	param_cols    = 3 | 0x80,
+	param_ਸਤਰ    = 1 | 0x80,
+	param_ਪੰਕਤੀਆਂ    = 2 | 0x80,
+	param_ਖਾਨੇ_ਗਿਣਤੀ    = 3 | 0x80,
 	param_columns = 4 | 0x80,
-	param_size    = 5,
-	param_speed   = 6,
+	param_ਮਾਪ    = 5,
+	param_ਰਫਤਾਰ   = 6,
 	param_ispeed  = 7 | 0x80,
 	param_ospeed  = 8 | 0x80,
 };
 
-static int find_param(const char *name)
+ਸਥਿਰ ਪੂਰਨ ਲੱਭੋ_param(ਅਚਲ ਅੱਖਰ *name)
 {
-	static const char params[] ALIGN1 =
+	ਸਥਿਰ ਅਚਲ ਅੱਖਰ params[] ALIGN1 =
 		"line\0"    /* 1 */
 		"rows\0"    /* 2 */
 		"cols\0"    /* 3 */
@@ -947,340 +947,340 @@ static int find_param(const char *name)
 		"speed\0"   /* 6 */
 		"ispeed\0"
 		"ospeed\0";
-	int i = index_in_strings(params, name) + 1;
-	if (i == 0)
-		return 0;
-	if (i != 5 && i != 6)
+	ਪੂਰਨ i = ਸੂਚਕਾਂਕ_ਵਿੱਚ_ਲੜੀਆਂ(params, name) + 1;
+	ਜੇ (i == 0)
+		ਵਾਪਸ 0;
+	ਜੇ (i != 5 && i != 6)
 		i |= 0x80;
-	return i;
+	ਵਾਪਸ i;
 }
 
-static int recover_mode(const char *arg, struct termios *mode)
+ਸਥਿਰ ਪੂਰਨ recover_ਬਹੁਲਕ(ਅਚਲ ਅੱਖਰ *arg, ਬਣਤਰ termios *ਬਹੁਲਕ)
 {
-	int i, n;
-	unsigned chr;
-	unsigned long iflag, oflag, cflag, lflag;
+	ਪੂਰਨ i, n;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ chr;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ iflag, oflag, cflag, lflag;
 
 	/* Scan into temporaries since it is too much trouble to figure out
 	   the right format for 'tcflag_t' */
-	if (sscanf(arg, "%lx:%lx:%lx:%lx%n",
+	ਜੇ (ਲੜੀ_ਤੋਂ_ਪੜ੍ਹੋ(arg, "%lx:%lx:%lx:%lx%n",
 			   &iflag, &oflag, &cflag, &lflag, &n) != 4)
-		return 0;
-	mode->c_iflag = iflag;
-	mode->c_oflag = oflag;
-	mode->c_cflag = cflag;
-	mode->c_lflag = lflag;
+		ਵਾਪਸ 0;
+	ਬਹੁਲਕ->c_iflag = iflag;
+	ਬਹੁਲਕ->c_oflag = oflag;
+	ਬਹੁਲਕ->c_cflag = cflag;
+	ਬਹੁਲਕ->c_lflag = lflag;
 	arg += n;
-	for (i = 0; i < NCCS; ++i) {
-		if (sscanf(arg, ":%x%n", &chr, &n) != 1)
-			return 0;
-		mode->c_cc[i] = chr;
+	ਲਈ (i = 0; i < NCCS; ++i) {
+		ਜੇ (ਲੜੀ_ਤੋਂ_ਪੜ੍ਹੋ(arg, ":%x%n", &chr, &n) != 1)
+			ਵਾਪਸ 0;
+		ਬਹੁਲਕ->c_cc[i] = chr;
 		arg += n;
 	}
 
 	/* Fail if there are too many fields */
-	if (*arg != '\0')
-		return 0;
+	ਜੇ (*arg != '\0')
+		ਵਾਪਸ 0;
 
-	return 1;
+	ਵਾਪਸ 1;
 }
 
-static void display_recoverable(const struct termios *mode,
-				int UNUSED_PARAM dummy)
+ਸਥਿਰ ਖਾਲੀ display_recoverable(ਅਚਲ ਬਣਤਰ termios *ਬਹੁਲਕ,
+				ਪੂਰਨ ਅਣਵਰਤਿਆ_PARAM dummy)
 {
-	int i;
-	printf("%lx:%lx:%lx:%lx",
-		   (unsigned long) mode->c_iflag, (unsigned long) mode->c_oflag,
-		   (unsigned long) mode->c_cflag, (unsigned long) mode->c_lflag);
-	for (i = 0; i < NCCS; ++i)
-		printf(":%x", (unsigned int) mode->c_cc[i]);
+	ਪੂਰਨ i;
+	ਲਿਖੋ("%lx:%lx:%lx:%lx",
+		   (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ) ਬਹੁਲਕ->c_iflag, (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ) ਬਹੁਲਕ->c_oflag,
+		   (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ) ਬਹੁਲਕ->c_cflag, (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ) ਬਹੁਲਕ->c_lflag);
+	ਲਈ (i = 0; i < NCCS; ++i)
+		ਲਿਖੋ(":%x", (ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ) ਬਹੁਲਕ->c_cc[i]);
 	bb_putchar('\n');
 }
 
-static void display_speed(const struct termios *mode, int fancy)
+ਸਥਿਰ ਖਾਲੀ display_ਰਫਤਾਰ(ਅਚਲ ਬਣਤਰ termios *ਬਹੁਲਕ, ਪੂਰਨ fancy)
 {
 	//____________________ 01234567 8 9
-	const char *fmt_str = "%lu %lu\n\0ispeed %lu baud; ospeed %lu baud;";
-	unsigned long ispeed, ospeed;
+	ਅਚਲ ਅੱਖਰ *fmt_str = "%lu %lu\n\0ispeed %lu baud; ospeed %lu baud;";
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ispeed, ospeed;
 
-	ispeed = cfgetispeed(mode);
-	ospeed = cfgetospeed(mode);
-	if (ispeed == 0 || ispeed == ospeed) {
+	ispeed = cfgetispeed(ਬਹੁਲਕ);
+	ospeed = cfgetospeed(ਬਹੁਲਕ);
+	ਜੇ (ispeed == 0 || ispeed == ospeed) {
 		ispeed = ospeed;                /* in case ispeed was 0 */
 		//________ 0123 4 5 6 7 8 9
 		fmt_str = "%lu\n\0\0\0\0\0speed %lu baud;";
 	}
-	if (fancy) fmt_str += 9;
-	wrapf(fmt_str, tty_baud_to_value(ispeed), tty_baud_to_value(ospeed));
+	ਜੇ (fancy) fmt_str += 9;
+	wrapf(fmt_str, tty_baud_ਮੰਜ਼ਿਲ_ਮੁੱਲ(ispeed), tty_baud_ਮੰਜ਼ਿਲ_ਮੁੱਲ(ospeed));
 }
 
-static void do_display(const struct termios *mode, int all)
+ਸਥਿਰ ਖਾਲੀ do_display(ਅਚਲ ਬਣਤਰ termios *ਬਹੁਲਕ, ਪੂਰਨ all)
 {
-	int i;
+	ਪੂਰਨ i;
 	tcflag_t *bitsp;
-	unsigned long mask;
-	int prev_type = control;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਨਕਾਬ;
+	ਪੂਰਨ prev_type = control;
 
-	display_speed(mode, 1);
-	if (all)
-		display_window_size(1);
-#ifdef __linux__
-	wrapf("line = %u;\n", mode->c_line);
-#else
+	display_ਰਫਤਾਰ(ਬਹੁਲਕ, 1);
+	ਜੇ (all)
+		display_ਖਿੜਕੀ_ਮਾਪ(1);
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ __linux__
+	wrapf("line = %u;\n", ਬਹੁਲਕ->c_ਸਤਰ);
+#ਨਹੀਂਤਾਂ
 	newline();
-#endif
+#ਜੇ_ਅੰਤ
 
-	for (i = 0; i != CIDX_min; ++i) {
-		char ch;
-		char buf10[10];
+	ਲਈ (i = 0; i != CIDX_min; ++i) {
+		ਅੱਖਰ ch;
+		ਅੱਖਰ buf10[10];
 
 		/* If swtch is the same as susp, don't print both */
-#if VSWTCH == VSUSP
-		if (i == CIDX_swtch)
-			continue;
-#endif
+#ਜੇ VSWTCH == VSUSP
+		ਜੇ (i == CIDX_swtch)
+			ਜਾਰੀ;
+#ਜੇ_ਅੰਤ
 		/* If eof uses the same slot as min, only print whichever applies */
-#if VEOF == VMIN
-		if (!(mode->c_lflag & ICANON)
+#ਜੇ VEOF == VMIN
+		ਜੇ (!(ਬਹੁਲਕ->c_lflag & ICANON)
 		 && (i == CIDX_eof || i == CIDX_eol)
 		) {
-			continue;
+			ਜਾਰੀ;
 		}
-#endif
-		ch = mode->c_cc[control_info[i].offset];
-		if (ch == _POSIX_VDISABLE)
+#ਜੇ_ਅੰਤ
+		ch = ਬਹੁਲਕ->c_cc[control_info[i].ਵਿੱਥ];
+		ਜੇ (ch == _POSIX_VDISABLE)
 			strcpy(buf10, "<undef>");
-		else
+		ਨਹੀਂਤਾਂ
 			visible(ch, buf10, 0);
 		wrapf("%s = %s;", nth_string(control_name, i), buf10);
 	}
-#if VEOF == VMIN
-	if ((mode->c_lflag & ICANON) == 0)
-#endif
-		wrapf("min = %u; time = %u;", mode->c_cc[VMIN], mode->c_cc[VTIME]);
+#ਜੇ VEOF == VMIN
+	ਜੇ ((ਬਹੁਲਕ->c_lflag & ICANON) == 0)
+#ਜੇ_ਅੰਤ
+		wrapf("min = %u; time = %u;", ਬਹੁਲਕ->c_cc[VMIN], ਬਹੁਲਕ->c_cc[VTIME]);
 	newline();
 
-	for (i = 0; i < NUM_mode_info; ++i) {
-		if (mode_info[i].flags & OMIT)
-			continue;
-		if (mode_info[i].type != prev_type) {
+	ਲਈ (i = 0; i < ਅੰਕ_ਬਹੁਲਕ_info; ++i) {
+		ਜੇ (ਬਹੁਲਕ_info[i].flags & OMIT)
+			ਜਾਰੀ;
+		ਜੇ (ਬਹੁਲਕ_info[i].type != prev_type) {
 			newline();
-			prev_type = mode_info[i].type;
+			prev_type = ਬਹੁਲਕ_info[i].type;
 		}
 
-		bitsp = get_ptr_to_tcflag(mode_info[i].type, mode);
-		mask = mode_info[i].mask ? mode_info[i].mask : mode_info[i].bits;
-		if ((*bitsp & mask) == mode_info[i].bits) {
-			if (all || (mode_info[i].flags & SANE_UNSET))
-				wrapf("-%s"+1, nth_string(mode_name, i));
-		} else {
-			if ((all && mode_info[i].flags & REV)
-			 || (!all && (mode_info[i].flags & (SANE_SET | REV)) == (SANE_SET | REV))
+		bitsp = get_ptr_ਮੰਜ਼ਿਲ_tcflag(ਬਹੁਲਕ_info[i].type, ਬਹੁਲਕ);
+		ਨਕਾਬ = ਬਹੁਲਕ_info[i].ਨਕਾਬ ? ਬਹੁਲਕ_info[i].ਨਕਾਬ : ਬਹੁਲਕ_info[i].ਬਿੱਟ;
+		ਜੇ ((*bitsp & ਨਕਾਬ) == ਬਹੁਲਕ_info[i].ਬਿੱਟ) {
+			ਜੇ (all || (ਬਹੁਲਕ_info[i].flags & SANE_UNSET))
+				wrapf("-%s"+1, nth_string(ਬਹੁਲਕ_name, i));
+		} ਨਹੀਂਤਾਂ {
+			ਜੇ ((all && ਬਹੁਲਕ_info[i].flags & REV)
+			 || (!all && (ਬਹੁਲਕ_info[i].flags & (SANE_ਸੈੱਟ | REV)) == (SANE_ਸੈੱਟ | REV))
 			) {
-				wrapf("-%s", nth_string(mode_name, i));
+				wrapf("-%s", nth_string(ਬਹੁਲਕ_name, i));
 			}
 		}
 	}
 	newline();
 }
 
-static void sane_mode(struct termios *mode)
+ਸਥਿਰ ਖਾਲੀ sane_ਬਹੁਲਕ(ਬਣਤਰ termios *ਬਹੁਲਕ)
 {
-	int i;
+	ਪੂਰਨ i;
 
-	for (i = 0; i < NUM_control_info; ++i) {
-#if VMIN == VEOF
-		if (i == CIDX_min)
-			break;
-#endif
-		mode->c_cc[control_info[i].offset] = control_info[i].saneval;
+	ਲਈ (i = 0; i < ਅੰਕ_control_info; ++i) {
+#ਜੇ VMIN == VEOF
+		ਜੇ (i == CIDX_min)
+			ਰੋਕੋ;
+#ਜੇ_ਅੰਤ
+		ਬਹੁਲਕ->c_cc[control_info[i].ਵਿੱਥ] = control_info[i].saneval;
 	}
 
-	for (i = 0; i < NUM_mode_info; ++i) {
+	ਲਈ (i = 0; i < ਅੰਕ_ਬਹੁਲਕ_info; ++i) {
 		tcflag_t val;
-		tcflag_t *bitsp = get_ptr_to_tcflag(mode_info[i].type, mode);
+		tcflag_t *bitsp = get_ptr_ਮੰਜ਼ਿਲ_tcflag(ਬਹੁਲਕ_info[i].type, ਬਹੁਲਕ);
 
-		if (!bitsp)
-			continue;
-		val = *bitsp & ~((unsigned long)mode_info[i].mask);
-		if (mode_info[i].flags & SANE_SET) {
-			*bitsp = val | mode_info[i].bits;
-		} else
-		if (mode_info[i].flags & SANE_UNSET) {
-			*bitsp = val & ~mode_info[i].bits;
+		ਜੇ (!bitsp)
+			ਜਾਰੀ;
+		val = *bitsp & ~((ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ)ਬਹੁਲਕ_info[i].ਨਕਾਬ);
+		ਜੇ (ਬਹੁਲਕ_info[i].flags & SANE_ਸੈੱਟ) {
+			*bitsp = val | ਬਹੁਲਕ_info[i].ਬਿੱਟ;
+		} ਨਹੀਂਤਾਂ
+		ਜੇ (ਬਹੁਲਕ_info[i].flags & SANE_UNSET) {
+			*bitsp = val & ~ਬਹੁਲਕ_info[i].ਬਿੱਟ;
 		}
 	}
 }
 
-static void set_mode(const struct mode_info *info, int reversed,
-					struct termios *mode)
+ਸਥਿਰ ਖਾਲੀ ਸੈੱਟ_ਬਹੁਲਕ(ਅਚਲ ਬਣਤਰ ਬਹੁਲਕ_info *info, ਪੂਰਨ reversed,
+					ਬਣਤਰ termios *ਬਹੁਲਕ)
 {
 	tcflag_t *bitsp;
 
-	bitsp = get_ptr_to_tcflag(info->type, mode);
+	bitsp = get_ptr_ਮੰਜ਼ਿਲ_tcflag(info->type, ਬਹੁਲਕ);
 
-	if (bitsp) {
-		tcflag_t val = *bitsp & ~info->mask;
-		if (reversed)
-			*bitsp = val & ~info->bits;
-		else
-			*bitsp = val | info->bits;
-		return;
+	ਜੇ (bitsp) {
+		tcflag_t val = *bitsp & ~info->ਨਕਾਬ;
+		ਜੇ (reversed)
+			*bitsp = val & ~info->ਬਿੱਟ;
+		ਨਹੀਂਤਾਂ
+			*bitsp = val | info->ਬਿੱਟ;
+		ਵਾਪਸ;
 	}
 
 	/* !bitsp - it's a "combination" mode */
-	if (info == &mode_info[IDX_evenp] || info == &mode_info[IDX_parity]) {
-		if (reversed)
-			mode->c_cflag = (mode->c_cflag & ~PARENB & ~CSIZE) | CS8;
-		else
-			mode->c_cflag = (mode->c_cflag & ~PARODD & ~CSIZE) | PARENB | CS7;
-	} else if (info == &mode_info[IDX_oddp]) {
-		if (reversed)
-			mode->c_cflag = (mode->c_cflag & ~PARENB & ~CSIZE) | CS8;
-		else
-			mode->c_cflag = (mode->c_cflag & ~CSIZE) | CS7 | PARODD | PARENB;
-	} else if (info == &mode_info[IDX_nl]) {
-		if (reversed) {
-			mode->c_iflag = (mode->c_iflag | ICRNL) & ~INLCR & ~IGNCR;
-			mode->c_oflag = (mode->c_oflag | ONLCR) & ~OCRNL & ~ONLRET;
-		} else {
-			mode->c_iflag = mode->c_iflag & ~ICRNL;
-			if (ONLCR) mode->c_oflag = mode->c_oflag & ~ONLCR;
+	ਜੇ (info == &ਬਹੁਲਕ_info[IDX_evenp] || info == &ਬਹੁਲਕ_info[IDX_parity]) {
+		ਜੇ (reversed)
+			ਬਹੁਲਕ->c_cflag = (ਬਹੁਲਕ->c_cflag & ~PARENB & ~CSIZE) | CS8;
+		ਨਹੀਂਤਾਂ
+			ਬਹੁਲਕ->c_cflag = (ਬਹੁਲਕ->c_cflag & ~PARODD & ~CSIZE) | PARENB | CS7;
+	} ਨਹੀਂਤਾਂ ਜੇ (info == &ਬਹੁਲਕ_info[IDX_oddp]) {
+		ਜੇ (reversed)
+			ਬਹੁਲਕ->c_cflag = (ਬਹੁਲਕ->c_cflag & ~PARENB & ~CSIZE) | CS8;
+		ਨਹੀਂਤਾਂ
+			ਬਹੁਲਕ->c_cflag = (ਬਹੁਲਕ->c_cflag & ~CSIZE) | CS7 | PARODD | PARENB;
+	} ਨਹੀਂਤਾਂ ਜੇ (info == &ਬਹੁਲਕ_info[IDX_nl]) {
+		ਜੇ (reversed) {
+			ਬਹੁਲਕ->c_iflag = (ਬਹੁਲਕ->c_iflag | ICRNL) & ~INLCR & ~IGNCR;
+			ਬਹੁਲਕ->c_oflag = (ਬਹੁਲਕ->c_oflag | ONLCR) & ~OCRNL & ~ONLRET;
+		} ਨਹੀਂਤਾਂ {
+			ਬਹੁਲਕ->c_iflag = ਬਹੁਲਕ->c_iflag & ~ICRNL;
+			ਜੇ (ONLCR) ਬਹੁਲਕ->c_oflag = ਬਹੁਲਕ->c_oflag & ~ONLCR;
 		}
-	} else if (info == &mode_info[IDX_ek]) {
-		mode->c_cc[VERASE] = CERASE;
-		mode->c_cc[VKILL] = CKILL;
-	} else if (info == &mode_info[IDX_sane]) {
-		sane_mode(mode);
-	} else if (info == &mode_info[IDX_cbreak]) {
-		if (reversed)
-			mode->c_lflag |= ICANON;
-		else
-			mode->c_lflag &= ~ICANON;
-	} else if (info == &mode_info[IDX_pass8]) {
-		if (reversed) {
-			mode->c_cflag = (mode->c_cflag & ~CSIZE) | CS7 | PARENB;
-			mode->c_iflag |= ISTRIP;
-		} else {
-			mode->c_cflag = (mode->c_cflag & ~PARENB & ~CSIZE) | CS8;
-			mode->c_iflag &= ~ISTRIP;
+	} ਨਹੀਂਤਾਂ ਜੇ (info == &ਬਹੁਲਕ_info[IDX_ek]) {
+		ਬਹੁਲਕ->c_cc[VERASE] = CERASE;
+		ਬਹੁਲਕ->c_cc[VKILL] = CKILL;
+	} ਨਹੀਂਤਾਂ ਜੇ (info == &ਬਹੁਲਕ_info[IDX_sane]) {
+		sane_ਬਹੁਲਕ(ਬਹੁਲਕ);
+	} ਨਹੀਂਤਾਂ ਜੇ (info == &ਬਹੁਲਕ_info[IDX_cbreak]) {
+		ਜੇ (reversed)
+			ਬਹੁਲਕ->c_lflag |= ICANON;
+		ਨਹੀਂਤਾਂ
+			ਬਹੁਲਕ->c_lflag &= ~ICANON;
+	} ਨਹੀਂਤਾਂ ਜੇ (info == &ਬਹੁਲਕ_info[IDX_pass8]) {
+		ਜੇ (reversed) {
+			ਬਹੁਲਕ->c_cflag = (ਬਹੁਲਕ->c_cflag & ~CSIZE) | CS7 | PARENB;
+			ਬਹੁਲਕ->c_iflag |= ISTRIP;
+		} ਨਹੀਂਤਾਂ {
+			ਬਹੁਲਕ->c_cflag = (ਬਹੁਲਕ->c_cflag & ~PARENB & ~CSIZE) | CS8;
+			ਬਹੁਲਕ->c_iflag &= ~ISTRIP;
 		}
-	} else if (info == &mode_info[IDX_litout]) {
-		if (reversed) {
-			mode->c_cflag = (mode->c_cflag & ~CSIZE) | CS7 | PARENB;
-			mode->c_iflag |= ISTRIP;
-			mode->c_oflag |= OPOST;
-		} else {
-			mode->c_cflag = (mode->c_cflag & ~PARENB & ~CSIZE) | CS8;
-			mode->c_iflag &= ~ISTRIP;
-			mode->c_oflag &= ~OPOST;
+	} ਨਹੀਂਤਾਂ ਜੇ (info == &ਬਹੁਲਕ_info[IDX_litout]) {
+		ਜੇ (reversed) {
+			ਬਹੁਲਕ->c_cflag = (ਬਹੁਲਕ->c_cflag & ~CSIZE) | CS7 | PARENB;
+			ਬਹੁਲਕ->c_iflag |= ISTRIP;
+			ਬਹੁਲਕ->c_oflag |= OPOST;
+		} ਨਹੀਂਤਾਂ {
+			ਬਹੁਲਕ->c_cflag = (ਬਹੁਲਕ->c_cflag & ~PARENB & ~CSIZE) | CS8;
+			ਬਹੁਲਕ->c_iflag &= ~ISTRIP;
+			ਬਹੁਲਕ->c_oflag &= ~OPOST;
 		}
-	} else if (info == &mode_info[IDX_raw] || info == &mode_info[IDX_cooked]) {
-		if ((info == &mode_info[IDX_raw] && reversed)
-		 || (info == &mode_info[IDX_cooked] && !reversed)
+	} ਨਹੀਂਤਾਂ ਜੇ (info == &ਬਹੁਲਕ_info[IDX_raw] || info == &ਬਹੁਲਕ_info[IDX_cooked]) {
+		ਜੇ ((info == &ਬਹੁਲਕ_info[IDX_raw] && reversed)
+		 || (info == &ਬਹੁਲਕ_info[IDX_cooked] && !reversed)
 		) {
 			/* Cooked mode */
-			mode->c_iflag |= BRKINT | IGNPAR | ISTRIP | ICRNL | IXON;
-			mode->c_oflag |= OPOST;
-			mode->c_lflag |= ISIG | ICANON;
-#if VMIN == VEOF
-			mode->c_cc[VEOF] = CEOF;
-#endif
-#if VTIME == VEOL
-			mode->c_cc[VEOL] = CEOL;
-#endif
-		} else {
+			ਬਹੁਲਕ->c_iflag |= BRKINT | IGNPAR | ISTRIP | ICRNL | IXON;
+			ਬਹੁਲਕ->c_oflag |= OPOST;
+			ਬਹੁਲਕ->c_lflag |= ISIG | ICANON;
+#ਜੇ VMIN == VEOF
+			ਬਹੁਲਕ->c_cc[VEOF] = CEOF;
+#ਜੇ_ਅੰਤ
+#ਜੇ VTIME == VEOL
+			ਬਹੁਲਕ->c_cc[VEOL] = CEOL;
+#ਜੇ_ਅੰਤ
+		} ਨਹੀਂਤਾਂ {
 			/* Raw mode */
-			mode->c_iflag = 0;
-			mode->c_oflag &= ~OPOST;
-			mode->c_lflag &= ~(ISIG | ICANON | XCASE);
-			mode->c_cc[VMIN] = 1;
-			mode->c_cc[VTIME] = 0;
+			ਬਹੁਲਕ->c_iflag = 0;
+			ਬਹੁਲਕ->c_oflag &= ~OPOST;
+			ਬਹੁਲਕ->c_lflag &= ~(ISIG | ICANON | XCASE);
+			ਬਹੁਲਕ->c_cc[VMIN] = 1;
+			ਬਹੁਲਕ->c_cc[VTIME] = 0;
 		}
 	}
-#if IXANY
-	else if (info == &mode_info[IDX_decctlq]) {
-		if (reversed)
-			mode->c_iflag |= IXANY;
-		else
-			mode->c_iflag &= ~IXANY;
+#ਜੇ IXANY
+	ਨਹੀਂਤਾਂ ਜੇ (info == &ਬਹੁਲਕ_info[IDX_decctlq]) {
+		ਜੇ (reversed)
+			ਬਹੁਲਕ->c_iflag |= IXANY;
+		ਨਹੀਂਤਾਂ
+			ਬਹੁਲਕ->c_iflag &= ~IXANY;
 	}
-#endif
-#if TABDLY
-	else if (info == &mode_info[IDX_tabs]) {
-		if (reversed)
-			mode->c_oflag = (mode->c_oflag & ~TABDLY) | TAB3;
-		else
-			mode->c_oflag = (mode->c_oflag & ~TABDLY) | TAB0;
+#ਜੇ_ਅੰਤ
+#ਜੇ TABDLY
+	ਨਹੀਂਤਾਂ ਜੇ (info == &ਬਹੁਲਕ_info[IDX_tabs]) {
+		ਜੇ (reversed)
+			ਬਹੁਲਕ->c_oflag = (ਬਹੁਲਕ->c_oflag & ~TABDLY) | TAB3;
+		ਨਹੀਂਤਾਂ
+			ਬਹੁਲਕ->c_oflag = (ਬਹੁਲਕ->c_oflag & ~TABDLY) | TAB0;
 	}
-#endif
-#if OXTABS
-	else if (info == &mode_info[IDX_tabs]) {
-		if (reversed)
-			mode->c_oflag |= OXTABS;
-		else
-			mode->c_oflag &= ~OXTABS;
+#ਜੇ_ਅੰਤ
+#ਜੇ OXTABS
+	ਨਹੀਂਤਾਂ ਜੇ (info == &ਬਹੁਲਕ_info[IDX_tabs]) {
+		ਜੇ (reversed)
+			ਬਹੁਲਕ->c_oflag |= OXTABS;
+		ਨਹੀਂਤਾਂ
+			ਬਹੁਲਕ->c_oflag &= ~OXTABS;
 	}
-#endif
-#if XCASE && IUCLC && OLCUC
-	else if (info==&mode_info[IDX_lcase] || info==&mode_info[IDX_LCASE]) {
-		if (reversed) {
-			mode->c_lflag &= ~XCASE;
-			mode->c_iflag &= ~IUCLC;
-			mode->c_oflag &= ~OLCUC;
-		} else {
-			mode->c_lflag |= XCASE;
-			mode->c_iflag |= IUCLC;
-			mode->c_oflag |= OLCUC;
+#ਜੇ_ਅੰਤ
+#ਜੇ XCASE && IUCLC && OLCUC
+	ਨਹੀਂਤਾਂ ਜੇ (info==&ਬਹੁਲਕ_info[IDX_lcase] || info==&ਬਹੁਲਕ_info[IDX_LCASE]) {
+		ਜੇ (reversed) {
+			ਬਹੁਲਕ->c_lflag &= ~XCASE;
+			ਬਹੁਲਕ->c_iflag &= ~IUCLC;
+			ਬਹੁਲਕ->c_oflag &= ~OLCUC;
+		} ਨਹੀਂਤਾਂ {
+			ਬਹੁਲਕ->c_lflag |= XCASE;
+			ਬਹੁਲਕ->c_iflag |= IUCLC;
+			ਬਹੁਲਕ->c_oflag |= OLCUC;
 		}
 	}
-#endif
-	else if (info == &mode_info[IDX_crt]) {
-		mode->c_lflag |= ECHOE | ECHOCTL | ECHOKE;
-	} else if (info == &mode_info[IDX_dec]) {
-		mode->c_cc[VINTR] = 3; /* ^C */
-		mode->c_cc[VERASE] = 127; /* DEL */
-		mode->c_cc[VKILL] = 21; /* ^U */
-		mode->c_lflag |= ECHOE | ECHOCTL | ECHOKE;
-		if (IXANY) mode->c_iflag &= ~IXANY;
+#ਜੇ_ਅੰਤ
+	ਨਹੀਂਤਾਂ ਜੇ (info == &ਬਹੁਲਕ_info[IDX_crt]) {
+		ਬਹੁਲਕ->c_lflag |= ECHOE | ECHOCTL | ECHOKE;
+	} ਨਹੀਂਤਾਂ ਜੇ (info == &ਬਹੁਲਕ_info[IDX_dec]) {
+		ਬਹੁਲਕ->c_cc[VINTR] = 3; /* ^C */
+		ਬਹੁਲਕ->c_cc[VERASE] = 127; /* DEL */
+		ਬਹੁਲਕ->c_cc[VKILL] = 21; /* ^U */
+		ਬਹੁਲਕ->c_lflag |= ECHOE | ECHOCTL | ECHOKE;
+		ਜੇ (IXANY) ਬਹੁਲਕ->c_iflag &= ~IXANY;
 	}
 }
 
-static void set_control_char_or_die(const struct control_info *info,
-			const char *arg, struct termios *mode)
+ਸਥਿਰ ਖਾਲੀ ਸੈੱਟ_control_char_or_die(ਅਚਲ ਬਣਤਰ control_info *info,
+			ਅਚਲ ਅੱਖਰ *arg, ਬਣਤਰ termios *ਬਹੁਲਕ)
 {
-	unsigned char value;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ ਮੁੱਲ_2;
 
-	if (info == &control_info[CIDX_min] || info == &control_info[CIDX_time])
-		value = xatoul_range_sfx(arg, 0, 0xff, stty_suffixes);
-	else if (arg[0] == '\0' || arg[1] == '\0')
-		value = arg[0];
-	else if (strcmp(arg, "^-") == 0 || strcmp(arg, "undef") == 0)
-		value = _POSIX_VDISABLE;
-	else if (arg[0] == '^') { /* Ignore any trailing junk (^Cjunk) */
-		value = arg[1] & 0x1f; /* Non-letters get weird results */
-		if (arg[1] == '?')
-			value = 127;
-	} else
-		value = xatoul_range_sfx(arg, 0, 0xff, stty_suffixes);
-	mode->c_cc[info->offset] = value;
+	ਜੇ (info == &control_info[CIDX_min] || info == &control_info[CIDX_ਸਮਾਂ])
+		ਮੁੱਲ_2 = xatoul_range_sfx(arg, 0, 0xff, stty_suffixes);
+	ਨਹੀਂਤਾਂ ਜੇ (arg[0] == '\0' || arg[1] == '\0')
+		ਮੁੱਲ_2 = arg[0];
+	ਨਹੀਂਤਾਂ ਜੇ (strcmp(arg, "^-") == 0 || strcmp(arg, "undef") == 0)
+		ਮੁੱਲ_2 = _POSIX_VDISABLE;
+	ਨਹੀਂਤਾਂ ਜੇ (arg[0] == '^') { /* Ignore any trailing junk (^Cjunk) */
+		ਮੁੱਲ_2 = arg[1] & 0x1f; /* Non-letters get weird results */
+		ਜੇ (arg[1] == '?')
+			ਮੁੱਲ_2 = 127;
+	} ਨਹੀਂਤਾਂ
+		ਮੁੱਲ_2 = xatoul_range_sfx(arg, 0, 0xff, stty_suffixes);
+	ਬਹੁਲਕ->c_cc[info->ਵਿੱਥ] = ਮੁੱਲ_2;
 }
 
-#define STTY_require_set_attr   (1 << 0)
-#define STTY_speed_was_set      (1 << 1)
-#define STTY_verbose_output     (1 << 2)
-#define STTY_recoverable_output (1 << 3)
-#define STTY_noargs             (1 << 4)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ STTY_require_ਸੈੱਟ_attr   (1 << 0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ STTY_ਰਫਤਾਰ_was_ਸੈੱਟ      (1 << 1)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ STTY_verbose_output     (1 << 2)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ STTY_recoverable_output (1 << 3)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ STTY_noargs             (1 << 4)
 
-int stty_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int stty_main(int argc UNUSED_PARAM, char **argv)
+ਪੂਰਨ stty_main(ਪੂਰਨ argc, ਅੱਖਰ **argv) MAIN_EXTERNALLY_VISIBLE;
+ਪੂਰਨ stty_main(ਪੂਰਨ argc ਅਣਵਰਤਿਆ_PARAM, ਅੱਖਰ **argv)
 {
-	struct termios mode;
-	void (*output_func)(const struct termios *, int);
-	const char *file_name = NULL;
-	int display_all = 0;
-	int stty_state;
-	int k;
+	ਬਣਤਰ termios ਬਹੁਲਕ;
+	ਖਾਲੀ (*output_func)(ਅਚਲ ਬਣਤਰ termios *, ਪੂਰਨ);
+	ਅਚਲ ਅੱਖਰ *file_name = ਨਿਰਾ;
+	ਪੂਰਨ display_all = 0;
+	ਪੂਰਨ stty_state;
+	ਪੂਰਨ k;
 
 	INIT_G();
 
@@ -1289,133 +1289,133 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 
 	/* First pass: only parse/verify command line params */
 	k = 0;
-	while (argv[++k]) {
-		const struct mode_info *mp;
-		const struct control_info *cp;
-		const char *arg = argv[k];
-		const char *argnext = argv[k+1];
-		int param;
+	ਜਦੋਂ (argv[++k]) {
+		ਅਚਲ ਬਣਤਰ ਬਹੁਲਕ_info *mp;
+		ਅਚਲ ਬਣਤਰ control_info *cp;
+		ਅਚਲ ਅੱਖਰ *arg = argv[k];
+		ਅਚਲ ਅੱਖਰ *argnext = argv[k+1];
+		ਪੂਰਨ param;
 
-		if (arg[0] == '-') {
-			int i;
-			mp = find_mode(arg+1);
-			if (mp) {
-				if (!(mp->flags & REV))
-					goto invalid_argument;
+		ਜੇ (arg[0] == '-') {
+			ਪੂਰਨ i;
+			mp = ਲੱਭੋ_ਬਹੁਲਕ(arg+1);
+			ਜੇ (mp) {
+				ਜੇ (!(mp->flags & REV))
+					ਜਾਓ invalid_ਦਲੀਲ;
 				stty_state &= ~STTY_noargs;
-				continue;
+				ਜਾਰੀ;
 			}
 			/* It is an option - parse it */
 			i = 0;
-			while (arg[++i]) {
-				switch (arg[i]) {
-				case 'a':
+			ਜਦੋਂ (arg[++i]) {
+				ਚੋਣ (arg[i]) {
+				ਹਾਲਤ 'a':
 					stty_state |= STTY_verbose_output;
 					output_func = do_display;
 					display_all = 1;
-					break;
-				case 'g':
+					ਰੋਕੋ;
+				ਹਾਲਤ 'g':
 					stty_state |= STTY_recoverable_output;
 					output_func = display_recoverable;
-					break;
-				case 'F':
-					if (file_name)
-						bb_simple_error_msg_and_die("only one device may be specified");
+					ਰੋਕੋ;
+				ਹਾਲਤ 'F':
+					ਜੇ (file_name)
+						bb_simple_error_ਸੁਨੇਹਾ_and_die("only one device may be specified");
 					file_name = &arg[i+1]; /* "-Fdevice" ? */
-					if (!file_name[0]) { /* nope, "-F device" */
-						int p = k+1; /* argv[p] is argnext */
+					ਜੇ (!file_name[0]) { /* nope, "-F device" */
+						ਪੂਰਨ p = k+1; /* argv[p] is argnext */
 						file_name = argnext;
-						if (!file_name)
-							bb_error_msg_and_die(bb_msg_requires_arg, "-F");
+						ਜੇ (!file_name)
+							bb_error_ਸੁਨੇਹਾ_and_die(bb_ਸੁਨੇਹਾ_requires_arg, "-F");
 						/* remove -F param from arg[vc] */
-						while (argv[p]) {
+						ਜਦੋਂ (argv[p]) {
 							argv[p] = argv[p+1];
 							++p;
 						}
 					}
-					goto end_option;
-				default:
-					goto invalid_argument;
+					ਜਾਓ ਸਿਰਾ_option;
+				ਮੂਲ:
+					ਜਾਓ invalid_ਦਲੀਲ;
 				}
 			}
- end_option:
-			continue;
+ ਸਿਰਾ_option:
+			ਜਾਰੀ;
 		}
 
-		mp = find_mode(arg);
-		if (mp) {
+		mp = ਲੱਭੋ_ਬਹੁਲਕ(arg);
+		ਜੇ (mp) {
 			stty_state &= ~STTY_noargs;
-			continue;
+			ਜਾਰੀ;
 		}
 
-		cp = find_control(arg);
-		if (cp) {
-			if (!argnext)
-				bb_error_msg_and_die(bb_msg_requires_arg, arg);
+		cp = ਲੱਭੋ_control(arg);
+		ਜੇ (cp) {
+			ਜੇ (!argnext)
+				bb_error_ਸੁਨੇਹਾ_and_die(bb_ਸੁਨੇਹਾ_requires_arg, arg);
 			/* called for the side effect of xfunc death only */
-			set_control_char_or_die(cp, argnext, &mode);
+			ਸੈੱਟ_control_char_or_die(cp, argnext, &ਬਹੁਲਕ);
 			stty_state &= ~STTY_noargs;
 			++k;
-			continue;
+			ਜਾਰੀ;
 		}
 
-		param = find_param(arg);
-		if (param & param_need_arg) {
-			if (!argnext)
-				bb_error_msg_and_die(bb_msg_requires_arg, arg);
+		param = ਲੱਭੋ_param(arg);
+		ਜੇ (param & param_need_arg) {
+			ਜੇ (!argnext)
+				bb_error_ਸੁਨੇਹਾ_and_die(bb_ਸੁਨੇਹਾ_requires_arg, arg);
 			++k;
 		}
 
-		switch (param) {
-#ifdef __linux__
-		case param_line:
+		ਚੋਣ (param) {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ __linux__
+		ਹਾਲਤ param_ਸਤਰ:
 # ifndef TIOCGWINSZ
-			xatoul_range_sfx(argnext, 1, INT_MAX, stty_suffixes);
-			break;
+			xatoul_range_sfx(argnext, 1, ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ, stty_suffixes);
+			ਰੋਕੋ;
 # endif /* else fall-through */
-#endif
-#ifdef TIOCGWINSZ
-		case param_rows:
-		case param_cols:
-		case param_columns:
-			xatoul_range_sfx(argnext, 1, INT_MAX, stty_suffixes);
-			break;
-		case param_size:
-#endif
-		case param_speed:
-			break;
-		case param_ispeed:
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ TIOCGWINSZ
+		ਹਾਲਤ param_ਪੰਕਤੀਆਂ:
+		ਹਾਲਤ param_ਖਾਨੇ_ਗਿਣਤੀ:
+		ਹਾਲਤ param_columns:
+			xatoul_range_sfx(argnext, 1, ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ, stty_suffixes);
+			ਰੋਕੋ;
+		ਹਾਲਤ param_ਮਾਪ:
+#ਜੇ_ਅੰਤ
+		ਹਾਲਤ param_ਰਫਤਾਰ:
+			ਰੋਕੋ;
+		ਹਾਲਤ param_ispeed:
 			/* called for the side effect of xfunc death only */
-			set_speed_or_die(input_speed, argnext, &mode);
-			break;
-		case param_ospeed:
+			ਸੈੱਟ_ਰਫਤਾਰ_or_die(ਨਿਵੇਸ਼_ਰਫਤਾਰ, argnext, &ਬਹੁਲਕ);
+			ਰੋਕੋ;
+		ਹਾਲਤ param_ospeed:
 			/* called for the side effect of xfunc death only */
-			set_speed_or_die(output_speed, argnext, &mode);
-			break;
-		default:
-			if (recover_mode(arg, &mode) == 1) break;
-			if (tty_value_to_baud(xatou(arg)) != (speed_t) -1) break;
- invalid_argument:
-			bb_error_msg_and_die("invalid argument '%s'", arg);
+			ਸੈੱਟ_ਰਫਤਾਰ_or_die(output_ਰਫਤਾਰ, argnext, &ਬਹੁਲਕ);
+			ਰੋਕੋ;
+		ਮੂਲ:
+			ਜੇ (recover_ਬਹੁਲਕ(arg, &ਬਹੁਲਕ) == 1) ਰੋਕੋ;
+			ਜੇ (tty_ਮੁੱਲ_ਮੰਜ਼ਿਲ_baud(xatou(arg)) != (ਰਫਤਾਰ_t) -1) ਰੋਕੋ;
+ invalid_ਦਲੀਲ:
+			bb_error_ਸੁਨੇਹਾ_and_die("invalid argument '%s'", arg);
 		}
 		stty_state &= ~STTY_noargs;
 	}
 
 	/* Specifying both -a and -g is an error */
-	if ((stty_state & (STTY_verbose_output | STTY_recoverable_output)) ==
+	ਜੇ ((stty_state & (STTY_verbose_output | STTY_recoverable_output)) ==
 		(STTY_verbose_output | STTY_recoverable_output)
 	) {
-		bb_simple_error_msg_and_die("-a and -g are mutually exclusive");
+		bb_simple_error_ਸੁਨੇਹਾ_and_die("-a and -g are mutually exclusive");
 	}
 	/* Specifying -a or -g with non-options is an error */
-	if ((stty_state & (STTY_verbose_output | STTY_recoverable_output))
+	ਜੇ ((stty_state & (STTY_verbose_output | STTY_recoverable_output))
 	 && !(stty_state & STTY_noargs)
 	) {
-		bb_simple_error_msg_and_die("modes may not be set when -a or -g is used");
+		bb_simple_error_ਸੁਨੇਹਾ_and_die("modes may not be set when -a or -g is used");
 	}
 
 	/* Now it is safe to start doing things */
-	if (file_name) {
+	ਜੇ (file_name) {
 		G.device_name = file_name;
 		xmove_fd(xopen_nonblocking(G.device_name), STDIN_FILENO);
 		ndelay_off(STDIN_FILENO);
@@ -1423,100 +1423,100 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 
 	/* Initialize to all zeroes so there is no risk memcmp will report a
 	   spurious difference in an uninitialized portion of the structure */
-	memset(&mode, 0, sizeof(mode));
-	if (tcgetattr(STDIN_FILENO, &mode))
+	memset(&ਬਹੁਲਕ, 0, ਆਕਾਰ(ਬਹੁਲਕ));
+	ਜੇ (tcgetattr(STDIN_FILENO, &ਬਹੁਲਕ))
 		perror_on_device_and_die("%s");
 
-	if (stty_state & (STTY_verbose_output | STTY_recoverable_output | STTY_noargs)) {
-		G.max_col = get_terminal_width(STDOUT_FILENO);
-		output_func(&mode, display_all);
-		return EXIT_SUCCESS;
+	ਜੇ (stty_state & (STTY_verbose_output | STTY_recoverable_output | STTY_noargs)) {
+		G.max_ਖਾਨਾ = get_terminal_ਚੌੜਾਈ(STDOUT_FILENO);
+		output_func(&ਬਹੁਲਕ, display_all);
+		ਵਾਪਸ EXIT_SUCCESS;
 	}
 
 	/* Second pass: perform actions */
 	k = 0;
-	while (argv[++k]) {
-		const struct mode_info *mp;
-		const struct control_info *cp;
-		const char *arg = argv[k];
-		const char *argnext = argv[k+1];
-		int param;
+	ਜਦੋਂ (argv[++k]) {
+		ਅਚਲ ਬਣਤਰ ਬਹੁਲਕ_info *mp;
+		ਅਚਲ ਬਣਤਰ control_info *cp;
+		ਅਚਲ ਅੱਖਰ *arg = argv[k];
+		ਅਚਲ ਅੱਖਰ *argnext = argv[k+1];
+		ਪੂਰਨ param;
 
-		if (arg[0] == '-') {
-			mp = find_mode(arg+1);
-			if (mp) {
-				set_mode(mp, 1 /* reversed */, &mode);
-				stty_state |= STTY_require_set_attr;
+		ਜੇ (arg[0] == '-') {
+			mp = ਲੱਭੋ_ਬਹੁਲਕ(arg+1);
+			ਜੇ (mp) {
+				ਸੈੱਟ_ਬਹੁਲਕ(mp, 1 /* reversed */, &ਬਹੁਲਕ);
+				stty_state |= STTY_require_ਸੈੱਟ_attr;
 			}
 			/* It is an option - already parsed. Skip it */
-			continue;
+			ਜਾਰੀ;
 		}
 
-		mp = find_mode(arg);
-		if (mp) {
-			set_mode(mp, 0 /* non-reversed */, &mode);
-			stty_state |= STTY_require_set_attr;
-			continue;
+		mp = ਲੱਭੋ_ਬਹੁਲਕ(arg);
+		ਜੇ (mp) {
+			ਸੈੱਟ_ਬਹੁਲਕ(mp, 0 /* non-reversed */, &ਬਹੁਲਕ);
+			stty_state |= STTY_require_ਸੈੱਟ_attr;
+			ਜਾਰੀ;
 		}
 
-		cp = find_control(arg);
-		if (cp) {
+		cp = ਲੱਭੋ_control(arg);
+		ਜੇ (cp) {
 			++k;
-			set_control_char_or_die(cp, argnext, &mode);
-			stty_state |= STTY_require_set_attr;
-			continue;
+			ਸੈੱਟ_control_char_or_die(cp, argnext, &ਬਹੁਲਕ);
+			stty_state |= STTY_require_ਸੈੱਟ_attr;
+			ਜਾਰੀ;
 		}
 
-		param = find_param(arg);
-		if (param & param_need_arg) {
+		param = ਲੱਭੋ_param(arg);
+		ਜੇ (param & param_need_arg) {
 			++k;
 		}
 
-		switch (param) {
-#ifdef __linux__
-		case param_line:
-			mode.c_line = xatoul_sfx(argnext, stty_suffixes);
-			stty_state |= STTY_require_set_attr;
-			break;
-#endif
-#ifdef TIOCGWINSZ
-		case param_cols:
-		case param_columns:
-			set_window_size(-1, xatoul_sfx(argnext, stty_suffixes));
-			break;
-		case param_size:
-			display_window_size(0);
-			break;
-		case param_rows:
-			set_window_size(xatoul_sfx(argnext, stty_suffixes), -1);
-			break;
-#endif
-		case param_speed:
-			display_speed(&mode, 0);
-			break;
-		case param_ispeed:
-			set_speed_or_die(input_speed, argnext, &mode);
-			stty_state |= (STTY_require_set_attr | STTY_speed_was_set);
-			break;
-		case param_ospeed:
-			set_speed_or_die(output_speed, argnext, &mode);
-			stty_state |= (STTY_require_set_attr | STTY_speed_was_set);
-			break;
-		default:
-			if (recover_mode(arg, &mode) == 1)
-				stty_state |= STTY_require_set_attr;
-			else /* true: if (tty_value_to_baud(xatou(arg)) != (speed_t) -1) */{
-				set_speed_or_die(both_speeds, arg, &mode);
-				stty_state |= (STTY_require_set_attr | STTY_speed_was_set);
+		ਚੋਣ (param) {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ __linux__
+		ਹਾਲਤ param_ਸਤਰ:
+			ਬਹੁਲਕ.c_ਸਤਰ = xatoul_sfx(argnext, stty_suffixes);
+			stty_state |= STTY_require_ਸੈੱਟ_attr;
+			ਰੋਕੋ;
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ TIOCGWINSZ
+		ਹਾਲਤ param_ਖਾਨੇ_ਗਿਣਤੀ:
+		ਹਾਲਤ param_columns:
+			ਸੈੱਟ_ਖਿੜਕੀ_ਮਾਪ(-1, xatoul_sfx(argnext, stty_suffixes));
+			ਰੋਕੋ;
+		ਹਾਲਤ param_ਮਾਪ:
+			display_ਖਿੜਕੀ_ਮਾਪ(0);
+			ਰੋਕੋ;
+		ਹਾਲਤ param_ਪੰਕਤੀਆਂ:
+			ਸੈੱਟ_ਖਿੜਕੀ_ਮਾਪ(xatoul_sfx(argnext, stty_suffixes), -1);
+			ਰੋਕੋ;
+#ਜੇ_ਅੰਤ
+		ਹਾਲਤ param_ਰਫਤਾਰ:
+			display_ਰਫਤਾਰ(&ਬਹੁਲਕ, 0);
+			ਰੋਕੋ;
+		ਹਾਲਤ param_ispeed:
+			ਸੈੱਟ_ਰਫਤਾਰ_or_die(ਨਿਵੇਸ਼_ਰਫਤਾਰ, argnext, &ਬਹੁਲਕ);
+			stty_state |= (STTY_require_ਸੈੱਟ_attr | STTY_ਰਫਤਾਰ_was_ਸੈੱਟ);
+			ਰੋਕੋ;
+		ਹਾਲਤ param_ospeed:
+			ਸੈੱਟ_ਰਫਤਾਰ_or_die(output_ਰਫਤਾਰ, argnext, &ਬਹੁਲਕ);
+			stty_state |= (STTY_require_ਸੈੱਟ_attr | STTY_ਰਫਤਾਰ_was_ਸੈੱਟ);
+			ਰੋਕੋ;
+		ਮੂਲ:
+			ਜੇ (recover_ਬਹੁਲਕ(arg, &ਬਹੁਲਕ) == 1)
+				stty_state |= STTY_require_ਸੈੱਟ_attr;
+			ਨਹੀਂਤਾਂ /* true: if (tty_value_to_baud(xatou(arg)) != (speed_t) -1) */{
+				ਸੈੱਟ_ਰਫਤਾਰ_or_die(both_speeds, arg, &ਬਹੁਲਕ);
+				stty_state |= (STTY_require_ਸੈੱਟ_attr | STTY_ਰਫਤਾਰ_was_ਸੈੱਟ);
 			} /* else - impossible (caught in the first pass):
 				bb_error_msg_and_die("invalid argument '%s'", arg); */
 		}
 	}
 
-	if (stty_state & STTY_require_set_attr) {
-		struct termios new_mode;
+	ਜੇ (stty_state & STTY_require_ਸੈੱਟ_attr) {
+		ਬਣਤਰ termios new_ਬਹੁਲਕ;
 
-		if (tcsetattr(STDIN_FILENO, TCSADRAIN, &mode))
+		ਜੇ (tcsetattr(STDIN_FILENO, TCSADRAIN, &ਬਹੁਲਕ))
 			perror_on_device_and_die("%s");
 
 		/* POSIX (according to Zlotnick's book) tcsetattr returns zero if
@@ -1528,17 +1528,17 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 
 		/* Initialize to all zeroes so there is no risk memcmp will report a
 		   spurious difference in an uninitialized portion of the structure */
-		memset(&new_mode, 0, sizeof(new_mode));
-		if (tcgetattr(STDIN_FILENO, &new_mode))
+		memset(&new_ਬਹੁਲਕ, 0, ਆਕਾਰ(new_ਬਹੁਲਕ));
+		ਜੇ (tcgetattr(STDIN_FILENO, &new_ਬਹੁਲਕ))
 			perror_on_device_and_die("%s");
 
-		if (memcmp(&mode, &new_mode, sizeof(mode)) != 0) {
+		ਜੇ (memcmp(&ਬਹੁਲਕ, &new_ਬਹੁਲਕ, ਆਕਾਰ(ਬਹੁਲਕ)) != 0) {
 /*
  * I think the below chunk is not necessary on Linux.
  * If you are deleting it, also delete STTY_speed_was_set bit -
  * it is only ever checked here.
  */
-#if 0 /* was "if CIBAUD" */
+#ਜੇ 0 /* was "if CIBAUD" */
 			/* SunOS 4.1.3 (at least) has the problem that after this sequence,
 			   tcgetattr (&m1); tcsetattr (&m1); tcgetattr (&m2);
 			   sometimes (m1 != m2).  The only difference is in the four bits
@@ -1548,13 +1548,13 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 			   set the baud rate explicitly -- otherwise we'd never give an
 			   error for a true failure to set the baud rate */
 
-			new_mode.c_cflag &= (~CIBAUD);
-			if ((stty_state & STTY_speed_was_set)
-			 || memcmp(&mode, &new_mode, sizeof(mode)) != 0)
-#endif
+			new_ਬਹੁਲਕ.c_cflag &= (~CIBAUD);
+			ਜੇ ((stty_state & STTY_ਰਫਤਾਰ_was_ਸੈੱਟ)
+			 || memcmp(&ਬਹੁਲਕ, &new_ਬਹੁਲਕ, ਆਕਾਰ(ਬਹੁਲਕ)) != 0)
+#ਜੇ_ਅੰਤ
 				perror_on_device_and_die("%s: cannot perform all requested operations");
 		}
 	}
 
-	return EXIT_SUCCESS;
+	ਵਾਪਸ EXIT_SUCCESS;
 }

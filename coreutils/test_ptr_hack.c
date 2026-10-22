@@ -5,19 +5,19 @@
  * Licensed under GPLv2, see file LICENSE in this source tree.
  */
 
-struct test_statics;
+ਬਣਤਰ test_statics;
 
-#ifndef GCC_COMBINE
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ GCC_COMBINE
 
 /* We cheat here. It is declared as const ptr in libbb.h,
  * but here we make it live in R/W memory */
-struct test_statics *test_ptr_to_statics;
+ਬਣਤਰ test_statics *test_ptr_ਮੰਜ਼ਿਲ_statics;
 
-#else
+#ਨਹੀਂਤਾਂ
 
 /* gcc -combine will see through and complain */
 /* Using alternative method which is more likely to break
  * on weird architectures, compilers, linkers and so on */
-struct test_statics *const test_ptr_to_statics __attribute__ ((section (".data")));
+ਬਣਤਰ test_statics *ਅਚਲ test_ptr_ਮੰਜ਼ਿਲ_statics __attribute__ ((section (".data")));
 
-#endif
+#ਜੇ_ਅੰਤ

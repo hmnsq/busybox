@@ -124,15 +124,15 @@
 //usage:       "$ date\n"
 //usage:       "Wed Apr 12 18:52:41 MDT 2000\n"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
-#if ENABLE_FEATURE_DATE_NANO
+#ਅਨ੍ਤਰ੍ਭਾਵ "libbb.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "common_bufsiz.h"
+#ਜੇ ENABLE_FEATURE_DATE_NANO
 # include <sys/syscall.h>
-#endif
+#ਜੇ_ਅੰਤ
 
-enum {
+ਗਿਣਤੀ {
 	OPT_RFC2822   = (1 << 0), /* R */
-	OPT_SET       = (1 << 1), /* s */
+	OPT_ਸੈੱਟ       = (1 << 1), /* s */
 	OPT_UTC       = (1 << 2), /* u */
 	OPT_DATE      = (1 << 3), /* d */
 	OPT_REFERENCE = (1 << 4), /* r */
@@ -140,17 +140,17 @@ enum {
 	OPT_STR2DT    = (1 << 6) * ENABLE_FEATURE_DATE_ISOFMT, /* D */
 };
 
-#if ENABLE_LONG_OPTS
-static const char date_longopts[] ALIGN1 =
-		"rfc-822\0"   No_argument       "R"
-		"rfc-2822\0"  No_argument       "R"
-		"set\0"       Required_argument "s"
-		"utc\0"       No_argument       "u"
+#ਜੇ ENABLE_LONG_OPTS
+ਸਥਿਰ ਅਚਲ ਅੱਖਰ date_longopts[] ALIGN1 =
+		"rfc-822\0"   No_ਦਲੀਲ       "R"
+		"rfc-2822\0"  No_ਦਲੀਲ       "R"
+		"set\0"       Required_ਦਲੀਲ "s"
+		"utc\0"       No_ਦਲੀਲ       "u"
 	/*	"universal\0" No_argument       "u" */
-		"date\0"      Required_argument "d"
-		"reference\0" Required_argument "r"
+		"date\0"      Required_ਦਲੀਲ "d"
+		"reference\0" Required_ਦਲੀਲ "r"
 		;
-#endif
+#ਜੇ_ਅੰਤ
 
 /* We are a NOEXEC applet.
  * Obstacles to NOFORK:
@@ -159,19 +159,19 @@ static const char date_longopts[] ALIGN1 =
  * - after xasprintf we use other xfuncs
  */
 
-int date_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int date_main(int argc UNUSED_PARAM, char **argv)
+ਪੂਰਨ date_main(ਪੂਰਨ argc, ਅੱਖਰ **argv) MAIN_EXTERNALLY_VISIBLE;
+ਪੂਰਨ date_main(ਪੂਰਨ argc ਅਣਵਰਤਿਆ_PARAM, ਅੱਖਰ **argv)
 {
-	struct timespec ts;
-	struct tm tm_time;
-	char buf_fmt_dt2str[64];
-	unsigned opt;
-	int isofmt = -1;
-	char *date_str;
-	char *fmt_dt2str;
-	char *fmt_str2dt;
-	char *filename;
-	char *isofmt_arg = NULL;
+	ਬਣਤਰ timespec ts;
+	ਬਣਤਰ tm tm_ਸਮਾਂ;
+	ਅੱਖਰ buf_fmt_dt2str[64];
+	ਬਿਨਾਨਿਸ਼ਾਨੀ opt;
+	ਪੂਰਨ isofmt = -1;
+	ਅੱਖਰ *date_str;
+	ਅੱਖਰ *fmt_dt2str;
+	ਅੱਖਰ *fmt_str2dt;
+	ਅੱਖਰ *filename;
+	ਅੱਖਰ *isofmt_arg = ਨਿਰਾ;
 
 	opt = getopt32long(argv, "^"
 			"Rs:ud:r:"
@@ -185,35 +185,35 @@ int date_main(int argc UNUSED_PARAM, char **argv)
 	);
 	argv += optind;
 
-	if (opt & OPT_UTC)
-		putenv((char*)"TZ=UTC0");
+	ਜੇ (opt & OPT_UTC)
+		putenv((ਅੱਖਰ*)"TZ=UTC0");
 
-	if (ENABLE_FEATURE_DATE_ISOFMT && (opt & OPT_ISO8601)) {
+	ਜੇ (ENABLE_FEATURE_DATE_ISOFMT && (opt & OPT_ISO8601)) {
 		isofmt = 0; /* default is date */
-		if (isofmt_arg) {
-			static const char isoformats[] ALIGN1 =
+		ਜੇ (isofmt_arg) {
+			ਸਥਿਰ ਅਚਲ ਅੱਖਰ isoformats[] ALIGN1 =
 				"date\0""hours\0""minutes\0""seconds\0ns\0";
-			isofmt = index_in_substrings(isoformats, isofmt_arg);
-			if (isofmt < 0)
+			isofmt = ਸੂਚਕਾਂਕ_ਵਿੱਚ_substrings(isoformats, isofmt_arg);
+			ਜੇ (isofmt < 0)
 				bb_show_usage();
 		}
 	}
 
-	fmt_dt2str = NULL;
-	if (argv[0] && argv[0][0] == '+') {
+	fmt_dt2str = ਨਿਰਾ;
+	ਜੇ (argv[0] && argv[0][0] == '+') {
 		fmt_dt2str = &argv[0][1]; /* skip over the '+' */
 		argv++;
 	}
-	if (!(opt & (OPT_SET | OPT_DATE))) { /* neither -s TIME nor -d TIME? */
-		opt |= OPT_SET;
+	ਜੇ (!(opt & (OPT_ਸੈੱਟ | OPT_DATE))) { /* neither -s TIME nor -d TIME? */
+		opt |= OPT_ਸੈੱਟ;
 		date_str = argv[0]; /* can be NULL */
-		if (date_str) {
-#if ENABLE_FEATURE_DATE_COMPAT
-			int len = strspn(date_str, "0123456789");
-			if (date_str[len] == '\0'
+		ਜੇ (date_str) {
+#ਜੇ ENABLE_FEATURE_DATE_COMPAT
+			ਪੂਰਨ len = strspn(date_str, "0123456789");
+			ਜੇ (date_str[len] == '\0'
 			 || (date_str[len] == '.'
-			    && isdigit(date_str[len+1])
-			    && isdigit(date_str[len+2])
+			    && ਅੰਕ_ਹੈ(date_str[len+1])
+			    && ਅੰਕ_ਹੈ(date_str[len+2])
 			    && date_str[len+3] == '\0'
 			    )
 			) {
@@ -222,98 +222,98 @@ int date_main(int argc UNUSED_PARAM, char **argv)
 				 * Some users actually do use it.
 				 */
 				len -= 8;
-				if (len < 0 || len > 4 || (len & 1))
-					bb_error_msg_and_die(bb_msg_invalid_date, date_str);
-				if (len != 0) { /* move YY or CCYY to front */
-					char buf[4];
-					memcpy(buf, date_str + 8, len);
+				ਜੇ (len < 0 || len > 4 || (len & 1))
+					bb_error_ਸੁਨੇਹਾ_and_die(bb_ਸੁਨੇਹਾ_invalid_date, date_str);
+				ਜੇ (len != 0) { /* move YY or CCYY to front */
+					ਅੱਖਰ buf[4];
+					ਸਮ੍ਰਿਤੀ_ਨਕਲ(buf, date_str + 8, len);
 					memmove(date_str + len, date_str, 8);
-					memcpy(date_str, buf, len);
+					ਸਮ੍ਰਿਤੀ_ਨਕਲ(date_str, buf, len);
 				}
 			}
-#endif
+#ਜੇ_ਅੰਤ
 			argv++;
 		}
 	}
-	if (*argv)
+	ਜੇ (*argv)
 		bb_show_usage();
 
 	/* Now we have parsed all the information except the date format
 	 * which depends on whether the clock is being set or read */
 
-	if (opt & OPT_REFERENCE) {
-		struct stat statbuf;
+	ਜੇ (opt & OPT_REFERENCE) {
+		ਬਣਤਰ stat statbuf;
 		xstat(filename, &statbuf);
 		ts.tv_sec = statbuf.st_mtime;
-#if ENABLE_FEATURE_DATE_NANO
+#ਜੇ ENABLE_FEATURE_DATE_NANO
 		ts.tv_nsec = statbuf.st_mtim.tv_nsec;
 		/* Some toolchains use .st_mtimensec instead of st_mtim.tv_nsec.
 		 * If you need #define _SVID_SOURCE 1 to enable st_mtim.tv_nsec,
 		 * drop a mail to project mailing list please
 		 */
-#endif
-	} else {
-#if ENABLE_FEATURE_DATE_NANO
+#ਜੇ_ਅੰਤ
+	} ਨਹੀਂਤਾਂ {
+#ਜੇ ENABLE_FEATURE_DATE_NANO
 		clock_gettime(CLOCK_REALTIME, &ts);
-#else
-		time(&ts.tv_sec);
-#endif
+#ਨਹੀਂਤਾਂ
+		ਸਮਾਂ(&ts.tv_sec);
+#ਜੇ_ਅੰਤ
 	}
-#if !ENABLE_FEATURE_DATE_NANO
+#ਜੇ !ENABLE_FEATURE_DATE_NANO
 	ts.tv_nsec = 0;
-#endif
-	localtime_r(&ts.tv_sec, &tm_time);
+#ਜੇ_ਅੰਤ
+	localtime_r(&ts.tv_sec, &tm_ਸਮਾਂ);
 
 	/* If date string is given, update tm_time, and maybe set date */
-	if (date_str != NULL) {
-		int check_dst = 1;
+	ਜੇ (date_str != ਨਿਰਾ) {
+		ਪੂਰਨ check_dst = 1;
 		/* Zero out fields - take her back to midnight! */
-		tm_time.tm_sec = 0;
-		tm_time.tm_min = 0;
-		tm_time.tm_hour = 0;
+		tm_ਸਮਾਂ.tm_sec = 0;
+		tm_ਸਮਾਂ.tm_min = 0;
+		tm_ਸਮਾਂ.tm_hour = 0;
 
 		/* Process any date input to UNIX time since 1 Jan 1970 */
-		if (ENABLE_FEATURE_DATE_ISOFMT && (opt & OPT_STR2DT)) {
-			if (strptime(date_str, fmt_str2dt, &tm_time) == NULL)
-				bb_error_msg_and_die(bb_msg_invalid_date, date_str);
-		} else {
-			check_dst = parse_datestr(date_str, &tm_time);
+		ਜੇ (ENABLE_FEATURE_DATE_ISOFMT && (opt & OPT_STR2DT)) {
+			ਜੇ (strptime(date_str, fmt_str2dt, &tm_ਸਮਾਂ) == ਨਿਰਾ)
+				bb_error_ਸੁਨੇਹਾ_and_die(bb_ਸੁਨੇਹਾ_invalid_date, date_str);
+		} ਨਹੀਂਤਾਂ {
+			check_dst = parse_datestr(date_str, &tm_ਸਮਾਂ);
 		}
 
 		/* Correct any day of week and day of year etc. fields */
 		/* Be sure to recheck dst (but not if date is UTC) */
-		if (check_dst)
-			tm_time.tm_isdst = -1;
-		ts.tv_sec = validate_tm_time(date_str, &tm_time);
+		ਜੇ (check_dst)
+			tm_ਸਮਾਂ.tm_isdst = -1;
+		ts.tv_sec = validate_tm_ਸਮਾਂ(date_str, &tm_ਸਮਾਂ);
 		ts.tv_nsec = 0;
 
 		/* if setting time, set it */
-		if ((opt & OPT_SET) && clock_settime(CLOCK_REALTIME, &ts) < 0) {
-			bb_simple_perror_msg("can't set date");
+		ਜੇ ((opt & OPT_ਸੈੱਟ) && clock_settime(CLOCK_REALTIME, &ts) < 0) {
+			bb_simple_perror_ਸੁਨੇਹਾ("can't set date");
 		}
 	}
 
 	/* Display output */
 
 	/* Deal with format string */
-	if (fmt_dt2str == NULL) {
-		int i;
+	ਜੇ (fmt_dt2str == ਨਿਰਾ) {
+		ਪੂਰਨ i;
 		fmt_dt2str = buf_fmt_dt2str;
-		if (ENABLE_FEATURE_DATE_ISOFMT && isofmt >= 0) {
+		ਜੇ (ENABLE_FEATURE_DATE_ISOFMT && isofmt >= 0) {
 			/* -I[SPEC]: 0:date 1:hours 2:minutes 3:seconds 4:ns*/
 			strcpy(fmt_dt2str, "%Y-%m-%dT%H:%M:%S");
 			i = 8 + 3 * isofmt;
-			if (isofmt != 0) {
-				int n;
-				if (isofmt == 4) {
+			ਜੇ (isofmt != 0) {
+				ਪੂਰਨ n;
+				ਜੇ (isofmt == 4) {
 					i -= 3;
-					i += sprintf(&fmt_dt2str[i], ",%09u", (unsigned)ts.tv_nsec);
+					i += sprintf(&fmt_dt2str[i], ",%09u", (ਬਿਨਾਨਿਸ਼ਾਨੀ)ts.tv_nsec);
 				}
 				/* %z prints "+hhmm" timezone, but coreutils-8.30 prints "+hh:mm"! */
 				/* ...therefore this atrocity: */
-				n = strftime(&fmt_dt2str[i], 8, "%z", &tm_time);
+				n = strftime(&fmt_dt2str[i], 8, "%z", &tm_ਸਮਾਂ);
 				i += n;
-				if (n == 5 && (fmt_dt2str[i-5] == '+' || fmt_dt2str[i-5] == '-')) {
+				ਜੇ (n == 5 && (fmt_dt2str[i-5] == '+' || fmt_dt2str[i-5] == '-')) {
 					/* "mm" -> ":mm" */
 					fmt_dt2str[i    ] = fmt_dt2str[i - 1];
 					fmt_dt2str[i - 1] = fmt_dt2str[i - 2];
@@ -322,66 +322,66 @@ int date_main(int argc UNUSED_PARAM, char **argv)
 				}
 			}
 			fmt_dt2str[i] = '\0';
-		} else if (opt & OPT_RFC2822) {
+		} ਨਹੀਂਤਾਂ ਜੇ (opt & OPT_RFC2822) {
 			/* -R. undo busybox.c setlocale */
-			if (ENABLE_LOCALE_SUPPORT)
-				setlocale(LC_TIME, "C");
-			fmt_dt2str = (char*)"%a, %d %b %Y %H:%M:%S %z";
-		} else { /* default case */
-			fmt_dt2str = (char*)"%a %b %e %H:%M:%S %Z %Y";
+			ਜੇ (ENABLE_LOCALE_SUPPORT)
+				setlocale(LC_ਸਮਾਂ, "C");
+			fmt_dt2str = (ਅੱਖਰ*)"%a, %d %b %Y %H:%M:%S %z";
+		} ਨਹੀਂਤਾਂ { /* default case */
+			fmt_dt2str = (ਅੱਖਰ*)"%a %b %e %H:%M:%S %Z %Y";
 		}
 	}
-#if ENABLE_FEATURE_DATE_NANO
-	else {
+#ਜੇ ENABLE_FEATURE_DATE_NANO
+	ਨਹੀਂਤਾਂ {
 		/* User-specified fmt_dt2str */
 		/* Search for and process "%N" */
-		char *p = fmt_dt2str;
-		while ((p = strchr(p, '%')) != NULL) {
-			int n, m;
-			unsigned pres, scale;
+		ਅੱਖਰ *p = fmt_dt2str;
+		ਜਦੋਂ ((p = strchr(p, '%')) != ਨਿਰਾ) {
+			ਪੂਰਨ n, m;
+			ਬਿਨਾਨਿਸ਼ਾਨੀ pres, scale;
 
 			p++;
-			if (*p == '%') {
+			ਜੇ (*p == '%') {
 				p++;
-				continue;
+				ਜਾਰੀ;
 			}
 			n = strspn(p, "0123456789");
-			if (p[n] != 'N') {
+			ਜੇ (p[n] != 'N') {
 				p += n;
-				continue;
+				ਜਾਰੀ;
 			}
 			/* We have "%[nnn]N" */
 			p[-1] = '\0';
 			p[n] = '\0';
 			scale = 1;
 			pres = 9;
-			if (n) {
-				pres = xatoi_positive(p);
-				if (pres == 0)
+			ਜੇ (n) {
+				pres = xatoi_ਸਕਾਰਾਤਮਕ(p);
+				ਜੇ (pres == 0)
 					pres = 9;
 				m = 9 - pres;
-				while (--m >= 0)
+				ਜਦੋਂ (--m >= 0)
 					scale *= 10;
 			}
 
 			m = p - fmt_dt2str;
 			p += n + 1;
-			fmt_dt2str = xasprintf("%s%0*u%s", fmt_dt2str, pres, (unsigned)ts.tv_nsec / scale, p);
+			fmt_dt2str = xasprintf("%s%0*u%s", fmt_dt2str, pres, (ਬਿਨਾਨਿਸ਼ਾਨੀ)ts.tv_nsec / scale, p);
 			p = fmt_dt2str + m;
 		}
 	}
-#endif
+#ਜੇ_ਅੰਤ
 
-#define date_buf bb_common_bufsiz1
-	setup_common_bufsiz();
-	if (*fmt_dt2str == '\0') {
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ date_buf bb_common_bufsiz1
+	ਤਿਆਰੀ_common_bufsiz();
+	ਜੇ (*fmt_dt2str == '\0') {
 		/* With no format string, just print a blank line */
 		date_buf[0] = '\0';
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		/* Generate output string */
-		strftime(date_buf, COMMON_BUFSIZE, fmt_dt2str, &tm_time);
+		strftime(date_buf, COMMON_BUFSIZE, fmt_dt2str, &tm_ਸਮਾਂ);
 	}
 	puts(date_buf);
 
-	return EXIT_SUCCESS;
+	ਵਾਪਸ EXIT_SUCCESS;
 }

@@ -54,18 +54,18 @@
 //usage:       "ls -l /tmp/foo\n"
 //usage:       "-r--r--r--    1 root     root            0 Apr 12 18:25 /tmp/foo\n"
 
-#include "libbb.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
 
-#define OPT_STR     "Rh" IF_DESKTOP("vcfLHP")
-#define BIT_RECURSE 1
-#define OPT_RECURSE (opt & 1)
-#define OPT_NODEREF (opt & 2)
-#define OPT_VERBOSE (IF_DESKTOP(opt & 0x04) IF_NOT_DESKTOP(0))
-#define OPT_CHANGED (IF_DESKTOP(opt & 0x08) IF_NOT_DESKTOP(0))
-#define OPT_QUIET   (IF_DESKTOP(opt & 0x10) IF_NOT_DESKTOP(0))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ OPT_STR     "Rh" IF_DESKTOP("vcfLHP")
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਦੋਆਧਾਰੀ_ਅੰਕ_RECURSE 1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ OPT_RECURSE (opt & 1)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ OPT_NODEREF (opt & 2)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ OPT_VERBOSE (IF_DESKTOP(opt & 0x04) IF_NOT_DESKTOP(0))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ OPT_ਬਦਲਿਆ (IF_DESKTOP(opt & 0x08) IF_NOT_DESKTOP(0))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ OPT_QUIET   (IF_DESKTOP(opt & 0x10) IF_NOT_DESKTOP(0))
 /* POSIX options
  * -L traverse every symbolic link to a directory encountered
  * -H if a command line argument is a symbolic link to a directory, traverse it
@@ -74,92 +74,92 @@
  * "Specifying more than one of -H, -L, and -P is not an error.
  * The last option specified shall determine the behavior of the utility." */
 /* -L */
-#define BIT_TRAVERSE 0x20
-#define OPT_TRAVERSE (IF_DESKTOP(opt & BIT_TRAVERSE) IF_NOT_DESKTOP(0))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਦੋਆਧਾਰੀ_ਅੰਕ_TRAVERSE 0x20
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ OPT_TRAVERSE (IF_DESKTOP(opt & ਦੋਆਧਾਰੀ_ਅੰਕ_TRAVERSE) IF_NOT_DESKTOP(0))
 /* -H or -L */
-#define BIT_TRAVERSE_TOP (0x20|0x40)
-#define OPT_TRAVERSE_TOP (IF_DESKTOP(opt & BIT_TRAVERSE_TOP) IF_NOT_DESKTOP(0))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਦੋਆਧਾਰੀ_ਅੰਕ_TRAVERSE_ਸਿਖਰ (0x20|0x40)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ OPT_TRAVERSE_ਸਿਖਰ (IF_DESKTOP(opt & ਦੋਆਧਾਰੀ_ਅੰਕ_TRAVERSE_ਸਿਖਰ) IF_NOT_DESKTOP(0))
 
-#if ENABLE_FEATURE_CHOWN_LONG_OPTIONS
-static const char chown_longopts[] ALIGN1 =
-	"recursive\0"        No_argument   "R"
-	"dereference\0"      No_argument   "\xff"
-	"no-dereference\0"   No_argument   "h"
-# if ENABLE_DESKTOP
-	"changes\0"          No_argument   "c"
-	"silent\0"           No_argument   "f"
-	"quiet\0"            No_argument   "f"
-	"verbose\0"          No_argument   "v"
+#ਜੇ ENABLE_FEATURE_CHOWN_LONG_OPTIONS
+ਸਥਿਰ ਅਚਲ ਅੱਖਰ chown_longopts[] ALIGN1 =
+	"recursive\0"        No_ਦਲੀਲ   "R"
+	"dereference\0"      No_ਦਲੀਲ   "\xff"
+	"no-dereference\0"   No_ਦਲੀਲ   "h"
+# ਜੇ ENABLE_DESKTOP
+	"changes\0"          No_ਦਲੀਲ   "c"
+	"silent\0"           No_ਦਲੀਲ   "f"
+	"quiet\0"            No_ਦਲੀਲ   "f"
+	"verbose\0"          No_ਦਲੀਲ   "v"
 # endif
 	;
-#endif
+#ਜੇ_ਅੰਤ
 
-typedef int (*chown_fptr)(const char *, uid_t, gid_t);
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਪੂਰਨ (*chown_fptr)(ਅਚਲ ਅੱਖਰ *, uid_t, gid_t);
 
-struct param_t {
-	struct bb_uidgid_t ugid;
+ਬਣਤਰ param_t {
+	ਬਣਤਰ bb_uidgid_t ugid;
 	chown_fptr chown_func;
 };
 
-static int FAST_FUNC fileAction(struct recursive_state *state UNUSED_PARAM,
-		const char *fileName, struct stat *statbuf)
+ਸਥਿਰ ਪੂਰਨ FAST_FUNC fileAction(ਬਣਤਰ recursive_state *state ਅਣਵਰਤਿਆ_PARAM,
+		ਅਚਲ ਅੱਖਰ *fileName, ਬਣਤਰ stat *statbuf)
 {
-#define param  (*(struct param_t*)state->userData)
-#define opt option_mask32
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ param  (*(ਬਣਤਰ param_t*)state->user_ਅੰਕੜੇ)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ opt option_mask32
 	uid_t u = (param.ugid.uid == (uid_t)-1L) ? statbuf->st_uid : param.ugid.uid;
 	gid_t g = (param.ugid.gid == (gid_t)-1L) ? statbuf->st_gid : param.ugid.gid;
 
-	if (param.chown_func(fileName, u, g) == 0) {
-		if (OPT_VERBOSE
-		 || (OPT_CHANGED && (statbuf->st_uid != u || statbuf->st_gid != g))
+	ਜੇ (param.chown_func(fileName, u, g) == 0) {
+		ਜੇ (OPT_VERBOSE
+		 || (OPT_ਬਦਲਿਆ && (statbuf->st_uid != u || statbuf->st_gid != g))
 		) {
-			printf("changed ownership of '%s' to %u:%u\n",
-					fileName, (unsigned)u, (unsigned)g);
+			ਲਿਖੋ("changed ownership of '%s' to %u:%u\n",
+					fileName, (ਬਿਨਾਨਿਸ਼ਾਨੀ)u, (ਬਿਨਾਨਿਸ਼ਾਨੀ)g);
 		}
-		return TRUE;
+		ਵਾਪਸ TRUE;
 	}
-	if (!OPT_QUIET)
-		bb_simple_perror_msg(fileName);
-	return FALSE;
-#undef opt
-#undef param
+	ਜੇ (!OPT_QUIET)
+		bb_simple_perror_ਸੁਨੇਹਾ(fileName);
+	ਵਾਪਸ FALSE;
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ opt
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ param
 }
 
-int chown_main(int argc UNUSED_PARAM, char **argv)
+ਪੂਰਨ chown_main(ਪੂਰਨ argc ਅਣਵਰਤਿਆ_PARAM, ਅੱਖਰ **argv)
 {
-	int retval = EXIT_SUCCESS;
-	int opt, flags;
-	struct param_t param;
+	ਪੂਰਨ retval = EXIT_SUCCESS;
+	ਪੂਰਨ opt, flags;
+	ਬਣਤਰ param_t param;
 
-#if ENABLE_FEATURE_CHOWN_LONG_OPTIONS
+#ਜੇ ENABLE_FEATURE_CHOWN_LONG_OPTIONS
 	opt = getopt32long(argv, "^" OPT_STR "\0" "-2", chown_longopts);
-#else
+#ਨਹੀਂਤਾਂ
 	opt = getopt32(argv, "^" OPT_STR "\0" "-2");
-#endif
+#ਜੇ_ਅੰਤ
 	argv += optind;
 
 	/* This matches coreutils behavior (almost - see below) */
 	param.chown_func = chown;
-	if (OPT_NODEREF
+	ਜੇ (OPT_NODEREF
 	/* || (OPT_RECURSE && !OPT_TRAVERSE_TOP): */
-	IF_DESKTOP( || (opt & (BIT_RECURSE|BIT_TRAVERSE_TOP)) == BIT_RECURSE)
+	IF_DESKTOP( || (opt & (ਦੋਆਧਾਰੀ_ਅੰਕ_RECURSE|ਦੋਆਧਾਰੀ_ਅੰਕ_TRAVERSE_ਸਿਖਰ)) == ਦੋਆਧਾਰੀ_ਅੰਕ_RECURSE)
 	) {
 		param.chown_func = lchown;
 	}
 
 	flags = ACTION_DEPTHFIRST; /* match coreutils order */
-	if (OPT_RECURSE)
+	ਜੇ (OPT_RECURSE)
 		flags |= ACTION_RECURSE;
-	if (OPT_TRAVERSE_TOP)
+	ਜੇ (OPT_TRAVERSE_ਸਿਖਰ)
 		flags |= ACTION_FOLLOWLINKS_L0; /* -H/-L: follow links on depth 0 */
-	if (OPT_TRAVERSE)
+	ਜੇ (OPT_TRAVERSE)
 		flags |= ACTION_FOLLOWLINKS; /* follow links if -L */
 
 	parse_chown_usergroup_or_die(&param.ugid, argv[0]);
 
 	/* Ok, ready to do the deed now */
-	while (*++argv) {
-		if (!recursive_action(*argv,
+	ਜਦੋਂ (*++argv) {
+		ਜੇ (!recursive_action(*argv,
 				flags,          /* flags */
 				fileAction,     /* file action */
 				fileAction,     /* dir action */
@@ -169,7 +169,7 @@ int chown_main(int argc UNUSED_PARAM, char **argv)
 		}
 	}
 
-	return retval;
+	ਵਾਪਸ retval;
 }
 
 /*

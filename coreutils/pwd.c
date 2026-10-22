@@ -25,69 +25,69 @@
 //usage:       "$ pwd\n"
 //usage:       "/root\n"
 
-#include "libbb.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "libbb.h"
 
-static int logical_getcwd(void)
+ਸਥਿਰ ਪੂਰਨ logical_getcwd(ਖਾਲੀ)
 {
-	struct stat st1;
-	struct stat st2;
-	char *wd;
-	char *p;
+	ਬਣਤਰ stat st1;
+	ਬਣਤਰ stat st2;
+	ਅੱਖਰ *wd;
+	ਅੱਖਰ *p;
 
 	wd = getenv("PWD");
-	if (!wd || wd[0] != '/')
-		return 0;
+	ਜੇ (!wd || wd[0] != '/')
+		ਵਾਪਸ 0;
 
 	p = wd;
-	while (*p) {
+	ਜਦੋਂ (*p) {
 		/* doing strstr(p, "/.") by hand is smaller and faster... */
-		if (*p++ != '/')
-			continue;
-		if (*p != '.')
-			continue;
+		ਜੇ (*p++ != '/')
+			ਜਾਰੀ;
+		ਜੇ (*p != '.')
+			ਜਾਰੀ;
 		/* we found "/.", skip to next char */
 		p++;
-		if (*p == '.')
+		ਜੇ (*p == '.')
 			p++; /* we found "/.." */
-		if (*p == '\0' || *p == '/')
-			return 0; /* "/./" or "/../" component: bad */
+		ਜੇ (*p == '\0' || *p == '/')
+			ਵਾਪਸ 0; /* "/./" or "/../" component: bad */
 	}
 
-	if (stat(wd, &st1) != 0)
-		return 0;
-	if (stat(".", &st2) != 0)
-		return 0;
-	if (st1.st_ino != st2.st_ino)
-		return 0;
-	if (st1.st_dev != st2.st_dev)
-		return 0;
+	ਜੇ (stat(wd, &st1) != 0)
+		ਵਾਪਸ 0;
+	ਜੇ (stat(".", &st2) != 0)
+		ਵਾਪਸ 0;
+	ਜੇ (st1.st_ino != st2.st_ino)
+		ਵਾਪਸ 0;
+	ਜੇ (st1.st_dev != st2.st_dev)
+		ਵਾਪਸ 0;
 
 	puts(wd);
-	return 1;
+	ਵਾਪਸ 1;
 }
 
-int pwd_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int pwd_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+ਪੂਰਨ pwd_main(ਪੂਰਨ argc, ਅੱਖਰ **argv) MAIN_EXTERNALLY_VISIBLE;
+ਪੂਰਨ pwd_main(ਪੂਰਨ argc ਅਣਵਰਤਿਆ_PARAM, ਅੱਖਰ **argv ਅਣਵਰਤਿਆ_PARAM)
 {
-	char *buf;
+	ਅੱਖਰ *buf;
 
-	if (ENABLE_DESKTOP) {
+	ਜੇ (ENABLE_DESKTOP) {
 		/* TODO: assume -L if $POSIXLY_CORRECT? (coreutils does that)
 		 * Rationale:
 		 * POSIX requires a default of -L, but most scripts expect -P
 		 */
-		unsigned opt = getopt32(argv, "LP");
-		if ((opt & 1) && logical_getcwd())
-			return fflush_all();
+		ਬਿਨਾਨਿਸ਼ਾਨੀ opt = getopt32(argv, "LP");
+		ਜੇ ((opt & 1) && logical_getcwd())
+			ਵਾਪਸ fflush_all();
 	}
 
-	buf = xrealloc_getcwd_or_warn(NULL);
+	buf = xrealloc_getcwd_or_warn(ਨਿਰਾ);
 
-	if (buf) {
+	ਜੇ (buf) {
 		puts(buf);
-		free(buf);
-		return fflush_all();
+		ਮੁਕਤ(buf);
+		ਵਾਪਸ fflush_all();
 	}
 
-	return EXIT_FAILURE;
+	ਵਾਪਸ EXIT_FAILURE;
 }

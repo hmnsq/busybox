@@ -124,11 +124,11 @@
 // --quiet   don't print OK for each successfully verified file
 // --status  don't output anything, status code shows success
 
-#include "libbb.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-enum {
+ਗਿਣਤੀ {
 	/* 4th letter of applet_name is... */
 	HASH_MD5 = 's', /* "md5>s<um" */
 	HASH_SHA1 = '1',
@@ -137,225 +137,225 @@ enum {
 	HASH_SHA512 = '5',
 };
 
-#define FLAG_SILENT  1
-#define FLAG_CHECK   2
-#define FLAG_WARN    4
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ FLAG_SILENT  1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ FLAG_CHECK   2
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ FLAG_WARN    4
 
 /* This might be useful elsewhere */
-static unsigned char *hash_bin_to_hex(unsigned char *hash_value,
-				unsigned hash_length)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *hash_bin_ਮੰਜ਼ਿਲ_hex(ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *hash_ਮੁੱਲ,
+				ਬਿਨਾਨਿਸ਼ਾਨੀ hash_ਲੰਮਾਈ)
 {
 	/* xzalloc zero-terminates */
-	char *hex_value = xzalloc((hash_length * 2) + 1);
-	bin2hex(hex_value, (char*)hash_value, hash_length);
-	return (unsigned char *)hex_value;
+	ਅੱਖਰ *hex_ਮੁੱਲ = xzalloc((hash_ਲੰਮਾਈ * 2) + 1);
+	bin2hex(hex_ਮੁੱਲ, (ਅੱਖਰ*)hash_ਮੁੱਲ, hash_ਲੰਮਾਈ);
+	ਵਾਪਸ (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *)hex_ਮੁੱਲ;
 }
 
-#define BUFSZ (CONFIG_FEATURE_COPYBUF_KB < 4 ? 4096 : CONFIG_FEATURE_COPYBUF_KB * 1024)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ BUFSZ (CONFIG_FEATURE_COPYBUF_KB < 4 ? 4096 : CONFIG_FEATURE_COPYBUF_KB * 1024)
 
-#if !ENABLE_SHA3SUM
+#ਜੇ !ENABLE_SHA3_ਜੋੜ
 # define hash_file(b,f,w) hash_file(b,f)
-#endif
-static uint8_t *hash_file(unsigned char *in_buf, const char *filename, unsigned sha3_width)
+#ਜੇ_ਅੰਤ
+ਸਥਿਰ uint8_t *hash_file(ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *ਵਿੱਚ_buf, ਅਚਲ ਅੱਖਰ *filename, ਬਿਨਾਨਿਸ਼ਾਨੀ sha3_ਚੌੜਾਈ)
 {
-	int src_fd, hash_len, count;
-	union _ctx_ {
+	ਪੂਰਨ src_fd, hash_len, ਗਿਣਤੀ_2;
+	ਸੰਘ _ctx_ {
 		sha3_ctx_t sha3;
 		sha512_ctx_t sha512;
 		sha256_ctx_t sha256;
 		sha1_ctx_t sha1;
 		md5_ctx_t md5;
 	} context;
-	uint8_t *hash_value;
-	void FAST_FUNC (*update)(void*, const void*, size_t);
-	unsigned FAST_FUNC (*final)(void*, void*);
-	char hash_algo;
+	uint8_t *hash_ਮੁੱਲ;
+	ਖਾਲੀ FAST_FUNC (*update)(ਖਾਲੀ*, ਅਚਲ ਖਾਲੀ*, ਮਾਪ_t);
+	ਬਿਨਾਨਿਸ਼ਾਨੀ FAST_FUNC (*final)(ਖਾਲੀ*, ਖਾਲੀ*);
+	ਅੱਖਰ hash_algo;
 
 	src_fd = open_or_warn_stdin(filename);
-	if (src_fd < 0) {
-		return NULL;
+	ਜੇ (src_fd < 0) {
+		ਵਾਪਸ ਨਿਰਾ;
 	}
 
 	hash_algo = applet_name[3];
 
 	/* figure specific hash algorithms */
-	if (ENABLE_MD5SUM && hash_algo == HASH_MD5) {
+	ਜੇ (ENABLE_MD5_ਜੋੜ && hash_algo == HASH_MD5) {
 		md5_begin(&context.md5);
-		update = (void*)md5_hash;
-		final = (void*)md5_end;
+		update = (ਖਾਲੀ*)md5_hash;
+		final = (ਖਾਲੀ*)md5_ਸਿਰਾ;
 		hash_len = 16;
 	}
-	else if (ENABLE_SHA1SUM && hash_algo == HASH_SHA1) {
+	ਨਹੀਂਤਾਂ ਜੇ (ENABLE_SHA1_ਜੋੜ && hash_algo == HASH_SHA1) {
 		sha1_begin(&context.sha1);
-		update = (void*)sha1_hash;
-		final = (void*)sha1_end;
+		update = (ਖਾਲੀ*)sha1_hash;
+		final = (ਖਾਲੀ*)sha1_ਸਿਰਾ;
 		hash_len = 20;
 	}
-	else if (ENABLE_SHA256SUM && hash_algo == HASH_SHA256) {
+	ਨਹੀਂਤਾਂ ਜੇ (ENABLE_SHA256_ਜੋੜ && hash_algo == HASH_SHA256) {
 		sha256_begin(&context.sha256);
-		update = (void*)sha256_hash;
-		final = (void*)sha256_end;
+		update = (ਖਾਲੀ*)sha256_hash;
+		final = (ਖਾਲੀ*)sha256_ਸਿਰਾ;
 		hash_len = 32;
 	}
-	else if (ENABLE_SHA512SUM && hash_algo == HASH_SHA512) {
+	ਨਹੀਂਤਾਂ ਜੇ (ENABLE_SHA512_ਜੋੜ && hash_algo == HASH_SHA512) {
 		sha512_begin(&context.sha512);
-		update = (void*)sha512_hash;
-		final = (void*)sha512_end;
+		update = (ਖਾਲੀ*)sha512_hash;
+		final = (ਖਾਲੀ*)sha512_ਸਿਰਾ;
 		hash_len = 64;
 	}
-#if ENABLE_SHA3SUM
-	else if (ENABLE_SHA3SUM && hash_algo == HASH_SHA3) {
+#ਜੇ ENABLE_SHA3_ਜੋੜ
+	ਨਹੀਂਤਾਂ ਜੇ (ENABLE_SHA3_ਜੋੜ && hash_algo == HASH_SHA3) {
 		sha3_begin(&context.sha3);
-		update = (void*)sha3_hash;
-		final = (void*)sha3_end;
+		update = (ਖਾਲੀ*)sha3_hash;
+		final = (ਖਾਲੀ*)sha3_ਸਿਰਾ;
 		/*
 		 * Should support 224, 256, 384, 512.
 		 * We allow any value which does not blow the algorithm up.
 		 */
-		if (sha3_width >= 1600/2 /* input block can't be <= 0 */
-		 || sha3_width == 0      /* hash len can't be 0 */
-		 || (sha3_width & 0x1f)  /* should be multiple of 32 */
+		ਜੇ (sha3_ਚੌੜਾਈ >= 1600/2 /* input block can't be <= 0 */
+		 || sha3_ਚੌੜਾਈ == 0      /* hash len can't be 0 */
+		 || (sha3_ਚੌੜਾਈ & 0x1f)  /* should be multiple of 32 */
 		/* (because input uses up to 8 byte wide word XORs. 32/4=8) */
 		) {
-			bb_error_msg_and_die("bad -a%u", sha3_width);
+			bb_error_ਸੁਨੇਹਾ_and_die("bad -a%u", sha3_ਚੌੜਾਈ);
 		}
-		sha3_width /= 4;
-		context.sha3.input_block_bytes = 1600/8 - sha3_width;
-		hash_len = sha3_width/2;
+		sha3_ਚੌੜਾਈ /= 4;
+		context.sha3.ਨਿਵੇਸ਼_ਖੰਡ_ਬਾਈਟਾਂ = 1600/8 - sha3_ਚੌੜਾਈ;
+		hash_len = sha3_ਚੌੜਾਈ/2;
 	}
-#endif
-	else {
+#ਜੇ_ਅੰਤ
+	ਨਹੀਂਤਾਂ {
 		xfunc_die(); /* can't reach this */
 	}
 
 	{
-		while ((count = safe_read(src_fd, in_buf, BUFSZ)) > 0) {
-			update(&context, in_buf, count);
+		ਜਦੋਂ ((ਗਿਣਤੀ_2 = ਸੁਰੱਖਿਅਤ_read(src_fd, ਵਿੱਚ_buf, BUFSZ)) > 0) {
+			update(&context, ਵਿੱਚ_buf, ਗਿਣਤੀ_2);
 		}
-		hash_value = NULL;
-		if (count < 0)
-			bb_perror_msg("can't read '%s'", filename);
-		else /* count == 0 */ {
-			final(&context, in_buf);
-			hash_value = hash_bin_to_hex(in_buf, hash_len);
+		hash_ਮੁੱਲ = ਨਿਰਾ;
+		ਜੇ (ਗਿਣਤੀ_2 < 0)
+			bb_perror_ਸੁਨੇਹਾ("can't read '%s'", filename);
+		ਨਹੀਂਤਾਂ /* count == 0 */ {
+			final(&context, ਵਿੱਚ_buf);
+			hash_ਮੁੱਲ = hash_bin_ਮੰਜ਼ਿਲ_hex(ਵਿੱਚ_buf, hash_len);
 		}
 	}
 
-	if (src_fd != STDIN_FILENO) {
+	ਜੇ (src_fd != STDIN_FILENO) {
 		close(src_fd);
 	}
 
-	return hash_value;
+	ਵਾਪਸ hash_ਮੁੱਲ;
 }
 
-int md5_sha1_sum_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int md5_sha1_sum_main(int argc UNUSED_PARAM, char **argv)
+ਪੂਰਨ md5_sha1_ਜੋੜ_main(ਪੂਰਨ argc, ਅੱਖਰ **argv) MAIN_EXTERNALLY_VISIBLE;
+ਪੂਰਨ md5_sha1_ਜੋੜ_main(ਪੂਰਨ argc ਅਣਵਰਤਿਆ_PARAM, ਅੱਖਰ **argv)
 {
-	unsigned char *in_buf;
-	int return_value = EXIT_SUCCESS;
-	unsigned flags;
-#if ENABLE_SHA3SUM
-	unsigned sha3_width = 224;
-#endif
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *ਵਿੱਚ_buf;
+	ਪੂਰਨ return_ਮੁੱਲ = EXIT_SUCCESS;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ flags;
+#ਜੇ ENABLE_SHA3_ਜੋੜ
+	ਬਿਨਾਨਿਸ਼ਾਨੀ sha3_ਚੌੜਾਈ = 224;
+#ਜੇ_ਅੰਤ
 
-	if (ENABLE_FEATURE_MD5_SHA1_SUM_CHECK) {
+	ਜੇ (ENABLE_FEATURE_MD5_SHA1_ਜੋੜ_CHECK) {
 		/* -b "binary", -t "text" are ignored (shaNNNsum compat) */
 		/* -s and -w require -c */
-#if ENABLE_SHA3SUM
-		if (applet_name[3] == HASH_SHA3)
-			flags = getopt32(argv, "^" "scwbta:+" "\0" "s?c:w?c", &sha3_width);
-		else
-#endif
+#ਜੇ ENABLE_SHA3_ਜੋੜ
+		ਜੇ (applet_name[3] == HASH_SHA3)
+			flags = getopt32(argv, "^" "scwbta:+" "\0" "s?c:w?c", &sha3_ਚੌੜਾਈ);
+		ਨਹੀਂਤਾਂ
+#ਜੇ_ਅੰਤ
 			flags = getopt32(argv, "^" "scwbt" "\0" "s?c:w?c");
-	} else {
-#if ENABLE_SHA3SUM
-		if (applet_name[3] == HASH_SHA3)
-			getopt32(argv, "a:+", &sha3_width);
-		else
-#endif
+	} ਨਹੀਂਤਾਂ {
+#ਜੇ ENABLE_SHA3_ਜੋੜ
+		ਜੇ (applet_name[3] == HASH_SHA3)
+			getopt32(argv, "a:+", &sha3_ਚੌੜਾਈ);
+		ਨਹੀਂਤਾਂ
+#ਜੇ_ਅੰਤ
 			getopt32(argv, "");
 	}
 	argv += optind;
 	//argc -= optind;
-	if (!*argv)
-		*--argv = (char*)"-";
+	ਜੇ (!*argv)
+		*--argv = (ਅੱਖਰ*)"-";
 
 	/* The buffer is not alloc/freed for each input file:
 	 * for big values of COPYBUF_KB, this helps to keep its pages
 	 * pre-faulted and possibly even fully cached on local CPU.
 	 */
-	in_buf = xmalloc(BUFSZ);
+	ਵਿੱਚ_buf = xmalloc(BUFSZ);
 
-	do {
-		if (ENABLE_FEATURE_MD5_SHA1_SUM_CHECK && (flags & FLAG_CHECK)) {
-			FILE *pre_computed_stream;
-			char *line;
-			int count_total = 0;
-			int count_failed = 0;
+	ਕਰੋ {
+		ਜੇ (ENABLE_FEATURE_MD5_SHA1_ਜੋੜ_CHECK && (flags & FLAG_CHECK)) {
+			FILE *pre_computed_ਧਾਰਾ;
+			ਅੱਖਰ *ਸਤਰ;
+			ਪੂਰਨ ਗਿਣਤੀ_ਕੁੱਲ = 0;
+			ਪੂਰਨ ਗਿਣਤੀ_failed = 0;
 
-			pre_computed_stream = xfopen_stdin(*argv);
+			pre_computed_ਧਾਰਾ = xfopen_stdin(*argv);
 
-			while ((line = xmalloc_fgetline(pre_computed_stream)) != NULL) {
-				uint8_t *hash_value;
-				char *filename_ptr;
+			ਜਦੋਂ ((ਸਤਰ = xmalloc_fgetline(pre_computed_ਧਾਰਾ)) != ਨਿਰਾ) {
+				uint8_t *hash_ਮੁੱਲ;
+				ਅੱਖਰ *filename_ptr;
 
-				count_total++;
-				filename_ptr = strchr(line, ' ');
-				if (!filename_ptr) {
-					if (flags & FLAG_WARN) {
-						bb_simple_error_msg("invalid format");
+				ਗਿਣਤੀ_ਕੁੱਲ++;
+				filename_ptr = strchr(ਸਤਰ, ' ');
+				ਜੇ (!filename_ptr) {
+					ਜੇ (flags & FLAG_WARN) {
+						bb_simple_error_ਸੁਨੇਹਾ("invalid format");
 					}
-					count_failed++;
-					return_value = EXIT_FAILURE;
-					free(line);
-					continue;
+					ਗਿਣਤੀ_failed++;
+					return_ਮੁੱਲ = EXIT_FAILURE;
+					ਮੁਕਤ(ਸਤਰ);
+					ਜਾਰੀ;
 				}
 				*filename_ptr++ = '\0';
 				/* coreutils 9.1 allows "HASH FILENAME" format,
 				 * with only one space. Skip the 'correct'
 				 * "  " or " *" delimiter if it is there:
 				 */
-				if (*filename_ptr == ' ' || *filename_ptr == '*')
+				ਜੇ (*filename_ptr == ' ' || *filename_ptr == '*')
 					filename_ptr++;
 
-				hash_value = hash_file(in_buf, filename_ptr, sha3_width);
+				hash_ਮੁੱਲ = hash_file(ਵਿੱਚ_buf, filename_ptr, sha3_ਚੌੜਾਈ);
 
-				if (hash_value && (strcasecmp((char*)hash_value, line) == 0)) {
-					if (!(flags & FLAG_SILENT))
-						printf("%s: OK\n", filename_ptr);
-				} else {
-					if (!(flags & FLAG_SILENT))
-						printf("%s: FAILED\n", filename_ptr);
-					count_failed++;
-					return_value = EXIT_FAILURE;
+				ਜੇ (hash_ਮੁੱਲ && (strcasecmp((ਅੱਖਰ*)hash_ਮੁੱਲ, ਸਤਰ) == 0)) {
+					ਜੇ (!(flags & FLAG_SILENT))
+						ਲਿਖੋ("%s: OK\n", filename_ptr);
+				} ਨਹੀਂਤਾਂ {
+					ਜੇ (!(flags & FLAG_SILENT))
+						ਲਿਖੋ("%s: FAILED\n", filename_ptr);
+					ਗਿਣਤੀ_failed++;
+					return_ਮੁੱਲ = EXIT_FAILURE;
 				}
 				/* possible free(NULL) */
-				free(hash_value);
-				free(line);
+				ਮੁਕਤ(hash_ਮੁੱਲ);
+				ਮੁਕਤ(ਸਤਰ);
 			}
-			if (count_failed && !(flags & FLAG_SILENT)) {
-				bb_error_msg("WARNING: %d of %d computed checksums did NOT match",
-						count_failed, count_total);
+			ਜੇ (ਗਿਣਤੀ_failed && !(flags & FLAG_SILENT)) {
+				bb_error_ਸੁਨੇਹਾ("WARNING: %d of %d computed checksums did NOT match",
+						ਗਿਣਤੀ_failed, ਗਿਣਤੀ_ਕੁੱਲ);
 			}
-			if (count_total == 0) {
-				return_value = EXIT_FAILURE;
+			ਜੇ (ਗਿਣਤੀ_ਕੁੱਲ == 0) {
+				return_ਮੁੱਲ = EXIT_FAILURE;
 				/*
 				 * md5sum from GNU coreutils 8.25 says:
 				 * md5sum: <FILE>: no properly formatted MD5 checksum lines found
 				 */
-				bb_error_msg("%s: no checksum lines found", *argv);
+				bb_error_ਸੁਨੇਹਾ("%s: no checksum lines found", *argv);
 			}
-			fclose_if_not_stdin(pre_computed_stream);
-		} else {
-			uint8_t *hash_value = hash_file(in_buf, *argv, sha3_width);
-			if (hash_value == NULL) {
-				return_value = EXIT_FAILURE;
-			} else {
-				printf("%s  %s\n", hash_value, *argv);
-				free(hash_value);
+			fclose_if_not_stdin(pre_computed_ਧਾਰਾ);
+		} ਨਹੀਂਤਾਂ {
+			uint8_t *hash_ਮੁੱਲ = hash_file(ਵਿੱਚ_buf, *argv, sha3_ਚੌੜਾਈ);
+			ਜੇ (hash_ਮੁੱਲ == ਨਿਰਾ) {
+				return_ਮੁੱਲ = EXIT_FAILURE;
+			} ਨਹੀਂਤਾਂ {
+				ਲਿਖੋ("%s  %s\n", hash_ਮੁੱਲ, *argv);
+				ਮੁਕਤ(hash_ਮੁੱਲ);
 			}
 		}
-	} while (*++argv);
+	} ਜਦੋਂ (*++argv);
 
-	return return_value;
+	ਵਾਪਸ return_ਮੁੱਲ;
 }

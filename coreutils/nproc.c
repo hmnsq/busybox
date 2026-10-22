@@ -23,50 +23,50 @@
 //usage:     "\n	--ignore=N	Exclude N CPUs"
 //usage:	)
 
-#include "libbb.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "libbb.h"
 
-int nproc_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int nproc_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+ਪੂਰਨ nproc_main(ਪੂਰਨ argc, ਅੱਖਰ **argv) MAIN_EXTERNALLY_VISIBLE;
+ਪੂਰਨ nproc_main(ਪੂਰਨ argc ਅਣਵਰਤਿਆ_PARAM, ਅੱਖਰ **argv ਅਣਵਰਤਿਆ_PARAM)
 {
-	int count = 0;
-#if ENABLE_LONG_OPTS
-	int ignore = 0;
-	int opts = getopt32long(argv, "\xfe:+",
-			"ignore\0" Required_argument "\xfe"
-			"all\0"    No_argument       "\xff"
+	ਪੂਰਨ ਗਿਣਤੀ_2 = 0;
+#ਜੇ ENABLE_LONG_OPTS
+	ਪੂਰਨ ignore = 0;
+	ਪੂਰਨ opts = getopt32long(argv, "\xfe:+",
+			"ignore\0" Required_ਦਲੀਲ "\xfe"
+			"all\0"    No_ਦਲੀਲ       "\xff"
 			, &ignore
 	);
 
-	if (opts & (1 << 1)) {
+	ਜੇ (opts & (1 << 1)) {
 		DIR *cpusd = opendir("/sys/devices/system/cpu");
-		if (cpusd) {
-			struct dirent *de;
-			while (NULL != (de = readdir(cpusd))) {
-				char *cpuid = strstr(de->d_name, "cpu");
-				if (cpuid && isdigit(cpuid[strlen(cpuid) - 1]))
-					count++;
+		ਜੇ (cpusd) {
+			ਬਣਤਰ dirent *de;
+			ਜਦੋਂ (ਨਿਰਾ != (de = readdir(cpusd))) {
+				ਅੱਖਰ *cpuid = ਲੜੀ_ਖੋਜ(de->d_name, "cpu");
+				ਜੇ (cpuid && ਅੰਕ_ਹੈ(cpuid[ਲੜੀ_ਲੰਬਾਈ(cpuid) - 1]))
+					ਗਿਣਤੀ_2++;
 			}
-			IF_FEATURE_CLEAN_UP(closedir(cpusd);)
+			IF_FEATURE_CLEAN_ਉੱਪਰ(closedir(cpusd);)
 		}
-	} else
-#endif
+	} ਨਹੀਂਤਾਂ
+#ਜੇ_ਅੰਤ
 	{
-		int i;
-		unsigned sz = 2 * 1024;
-		unsigned long *mask = get_malloc_cpu_affinity(0, &sz);
-		sz /= sizeof(long);
-		for (i = 0; i < sz; i++) {
-			if (mask[i] != 0) /* most mask[i] are usually 0 */
-				count += bb_popcnt_long(mask[i]);
+		ਪੂਰਨ i;
+		ਬਿਨਾਨਿਸ਼ਾਨੀ sz = 2 * 1024;
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ *ਨਕਾਬ = get_malloc_cpu_affinity(0, &sz);
+		sz /= ਆਕਾਰ(ਲੰਮਾ);
+		ਲਈ (i = 0; i < sz; i++) {
+			ਜੇ (ਨਕਾਬ[i] != 0) /* most mask[i] are usually 0 */
+				ਗਿਣਤੀ_2 += bb_popcnt_long(ਨਕਾਬ[i]);
 		}
-		IF_FEATURE_CLEAN_UP(free(mask);)
+		IF_FEATURE_CLEAN_ਉੱਪਰ(ਮੁਕਤ(ਨਕਾਬ);)
 	}
 
-	IF_LONG_OPTS(count -= ignore;)
-	if (count <= 0)
-		count = 1;
+	IF_LONG_OPTS(ਗਿਣਤੀ_2 -= ignore;)
+	ਜੇ (ਗਿਣਤੀ_2 <= 0)
+		ਗਿਣਤੀ_2 = 1;
 
-	printf("%u\n", count);
+	ਲਿਖੋ("%u\n", ਗਿਣਤੀ_2);
 
-	return 0;
+	ਵਾਪਸ 0;
 }

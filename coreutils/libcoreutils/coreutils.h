@@ -2,18 +2,18 @@
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-#ifndef COREUTILS_H
-#define COREUTILS_H 1
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ COREUTILS_H
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ COREUTILS_H 1
 
-PUSH_AND_SET_FUNCTION_VISIBILITY_TO_HIDDEN
+ਧੱਕੋ_AND_ਸੈੱਟ_FUNCTION_VISIBILITY_ਮੰਜ਼ਿਲ_HIDDEN
 
-typedef int (*stat_func)(const char *fn, struct stat *ps);
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਪੂਰਨ (*stat_func)(ਅਚਲ ਅੱਖਰ *fn, ਬਣਤਰ stat *ps);
 
-int cp_mv_stat2(const char *fn, struct stat *fn_stat, stat_func sf) FAST_FUNC;
-int cp_mv_stat(const char *fn, struct stat *fn_stat) FAST_FUNC;
+ਪੂਰਨ cp_mv_stat2(ਅਚਲ ਅੱਖਰ *fn, ਬਣਤਰ stat *fn_stat, stat_func sf) FAST_FUNC;
+ਪੂਰਨ cp_mv_stat(ਅਚਲ ਅੱਖਰ *fn, ਬਣਤਰ stat *fn_stat) FAST_FUNC;
 
-mode_t getopt_mk_fifo_nod(char **argv) FAST_FUNC;
+ਬਹੁਲਕ_t getopt_mk_fifo_nod(ਅੱਖਰ **argv) FAST_FUNC;
 
-POP_SAVED_FUNCTION_VISIBILITY
+ਕੱਢੋ_SAVED_FUNCTION_VISIBILITY
 
-#endif
+#ਜੇ_ਅੰਤ

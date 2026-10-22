@@ -36,41 +36,41 @@
 //usage:       "$ mknod /dev/fd0 b 2 0\n"
 //usage:       "$ mknod -m 644 /tmp/pipe p\n"
 
-#ifdef __linux__
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ __linux__
 # include <sys/sysmacros.h>  // For makedev
-#endif
+#ਜੇ_ਅੰਤ
 
-#include "libbb.h"
-#include "libcoreutils/coreutils.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "libbb.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "libcoreutils/coreutils.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-static const char modes_chars[] ALIGN1 = { 'p', 'c', 'u', 'b', 0, 1, 1, 2 };
-static const mode_t modes_cubp[] = { S_IFIFO, S_IFCHR, S_IFBLK };
+ਸਥਿਰ ਅਚਲ ਅੱਖਰ modes_chars[] ALIGN1 = { 'p', 'c', 'u', 'b', 0, 1, 1, 2 };
+ਸਥਿਰ ਅਚਲ ਬਹੁਲਕ_t modes_cubp[] = { S_IFIFO, S_IFCHR, S_IFBLK };
 
-int mknod_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int mknod_main(int argc UNUSED_PARAM, char **argv)
+ਪੂਰਨ mknod_main(ਪੂਰਨ argc, ਅੱਖਰ **argv) MAIN_EXTERNALLY_VISIBLE;
+ਪੂਰਨ mknod_main(ਪੂਰਨ argc ਅਣਵਰਤਿਆ_PARAM, ਅੱਖਰ **argv)
 {
-	mode_t mode;
+	ਬਹੁਲਕ_t ਬਹੁਲਕ;
 	dev_t dev;
-	const char *type, *arg;
+	ਅਚਲ ਅੱਖਰ *type, *arg;
 
-	mode = getopt_mk_fifo_nod(argv);
+	ਬਹੁਲਕ = getopt_mk_fifo_nod(argv);
 	argv += optind;
 	//argc -= optind;
 
-	if (!argv[0] || !argv[1])
+	ਜੇ (!argv[0] || !argv[1])
 		bb_show_usage();
 	type = strchr(modes_chars, argv[1][0]);
-	if (!type)
+	ਜੇ (!type)
 		bb_show_usage();
 
-	mode |= modes_cubp[(int)(type[4])];
+	ਬਹੁਲਕ |= modes_cubp[(ਪੂਰਨ)(type[4])];
 
 	dev = 0;
 	arg = argv[2];
-	if (*type != 'p') {
-		if (!argv[2] || !argv[3])
+	ਜੇ (*type != 'p') {
+		ਜੇ (!argv[2] || !argv[3])
 			bb_show_usage();
 		/* Autodetect what the system supports; these macros should
 		 * optimize out to two constants. */
@@ -78,11 +78,11 @@ int mknod_main(int argc UNUSED_PARAM, char **argv)
 				xatoul_range(argv[3], 0, minor(UINT_MAX)));
 		arg = argv[4];
 	}
-	if (arg)
+	ਜੇ (arg)
 		bb_show_usage();
 
-	if (mknod(argv[0], mode, dev) != 0) {
-		bb_simple_perror_msg_and_die(argv[0]);
+	ਜੇ (mknod(argv[0], ਬਹੁਲਕ, dev) != 0) {
+		bb_simple_perror_ਸੁਨੇਹਾ_and_die(argv[0]);
 	}
-	return EXIT_SUCCESS;
+	ਵਾਪਸ EXIT_SUCCESS;
 }

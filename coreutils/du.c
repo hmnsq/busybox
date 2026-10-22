@@ -72,45 +72,45 @@
 //usage:       "104     ./docs\n"
 //usage:       "2417    .\n"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "libbb.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "common_bufsiz.h"
 
-enum {
+ਗਿਣਤੀ {
 	OPT_a_files_too    = (1 << 0),
 	OPT_H_follow_links = (1 << 1),
 	OPT_k_kbytes       = (1 << 2),
 	OPT_L_follow_links = (1 << 3),
-	OPT_s_total_norecurse = (1 << 4),
+	OPT_s_ਕੁੱਲ_norecurse = (1 << 4),
 	OPT_x_one_FS       = (1 << 5),
 	OPT_d_maxdepth     = (1 << 6),
 	OPT_l_hardlinks    = (1 << 7),
-	OPT_c_total        = (1 << 8),
+	OPT_c_ਕੁੱਲ        = (1 << 8),
 	OPT_b              = (1 << 9),
 	OPT_h_for_humans   = (1 << 10),
 	OPT_m_mbytes       = (1 << 11),
 };
 
-struct globals {
-#if ENABLE_FEATURE_HUMAN_READABLE
-	unsigned long disp_unit;
-#else
-	unsigned disp_k;
-#endif
-	int max_print_depth;
-	bool status;
-	int slink_depth;
-	int du_depth;
+ਬਣਤਰ globals {
+#ਜੇ ENABLE_FEATURE_HUMAN_READABLE
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ disp_unit;
+#ਨਹੀਂਤਾਂ
+	ਬਿਨਾਨਿਸ਼ਾਨੀ disp_k;
+#ਜੇ_ਅੰਤ
+	ਪੂਰਨ max_print_ਡੂੰਘਾਈ;
+	bool ਸਥਿਤੀ;
+	ਪੂਰਨ slink_ਡੂੰਘਾਈ;
+	ਪੂਰਨ du_ਡੂੰਘਾਈ;
 	dev_t dir_dev;
 } FIX_ALIASING;
-#define G (*(struct globals*)bb_common_bufsiz1)
-#define INIT_G() do { setup_common_bufsiz(); } while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ G (*(ਬਣਤਰ globals*)bb_common_bufsiz1)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ INIT_G() ਕਰੋ { ਤਿਆਰੀ_common_bufsiz(); } ਜਦੋਂ (0)
 
 
-static void print(unsigned long long size, const char *filename)
+ਸਥਿਰ ਖਾਲੀ print(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ ਮਾਪ, ਅਚਲ ਅੱਖਰ *filename)
 {
 	/* TODO - May not want to defer error checking here. */
-#if ENABLE_FEATURE_HUMAN_READABLE
-# if ENABLE_DESKTOP
+#ਜੇ ENABLE_FEATURE_HUMAN_READABLE
+# ਜੇ ENABLE_DESKTOP
 	/* ~30 bytes of code for extra compat:
 	 * coreutils' du rounds sizes up:
 	 * for example,  1025k file is shown as "2" by du -m.
@@ -118,126 +118,126 @@ static void print(unsigned long long size, const char *filename)
 	 * else (fixed scale such as -m), we round up. To that end,
 	 * add yet another half of the unit before displaying:
 	 */
-	if (G.disp_unit)
-		size += (G.disp_unit-1) / (unsigned)(512 * 2);
+	ਜੇ (G.disp_unit)
+		ਮਾਪ += (G.disp_unit-1) / (ਬਿਨਾਨਿਸ਼ਾਨੀ)(512 * 2);
 # endif
-	printf("%s\t%s\n",
+	ਲਿਖੋ("%s\t%s\n",
 			/* size x 512 / G.disp_unit.
 			 * If G.disp_unit == 0, show one fractional
 			 * and use suffixes
 			 */
-			make_human_readable_str(size, (option_mask32 & OPT_b) ? 1 : 512, G.disp_unit),
+			make_human_readable_str(ਮਾਪ, (option_mask32 & OPT_b) ? 1 : 512, G.disp_unit),
 			filename);
-#else
-	if (G.disp_k) {
-		if (!(option_mask32 & OPT_b)) {
-			size++;
-			size >>= 1;
-		} else {
-			size >>= 10;
+#ਨਹੀਂਤਾਂ
+	ਜੇ (G.disp_k) {
+		ਜੇ (!(option_mask32 & OPT_b)) {
+			ਮਾਪ++;
+			ਮਾਪ >>= 1;
+		} ਨਹੀਂਤਾਂ {
+			ਮਾਪ >>= 10;
 		}
 	}
-	printf("%llu\t%s\n", size, filename);
-#endif
+	ਲਿਖੋ("%llu\t%s\n", ਮਾਪ, filename);
+#ਜੇ_ਅੰਤ
 }
 
 /* tiny recursive du */
-static unsigned long long du(const char *filename)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ du(ਅਚਲ ਅੱਖਰ *filename)
 {
-	struct stat statbuf;
-	unsigned long long sum;
+	ਬਣਤਰ stat statbuf;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ ਜੋੜ;
 
-	if (lstat(filename, &statbuf) != 0) {
-		bb_simple_perror_msg(filename);
-		G.status = EXIT_FAILURE;
-		return 0;
+	ਜੇ (lstat(filename, &statbuf) != 0) {
+		bb_simple_perror_ਸੁਨੇਹਾ(filename);
+		G.ਸਥਿਤੀ = EXIT_FAILURE;
+		ਵਾਪਸ 0;
 	}
 
-	if (option_mask32 & OPT_x_one_FS) {
-		if (G.du_depth == 0) {
+	ਜੇ (option_mask32 & OPT_x_one_FS) {
+		ਜੇ (G.du_ਡੂੰਘਾਈ == 0) {
 			G.dir_dev = statbuf.st_dev;
-		} else if (G.dir_dev != statbuf.st_dev) {
-			return 0;
+		} ਨਹੀਂਤਾਂ ਜੇ (G.dir_dev != statbuf.st_dev) {
+			ਵਾਪਸ 0;
 		}
 	}
 
-	sum = ((option_mask32 & OPT_b) ? statbuf.st_size : statbuf.st_blocks);
+	ਜੋੜ = ((option_mask32 & OPT_b) ? statbuf.st_ਮਾਪ : statbuf.st_ਖੰਡਾਂ);
 
-	if (S_ISLNK(statbuf.st_mode)) {
-		if (G.slink_depth > G.du_depth) { /* -H or -L */
-			if (stat(filename, &statbuf) != 0) {
-				bb_simple_perror_msg(filename);
-				G.status = EXIT_FAILURE;
-				return 0;
+	ਜੇ (S_ISLNK(statbuf.st_ਬਹੁਲਕ)) {
+		ਜੇ (G.slink_ਡੂੰਘਾਈ > G.du_ਡੂੰਘਾਈ) { /* -H or -L */
+			ਜੇ (stat(filename, &statbuf) != 0) {
+				bb_simple_perror_ਸੁਨੇਹਾ(filename);
+				G.ਸਥਿਤੀ = EXIT_FAILURE;
+				ਵਾਪਸ 0;
 			}
-			sum = ((option_mask32 & OPT_b) ? statbuf.st_size : statbuf.st_blocks);
-			if (G.slink_depth == 1) {
+			ਜੋੜ = ((option_mask32 & OPT_b) ? statbuf.st_ਮਾਪ : statbuf.st_ਖੰਡਾਂ);
+			ਜੇ (G.slink_ਡੂੰਘਾਈ == 1) {
 				/* Convert -H to -L */
-				G.slink_depth = INT_MAX;
+				G.slink_ਡੂੰਘਾਈ = ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ;
 			}
 		}
 	}
 
-	if (!(option_mask32 & OPT_l_hardlinks)
+	ਜੇ (!(option_mask32 & OPT_l_hardlinks)
 	 && statbuf.st_nlink > 1
 	) {
 		/* Add files/directories with links only once */
-		if (is_in_ino_dev_hashtable(&statbuf)) {
-			return 0;
+		ਜੇ (is_ਵਿੱਚ_ino_dev_hashtable(&statbuf)) {
+			ਵਾਪਸ 0;
 		}
-		add_to_ino_dev_hashtable(&statbuf, NULL);
+		ਜੋੜੋ_ਮੰਜ਼ਿਲ_ino_dev_hashtable(&statbuf, ਨਿਰਾ);
 	}
 
-	if (S_ISDIR(statbuf.st_mode)) {
+	ਜੇ (S_ISDIR(statbuf.st_ਬਹੁਲਕ)) {
 		DIR *dir;
-		struct dirent *entry;
-		char *newfile;
+		ਬਣਤਰ dirent *ਇੰਦਰਾਜ;
+		ਅੱਖਰ *newfile;
 
 		dir = warn_opendir(filename);
-		if (!dir) {
-			G.status = EXIT_FAILURE;
-			return sum;
+		ਜੇ (!dir) {
+			G.ਸਥਿਤੀ = EXIT_FAILURE;
+			ਵਾਪਸ ਜੋੜ;
 		}
 
-		while ((entry = readdir(dir))) {
-			newfile = concat_subpath_file(filename, entry->d_name);
-			if (newfile == NULL)
-				continue;
-			++G.du_depth;
-			sum += du(newfile);
-			--G.du_depth;
-			free(newfile);
+		ਜਦੋਂ ((ਇੰਦਰਾਜ = readdir(dir))) {
+			newfile = concat_subpath_file(filename, ਇੰਦਰਾਜ->d_name);
+			ਜੇ (newfile == ਨਿਰਾ)
+				ਜਾਰੀ;
+			++G.du_ਡੂੰਘਾਈ;
+			ਜੋੜ += du(newfile);
+			--G.du_ਡੂੰਘਾਈ;
+			ਮੁਕਤ(newfile);
 		}
 		closedir(dir);
-	} else {
-		if (!(option_mask32 & OPT_a_files_too) && G.du_depth != 0)
-			return sum;
+	} ਨਹੀਂਤਾਂ {
+		ਜੇ (!(option_mask32 & OPT_a_files_too) && G.du_ਡੂੰਘਾਈ != 0)
+			ਵਾਪਸ ਜੋੜ;
 	}
-	if (G.du_depth <= G.max_print_depth) {
-		print(sum, filename);
+	ਜੇ (G.du_ਡੂੰਘਾਈ <= G.max_print_ਡੂੰਘਾਈ) {
+		print(ਜੋੜ, filename);
 	}
-	return sum;
+	ਵਾਪਸ ਜੋੜ;
 }
 
-int du_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int du_main(int argc UNUSED_PARAM, char **argv)
+ਪੂਰਨ du_main(ਪੂਰਨ argc, ਅੱਖਰ **argv) MAIN_EXTERNALLY_VISIBLE;
+ਪੂਰਨ du_main(ਪੂਰਨ argc ਅਣਵਰਤਿਆ_PARAM, ਅੱਖਰ **argv)
 {
-	unsigned long long total;
-	int slink_depth_save;
-	unsigned opt;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ ਕੁੱਲ;
+	ਪੂਰਨ slink_ਡੂੰਘਾਈ_save;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ opt;
 
 	INIT_G();
 
-#if ENABLE_FEATURE_HUMAN_READABLE
+#ਜੇ ENABLE_FEATURE_HUMAN_READABLE
 	IF_FEATURE_DU_DEFAULT_BLOCKSIZE_1K(G.disp_unit = 1024;)
 	IF_NOT_FEATURE_DU_DEFAULT_BLOCKSIZE_1K(G.disp_unit = 512;)
-	if (getenv("POSIXLY_CORRECT"))  /* TODO - a new libbb function? */
+	ਜੇ (getenv("POSIXLY_CORRECT"))  /* TODO - a new libbb function? */
 		G.disp_unit = 512;
-#else
+#ਨਹੀਂਤਾਂ
 	IF_FEATURE_DU_DEFAULT_BLOCKSIZE_1K(G.disp_k = 1;)
 	/* IF_NOT_FEATURE_DU_DEFAULT_BLOCKSIZE_1K(G.disp_k = 0;) - G is pre-zeroed */
-#endif
-	G.max_print_depth = INT_MAX;
+#ਜੇ_ਅੰਤ
+	G.max_print_ਡੂੰਘਾਈ = ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ;
 
 	/* Note: SUSv3 specifies that -a and -s options cannot be used together
 	 * in strictly conforming applications.  However, it also says that some
@@ -245,67 +245,67 @@ int du_main(int argc UNUSED_PARAM, char **argv)
 	 * gnu du exits with an error code in this case.  We choose to simply
 	 * ignore -a.  This is consistent with -s being equivalent to -d 0.
 	 */
-#if ENABLE_FEATURE_HUMAN_READABLE
+#ਜੇ ENABLE_FEATURE_HUMAN_READABLE
 	opt = getopt32(argv, "^"
 			"aHkLsxd:+lcbhm"
 			"\0" "h-km:k-hm:m-hk:H-L:L-H:s-d:d-s",
-			&G.max_print_depth
+			&G.max_print_ਡੂੰਘਾਈ
 	);
 	argv += optind;
-	if (opt & OPT_b) {
+	ਜੇ (opt & OPT_b) {
 		G.disp_unit = 1;
 	}
-	if (opt & OPT_h_for_humans) {
+	ਜੇ (opt & OPT_h_for_humans) {
 		G.disp_unit = 0;
 	}
-	if (opt & OPT_m_mbytes) {
+	ਜੇ (opt & OPT_m_mbytes) {
 		G.disp_unit = 1024*1024;
 	}
-	if (opt & OPT_k_kbytes) {
+	ਜੇ (opt & OPT_k_kbytes) {
 		G.disp_unit = 1024;
 	}
-#else
+#ਨਹੀਂਤਾਂ
 	opt = getopt32(argv, "^"
 			"aHkLsxd:+lcb"
 			"\0" "H-L:L-H:s-d:d-s",
-			&G.max_print_depth
+			&G.max_print_ਡੂੰਘਾਈ
 	);
 	argv += optind;
-# if !ENABLE_FEATURE_DU_DEFAULT_BLOCKSIZE_1K
-	if (opt & OPT_k_kbytes) {
+# ਜੇ !ENABLE_FEATURE_DU_DEFAULT_BLOCKSIZE_1K
+	ਜੇ (opt & OPT_k_kbytes) {
 		G.disp_k = 1;
 	}
 # endif
-#endif
-	if (opt & OPT_H_follow_links) {
-		G.slink_depth = 1;
+#ਜੇ_ਅੰਤ
+	ਜੇ (opt & OPT_H_follow_links) {
+		G.slink_ਡੂੰਘਾਈ = 1;
 	}
-	if (opt & OPT_L_follow_links) {
-		G.slink_depth = INT_MAX;
+	ਜੇ (opt & OPT_L_follow_links) {
+		G.slink_ਡੂੰਘਾਈ = ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ;
 	}
-	if (opt & OPT_s_total_norecurse) {
-		G.max_print_depth = 0;
+	ਜੇ (opt & OPT_s_ਕੁੱਲ_norecurse) {
+		G.max_print_ਡੂੰਘਾਈ = 0;
 	}
 
 	/* go through remaining args (if any) */
-	if (!*argv) {
-		*--argv = (char*)".";
-		if (G.slink_depth == 1) {
-			G.slink_depth = 0;
+	ਜੇ (!*argv) {
+		*--argv = (ਅੱਖਰ*)".";
+		ਜੇ (G.slink_ਡੂੰਘਾਈ == 1) {
+			G.slink_ਡੂੰਘਾਈ = 0;
 		}
 	}
 
-	slink_depth_save = G.slink_depth;
-	total = 0;
-	do {
-		total += du(*argv);
-		G.slink_depth = slink_depth_save;
-	} while (*++argv);
+	slink_ਡੂੰਘਾਈ_save = G.slink_ਡੂੰਘਾਈ;
+	ਕੁੱਲ = 0;
+	ਕਰੋ {
+		ਕੁੱਲ += du(*argv);
+		G.slink_ਡੂੰਘਾਈ = slink_ਡੂੰਘਾਈ_save;
+	} ਜਦੋਂ (*++argv);
 
-	if (ENABLE_FEATURE_CLEAN_UP)
+	ਜੇ (ENABLE_FEATURE_CLEAN_ਉੱਪਰ)
 		reset_ino_dev_hashtable();
-	if (opt & OPT_c_total)
-		print(total, "total");
+	ਜੇ (opt & OPT_c_ਕੁੱਲ)
+		print(ਕੁੱਲ, "total");
 
-	fflush_stdout_and_exit(G.status);
+	fflush_stdout_and_exit(G.ਸਥਿਤੀ);
 }

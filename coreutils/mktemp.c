@@ -58,15 +58,15 @@
 //usage:       "$ ls -la /tmp/temp.mWiLjM\n"
 //usage:       "-rw-------    1 andersen andersen        0 Apr 25 17:10 /tmp/temp.mWiLjM\n"
 
-#include "libbb.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "libbb.h"
 
-int mktemp_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int mktemp_main(int argc UNUSED_PARAM, char **argv)
+ਪੂਰਨ mktemp_main(ਪੂਰਨ argc, ਅੱਖਰ **argv) MAIN_EXTERNALLY_VISIBLE;
+ਪੂਰਨ mktemp_main(ਪੂਰਨ argc ਅਣਵਰਤਿਆ_PARAM, ਅੱਖਰ **argv)
 {
-	const char *path;
-	char *chp;
-	unsigned opts;
-	enum {
+	ਅਚਲ ਅੱਖਰ *ਰਸਤਾ;
+	ਅੱਖਰ *chp;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ opts;
+	ਗਿਣਤੀ {
 		OPT_d = 1 << 0,
 		OPT_q = 1 << 1,
 		OPT_t = 1 << 2,
@@ -75,59 +75,59 @@ int mktemp_main(int argc UNUSED_PARAM, char **argv)
 		OPT_tmpdir = (1 << 5) * ENABLE_LONG_OPTS,
 	};
 
-	path = getenv("TMPDIR");
-	if (!path || path[0] == '\0')
-		path = "/tmp";
+	ਰਸਤਾ = getenv("TMPDIR");
+	ਜੇ (!ਰਸਤਾ || ਰਸਤਾ[0] == '\0')
+		ਰਸਤਾ = "/tmp";
 
-#if ENABLE_LONG_OPTS
+#ਜੇ ENABLE_LONG_OPTS
 	opts = getopt32long(argv, "^"
 		"dqtp:u"
 		"\0"
 		"?1" /* 1 arg max */,
-		"directory\0" No_argument       "d"
-		"quiet\0"     No_argument       "q"
-		"dry-run\0"   No_argument       "u"
-		"tmpdir\0"    Optional_argument "\xff"
-		, &path, &path
+		"directory\0" No_ਦਲੀਲ       "d"
+		"quiet\0"     No_ਦਲੀਲ       "q"
+		"dry-run\0"   No_ਦਲੀਲ       "u"
+		"tmpdir\0"    Optional_ਦਲੀਲ "\xff"
+		, &ਰਸਤਾ, &ਰਸਤਾ
 	);
-#else
-	opts = getopt32(argv, "^" "dqtp:u" "\0" "?1"/*1 arg max*/, &path);
-#endif
+#ਨਹੀਂਤਾਂ
+	opts = getopt32(argv, "^" "dqtp:u" "\0" "?1"/*1 arg max*/, &ਰਸਤਾ);
+#ਜੇ_ਅੰਤ
 
 	chp = argv[optind];
-	if (!chp) {
+	ਜੇ (!chp) {
 		/* GNU coreutils 8.4:
 		 * bare "mktemp" -> "mktemp -t tmp.XXXXXX"
 		 */
 		chp = xstrdup("tmp.XXXXXX");
 		opts |= OPT_t;
 	}
-#if 0
+#ਜੇ 0
 	/* Don't allow directory separator in template */
-	if ((opts & OPT_t) && bb_basename(chp) != chp) {
+	ਜੇ ((opts & OPT_t) && bb_basename(chp) != chp) {
 		errno = EINVAL;
-		goto error;
+		ਜਾਓ error;
 	}
-#endif
-	if (opts & (OPT_t|OPT_p|OPT_tmpdir))
-		chp = concat_path_file(path, chp);
+#ਜੇ_ਅੰਤ
+	ਜੇ (opts & (OPT_t|OPT_p|OPT_tmpdir))
+		chp = concat_ਰਸਤਾ_file(ਰਸਤਾ, chp);
 
-	if (opts & OPT_u) {
+	ਜੇ (opts & OPT_u) {
 		chp = mktemp(chp);
-		if (chp[0] == '\0')
-			goto error;
-	} else if (opts & OPT_d) {
-		if (mkdtemp(chp) == NULL)
-			goto error;
-	} else {
-		if (mkstemp(chp) < 0)
-			goto error;
+		ਜੇ (chp[0] == '\0')
+			ਜਾਓ error;
+	} ਨਹੀਂਤਾਂ ਜੇ (opts & OPT_d) {
+		ਜੇ (mkdtemp(chp) == ਨਿਰਾ)
+			ਜਾਓ error;
+	} ਨਹੀਂਤਾਂ {
+		ਜੇ (mkstemp(chp) < 0)
+			ਜਾਓ error;
 	}
 	puts(chp);
-	return EXIT_SUCCESS;
+	ਵਾਪਸ EXIT_SUCCESS;
  error:
-	if (opts & OPT_q)
-		return EXIT_FAILURE;
+	ਜੇ (opts & OPT_q)
+		ਵਾਪਸ EXIT_FAILURE;
 	/* don't use chp as it gets mangled in case of error */
 	bb_perror_nomsg_and_die();
 }

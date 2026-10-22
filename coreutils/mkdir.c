@@ -44,60 +44,60 @@
 //usage:       "/tmp/foo/bar/baz: No such file or directory\n"
 //usage:       "$ mkdir -p /tmp/foo/bar/baz\n"
 
-#include "libbb.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "libbb.h"
 
 /* This is a NOFORK applet. Be very careful! */
 
-int mkdir_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int mkdir_main(int argc UNUSED_PARAM, char **argv)
+ਪੂਰਨ mkdir_main(ਪੂਰਨ argc, ਅੱਖਰ **argv) MAIN_EXTERNALLY_VISIBLE;
+ਪੂਰਨ mkdir_main(ਪੂਰਨ argc ਅਣਵਰਤਿਆ_PARAM, ਅੱਖਰ **argv)
 {
-	long mode = -1;
-	int status = EXIT_SUCCESS;
-	int flags = 0;
-	unsigned opt;
-	char *smode;
-#if ENABLE_SELINUX
+	ਲੰਮਾ ਬਹੁਲਕ = -1;
+	ਪੂਰਨ ਸਥਿਤੀ = EXIT_SUCCESS;
+	ਪੂਰਨ flags = 0;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ opt;
+	ਅੱਖਰ *smode;
+#ਜੇ ENABLE_SELINUX
 	security_context_t scontext;
-#endif
+#ਜੇ_ਅੰਤ
 
 	opt = getopt32long(argv, "m:pv" IF_SELINUX("Z:"),
-			"mode\0"    Required_argument "m"
-			"parents\0" No_argument       "p"
-# if ENABLE_SELINUX
-			"context\0" Required_argument "Z"
+			"mode\0"    Required_ਦਲੀਲ "m"
+			"parents\0" No_ਦਲੀਲ       "p"
+# ਜੇ ENABLE_SELINUX
+			"context\0" Required_ਦਲੀਲ "Z"
 # endif
-# if ENABLE_FEATURE_VERBOSE
-			"verbose\0" No_argument       "v"
+# ਜੇ ENABLE_FEATURE_VERBOSE
+			"verbose\0" No_ਦਲੀਲ       "v"
 # endif
 			, &smode IF_SELINUX(,&scontext)
 	);
-	if (opt & 1) {
-		mode_t mmode = bb_parse_mode(smode, 0777);
-		if (mmode == (mode_t)-1) {
-			bb_error_msg_and_die("invalid mode '%s'", smode);
+	ਜੇ (opt & 1) {
+		ਬਹੁਲਕ_t mmode = bb_parse_ਬਹੁਲਕ(smode, 0777);
+		ਜੇ (mmode == (ਬਹੁਲਕ_t)-1) {
+			bb_error_ਸੁਨੇਹਾ_and_die("invalid mode '%s'", smode);
 		}
-		mode = mmode;
+		ਬਹੁਲਕ = mmode;
 	}
-	if (opt & 2)
+	ਜੇ (opt & 2)
 		flags |= FILEUTILS_RECUR;
-	if ((opt & 4) && FILEUTILS_VERBOSE)
+	ਜੇ ((opt & 4) && FILEUTILS_VERBOSE)
 		flags |= FILEUTILS_VERBOSE;
-#if ENABLE_SELINUX
-	if (opt & 8) {
+#ਜੇ ENABLE_SELINUX
+	ਜੇ (opt & 8) {
 		selinux_or_die();
 		setfscreatecon_or_die(scontext);
 	}
-#endif
+#ਜੇ_ਅੰਤ
 
 	argv += optind;
-	if (!argv[0])
+	ਜੇ (!argv[0])
 		bb_show_usage();
 
-	do {
-		if (bb_make_directory(*argv, mode, flags)) {
-			status = EXIT_FAILURE;
+	ਕਰੋ {
+		ਜੇ (bb_make_directory(*argv, ਬਹੁਲਕ, flags)) {
+			ਸਥਿਤੀ = EXIT_FAILURE;
 		}
-	} while (*++argv);
+	} ਜਦੋਂ (*++argv);
 
-	return status;
+	ਵਾਪਸ ਸਥਿਤੀ;
 }

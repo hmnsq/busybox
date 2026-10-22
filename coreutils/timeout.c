@@ -45,62 +45,62 @@
 //usage:       "Default SIG: TERM."
 //usage:       "If it still exists in KILL_SECS seconds, send KILL.\n"
 
-#include "libbb.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "libbb.h"
 
-static NOINLINE int timeout_wait(duration_t timeout, pid_t pid)
+ਸਥਿਰ NOINLINE ਪੂਰਨ timeout_wait(duration_t timeout, pid_t pid)
 {
 	/* Just sleep(HUGE_NUM); kill(parent) may kill wrong process! */
-	while (1) {
-#if ENABLE_FLOAT_DURATION
-		if (timeout < 1)
+	ਜਦੋਂ (1) {
+#ਜੇ ENABLE_FLOAT_DURATION
+		ਜੇ (timeout < 1)
 			sleep_for_duration(timeout);
-		else
-#endif
+		ਨਹੀਂਤਾਂ
+#ਜੇ_ਅੰਤ
 			sleep1();
-		if (--timeout <= 0)
-			break;
-		if (kill(pid, 0)) {
+		ਜੇ (--timeout <= 0)
+			ਰੋਕੋ;
+		ਜੇ (kill(pid, 0)) {
 			/* process is gone */
-			return EXIT_SUCCESS;
+			ਵਾਪਸ EXIT_SUCCESS;
 		}
 	}
-	return EXIT_FAILURE;
+	ਵਾਪਸ EXIT_FAILURE;
 }
 
-int timeout_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int timeout_main(int argc UNUSED_PARAM, char **argv)
+ਪੂਰਨ timeout_main(ਪੂਰਨ argc, ਅੱਖਰ **argv) MAIN_EXTERNALLY_VISIBLE;
+ਪੂਰਨ timeout_main(ਪੂਰਨ argc ਅਣਵਰਤਿਆ_PARAM, ਅੱਖਰ **argv)
 {
-	int signo;
-	int status;
-	int parent = 0;
+	ਪੂਰਨ signo;
+	ਪੂਰਨ ਸਥਿਤੀ;
+	ਪੂਰਨ ਮਾਪਾ = 0;
 	duration_t timeout;
 	duration_t kill_timeout;
 	pid_t pid;
-#if !BB_MMU
-	char *sv1, *sv2;
-#endif
-	const char *opt_s = "TERM";
-	char *opt_k = NULL;
+#ਜੇ !BB_MMU
+	ਅੱਖਰ *sv1, *sv2;
+#ਜੇ_ਅੰਤ
+	ਅਚਲ ਅੱਖਰ *opt_s = "TERM";
+	ਅੱਖਰ *opt_k = ਨਿਰਾ;
 
 	/* -p option is not documented, it is needed to support NOMMU. */
 
 	/* -t SECONDS; -p PARENT_PID */
 	/* '+': stop at first non-option */
-	getopt32(argv, "+s:k:" USE_FOR_NOMMU("p:+"), &opt_s, &opt_k, &parent);
+	getopt32(argv, "+s:k:" USE_FOR_NOMMU("p:+"), &opt_s, &opt_k, &ਮਾਪਾ);
 	/*argv += optind; - no, wait for bb_daemonize_or_rexec! */
 
 	signo = get_signum(opt_s);
-	if (signo < 0)
-		bb_error_msg_and_die("unknown signal '%s'", opt_s);
+	ਜੇ (signo < 0)
+		bb_error_ਸੁਨੇਹਾ_and_die("unknown signal '%s'", opt_s);
 
 	kill_timeout = 0;
-	if (opt_k)
+	ਜੇ (opt_k)
 		kill_timeout = parse_duration_str(opt_k);
 
-	if (!argv[optind])
+	ਜੇ (!argv[optind])
 		bb_show_usage();
 	timeout = parse_duration_str(argv[optind++]);
-	if (!argv[optind]) /* no PROG? */
+	ਜੇ (!argv[optind]) /* no PROG? */
 		bb_show_usage();
 
 	/* We want to create a grandchild which will watch
@@ -111,48 +111,48 @@ int timeout_main(int argc UNUSED_PARAM, char **argv)
 	 * making child watch parent results in programs having
 	 * unexpected children.	*/
 
-	if (parent) /* we were re-execed, already grandchild */
-		goto grandchild;
+	ਜੇ (ਮਾਪਾ) /* we were re-execed, already grandchild */
+		ਜਾਓ grandchild;
 
-#if !BB_MMU
+#ਜੇ !BB_MMU
 	sv1 = argv[optind];
 	sv2 = argv[optind + 1];
-#endif
+#ਜੇ_ਅੰਤ
 	pid = xvfork();
-	if (pid == 0) {
+	ਜੇ (pid == 0) {
 		/* Child: spawn grandchild and exit */
-		parent = getppid();
-#if !BB_MMU
-		argv[optind] = xasprintf("-p%u", parent);
-		argv[optind + 1] = NULL;
-#endif
+		ਮਾਪਾ = getppid();
+#ਜੇ !BB_MMU
+		argv[optind] = xasprintf("-p%u", ਮਾਪਾ);
+		argv[optind + 1] = ਨਿਰਾ;
+#ਜੇ_ਅੰਤ
 		/* NB: exits with nonzero on error: */
 		bb_daemonize_or_rexec(0, argv);
 		/* Here we are grandchild. Sleep, then kill grandparent */
  grandchild:
-		if (timeout_wait(timeout, parent) == EXIT_SUCCESS)
-			return EXIT_SUCCESS;
-		kill(parent, signo);
+		ਜੇ (timeout_wait(timeout, ਮਾਪਾ) == EXIT_SUCCESS)
+			ਵਾਪਸ EXIT_SUCCESS;
+		kill(ਮਾਪਾ, signo);
 
-		if (kill_timeout > 0) {
-			if (timeout_wait(kill_timeout, parent) == EXIT_SUCCESS)
-				return EXIT_SUCCESS;
-			kill(parent, SIGKILL);
+		ਜੇ (kill_timeout > 0) {
+			ਜੇ (timeout_wait(kill_timeout, ਮਾਪਾ) == EXIT_SUCCESS)
+				ਵਾਪਸ EXIT_SUCCESS;
+			kill(ਮਾਪਾ, SIGKILL);
 		}
 
-		return EXIT_SUCCESS;
+		ਵਾਪਸ EXIT_SUCCESS;
 	}
 
-	/* Parent */
-	wait(&status); /* wait for child to die */
+	/*ਮਾਪਾ*/
+	wait(&ਸਥਿਤੀ); /* wait for child to die */
 	/* Did intermediate [v]fork or exec fail? */
-	if (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
-		return EXIT_FAILURE;
+	ਜੇ (!WIFEXITED(ਸਥਿਤੀ) || WEXITSTATUS(ਸਥਿਤੀ) != 0)
+		ਵਾਪਸ EXIT_FAILURE;
 	/* Ok, exec a program as requested */
 	argv += optind;
-#if !BB_MMU
+#ਜੇ !BB_MMU
 	argv[0] = sv1;
 	argv[1] = sv2;
-#endif
+#ਜੇ_ਅੰਤ
 	BB_EXECVP_or_die(argv);
 }

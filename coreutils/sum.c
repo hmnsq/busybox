@@ -29,90 +29,90 @@
 //usage:     "\n	-r	Use BSD sum algorithm (1K blocks)"
 //usage:     "\n	-s	Use System V sum algorithm (512byte blocks)"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "libbb.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "common_bufsiz.h"
 
-enum { SUM_BSD, PRINT_NAME, SUM_SYSV };
+ਗਿਣਤੀ { ਜੋੜ_BSD, PRINT_NAME, ਜੋੜ_SYSV };
 
 /* BSD: calculate and print the rotated checksum and the size in 1K blocks
    The checksum varies depending on sizeof (int). */
 /* SYSV: calculate and print the checksum and the size in 512-byte blocks */
 /* Return 1 if successful.  */
-static unsigned sum_file(const char *file, unsigned type)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਜੋੜ_file(ਅਚਲ ਅੱਖਰ *file, ਬਿਨਾਨਿਸ਼ਾਨੀ type)
 {
-	unsigned long long total_bytes = 0;
-	int fd, r;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ ਕੁੱਲ_ਬਾਈਟਾਂ = 0;
+	ਪੂਰਨ fd, r;
 	/* The sum of all the input bytes, modulo (UINT_MAX + 1).  */
-	unsigned s = 0;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ s = 0;
 
-#define buf bb_common_bufsiz1
-	setup_common_bufsiz();
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ buf bb_common_bufsiz1
+	ਤਿਆਰੀ_common_bufsiz();
 
 	fd = open_or_warn_stdin(file);
-	if (fd == -1)
-		return 0;
+	ਜੇ (fd == -1)
+		ਵਾਪਸ 0;
 
-	while (1) {
-		size_t bytes_read = safe_read(fd, buf, COMMON_BUFSIZE);
+	ਜਦੋਂ (1) {
+		ਮਾਪ_t ਬਾਈਟਾਂ_read = ਸੁਰੱਖਿਅਤ_read(fd, buf, COMMON_BUFSIZE);
 
-		if ((ssize_t)bytes_read <= 0) {
+		ਜੇ ((ssize_t)ਬਾਈਟਾਂ_read <= 0) {
 			r = (fd && close(fd) != 0);
-			if (!bytes_read && !r)
+			ਜੇ (!ਬਾਈਟਾਂ_read && !r)
 				/* no error */
-				break;
-			bb_simple_perror_msg(file);
-			return 0;
+				ਰੋਕੋ;
+			bb_simple_perror_ਸੁਨੇਹਾ(file);
+			ਵਾਪਸ 0;
 		}
 
-		total_bytes += bytes_read;
-		if (type >= SUM_SYSV) {
-			do s += buf[--bytes_read]; while (bytes_read);
-		} else {
+		ਕੁੱਲ_ਬਾਈਟਾਂ += ਬਾਈਟਾਂ_read;
+		ਜੇ (type >= ਜੋੜ_SYSV) {
+			ਕਰੋ s += buf[--ਬਾਈਟਾਂ_read]; ਜਦੋਂ (ਬਾਈਟਾਂ_read);
+		} ਨਹੀਂਤਾਂ {
 			r = 0;
-			do {
+			ਕਰੋ {
 				s = (s >> 1) + ((s & 1) << 15);
 				s += buf[r++];
 				s &= 0xffff; /* Keep it within bounds. */
-			} while (--bytes_read);
+			} ਜਦੋਂ (--ਬਾਈਟਾਂ_read);
 		}
 	}
 
-	if (type < PRINT_NAME)
+	ਜੇ (type < PRINT_NAME)
 		file = "";
-	if (type >= SUM_SYSV) {
+	ਜੇ (type >= ਜੋੜ_SYSV) {
 		r = (s & 0xffff) + ((s & 0xffffffff) >> 16);
 		s = (r & 0xffff) + (r >> 16);
-		printf("%u %llu %s\n", s, (total_bytes + 511) / 512, file);
-	} else
-		printf("%05u %5llu %s\n", s, (total_bytes + 1023) / 1024, file);
-	return 1;
-#undef buf
+		ਲਿਖੋ("%u %llu %s\n", s, (ਕੁੱਲ_ਬਾਈਟਾਂ + 511) / 512, file);
+	} ਨਹੀਂਤਾਂ
+		ਲਿਖੋ("%05u %5llu %s\n", s, (ਕੁੱਲ_ਬਾਈਟਾਂ + 1023) / 1024, file);
+	ਵਾਪਸ 1;
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ buf
 }
 
-int sum_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int sum_main(int argc UNUSED_PARAM, char **argv)
+ਪੂਰਨ ਜੋੜ_main(ਪੂਰਨ argc, ਅੱਖਰ **argv) MAIN_EXTERNALLY_VISIBLE;
+ਪੂਰਨ ਜੋੜ_main(ਪੂਰਨ argc ਅਣਵਰਤਿਆ_PARAM, ਅੱਖਰ **argv)
 {
-	unsigned n;
-	unsigned type = SUM_BSD;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ n;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ type = ਜੋੜ_BSD;
 
 	n = getopt32(argv, "sr");
 	argv += optind;
-	if (n & 1) type = SUM_SYSV;
+	ਜੇ (n & 1) type = ਜੋੜ_SYSV;
 	/* give the bsd priority over sysv func */
-	if (n & 2) type = SUM_BSD;
+	ਜੇ (n & 2) type = ਜੋੜ_BSD;
 
-	if (!argv[0]) {
+	ਜੇ (!argv[0]) {
 		/* Do not print the name */
-		n = sum_file("-", type);
-	} else {
+		n = ਜੋੜ_file("-", type);
+	} ਨਹੀਂਤਾਂ {
 		/* Need to print the name if either
 		 * - more than one file given
 		 * - doing sysv */
-		type += (argv[1] || type == SUM_SYSV);
+		type += (argv[1] || type == ਜੋੜ_SYSV);
 		n = 1;
-		do {
-			n &= sum_file(*argv, type);
-		} while (*++argv);
+		ਕਰੋ {
+			n &= ਜੋੜ_file(*argv, type);
+		} ਜਦੋਂ (*++argv);
 	}
-	return !n;
+	ਵਾਪਸ !n;
 }
