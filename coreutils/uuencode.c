@@ -37,11 +37,11 @@ enum {
 	DST_BUF_SIZE = 4 * ((SRC_BUF_SIZE + 2) / 3),
 };
 
-int uuencode_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int uuencode_main(int argc UNUSED_PARAM, char **argv)
+정수 uuencode_main(정수 argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+정수 uuencode_main(정수 argc UNUSED_PARAM, char **argv)
 {
 	struct stat stat_buf;
-	int src_fd = STDIN_FILENO;
+	정수 src_fd = STDIN_FILENO;
 	const char *tbl;
 	mode_t mode;
 	char src_buf[SRC_BUF_SIZE];
@@ -49,11 +49,11 @@ int uuencode_main(int argc UNUSED_PARAM, char **argv)
 
 	tbl = bb_uuenc_tbl_std;
 	mode = 0666 & ~umask(0666);
-	if (getopt32(argv, "^" "m" "\0" "-1:?2"/*must have 1 or 2 args*/)) {
+	만약 (getopt32(argv, "^" "m" "\0" "-1:?2"/*must have 1 or 2 args*/)) {
 		tbl = bb_uuenc_tbl_base64;
 	}
 	argv += optind;
-	if (argv[1]) {
+	만약 (argv[1]) {
 		src_fd = xopen(argv[0], O_RDONLY);
 		fstat(src_fd, &stat_buf);
 		mode = stat_buf.st_mode & (S_IRWXU | S_IRWXG | S_IRWXO);
@@ -61,16 +61,16 @@ int uuencode_main(int argc UNUSED_PARAM, char **argv)
 	}
 
 	printf("begin%s %o %s", tbl == bb_uuenc_tbl_std ? "" : "-base64", mode, *argv);
-	while (1) {
+	동안 (1) {
 		size_t size = full_read(src_fd, src_buf, SRC_BUF_SIZE);
-		if (!size)
+		만약 (!size)
 			break;
-		if ((ssize_t)size < 0)
+		만약 ((ssize_t)size < 0)
 			bb_simple_perror_msg_and_die(bb_msg_read_error);
 		/* Encode the buffer we just read in */
 		bb_uuencode(dst_buf, src_buf, size, tbl);
 		bb_putchar('\n');
-		if (tbl == bb_uuenc_tbl_std) {
+		만약 (tbl == bb_uuenc_tbl_std) {
 			bb_putchar(tbl[size]);
 		}
 		fflush(stdout);

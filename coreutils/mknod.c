@@ -48,8 +48,8 @@
 static const char modes_chars[] ALIGN1 = { 'p', 'c', 'u', 'b', 0, 1, 1, 2 };
 static const mode_t modes_cubp[] = { S_IFIFO, S_IFCHR, S_IFBLK };
 
-int mknod_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int mknod_main(int argc UNUSED_PARAM, char **argv)
+정수 mknod_main(정수 argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+정수 mknod_main(정수 argc UNUSED_PARAM, char **argv)
 {
 	mode_t mode;
 	dev_t dev;
@@ -59,18 +59,18 @@ int mknod_main(int argc UNUSED_PARAM, char **argv)
 	argv += optind;
 	//argc -= optind;
 
-	if (!argv[0] || !argv[1])
+	만약 (!argv[0] || !argv[1])
 		bb_show_usage();
 	type = strchr(modes_chars, argv[1][0]);
-	if (!type)
+	만약 (!type)
 		bb_show_usage();
 
-	mode |= modes_cubp[(int)(type[4])];
+	mode |= modes_cubp[(정수)(type[4])];
 
 	dev = 0;
 	arg = argv[2];
-	if (*type != 'p') {
-		if (!argv[2] || !argv[3])
+	만약 (*type != 'p') {
+		만약 (!argv[2] || !argv[3])
 			bb_show_usage();
 		/* Autodetect what the system supports; these macros should
 		 * optimize out to two constants. */
@@ -78,11 +78,11 @@ int mknod_main(int argc UNUSED_PARAM, char **argv)
 				xatoul_range(argv[3], 0, minor(UINT_MAX)));
 		arg = argv[4];
 	}
-	if (arg)
+	만약 (arg)
 		bb_show_usage();
 
-	if (mknod(argv[0], mode, dev) != 0) {
+	만약 (mknod(argv[0], mode, dev) != 0) {
 		bb_simple_perror_msg_and_die(argv[0]);
 	}
-	return EXIT_SUCCESS;
+	반환 EXIT_SUCCESS;
 }

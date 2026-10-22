@@ -40,11 +40,11 @@
 #define VERBOSE          ((1 << 1) * ENABLE_FEATURE_VERBOSE)
 #define IGNORE_NON_EMPTY ((1 << 2) * ENABLE_LONG_OPTS)
 
-int rmdir_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int rmdir_main(int argc UNUSED_PARAM, char **argv)
+정수 rmdir_main(정수 argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+정수 rmdir_main(정수 argc UNUSED_PARAM, char **argv)
 {
-	int status = EXIT_SUCCESS;
-	int flags;
+	정수 status = EXIT_SUCCESS;
+	정수 flags;
 	char *path;
 
 	flags = getopt32long(argv, "pv",
@@ -58,38 +58,38 @@ int rmdir_main(int argc UNUSED_PARAM, char **argv)
 	);
 	argv += optind;
 
-	if (!*argv) {
+	만약 (!*argv) {
 		bb_show_usage();
 	}
 
 	do {
 		path = *argv;
 
-		while (1) {
-			if (flags & VERBOSE) {
+		동안 (1) {
+			만약 (flags & VERBOSE) {
 				printf("rmdir: removing directory, '%s'\n", path);
 			}
 
-			if (rmdir(path) < 0) {
-#if ENABLE_LONG_OPTS
-				if ((flags & IGNORE_NON_EMPTY) && errno == ENOTEMPTY)
+			만약 (rmdir(path) < 0) {
+#만약 ENABLE_LONG_OPTS
+				만약 ((flags & IGNORE_NON_EMPTY) && errno == ENOTEMPTY)
 					break;
 #endif
 				bb_perror_msg("'%s'", path);  /* Match gnu rmdir msg. */
 				status = EXIT_FAILURE;
-			} else if (flags & PARENTS) {
+			} 아니면 만약 (flags & PARENTS) {
 				/* Note: path was not "" since rmdir succeeded. */
 				path = dirname(path);
 				/* Path is now just the parent component.  Dirname
 				 * returns "." if there are no parents.
 				 */
-				if (NOT_LONE_CHAR(path, '.')) {
+				만약 (NOT_LONE_CHAR(path, '.')) {
 					continue;
 				}
 			}
 			break;
 		}
-	} while (*++argv);
+	} 동안 (*++argv);
 
-	return status;
+	반환 status;
 }

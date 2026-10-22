@@ -41,7 +41,7 @@ enum { SUM_BSD, PRINT_NAME, SUM_SYSV };
 static unsigned sum_file(const char *file, unsigned type)
 {
 	unsigned long long total_bytes = 0;
-	int fd, r;
+	정수 fd, r;
 	/* The sum of all the input bytes, modulo (UINT_MAX + 1).  */
 	unsigned s = 0;
 
@@ -49,62 +49,62 @@ static unsigned sum_file(const char *file, unsigned type)
 	setup_common_bufsiz();
 
 	fd = open_or_warn_stdin(file);
-	if (fd == -1)
-		return 0;
+	만약 (fd == -1)
+		반환 0;
 
-	while (1) {
+	동안 (1) {
 		size_t bytes_read = safe_read(fd, buf, COMMON_BUFSIZE);
 
-		if ((ssize_t)bytes_read <= 0) {
+		만약 ((ssize_t)bytes_read <= 0) {
 			r = (fd && close(fd) != 0);
-			if (!bytes_read && !r)
+			만약 (!bytes_read && !r)
 				/* no error */
 				break;
 			bb_simple_perror_msg(file);
-			return 0;
+			반환 0;
 		}
 
 		total_bytes += bytes_read;
-		if (type >= SUM_SYSV) {
-			do s += buf[--bytes_read]; while (bytes_read);
-		} else {
+		만약 (type >= SUM_SYSV) {
+			do s += buf[--bytes_read]; 동안 (bytes_read);
+		} 아니면 {
 			r = 0;
 			do {
 				s = (s >> 1) + ((s & 1) << 15);
 				s += buf[r++];
 				s &= 0xffff; /* Keep it within bounds. */
-			} while (--bytes_read);
+			} 동안 (--bytes_read);
 		}
 	}
 
-	if (type < PRINT_NAME)
+	만약 (type < PRINT_NAME)
 		file = "";
-	if (type >= SUM_SYSV) {
+	만약 (type >= SUM_SYSV) {
 		r = (s & 0xffff) + ((s & 0xffffffff) >> 16);
 		s = (r & 0xffff) + (r >> 16);
 		printf("%u %llu %s\n", s, (total_bytes + 511) / 512, file);
-	} else
+	} 아니면
 		printf("%05u %5llu %s\n", s, (total_bytes + 1023) / 1024, file);
-	return 1;
+	반환 1;
 #undef buf
 }
 
-int sum_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int sum_main(int argc UNUSED_PARAM, char **argv)
+정수 sum_main(정수 argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+정수 sum_main(정수 argc UNUSED_PARAM, char **argv)
 {
 	unsigned n;
 	unsigned type = SUM_BSD;
 
 	n = getopt32(argv, "sr");
 	argv += optind;
-	if (n & 1) type = SUM_SYSV;
+	만약 (n & 1) type = SUM_SYSV;
 	/* give the bsd priority over sysv func */
-	if (n & 2) type = SUM_BSD;
+	만약 (n & 2) type = SUM_BSD;
 
-	if (!argv[0]) {
+	만약 (!argv[0]) {
 		/* Do not print the name */
 		n = sum_file("-", type);
-	} else {
+	} 아니면 {
 		/* Need to print the name if either
 		 * - more than one file given
 		 * - doing sysv */
@@ -112,7 +112,7 @@ int sum_main(int argc UNUSED_PARAM, char **argv)
 		n = 1;
 		do {
 			n &= sum_file(*argv, type);
-		} while (*++argv);
+		} 동안 (*++argv);
 	}
-	return !n;
+	반환 !n;
 }

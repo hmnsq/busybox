@@ -60,8 +60,8 @@
 
 #include "libbb.h"
 
-int mktemp_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int mktemp_main(int argc UNUSED_PARAM, char **argv)
+정수 mktemp_main(정수 argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+정수 mktemp_main(정수 argc UNUSED_PARAM, char **argv)
 {
 	const char *path;
 	char *chp;
@@ -76,10 +76,10 @@ int mktemp_main(int argc UNUSED_PARAM, char **argv)
 	};
 
 	path = getenv("TMPDIR");
-	if (!path || path[0] == '\0')
+	만약 (!path || path[0] == '\0')
 		path = "/tmp";
 
-#if ENABLE_LONG_OPTS
+#만약 ENABLE_LONG_OPTS
 	opts = getopt32long(argv, "^"
 		"dqtp:u"
 		"\0"
@@ -90,44 +90,44 @@ int mktemp_main(int argc UNUSED_PARAM, char **argv)
 		"tmpdir\0"    Optional_argument "\xff"
 		, &path, &path
 	);
-#else
+#아니면
 	opts = getopt32(argv, "^" "dqtp:u" "\0" "?1"/*1 arg max*/, &path);
 #endif
 
 	chp = argv[optind];
-	if (!chp) {
+	만약 (!chp) {
 		/* GNU coreutils 8.4:
 		 * bare "mktemp" -> "mktemp -t tmp.XXXXXX"
 		 */
 		chp = xstrdup("tmp.XXXXXX");
 		opts |= OPT_t;
 	}
-#if 0
+#만약 0
 	/* Don't allow directory separator in template */
-	if ((opts & OPT_t) && bb_basename(chp) != chp) {
+	만약 ((opts & OPT_t) && bb_basename(chp) != chp) {
 		errno = EINVAL;
 		goto error;
 	}
 #endif
-	if (opts & (OPT_t|OPT_p|OPT_tmpdir))
+	만약 (opts & (OPT_t|OPT_p|OPT_tmpdir))
 		chp = concat_path_file(path, chp);
 
-	if (opts & OPT_u) {
+	만약 (opts & OPT_u) {
 		chp = mktemp(chp);
-		if (chp[0] == '\0')
+		만약 (chp[0] == '\0')
 			goto error;
-	} else if (opts & OPT_d) {
-		if (mkdtemp(chp) == NULL)
+	} 아니면 만약 (opts & OPT_d) {
+		만약 (mkdtemp(chp) == NULL)
 			goto error;
-	} else {
-		if (mkstemp(chp) < 0)
+	} 아니면 {
+		만약 (mkstemp(chp) < 0)
 			goto error;
 	}
 	puts(chp);
-	return EXIT_SUCCESS;
+	반환 EXIT_SUCCESS;
  error:
-	if (opts & OPT_q)
-		return EXIT_FAILURE;
+	만약 (opts & OPT_q)
+		반환 EXIT_FAILURE;
 	/* don't use chp as it gets mangled in case of error */
 	bb_perror_nomsg_and_die();
 }

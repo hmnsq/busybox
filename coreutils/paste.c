@@ -32,22 +32,22 @@
 
 #include "libbb.h"
 
-static void paste_files(FILE** files, int file_cnt, char* delims, int del_cnt)
+static void paste_files(FILE** files, 정수 file_cnt, char* delims, 정수 del_cnt)
 {
 	char *line;
 	char delim;
-	int active_files = file_cnt;
-	int i;
+	정수 active_files = file_cnt;
+	정수 i;
 
-	while (active_files > 0) {
-		int del_idx = 0;
+	동안 (active_files > 0) {
+		정수 del_idx = 0;
 
-		for (i = 0; i < file_cnt; ++i) {
-			if (files[i] == NULL)
+		위해 (i = 0; i < file_cnt; ++i) {
+			만약 (files[i] == NULL)
 				continue;
 
 			line = xmalloc_fgetline(files[i]);
-			if (!line) {
+			만약 (!line) {
 				fclose_if_not_stdin(files[i]);
 				files[i] = NULL;
 				--active_files;
@@ -56,40 +56,40 @@ static void paste_files(FILE** files, int file_cnt, char* delims, int del_cnt)
 			fputs_stdout(line);
 			free(line);
 			delim = '\n';
-			if (i != file_cnt - 1) {
+			만약 (i != file_cnt - 1) {
 				delim = delims[del_idx++];
-				if (del_idx == del_cnt)
+				만약 (del_idx == del_cnt)
 					del_idx = 0;
 			}
-			if (delim != '\0')
+			만약 (delim != '\0')
 				fputc(delim, stdout);
 		}
 	}
 }
 
-static void paste_files_separate(FILE** files, char* delims, int del_cnt)
+static void paste_files_separate(FILE** files, char* delims, 정수 del_cnt)
 {
 	char *line, *next_line;
 	char delim;
-	int i;
+	정수 i;
 
-	for (i = 0; files[i]; ++i) {
-		int del_idx = 0;
+	위해 (i = 0; files[i]; ++i) {
+		정수 del_idx = 0;
 
 		line = NULL;
-		while ((next_line = xmalloc_fgetline(files[i])) != NULL) {
-			if (line) {
+		동안 ((next_line = xmalloc_fgetline(files[i])) != NULL) {
+			만약 (line) {
 				fputs_stdout(line);
 				free(line);
 				delim = delims[del_idx++];
-				if (del_idx == del_cnt)
+				만약 (del_idx == del_cnt)
 					del_idx = 0;
-				if (delim != '\0')
+				만약 (delim != '\0')
 					fputc(delim, stdout);
 			}
 			line = next_line;
 		}
-		if (line) {
+		만약 (line) {
 			/* coreutils adds \n even if this is a final line
 			 * of the last file and it was not \n-terminated.
 			 */
@@ -103,19 +103,19 @@ static void paste_files_separate(FILE** files, char* delims, int del_cnt)
 #define PASTE_OPT_DELIMITERS (1 << 0)
 #define PASTE_OPT_SEPARATE   (1 << 1)
 
-int paste_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int paste_main(int argc UNUSED_PARAM, char **argv)
+정수 paste_main(정수 argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+정수 paste_main(정수 argc UNUSED_PARAM, char **argv)
 {
 	char *delims = (char*)"\t";
-	int del_cnt = 1;
+	정수 del_cnt = 1;
 	unsigned opt;
-	int i;
+	정수 i;
 
 	opt = getopt32(argv, "d:s", &delims);
 	argv += optind;
 
-	if (opt & PASTE_OPT_DELIMITERS) {
-		if (!delims[0])
+	만약 (opt & PASTE_OPT_DELIMITERS) {
+		만약 (!delims[0])
 			bb_simple_error_msg_and_die("-d '' is not supported");
 		/* unknown mappings are not changed: "\z" -> '\\' 'z' */
 		/* trailing backslash, if any, is preserved */
@@ -123,17 +123,17 @@ int paste_main(int argc UNUSED_PARAM, char **argv)
 		/* note: handle NUL properly (do not stop at it!): try -d'\t\0\t' */
 	}
 
-	if (!argv[0])
+	만약 (!argv[0])
 		(--argv)[0] = (char*) "-";
-	for (i = 0; argv[i]; ++i) {
+	위해 (i = 0; argv[i]; ++i) {
 		argv[i] = (void*) fopen_or_warn_stdin(argv[i]);
-		if (!argv[i])
+		만약 (!argv[i])
 			xfunc_die();
 	}
 
-	if (opt & PASTE_OPT_SEPARATE)
+	만약 (opt & PASTE_OPT_SEPARATE)
 		paste_files_separate((FILE**)argv, delims, del_cnt);
-	else
+	아니면
 		paste_files((FILE**)argv, i, delims, del_cnt);
 
 	fflush_stdout_and_exit(0);

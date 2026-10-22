@@ -34,25 +34,25 @@
 
 /* This is a NOEXEC applet. Be very careful! */
 
-int mkfifo_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int mkfifo_main(int argc UNUSED_PARAM, char **argv)
+정수 mkfifo_main(정수 argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+정수 mkfifo_main(정수 argc UNUSED_PARAM, char **argv)
 {
 	mode_t mode;
-	int retval = EXIT_SUCCESS;
+	정수 retval = EXIT_SUCCESS;
 
 	mode = getopt_mk_fifo_nod(argv);
 
 	argv += optind;
-	if (!*argv) {
+	만약 (!*argv) {
 		bb_show_usage();
 	}
 
 	do {
-		if (mkfifo(*argv, mode) < 0) {
+		만약 (mkfifo(*argv, mode) < 0) {
 			bb_simple_perror_msg(*argv);  /* Avoid multibyte problems. */
 			retval = EXIT_FAILURE;
 		}
-	} while (*++argv);
+	} 동안 (*++argv);
 
-	return retval;
+	반환 retval;
 }

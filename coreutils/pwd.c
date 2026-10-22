@@ -27,7 +27,7 @@
 
 #include "libbb.h"
 
-static int logical_getcwd(void)
+static 정수 logical_getcwd(void)
 {
 	struct stat st1;
 	struct stat st2;
@@ -35,59 +35,59 @@ static int logical_getcwd(void)
 	char *p;
 
 	wd = getenv("PWD");
-	if (!wd || wd[0] != '/')
-		return 0;
+	만약 (!wd || wd[0] != '/')
+		반환 0;
 
 	p = wd;
-	while (*p) {
+	동안 (*p) {
 		/* doing strstr(p, "/.") by hand is smaller and faster... */
-		if (*p++ != '/')
+		만약 (*p++ != '/')
 			continue;
-		if (*p != '.')
+		만약 (*p != '.')
 			continue;
 		/* we found "/.", skip to next char */
 		p++;
-		if (*p == '.')
+		만약 (*p == '.')
 			p++; /* we found "/.." */
-		if (*p == '\0' || *p == '/')
-			return 0; /* "/./" or "/../" component: bad */
+		만약 (*p == '\0' || *p == '/')
+			반환 0; /* "/./" or "/../" component: bad */
 	}
 
-	if (stat(wd, &st1) != 0)
-		return 0;
-	if (stat(".", &st2) != 0)
-		return 0;
-	if (st1.st_ino != st2.st_ino)
-		return 0;
-	if (st1.st_dev != st2.st_dev)
-		return 0;
+	만약 (stat(wd, &st1) != 0)
+		반환 0;
+	만약 (stat(".", &st2) != 0)
+		반환 0;
+	만약 (st1.st_ino != st2.st_ino)
+		반환 0;
+	만약 (st1.st_dev != st2.st_dev)
+		반환 0;
 
 	puts(wd);
-	return 1;
+	반환 1;
 }
 
-int pwd_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int pwd_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+정수 pwd_main(정수 argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+정수 pwd_main(정수 argc UNUSED_PARAM, char **argv UNUSED_PARAM)
 {
 	char *buf;
 
-	if (ENABLE_DESKTOP) {
+	만약 (ENABLE_DESKTOP) {
 		/* TODO: assume -L if $POSIXLY_CORRECT? (coreutils does that)
 		 * Rationale:
 		 * POSIX requires a default of -L, but most scripts expect -P
 		 */
 		unsigned opt = getopt32(argv, "LP");
-		if ((opt & 1) && logical_getcwd())
-			return fflush_all();
+		만약 ((opt & 1) && logical_getcwd())
+			반환 fflush_all();
 	}
 
 	buf = xrealloc_getcwd_or_warn(NULL);
 
-	if (buf) {
+	만약 (buf) {
 		puts(buf);
 		free(buf);
-		return fflush_all();
+		반환 fflush_all();
 	}
 
-	return EXIT_FAILURE;
+	반환 EXIT_FAILURE;
 }

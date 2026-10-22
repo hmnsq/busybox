@@ -33,37 +33,37 @@
 
 #include "libbb.h"
 
-#if ENABLE_UUDECODE
-static void FAST_FUNC read_stduu(FILE *src_stream, FILE *dst_stream, int flags UNUSED_PARAM)
+#만약 ENABLE_UUDECODE
+static void FAST_FUNC read_stduu(FILE *src_stream, FILE *dst_stream, 정수 flags UNUSED_PARAM)
 {
 	char *line;
 
-	for (;;) {
-		int encoded_len, str_len;
+	위해 (;;) {
+		정수 encoded_len, str_len;
 		char *line_ptr, *dst;
 		size_t line_len;
 
 		line_len = 64 * 1024;
 		line = xmalloc_fgets_str_len(src_stream, "\n", &line_len);
-		if (!line)
+		만약 (!line)
 			break;
 		/* Handle both Unix and MSDOS text.
 		 * Note: space should not be trimmed, some encoders use it instead of "`"
 		 * for padding of last incomplete 4-char block.
 		 */
 		str_len = line_len;
-		while (--str_len >= 0
+		동안 (--str_len >= 0
 		 && (line[str_len] == '\n' || line[str_len] == '\r')
 		) {
 			line[str_len] = '\0';
 		}
 
-		if (strcmp(line, "end") == 0) {
-			return; /* the only non-error exit */
+		만약 (strcmp(line, "end") == 0) {
+			반환; /* the only non-error exit */
 		}
 
 		line_ptr = line;
-		while (*line_ptr) {
+		동안 (*line_ptr) {
 			*line_ptr = (*line_ptr - 0x20) & 0x3f;
 			line_ptr++;
 		}
@@ -73,15 +73,15 @@ static void FAST_FUNC read_stduu(FILE *src_stream, FILE *dst_stream, int flags U
 		/* Check that line is not too short. (we tolerate
 		 * overly _long_ line to accommodate possible extra "`").
 		 * Empty line case is also caught here. */
-		if (str_len <= encoded_len) {
+		만약 (str_len <= encoded_len) {
 			break; /* go to bb_error_msg_and_die("short file"); */
 		}
-		if (encoded_len <= 0) {
+		만약 (encoded_len <= 0) {
 			/* Ignore the "`\n" line, why is it even in the encode file ? */
 			free(line);
 			continue;
 		}
-		if (encoded_len > 60) {
+		만약 (encoded_len > 60) {
 			bb_simple_error_msg_and_die("line too long");
 		}
 
@@ -91,28 +91,28 @@ static void FAST_FUNC read_stduu(FILE *src_stream, FILE *dst_stream, int flags U
 			/* Merge four 6 bit chars to three 8 bit chars */
 			*dst++ = line_ptr[0] << 2 | line_ptr[1] >> 4;
 			encoded_len--;
-			if (encoded_len == 0) {
+			만약 (encoded_len == 0) {
 				break;
 			}
 
 			*dst++ = line_ptr[1] << 4 | line_ptr[2] >> 2;
 			encoded_len--;
-			if (encoded_len == 0) {
+			만약 (encoded_len == 0) {
 				break;
 			}
 
 			*dst++ = line_ptr[2] << 6 | line_ptr[3];
 			line_ptr += 4;
 			encoded_len -= 2;
-		} while (encoded_len > 0);
+		} 동안 (encoded_len > 0);
 		fwrite(line, 1, dst - line, dst_stream);
 		free(line);
 	}
 	bb_simple_error_msg_and_die("short file");
 }
 
-int uudecode_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int uudecode_main(int argc UNUSED_PARAM, char **argv)
+정수 uudecode_main(정수 argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+정수 uudecode_main(정수 argc UNUSED_PARAM, char **argv)
 {
 	FILE *src_stream;
 	char *outname = NULL;
@@ -121,41 +121,41 @@ int uudecode_main(int argc UNUSED_PARAM, char **argv)
 	getopt32(argv, "^" "o:" "\0" "?1"/* 1 arg max*/, &outname);
 	argv += optind;
 
-	if (!argv[0])
+	만약 (!argv[0])
 		*--argv = (char*)"-";
 	src_stream = xfopen_stdin(argv[0]);
 
 	/* Search for the start of the encoding */
-	while ((line = xmalloc_fgetline(src_stream)) != NULL) {
-		void FAST_FUNC (*decode_fn_ptr)(FILE *src, FILE *dst, int flags);
+	동안 ((line = xmalloc_fgetline(src_stream)) != NULL) {
+		void FAST_FUNC (*decode_fn_ptr)(FILE *src, FILE *dst, 정수 flags);
 		char *line_ptr;
 		FILE *dst_stream;
-		int mode;
+		정수 mode;
 
-		if (is_prefixed_with(line, "begin-base64 ")) {
+		만약 (is_prefixed_with(line, "begin-base64 ")) {
 			line_ptr = line + 13;
 			decode_fn_ptr = read_base64;
-		} else if (is_prefixed_with(line, "begin ")) {
+		} 아니면 만약 (is_prefixed_with(line, "begin ")) {
 			line_ptr = line + 6;
 			decode_fn_ptr = read_stduu;
-		} else {
+		} 아니면 {
 			free(line);
 			continue;
 		}
 
 		/* begin line found. decode and exit */
 		mode = bb_strtou(line_ptr, NULL, 8);
-		if (outname == NULL) {
+		만약 (outname == NULL) {
 			outname = strchr(line_ptr, ' ');
-			if (!outname)
+			만약 (!outname)
 				break;
 			outname++;
 			trim(outname); /* remove trailing space (and '\r' for DOS text) */
-			if (!outname[0])
+			만약 (!outname[0])
 				break;
 		}
 		dst_stream = stdout;
-		if (NOT_LONE_DASH(outname)
+		만약 (NOT_LONE_DASH(outname)
 /* https://pubs.opengroup.org/onlinepubs/9699919799/utilities/uudecode.html
  * https://pubs.opengroup.org/onlinepubs/9699919799/utilities/uuencode.html
  * The above says that output file name specified in input file
@@ -171,7 +171,7 @@ int uudecode_main(int argc UNUSED_PARAM, char **argv)
 		free(line);
 		decode_fn_ptr(src_stream, dst_stream, /*flags:*/ BASE64_FLAG_UU_STOP + BASE64_FLAG_NO_STOP_CHAR);
 		/* fclose_if_not_stdin(src_stream); - redundant */
-		return EXIT_SUCCESS;
+		반환 EXIT_SUCCESS;
 	}
 	bb_simple_error_msg_and_die("no 'begin' line");
 }
@@ -214,16 +214,16 @@ int uudecode_main(int argc UNUSED_PARAM, char **argv)
 //kbuild:lib-$(CONFIG_BASE64) += uudecode.o
 //kbuild:lib-$(CONFIG_BASE32) += uudecode.o
 
-#if ENABLE_BASE32 || ENABLE_BASE64
+#만약 ENABLE_BASE32 || ENABLE_BASE64
 
-# if ENABLE_BASE32
-static void bb_b32encode(char *p, const void *src, int length)
+# 만약 ENABLE_BASE32
+static void bb_b32encode(char *p, const void *src, 정수 length)
 {
 #define tbl bb_uuenc_tbl_base32
 	const unsigned char *s = src;
 
 	/* Transform 5x8 bits to 8x5 bits */
-	while (length > 0) {
+	동안 (length > 0) {
 		unsigned cur, next;
 
 		length--;
@@ -232,7 +232,7 @@ static void bb_b32encode(char *p, const void *src, int length)
 		cur &= 7;
 
 		next = 0;
-		if (--length >= 0)
+		만약 (--length >= 0)
 			next = *s++;
 		*p++ = tbl[(cur << 2) + (next >> 6)];	// -----xxx xx------ -------- -------- --------
 		cur = next & 0x3f;
@@ -241,13 +241,13 @@ static void bb_b32encode(char *p, const void *src, int length)
 		cur &= 1;
 
 		next = 0;
-		if (--length >= 0)
+		만약 (--length >= 0)
 			next = *s++;
 		*p++ = tbl[(cur << 4) + (next >> 4)];	// -------- -------x xxxx---- -------- --------
 		cur = next & 0xf;
 
 		next = 0;
-		if (--length >= 0)
+		만약 (--length >= 0)
 			next = *s++;
 		*p++ = tbl[(cur << 1) + (next >> 7)];	// -------- -------- ----xxxx x------- --------
 		cur = next & 0x7f;
@@ -256,7 +256,7 @@ static void bb_b32encode(char *p, const void *src, int length)
 		cur &= 3;
 
 		next = 0;
-		if (--length >= 0)
+		만약 (--length >= 0)
 			next = *s++;
 		*p++ = tbl[(cur << 3) + (next >> 5)];	// -------- -------- -------- ------xx xxx-----
 		cur = next & 0x1f;
@@ -268,16 +268,16 @@ static void bb_b32encode(char *p, const void *src, int length)
 	*p = '\0';
 	/* Pad as necessary */
 	length = ((-length) * 3) >> 1; /* -4 => 6 pad chars, -3 => 4, -2 => 3, -1 => 1 */
-	while (length--) {
+	동안 (length--) {
 		*--p = '=';
 	}
 }
-# else
-void bb_b32encode(char *p, const void *src, int length); /* undefined */
+# 아니면
+void bb_b32encode(char *p, const void *src, 정수 length); /* undefined */
 # endif
 
-int baseNUM_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int baseNUM_main(int argc UNUSED_PARAM, char **argv)
+정수 baseNUM_main(정수 argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+정수 baseNUM_main(정수 argc UNUSED_PARAM, char **argv)
 {
 	FILE *src_stream;
 	unsigned opts;
@@ -286,16 +286,16 @@ int baseNUM_main(int argc UNUSED_PARAM, char **argv)
 	opts = getopt32(argv, "^" "diw:+" "\0" "?1"/* 1 arg max*/, &col);
 	argv += optind;
 
-	if (!argv[0])
+	만약 (!argv[0])
 		*--argv = (char*)"-";
 	src_stream = xfopen_stdin(argv[0]);
-	if (opts & 1) {
+	만약 (opts & 1) {
 		/* -d: decode */
-		int flags = (unsigned char)EOF;
-		if (ENABLE_BASE32 && (!ENABLE_BASE64 || applet_name[4] == '3'))
+		정수 flags = (unsigned char)EOF;
+		만약 (ENABLE_BASE32 && (!ENABLE_BASE64 || applet_name[4] == '3'))
 			flags = ((unsigned char)EOF) | BASE64_32;
 		read_base64(src_stream, stdout, flags);
-	} else {
+	} 아니면 {
 		enum {
 			SRC_BUF_SIZE = 3 * 5 * 32, /* this *MUST* be a multiple of 3 and 5 */
 			DST_BUF_SIZE = 8 * ((SRC_BUF_SIZE + 4) / 5), /* max growth on encode (base32 case) */
@@ -307,42 +307,42 @@ int baseNUM_main(int argc UNUSED_PARAM, char **argv)
 		 */
 		char dst_buf[((DST_BUF_SIZE + /*gap:*/ 16) /*round up to 16:*/ | 0xf) + 1];
 #define src_buf (dst_buf + sizeof(dst_buf) - SRC_BUF_SIZE)
-		int src_fd, rem;
+		정수 src_fd, rem;
 
 		src_fd = fileno(src_stream);
 		rem = 0;
-		while (1) {
+		동안 (1) {
 			size_t size = full_read(src_fd, src_buf, SRC_BUF_SIZE);
-			if ((ssize_t)size < 0)
+			만약 ((ssize_t)size < 0)
 				bb_simple_perror_msg_and_die(bb_msg_read_error);
-			if (size == 0) {
-				if (rem != 0) bb_putchar('\n');
+			만약 (size == 0) {
+				만약 (rem != 0) bb_putchar('\n');
 				break;
 			}
 
 			/* Encode the buffer we just read in */
-			if (ENABLE_BASE32 && (!ENABLE_BASE64 || applet_name[4] == '3')) {
+			만약 (ENABLE_BASE32 && (!ENABLE_BASE64 || applet_name[4] == '3')) {
 				bb_b32encode(dst_buf, src_buf, size);
 				size = 8 * ((size + 4) / 5);
-			} else {
+			} 아니면 {
 				bb_uuencode(dst_buf, src_buf, size, bb_uuenc_tbl_base64);
 				size = 4 * ((size + 2) / 3);
 			}
 
-			if (col == 0) {
+			만약 (col == 0) {
 				fputs_stdout(dst_buf);
-			} else {
+			} 아니면 {
 				char *result = dst_buf;
-				if (rem == 0)
+				만약 (rem == 0)
 					rem = col;
-				while (1) {
-					int out = size < rem ? size : rem;
+				동안 (1) {
+					정수 out = size < rem ? size : rem;
 					rem -= out;
 					printf(rem != 0 ? "%.*s" : "%.*s\n", out, result);
-					if (rem != 0)
+					만약 (rem != 0)
 						break;
 					size -= out;
-					if (size == 0)
+					만약 (size == 0)
 						break;
 					result += out;
 					rem = col;

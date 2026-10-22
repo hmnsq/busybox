@@ -56,17 +56,17 @@
 #include "libbb.h"
 #include "unicode.h"
 
-#if !ENABLE_LOCALE_SUPPORT
+#만약 !ENABLE_LOCALE_SUPPORT
 # undef isprint
 # undef isspace
 # define isprint(c) ((unsigned)((c) - 0x20) <= (0x7e - 0x20))
 # define isspace(c) ((c) == ' ')
 #endif
 
-#if ENABLE_FEATURE_WC_LARGE
+#만약 ENABLE_FEATURE_WC_LARGE
 # define COUNT_T unsigned long long
 # define COUNT_FMT "llu"
-#else
+#아니면
 # define COUNT_T unsigned
 # define COUNT_FMT "u"
 #endif
@@ -105,8 +105,8 @@ enum {
 	NUM_WCS     = 5,
 };
 
-int wc_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int wc_main(int argc UNUSED_PARAM, char **argv)
+정수 wc_main(정수 argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+정수 wc_main(정수 argc UNUSED_PARAM, char **argv)
 {
 	const char *arg;
 	const char *start_fmt = " %9"COUNT_FMT + 1;
@@ -114,7 +114,7 @@ int wc_main(int argc UNUSED_PARAM, char **argv)
 	COUNT_T *pcounts;
 	COUNT_T counts[NUM_WCS];
 	COUNT_T totals[NUM_WCS];
-	int num_files;
+	정수 num_files;
 	smallint status = EXIT_SUCCESS;
 	unsigned print_type;
 
@@ -122,17 +122,17 @@ int wc_main(int argc UNUSED_PARAM, char **argv)
 
 	print_type = getopt32(argv, "lwmcL");
 
-	if (print_type == 0) {
+	만약 (print_type == 0) {
 		print_type = (1 << WC_LINES) | (1 << WC_WORDS) | (1 << WC_BYTES);
 	}
 
 	argv += optind;
-	if (!argv[0]) {
+	만약 (!argv[0]) {
 		*--argv = (char *) bb_msg_standard_input;
 		fname_fmt = "\n";
 	}
-	if (!argv[1]) { /* zero or one filename? */
-		if (!((print_type-1) & print_type)) /* exactly one option? */
+	만약 (!argv[1]) { /* zero or one filename? */
+		만약 (!((print_type-1) & print_type)) /* exactly one option? */
 			start_fmt = "%"COUNT_FMT;
 	}
 
@@ -141,7 +141,7 @@ int wc_main(int argc UNUSED_PARAM, char **argv)
 	pcounts = counts;
 
 	num_files = 0;
-	while ((arg = *argv++) != NULL) {
+	동안 ((arg = *argv++) != NULL) {
 		FILE *fp;
 		const char *s;
 		unsigned u;
@@ -150,7 +150,7 @@ int wc_main(int argc UNUSED_PARAM, char **argv)
 
 		++num_files;
 		fp = fopen_or_warn_stdin(arg);
-		if (!fp) {
+		만약 (!fp) {
 			status = EXIT_FAILURE;
 			continue;
 		}
@@ -159,13 +159,13 @@ int wc_main(int argc UNUSED_PARAM, char **argv)
 		linepos = 0;
 		in_word = 0;
 
-		while (1) {
-			int c;
+		동안 (1) {
+			정수 c;
 			/* Our -w doesn't match GNU wc exactly... oh well */
 
 			c = getc(fp);
-			if (c == EOF) {
-				if (ferror(fp)) {
+			만약 (c == EOF) {
+				만약 (ferror(fp)) {
 					bb_simple_perror_msg(arg);
 					status = EXIT_FAILURE;
 				}
@@ -174,53 +174,53 @@ int wc_main(int argc UNUSED_PARAM, char **argv)
 
 			/* Cater for -c and -m */
 			++counts[WC_BYTES];
-			if (unicode_status != UNICODE_ON /* every byte is a new char */
+			만약 (unicode_status != UNICODE_ON /* every byte is a new char */
 			 || (c & 0xc0) != 0x80 /* it isn't a 2nd+ byte of a Unicode char */
 			) {
 				++counts[WC_UNICHARS];
 			}
 
-			if (isprint_asciionly(c)) { /* FIXME: not unicode-aware */
+			만약 (isprint_asciionly(c)) { /* FIXME: not unicode-aware */
 				++linepos;
-				if (!isspace(c)) {
+				만약 (!isspace(c)) {
 					in_word = 1;
 					continue;
 				}
-			} else if ((unsigned)(c - 9) <= 4) {
+			} 아니면 만약 ((unsigned)(c - 9) <= 4) {
 				/* \t  9
 				 * \n 10
 				 * \v 11
 				 * \f 12
 				 * \r 13
 				 */
-				if (c == '\t') {
+				만약 (c == '\t') {
 					linepos = (linepos | 7) + 1;
-				} else {  /* '\n', '\r', '\f', or '\v' */
+				} 아니면 {  /* '\n', '\r', '\f', or '\v' */
  DO_EOF:
-					if (linepos > counts[WC_LENGTH]) {
+					만약 (linepos > counts[WC_LENGTH]) {
 						counts[WC_LENGTH] = linepos;
 					}
-					if (c == '\n') {
+					만약 (c == '\n') {
 						++counts[WC_LINES];
 					}
-					if (c != '\v') {
+					만약 (c != '\v') {
 						linepos = 0;
 					}
 				}
-			} else {
+			} 아니면 {
 				continue;
 			}
 
 			counts[WC_WORDS] += in_word;
 			in_word = 0;
-			if (c == EOF) {
+			만약 (c == EOF) {
 				break;
 			}
 		}
 
 		fclose_if_not_stdin(fp);
 
-		if (totals[WC_LENGTH] < counts[WC_LENGTH]) {
+		만약 (totals[WC_LENGTH] < counts[WC_LENGTH]) {
 			totals[WC_LENGTH] = counts[WC_LENGTH];
 		}
 		totals[WC_LENGTH] -= counts[WC_LENGTH];
@@ -232,12 +232,12 @@ int wc_main(int argc UNUSED_PARAM, char **argv)
 		s = start_fmt;
 		u = 0;
 		do {
-			if (print_type & (1 << u)) {
+			만약 (print_type & (1 << u)) {
 				printf(s, pcounts[u]);
 				s = " %9"COUNT_FMT; /* Ok... restore the leading space. */
 			}
 			totals[u] += pcounts[u];
-		} while (++u < NUM_WCS);
+		} 동안 (++u < NUM_WCS);
 		printf(fname_fmt, arg);
 	}
 
@@ -245,7 +245,7 @@ int wc_main(int argc UNUSED_PARAM, char **argv)
 	 * space, we set the pcounts ptr to the totals array.  This has the side
 	 * effect of trashing the totals array after outputting it, but that's
 	 * irrelavent since we no longer need it. */
-	if (num_files > 1) {
+	만약 (num_files > 1) {
 		num_files = 0;  /* Make sure we don't get here again. */
 		arg = "total";
 		pcounts = totals;

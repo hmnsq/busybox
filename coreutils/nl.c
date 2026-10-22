@@ -35,15 +35,15 @@
 
 #include "libbb.h"
 
-int nl_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int nl_main(int argc UNUSED_PARAM, char **argv)
+정수 nl_main(정수 argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+정수 nl_main(정수 argc UNUSED_PARAM, char **argv)
 {
 	struct number_state ns;
 	const char *opt_b = "t";
 	enum {
 		OPT_p = (1 << 0),
 	};
-#if ENABLE_LONG_OPTS
+#만약 ENABLE_LONG_OPTS
 	static const char nl_longopts[] ALIGN1 =
 		"body-numbering\0"	Required_argument "b"
 	//	"footer-numbering\0"	Required_argument "f" - not implemented yet
@@ -58,7 +58,7 @@ int nl_main(int argc UNUSED_PARAM, char **argv)
 		"number-width\0"	Required_argument "w"
 	;
 #endif
-	int exitcode;
+	정수 exitcode;
 
 	ns.width = 6;
 	ns.start = 1;
@@ -68,16 +68,16 @@ int nl_main(int argc UNUSED_PARAM, char **argv)
 			&ns.width, &ns.sep, &ns.start, &ns.inc, &opt_b);
 	ns.all = (opt_b[0] == 'a');
 	ns.nonempty = (opt_b[0] == 't');
-	ns.empty_str = xasprintf("%*s", ns.width + (int)strlen(ns.sep), "");
+	ns.empty_str = xasprintf("%*s", ns.width + (정수)strlen(ns.sep), "");
 
 	argv += optind;
-	if (!*argv)
+	만약 (!*argv)
 		*--argv = (char*)"-";
 
 	exitcode = EXIT_SUCCESS;
 	do {
 		exitcode |= print_numbered_lines(&ns, *argv);
-	} while (*++argv);
+	} 동안 (*++argv);
 
 	fflush_stdout_and_exit(exitcode);
 }

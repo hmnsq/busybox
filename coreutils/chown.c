@@ -80,12 +80,12 @@
 #define BIT_TRAVERSE_TOP (0x20|0x40)
 #define OPT_TRAVERSE_TOP (IF_DESKTOP(opt & BIT_TRAVERSE_TOP) IF_NOT_DESKTOP(0))
 
-#if ENABLE_FEATURE_CHOWN_LONG_OPTIONS
+#만약 ENABLE_FEATURE_CHOWN_LONG_OPTIONS
 static const char chown_longopts[] ALIGN1 =
 	"recursive\0"        No_argument   "R"
 	"dereference\0"      No_argument   "\xff"
 	"no-dereference\0"   No_argument   "h"
-# if ENABLE_DESKTOP
+# 만약 ENABLE_DESKTOP
 	"changes\0"          No_argument   "c"
 	"silent\0"           No_argument   "f"
 	"quiet\0"            No_argument   "f"
@@ -94,14 +94,14 @@ static const char chown_longopts[] ALIGN1 =
 	;
 #endif
 
-typedef int (*chown_fptr)(const char *, uid_t, gid_t);
+typedef 정수 (*chown_fptr)(const char *, uid_t, gid_t);
 
 struct param_t {
 	struct bb_uidgid_t ugid;
 	chown_fptr chown_func;
 };
 
-static int FAST_FUNC fileAction(struct recursive_state *state UNUSED_PARAM,
+static 정수 FAST_FUNC fileAction(struct recursive_state *state UNUSED_PARAM,
 		const char *fileName, struct stat *statbuf)
 {
 #define param  (*(struct param_t*)state->userData)
@@ -109,38 +109,38 @@ static int FAST_FUNC fileAction(struct recursive_state *state UNUSED_PARAM,
 	uid_t u = (param.ugid.uid == (uid_t)-1L) ? statbuf->st_uid : param.ugid.uid;
 	gid_t g = (param.ugid.gid == (gid_t)-1L) ? statbuf->st_gid : param.ugid.gid;
 
-	if (param.chown_func(fileName, u, g) == 0) {
-		if (OPT_VERBOSE
+	만약 (param.chown_func(fileName, u, g) == 0) {
+		만약 (OPT_VERBOSE
 		 || (OPT_CHANGED && (statbuf->st_uid != u || statbuf->st_gid != g))
 		) {
 			printf("changed ownership of '%s' to %u:%u\n",
 					fileName, (unsigned)u, (unsigned)g);
 		}
-		return TRUE;
+		반환 TRUE;
 	}
-	if (!OPT_QUIET)
+	만약 (!OPT_QUIET)
 		bb_simple_perror_msg(fileName);
-	return FALSE;
+	반환 FALSE;
 #undef opt
 #undef param
 }
 
-int chown_main(int argc UNUSED_PARAM, char **argv)
+정수 chown_main(정수 argc UNUSED_PARAM, char **argv)
 {
-	int retval = EXIT_SUCCESS;
-	int opt, flags;
+	정수 retval = EXIT_SUCCESS;
+	정수 opt, flags;
 	struct param_t param;
 
-#if ENABLE_FEATURE_CHOWN_LONG_OPTIONS
+#만약 ENABLE_FEATURE_CHOWN_LONG_OPTIONS
 	opt = getopt32long(argv, "^" OPT_STR "\0" "-2", chown_longopts);
-#else
+#아니면
 	opt = getopt32(argv, "^" OPT_STR "\0" "-2");
 #endif
 	argv += optind;
 
 	/* This matches coreutils behavior (almost - see below) */
 	param.chown_func = chown;
-	if (OPT_NODEREF
+	만약 (OPT_NODEREF
 	/* || (OPT_RECURSE && !OPT_TRAVERSE_TOP): */
 	IF_DESKTOP( || (opt & (BIT_RECURSE|BIT_TRAVERSE_TOP)) == BIT_RECURSE)
 	) {
@@ -148,18 +148,18 @@ int chown_main(int argc UNUSED_PARAM, char **argv)
 	}
 
 	flags = ACTION_DEPTHFIRST; /* match coreutils order */
-	if (OPT_RECURSE)
+	만약 (OPT_RECURSE)
 		flags |= ACTION_RECURSE;
-	if (OPT_TRAVERSE_TOP)
+	만약 (OPT_TRAVERSE_TOP)
 		flags |= ACTION_FOLLOWLINKS_L0; /* -H/-L: follow links on depth 0 */
-	if (OPT_TRAVERSE)
+	만약 (OPT_TRAVERSE)
 		flags |= ACTION_FOLLOWLINKS; /* follow links if -L */
 
 	parse_chown_usergroup_or_die(&param.ugid, argv[0]);
 
 	/* Ok, ready to do the deed now */
-	while (*++argv) {
-		if (!recursive_action(*argv,
+	동안 (*++argv) {
+		만약 (!recursive_action(*argv,
 				flags,          /* flags */
 				fileAction,     /* file action */
 				fileAction,     /* dir action */
@@ -169,7 +169,7 @@ int chown_main(int argc UNUSED_PARAM, char **argv)
 		}
 	}
 
-	return retval;
+	반환 retval;
 }
 
 /*
