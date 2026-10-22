@@ -110,24 +110,24 @@
 
 /* This is a NOEXEC applet. Be very careful! */
 
-int cp_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int cp_main(int argc, char **argv)
+цяло cp_main(цяло argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+цяло cp_main(цяло argc, char **argv)
 {
 	struct stat source_stat;
 	struct stat dest_stat;
 	const char *last;
 	const char *dest;
-	int s_flags;
-	int d_flags;
-	int flags;
-	int status;
-#if ENABLE_FEATURE_CP_LONG_OPTIONS
+	цяло s_flags;
+	цяло d_flags;
+	цяло flags;
+	цяло status;
+#ако ENABLE_FEATURE_CP_LONG_OPTIONS
 	enum {
 		/*OPT_rmdest  = FILEUTILS_RMDEST = 1 << FILEUTILS_CP_OPTBITS */
 		OPT_parents = 1 << (FILEUTILS_CP_OPTBITS+1),
 		OPT_reflink = 1 << (FILEUTILS_CP_OPTBITS+2),
 	};
-# if ENABLE_FEATURE_CP_REFLINK
+# ако ENABLE_FEATURE_CP_REFLINK
 	char *reflink = NULL;
 # endif
 	flags = getopt32long(argv, "^"
@@ -156,26 +156,26 @@ int cp_main(int argc, char **argv)
 		"update\0"         No_argument "u"
 		"remove-destination\0" No_argument "\xff"
 		"parents\0"        No_argument "\xfe"
-# if ENABLE_FEATURE_CP_REFLINK
+# ако ENABLE_FEATURE_CP_REFLINK
 		"reflink\0"        Optional_argument "\xfd"
 # endif
 		, &last
-# if ENABLE_FEATURE_CP_REFLINK
+# ако ENABLE_FEATURE_CP_REFLINK
 		, &reflink
 # endif
 	);
-# if ENABLE_FEATURE_CP_REFLINK
-	BUILD_BUG_ON((int)OPT_reflink != (int)FILEUTILS_REFLINK);
-	if (flags & FILEUTILS_REFLINK) {
-		if (!reflink)
+# ако ENABLE_FEATURE_CP_REFLINK
+	BUILD_BUG_ON((цяло)OPT_reflink != (цяло)FILEUTILS_REFLINK);
+	ако (flags & FILEUTILS_REFLINK) {
+		ако (!reflink)
 			flags |= FILEUTILS_REFLINK_ALWAYS;
-		else if (strcmp(reflink, "always") == 0)
+		иначе ако (strcmp(reflink, "always") == 0)
 			flags |= FILEUTILS_REFLINK_ALWAYS;
-		else if (strcmp(reflink, "auto") != 0)
+		иначе ако (strcmp(reflink, "auto") != 0)
 			bb_show_usage();
 	}
 # endif
-#else
+#иначе
 	flags = getopt32(argv, "^"
 		FILEUTILS_CP_OPTSTR
 		"\0"
@@ -191,55 +191,55 @@ int cp_main(int argc, char **argv)
 	 * by default, "cp" derefs symlinks (creates regular dest files),
 	 * but "cp -R" does not. We switch off deref if -r or -R (see above).
 	 * However, "cp -RL" must still deref symlinks: */
-	if (flags & FILEUTILS_DEREF_SOFTLINK) /* -L */
+	ако (flags & FILEUTILS_DEREF_SOFTLINK) /* -L */
 		flags |= FILEUTILS_DEREFERENCE;
 
-#if ENABLE_SELINUX
-	if (flags & FILEUTILS_PRESERVE_SECURITY_CONTEXT) {
+#ако ENABLE_SELINUX
+	ако (flags & FILEUTILS_PRESERVE_SECURITY_CONTEXT) {
 		selinux_or_die();
 	}
 #endif
 
 	status = EXIT_SUCCESS;
-	if (!(flags & FILEUTILS_TARGET_DIR)) {
+	ако (!(flags & FILEUTILS_TARGET_DIR)) {
 		last = argv[argc - 1];
-		if (argc < 2)
+		ако (argc < 2)
 			bb_show_usage();
-		if (argc != 2) {
-			if (flags & FILEUTILS_NO_TARGET_DIR)
+		ако (argc != 2) {
+			ако (flags & FILEUTILS_NO_TARGET_DIR)
 				bb_show_usage();
 			/* "cp A B C... DIR" - target must be dir */
-		} else /* argc == 2 */ {
+		} иначе /* argc == 2 */ {
 			/* "cp A B" - only case where target can be not a dir */
 			s_flags = cp_mv_stat2(*argv, &source_stat,
 					(flags & FILEUTILS_DEREFERENCE) ? stat : lstat);
-			if (s_flags < 0) /* error other than ENOENT */
-				return EXIT_FAILURE;
+			ако (s_flags < 0) /* error other than ENOENT */
+				върни EXIT_FAILURE;
 			d_flags = cp_mv_stat(last, &dest_stat);
-			if (d_flags < 0) /* error other than ENOENT */
-				return EXIT_FAILURE;
+			ако (d_flags < 0) /* error other than ENOENT */
+				върни EXIT_FAILURE;
 
-			if (flags & FILEUTILS_NO_TARGET_DIR) { /* -T */
-				if (!(s_flags & 2) && (d_flags & 2))
+			ако (flags & FILEUTILS_NO_TARGET_DIR) { /* -T */
+				ако (!(s_flags & 2) && (d_flags & 2))
 					/* cp -T NOTDIR DIR */
 					bb_error_msg_and_die("'%s' is a directory", last);
 			}
 
-#if ENABLE_FEATURE_CP_LONG_OPTIONS
+#ако ENABLE_FEATURE_CP_LONG_OPTIONS
 			//bb_error_msg("flags:%x FILEUTILS_RMDEST:%x OPT_parents:%x",
 			//	flags, FILEUTILS_RMDEST, OPT_parents);
-			if (flags & OPT_parents) {
-				if (!(d_flags & 2)) {
+			ако (flags & OPT_parents) {
+				ако (!(d_flags & 2)) {
 					bb_simple_error_msg_and_die("with --parents, the destination must be a directory");
 				}
 			}
-			if (flags & FILEUTILS_RMDEST) {
+			ако (flags & FILEUTILS_RMDEST) {
 				flags |= FILEUTILS_FORCE;
 			}
 #endif
 
 			/* ...if neither is a directory...  */
-			if (!((s_flags | d_flags) & 2)
+			ако (!((s_flags | d_flags) & 2)
 			    /* ...or: recursing, the 1st is a directory, and the 2nd doesn't exist... */
 			 || ((flags & FILEUTILS_RECUR) && (s_flags & 2) && !d_flags)
 			 || (flags & FILEUTILS_NO_TARGET_DIR)
@@ -252,16 +252,16 @@ int cp_main(int argc, char **argv)
 	}
 	/* else: last is DIR from "-t DIR" */
 
-	while (1) {
-#if ENABLE_FEATURE_CP_LONG_OPTIONS
-		if (flags & OPT_parents) {
+	докато (1) {
+#ако ENABLE_FEATURE_CP_LONG_OPTIONS
+		ако (flags & OPT_parents) {
 			char *dest_dup;
 			char *dest_dir;
 			dest = concat_path_file(last, *argv);
 			dest_dup = xstrdup(dest);
 			dest_dir = dirname(dest_dup);
-			if (bb_make_directory(dest_dir, -1, FILEUTILS_RECUR)) {
-				return EXIT_FAILURE;
+			ако (bb_make_directory(dest_dir, -1, FILEUTILS_RECUR)) {
+				върни EXIT_FAILURE;
 			}
 			free(dest_dup);
 			goto DO_COPY;
@@ -269,10 +269,10 @@ int cp_main(int argc, char **argv)
 #endif
 		dest = concat_path_file(last, bb_get_last_path_component_strip(*argv));
  DO_COPY:
-		if (copy_file(*argv, dest, flags) < 0) {
+		ако (copy_file(*argv, dest, flags) < 0) {
 			status = EXIT_FAILURE;
 		}
-		if (!*++argv || *argv == last) {
+		ако (!*++argv || *argv == last) {
 			/* possibly leaking dest... */
 			break;
 		}
@@ -281,5 +281,5 @@ int cp_main(int argc, char **argv)
 	}
 
 	/* Exit. We are NOEXEC, not NOFORK. We do exit at the end of main() */
-	return status;
+	върни status;
 }

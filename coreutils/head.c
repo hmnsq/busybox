@@ -51,47 +51,47 @@
 
 /* This is a NOEXEC applet. Be very careful! */
 
-#if !ENABLE_FEATURE_FANCY_HEAD
+#ако !ENABLE_FEATURE_FANCY_HEAD
 # define print_first_N(fp,count,bytes) print_first_N(fp,count)
 #endif
 static void
 print_first_N(FILE *fp, unsigned long count, bool count_bytes)
 {
-#if !ENABLE_FEATURE_FANCY_HEAD
-	const int count_bytes = 0;
+#ако !ENABLE_FEATURE_FANCY_HEAD
+	const цяло count_bytes = 0;
 #endif
-	while (count) {
-		int c = getc(fp);
-		if (c == EOF)
+	докато (count) {
+		цяло c = getc(fp);
+		ако (c == EOF)
 			break;
-		if (count_bytes || (c == '\n'))
+		ако (count_bytes || (c == '\n'))
 			--count;
 		putchar(c);
 	}
 }
 
-#if ENABLE_FEATURE_FANCY_HEAD
+#ако ENABLE_FEATURE_FANCY_HEAD
 static void
 print_except_N_last_bytes(FILE *fp, unsigned count)
 {
 	unsigned char *circle = xmalloc(++count);
 	unsigned head = 0;
-	for (;;) {
-		int c;
+	за (;;) {
+		цяло c;
 		c = getc(fp);
-		if (c == EOF)
+		ако (c == EOF)
 			goto ret;
 		circle[head++] = c;
-		if (head == count)
+		ако (head == count)
 			break;
 	}
-	for (;;) {
-		int c;
-		if (head == count)
+	за (;;) {
+		цяло c;
+		ако (head == count)
 			head = 0;
 		putchar(circle[head]);
 		c = getc(fp);
-		if (c == EOF)
+		ако (c == EOF)
 			goto ret;
 		circle[head] = c;
 		head++;
@@ -105,74 +105,74 @@ print_except_N_last_lines(FILE *fp, unsigned count)
 {
 	char **circle = xzalloc((++count) * sizeof(circle[0]));
 	unsigned head = 0;
-	for (;;) {
+	за (;;) {
 		char *c;
 		c = xmalloc_fgets(fp);
-		if (!c)
+		ако (!c)
 			goto ret;
 		circle[head++] = c;
-		if (head == count)
+		ако (head == count)
 			break;
 	}
-	for (;;) {
+	за (;;) {
 		char *c;
-		if (head == count)
+		ако (head == count)
 			head = 0;
 		fputs_stdout(circle[head]);
 		c = xmalloc_fgets(fp);
-		if (!c)
+		ако (!c)
 			goto ret;
 		free(circle[head]);
 		circle[head++] = c;
 	}
  ret:
 	head = 0;
-	for (;;) {
+	за (;;) {
 		free(circle[head++]);
-		if (head == count)
+		ако (head == count)
 			break;
 	}
 	free(circle);
 }
-#else
+#иначе
 /* Must never be called */
 void print_except_N_last_bytes(FILE *fp, unsigned count);
 void print_except_N_last_lines(FILE *fp, unsigned count);
 #endif
 
-#if !ENABLE_FEATURE_FANCY_HEAD
+#ако !ENABLE_FEATURE_FANCY_HEAD
 # define eat_num(negative_N,p) eat_num(p)
 #endif
 static unsigned long
 eat_num(bool *negative_N, const char *p)
 {
-#if ENABLE_FEATURE_FANCY_HEAD
-	if (*p == '-') {
+#ако ENABLE_FEATURE_FANCY_HEAD
+	ако (*p == '-') {
 		*negative_N = 1;
 		p++;
 	}
 #endif
-	return xatoul_sfx(p, bkm_suffixes);
+	върни xatoul_sfx(p, bkm_suffixes);
 }
 
 static const char head_opts[] ALIGN1 =
 	"n:"
-#if ENABLE_FEATURE_FANCY_HEAD
+#ако ENABLE_FEATURE_FANCY_HEAD
 	"c:qv"
 #endif
 	;
 
 #define header_fmt_str "\n==> %s <==\n"
 
-int head_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int head_main(int argc, char **argv)
+цяло head_main(цяло argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+цяло head_main(цяло argc, char **argv)
 {
 	unsigned long count = 10;
-#if ENABLE_FEATURE_FANCY_HEAD
-	int header_threshhold = 1;
+#ако ENABLE_FEATURE_FANCY_HEAD
+	цяло header_threshhold = 1;
 	bool count_bytes = 0;
 	bool negative_N = 0;
-#else
+#иначе
 # define header_threshhold 1
 # define count_bytes       0
 # define negative_N        0
@@ -180,12 +180,12 @@ int head_main(int argc, char **argv)
 	FILE *fp;
 	const char *fmt;
 	char *p;
-	int opt;
-	int retval = EXIT_SUCCESS;
+	цяло opt;
+	цяло retval = EXIT_SUCCESS;
 
-#if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
+#ако ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
 	/* Allow legacy syntax of an initial numeric option without -n. */
-	if (argv[1] && argv[1][0] == '-'
+	ако (argv[1] && argv[1][0] == '-'
 	 && isdigit(argv[1][1])
 	) {
 		--argc;
@@ -196,9 +196,9 @@ int head_main(int argc, char **argv)
 #endif
 
 	/* No size benefit in converting this to getopt32 */
-	while ((opt = getopt(argc, argv, head_opts)) > 0) {
+	докато ((opt = getopt(argc, argv, head_opts)) > 0) {
 		switch (opt) {
-#if ENABLE_FEATURE_FANCY_HEAD
+#ако ENABLE_FEATURE_FANCY_HEAD
 		case 'q':
 			header_threshhold = INT_MAX;
 			break;
@@ -211,7 +211,7 @@ int head_main(int argc, char **argv)
 #endif
 		case 'n':
 			p = optarg;
-#if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
+#ако ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
  GET_COUNT:
 #endif
 			count = eat_num(&negative_N, p);
@@ -223,50 +223,50 @@ int head_main(int argc, char **argv)
 
 	argc -= optind;
 	argv += optind;
-	if (!*argv)
+	ако (!*argv)
 		*--argv = (char*)"-";
 
 	fmt = header_fmt_str + 1;
-	if (argc <= header_threshhold) {
-#if ENABLE_FEATURE_FANCY_HEAD
+	ако (argc <= header_threshhold) {
+#ако ENABLE_FEATURE_FANCY_HEAD
 		header_threshhold = 0;
-#else
+#иначе
 		fmt += 11; /* "" */
 #endif
 	}
-	if (negative_N) {
-		if (count >= INT_MAX / sizeof(char*))
+	ако (negative_N) {
+		ако (count >= INT_MAX / sizeof(char*))
 			bb_error_msg("count is too big: %lu", count);
 	}
 
 	do {
 		fp = fopen_or_warn_stdin(*argv);
-		if (fp) {
-			if (fp == stdin) {
+		ако (fp) {
+			ако (fp == stdin) {
 				*argv = (char *) bb_msg_standard_input;
 			}
-			if (header_threshhold) {
+			ако (header_threshhold) {
 				printf(fmt, *argv);
 			}
-			if (negative_N) {
-				if (count_bytes) {
+			ако (negative_N) {
+				ако (count_bytes) {
 					print_except_N_last_bytes(fp, count);
-				} else {
+				} иначе {
 					print_except_N_last_lines(fp, count);
 				}
-			} else {
+			} иначе {
 				print_first_N(fp, count, count_bytes);
 			}
 			die_if_ferror_stdout();
-			if (fclose_if_not_stdin(fp)) {
+			ако (fclose_if_not_stdin(fp)) {
 				bb_simple_perror_msg(*argv);
 				retval = EXIT_FAILURE;
 			}
-		} else {
+		} иначе {
 			retval = EXIT_FAILURE;
 		}
 		fmt = header_fmt_str;
-	} while (*++argv);
+	} докато (*++argv);
 
 	fflush_stdout_and_exit(retval);
 }

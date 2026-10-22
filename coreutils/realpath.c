@@ -27,26 +27,26 @@
 
 #include "libbb.h"
 
-int realpath_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int realpath_main(int argc UNUSED_PARAM, char **argv)
+цяло realpath_main(цяло argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+цяло realpath_main(цяло argc UNUSED_PARAM, char **argv)
 {
-	int retval = EXIT_SUCCESS;
+	цяло retval = EXIT_SUCCESS;
 
-	if (!*++argv) {
+	ако (!*++argv) {
 		bb_show_usage();
 	}
 
 	do {
 		/* NOFORK: only one alloc is allowed; must free */
 		char *resolved_path = xmalloc_realpath_coreutils(*argv);
-		if (resolved_path != NULL) {
+		ако (resolved_path != NULL) {
 			puts(resolved_path);
 			free(resolved_path);
-		} else {
+		} иначе {
 			retval = EXIT_FAILURE;
 			bb_simple_perror_msg(*argv);
 		}
-	} while (*++argv);
+	} докато (*++argv);
 
 	fflush_stdout_and_exit(retval);
 }

@@ -27,30 +27,30 @@
 
 /* This is a NOFORK applet. Be very careful! */
 
-int printenv_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int printenv_main(int argc UNUSED_PARAM, char **argv)
+цяло printenv_main(цяло argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+цяло printenv_main(цяло argc UNUSED_PARAM, char **argv)
 {
-	int exit_code = EXIT_SUCCESS;
+	цяло exit_code = EXIT_SUCCESS;
 
 	/* no variables specified, show whole env */
-	if (!argv[1]) {
+	ако (!argv[1]) {
 		char **e = environ;
 
 		/* environ can be NULL! (for example, after clearenv())
 		 * Check for that:
 		 */
-		if (e)
-			while (*e)
+		ако (e)
+			докато (*e)
 				puts(*e++);
-	} else {
+	} иначе {
 		/* search for specified variables and print them out if found */
 		char *arg, *env;
 
-		while ((arg = *++argv) != NULL) {
+		докато ((arg = *++argv) != NULL) {
 			env = getenv(arg);
-			if (env)
+			ако (env)
 				puts(env);
-			else
+			иначе
 				exit_code = EXIT_FAILURE;
 		}
 	}
