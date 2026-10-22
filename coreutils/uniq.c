@@ -38,19 +38,19 @@
 //usage:       "b\n"
 //usage:       "c\n"
 
-#include "libbb.h"
+#অন্তর্ভাব "libbb.h"
 
-int uniq_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int uniq_main(int argc UNUSED_PARAM, char **argv)
+পূর্ণাঙ্ক uniq_main(পূর্ণাঙ্ক argc, বর্ণ **argv) MAIN_EXTERNALLY_VISIBLE;
+পূর্ণাঙ্ক uniq_main(পূর্ণাঙ্ক argc UNUSED_PARAM, বর্ণ **argv)
 {
-	const char *input_filename;
+	ধ্রুব বর্ণ *প্রবেশ_filename;
 	unsigned skip_fields, skip_chars, max_chars;
 	unsigned opt;
-	char eol;
-	char *cur_line;
-	const char *cur_compare;
+	বর্ণ eol;
+	বর্ণ *cur_সারি;
+	ধ্রুব বর্ণ *cur_compare;
 
-	enum {
+	গণনা {
 		OPT_c = 1 << 0,
 		OPT_d = 1 << 1, /* print only dups */
 		OPT_u = 1 << 2, /* print only uniq */
@@ -67,19 +67,19 @@ int uniq_main(int argc UNUSED_PARAM, char **argv)
 	opt = getopt32(argv, "cduf:+s:+w:+iz", &skip_fields, &skip_chars, &max_chars);
 	argv += optind;
 
-	input_filename = argv[0];
-	if (input_filename) {
-		const char *output;
+	প্রবেশ_filename = argv[0];
+	যদি (প্রবেশ_filename) {
+		ধ্রুব বর্ণ *output;
 
-		if (input_filename[0] != '-' || input_filename[1]) {
+		যদি (প্রবেশ_filename[0] != '-' || প্রবেশ_filename[1]) {
 			close(STDIN_FILENO); /* == 0 */
-			xopen(input_filename, O_RDONLY); /* fd will be 0 */
+			xopen(প্রবেশ_filename, O_RDONLY); /* fd will be 0 */
 		}
 		output = argv[1];
-		if (output) {
-			if (argv[2])
+		যদি (output) {
+			যদি (argv[2])
 				bb_show_usage();
-			if (output[0] != '-' || output[1]) {
+			যদি (output[0] != '-' || output[1]) {
 				// Won't work with "uniq - FILE" and closed stdin:
 				//close(STDOUT_FILENO);
 				//xopen(output, O_WRONLY | O_CREAT | O_TRUNC);
@@ -88,56 +88,56 @@ int uniq_main(int argc UNUSED_PARAM, char **argv)
 		}
 	}
 
-	cur_compare = cur_line = NULL; /* prime the pump */
+	cur_compare = cur_সারি = রিক্ত; /* prime the pump */
 	eol = (opt & OPT_z) ? 0 : '\n';
 
-	do {
+	কুরু {
 		unsigned i;
 		unsigned long dups;
-		char *old_line;
-		const char *old_compare;
+		বর্ণ *old_সারি;
+		ধ্রুব বর্ণ *old_compare;
 
-		old_line = cur_line;
+		old_সারি = cur_সারি;
 		old_compare = cur_compare;
 		dups = 0;
 
 		/* gnu uniq ignores newlines */
-		while ((cur_line = xmalloc_fgetline(stdin)) != NULL) {
-			cur_compare = cur_line;
-			for (i = skip_fields; i; i--) {
+		যাবত্ ((cur_সারি = xmalloc_fgetline(stdin)) != রিক্ত) {
+			cur_compare = cur_সারি;
+			প্রতি (i = skip_fields; i; i--) {
 				cur_compare = skip_whitespace(cur_compare);
 				cur_compare = skip_non_whitespace(cur_compare);
 			}
-			for (i = skip_chars; *cur_compare && i; i--) {
+			প্রতি (i = skip_chars; *cur_compare && i; i--) {
 				++cur_compare;
 			}
 
-			if (!old_line)
-				break;
-			if ((opt & OPT_i)
+			যদি (!old_সারি)
+				ভঙ্গ;
+			যদি ((opt & OPT_i)
 				? strncasecmp(old_compare, cur_compare, max_chars)
 				: strncmp(old_compare, cur_compare, max_chars)
 			) {
-				break;
+				ভঙ্গ;
 			}
 
-			free(cur_line);
+			মুক্ত(cur_সারি);
 			++dups;  /* testing for overflow seems excessive */
 		}
 
-		if (old_line) {
-			if (!(opt & (OPT_d << !!dups))) { /* (if dups, opt & OPT_u) */
-				if (opt & OPT_c) {
+		যদি (old_সারি) {
+			যদি (!(opt & (OPT_d << !!dups))) { /* (if dups, opt & OPT_u) */
+				যদি (opt & OPT_c) {
 					/* %7lu matches GNU coreutils 6.9 */
 					printf("%7lu ", dups + 1);
 				}
-				printf("%s%c", old_line, eol);
+				printf("%s%c", old_সারি, eol);
 			}
-			free(old_line);
+			মুক্ত(old_সারি);
 		}
-	} while (cur_line);
+	} যাবত্ (cur_সারি);
 
-	die_if_ferror(stdin, input_filename);
+	die_if_ferror(stdin, প্রবেশ_filename);
 
 	fflush_stdout_and_exit_SUCCESS();
 }

@@ -49,13 +49,13 @@
 //usage:       "$ echo \"Hello world\" | cut -f 2 -d ' '\n"
 //usage:       "world\n"
 
-#include "libbb.h"
+#অন্তর্ভাব "libbb.h"
 
-#if ENABLE_FEATURE_CUT_REGEX
-#include "xregex.h"
-#else
-#define regex_t int
-typedef struct { int rm_eo, rm_so; } regmatch_t;
+#যদি ENABLE_FEATURE_CUT_REGEX
+#অন্তর্ভাব "xregex.h"
+#অন্যথা
+#define regex_t পূর্ণাঙ্ক
+প্রকারনির্দেশ সংরচনা { পূর্ণাঙ্ক rm_eo, rm_so; } regmatch_t;
 #define xregcomp(x, ...) *(x) = 0
 #define regexec(...)     0
 #endif
@@ -74,148 +74,148 @@ typedef struct { int rm_eo, rm_so; } regmatch_t;
 #define CUT_OPT_NOSORT_FLGS   (1 << 6)
 #define CUT_OPT_REGEX_FLGS    ((1 << 7) * ENABLE_FEATURE_CUT_REGEX)
 
-struct cut_list {
-	int startpos;
-	int endpos;
+সংরচনা cut_list {
+	পূর্ণাঙ্ক startpos;
+	পূর্ণাঙ্ক endpos;
 };
 
-static int cmpfunc(const void *a, const void *b)
+স্থির পূর্ণাঙ্ক cmpfunc(ধ্রুব শূন্য *a, ধ্রুব শূন্য *b)
 {
-	return (((struct cut_list *) a)->startpos -
-			((struct cut_list *) b)->startpos);
+	প্রত্যাগম (((সংরচনা cut_list *) a)->startpos -
+			((সংরচনা cut_list *) b)->startpos);
 }
 
-static void cut_file(FILE *file, const char *delim, const char *odelim,
-		const struct cut_list *cut_lists, unsigned nlists)
+স্থির শূন্য cut_file(FILE *file, ধ্রুব বর্ণ *delim, ধ্রুব বর্ণ *odelim,
+		ধ্রুব সংরচনা cut_list *cut_lists, unsigned nlists)
 {
-	char *line;
+	বর্ণ *সারি;
 	unsigned linenum = 0;	/* keep these zero-based to be consistent */
 	regex_t reg;
-	int spos, shoe = option_mask32 & CUT_OPT_REGEX_FLGS;
+	পূর্ণাঙ্ক spos, shoe = option_mask32 & CUT_OPT_REGEX_FLGS;
 
-	if (shoe) xregcomp(&reg, delim, REG_EXTENDED);
+	যদি (shoe) xregcomp(&reg, delim, REG_EXTENDED);
 
 	/* go through every line in the file */
-	while ((line = xmalloc_fgetline(file)) != NULL) {
+	যাবত্ ((সারি = xmalloc_fgetline(file)) != রিক্ত) {
 
 		/* set up a list so we can keep track of what's been printed */
-		int linelen = strlen(line);
-		char *printed = xzalloc(linelen + 1);
-		char *orig_line = line;
+		পূর্ণাঙ্ক linelen = strlen(সারি);
+		বর্ণ *printed = xzalloc(linelen + 1);
+		বর্ণ *orig_সারি = সারি;
 		unsigned cl_pos = 0;
 
 		/* cut based on chars/bytes XXX: only works when sizeof(char) == byte */
-		if (option_mask32 & (CUT_OPT_CHAR_FLGS | CUT_OPT_BYTE_FLGS)) {
+		যদি (option_mask32 & (CUT_OPT_CHAR_FLGS | CUT_OPT_BYTE_FLGS)) {
 			/* print the chars specified in each cut list */
-			for (; cl_pos < nlists; cl_pos++) {
-				for (spos = cut_lists[cl_pos].startpos; spos < linelen;) {
-					if (!printed[spos]) {
+			প্রতি (; cl_pos < nlists; cl_pos++) {
+				প্রতি (spos = cut_lists[cl_pos].startpos; spos < linelen;) {
+					যদি (!printed[spos]) {
 						printed[spos] = 'X';
-						putchar(line[spos]);
+						putchar(সারি[spos]);
 					}
-					if (++spos > cut_lists[cl_pos].endpos) {
-						break;
+					যদি (++spos > cut_lists[cl_pos].endpos) {
+						ভঙ্গ;
 					}
 				}
 			}
-		} else if (*delim == '\n') {	/* cut by lines */
+		} অন্যথা যদি (*delim == '\n') {	/* cut by lines */
 			spos = cut_lists[cl_pos].startpos;
 
 			/* get out if we have no more lists to process or if the lines
 			 * are lower than what we're interested in */
-			if (((int)linenum < spos) || (cl_pos >= nlists))
-				goto next_line;
+			যদি (((পূর্ণাঙ্ক)linenum < spos) || (cl_pos >= nlists))
+				গচ্ছ next_সারি;
 
 			/* if the line we're looking for is lower than the one we were
 			 * passed, it means we displayed it already, so move on */
-			while (spos < (int)linenum) {
+			যাবত্ (spos < (পূর্ণাঙ্ক)linenum) {
 				spos++;
 				/* go to the next list if we're at the end of this one */
-				if (spos > cut_lists[cl_pos].endpos) {
+				যদি (spos > cut_lists[cl_pos].endpos) {
 					cl_pos++;
 					/* get out if there's no more lists to process */
-					if (cl_pos >= nlists)
-						goto next_line;
+					যদি (cl_pos >= nlists)
+						গচ্ছ next_সারি;
 					spos = cut_lists[cl_pos].startpos;
 					/* get out if the current line is lower than the one
 					 * we just became interested in */
-					if ((int)linenum < spos)
-						goto next_line;
+					যদি ((পূর্ণাঙ্ক)linenum < spos)
+						গচ্ছ next_সারি;
 				}
 			}
 
 			/* If we made it here, it means we've found the line we're
 			 * looking for, so print it */
-			puts(line);
-			goto next_line;
-		} else {		/* cut by fields */
+			puts(সারি);
+			গচ্ছ next_সারি;
+		} অন্যথা {		/* cut by fields */
 			unsigned uu = 0, start = 0, end = 0, out = 0;
-			int dcount = 0;
+			পূর্ণাঙ্ক dcount = 0;
 
 			/* Loop through bytes, finding next delimiter */
-			for (;;) {
+			প্রতি (;;) {
 				/* End of current range? */
-				if (end == linelen || dcount > cut_lists[cl_pos].endpos) {
-					if (++cl_pos >= nlists) break;
-					if (option_mask32 & CUT_OPT_NOSORT_FLGS)
+				যদি (end == linelen || dcount > cut_lists[cl_pos].endpos) {
+					যদি (++cl_pos >= nlists) ভঙ্গ;
+					যদি (option_mask32 & CUT_OPT_NOSORT_FLGS)
 						start = dcount = uu = 0;
 					end = 0;
 				}
 				/* End of current line? */
-				if (uu == linelen) {
+				যদি (uu == linelen) {
 					/* If we've seen no delimiters, check -s */
-					if (!cl_pos && !dcount && !shoe) {
-						if (option_mask32 & CUT_OPT_SUPPRESS_FLGS)
-							goto next_line;
-					} else if (dcount < cut_lists[cl_pos].startpos)
+					যদি (!cl_pos && !dcount && !shoe) {
+						যদি (option_mask32 & CUT_OPT_SUPPRESS_FLGS)
+							গচ্ছ next_সারি;
+					} অন্যথা যদি (dcount < cut_lists[cl_pos].startpos)
 						start = linelen;
 					end = linelen;
-				} else {
+				} অন্যথা {
 					/* Find next delimiter */
-					if (shoe) {
+					যদি (shoe) {
 						regmatch_t rr = {-1, -1};
 
-						if (!regexec(&reg, line+uu, 1, &rr, REG_NOTBOL|REG_NOTEOL)) {
+						যদি (!regexec(&reg, সারি+uu, 1, &rr, REG_NOTBOL|REG_NOTEOL)) {
 							end = uu + rr.rm_so;
 							uu += rr.rm_eo;
-						} else {
+						} অন্যথা {
 							uu = linelen;
-							continue;
+							অনুবর্ত;
 						}
-					} else if (line[end = uu++] != *delim)
-						continue;
+					} অন্যথা যদি (সারি[end = uu++] != *delim)
+						অনুবর্ত;
 
 					/* Got delimiter. Loop if not yet within range. */
-					if (dcount++ < cut_lists[cl_pos].startpos) {
+					যদি (dcount++ < cut_lists[cl_pos].startpos) {
 						start = uu;
-						continue;
+						অনুবর্ত;
 					}
 				}
-				if (end != start || !shoe)
-					printf("%s%.*s", out++ ? odelim : "", end-start, line + start);
+				যদি (end != start || !shoe)
+					printf("%s%.*s", out++ ? odelim : "", end-start, সারি + start);
 				start = uu;
-				if (!dcount)
-					break;
+				যদি (!dcount)
+					ভঙ্গ;
 			}
 		}
 		/* if we printed anything, finish with newline */
 		putchar('\n');
- next_line:
+ next_সারি:
 		linenum++;
-		free(printed);
-		free(orig_line);
+		মুক্ত(printed);
+		মুক্ত(orig_সারি);
 	}
 }
 
-int cut_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int cut_main(int argc UNUSED_PARAM, char **argv)
+পূর্ণাঙ্ক cut_main(পূর্ণাঙ্ক argc, বর্ণ **argv) MAIN_EXTERNALLY_VISIBLE;
+পূর্ণাঙ্ক cut_main(পূর্ণাঙ্ক argc UNUSED_PARAM, বর্ণ **argv)
 {
 	/* growable array holding a series of lists */
-	struct cut_list *cut_lists = NULL;
+	সংরচনা cut_list *cut_lists = রিক্ত;
 	unsigned nlists = 0;	/* number of elements in above list */
-	char *sopt, *ltok;
-	const char *delim = NULL;
-	const char *odelim = NULL;
+	বর্ণ *sopt, *ltok;
+	ধ্রুব বর্ণ *delim = রিক্ত;
+	ধ্রুব বর্ণ *odelim = রিক্ত;
 	unsigned opt;
 
 #define ARG "bcf"IF_FEATURE_CUT_REGEX("F")
@@ -224,25 +224,25 @@ int cut_main(int argc UNUSED_PARAM, char **argv)
 			"\0" "b--"ARG":c--"ARG":f--"ARG IF_FEATURE_CUT_REGEX("F--"ARG),
 			&sopt, &sopt, &sopt, &delim, &odelim IF_FEATURE_CUT_REGEX(, &sopt)
 	);
-	if (!delim || !*delim)
+	যদি (!delim || !*delim)
 		delim = (opt & CUT_OPT_REGEX_FLGS) ? "[[:space:]]+" : "\t";
-	if (!odelim) odelim = (opt & CUT_OPT_REGEX_FLGS) ? " " : delim;
+	যদি (!odelim) odelim = (opt & CUT_OPT_REGEX_FLGS) ? " " : delim;
 
 //	argc -= optind;
 	argv += optind;
-	if (!(opt & (CUT_OPT_BYTE_FLGS | CUT_OPT_CHAR_FLGS | CUT_OPT_FIELDS_FLGS | CUT_OPT_REGEX_FLGS)))
-		bb_simple_error_msg_and_die("expected a list of bytes, characters, or fields");
+	যদি (!(opt & (CUT_OPT_BYTE_FLGS | CUT_OPT_CHAR_FLGS | CUT_OPT_FIELDS_FLGS | CUT_OPT_REGEX_FLGS)))
+		bb_simple_error_বার্তা_and_die("expected a list of bytes, characters, or fields");
 
 	/*  non-field (char or byte) cutting has some special handling */
-	if (!(opt & (CUT_OPT_FIELDS_FLGS|CUT_OPT_REGEX_FLGS))) {
-		static const char _op_on_field[] ALIGN1 = " only when operating on fields";
+	যদি (!(opt & (CUT_OPT_FIELDS_FLGS|CUT_OPT_REGEX_FLGS))) {
+		স্থির ধ্রুব বর্ণ _op_on_field[] ALIGN1 = " only when operating on fields";
 
-		if (opt & CUT_OPT_SUPPRESS_FLGS) {
-			bb_error_msg_and_die
+		যদি (opt & CUT_OPT_SUPPRESS_FLGS) {
+			bb_error_বার্তা_and_die
 				("suppressing non-delimited lines makes sense%s", _op_on_field);
 		}
-		if (opt & CUT_OPT_DELIM_FLGS) {
-			bb_error_msg_and_die
+		যদি (opt & CUT_OPT_DELIM_FLGS) {
+			bb_error_বার্তা_and_die
 				("a delimiter may be specified%s", _op_on_field);
 		}
 	}
@@ -253,41 +253,41 @@ int cut_main(int argc UNUSED_PARAM, char **argv)
 	 * more than one list can be separated by commas
 	 */
 	{
-		char *ntok;
-		int s = 0, e = 0;
+		বর্ণ *ntok;
+		পূর্ণাঙ্ক s = 0, e = 0;
 
 		/* take apart the lists, one by one (they are separated with commas) */
-		while ((ltok = strsep(&sopt, ",")) != NULL) {
+		যাবত্ ((ltok = strsep(&sopt, ",")) != রিক্ত) {
 
 			/* it's actually legal to pass an empty list */
-			if (!ltok[0])
-				continue;
+			যদি (!ltok[0])
+				অনুবর্ত;
 
 			/* get the start pos */
 			ntok = strsep(&ltok, "-");
-			if (!ntok[0]) {
+			যদি (!ntok[0]) {
 				s = 0;
-			} else {
+			} অন্যথা {
 				s = xatoi_positive(ntok);
 				/* account for the fact that arrays are zero based, while
 				 * the user expects the first char on the line to be char #1 */
-				if (s != 0)
+				যদি (s != 0)
 					s--;
 			}
 
 			/* get the end pos */
-			if (ltok == NULL) {
+			যদি (ltok == রিক্ত) {
 				e = s;
-			} else if (!ltok[0]) {
+			} অন্যথা যদি (!ltok[0]) {
 				e = INT_MAX;
-			} else {
+			} অন্যথা {
 				e = xatoi_positive(ltok);
 				/* if the user specified and end position of 0,
 				 * that means "til the end of the line" */
-				if (!*ltok)
+				যদি (!*ltok)
 					e = INT_MAX;
-				else if (e < s)
-					bb_error_msg_and_die("%d<%d", e, s);
+				অন্যথা যদি (e < s)
+					bb_error_বার্তা_and_die("%d<%d", e, s);
 				e--;	/* again, arrays are zero based, lines are 1 based */
 			}
 
@@ -300,34 +300,34 @@ int cut_main(int argc UNUSED_PARAM, char **argv)
 		}
 
 		/* make sure we got some cut positions out of all that */
-		if (nlists == 0)
-			bb_simple_error_msg_and_die("missing list of positions");
+		যদি (nlists == 0)
+			bb_simple_error_বার্তা_and_die("missing list of positions");
 
 		/* now that the lists are parsed, we need to sort them to make life
 		 * easier on us when it comes time to print the chars / fields / lines
 		 */
-		if (!(opt & CUT_OPT_NOSORT_FLGS))
-			qsort(cut_lists, nlists, sizeof(cut_lists[0]), cmpfunc);
+		যদি (!(opt & CUT_OPT_NOSORT_FLGS))
+			qsort(cut_lists, nlists, পরিমাণ(cut_lists[0]), cmpfunc);
 	}
 
 	{
 		exitcode_t retval = EXIT_SUCCESS;
 
-		if (!*argv)
-			*--argv = (char *)"-";
+		যদি (!*argv)
+			*--argv = (বর্ণ *)"-";
 
-		do {
+		কুরু {
 			FILE *file = fopen_or_warn_stdin(*argv);
-			if (!file) {
+			যদি (!file) {
 				retval = EXIT_FAILURE;
-				continue;
+				অনুবর্ত;
 			}
 			cut_file(file, delim, odelim, cut_lists, nlists);
 			fclose_if_not_stdin(file);
-		} while (*++argv);
+		} যাবত্ (*++argv);
 
-		if (ENABLE_FEATURE_CLEAN_UP)
-			free(cut_lists);
+		যদি (ENABLE_FEATURE_CLEAN_UP)
+			মুক্ত(cut_lists);
 		fflush_stdout_and_exit(retval);
 	}
 }

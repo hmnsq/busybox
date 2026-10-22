@@ -47,226 +47,226 @@
 //usage:       "root:x:0:0:root:/root:/bin/bash\n"
 //usage:       "daemon:x:1:1:daemon:/usr/sbin:/bin/sh\n"
 
-#include "libbb.h"
+#অন্তর্ভাব "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-#if !ENABLE_FEATURE_FANCY_HEAD
-# define print_first_N(fp,count,bytes) print_first_N(fp,count)
+#যদি !ENABLE_FEATURE_FANCY_HEAD
+# define print_first_N(fp,গুনতি,bytes) print_first_N(fp,গুনতি)
 #endif
-static void
-print_first_N(FILE *fp, unsigned long count, bool count_bytes)
+স্থির শূন্য
+print_first_N(FILE *fp, unsigned long গুনতি, bool গুনতি_bytes)
 {
-#if !ENABLE_FEATURE_FANCY_HEAD
-	const int count_bytes = 0;
+#যদি !ENABLE_FEATURE_FANCY_HEAD
+	ধ্রুব পূর্ণাঙ্ক গুনতি_bytes = 0;
 #endif
-	while (count) {
-		int c = getc(fp);
-		if (c == EOF)
-			break;
-		if (count_bytes || (c == '\n'))
-			--count;
+	যাবত্ (গুনতি) {
+		পূর্ণাঙ্ক c = getc(fp);
+		যদি (c == EOF)
+			ভঙ্গ;
+		যদি (গুনতি_bytes || (c == '\n'))
+			--গুনতি;
 		putchar(c);
 	}
 }
 
-#if ENABLE_FEATURE_FANCY_HEAD
-static void
-print_except_N_last_bytes(FILE *fp, unsigned count)
+#যদি ENABLE_FEATURE_FANCY_HEAD
+স্থির শূন্য
+print_except_N_last_bytes(FILE *fp, unsigned গুনতি)
 {
-	unsigned char *circle = xmalloc(++count);
+	unsigned বর্ণ *circle = xmalloc(++গুনতি);
 	unsigned head = 0;
-	for (;;) {
-		int c;
+	প্রতি (;;) {
+		পূর্ণাঙ্ক c;
 		c = getc(fp);
-		if (c == EOF)
-			goto ret;
+		যদি (c == EOF)
+			গচ্ছ ret;
 		circle[head++] = c;
-		if (head == count)
-			break;
+		যদি (head == গুনতি)
+			ভঙ্গ;
 	}
-	for (;;) {
-		int c;
-		if (head == count)
+	প্রতি (;;) {
+		পূর্ণাঙ্ক c;
+		যদি (head == গুনতি)
 			head = 0;
 		putchar(circle[head]);
 		c = getc(fp);
-		if (c == EOF)
-			goto ret;
+		যদি (c == EOF)
+			গচ্ছ ret;
 		circle[head] = c;
 		head++;
 	}
  ret:
-	free(circle);
+	মুক্ত(circle);
 }
 
-static void
-print_except_N_last_lines(FILE *fp, unsigned count)
+স্থির শূন্য
+print_except_N_last_সারিগুলি(FILE *fp, unsigned গুনতি)
 {
-	char **circle = xzalloc((++count) * sizeof(circle[0]));
+	বর্ণ **circle = xzalloc((++গুনতি) * পরিমাণ(circle[0]));
 	unsigned head = 0;
-	for (;;) {
-		char *c;
+	প্রতি (;;) {
+		বর্ণ *c;
 		c = xmalloc_fgets(fp);
-		if (!c)
-			goto ret;
+		যদি (!c)
+			গচ্ছ ret;
 		circle[head++] = c;
-		if (head == count)
-			break;
+		যদি (head == গুনতি)
+			ভঙ্গ;
 	}
-	for (;;) {
-		char *c;
-		if (head == count)
+	প্রতি (;;) {
+		বর্ণ *c;
+		যদি (head == গুনতি)
 			head = 0;
 		fputs_stdout(circle[head]);
 		c = xmalloc_fgets(fp);
-		if (!c)
-			goto ret;
-		free(circle[head]);
+		যদি (!c)
+			গচ্ছ ret;
+		মুক্ত(circle[head]);
 		circle[head++] = c;
 	}
  ret:
 	head = 0;
-	for (;;) {
-		free(circle[head++]);
-		if (head == count)
-			break;
+	প্রতি (;;) {
+		মুক্ত(circle[head++]);
+		যদি (head == গুনতি)
+			ভঙ্গ;
 	}
-	free(circle);
+	মুক্ত(circle);
 }
-#else
+#অন্যথা
 /* Must never be called */
-void print_except_N_last_bytes(FILE *fp, unsigned count);
-void print_except_N_last_lines(FILE *fp, unsigned count);
+শূন্য print_except_N_last_bytes(FILE *fp, unsigned গুনতি);
+শূন্য print_except_N_last_সারিগুলি(FILE *fp, unsigned গুনতি);
 #endif
 
-#if !ENABLE_FEATURE_FANCY_HEAD
-# define eat_num(negative_N,p) eat_num(p)
+#যদি !ENABLE_FEATURE_FANCY_HEAD
+# define eat_অঙ্ক(negative_N,p) eat_অঙ্ক(p)
 #endif
-static unsigned long
-eat_num(bool *negative_N, const char *p)
+স্থির unsigned long
+eat_অঙ্ক(bool *negative_N, ধ্রুব বর্ণ *p)
 {
-#if ENABLE_FEATURE_FANCY_HEAD
-	if (*p == '-') {
+#যদি ENABLE_FEATURE_FANCY_HEAD
+	যদি (*p == '-') {
 		*negative_N = 1;
 		p++;
 	}
 #endif
-	return xatoul_sfx(p, bkm_suffixes);
+	প্রত্যাগম xatoul_sfx(p, bkm_suffixes);
 }
 
-static const char head_opts[] ALIGN1 =
+স্থির ধ্রুব বর্ণ head_opts[] ALIGN1 =
 	"n:"
-#if ENABLE_FEATURE_FANCY_HEAD
+#যদি ENABLE_FEATURE_FANCY_HEAD
 	"c:qv"
 #endif
 	;
 
 #define header_fmt_str "\n==> %s <==\n"
 
-int head_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int head_main(int argc, char **argv)
+পূর্ণাঙ্ক head_main(পূর্ণাঙ্ক argc, বর্ণ **argv) MAIN_EXTERNALLY_VISIBLE;
+পূর্ণাঙ্ক head_main(পূর্ণাঙ্ক argc, বর্ণ **argv)
 {
-	unsigned long count = 10;
-#if ENABLE_FEATURE_FANCY_HEAD
-	int header_threshhold = 1;
-	bool count_bytes = 0;
+	unsigned long গুনতি = 10;
+#যদি ENABLE_FEATURE_FANCY_HEAD
+	পূর্ণাঙ্ক header_threshhold = 1;
+	bool গুনতি_bytes = 0;
 	bool negative_N = 0;
-#else
+#অন্যথা
 # define header_threshhold 1
-# define count_bytes       0
+# define গুনতি_bytes       0
 # define negative_N        0
 #endif
 	FILE *fp;
-	const char *fmt;
-	char *p;
-	int opt;
-	int retval = EXIT_SUCCESS;
+	ধ্রুব বর্ণ *fmt;
+	বর্ণ *p;
+	পূর্ণাঙ্ক opt;
+	পূর্ণাঙ্ক retval = EXIT_SUCCESS;
 
-#if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
+#যদি ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
 	/* Allow legacy syntax of an initial numeric option without -n. */
-	if (argv[1] && argv[1][0] == '-'
+	যদি (argv[1] && argv[1][0] == '-'
 	 && isdigit(argv[1][1])
 	) {
 		--argc;
 		++argv;
 		p = argv[0] + 1;
-		goto GET_COUNT;
+		গচ্ছ GET_গুনতি;
 	}
 #endif
 
 	/* No size benefit in converting this to getopt32 */
-	while ((opt = getopt(argc, argv, head_opts)) > 0) {
-		switch (opt) {
-#if ENABLE_FEATURE_FANCY_HEAD
-		case 'q':
+	যাবত্ ((opt = getopt(argc, argv, head_opts)) > 0) {
+		বিকল্প (opt) {
+#যদি ENABLE_FEATURE_FANCY_HEAD
+		পক্ষ 'q':
 			header_threshhold = INT_MAX;
-			break;
-		case 'v':
+			ভঙ্গ;
+		পক্ষ 'v':
 			header_threshhold = -1;
-			break;
-		case 'c':
-			count_bytes = 1;
+			ভঙ্গ;
+		পক্ষ 'c':
+			গুনতি_bytes = 1;
 			/* fall through */
 #endif
-		case 'n':
+		পক্ষ 'n':
 			p = optarg;
-#if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
- GET_COUNT:
+#যদি ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
+ GET_গুনতি:
 #endif
-			count = eat_num(&negative_N, p);
-			break;
-		default:
+			গুনতি = eat_অঙ্ক(&negative_N, p);
+			ভঙ্গ;
+		স্বভাব:
 			bb_show_usage();
 		}
 	}
 
 	argc -= optind;
 	argv += optind;
-	if (!*argv)
-		*--argv = (char*)"-";
+	যদি (!*argv)
+		*--argv = (বর্ণ*)"-";
 
 	fmt = header_fmt_str + 1;
-	if (argc <= header_threshhold) {
-#if ENABLE_FEATURE_FANCY_HEAD
+	যদি (argc <= header_threshhold) {
+#যদি ENABLE_FEATURE_FANCY_HEAD
 		header_threshhold = 0;
-#else
+#অন্যথা
 		fmt += 11; /* "" */
 #endif
 	}
-	if (negative_N) {
-		if (count >= INT_MAX / sizeof(char*))
-			bb_error_msg("count is too big: %lu", count);
+	যদি (negative_N) {
+		যদি (গুনতি >= INT_MAX / পরিমাণ(বর্ণ*))
+			bb_error_বার্তা("count is too big: %lu", গুনতি);
 	}
 
-	do {
+	কুরু {
 		fp = fopen_or_warn_stdin(*argv);
-		if (fp) {
-			if (fp == stdin) {
-				*argv = (char *) bb_msg_standard_input;
+		যদি (fp) {
+			যদি (fp == stdin) {
+				*argv = (বর্ণ *) bb_বার্তা_standard_প্রবেশ;
 			}
-			if (header_threshhold) {
+			যদি (header_threshhold) {
 				printf(fmt, *argv);
 			}
-			if (negative_N) {
-				if (count_bytes) {
-					print_except_N_last_bytes(fp, count);
-				} else {
-					print_except_N_last_lines(fp, count);
+			যদি (negative_N) {
+				যদি (গুনতি_bytes) {
+					print_except_N_last_bytes(fp, গুনতি);
+				} অন্যথা {
+					print_except_N_last_সারিগুলি(fp, গুনতি);
 				}
-			} else {
-				print_first_N(fp, count, count_bytes);
+			} অন্যথা {
+				print_first_N(fp, গুনতি, গুনতি_bytes);
 			}
 			die_if_ferror_stdout();
-			if (fclose_if_not_stdin(fp)) {
-				bb_simple_perror_msg(*argv);
+			যদি (fclose_if_not_stdin(fp)) {
+				bb_simple_perror_বার্তা(*argv);
 				retval = EXIT_FAILURE;
 			}
-		} else {
+		} অন্যথা {
 			retval = EXIT_FAILURE;
 		}
 		fmt = header_fmt_str;
-	} while (*++argv);
+	} যাবত্ (*++argv);
 
 	fflush_stdout_and_exit(retval);
 }

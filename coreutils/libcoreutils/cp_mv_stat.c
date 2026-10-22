@@ -18,31 +18,31 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-#include "libbb.h"
-#include "coreutils.h"
+#অন্তর্ভাব "libbb.h"
+#অন্তর্ভাব "coreutils.h"
 
-int FAST_FUNC cp_mv_stat2(const char *fn, struct stat *fn_stat, stat_func sf)
+পূর্ণাঙ্ক FAST_FUNC cp_mv_stat2(ধ্রুব বর্ণ *fn, সংরচনা stat *fn_stat, stat_func sf)
 {
-	if (sf(fn, fn_stat) < 0) {
-		if (errno != ENOENT) {
-#if ENABLE_FEATURE_VERBOSE_CP_MESSAGE
-			if (errno == ENOTDIR) {
-				bb_error_msg("can't stat '%s': Path has non-directory component", fn);
-				return -1;
+	যদি (sf(fn, fn_stat) < 0) {
+		যদি (errno != ENOENT) {
+#যদি ENABLE_FEATURE_VERBOSE_CP_MESSAGE
+			যদি (errno == ENOTDIR) {
+				bb_error_বার্তা("can't stat '%s': Path has non-directory component", fn);
+				প্রত্যাগম -1;
 			}
 #endif
-			bb_perror_msg("can't stat '%s'", fn);
-			return -1;
+			bb_perror_বার্তা("can't stat '%s'", fn);
+			প্রত্যাগম -1;
 		}
-		return 0;
+		প্রত্যাগম 0;
 	}
-	if (S_ISDIR(fn_stat->st_mode)) {
-		return 3;
+	যদি (S_ISDIR(fn_stat->st_mode)) {
+		প্রত্যাগম 3;
 	}
-	return 1;
+	প্রত্যাগম 1;
 }
 
-int FAST_FUNC cp_mv_stat(const char *fn, struct stat *fn_stat)
+পূর্ণাঙ্ক FAST_FUNC cp_mv_stat(ধ্রুব বর্ণ *fn, সংরচনা stat *fn_stat)
 {
-	return cp_mv_stat2(fn, fn_stat, stat);
+	প্রত্যাগম cp_mv_stat2(fn, fn_stat, stat);
 }

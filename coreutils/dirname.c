@@ -31,13 +31,13 @@
 //usage:       "$ dirname /tmp/foo/\n"
 //usage:       "/tmp\n"
 
-#include "libbb.h"
+#অন্তর্ভাব "libbb.h"
 
 /* This is a NOFORK applet. Be very careful! */
 
-int dirname_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int dirname_main(int argc UNUSED_PARAM, char **argv)
+পূর্ণাঙ্ক dirname_main(পূর্ণাঙ্ক argc, বর্ণ **argv) MAIN_EXTERNALLY_VISIBLE;
+পূর্ণাঙ্ক dirname_main(পূর্ণাঙ্ক argc UNUSED_PARAM, বর্ণ **argv)
 {
 	puts(dirname(single_argv(argv)));
-	return fflush_all();
+	প্রত্যাগম fflush_all();
 }

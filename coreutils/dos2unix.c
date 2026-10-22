@@ -47,75 +47,75 @@
 //usage:     "\n	-u	dos2unix"
 //usage:     "\n	-d	unix2dos"
 
-#include "libbb.h"
+#অন্তর্ভাব "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-enum {
+গণনা {
 	CT_UNIX2DOS = 1,
 	CT_DOS2UNIX
 };
 
 /* if fn is NULL then input is stdin and output is stdout */
-static void convert(char *fn, int conv_type)
+স্থির শূন্য convert(বর্ণ *fn, পূর্ণাঙ্ক conv_type)
 {
 	FILE *in, *out;
-	int ch;
-	char *temp_fn = temp_fn; /* for compiler */
-	char *resolved_fn = resolved_fn;
+	পূর্ণাঙ্ক ch;
+	বর্ণ *temp_fn = temp_fn; /* for compiler */
+	বর্ণ *resolved_fn = resolved_fn;
 
 	in = stdin;
 	out = stdout;
-	if (fn != NULL) {
-		struct stat st;
-		int fd;
+	যদি (fn != রিক্ত) {
+		সংরচনা stat st;
+		পূর্ণাঙ্ক fd;
 
 		resolved_fn = xmalloc_follow_symlinks(fn);
-		if (resolved_fn == NULL)
-			bb_simple_perror_msg_and_die(fn);
+		যদি (resolved_fn == রিক্ত)
+			bb_simple_perror_বার্তা_and_die(fn);
 		in = xfopen_for_read(resolved_fn);
 		xfstat(fileno(in), &st, resolved_fn);
 
 		temp_fn = xasprintf("%sXXXXXX", resolved_fn);
 		fd = xmkstemp(temp_fn);
-		if (fchmod(fd, st.st_mode) == -1)
-			bb_simple_perror_msg_and_die(temp_fn);
+		যদি (fchmod(fd, st.st_mode) == -1)
+			bb_simple_perror_বার্তা_and_die(temp_fn);
 		fchown(fd, st.st_uid, st.st_gid);
 
 		out = xfdopen_for_write(fd);
 	}
 
-	while ((ch = fgetc(in)) != EOF) {
-		if (ch == '\r')
-			continue;
-		if (ch == '\n')
-			if (conv_type == CT_UNIX2DOS)
+	যাবত্ ((ch = fgetc(in)) != EOF) {
+		যদি (ch == '\r')
+			অনুবর্ত;
+		যদি (ch == '\n')
+			যদি (conv_type == CT_UNIX2DOS)
 				fputc('\r', out);
 		fputc(ch, out);
 	}
 
-	if (fn != NULL) {
-		if (fclose(in) < 0 || fclose(out) < 0) {
+	যদি (fn != রিক্ত) {
+		যদি (fclose(in) < 0 || fclose(out) < 0) {
 			unlink(temp_fn);
 			bb_perror_nomsg_and_die();
 		}
 		xrename(temp_fn, resolved_fn);
-		free(temp_fn);
-		free(resolved_fn);
+		মুক্ত(temp_fn);
+		মুক্ত(resolved_fn);
 	}
 }
 
-int dos2unix_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int dos2unix_main(int argc UNUSED_PARAM, char **argv)
+পূর্ণাঙ্ক dos2unix_main(পূর্ণাঙ্ক argc, বর্ণ **argv) MAIN_EXTERNALLY_VISIBLE;
+পূর্ণাঙ্ক dos2unix_main(পূর্ণাঙ্ক argc UNUSED_PARAM, বর্ণ **argv)
 {
-	int o, conv_type;
+	পূর্ণাঙ্ক o, conv_type;
 
 	/* See if we are supposed to be doing dos2unix or unix2dos */
-	if (ENABLE_DOS2UNIX
+	যদি (ENABLE_DOS2UNIX
 	 && (!ENABLE_UNIX2DOS || applet_name[0] == 'd')
 	) {
 		conv_type = CT_DOS2UNIX;
-	} else {
+	} অন্যথা {
 		conv_type = CT_UNIX2DOS;
 	}
 
@@ -124,14 +124,14 @@ int dos2unix_main(int argc UNUSED_PARAM, char **argv)
 
 	/* Do the conversion requested by an argument else do the default
 	 * conversion depending on our name.  */
-	if (o)
+	যদি (o)
 		conv_type = o;
 
 	argv += optind;
-	do {
+	কুরু {
 		/* might be convert(NULL) if there is no filename given */
 		convert(*argv, conv_type);
-	} while (*argv && *++argv);
+	} যাবত্ (*argv && *++argv);
 
-	return 0;
+	প্রত্যাগম 0;
 }

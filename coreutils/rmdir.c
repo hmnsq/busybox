@@ -31,7 +31,7 @@
 //usage:#define rmdir_example_usage
 //usage:       "# rmdir /tmp/foo\n"
 
-#include "libbb.h"
+#অন্তর্ভাব "libbb.h"
 
 /* This is a NOFORK applet. Be very careful! */
 
@@ -40,12 +40,12 @@
 #define VERBOSE          ((1 << 1) * ENABLE_FEATURE_VERBOSE)
 #define IGNORE_NON_EMPTY ((1 << 2) * ENABLE_LONG_OPTS)
 
-int rmdir_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int rmdir_main(int argc UNUSED_PARAM, char **argv)
+পূর্ণাঙ্ক rmdir_main(পূর্ণাঙ্ক argc, বর্ণ **argv) MAIN_EXTERNALLY_VISIBLE;
+পূর্ণাঙ্ক rmdir_main(পূর্ণাঙ্ক argc UNUSED_PARAM, বর্ণ **argv)
 {
-	int status = EXIT_SUCCESS;
-	int flags;
-	char *path;
+	পূর্ণাঙ্ক status = EXIT_SUCCESS;
+	পূর্ণাঙ্ক flags;
+	বর্ণ *path;
 
 	flags = getopt32long(argv, "pv",
 		"parents\0"                  No_argument "p"
@@ -58,38 +58,38 @@ int rmdir_main(int argc UNUSED_PARAM, char **argv)
 	);
 	argv += optind;
 
-	if (!*argv) {
+	যদি (!*argv) {
 		bb_show_usage();
 	}
 
-	do {
+	কুরু {
 		path = *argv;
 
-		while (1) {
-			if (flags & VERBOSE) {
+		যাবত্ (1) {
+			যদি (flags & VERBOSE) {
 				printf("rmdir: removing directory, '%s'\n", path);
 			}
 
-			if (rmdir(path) < 0) {
-#if ENABLE_LONG_OPTS
-				if ((flags & IGNORE_NON_EMPTY) && errno == ENOTEMPTY)
-					break;
+			যদি (rmdir(path) < 0) {
+#যদি ENABLE_LONG_OPTS
+				যদি ((flags & IGNORE_NON_EMPTY) && errno == ENOTEMPTY)
+					ভঙ্গ;
 #endif
-				bb_perror_msg("'%s'", path);  /* Match gnu rmdir msg. */
+				bb_perror_বার্তা("'%s'", path);  /* Match gnu rmdir msg. */
 				status = EXIT_FAILURE;
-			} else if (flags & PARENTS) {
+			} অন্যথা যদি (flags & PARENTS) {
 				/* Note: path was not "" since rmdir succeeded. */
 				path = dirname(path);
 				/* Path is now just the parent component.  Dirname
 				 * returns "." if there are no parents.
 				 */
-				if (NOT_LONE_CHAR(path, '.')) {
-					continue;
+				যদি (NOT_LONE_CHAR(path, '.')) {
+					অনুবর্ত;
 				}
 			}
-			break;
+			ভঙ্গ;
 		}
-	} while (*++argv);
+	} যাবত্ (*++argv);
 
-	return status;
+	প্রত্যাগম status;
 }

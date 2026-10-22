@@ -27,25 +27,25 @@
 //usage:#define tac_full_usage "\n\n"
 //usage:	"Concatenate FILEs and print them in reverse"
 
-#include "libbb.h"
+#অন্তর্ভাব "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-struct lstring {
-	int size;
-	char buf[1];
+সংরচনা lstring {
+	পূর্ণাঙ্ক size;
+	বর্ণ buf[1];
 };
 
-int tac_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int tac_main(int argc UNUSED_PARAM, char **argv)
+পূর্ণাঙ্ক tac_main(পূর্ণাঙ্ক argc, বর্ণ **argv) MAIN_EXTERNALLY_VISIBLE;
+পূর্ণাঙ্ক tac_main(পূর্ণাঙ্ক argc UNUSED_PARAM, বর্ণ **argv)
 {
-	char **name;
+	বর্ণ **name;
 	FILE *f;
-	struct lstring *line = NULL;
-	llist_t *list = NULL;
-	int retval = EXIT_SUCCESS;
+	সংরচনা lstring *সারি = রিক্ত;
+	llist_t *list = রিক্ত;
+	পূর্ণাঙ্ক retval = EXIT_SUCCESS;
 
-#if ENABLE_DESKTOP
+#যদি ENABLE_DESKTOP
 /* tac from coreutils 6.9 supports:
        -b, --before
               attach the separator before instead of after
@@ -57,61 +57,61 @@ We support none, but at least we will complain or handle "--":
 */
 	getopt32(argv, "");
 	argv += optind;
-#else
+#অন্যথা
 	argv++;
 #endif
-	if (!*argv)
-		*--argv = (char *)"-";
+	যদি (!*argv)
+		*--argv = (বর্ণ *)"-";
 	/* We will read from last file to first */
 	name = argv;
-	while (*name)
+	যাবত্ (*name)
 		name++;
 
-	do {
-		int ch, i;
+	কুরু {
+		পূর্ণাঙ্ক ch, i;
 
 		name--;
 		f = fopen_or_warn_stdin(*name);
-		if (f == NULL) {
+		যদি (f == রিক্ত) {
 			/* error message is printed by fopen_or_warn_stdin */
 			retval = EXIT_FAILURE;
-			continue;
+			অনুবর্ত;
 		}
 
 		errno = i = 0;
-		do {
+		কুরু {
 			ch = fgetc(f);
-			if (ch != EOF) {
-				if (!(i & 0x7f))
+			যদি (ch != EOF) {
+				যদি (!(i & 0x7f))
 					/* Grow on every 128th char */
-					line = xrealloc(line, i + 0x7f + sizeof(int) + 1);
-				line->buf[i++] = ch;
+					সারি = xrealloc(সারি, i + 0x7f + পরিমাণ(পূর্ণাঙ্ক) + 1);
+				সারি->buf[i++] = ch;
 			}
-			if (ch == '\n' || (ch == EOF && i != 0)) {
-				line = xrealloc(line, i + sizeof(int));
-				line->size = i;
-				llist_add_to(&list, line);
-				line = NULL;
+			যদি (ch == '\n' || (ch == EOF && i != 0)) {
+				সারি = xrealloc(সারি, i + পরিমাণ(পূর্ণাঙ্ক));
+				সারি->size = i;
+				llist_add_to(&list, সারি);
+				সারি = রিক্ত;
 				i = 0;
 			}
-		} while (ch != EOF);
+		} যাবত্ (ch != EOF);
 		/* fgetc sets errno to ENOENT on EOF, we don't want
 		 * to warn on this non-error! */
-		if (errno && errno != ENOENT) {
-			bb_simple_perror_msg(*name);
+		যদি (errno && errno != ENOENT) {
+			bb_simple_perror_বার্তা(*name);
 			retval = EXIT_FAILURE;
 		}
-	} while (name != argv);
+	} যাবত্ (name != argv);
 
-	while (list) {
-		line = (struct lstring *)list->data;
-		xwrite(STDOUT_FILENO, line->buf, line->size);
-		if (ENABLE_FEATURE_CLEAN_UP) {
-			free(llist_pop(&list));
-		} else {
+	যাবত্ (list) {
+		সারি = (সংরচনা lstring *)list->data;
+		xwrite(STDOUT_FILENO, সারি->buf, সারি->size);
+		যদি (ENABLE_FEATURE_CLEAN_UP) {
+			মুক্ত(llist_বের_করো(&list));
+		} অন্যথা {
 			list = list->link;
 		}
 	}
 
-	return retval;
+	প্রত্যাগম retval;
 }
