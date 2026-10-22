@@ -27,30 +27,30 @@
 
 /* This is a NOFORK applet. Be very careful! */
 
-int printenv_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int printenv_main(int argc UNUSED_PARAM, char **argv)
+පූර්ණ_සංඛ්‍යා printenv_main(පූර්ණ_සංඛ්‍යා argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+පූර්ණ_සංඛ්‍යා printenv_main(පූර්ණ_සංඛ්‍යා argc UNUSED_PARAM, var_na **argv)
 {
-	int exit_code = EXIT_SUCCESS;
+	පූර්ණ_සංඛ්‍යා exit_code = EXIT_SUCCESS;
 
 	/* no variables specified, show whole env */
-	if (!argv[1]) {
-		char **e = environ;
+	නම් (!argv[1]) {
+		var_na **e = environ;
 
 		/* environ can be NULL! (for example, after clearenv())
 		 * Check for that:
 		 */
-		if (e)
-			while (*e)
+		නම් (e)
+			අතරතුර (*e)
 				puts(*e++);
-	} else {
+	} නැතහොත් {
 		/* search for specified variables and print them out if found */
-		char *arg, *env;
+		var_na *arg, *env;
 
-		while ((arg = *++argv) != NULL) {
+		අතරතුර ((arg = *++argv) != NULL) {
 			env = getenv(arg);
-			if (env)
+			නම් (env)
 				puts(env);
-			else
+			නැතහොත්
 				exit_code = EXIT_FAILURE;
 		}
 	}

@@ -39,38 +39,38 @@
 
 /* This is a NOEXEC applet. Be very careful! */
 
-int rm_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int rm_main(int argc UNUSED_PARAM, char **argv)
+පූර්ණ_සංඛ්‍යා rm_main(පූර්ණ_සංඛ්‍යා argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+පූර්ණ_සංඛ්‍යා rm_main(පූර්ණ_සංඛ්‍යා argc UNUSED_PARAM, var_na **argv)
 {
-	int status = 0;
-	int flags = 0;
+	පූර්ණ_සංඛ්‍යා status = 0;
+	පූර්ණ_සංඛ්‍යා flags = 0;
 	unsigned opt;
 
 	opt = getopt32(argv, "^" "fiRrv" "\0" "f-i:i-f");
 	argv += optind;
-	if (opt & 1)
+	නම් (opt & 1)
 		flags |= FILEUTILS_FORCE;
-	if (opt & 2)
+	නම් (opt & 2)
 		flags |= FILEUTILS_INTERACTIVE;
-	if (opt & (8|4))
+	නම් (opt & (8|4))
 		flags |= FILEUTILS_RECUR;
-	if ((opt & 16) && FILEUTILS_VERBOSE)
+	නම් ((opt & 16) && FILEUTILS_VERBOSE)
 		flags |= FILEUTILS_VERBOSE;
 
-	if (*argv != NULL) {
+	නම් (*argv != NULL) {
 		do {
-			const char *base = bb_get_last_path_component_strip(*argv);
+			const var_na *base = bb_get_last_path_component_strip(*argv);
 
-			if (DOT_OR_DOTDOT(base)) {
+			නම් (DOT_OR_DOTDOT(base)) {
 				bb_simple_error_msg("can't remove '.' or '..'");
-			} else if (remove_file(*argv, flags) >= 0) {
+			} නැතහොත් නම් (remove_file(*argv, flags) >= 0) {
 				continue;
 			}
 			status = 1;
-		} while (*++argv);
-	} else if (!(flags & FILEUTILS_FORCE)) {
+		} අතරතුර (*++argv);
+	} නැතහොත් නම් (!(flags & FILEUTILS_FORCE)) {
 		bb_show_usage();
 	}
 
-	return status;
+	ආපසු status;
 }

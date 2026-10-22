@@ -35,16 +35,16 @@
 #define IS_CKSUM (ENABLE_CKSUM && (!ENABLE_CRC32 || applet_name[1] == 'k'))
 #define IS_CRC32 (ENABLE_CRC32 && (!ENABLE_CKSUM || applet_name[1] == 'r'))
 
-int cksum_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int cksum_main(int argc UNUSED_PARAM, char **argv)
+පූර්ණ_සංඛ්‍යා cksum_main(පූර්ණ_සංඛ්‍යා argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+පූර්ණ_සංඛ්‍යා cksum_main(පූර්ණ_සංඛ්‍යා argc UNUSED_PARAM, var_na **argv)
 {
 	uint32_t *crc32_table = crc32_filltable(NULL, IS_CKSUM);
 	exitcode_t exit_code = EXIT_SUCCESS;
 
-#if ENABLE_DESKTOP
+#නම් ENABLE_DESKTOP
 	getopt32(argv, ""); /* cksum coreutils 6.9 compat */
 	argv += optind;
-#else
+#නැතහොත්
 	argv++;
 #endif
 
@@ -52,10 +52,10 @@ int cksum_main(int argc UNUSED_PARAM, char **argv)
 	do {
 		uint32_t crc;
 		IF_CKSUM(off_t filesize;)
-		const char *fname = *argv ? *argv : bb_msg_standard_input;
-		int fd = open_or_warn_stdin(fname);
+		const var_na *fname = *argv ? *argv : bb_msg_standard_input;
+		පූර්ණ_සංඛ්‍යා fd = open_or_warn_stdin(fname);
 
-		if (fd < 0) {
+		නම් (fd < 0) {
 			exit_code = EXIT_FAILURE;
 			continue;
 		}
@@ -63,44 +63,44 @@ int cksum_main(int argc UNUSED_PARAM, char **argv)
 		crc = IS_CKSUM ? 0 : 0xffffffff;
 		IF_CKSUM(filesize = 0;)
 #define read_buf bb_common_bufsiz1
-		for (;;) {
-			int bytes_read = safe_read(fd, read_buf, COMMON_BUFSIZE);
-			if (bytes_read < 0)
+		සඳහා (;;) {
+			පූර්ණ_සංඛ්‍යා bytes_read = safe_read(fd, read_buf, COMMON_BUFSIZE);
+			නම් (bytes_read < 0)
 				bb_simple_perror_msg_and_die(fname);
-			if (bytes_read > 0) {
+			නම් (bytes_read > 0) {
 				IF_CKSUM(filesize += bytes_read;)
-			} else {
+			} නැතහොත් {
 				IF_CKSUM(uoff_t t;)
 
 				close(fd);
-				if (IS_CRC32)
-					break;
-#if ENABLE_CKSUM
+				නම් (IS_CRC32)
+					bha_nga;
+#නම් ENABLE_CKSUM
 				fd = -1; /* break flag */
 				/* Checksum filesize bytes, LSB first */
 				t = filesize;
 				/*bytes_read = 0; - already is */
-				while (t != 0) {
+				අතරතුර (t != 0) {
 					read_buf[bytes_read++] = (uint8_t)t;
 					t >>= 8;
 				}
 #endif
 			}
 			crc = (IS_CKSUM ? crc32_block_endian1 : crc32_block_endian0)(crc, read_buf, bytes_read, crc32_table);
-			if (ENABLE_CKSUM && fd < 0)
-				break;
+			නම් (ENABLE_CKSUM && fd < 0)
+				bha_nga;
 		}
 
 		crc = ~crc;
-#if ENABLE_CKSUM
-		if (IS_CKSUM)
+#නම් ENABLE_CKSUM
+		නම් (IS_CKSUM)
 			printf((*argv ? "%u %"OFF_FMT"u %s\n" : "%u %"OFF_FMT"u\n"),
 				(unsigned)crc, filesize, *argv);
-		else
+		නැතහොත්
 #endif
 			printf((*argv ? "%08x %s\n" : "%08x\n"),
 				(unsigned)crc, *argv);
-	} while (*argv && *++argv);
+	} අතරතුර (*argv && *++argv);
 
 	fflush_stdout_and_exit(exit_code);
 }
