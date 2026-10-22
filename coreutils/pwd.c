@@ -27,7 +27,7 @@
 
 #include "libbb.h"
 
-static int logical_getcwd(void)
+static целое logical_getcwd(void)
 {
 	struct stat st1;
 	struct stat st2;
@@ -35,59 +35,59 @@ static int logical_getcwd(void)
 	char *p;
 
 	wd = getenv("PWD");
-	if (!wd || wd[0] != '/')
-		return 0;
+	если (!wd || wd[0] != '/')
+		вернуть 0;
 
 	p = wd;
-	while (*p) {
+	пока (*p) {
 		/* doing strstr(p, "/.") by hand is smaller and faster... */
-		if (*p++ != '/')
+		если (*p++ != '/')
 			continue;
-		if (*p != '.')
+		если (*p != '.')
 			continue;
 		/* we found "/.", skip to next char */
 		p++;
-		if (*p == '.')
+		если (*p == '.')
 			p++; /* we found "/.." */
-		if (*p == '\0' || *p == '/')
-			return 0; /* "/./" or "/../" component: bad */
+		если (*p == '\0' || *p == '/')
+			вернуть 0; /* "/./" or "/../" component: bad */
 	}
 
-	if (stat(wd, &st1) != 0)
-		return 0;
-	if (stat(".", &st2) != 0)
-		return 0;
-	if (st1.st_ino != st2.st_ino)
-		return 0;
-	if (st1.st_dev != st2.st_dev)
-		return 0;
+	если (stat(wd, &st1) != 0)
+		вернуть 0;
+	если (stat(".", &st2) != 0)
+		вернуть 0;
+	если (st1.st_ino != st2.st_ino)
+		вернуть 0;
+	если (st1.st_dev != st2.st_dev)
+		вернуть 0;
 
 	puts(wd);
-	return 1;
+	вернуть 1;
 }
 
-int pwd_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int pwd_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+целое pwd_main(целое argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+целое pwd_main(целое argc UNUSED_PARAM, char **argv UNUSED_PARAM)
 {
 	char *buf;
 
-	if (ENABLE_DESKTOP) {
+	если (ENABLE_DESKTOP) {
 		/* TODO: assume -L if $POSIXLY_CORRECT? (coreutils does that)
 		 * Rationale:
 		 * POSIX requires a default of -L, but most scripts expect -P
 		 */
 		unsigned opt = getopt32(argv, "LP");
-		if ((opt & 1) && logical_getcwd())
-			return fflush_all();
+		если ((opt & 1) && logical_getcwd())
+			вернуть fflush_all();
 	}
 
 	buf = xrealloc_getcwd_or_warn(NULL);
 
-	if (buf) {
+	если (buf) {
 		puts(buf);
 		free(buf);
-		return fflush_all();
+		вернуть fflush_all();
 	}
 
-	return EXIT_FAILURE;
+	вернуть EXIT_FAILURE;
 }

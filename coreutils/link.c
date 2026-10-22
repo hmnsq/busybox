@@ -24,16 +24,16 @@
 
 /* This is a NOFORK applet. Be very careful! */
 
-int link_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int link_main(int argc UNUSED_PARAM, char **argv)
+целое link_main(целое argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+целое link_main(целое argc UNUSED_PARAM, char **argv)
 {
 	getopt32(argv, "^" "" "\0" "=2");
 	argv += optind;
-	if (link(argv[0], argv[1]) != 0) {
+	если (link(argv[0], argv[1]) != 0) {
 		/* shared message */
 		bb_perror_msg_and_die("can't create %slink '%s' to '%s'",
 			"hard",	argv[1], argv[0]
 		);
 	}
-	return EXIT_SUCCESS;
+	вернуть EXIT_SUCCESS;
 }

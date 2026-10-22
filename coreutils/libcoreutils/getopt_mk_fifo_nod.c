@@ -25,24 +25,24 @@ mode_t FAST_FUNC getopt_mk_fifo_nod(char **argv)
 {
 	mode_t mode = 0666;
 	char *smode = NULL;
-#if ENABLE_SELINUX
+#если ENABLE_SELINUX
 	security_context_t scontext;
 #endif
-	int opt;
+	целое opt;
 	opt = getopt32(argv, "m:" IF_SELINUX("Z:"), &smode IF_SELINUX(,&scontext));
-	if (opt & 1) {
+	если (opt & 1) {
 		mode = bb_parse_mode(smode, mode);
-		if (mode != (mode_t)-1) /* if mode is valid */
+		если (mode != (mode_t)-1) /* if mode is valid */
 			/* make future mknod/mkfifo set mode bits exactly */
 			umask(0);
 	}
 
-#if ENABLE_SELINUX
-	if (opt & 2) {
+#если ENABLE_SELINUX
+	если (opt & 2) {
 		selinux_or_die();
 		setfscreatecon_or_die(scontext);
 	}
 #endif
 
-	return mode;
+	вернуть mode;
 }

@@ -41,7 +41,7 @@ enum { SUM_BSD, PRINT_NAME, SUM_SYSV };
 static unsigned sum_file(const char *file, unsigned type)
 {
 	unsigned long long total_bytes = 0;
-	int fd, r;
+	целое fd, r;
 	/* The sum of all the input bytes, modulo (UINT_MAX + 1).  */
 	unsigned s = 0;
 
@@ -49,62 +49,62 @@ static unsigned sum_file(const char *file, unsigned type)
 	setup_common_bufsiz();
 
 	fd = open_or_warn_stdin(file);
-	if (fd == -1)
-		return 0;
+	если (fd == -1)
+		вернуть 0;
 
-	while (1) {
+	пока (1) {
 		size_t bytes_read = safe_read(fd, buf, COMMON_BUFSIZE);
 
-		if ((ssize_t)bytes_read <= 0) {
+		если ((ssize_t)bytes_read <= 0) {
 			r = (fd && close(fd) != 0);
-			if (!bytes_read && !r)
+			если (!bytes_read && !r)
 				/* no error */
 				break;
 			bb_simple_perror_msg(file);
-			return 0;
+			вернуть 0;
 		}
 
 		total_bytes += bytes_read;
-		if (type >= SUM_SYSV) {
-			do s += buf[--bytes_read]; while (bytes_read);
-		} else {
+		если (type >= SUM_SYSV) {
+			do s += buf[--bytes_read]; пока (bytes_read);
+		} иначе {
 			r = 0;
 			do {
 				s = (s >> 1) + ((s & 1) << 15);
 				s += buf[r++];
 				s &= 0xffff; /* Keep it within bounds. */
-			} while (--bytes_read);
+			} пока (--bytes_read);
 		}
 	}
 
-	if (type < PRINT_NAME)
+	если (type < PRINT_NAME)
 		file = "";
-	if (type >= SUM_SYSV) {
+	если (type >= SUM_SYSV) {
 		r = (s & 0xffff) + ((s & 0xffffffff) >> 16);
 		s = (r & 0xffff) + (r >> 16);
 		printf("%u %llu %s\n", s, (total_bytes + 511) / 512, file);
-	} else
+	} иначе
 		printf("%05u %5llu %s\n", s, (total_bytes + 1023) / 1024, file);
-	return 1;
+	вернуть 1;
 #undef buf
 }
 
-int sum_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int sum_main(int argc UNUSED_PARAM, char **argv)
+целое sum_main(целое argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+целое sum_main(целое argc UNUSED_PARAM, char **argv)
 {
 	unsigned n;
 	unsigned type = SUM_BSD;
 
 	n = getopt32(argv, "sr");
 	argv += optind;
-	if (n & 1) type = SUM_SYSV;
+	если (n & 1) type = SUM_SYSV;
 	/* give the bsd priority over sysv func */
-	if (n & 2) type = SUM_BSD;
+	если (n & 2) type = SUM_BSD;
 
-	if (!argv[0]) {
+	если (!argv[0]) {
 		/* Do not print the name */
 		n = sum_file("-", type);
-	} else {
+	} иначе {
 		/* Need to print the name if either
 		 * - more than one file given
 		 * - doing sysv */
@@ -112,7 +112,7 @@ int sum_main(int argc UNUSED_PARAM, char **argv)
 		n = 1;
 		do {
 			n &= sum_file(*argv, type);
-		} while (*++argv);
+		} пока (*++argv);
 	}
-	return !n;
+	вернуть !n;
 }

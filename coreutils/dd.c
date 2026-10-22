@@ -114,18 +114,18 @@ enum {
 
 struct globals {
 	off_t out_full, out_part, in_full, in_part;
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
+#если ENABLE_FEATURE_DD_THIRD_STATUS_LINE
 	unsigned long long total_bytes;
 	unsigned long long begin_time_us;
 #endif
-	int flags;
+	целое flags;
 } FIX_ALIASING;
 #define G (*(struct globals*)bb_common_bufsiz1)
 #define INIT_G() do { \
 	setup_common_bufsiz(); \
 	/* we have to zero it out because of NOEXEC */ \
 	memset(&G, 0, sizeof(G)); \
-} while (0)
+} пока (0)
 
 enum {
 	/* Must be in the same order as OP_conv_XXX! */
@@ -155,9 +155,9 @@ enum {
 	FLAG_STATUS_NOXFER = 1 << 15,
 };
 
-static void dd_output_status(int UNUSED_PARAM cur_signal)
+static void dd_output_status(целое UNUSED_PARAM cur_signal)
 {
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
+#если ENABLE_FEATURE_DD_THIRD_STATUS_LINE
 	double seconds;
 	unsigned long long bytes_sec;
 	unsigned long long now_us = monotonic_us(); /* before fprintf */
@@ -169,10 +169,10 @@ static void dd_output_status(int UNUSED_PARAM cur_signal)
 			G.in_full, G.in_part,
 			G.out_full, G.out_part);
 
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
-# if ENABLE_FEATURE_DD_STATUS
-	if (G.flags & FLAG_STATUS_NOXFER) /* status=noxfer active? */
-		return;
+#если ENABLE_FEATURE_DD_THIRD_STATUS_LINE
+# если ENABLE_FEATURE_DD_STATUS
+	если (G.flags & FLAG_STATUS_NOXFER) /* status=noxfer active? */
+		вернуть;
 	//TODO: should status=none make dd stop reacting to USR1 entirely?
 	//So far we react to it (we print the stats),
 	//status=none only suppresses final, non-USR1 generated status message.
@@ -199,18 +199,18 @@ static void dd_output_status(int UNUSED_PARAM cur_signal)
 #endif
 }
 
-#if ENABLE_FEATURE_DD_IBS_OBS
+#если ENABLE_FEATURE_DD_IBS_OBS
 # ifdef O_DIRECT
-static int clear_O_DIRECT(int fd)
+static целое clear_O_DIRECT(целое fd)
 {
-	if (errno == EINVAL) {
-		int fl = fcntl(fd, F_GETFL);
-		if (fl & O_DIRECT) {
+	если (errno == EINVAL) {
+		целое fl = fcntl(fd, F_GETFL);
+		если (fl & O_DIRECT) {
 			fcntl(fd, F_SETFL, fl & ~O_DIRECT);
-			return 1;
+			вернуть 1;
 		}
 	}
-	return 0;
+	вернуть 0;
 }
 # endif
 #endif
@@ -219,20 +219,20 @@ static ssize_t dd_read(void *ibuf, size_t ibs)
 {
 	ssize_t n;
 
-#if ENABLE_FEATURE_DD_IBS_OBS
+#если ENABLE_FEATURE_DD_IBS_OBS
  read_again:
-	if (G.flags & FLAG_FULLBLOCK)
+	если (G.flags & FLAG_FULLBLOCK)
 		n = full_read(ifd, ibuf, ibs);
-	else
+	иначе
 #endif
 		n = safe_read(ifd, ibuf, ibs);
-#if ENABLE_FEATURE_DD_IBS_OBS
+#если ENABLE_FEATURE_DD_IBS_OBS
 # ifdef O_DIRECT
-	if (n < 0 && (G.flags & FLAG_IDIRECT) && clear_O_DIRECT(ifd))
+	если (n < 0 && (G.flags & FLAG_IDIRECT) && clear_O_DIRECT(ifd))
 		goto read_again;
 # endif
 #endif
-	return n;
+	вернуть n;
 }
 
 static bool write_and_stats(const void *buf, size_t len, size_t obs,
@@ -242,24 +242,24 @@ static bool write_and_stats(const void *buf, size_t len, size_t obs,
 
  IF_FEATURE_DD_IBS_OBS(write_again:)
 	n = full_write(ofd, buf, len);
-#if ENABLE_FEATURE_DD_IBS_OBS
+#если ENABLE_FEATURE_DD_IBS_OBS
 # ifdef O_DIRECT
-	if (n < 0 && (G.flags & FLAG_ODIRECT) && clear_O_DIRECT(ofd))
+	если (n < 0 && (G.flags & FLAG_ODIRECT) && clear_O_DIRECT(ofd))
 		goto write_again;
 # endif
 #endif
 
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
-	if (n > 0)
+#если ENABLE_FEATURE_DD_THIRD_STATUS_LINE
+	если (n > 0)
 		G.total_bytes += n;
 #endif
-	if ((size_t)n == obs) {
+	если ((size_t)n == obs) {
 		G.out_full++;
-		return 0;
+		вернуть 0;
 	}
-	if ((size_t)n == len) {
+	если ((size_t)n == len) {
 		G.out_part++;
-		return 0;
+		вернуть 0;
 	}
 	/* n is < len (and possibly is -1).
 	 * Even if n >= 0, errno is usually set correctly.
@@ -269,60 +269,60 @@ static bool write_and_stats(const void *buf, size_t len, size_t obs,
 	 * It returns n > 0 (the amount which it did write).
 	 */
 	bb_perror_msg("error writing '%s'", filename);
-	return 1;
+	вернуть 1;
 }
 
-#if ENABLE_LFS
+#если ENABLE_LFS
 # define XATOU_SFX xatoull_sfx
-#else
+#иначе
 # define XATOU_SFX xatoul_sfx
 #endif
 
-#if ENABLE_FEATURE_DD_IBS_OBS
-static int parse_comma_flags(char *val, const char *words, const char *error_in)
+#если ENABLE_FEATURE_DD_IBS_OBS
+static целое parse_comma_flags(char *val, const char *words, const char *error_in)
 {
-	int flags = 0;
-	while (1) {
-		int n;
+	целое flags = 0;
+	пока (1) {
+		целое n;
 		char *arg;
 		/* find ',', replace them with NUL so we can use val for
 		 * index_in_strings() without copying.
 		 * We rely on val being non-null, else strchr would fault.
 		 */
 		arg = strchr(val, ',');
-		if (arg)
+		если (arg)
 			*arg = '\0';
 		n = index_in_strings(words, val);
-		if (n < 0)
+		если (n < 0)
 			bb_error_msg_and_die(bb_msg_invalid_arg_to, val, error_in);
 		flags |= (1 << n);
-		if (!arg) /* no ',' left, so this was the last specifier */
+		если (!arg) /* no ',' left, so this was the last specifier */
 			break;
 		*arg = ','; /* to preserve ps listing */
 		val = arg + 1; /* skip this keyword and ',' */
 	}
-	return flags;
+	вернуть flags;
 }
 #endif
 
 static void *alloc_buf(size_t size)
 {
 	/* Important for "{i,o}flag=direct" - buffers must be page aligned */
-	if (size >= bb_getpagesize())
-		return xmmap_anon(size);
-	return xmalloc(size);
+	если (size >= bb_getpagesize())
+		вернуть xmmap_anon(size);
+	вернуть xmalloc(size);
 }
 
-int dd_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int dd_main(int argc UNUSED_PARAM, char **argv)
+целое dd_main(целое argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+целое dd_main(целое argc UNUSED_PARAM, char **argv)
 {
 	static const char keywords[] ALIGN1 =
 		"bs\0""count\0""seek\0""skip\0""if\0""of\0"IF_FEATURE_DD_STATUS("status\0")
-#if ENABLE_FEATURE_DD_IBS_OBS
+#если ENABLE_FEATURE_DD_IBS_OBS
 		"ibs\0""obs\0""conv\0""iflag\0""oflag\0"
 #endif
 		;
-#if ENABLE_FEATURE_DD_IBS_OBS
+#если ENABLE_FEATURE_DD_IBS_OBS
 	static const char conv_words[] ALIGN1 =
 		"notrunc\0""sync\0""noerror\0""fsync\0""swab\0";
 	static const char iflag_words[] ALIGN1 =
@@ -330,7 +330,7 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 	static const char oflag_words[] ALIGN1 =
 		"seek_bytes\0append\0""direct\0";
 #endif
-#if ENABLE_FEATURE_DD_STATUS
+#если ENABLE_FEATURE_DD_STATUS
 	static const char status_words[] ALIGN1 =
 		"none\0""noxfer\0";
 #endif
@@ -342,7 +342,7 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 		OP_if,
 		OP_of,
 		IF_FEATURE_DD_STATUS(OP_status,)
-#if ENABLE_FEATURE_DD_IBS_OBS
+#если ENABLE_FEATURE_DD_IBS_OBS
 		OP_ibs,
 		OP_obs,
 		OP_conv,
@@ -376,13 +376,13 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 #endif
 	};
 	exitcode_t exitcode = EXIT_FAILURE;
-	int i;
+	целое i;
 	size_t ibs = 512;
 	char *ibuf;
-#if ENABLE_FEATURE_DD_IBS_OBS
+#если ENABLE_FEATURE_DD_IBS_OBS
 	size_t obs = 512;
 	char *obuf;
-#else
+#иначе
 # define obs  ibs
 # define obuf ibuf
 #endif
@@ -406,81 +406,81 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 	INIT_G();
 	//fflush_all(); - is this needed because of NOEXEC?
 
-	for (i = 1; argv[i]; i++) {
-		int what;
+	для (i = 1; argv[i]; i++) {
+		целое what;
 		char *val;
 		char *arg = argv[i];
 
-#if ENABLE_DESKTOP
+#если ENABLE_DESKTOP
 		/* "dd --". NB: coreutils 6.9 will complain if they see
 		 * more than one of them. We wouldn't. */
-		if (arg[0] == '-' && arg[1] == '-' && arg[2] == '\0')
+		если (arg[0] == '-' && arg[1] == '-' && arg[2] == '\0')
 			continue;
 #endif
 		val = strchr(arg, '=');
-		if (val == NULL)
+		если (val == NULL)
 			bb_show_usage();
 		*val = '\0';
 		what = index_in_strings(keywords, arg);
-		if (what < 0)
+		если (what < 0)
 			bb_show_usage();
 		/* *val = '='; - to preserve ps listing? */
 		val++;
-#if ENABLE_FEATURE_DD_IBS_OBS
-		if (what == OP_ibs) {
+#если ENABLE_FEATURE_DD_IBS_OBS
+		если (what == OP_ibs) {
 			/* Must fit into positive ssize_t */
 			ibs = xatoul_range_sfx(val, 1, ((size_t)-1L)/2, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_obs) {
+		если (what == OP_obs) {
 			obs = xatoul_range_sfx(val, 1, ((size_t)-1L)/2, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_conv) {
+		если (what == OP_conv) {
 			G.flags |= parse_comma_flags(val, conv_words, "conv");
 			/*continue;*/
 		}
-		if (what == OP_iflag) {
+		если (what == OP_iflag) {
 			G.flags |= parse_comma_flags(val, iflag_words, "iflag") << FLAG_IFLAG_SHIFT;
 			/*continue;*/
 		}
-		if (what == OP_oflag) {
+		если (what == OP_oflag) {
 			G.flags |= parse_comma_flags(val, oflag_words, "oflag") << FLAG_OFLAG_SHIFT;
 			/*continue;*/
 		}
 #endif
-		if (what == OP_bs) {
+		если (what == OP_bs) {
 			ibs = xatoul_range_sfx(val, 1, ((size_t)-1L)/2, cwbkMG_suffixes);
 			obs = ibs;
 			/*continue;*/
 		}
 		/* These can be large: */
-		if (what == OP_count) {
+		если (what == OP_count) {
 			G.flags |= FLAG_COUNT;
 			count = XATOU_SFX(val, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_seek) {
+		если (what == OP_seek) {
 			seek = XATOU_SFX(val, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_skip) {
+		если (what == OP_skip) {
 			skip = XATOU_SFX(val, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_if) {
+		если (what == OP_if) {
 			infile = val;
 			/*continue;*/
 		}
-		if (what == OP_of) {
+		если (what == OP_of) {
 			outfile = val;
 			/*continue;*/
 		}
-#if ENABLE_FEATURE_DD_STATUS
-		if (what == OP_status) {
-			int n;
+#если ENABLE_FEATURE_DD_STATUS
+		если (what == OP_status) {
+			целое n;
 			n = index_in_strings(status_words, val);
-			if (n < 0)
+			если (n < 0)
 				bb_error_msg_and_die(bb_msg_invalid_arg_to, val, "status");
 			G.flags |= FLAG_STATUS_NONE << n;
 			/*continue;*/
@@ -490,59 +490,59 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 
 	ibuf = alloc_buf(ibs);
 	obuf = ibuf;
-#if ENABLE_FEATURE_DD_IBS_OBS
-	if (ibs != obs) {
+#если ENABLE_FEATURE_DD_IBS_OBS
+	если (ibs != obs) {
 		G.flags |= FLAG_TWOBUFS;
 		obuf = alloc_buf(obs);
 	}
 #endif
 
-#if ENABLE_FEATURE_DD_SIGNAL_HANDLING
+#если ENABLE_FEATURE_DD_SIGNAL_HANDLING
 	signal_SA_RESTART_empty_mask(SIGUSR1, dd_output_status);
 #endif
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
+#если ENABLE_FEATURE_DD_THIRD_STATUS_LINE
 	G.begin_time_us = monotonic_us();
 #endif
 
-	if (infile) {
-		int iflag = O_RDONLY;
-#if ENABLE_FEATURE_DD_IBS_OBS
-		if (G.flags & FLAG_IDIRECT) {
+	если (infile) {
+		целое iflag = O_RDONLY;
+#если ENABLE_FEATURE_DD_IBS_OBS
+		если (G.flags & FLAG_IDIRECT) {
 # ifdef O_DIRECT
 			iflag |= O_DIRECT;
-# else
+# иначе
 			bb_error_msg_and_die("O_DIRECT not supported on this platform");
 # endif
 		}
 #endif
 		xmove_fd(xopen(infile, iflag), ifd);
-	} else {
+	} иначе {
 		infile = bb_msg_standard_input;
 	}
-	if (outfile) {
-		int oflag = O_WRONLY | O_CREAT;
+	если (outfile) {
+		целое oflag = O_WRONLY | O_CREAT;
 
-		if (!seek && !(G.flags & FLAG_NOTRUNC))
+		если (!seek && !(G.flags & FLAG_NOTRUNC))
 			oflag |= O_TRUNC;
-		if (G.flags & FLAG_APPEND)
+		если (G.flags & FLAG_APPEND)
 			oflag |= O_APPEND;
-#if ENABLE_FEATURE_DD_IBS_OBS
-		if (G.flags & FLAG_ODIRECT) {
+#если ENABLE_FEATURE_DD_IBS_OBS
+		если (G.flags & FLAG_ODIRECT) {
 # ifdef O_DIRECT
 			oflag |= O_DIRECT;
-# else
+# иначе
 			bb_error_msg_and_die("O_DIRECT not supported on this platform");
 # endif
 		}
 #endif
 		xmove_fd(xopen(outfile, oflag), ofd);
 
-		if (seek && !(G.flags & FLAG_NOTRUNC)) {
+		если (seek && !(G.flags & FLAG_NOTRUNC)) {
 			size_t blocksz = (G.flags & FLAG_SEEK_BYTES) ? 1 : obs;
-			if (ftruncate(ofd, seek * blocksz) < 0) {
+			если (ftruncate(ofd, seek * blocksz) < 0) {
 				struct stat st;
 
-				if (fstat(ofd, &st) < 0
+				если (fstat(ofd, &st) < 0
 				 || S_ISREG(st.st_mode)
 				 || S_ISDIR(st.st_mode)
 				) {
@@ -550,43 +550,43 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 				}
 			}
 		}
-	} else {
+	} иначе {
 		outfile = bb_msg_standard_output;
 	}
-	if (skip) {
+	если (skip) {
 		size_t blocksz = (G.flags & FLAG_SKIP_BYTES) ? 1 : ibs;
-		if (lseek(ifd, skip * blocksz, SEEK_CUR) < 0) {
+		если (lseek(ifd, skip * blocksz, SEEK_CUR) < 0) {
 			do {
 				ssize_t n = dd_read(ibuf, blocksz);
-				if (n < 0)
+				если (n < 0)
 					goto die_infile;
-				if (n == 0)
+				если (n == 0)
 					break;
-			} while (--skip != 0);
+			} пока (--skip != 0);
 		}
 	}
-	if (seek) {
+	если (seek) {
 		size_t blocksz = (G.flags & FLAG_SEEK_BYTES) ? 1 : obs;
-		if (lseek(ofd, seek * blocksz, SEEK_CUR) < 0)
+		если (lseek(ofd, seek * blocksz, SEEK_CUR) < 0)
 			goto die_outfile;
 	}
 
-	while (1) {
+	пока (1) {
 		ssize_t n = ibs;
 
-		if (G.flags & FLAG_COUNT) {
-			if (count == 0)
+		если (G.flags & FLAG_COUNT) {
+			если (count == 0)
 				break;
-			if ((G.flags & FLAG_COUNT_BYTES) && count < ibs)
+			если ((G.flags & FLAG_COUNT_BYTES) && count < ibs)
 				n = count;
 		}
 
 		n = dd_read(ibuf, n);
-		if (n == 0)
+		если (n == 0)
 			break;
-		if (n < 0) {
+		если (n < 0) {
 			/* "Bad block" */
-			if (!(G.flags & FLAG_NOERROR))
+			если (!(G.flags & FLAG_NOERROR))
 				goto die_infile;
 			bb_simple_perror_msg(infile);
 			/* GNU dd with conv=noerror skips over bad blocks */
@@ -595,12 +595,12 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 			 * conv=noerror just ignores input bad blocks */
 			n = 0;
 		}
-		if (G.flags & FLAG_SWAB) {
+		если (G.flags & FLAG_SWAB) {
 			uint16_t *p16;
 			ssize_t n2;
 
 			/* Our code allows only last read to be odd-sized */
-			if (prev_read_size & 1)
+			если (prev_read_size & 1)
 				bb_error_msg_and_die("can't swab %lu byte buffer",
 						(unsigned long)prev_read_size);
 			prev_read_size = n;
@@ -611,79 +611,79 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 			 */
 			p16 = (void*) ibuf;
 			n2 = (n >> 1);
-			while (--n2 >= 0) {
+			пока (--n2 >= 0) {
 				*p16 = bswap_16(*p16);
 				p16++;
 			}
 		}
 		count -= (G.flags & FLAG_COUNT_BYTES) ? n : 1;
-		if ((size_t)n == ibs)
+		если ((size_t)n == ibs)
 			G.in_full++;
-		else {
+		иначе {
 			G.in_part++;
-			if (G.flags & FLAG_SYNC) {
+			если (G.flags & FLAG_SYNC) {
 				memset(ibuf + n, 0, ibs - n);
 				n = ibs;
 			}
 		}
-#if ENABLE_FEATURE_DD_IBS_OBS
-		if (G.flags & FLAG_TWOBUFS) {
+#если ENABLE_FEATURE_DD_IBS_OBS
+		если (G.flags & FLAG_TWOBUFS) {
 			char *tmp = ibuf;
-			while (n) {
+			пока (n) {
 				size_t d = obs - ocount;
-				if (d > (size_t)n)
+				если (d > (size_t)n)
 					d = n;
 				memcpy(obuf + ocount, tmp, d);
 				n -= d;
 				tmp += d;
 				ocount += d;
-				if (ocount == obs) {
-					if (write_and_stats(obuf, obs, obs, outfile))
+				если (ocount == obs) {
+					если (write_and_stats(obuf, obs, obs, outfile))
 						goto out_status;
 					ocount = 0;
 				}
 			}
-		} else
+		} иначе
 #endif
 		{
-			if (write_and_stats(ibuf, n, obs, outfile))
+			если (write_and_stats(ibuf, n, obs, outfile))
 				goto out_status;
 		}
 	}
 
-	if (G.flags & FLAG_FSYNC) {
-		if (fsync(ofd) < 0)
+	если (G.flags & FLAG_FSYNC) {
+		если (fsync(ofd) < 0)
 			goto die_outfile;
 	}
 
-#if ENABLE_FEATURE_DD_IBS_OBS
-	if (ocount != 0) {
-		if (write_and_stats(obuf, ocount, obs, outfile))
+#если ENABLE_FEATURE_DD_IBS_OBS
+	если (ocount != 0) {
+		если (write_and_stats(obuf, ocount, obs, outfile))
 			goto out_status;
 	}
 #endif
-	if (close(ifd) < 0) {
+	если (close(ifd) < 0) {
  die_infile:
 		bb_simple_perror_msg_and_die(infile);
 	}
 
-	if (close(ofd) < 0) {
+	если (close(ofd) < 0) {
  die_outfile:
 		bb_simple_perror_msg_and_die(outfile);
 	}
 
 	exitcode = EXIT_SUCCESS;
  out_status:
-	if (!ENABLE_FEATURE_DD_STATUS || !(G.flags & FLAG_STATUS_NONE))
+	если (!ENABLE_FEATURE_DD_STATUS || !(G.flags & FLAG_STATUS_NONE))
 		dd_output_status(0);
 
-#if 0 /* can't just free(), they can be mmap()ed */
-	if (ENABLE_FEATURE_CLEAN_UP) {
+#если 0 /* can't just free(), they can be mmap()ed */
+	если (ENABLE_FEATURE_CLEAN_UP) {
 		free(obuf);
-		if (G.flags & FLAG_TWOBUFS)
+		если (G.flags & FLAG_TWOBUFS)
 			free(ibuf);
 	}
 #endif
 
-	return exitcode;
+	вернуть exitcode;
 }

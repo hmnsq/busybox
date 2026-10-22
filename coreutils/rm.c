@@ -39,38 +39,38 @@
 
 /* This is a NOEXEC applet. Be very careful! */
 
-int rm_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int rm_main(int argc UNUSED_PARAM, char **argv)
+целое rm_main(целое argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+целое rm_main(целое argc UNUSED_PARAM, char **argv)
 {
-	int status = 0;
-	int flags = 0;
+	целое status = 0;
+	целое flags = 0;
 	unsigned opt;
 
 	opt = getopt32(argv, "^" "fiRrv" "\0" "f-i:i-f");
 	argv += optind;
-	if (opt & 1)
+	если (opt & 1)
 		flags |= FILEUTILS_FORCE;
-	if (opt & 2)
+	если (opt & 2)
 		flags |= FILEUTILS_INTERACTIVE;
-	if (opt & (8|4))
+	если (opt & (8|4))
 		flags |= FILEUTILS_RECUR;
-	if ((opt & 16) && FILEUTILS_VERBOSE)
+	если ((opt & 16) && FILEUTILS_VERBOSE)
 		flags |= FILEUTILS_VERBOSE;
 
-	if (*argv != NULL) {
+	если (*argv != NULL) {
 		do {
 			const char *base = bb_get_last_path_component_strip(*argv);
 
-			if (DOT_OR_DOTDOT(base)) {
+			если (DOT_OR_DOTDOT(base)) {
 				bb_simple_error_msg("can't remove '.' or '..'");
-			} else if (remove_file(*argv, flags) >= 0) {
+			} иначе если (remove_file(*argv, flags) >= 0) {
 				continue;
 			}
 			status = 1;
-		} while (*++argv);
-	} else if (!(flags & FILEUTILS_FORCE)) {
+		} пока (*++argv);
+	} иначе если (!(flags & FILEUTILS_FORCE)) {
 		bb_show_usage();
 	}
 
-	return status;
+	вернуть status;
 }

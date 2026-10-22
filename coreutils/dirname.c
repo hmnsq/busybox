@@ -35,9 +35,9 @@
 
 /* This is a NOFORK applet. Be very careful! */
 
-int dirname_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int dirname_main(int argc UNUSED_PARAM, char **argv)
+целое dirname_main(целое argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+целое dirname_main(целое argc UNUSED_PARAM, char **argv)
 {
 	puts(dirname(single_argv(argv)));
-	return fflush_all();
+	вернуть fflush_all();
 }

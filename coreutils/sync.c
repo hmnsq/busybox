@@ -43,10 +43,10 @@
 
 /* This is a NOFORK applet. Be very careful! */
 
-#if ENABLE_FEATURE_SYNC_FANCY || ENABLE_FSYNC
-static int sync_common(int opts, char **argv)
+#если ENABLE_FEATURE_SYNC_FANCY || ENABLE_FSYNC
+static целое sync_common(целое opts, char **argv)
 {
-	int ret;
+	целое ret;
 	enum {
 		OPT_DATASYNC = (1 << 0),
 		OPT_SYNCFS   = (1 << 1),
@@ -55,52 +55,52 @@ static int sync_common(int opts, char **argv)
 	ret = EXIT_SUCCESS;
 	do {
 		/* GNU "sync FILE" uses O_NONBLOCK open */
-		int fd = open_or_warn(*argv, /*O_NOATIME |*/ O_NOCTTY | O_RDONLY | O_NONBLOCK);
+		целое fd = open_or_warn(*argv, /*O_NOATIME |*/ O_NOCTTY | O_RDONLY | O_NONBLOCK);
 		/* open(NOATIME) can only be used by owner or root, don't use NOATIME here */
 
-		if (fd < 0) {
+		если (fd < 0) {
 			ret = EXIT_FAILURE;
 			goto next;
 		}
-# if ENABLE_FEATURE_SYNC_FANCY
-		if (opts & OPT_SYNCFS) {
+# если ENABLE_FEATURE_SYNC_FANCY
+		если (opts & OPT_SYNCFS) {
 			/*
 			 * syncfs is documented to only fail with EBADF,
 			 * which can't happen here. So, no error checks.
 			 */
 			syncfs(fd);
-		} else
+		} иначе
 # endif
-		if (((opts & OPT_DATASYNC) ? fdatasync(fd) : fsync(fd)) != 0) {
+		если (((opts & OPT_DATASYNC) ? fdatasync(fd) : fsync(fd)) != 0) {
 			bb_simple_perror_msg(*argv);
 			ret = EXIT_FAILURE;
 		}
 		close(fd);
  next:
 		argv++;
-	} while (*argv);
+	} пока (*argv);
 
-	return ret;
+	вернуть ret;
 }
 #endif
 
-#if ENABLE_SYNC
-int sync_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int sync_main(int argc UNUSED_PARAM, char **argv IF_NOT_DESKTOP(UNUSED_PARAM))
+#если ENABLE_SYNC
+целое sync_main(целое argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+целое sync_main(целое argc UNUSED_PARAM, char **argv IF_NOT_DESKTOP(UNUSED_PARAM))
 {
-# if !ENABLE_FEATURE_SYNC_FANCY
+# если !ENABLE_FEATURE_SYNC_FANCY
 	/* coreutils-6.9 compat */
 	bb_warn_ignoring_args(argv[1]);
 	sync();
-	return EXIT_SUCCESS;
-# else
+	вернуть EXIT_SUCCESS;
+# иначе
 	unsigned opts = getopt32(argv, "^" "df" "\0" "d--f:f--d");
 	argv += optind;
-	if (!argv[0]) {
+	если (!argv[0]) {
 		sync();
-		return EXIT_SUCCESS;
+		вернуть EXIT_SUCCESS;
 	}
-	return sync_common(opts, argv);
+	вернуть sync_common(opts, argv);
 # endif
 }
 #endif
@@ -129,12 +129,12 @@ int sync_main(int argc UNUSED_PARAM, char **argv IF_NOT_DESKTOP(UNUSED_PARAM))
 //usage:       "Write all buffered blocks in FILEs to disk\n"
 //usage:     "\n	-d	Avoid syncing metadata"
 
-#if ENABLE_FSYNC
-int fsync_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int fsync_main(int argc UNUSED_PARAM, char **argv)
+#если ENABLE_FSYNC
+целое fsync_main(целое argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+целое fsync_main(целое argc UNUSED_PARAM, char **argv)
 {
-	int opts = getopt32(argv, "^" "d" "\0" "-1"/*min 1 arg*/);
+	целое opts = getopt32(argv, "^" "d" "\0" "-1"/*min 1 arg*/);
 	argv += optind;
-	return sync_common(opts, argv);
+	вернуть sync_common(opts, argv);
 }
 #endif

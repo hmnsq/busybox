@@ -41,19 +41,19 @@
 
 /* This is a NOFORK applet. Be very careful! */
 
-int logname_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int logname_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+целое logname_main(целое argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+целое logname_main(целое argc UNUSED_PARAM, char **argv UNUSED_PARAM)
 {
 	char buf[64];
 
-	if (argv[1]) {
+	если (argv[1]) {
 		bb_show_usage();
 	}
 
 	/* Using _r function - avoid pulling in static buffer from libc */
-	if (getlogin_r(buf, sizeof(buf)) == 0) {
+	если (getlogin_r(buf, sizeof(buf)) == 0) {
 		puts(buf);
-		return fflush_all();
+		вернуть fflush_all();
 	}
 
 	bb_simple_perror_msg_and_die("getlogin");

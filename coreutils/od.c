@@ -30,18 +30,18 @@
 //usage:#endif
 
 #include "libbb.h"
-#if ENABLE_DESKTOP
+#если ENABLE_DESKTOP
 /* This one provides -t (busybox's own build script needs it) */
 #include "od_bloaty.c"
-#else
+#иначе
 
 #include "dump.h"
 
 static void
-odoffset(dumper_t *dumper, int argc, char ***argvp)
+odoffset(dumper_t *dumper, целое argc, char ***argvp)
 {
 	char *num, *p;
-	int base;
+	целое base;
 	char *end;
 
 	/*
@@ -58,69 +58,69 @@ odoffset(dumper_t *dumper, int argc, char ***argvp)
 	 */
 	p = **argvp;
 
-	if (!p) {
+	если (!p) {
 		/* hey someone is probably piping to us ... */
-		return;
+		вернуть;
 	}
 
-	if ((*p != '+')
+	если ((*p != '+')
 		&& (argc < 2
 			|| (!isdigit(p[0])
 				&& ((p[0] != 'x') || !isxdigit(p[1])))))
-		return;
+		вернуть;
 
 	base = 0;
 	/*
 	 * skip over leading '+', 'x[0-9a-fA-f]' or '0x', and
 	 * set base.
 	 */
-	if (p[0] == '+')
+	если (p[0] == '+')
 		++p;
-	if (p[0] == 'x' && isxdigit(p[1])) {
+	если (p[0] == 'x' && isxdigit(p[1])) {
 		++p;
 		base = 16;
-	} else if (p[0] == '0' && p[1] == 'x') {
+	} иначе если (p[0] == '0' && p[1] == 'x') {
 		p += 2;
 		base = 16;
 	}
 
 	/* skip over the number */
-	if (base == 16)
-		for (num = p; isxdigit(*p); ++p)
+	если (base == 16)
+		для (num = p; isxdigit(*p); ++p)
 			continue;
-	else
-		for (num = p; isdigit(*p); ++p)
+	иначе
+		для (num = p; isdigit(*p); ++p)
 			continue;
 
 	/* check for no number */
-	if (num == p)
-		return;
+	если (num == p)
+		вернуть;
 
 	/* if terminates with a '.', base is decimal */
-	if (*p == '.') {
-		if (base)
-			return;
+	если (*p == '.') {
+		если (base)
+			вернуть;
 		base = 10;
 	}
 
 	dumper->dump_skip = strtol(num, &end, base ? base : 8);
 
 	/* if end isn't the same as p, we got a non-octal digit */
-	if (end != p)
+	если (end != p)
 		dumper->dump_skip = 0;
-	else {
-		if (*p) {
-			if (*p == 'b') {
+	иначе {
+		если (*p) {
+			если (*p == 'b') {
 				dumper->dump_skip *= 512;
 				++p;
-			} else if (*p == 'B') {
+			} иначе если (*p == 'B') {
 				dumper->dump_skip *= 1024;
 				++p;
 			}
 		}
-		if (*p)
+		если (*p)
 			dumper->dump_skip = 0;
-		else {
+		иначе {
 			++*argvp;
 			/*
 			 * If the offset uses a non-octal base, the base of
@@ -130,11 +130,11 @@ odoffset(dumper_t *dumper, int argc, char ***argvp)
 #define TYPE_OFFSET 7
 			{
 				char x_or_d;
-				if (base == 16) {
+				если (base == 16) {
 					x_or_d = 'x';
 					goto DO_X_OR_D;
 				}
-				if (base == 10) {
+				если (base == 10) {
 					x_or_d = 'd';
  DO_X_OR_D:
 					dumper->fshead->nextfu->fmt[TYPE_OFFSET]
@@ -174,10 +174,10 @@ static const char *const add_strings[] ALIGN_PTR = {
 	"4/4 \" %011o\""   "\"\n\"",            /* 11: O */
 	"8/2 \" %6d\""     "\"\n\"",            /* 12: s */
 	/* -I,L,l: depend on word width of the arch (what is "long"?) */
-#if ULONG_MAX > 0xffffffff
+#если ULONG_MAX > 0xffffffff
 	"2/8 \" %20lld\""  "\"\n\"",            /* 13: I, L, l */
 #define L_ 13
-#else
+#иначе
 	/* 32-bit arch: -I,L,l are the same as -i */
 #define L_ 10
 #endif
@@ -192,31 +192,31 @@ static const char od_o2si[] ALIGN1 = {
 	11, 1, 8, 9, 12    /* OoXxs */
 };
 
-int od_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int od_main(int argc, char **argv)
+целое od_main(целое argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+целое od_main(целое argc, char **argv)
 {
-	int ch;
-	int first = 1;
+	целое ch;
+	целое first = 1;
 	char *p;
 	dumper_t *dumper = alloc_dumper();
 
-	while ((ch = getopt(argc, argv, od_opts)) > 0) {
-		if (ch == 'v') {
+	пока ((ch = getopt(argc, argv, od_opts)) > 0) {
+		если (ch == 'v') {
 			dumper->dump_vflag = ALL;
-		} else if (((p = strchr(od_opts, ch)) != NULL) && (*p != '\0')) {
-			if (first) {
+		} иначе если (((p = strchr(od_opts, ch)) != NULL) && (*p != '\0')) {
+			если (first) {
 				first = 0;
 				bb_dump_add(dumper, "\"%07.7_Ao\n\"");
 				bb_dump_add(dumper, "\"%07.7_ao\"");
-			} else {
+			} иначе {
 				bb_dump_add(dumper, "\"       \"");
 			}
-			bb_dump_add(dumper, add_strings[(int)od_o2si[(p - od_opts)]]);
-		} else {  /* P, p, w, or other unhandled */
+			bb_dump_add(dumper, add_strings[(целое)od_o2si[(p - od_opts)]]);
+		} иначе {  /* P, p, w, or other unhandled */
 			bb_show_usage();
 		}
 	}
-	if (!dumper->fshead) {
+	если (!dumper->fshead) {
 		bb_dump_add(dumper, "\"%07.7_Ao\n\"");
 		bb_dump_add(dumper, "\"%07.7_ao\"");
 		bb_dump_add(dumper, add_strings[1]); /* -o format is default */
@@ -228,7 +228,7 @@ int od_main(int argc, char **argv)
 
 	odoffset(dumper, argc, &argv);
 
-	return bb_dump_dump(dumper, argv);
+	вернуть bb_dump_dump(dumper, argv);
 }
 #endif /* !ENABLE_DESKTOP */
 
