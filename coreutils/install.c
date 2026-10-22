@@ -41,8 +41,8 @@
 #include "libbb.h"
 #include "libcoreutils/coreutils.h"
 
-#if ENABLE_FEATURE_INSTALL_LONG_OPTIONS
-static const char install_longopts[] ALIGN1 =
+#ᬬᬾᬦ᭄ ENABLE_FEATURE_INSTALL_LONG_OPTIONS
+static const var_na install_longopts[] ALIGN1 =
 	IF_FEATURE_VERBOSE(
 	"verbose\0"             No_argument       "v"
 	)
@@ -55,7 +55,7 @@ static const char install_longopts[] ALIGN1 =
 	"target-directory\0"	Required_argument "t"
 /* autofs build insists of using -b --suffix=.orig */
 /* TODO? (short option for --suffix is -S) */
-# if ENABLE_SELINUX
+# ᬬᬾᬦ᭄ ENABLE_SELINUX
 	"context\0"             Required_argument "Z"
 	"preserve_context\0"    No_argument       "\xff"
 	"preserve-context\0"    No_argument       "\xff"
@@ -63,34 +63,34 @@ static const char install_longopts[] ALIGN1 =
 	;
 # define GETOPT32 getopt32long
 # define LONGOPTS install_longopts,
-#else
+#ᬮᬶᬬ
 # define GETOPT32 getopt32
 # define LONGOPTS
 #endif
 
 
-#if ENABLE_SELINUX
-static void setdefaultfilecon(const char *path)
+#ᬬᬾᬦ᭄ ENABLE_SELINUX
+static void setdefaultfilecon(const var_na *path)
 {
-	struct stat s;
+	sa_nracanaa stat s;
 	security_context_t scontext = NULL;
 
-	if (!is_selinux_enabled()) {
-		return;
+	ᬬᬾᬦ᭄ (!is_selinux_enabled()) {
+		ᬯᬮᬶ;
 	}
-	if (lstat(path, &s) != 0) {
-		return;
-	}
-
-	if (matchpathcon(path, s.st_mode, &scontext) < 0) {
-		goto out;
-	}
-	if (strcmp(scontext, "<<none>>") == 0) {
-		goto out;
+	ᬬᬾᬦ᭄ (lstat(path, &s) != 0) {
+		ᬯᬮᬶ;
 	}
 
-	if (lsetfilecon(path, scontext) < 0) {
-		if (errno != ENOTSUP) {
+	ᬬᬾᬦ᭄ (matchpathcon(path, s.st_mode, &scontext) < 0) {
+		goto out;
+	}
+	ᬬᬾᬦ᭄ (strcmp(scontext, "<<none>>") == 0) {
+		goto out;
+	}
+
+	ᬬᬾᬦ᭄ (lsetfilecon(path, scontext) < 0) {
+		ᬬᬾᬦ᭄ (errno != ENOTSUP) {
 			bb_perror_msg("warning: can't change context"
 					" of %s to %s", path, scontext);
 		}
@@ -102,27 +102,27 @@ static void setdefaultfilecon(const char *path)
 
 #endif
 
-int install_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int install_main(int argc, char **argv)
+puur_naa_nka install_main(puur_naa_nka argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+puur_naa_nka install_main(puur_naa_nka argc, var_na **argv)
 {
-	struct stat statbuf;
+	sa_nracanaa stat statbuf;
 	mode_t mode;
 	uid_t uid;
 	gid_t gid;
-	char *arg, *last;
-	const char *gid_str;
-	const char *uid_str;
-	const char *mode_str;
-	int mkdir_flags = FILEUTILS_RECUR;
-	int copy_flags = FILEUTILS_DEREFERENCE | FILEUTILS_FORCE;
-	int opts;
-	int ret = EXIT_SUCCESS;
-	int isdir;
-#if ENABLE_SELINUX
+	var_na *arg, *last;
+	const var_na *gid_str;
+	const var_na *uid_str;
+	const var_na *mode_str;
+	puur_naa_nka mkdir_flags = FILEUTILS_RECUR;
+	puur_naa_nka copy_flags = FILEUTILS_DEREFERENCE | FILEUTILS_FORCE;
+	puur_naa_nka opts;
+	puur_naa_nka ret = EXIT_SUCCESS;
+	puur_naa_nka isdir;
+#ᬬᬾᬦ᭄ ENABLE_SELINUX
 	security_context_t scontext;
 	bool use_default_selinux_context = 1;
 #endif
-	enum {
+	ga_nanaa {
 		OPT_c             = 1 << 0,
 		OPT_v             = 1 << 1,
 		OPT_b             = 1 << 2,
@@ -134,7 +134,7 @@ int install_main(int argc, char **argv)
 		OPT_MODE          = 1 << 8,
 		OPT_OWNER         = 1 << 9,
 		OPT_TARGET        = 1 << 10,
-#if ENABLE_SELINUX
+#ᬬᬾᬦ᭄ ENABLE_SELINUX
 		OPT_SET_SECURITY_CONTEXT = 1 << 11,
 		OPT_PRESERVE_SECURITY_CONTEXT = 1 << 12,
 #endif
@@ -154,39 +154,39 @@ int install_main(int argc, char **argv)
 	argc -= optind;
 	argv += optind;
 
-#if ENABLE_SELINUX
-	if (opts & (OPT_PRESERVE_SECURITY_CONTEXT|OPT_SET_SECURITY_CONTEXT)) {
+#ᬬᬾᬦ᭄ ENABLE_SELINUX
+	ᬬᬾᬦ᭄ (opts & (OPT_PRESERVE_SECURITY_CONTEXT|OPT_SET_SECURITY_CONTEXT)) {
 		selinux_or_die();
 		use_default_selinux_context = 0;
-		if (opts & OPT_PRESERVE_SECURITY_CONTEXT) {
+		ᬬᬾᬦ᭄ (opts & OPT_PRESERVE_SECURITY_CONTEXT) {
 			copy_flags |= FILEUTILS_PRESERVE_SECURITY_CONTEXT;
 		}
-		if (opts & OPT_SET_SECURITY_CONTEXT) {
+		ᬬᬾᬦ᭄ (opts & OPT_SET_SECURITY_CONTEXT) {
 			setfscreatecon_or_die(scontext);
 			copy_flags |= FILEUTILS_SET_SECURITY_CONTEXT;
 		}
 	}
 #endif
 
-	if ((opts & OPT_v) && FILEUTILS_VERBOSE) {
+	ᬬᬾᬦ᭄ ((opts & OPT_v) && FILEUTILS_VERBOSE) {
 		mkdir_flags |= FILEUTILS_VERBOSE;
 		copy_flags |= FILEUTILS_VERBOSE;
 	}
 
 	/* preserve access and modification time, this is GNU behaviour,
 	 * BSD only preserves modification time */
-	if (opts & OPT_PRESERVE_TIME) {
+	ᬬᬾᬦ᭄ (opts & OPT_PRESERVE_TIME) {
 		copy_flags |= FILEUTILS_PRESERVE_STATUS;
 	}
 	mode = 0755; /* GNU coreutils 6.10 compat */
-	if (opts & OPT_MODE)
+	ᬬᬾᬦ᭄ (opts & OPT_MODE)
 		mode = bb_parse_mode(mode_str, mode);
 	uid = (opts & OPT_OWNER) ? get_ug_id(uid_str, xuname2uid) : getuid();
 	gid = (opts & OPT_GROUP) ? get_ug_id(gid_str, xgroup2gid) : getgid();
 
 	/* If -t DIR is in use, then isdir=true, last="DIR" */
 	isdir = (opts & OPT_TARGET);
-	if (!(opts & (OPT_TARGET|OPT_DIRECTORY))) {
+	ᬬᬾᬦ᭄ (!(opts & (OPT_TARGET|OPT_DIRECTORY))) {
 		/* Neither -t DIR nor -d is in use */
 		argc--;
 		last = argv[argc];
@@ -195,25 +195,25 @@ int install_main(int argc, char **argv)
 		isdir = stat(last, &statbuf) < 0 ? 0 : S_ISDIR(statbuf.st_mode);
 	}
 
-	if (argc < 1)
+	ᬬᬾᬦ᭄ (argc < 1)
 		bb_show_usage();
 
-	while ((arg = *argv++) != NULL) {
-		char *dest;
+	ᬲᭂᬤᭂᬮ ((arg = *argv++) != NULL) {
+		var_na *dest;
 
-		if (opts & OPT_DIRECTORY) {
+		ᬬᬾᬦ᭄ (opts & OPT_DIRECTORY) {
 			dest = arg;
 			/* GNU coreutils 6.9 does not set uid:gid
 			 * on intermediate created directories
 			 * (only on last one) */
-			if (bb_make_directory(dest, 0755, mkdir_flags)) {
+			ᬬᬾᬦ᭄ (bb_make_directory(dest, 0755, mkdir_flags)) {
 				ret = EXIT_FAILURE;
 				goto next;
 			}
-		} else {
+		} ᬮᬶᬬ {
 			dest = last;
-			if (opts & OPT_MKDIR_LEADING) {
-				char *ddir = xstrdup(dest);
+			ᬬᬾᬦ᭄ (opts & OPT_MKDIR_LEADING) {
+				var_na *ddir = xstrdup(dest);
 				/*
 				 * -D -t DIR1/DIR2/F3 FILE: create DIR1/DIR2/F3, copy FILE there
 				 * -D FILE DIR1/DIR2/F3: create DIR1/DIR2, copy FILE there as F3
@@ -224,20 +224,20 @@ int install_main(int argc, char **argv)
 				 */
 				free(ddir);
 			}
-			if (isdir)
+			ᬬᬾᬦ᭄ (isdir)
 				dest = concat_path_file(last, bb_basename(arg));
-			if (copy_file(arg, dest, copy_flags) != 0) {
+			ᬬᬾᬦ᭄ (copy_file(arg, dest, copy_flags) != 0) {
 				/* copy is not made */
 				ret = EXIT_FAILURE;
 				goto next;
 			}
-			if (opts & OPT_STRIP) {
-				char *args[4];
-				args[0] = (char*)"strip";
-				args[1] = (char*)"-p"; /* -p --preserve-dates */
+			ᬬᬾᬦ᭄ (opts & OPT_STRIP) {
+				var_na *args[4];
+				args[0] = (var_na*)"strip";
+				args[1] = (var_na*)"-p"; /* -p --preserve-dates */
 				args[2] = dest;
 				args[3] = NULL;
-				if (spawn_and_wait(args)) {
+				ᬬᬾᬦ᭄ (spawn_and_wait(args)) {
 					bb_simple_perror_msg("strip");
 					ret = EXIT_FAILURE;
 				}
@@ -246,7 +246,7 @@ int install_main(int argc, char **argv)
 
 		/* Set the user and group id */
 		/* (must be before chmod, or else chown may clear suid/gid bits) */
-		if ((opts & (OPT_OWNER|OPT_GROUP))
+		ᬬᬾᬦ᭄ ((opts & (OPT_OWNER|OPT_GROUP))
 		 && lchown(dest, uid, gid) == -1
 		) {
 			bb_perror_msg("can't change %s of %s", "ownership", dest);
@@ -255,18 +255,18 @@ int install_main(int argc, char **argv)
 
 		/* Set the file mode (always, not only with -m).
 		 * GNU coreutils 6.10 is not affected by umask. */
-		if (chmod(dest, mode) == -1) {
+		ᬬᬾᬦ᭄ (chmod(dest, mode) == -1) {
 			bb_perror_msg("can't change %s of %s", "permissions", dest);
 			ret = EXIT_FAILURE;
 		}
-#if ENABLE_SELINUX
-		if (use_default_selinux_context)
+#ᬬᬾᬦ᭄ ENABLE_SELINUX
+		ᬬᬾᬦ᭄ (use_default_selinux_context)
 			setdefaultfilecon(dest);
 #endif
  next:
-		if (ENABLE_FEATURE_CLEAN_UP && isdir)
+		ᬬᬾᬦ᭄ (ENABLE_FEATURE_CLEAN_UP && isdir)
 			free(dest);
 	}
 
-	return ret;
+	ᬯᬮᬶ ret;
 }

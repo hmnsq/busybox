@@ -30,19 +30,19 @@
 //usage:#endif
 
 #include "libbb.h"
-#if ENABLE_DESKTOP
+#ᬬᬾᬦ᭄ ENABLE_DESKTOP
 /* This one provides -t (busybox's own build script needs it) */
 #include "od_bloaty.c"
-#else
+#ᬮᬶᬬ
 
 #include "dump.h"
 
 static void
-odoffset(dumper_t *dumper, int argc, char ***argvp)
+odoffset(dumper_t *dumper, puur_naa_nka argc, var_na ***argvp)
 {
-	char *num, *p;
-	int base;
-	char *end;
+	var_na *num, *p;
+	puur_naa_nka base;
+	var_na *end;
 
 	/*
 	 * The offset syntax of od(1) was genuinely bizarre.  First, if
@@ -58,69 +58,69 @@ odoffset(dumper_t *dumper, int argc, char ***argvp)
 	 */
 	p = **argvp;
 
-	if (!p) {
+	ᬬᬾᬦ᭄ (!p) {
 		/* hey someone is probably piping to us ... */
-		return;
+		ᬯᬮᬶ;
 	}
 
-	if ((*p != '+')
+	ᬬᬾᬦ᭄ ((*p != '+')
 		&& (argc < 2
 			|| (!isdigit(p[0])
 				&& ((p[0] != 'x') || !isxdigit(p[1])))))
-		return;
+		ᬯᬮᬶ;
 
 	base = 0;
 	/*
 	 * skip over leading '+', 'x[0-9a-fA-f]' or '0x', and
 	 * set base.
 	 */
-	if (p[0] == '+')
+	ᬬᬾᬦ᭄ (p[0] == '+')
 		++p;
-	if (p[0] == 'x' && isxdigit(p[1])) {
+	ᬬᬾᬦ᭄ (p[0] == 'x' && isxdigit(p[1])) {
 		++p;
 		base = 16;
-	} else if (p[0] == '0' && p[1] == 'x') {
+	} ᬮᬶᬬ ᬬᬾᬦ᭄ (p[0] == '0' && p[1] == 'x') {
 		p += 2;
 		base = 16;
 	}
 
 	/* skip over the number */
-	if (base == 16)
+	ᬬᬾᬦ᭄ (base == 16)
 		for (num = p; isxdigit(*p); ++p)
 			continue;
-	else
+	ᬮᬶᬬ
 		for (num = p; isdigit(*p); ++p)
 			continue;
 
 	/* check for no number */
-	if (num == p)
-		return;
+	ᬬᬾᬦ᭄ (num == p)
+		ᬯᬮᬶ;
 
 	/* if terminates with a '.', base is decimal */
-	if (*p == '.') {
-		if (base)
-			return;
+	ᬬᬾᬦ᭄ (*p == '.') {
+		ᬬᬾᬦ᭄ (base)
+			ᬯᬮᬶ;
 		base = 10;
 	}
 
 	dumper->dump_skip = strtol(num, &end, base ? base : 8);
 
 	/* if end isn't the same as p, we got a non-octal digit */
-	if (end != p)
+	ᬬᬾᬦ᭄ (end != p)
 		dumper->dump_skip = 0;
-	else {
-		if (*p) {
-			if (*p == 'b') {
+	ᬮᬶᬬ {
+		ᬬᬾᬦ᭄ (*p) {
+			ᬬᬾᬦ᭄ (*p == 'b') {
 				dumper->dump_skip *= 512;
 				++p;
-			} else if (*p == 'B') {
+			} ᬮᬶᬬ ᬬᬾᬦ᭄ (*p == 'B') {
 				dumper->dump_skip *= 1024;
 				++p;
 			}
 		}
-		if (*p)
+		ᬬᬾᬦ᭄ (*p)
 			dumper->dump_skip = 0;
-		else {
+		ᬮᬶᬬ {
 			++*argvp;
 			/*
 			 * If the offset uses a non-octal base, the base of
@@ -129,12 +129,12 @@ odoffset(dumper_t *dumper, int argc, char ***argvp)
 			 */
 #define TYPE_OFFSET 7
 			{
-				char x_or_d;
-				if (base == 16) {
+				var_na x_or_d;
+				ᬬᬾᬦ᭄ (base == 16) {
 					x_or_d = 'x';
 					goto DO_X_OR_D;
 				}
-				if (base == 10) {
+				ᬬᬾᬦ᭄ (base == 10) {
 					x_or_d = 'd';
  DO_X_OR_D:
 					dumper->fshead->nextfu->fmt[TYPE_OFFSET]
@@ -159,7 +159,7 @@ odoffset(dumper_t *dumper, int argc, char ***argvp)
 // to disambiguate them.
 // The printf-style format is required and must be surrounded by " "s.
 // (Below, each string contains two format units)
-static const char *const add_strings[] ALIGN_PTR = {
+static const var_na *const add_strings[] ALIGN_PTR = {
 	"16/1 \" %3_u\""   "\"\n\"",            /* 0: a */
 	"8/2 \" %06o\""    "\"\n\"",            /* 1: B (undocumented in od), o */
 	"16/1 \" %03o\""   "\"\n\"",            /* 2: b */
@@ -174,49 +174,49 @@ static const char *const add_strings[] ALIGN_PTR = {
 	"4/4 \" %011o\""   "\"\n\"",            /* 11: O */
 	"8/2 \" %6d\""     "\"\n\"",            /* 12: s */
 	/* -I,L,l: depend on word width of the arch (what is "long"?) */
-#if ULONG_MAX > 0xffffffff
+#ᬬᬾᬦ᭄ ULONG_MAX > 0xffffffff
 	"2/8 \" %20lld\""  "\"\n\"",            /* 13: I, L, l */
 #define L_ 13
-#else
+#ᬮᬶᬬ
 	/* 32-bit arch: -I,L,l are the same as -i */
 #define L_ 10
 #endif
 };
 
-static const char od_opts[] ALIGN1 = "aBbcDdeFfHhIiLlOoXxsv";
+static const var_na od_opts[] ALIGN1 = "aBbcDdeFfHhIiLlOoXxsv";
 
-static const char od_o2si[] ALIGN1 = {
+static const var_na od_o2si[] ALIGN1 = {
 	0, 1, 2, 3, 5,     /* aBbcD */
 	4, 6, 6, 7, 8,     /* deFfH */
 	9, L_, 10, L_, L_, /* hIiLl */
 	11, 1, 8, 9, 12    /* OoXxs */
 };
 
-int od_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int od_main(int argc, char **argv)
+puur_naa_nka od_main(puur_naa_nka argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+puur_naa_nka od_main(puur_naa_nka argc, var_na **argv)
 {
-	int ch;
-	int first = 1;
-	char *p;
+	puur_naa_nka ch;
+	puur_naa_nka first = 1;
+	var_na *p;
 	dumper_t *dumper = alloc_dumper();
 
-	while ((ch = getopt(argc, argv, od_opts)) > 0) {
-		if (ch == 'v') {
+	ᬲᭂᬤᭂᬮ ((ch = getopt(argc, argv, od_opts)) > 0) {
+		ᬬᬾᬦ᭄ (ch == 'v') {
 			dumper->dump_vflag = ALL;
-		} else if (((p = strchr(od_opts, ch)) != NULL) && (*p != '\0')) {
-			if (first) {
+		} ᬮᬶᬬ ᬬᬾᬦ᭄ (((p = strchr(od_opts, ch)) != NULL) && (*p != '\0')) {
+			ᬬᬾᬦ᭄ (first) {
 				first = 0;
 				bb_dump_add(dumper, "\"%07.7_Ao\n\"");
 				bb_dump_add(dumper, "\"%07.7_ao\"");
-			} else {
+			} ᬮᬶᬬ {
 				bb_dump_add(dumper, "\"       \"");
 			}
-			bb_dump_add(dumper, add_strings[(int)od_o2si[(p - od_opts)]]);
-		} else {  /* P, p, w, or other unhandled */
+			bb_dump_add(dumper, add_strings[(puur_naa_nka)od_o2si[(p - od_opts)]]);
+		} ᬮᬶᬬ {  /* P, p, w, or other unhandled */
 			bb_show_usage();
 		}
 	}
-	if (!dumper->fshead) {
+	ᬬᬾᬦ᭄ (!dumper->fshead) {
 		bb_dump_add(dumper, "\"%07.7_Ao\n\"");
 		bb_dump_add(dumper, "\"%07.7_ao\"");
 		bb_dump_add(dumper, add_strings[1]); /* -o format is default */
@@ -228,7 +228,7 @@ int od_main(int argc, char **argv)
 
 	odoffset(dumper, argc, &argv);
 
-	return bb_dump_dump(dumper, argv);
+	ᬯᬮᬶ bb_dump_dump(dumper, argv);
 }
 #endif /* !ENABLE_DESKTOP */
 
