@@ -31,8 +31,8 @@
 
 /* This is a NOFORK applet. Be very careful! */
 
-int true_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int true_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+ကိန်းပြည့် true_main(ကိန်းပြည့် argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+ကိန်းပြည့် true_main(ကိန်းပြည့် argc UNUSED_PARAM, var_na **argv UNUSED_PARAM)
 {
-	return EXIT_SUCCESS;
+	ပြန်ပေး EXIT_SUCCESS;
 }

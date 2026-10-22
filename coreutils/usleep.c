@@ -31,10 +31,10 @@
 
 /* This is a NOFORK applet. Be very careful! */
 
-int usleep_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int usleep_main(int argc UNUSED_PARAM, char **argv)
+ကိန်းပြည့် usleep_main(ကိန်းပြည့် argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+ကိန်းပြည့် usleep_main(ကိန်းပြည့် argc UNUSED_PARAM, var_na **argv)
 {
-	if (!argv[1]) {
+	အကယ်၍ (!argv[1]) {
 		bb_show_usage();
 	}
 
@@ -47,5 +47,5 @@ int usleep_main(int argc UNUSED_PARAM, char **argv)
 	 */
 	usleep(xatou(argv[1]));
 
-	return EXIT_SUCCESS;
+	ပြန်ပေး EXIT_SUCCESS;
 }

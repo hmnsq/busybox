@@ -80,12 +80,12 @@
 #define BIT_TRAVERSE_TOP (0x20|0x40)
 #define OPT_TRAVERSE_TOP (IF_DESKTOP(opt & BIT_TRAVERSE_TOP) IF_NOT_DESKTOP(0))
 
-#if ENABLE_FEATURE_CHOWN_LONG_OPTIONS
-static const char chown_longopts[] ALIGN1 =
+#အကယ်၍ ENABLE_FEATURE_CHOWN_LONG_OPTIONS
+static const var_na chown_longopts[] ALIGN1 =
 	"recursive\0"        No_argument   "R"
 	"dereference\0"      No_argument   "\xff"
 	"no-dereference\0"   No_argument   "h"
-# if ENABLE_DESKTOP
+# အကယ်၍ ENABLE_DESKTOP
 	"changes\0"          No_argument   "c"
 	"silent\0"           No_argument   "f"
 	"quiet\0"            No_argument   "f"
@@ -94,53 +94,53 @@ static const char chown_longopts[] ALIGN1 =
 	;
 #endif
 
-typedef int (*chown_fptr)(const char *, uid_t, gid_t);
+typedef ကိန်းပြည့် (*chown_fptr)(const var_na *, uid_t, gid_t);
 
-struct param_t {
-	struct bb_uidgid_t ugid;
+sa_nracanaa param_t {
+	sa_nracanaa bb_uidgid_t ugid;
 	chown_fptr chown_func;
 };
 
-static int FAST_FUNC fileAction(struct recursive_state *state UNUSED_PARAM,
-		const char *fileName, struct stat *statbuf)
+static ကိန်းပြည့် FAST_FUNC fileAction(sa_nracanaa recursive_state *state UNUSED_PARAM,
+		const var_na *fileName, sa_nracanaa stat *statbuf)
 {
-#define param  (*(struct param_t*)state->userData)
+#define param  (*(sa_nracanaa param_t*)state->userData)
 #define opt option_mask32
 	uid_t u = (param.ugid.uid == (uid_t)-1L) ? statbuf->st_uid : param.ugid.uid;
 	gid_t g = (param.ugid.gid == (gid_t)-1L) ? statbuf->st_gid : param.ugid.gid;
 
-	if (param.chown_func(fileName, u, g) == 0) {
-		if (OPT_VERBOSE
+	အကယ်၍ (param.chown_func(fileName, u, g) == 0) {
+		အကယ်၍ (OPT_VERBOSE
 		 || (OPT_CHANGED && (statbuf->st_uid != u || statbuf->st_gid != g))
 		) {
 			printf("changed ownership of '%s' to %u:%u\n",
 					fileName, (unsigned)u, (unsigned)g);
 		}
-		return TRUE;
+		ပြန်ပေး TRUE;
 	}
-	if (!OPT_QUIET)
+	အကယ်၍ (!OPT_QUIET)
 		bb_simple_perror_msg(fileName);
-	return FALSE;
+	ပြန်ပေး FALSE;
 #undef opt
 #undef param
 }
 
-int chown_main(int argc UNUSED_PARAM, char **argv)
+ကိန်းပြည့် chown_main(ကိန်းပြည့် argc UNUSED_PARAM, var_na **argv)
 {
-	int retval = EXIT_SUCCESS;
-	int opt, flags;
-	struct param_t param;
+	ကိန်းပြည့် retval = EXIT_SUCCESS;
+	ကိန်းပြည့် opt, flags;
+	sa_nracanaa param_t param;
 
-#if ENABLE_FEATURE_CHOWN_LONG_OPTIONS
+#အကယ်၍ ENABLE_FEATURE_CHOWN_LONG_OPTIONS
 	opt = getopt32long(argv, "^" OPT_STR "\0" "-2", chown_longopts);
-#else
+#မဟုတ်ပါက
 	opt = getopt32(argv, "^" OPT_STR "\0" "-2");
 #endif
 	argv += optind;
 
 	/* This matches coreutils behavior (almost - see below) */
 	param.chown_func = chown;
-	if (OPT_NODEREF
+	အကယ်၍ (OPT_NODEREF
 	/* || (OPT_RECURSE && !OPT_TRAVERSE_TOP): */
 	IF_DESKTOP( || (opt & (BIT_RECURSE|BIT_TRAVERSE_TOP)) == BIT_RECURSE)
 	) {
@@ -148,18 +148,18 @@ int chown_main(int argc UNUSED_PARAM, char **argv)
 	}
 
 	flags = ACTION_DEPTHFIRST; /* match coreutils order */
-	if (OPT_RECURSE)
+	အကယ်၍ (OPT_RECURSE)
 		flags |= ACTION_RECURSE;
-	if (OPT_TRAVERSE_TOP)
+	အကယ်၍ (OPT_TRAVERSE_TOP)
 		flags |= ACTION_FOLLOWLINKS_L0; /* -H/-L: follow links on depth 0 */
-	if (OPT_TRAVERSE)
+	အကယ်၍ (OPT_TRAVERSE)
 		flags |= ACTION_FOLLOWLINKS; /* follow links if -L */
 
 	parse_chown_usergroup_or_die(&param.ugid, argv[0]);
 
 	/* Ok, ready to do the deed now */
-	while (*++argv) {
-		if (!recursive_action(*argv,
+	နေစဉ် (*++argv) {
+		အကယ်၍ (!recursive_action(*argv,
 				flags,          /* flags */
 				fileAction,     /* file action */
 				fileAction,     /* dir action */
@@ -169,7 +169,7 @@ int chown_main(int argc UNUSED_PARAM, char **argv)
 		}
 	}
 
-	return retval;
+	ပြန်ပေး retval;
 }
 
 /*

@@ -28,15 +28,15 @@
 
 /* This is a NOFORK applet. Be very careful! */
 
-int hostid_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int hostid_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+ကိန်းပြည့် hostid_main(ကိန်းပြည့် argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+ကိန်းပြည့် hostid_main(ကိန်းပြည့် argc UNUSED_PARAM, var_na **argv UNUSED_PARAM)
 {
-	if (argv[1]) {
+	အကယ်၍ (argv[1]) {
 		bb_show_usage();
 	}
 
 	/* POSIX says gethostid returns a "32-bit identifier" */
 	printf("%08x\n", (unsigned)(uint32_t)gethostid());
 
-	return fflush_all();
+	ပြန်ပေး fflush_all();
 }

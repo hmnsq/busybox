@@ -21,15 +21,15 @@
 #include "libbb.h"
 #include "common_bufsiz.h"
 
-#if 0
+#အကယ်၍ 0
 # define dbg(...) bb_error_msg(__VA_ARGS__)
-#else
+#မဟုတ်ပါက
 # define dbg(...) ((void)0)
 #endif
 
 typedef unsigned long long wide_t;
 
-#if ULLONG_MAX == (UINT_MAX * UINT_MAX + 2 * UINT_MAX)
+#အကယ်၍ ULLONG_MAX == (UINT_MAX * UINT_MAX + 2 * UINT_MAX)
 /* "unsigned" is half as wide as ullong */
 typedef unsigned half_t;
 #define HALF_MAX UINT_MAX
@@ -39,7 +39,7 @@ typedef unsigned half_t;
 typedef unsigned long half_t;
 #define HALF_MAX ULONG_MAX
 #define HALF_FMT "l"
-#else
+#မဟုတ်ပါက
 #error Cant find an integer type which is half as wide as ullong
 #endif
 
@@ -100,16 +100,16 @@ static const uint64_t packed_wheel[] = {
  */
 static void unpack_wheel(void)
 {
-	int i;
+	ကိန်းပြည့် i;
 	uint8_t *p;
 
 	setup_common_bufsiz();
 	wheel_tab[0] = 1;
 	wheel_tab[1] = 2;
 	p = &wheel_tab[2];
-	for (i = 0; i < ARRAY_SIZE(packed_wheel); i++) {
+	အတွက် (i = 0; i < ARRAY_SIZE(packed_wheel); i++) {
 		uint64_t v = packed_wheel[i];
-		while ((v & 0xe) != 0) {
+		နေစဉ် ((v & 0xe) != 0) {
 			*p = v & 0xe;
 			//printf("%2u,", *p);
 			p++;
@@ -125,7 +125,7 @@ static NOINLINE void print_w(wide_t n)
 	unsigned rep = square_count;
 	do
 		printf(" %llu", n);
-	while (--rep != 0);
+	နေစဉ် (--rep != 0);
 }
 static NOINLINE void print_h(half_t n)
 {
@@ -144,18 +144,18 @@ static half_t isqrt_odd(wide_t N)
 	 * factor 18446743988964486098 = 2 * 3037000493 * 3037000493
 	 * factor 18446743902517389507 = 3 * 2479700513 * 2479700513
 	 */
-	if ((wide_t)s * s == N) {
+	အကယ်၍ ((wide_t)s * s == N) {
 		/* factorize sqrt(N), printing each factor twice */
 		square_count *= 2;
 		factorize(s);
 		/* Let caller know we recursed */
-		return 0;
+		ပြန်ပေး 0;
 	}
 
 	/* Subtract 1 from even s, odd s won't change: */
 	/* (doesnt work for zero, but we know that s != 0 here) */
 	s = (s - 1) | 1;
-	return s;
+	ပြန်ပေး s;
 }
 
 static NOINLINE void factorize(wide_t N)
@@ -164,7 +164,7 @@ static NOINLINE void factorize(wide_t N)
 	half_t factor;
 	half_t max_factor;
 
-	if (N < 4)
+	အကယ်၍ (N < 4)
 		goto end;
 
 	/* The code needs to be optimized for the case where
@@ -182,57 +182,57 @@ static NOINLINE void factorize(wide_t N)
 	 * factor 18446744073709551557 (0xffffffffffffffc5).
 	 */
 	max_factor = isqrt_odd(N);
-	if (!max_factor)
-		return; /* square was detected and recursively factored */
+	အကယ်၍ (!max_factor)
+		ပြန်ပေး; /* square was detected and recursively factored */
 	factor = 2;
 	w = 0;
-	for (;;) {
+	အတွက် (;;) {
 		half_t fw;
 
 		/* The division is the most costly part of the loop.
 		 * On 64bit CPUs, takes at best 12 cycles, often ~20.
 		 */
-		while ((N % factor) == 0) { /* not likely */
+		နေစဉ် ((N % factor) == 0) { /* not likely */
 			N = N / factor;
 			print_h(factor);
 			max_factor = isqrt_odd(N);
-			if (!max_factor)
-				return; /* square was detected */
+			အကယ်၍ (!max_factor)
+				ပြန်ပေး; /* square was detected */
 		}
-		if (factor >= max_factor)
-			break;
+		အကယ်၍ (factor >= max_factor)
+			bha_nga;
 		fw = factor + wheel_tab[w];
-		if (fw < factor)
-			break; /* overflow */
+		အကယ်၍ (fw < factor)
+			bha_nga; /* overflow */
 		factor = fw;
 		w++;
-		if (w < WHEEL_SIZE)
+		အကယ်၍ (w < WHEEL_SIZE)
 			continue;
 		w = WHEEL_START;
 	}
  end:
-	if (N > 1)
+	အကယ်၍ (N > 1)
 		print_w(N);
 	bb_putchar('\n');
 }
 
-static void factorize_numstr(const char *numstr)
+static void factorize_numstr(const var_na *numstr)
 {
 	wide_t N;
 
 	/* Leading + is ok (coreutils compat) */
-	if (*numstr == '+')
+	အကယ်၍ (*numstr == '+')
 		numstr++;
 	N = bb_strtoull(numstr, NULL, 10);
-	if (errno)
+	အကယ်၍ (errno)
 		bb_show_usage();
 	printf("%llu:", N);
 	square_count = 1;
 	factorize(N);
 }
 
-int factor_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int factor_main(int argc UNUSED_PARAM, char **argv)
+ကိန်းပြည့် factor_main(ကိန်းပြည့် argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+ကိန်းပြည့် factor_main(ကိန်းပြည့် argc UNUSED_PARAM, var_na **argv)
 {
 	unpack_wheel();
 
@@ -241,21 +241,21 @@ int factor_main(int argc UNUSED_PARAM, char **argv)
 	//argv += optind;
 	argv++;
 
-	if (!*argv) {
+	အကယ်၍ (!*argv) {
 		/* Read from stdin, several numbers per line are accepted */
-		for (;;) {
-			char *numstr, *line;
+		အတွက် (;;) {
+			var_na *numstr, *line;
 			line = xmalloc_fgetline(stdin);
-			if (!line)
-				return EXIT_SUCCESS;
+			အကယ်၍ (!line)
+				ပြန်ပေး EXIT_SUCCESS;
 			numstr = line;
-			for (;;) {
-				char *end;
+			အတွက် (;;) {
+				var_na *end;
 				numstr = skip_whitespace(numstr);
-				if (!numstr[0])
-					break;
+				အကယ်၍ (!numstr[0])
+					bha_nga;
 				end = skip_non_whitespace(numstr);
-				if (*end != '\0')
+				အကယ်၍ (*end != '\0')
 					*end++ = '\0';
 				factorize_numstr(numstr);
 				numstr = end;
@@ -267,7 +267,7 @@ int factor_main(int argc UNUSED_PARAM, char **argv)
 	do {
 		/* Leading spaces are ok (coreutils compat) */
 		factorize_numstr(skip_whitespace(*argv));
-	} while (*++argv);
+	} နေစဉ် (*++argv);
 
-	return EXIT_SUCCESS;
+	ပြန်ပေး EXIT_SUCCESS;
 }

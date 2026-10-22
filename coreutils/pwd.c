@@ -27,67 +27,67 @@
 
 #include "libbb.h"
 
-static int logical_getcwd(void)
+static ကိန်းပြည့် logical_getcwd(void)
 {
-	struct stat st1;
-	struct stat st2;
-	char *wd;
-	char *p;
+	sa_nracanaa stat st1;
+	sa_nracanaa stat st2;
+	var_na *wd;
+	var_na *p;
 
 	wd = getenv("PWD");
-	if (!wd || wd[0] != '/')
-		return 0;
+	အကယ်၍ (!wd || wd[0] != '/')
+		ပြန်ပေး 0;
 
 	p = wd;
-	while (*p) {
+	နေစဉ် (*p) {
 		/* doing strstr(p, "/.") by hand is smaller and faster... */
-		if (*p++ != '/')
+		အကယ်၍ (*p++ != '/')
 			continue;
-		if (*p != '.')
+		အကယ်၍ (*p != '.')
 			continue;
 		/* we found "/.", skip to next char */
 		p++;
-		if (*p == '.')
+		အကယ်၍ (*p == '.')
 			p++; /* we found "/.." */
-		if (*p == '\0' || *p == '/')
-			return 0; /* "/./" or "/../" component: bad */
+		အကယ်၍ (*p == '\0' || *p == '/')
+			ပြန်ပေး 0; /* "/./" or "/../" component: bad */
 	}
 
-	if (stat(wd, &st1) != 0)
-		return 0;
-	if (stat(".", &st2) != 0)
-		return 0;
-	if (st1.st_ino != st2.st_ino)
-		return 0;
-	if (st1.st_dev != st2.st_dev)
-		return 0;
+	အကယ်၍ (stat(wd, &st1) != 0)
+		ပြန်ပေး 0;
+	အကယ်၍ (stat(".", &st2) != 0)
+		ပြန်ပေး 0;
+	အကယ်၍ (st1.st_ino != st2.st_ino)
+		ပြန်ပေး 0;
+	အကယ်၍ (st1.st_dev != st2.st_dev)
+		ပြန်ပေး 0;
 
 	puts(wd);
-	return 1;
+	ပြန်ပေး 1;
 }
 
-int pwd_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int pwd_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+ကိန်းပြည့် pwd_main(ကိန်းပြည့် argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+ကိန်းပြည့် pwd_main(ကိန်းပြည့် argc UNUSED_PARAM, var_na **argv UNUSED_PARAM)
 {
-	char *buf;
+	var_na *buf;
 
-	if (ENABLE_DESKTOP) {
+	အကယ်၍ (ENABLE_DESKTOP) {
 		/* TODO: assume -L if $POSIXLY_CORRECT? (coreutils does that)
 		 * Rationale:
 		 * POSIX requires a default of -L, but most scripts expect -P
 		 */
 		unsigned opt = getopt32(argv, "LP");
-		if ((opt & 1) && logical_getcwd())
-			return fflush_all();
+		အကယ်၍ ((opt & 1) && logical_getcwd())
+			ပြန်ပေး fflush_all();
 	}
 
 	buf = xrealloc_getcwd_or_warn(NULL);
 
-	if (buf) {
+	အကယ်၍ (buf) {
 		puts(buf);
 		free(buf);
-		return fflush_all();
+		ပြန်ပေး fflush_all();
 	}
 
-	return EXIT_FAILURE;
+	ပြန်ပေး EXIT_FAILURE;
 }

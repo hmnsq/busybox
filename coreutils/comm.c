@@ -32,86 +32,86 @@
 #define COMM_OPT_3 (1 << 2)
 
 /* writeline outputs the input given, appropriately aligned according to class */
-static void writeline(char *line, int class)
+static void writeline(var_na *line, ကိန်းပြည့် class)
 {
-	int flags = option_mask32;
-	if (class == 0) {
-		if (flags & COMM_OPT_1)
-			return;
-	} else if (class == 1) {
-		if (flags & COMM_OPT_2)
-			return;
-		if (!(flags & COMM_OPT_1))
+	ကိန်းပြည့် flags = option_mask32;
+	အကယ်၍ (class == 0) {
+		အကယ်၍ (flags & COMM_OPT_1)
+			ပြန်ပေး;
+	} မဟုတ်ပါက အကယ်၍ (class == 1) {
+		အကယ်၍ (flags & COMM_OPT_2)
+			ပြန်ပေး;
+		အကယ်၍ (!(flags & COMM_OPT_1))
 			putchar('\t');
-	} else /*if (class == 2)*/ {
-		if (flags & COMM_OPT_3)
-			return;
-		if (!(flags & COMM_OPT_1))
+	} မဟုတ်ပါက /*if (class == 2)*/ {
+		အကယ်၍ (flags & COMM_OPT_3)
+			ပြန်ပေး;
+		အကယ်၍ (!(flags & COMM_OPT_1))
 			putchar('\t');
-		if (!(flags & COMM_OPT_2))
+		အကယ်၍ (!(flags & COMM_OPT_2))
 			putchar('\t');
 	}
 	puts(line);
 }
 
-int comm_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int comm_main(int argc UNUSED_PARAM, char **argv)
+ကိန်းပြည့် comm_main(ကိန်းပြည့် argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+ကိန်းပြည့် comm_main(ကိန်းပြည့် argc UNUSED_PARAM, var_na **argv)
 {
-	char *thisline[2];
+	var_na *thisline[2];
 	FILE *stream[2];
-	int i;
-	int order;
+	ကိန်းပြည့် i;
+	ကိန်းပြည့် order;
 
 	getopt32(argv, "^" "123" "\0" "=2");
 	argv += optind;
 
-	for (i = 0; i < 2; ++i) {
+	အတွက် (i = 0; i < 2; ++i) {
 		stream[i] = xfopen_stdin(argv[i]);
 	}
 
 	order = 0;
 	thisline[1] = thisline[0] = NULL;
-	while (1) {
-		if (order <= 0) {
+	နေစဉ် (1) {
+		အကယ်၍ (order <= 0) {
 			free(thisline[0]);
 			thisline[0] = xmalloc_fgetline(stream[0]);
 		}
-		if (order >= 0) {
+		အကယ်၍ (order >= 0) {
 			free(thisline[1]);
 			thisline[1] = xmalloc_fgetline(stream[1]);
 		}
 
 		i = !thisline[0] + (!thisline[1] << 1);
-		if (i)
-			break;
+		အကယ်၍ (i)
+			bha_nga;
 		order = strcmp(thisline[0], thisline[1]);
 
-		if (order >= 0)
+		အကယ်၍ (order >= 0)
 			writeline(thisline[1], order ? 1 : 2);
-		else
+		မဟုတ်ပါက
 			writeline(thisline[0], 0);
 	}
 
 	/* EOF at least on one of the streams */
 	i &= 1;
-	if (thisline[i]) {
+	အကယ်၍ (thisline[i]) {
 		/* stream[i] is not at EOF yet */
 		/* we did not print thisline[i] yet */
-		char *p = thisline[i];
+		var_na *p = thisline[i];
 		writeline(p, i);
-		while (1) {
+		နေစဉ် (1) {
 			free(p);
 			p = xmalloc_fgetline(stream[i]);
-			if (!p)
-				break;
+			အကယ်၍ (!p)
+				bha_nga;
 			writeline(p, i);
 		}
 	}
 
-	if (ENABLE_FEATURE_CLEAN_UP) {
+	အကယ်၍ (ENABLE_FEATURE_CLEAN_UP) {
 		fclose(stream[0]);
 		fclose(stream[1]);
 	}
 
-	return EXIT_SUCCESS;
+	ပြန်ပေး EXIT_SUCCESS;
 }

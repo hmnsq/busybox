@@ -27,26 +27,26 @@
 
 #include "libbb.h"
 
-int realpath_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int realpath_main(int argc UNUSED_PARAM, char **argv)
+ကိန်းပြည့် realpath_main(ကိန်းပြည့် argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+ကိန်းပြည့် realpath_main(ကိန်းပြည့် argc UNUSED_PARAM, var_na **argv)
 {
-	int retval = EXIT_SUCCESS;
+	ကိန်းပြည့် retval = EXIT_SUCCESS;
 
-	if (!*++argv) {
+	အကယ်၍ (!*++argv) {
 		bb_show_usage();
 	}
 
 	do {
 		/* NOFORK: only one alloc is allowed; must free */
-		char *resolved_path = xmalloc_realpath_coreutils(*argv);
-		if (resolved_path != NULL) {
+		var_na *resolved_path = xmalloc_realpath_coreutils(*argv);
+		အကယ်၍ (resolved_path != NULL) {
 			puts(resolved_path);
 			free(resolved_path);
-		} else {
+		} မဟုတ်ပါက {
 			retval = EXIT_FAILURE;
 			bb_simple_perror_msg(*argv);
 		}
-	} while (*++argv);
+	} နေစဉ် (*++argv);
 
 	fflush_stdout_and_exit(retval);
 }

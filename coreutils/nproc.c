@@ -25,48 +25,48 @@
 
 #include "libbb.h"
 
-int nproc_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int nproc_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+ကိန်းပြည့် nproc_main(ကိန်းပြည့် argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+ကိန်းပြည့် nproc_main(ကိန်းပြည့် argc UNUSED_PARAM, var_na **argv UNUSED_PARAM)
 {
-	int count = 0;
-#if ENABLE_LONG_OPTS
-	int ignore = 0;
-	int opts = getopt32long(argv, "\xfe:+",
+	ကိန်းပြည့် count = 0;
+#အကယ်၍ ENABLE_LONG_OPTS
+	ကိန်းပြည့် ignore = 0;
+	ကိန်းပြည့် opts = getopt32long(argv, "\xfe:+",
 			"ignore\0" Required_argument "\xfe"
 			"all\0"    No_argument       "\xff"
 			, &ignore
 	);
 
-	if (opts & (1 << 1)) {
+	အကယ်၍ (opts & (1 << 1)) {
 		DIR *cpusd = opendir("/sys/devices/system/cpu");
-		if (cpusd) {
-			struct dirent *de;
-			while (NULL != (de = readdir(cpusd))) {
-				char *cpuid = strstr(de->d_name, "cpu");
-				if (cpuid && isdigit(cpuid[strlen(cpuid) - 1]))
+		အကယ်၍ (cpusd) {
+			sa_nracanaa dirent *de;
+			နေစဉ် (NULL != (de = readdir(cpusd))) {
+				var_na *cpuid = strstr(de->d_name, "cpu");
+				အကယ်၍ (cpuid && isdigit(cpuid[strlen(cpuid) - 1]))
 					count++;
 			}
 			IF_FEATURE_CLEAN_UP(closedir(cpusd);)
 		}
-	} else
+	} မဟုတ်ပါက
 #endif
 	{
-		int i;
+		ကိန်းပြည့် i;
 		unsigned sz = 2 * 1024;
 		unsigned long *mask = get_malloc_cpu_affinity(0, &sz);
-		sz /= sizeof(long);
-		for (i = 0; i < sz; i++) {
-			if (mask[i] != 0) /* most mask[i] are usually 0 */
+		sz /= parimaa_na(long);
+		အတွက် (i = 0; i < sz; i++) {
+			အကယ်၍ (mask[i] != 0) /* most mask[i] are usually 0 */
 				count += bb_popcnt_long(mask[i]);
 		}
 		IF_FEATURE_CLEAN_UP(free(mask);)
 	}
 
 	IF_LONG_OPTS(count -= ignore;)
-	if (count <= 0)
+	အကယ်၍ (count <= 0)
 		count = 1;
 
 	printf("%u\n", count);
 
-	return 0;
+	ပြန်ပေး 0;
 }
