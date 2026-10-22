@@ -89,10 +89,10 @@
 //usage:	)
 //usage:       ""
 
-#include "libbb.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
 
 /* These are sort types */
-enum {
+ಎಣಿಕೆ {
 	FLAG_n  = 1 << 0,       /* Numeric sort */
 	FLAG_g  = 1 << 1,       /* Sort using strtod() */
 	FLAG_h  = 1 << 2,       /* Sort using strtod(), plus KMGT suffixes */
@@ -105,7 +105,7 @@ enum {
 	FLAG_z  = 1 << 8,       /* Input and output is NUL terminated, not \n */
 /* These can be applied to search keys, the previous four can't */
 	FLAG_b  = 1 << 9,       /* Ignore leading blanks */
-	FLAG_r  = 1 << 10,      /* Reverse */
+	FLAG_r  = 1 << 10,      /*ಹಿಮ್ಮುಖ*/
 	FLAG_d  = 1 << 11,      /* Ignore !(isalnum()|isspace()) */
 	FLAG_f  = 1 << 12,      /* Force uppercase */
 	FLAG_i  = 1 << 13,      /* Ignore !isprint() */
@@ -119,355 +119,355 @@ enum {
 	FLAG_no_tie_break = 0x40000000,
 };
 
-static const char sort_opt_str[] ALIGN1 = "^"
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ ವಿಂಗಡಿಸು_opt_str[] ALIGN1 = "^"
 			"nghMVucszbrdfimS:T:o:k:*t:"
 			"\0" "o--o:t--t"/*-t, -o: at most one of each*/;
 /*
  * OPT_STR must not be string literal, needs to have stable address:
  * code uses "strchr(OPT_STR,c) - OPT_STR" idiom.
  */
-#define OPT_STR (sort_opt_str + 1)
+#ವ್ಯಾಖ್ಯಾನಿಸು OPT_STR (ವಿಂಗಡಿಸು_opt_str + 1)
 
-#if ENABLE_FEATURE_SORT_BIG
-static char key_separator;
+#ಆದರೆ ENABLE_FEATURE_ವಿಂಗಡಿಸು_BIG
+ಸ್ಥಿರ ಅಕ್ಷರ ಕೀಲಿ_separator;
 
-static struct sort_key {
-	struct sort_key *next_key;  /* linked list */
-	unsigned range[4];          /* start word, start char, end word, end char */
-	unsigned flags;
-} *key_list;
+ಸ್ಥಿರ ರಚನೆ ವಿಂಗಡಿಸು_ಕೀಲಿ {
+	ರಚನೆ ವಿಂಗಡಿಸು_ಕೀಲಿ *ಮುಂದಿನ_ಕೀಲಿ;  /* linked list */
+	ಚಿಹ್ನೆರಹಿತ range[4];          /* start word, start char, end word, end char */
+	ಚಿಹ್ನೆರಹಿತ flags;
+} *ಕೀಲಿ_list;
 
 
 /* This is a NOEXEC applet. Be very careful! */
 
 
-static char *get_key(char *str, struct sort_key *key, int flags)
+ಸ್ಥಿರ ಅಕ್ಷರ *get_ಕೀಲಿ(ಅಕ್ಷರ *str, ರಚನೆ ವಿಂಗಡಿಸು_ಕೀಲಿ *ಕೀಲಿ, ಪೂರ್ಣಾಂಕ flags)
 {
-	int start = start; /* for compiler */
-	int end;
-	int len, j;
-	unsigned i;
+	ಪೂರ್ಣಾಂಕ ಆರಂಭ = ಆರಂಭ; /* for compiler */
+	ಪೂರ್ಣಾಂಕ ಕೊನೆ;
+	ಪೂರ್ಣಾಂಕ len, j;
+	ಚಿಹ್ನೆರಹಿತ i;
 
 	/* Special case whole string, so we don't have to make a copy */
-	if (key->range[0] == 1 && !key->range[1] && !key->range[2] && !key->range[3]
+	ಆದರೆ (ಕೀಲಿ->range[0] == 1 && !ಕೀಲಿ->range[1] && !ಕೀಲಿ->range[2] && !ಕೀಲಿ->range[3]
 	 && !(flags & (FLAG_b | FLAG_d | FLAG_f | FLAG_i | FLAG_bb))
 	) {
-		return str;
+		ಹಿಂತಿರುಗಿ str;
 	}
 
 	/* Find start of key on first pass, end on second pass */
-	len = strlen(str);
-	for (j = 0; j < 2; j++) {
-		if (!key->range[2*j])
-			end = len;
+	len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(str);
+	ಗಾಗಿ (j = 0; j < 2; j++) {
+		ಆದರೆ (!ಕೀಲಿ->range[2*j])
+			ಕೊನೆ = len;
 		/* Loop through fields */
-		else {
-			unsigned char ch = 0;
+		ಇಲ್ಲದಿದ್ದರೆ {
+			ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ ch = 0;
 
-			end = 0;
-			for (i = 1; i < key->range[2*j] + j; i++) {
-				if (key_separator) {
+			ಕೊನೆ = 0;
+			ಗಾಗಿ (i = 1; i < ಕೀಲಿ->range[2*j] + j; i++) {
+				ಆದರೆ (ಕೀಲಿ_separator) {
 					/* Skip body of key and separator */
-					while ((ch = str[end]) != '\0') {
-							end++;
-						if (ch == key_separator)
-							break;
+					ಆಗ ((ch = str[ಕೊನೆ]) != '\0') {
+							ಕೊನೆ++;
+						ಆದರೆ (ch == ಕೀಲಿ_separator)
+							ನಿಲ್ಲಿಸು;
 					}
-				} else {
+				} ಇಲ್ಲದಿದ್ದರೆ {
 					/* Skip leading blanks */
-					while (isspace(str[end]))
-						end++;
+					ಆಗ (ಖಾಲಿಯೇ(str[ಕೊನೆ]))
+						ಕೊನೆ++;
 					/* Skip body of key */
-					while (str[end] != '\0') {
-						if (isspace(str[end]))
-							break;
-						end++;
+					ಆಗ (str[ಕೊನೆ] != '\0') {
+						ಆದರೆ (ಖಾಲಿಯೇ(str[ಕೊನೆ]))
+							ನಿಲ್ಲಿಸು;
+						ಕೊನೆ++;
 					}
 				}
 			}
 			/* Remove last delim: "abc:def:" => "abc:def" */
-			if (j && ch) {
+			ಆದರೆ (j && ch) {
 				//if (str[end-1] != key_separator)
 				//  bb_error_msg(_and_die("BUG! "
 				//  "str[start:%d,end:%d]:'%.*s'",
 				//  start, end, (int)(end-start), &str[start]);
-				end--;
+				ಕೊನೆ--;
 			}
 		}
-		if (!j) start = end;
+		ಆದರೆ (!j) ಆರಂಭ = ಕೊನೆ;
 	}
 	/* Strip leading whitespace if necessary */
-	if (flags & FLAG_b)
+	ಆದರೆ (flags & FLAG_b)
 		/* not using skip_whitespace() for speed */
-		while (isspace(str[start])) start++;
+		ಆಗ (ಖಾಲಿಯೇ(str[ಆರಂಭ])) ಆರಂಭ++;
 	/* Strip trailing whitespace if necessary */
-	if (flags & FLAG_bb)
-		while (end > start && isspace(str[end-1])) end--;
+	ಆದರೆ (flags & FLAG_bb)
+		ಆಗ (ಕೊನೆ > ಆರಂಭ && ಖಾಲಿಯೇ(str[ಕೊನೆ-1])) ಕೊನೆ--;
 	/* -kSTART,N.ENDCHAR: honor ENDCHAR (1-based) */
-	if (key->range[3]) {
-		end = key->range[3];
-		if (end > len) end = len;
+	ಆದರೆ (ಕೀಲಿ->range[3]) {
+		ಕೊನೆ = ಕೀಲಿ->range[3];
+		ಆದರೆ (ಕೊನೆ > len) ಕೊನೆ = len;
 	}
 	/* -kN.STARTCHAR[,...]: honor STARTCHAR (1-based) */
-	if (key->range[1]) {
-		start += key->range[1] - 1;
-		if (start > len) start = len;
+	ಆದರೆ (ಕೀಲಿ->range[1]) {
+		ಆರಂಭ += ಕೀಲಿ->range[1] - 1;
+		ಆದರೆ (ಆರಂಭ > len) ಆರಂಭ = len;
 	}
 	/* Make the copy */
-	if (end < start)
-		end = start;
-	str = xstrndup(str+start, end-start);
+	ಆದರೆ (ಕೊನೆ < ಆರಂಭ)
+		ಕೊನೆ = ಆರಂಭ;
+	str = xstrndup(str+ಆರಂಭ, ಕೊನೆ-ಆರಂಭ);
 	/* Handle -d */
-	if (flags & FLAG_d) {
-		for (start = end = 0; str[end]; end++)
-			if (isspace(str[end]) || isalnum(str[end]))
-				str[start++] = str[end];
-		str[start] = '\0';
+	ಆದರೆ (flags & FLAG_d) {
+		ಗಾಗಿ (ಆರಂಭ = ಕೊನೆ = 0; str[ಕೊನೆ]; ಕೊನೆ++)
+			ಆದರೆ (ಖಾಲಿಯೇ(str[ಕೊನೆ]) || ಅಕ್ಷರವೇ_ಅಂಕಿಯೇ(str[ಕೊನೆ]))
+				str[ಆರಂಭ++] = str[ಕೊನೆ];
+		str[ಆರಂಭ] = '\0';
 	}
 	/* Handle -i */
-	if (flags & FLAG_i) {
-		for (start = end = 0; str[end]; end++)
-			if (isprint_asciionly(str[end]))
-				str[start++] = str[end];
-		str[start] = '\0';
+	ಆದರೆ (flags & FLAG_i) {
+		ಗಾಗಿ (ಆರಂಭ = ಕೊನೆ = 0; str[ಕೊನೆ]; ಕೊನೆ++)
+			ಆದರೆ (isprint_asciionly(str[ಕೊನೆ]))
+				str[ಆರಂಭ++] = str[ಕೊನೆ];
+		str[ಆರಂಭ] = '\0';
 	}
 	/* Handle -f */
-	if (flags & FLAG_f)
-		for (i = 0; str[i]; i++)
-			str[i] = toupper(str[i]);
+	ಆದರೆ (flags & FLAG_f)
+		ಗಾಗಿ (i = 0; str[i]; i++)
+			str[i] = ದೊಡ್ಡ_ಅಕ್ಷರ(str[i]);
 
-	return str;
+	ಹಿಂತಿರುಗಿ str;
 }
 
-static struct sort_key *add_key(void)
+ಸ್ಥಿರ ರಚನೆ ವಿಂಗಡಿಸು_ಕೀಲಿ *ಕೂಡಿಸು_ಕೀಲಿ(ಶೂನ್ಯ)
 {
-	struct sort_key **pkey = &key_list;
-	while (*pkey)
-		pkey = &((*pkey)->next_key);
-	return *pkey = xzalloc(sizeof(struct sort_key));
+	ರಚನೆ ವಿಂಗಡಿಸು_ಕೀಲಿ **pkey = &ಕೀಲಿ_list;
+	ಆಗ (*pkey)
+		pkey = &((*pkey)->ಮುಂದಿನ_ಕೀಲಿ);
+	ಹಿಂತಿರುಗಿ *pkey = xzalloc(ಗಾತ್ರ(ರಚನೆ ವಿಂಗಡಿಸು_ಕೀಲಿ));
 }
 
-#define GET_LINE(fp) \
+#ವ್ಯಾಖ್ಯಾನಿಸು GET_ಸಾಲು(fp) \
 	((option_mask32 & FLAG_z) \
-	? bb_get_chunk_from_file(fp, NULL) \
+	? bb_get_chunk_from_file(fp, ಖಾಲಿ) \
 	: xmalloc_fgetline(fp))
-#else
-#define GET_LINE(fp) xmalloc_fgetline(fp)
-#endif
+#ಇಲ್ಲದಿದ್ದರೆ
+#ವ್ಯಾಖ್ಯಾನಿಸು GET_ಸಾಲು(fp) xmalloc_fgetline(fp)
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if ENABLE_FEATURE_SORT_BIG
-static int scale_suffix(const char *tail)
+#ಆದರೆ ENABLE_FEATURE_ವಿಂಗಡಿಸು_BIG
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ scale_suffix(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಬಾಲ)
 {
-	static const char suffix[] ALIGN1 = "kmgtpezy";
-	const char *s;
-	int n;
+	ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ suffix[] ALIGN1 = "kmgtpezy";
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s;
+	ಪೂರ್ಣಾಂಕ n;
 
-	if (!tail[0])
-		return -1;
-	s = strchr(suffix, tail[0] | 0x20);
-	if (!s)
-		return -1;
+	ಆದರೆ (!ಬಾಲ[0])
+		ಹಿಂತಿರುಗಿ -1;
+	s = strchr(suffix, ಬಾಲ[0] | 0x20);
+	ಆದರೆ (!s)
+		ಹಿಂತಿರುಗಿ -1;
 	n = s - suffix;
-	if (n != 0 && tail[0] >= 'a')
-		return -1; /* mg... not accepted, only MG... */
-	return n;
+	ಆದರೆ (n != 0 && ಬಾಲ[0] >= 'a')
+		ಹಿಂತಿರುಗಿ -1; /* mg... not accepted, only MG... */
+	ಹಿಂತಿರುಗಿ n;
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 /* Iterate through keys list and perform comparisons */
-static int compare_keys(const void *xarg, const void *yarg)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ compare_ಕೀಲಿಗಳು(ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *xarg, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *yarg)
 {
-	int flags = option_mask32, retval = 0;
-	char *x, *y;
+	ಪೂರ್ಣಾಂಕ flags = option_mask32, retval = 0;
+	ಅಕ್ಷರ *x, *y;
 
-#if ENABLE_FEATURE_SORT_BIG
-	struct sort_key *key;
+#ಆದರೆ ENABLE_FEATURE_ವಿಂಗಡಿಸು_BIG
+	ರಚನೆ ವಿಂಗಡಿಸು_ಕೀಲಿ *ಕೀಲಿ;
 
-	for (key = key_list; !retval && key; key = key->next_key) {
-		flags = key->flags ? key->flags : option_mask32;
+	ಗಾಗಿ (ಕೀಲಿ = ಕೀಲಿ_list; !retval && ಕೀಲಿ; ಕೀಲಿ = ಕೀಲಿ->ಮುಂದಿನ_ಕೀಲಿ) {
+		flags = ಕೀಲಿ->flags ? ಕೀಲಿ->flags : option_mask32;
 		/* Chop out and modify key chunks, handling -dfib */
-		x = get_key(*(char **)xarg, key, flags);
-		y = get_key(*(char **)yarg, key, flags);
-#else
+		x = get_ಕೀಲಿ(*(ಅಕ್ಷರ **)xarg, ಕೀಲಿ, flags);
+		y = get_ಕೀಲಿ(*(ಅಕ್ಷರ **)yarg, ಕೀಲಿ, flags);
+#ಇಲ್ಲದಿದ್ದರೆ
 	/* This curly bracket serves no purpose but to match the nesting
 	 * level of the for () loop we're not using */
 	{
-		x = *(char **)xarg;
-		y = *(char **)yarg;
-#endif
+		x = *(ಅಕ್ಷರ **)xarg;
+		y = *(ಅಕ್ಷರ **)yarg;
+#ಆದರೆ_ಅಂತ್ಯ
 		/* Perform actual comparison */
-		switch (flags & (FLAG_n | FLAG_g | FLAG_h | FLAG_M | FLAG_V)) {
-		default:
-			bb_simple_error_msg_and_die("unknown sort type");
-			break;
-#if defined(HAVE_STRVERSCMP) && HAVE_STRVERSCMP == 1
-		case FLAG_V:
+		ಆಯ್ಕೆ (flags & (FLAG_n | FLAG_g | FLAG_h | FLAG_M | FLAG_V)) {
+		ಪೂರ್ವನಿಯೋಜಿತ:
+			bb_simple_error_ಸಂದೇಶ_and_die("unknown sort type");
+			ನಿಲ್ಲಿಸು;
+#ಆದರೆ defined(HAVE_STRVERSCMP) && HAVE_STRVERSCMP == 1
+		ಸ್ಥಿತಿ FLAG_V:
 			retval = strverscmp(x, y);
-			break;
-#endif
+			ನಿಲ್ಲಿಸು;
+#ಆದರೆ_ಅಂತ್ಯ
 		/* Ascii sort */
-		case 0:
-#if ENABLE_LOCALE_SUPPORT
+		ಸ್ಥಿತಿ 0:
+#ಆದರೆ ENABLE_LOCALE_SUPPORT
 			retval = strcoll(x, y);
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 			retval = strcmp(x, y);
-#endif
-			break;
-#if ENABLE_FEATURE_SORT_BIG
-		case FLAG_g:
-		case FLAG_h: {
-			char *xx, *yy;
+#ಆದರೆ_ಅಂತ್ಯ
+			ನಿಲ್ಲಿಸು;
+#ಆದರೆ ENABLE_FEATURE_ವಿಂಗಡಿಸು_BIG
+		ಸ್ಥಿತಿ FLAG_g:
+		ಸ್ಥಿತಿ FLAG_h: {
+			ಅಕ್ಷರ *xx, *yy;
 //TODO: needs setlocale(LC_NUMERIC, "C")?
-			double dx = strtod(x, &xx);
-			double dy = strtod(y, &yy);
+			ದ್ವಿಗುಣ dx = strtod(x, &xx);
+			ದ್ವಿಗುಣ dy = strtod(y, &yy);
 			/* not numbers < NaN < -infinity < numbers < +infinity) */
-			if (x == xx)
+			ಆದರೆ (x == xx)
 				retval = (y == yy ? 0 : -1);
-			else if (y == yy)
+			ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (y == yy)
 				retval = 1;
 			/* Check for isnan */
-			else if (dx != dx)
+			ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (dx != dx)
 				retval = (dy != dy) ? 0 : -1;
-			else if (dy != dy)
+			ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (dy != dy)
 				retval = 1;
-			else {
-				if (flags & FLAG_h) {
-					int xs = scale_suffix(xx);
-					int ys = scale_suffix(yy);
-					if (xs != ys) {
+			ಇಲ್ಲದಿದ್ದರೆ {
+				ಆದರೆ (flags & FLAG_h) {
+					ಪೂರ್ಣಾಂಕ xs = scale_suffix(xx);
+					ಪೂರ್ಣಾಂಕ ys = scale_suffix(yy);
+					ಆದರೆ (xs != ys) {
 						retval = xs - ys;
-						break;
+						ನಿಲ್ಲಿಸು;
 					}
 				}
 				/* Check for infinity.  Could underflow, but it avoids libm. */
-				if (1.0 / dx == 0.0) {
-					if (dx < 0)
+				ಆದರೆ (1.0 / dx == 0.0) {
+					ಆದರೆ (dx < 0)
 						retval = (1.0 / dy == 0.0 && dy < 0) ? 0 : -1;
-					else
+					ಇಲ್ಲದಿದ್ದರೆ
 						retval = (1.0 / dy == 0.0 && dy > 0) ? 0 : 1;
-				} else if (1.0 / dy == 0.0)
+				} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (1.0 / dy == 0.0)
 					retval = (dy < 0) ? 1 : -1;
-				else
+				ಇಲ್ಲದಿದ್ದರೆ
 					retval = (dx > dy) ? 1 : ((dx < dy) ? -1 : 0);
 			}
-			break;
+			ನಿಲ್ಲಿಸು;
 		}
-		case FLAG_M: {
-			struct tm thyme;
-			int dx;
-			char *xx, *yy;
+		ಸ್ಥಿತಿ FLAG_M: {
+			ರಚನೆ tm thyme;
+			ಪೂರ್ಣಾಂಕ dx;
+			ಅಕ್ಷರ *xx, *yy;
 
 			xx = strptime(skip_whitespace(x), "%b", &thyme);
 			dx = thyme.tm_mon;
 			yy = strptime(skip_whitespace(y), "%b", &thyme);
-			if (!xx)
+			ಆದರೆ (!xx)
 				retval = (!yy) ? 0 : -1;
-			else if (!yy)
+			ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (!yy)
 				retval = 1;
-			else
+			ಇಲ್ಲದಿದ್ದರೆ
 				retval = dx - thyme.tm_mon;
-			break;
+			ನಿಲ್ಲಿಸು;
 		}
 		/* Full floating point version of -n */
-		case FLAG_n: {
-			double dx = atof(x);
-			double dy = atof(y);
+		ಸ್ಥಿತಿ FLAG_n: {
+			ದ್ವಿಗುಣ dx = atof(x);
+			ದ್ವಿಗುಣ dy = atof(y);
 			retval = (dx > dy) ? 1 : ((dx < dy) ? -1 : 0);
-			break;
+			ನಿಲ್ಲಿಸು;
 		}
 		} /* switch */
 		/* Free key copies. */
-		if (x != *(char **)xarg) free(x);
-		if (y != *(char **)yarg) free(y);
+		ಆದರೆ (x != *(ಅಕ್ಷರ **)xarg) ಬಿಡುಗಡೆ(x);
+		ಆದರೆ (y != *(ಅಕ್ಷರ **)yarg) ಬಿಡುಗಡೆ(y);
 		/* if (retval) break; - done by for () anyway */
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 		/* Integer version of -n for tiny systems */
-		case FLAG_n:
+		ಸ್ಥಿತಿ FLAG_n:
 			retval = atoi(x) - atoi(y);
-			break;
+			ನಿಲ್ಲಿಸು;
 		} /* switch */
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 	} /* for */
 
-	if (retval == 0) {
+	ಆದರೆ (retval == 0) {
 		/* So far lines are "the same" */
 
-		if (option_mask32 & FLAG_s) {
+		ಆದರೆ (option_mask32 & FLAG_s) {
 			/* "Stable sort": later line is "greater than",
 			 * IOW: do not allow qsort() to swap equal lines.
 			 */
 			uint32_t *p32;
 			uint32_t x32, y32;
-			char *line;
-			unsigned len;
+			ಅಕ್ಷರ *ಸಾಲು;
+			ಚಿಹ್ನೆರಹಿತ len;
 
-			line = *(char**)xarg;
-			len = (strlen(line) + 4) & (~3u);
-			p32 = (void*)(line + len);
+			ಸಾಲು = *(ಅಕ್ಷರ**)xarg;
+			len = (ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ಸಾಲು) + 4) & (~3u);
+			p32 = (ಶೂನ್ಯ*)(ಸಾಲು + len);
 			x32 = *p32;
-			line = *(char**)yarg;
-			len = (strlen(line) + 4) & (~3u);
-			p32 = (void*)(line + len);
+			ಸಾಲು = *(ಅಕ್ಷರ**)yarg;
+			len = (ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ಸಾಲು) + 4) & (~3u);
+			p32 = (ಶೂನ್ಯ*)(ಸಾಲು + len);
 			y32 = *p32;
 
 			/* If x > y, 1, else -1 */
 			retval = (x32 > y32) * 2 - 1;
 			/* Here, -r has no effect! */
-			return retval;
+			ಹಿಂತಿರುಗಿ retval;
 		}
-		if (!(option_mask32 & FLAG_no_tie_break)) {
+		ಆದರೆ (!(option_mask32 & FLAG_no_tie_break)) {
 			/* fallback sort */
 			flags = option_mask32;
-			retval = strcmp(*(char **)xarg, *(char **)yarg);
+			retval = strcmp(*(ಅಕ್ಷರ **)xarg, *(ಅಕ್ಷರ **)yarg);
 		}
 	}
 
-	if (flags & FLAG_r)
-		return -retval;
+	ಆದರೆ (flags & FLAG_r)
+		ಹಿಂತಿರುಗಿ -retval;
 
-	return retval;
+	ಹಿಂತಿರುಗಿ retval;
 }
 
-#if ENABLE_FEATURE_SORT_BIG
-static unsigned str2u(char **str)
+#ಆದರೆ ENABLE_FEATURE_ವಿಂಗಡಿಸು_BIG
+ಸ್ಥಿರ ಚಿಹ್ನೆರಹಿತ str2u(ಅಕ್ಷರ **str)
 {
-	unsigned long lu;
-	if (!isdigit((*str)[0]))
-		bb_simple_error_msg_and_die("bad field specification");
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ lu;
+	ಆದರೆ (!ಅಂಕಿಯೇ((*str)[0]))
+		bb_simple_error_ಸಂದೇಶ_and_die("bad field specification");
 	lu = strtoul(*str, str, 10);
-	if ((sizeof(long) > sizeof(int) && lu > INT_MAX) || !lu)
-		bb_simple_error_msg_and_die("bad field specification");
-	return lu;
+	ಆದರೆ ((ಗಾತ್ರ(ದೀರ್ಘ) > ಗಾತ್ರ(ಪೂರ್ಣಾಂಕ) && lu > ಗರಿಷ್ಠ_ಪೂರ್ಣಾಂಕ) || !lu)
+		bb_simple_error_ಸಂದೇಶ_and_die("bad field specification");
+	ಹಿಂತಿರುಗಿ lu;
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-int sort_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int sort_main(int argc UNUSED_PARAM, char **argv)
+ಪೂರ್ಣಾಂಕ ವಿಂಗಡಿಸು_main(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಂಕ ವಿಂಗಡಿಸು_main(ಪೂರ್ಣಾಂಕ argc ಬಳಸದ_PARAM, ಅಕ್ಷರ **argv)
 {
-	char **lines;
-	char *str_ignored, *str_o, *str_t;
-	llist_t *lst_k = NULL;
-	int i;
-	int linecount;
-	unsigned opts;
-#if ENABLE_FEATURE_SORT_OPTIMIZE_MEMORY
+	ಅಕ್ಷರ **ಸಾಲುಗಳು;
+	ಅಕ್ಷರ *str_ignored, *str_o, *str_t;
+	llist_t *lst_k = ಖಾಲಿ;
+	ಪೂರ್ಣಾಂಕ i;
+	ಪೂರ್ಣಾಂಕ linecount;
+	ಚಿಹ್ನೆರಹಿತ opts;
+#ಆದರೆ ENABLE_FEATURE_ವಿಂಗಡಿಸು_OPTIMIZE_ಸ್ಮರಣೆ
 	bool can_drop_dups;
-	size_t prev_len = 0;
-	char *prev_line = (char*) "";
+	ಗಾತ್ರ_t prev_len = 0;
+	ಅಕ್ಷರ *prev_ಸಾಲು = (ಅಕ್ಷರ*) "";
 	/* Postpone optimizing if the input is small, < 16k lines:
 	 * even just free()ing duplicate lines takes time.
 	 */
-	size_t count_to_optimize_dups = 0x3fff;
-#endif
+	ಗಾತ್ರ_t ಎಣಿಕೆ_ಗಮ್ಯ_optimize_dups = 0x3fff;
+#ಆದರೆ_ಅಂತ್ಯ
 
 	xfunc_error_retval = 2;
 
 	/* Parse command line options */
 	opts = getopt32(argv,
-			sort_opt_str,
+			ವಿಂಗಡಿಸು_opt_str,
 			&str_ignored, &str_ignored, &str_o, &lst_k, &str_t
 	);
-#if ENABLE_FEATURE_SORT_OPTIMIZE_MEMORY
+#ಆದರೆ ENABLE_FEATURE_ವಿಂಗಡಿಸು_OPTIMIZE_ಸ್ಮರಣೆ
 	/* Can drop dups only if -u but no "complicating" options,
 	 * IOW: if we do a full line compares. Safe options:
 	 * -o FILE Output to FILE
@@ -487,159 +487,159 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 	/* Stable sort needs every line to be uniquely allocated,
 	 * disable optimization to reuse strings:
 	 */
-	if (opts & FLAG_s)
-		count_to_optimize_dups = (size_t)-1L;
-#endif
+	ಆದರೆ (opts & FLAG_s)
+		ಎಣಿಕೆ_ಗಮ್ಯ_optimize_dups = (ಗಾತ್ರ_t)-1L;
+#ಆದರೆ_ಅಂತ್ಯ
 	/* global b strips leading and trailing spaces */
-	if (opts & FLAG_b)
+	ಆದರೆ (opts & FLAG_b)
 		option_mask32 |= FLAG_bb;
-#if ENABLE_FEATURE_SORT_BIG
-	if (opts & FLAG_t) {
-		if (!str_t[0] || str_t[1])
-			bb_simple_error_msg_and_die("bad -t parameter");
-		key_separator = str_t[0];
+#ಆದರೆ ENABLE_FEATURE_ವಿಂಗಡಿಸು_BIG
+	ಆದರೆ (opts & FLAG_t) {
+		ಆದರೆ (!str_t[0] || str_t[1])
+			bb_simple_error_ಸಂದೇಶ_and_die("bad -t parameter");
+		ಕೀಲಿ_separator = str_t[0];
 	}
 	/* note: below this point we use option_mask32, not opts,
 	 * since that reduces register pressure and makes code smaller */
 
 	/* Parse sort key */
-	while (lst_k) {
-		enum {
+	ಆಗ (lst_k) {
+		ಎಣಿಕೆ {
 			FLAG_allowed_for_k =
 				FLAG_n | /* Numeric sort */
 				FLAG_g | /* Sort using strtod() */
 				FLAG_h | /* Sort using strtod(), plus KMGT suffixes */
 				FLAG_M | /* Sort date */
 				FLAG_b | /* Ignore leading blanks */
-				FLAG_r | /* Reverse */
+				FLAG_r | /*ಹಿಮ್ಮುಖ*/
 				FLAG_d | /* Ignore !(isalnum()|isspace()) */
 				FLAG_f | /* Force uppercase */
 				FLAG_i | /* Ignore !isprint() */
 			0
 		};
-		struct sort_key *key = add_key();
-		char *str_k = llist_pop(&lst_k);
+		ರಚನೆ ವಿಂಗಡಿಸು_ಕೀಲಿ *ಕೀಲಿ = ಕೂಡಿಸು_ಕೀಲಿ();
+		ಅಕ್ಷರ *str_k = llist_ತೆಗೆ(&lst_k);
 
 		i = 0; /* i==0 before comma, 1 after (-k3,6) */
-		while (*str_k) {
+		ಆಗ (*str_k) {
 			/* Start of range */
 			/* Cannot use bb_strtou - suffix can be a letter */
-			key->range[2*i] = str2u(&str_k);
-			if (*str_k == '.') {
+			ಕೀಲಿ->range[2*i] = str2u(&str_k);
+			ಆದರೆ (*str_k == '.') {
 				str_k++;
-				key->range[2*i+1] = str2u(&str_k);
+				ಕೀಲಿ->range[2*i+1] = str2u(&str_k);
 			}
-			while (*str_k) {
-				int flag;
-				const char *idx;
+			ಆಗ (*str_k) {
+				ಪೂರ್ಣಾಂಕ flag;
+				ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *idx;
 
-				if (*str_k == ',' && !i++) {
+				ಆದರೆ (*str_k == ',' && !i++) {
 					str_k++;
-					break;
+					ನಿಲ್ಲಿಸು;
 				} /* no else needed: fall through to syntax error
 					because comma isn't in OPT_STR */
 				idx = strchr(OPT_STR, *str_k);
-				if (!idx)
-					bb_simple_error_msg_and_die("unknown key option");
+				ಆದರೆ (!idx)
+					bb_simple_error_ಸಂದೇಶ_and_die("unknown key option");
 				flag = 1 << (idx - OPT_STR);
-				if (flag & ~FLAG_allowed_for_k)
-					bb_simple_error_msg_and_die("unknown sort type");
+				ಆದರೆ (flag & ~FLAG_allowed_for_k)
+					bb_simple_error_ಸಂದೇಶ_and_die("unknown sort type");
 				/* b after ',' means strip _trailing_ space */
-				if (i && flag == FLAG_b)
+				ಆದರೆ (i && flag == FLAG_b)
 					flag = FLAG_bb;
-				key->flags |= flag;
+				ಕೀಲಿ->flags |= flag;
 				str_k++;
 			}
 		}
 	}
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 	/* Open input files and read data */
 	argv += optind;
-	if (!*argv)
-		*--argv = (char*)"-";
+	ಆದರೆ (!*argv)
+		*--argv = (ಅಕ್ಷರ*)"-";
 	linecount = 0;
-	lines = NULL;
-	do {
+	ಸಾಲುಗಳು = ಖಾಲಿ;
+	ಮಾಡು {
 		/* coreutils 6.9 compat: abort on first open error,
 		 * do not continue to next file: */
 		FILE *fp = xfopen_stdin(*argv);
-		for (;;) {
-			char *line = GET_LINE(fp);
-			if (!line)
-				break;
+		ಗಾಗಿ (;;) {
+			ಅಕ್ಷರ *ಸಾಲು = GET_ಸಾಲು(fp);
+			ಆದರೆ (!ಸಾಲು)
+				ನಿಲ್ಲಿಸು;
 
-#if ENABLE_FEATURE_SORT_OPTIMIZE_MEMORY
-			if (count_to_optimize_dups != 0)
-				count_to_optimize_dups--;
-			if (count_to_optimize_dups == 0) {
-				size_t len;
-				char *new_line;
+#ಆದರೆ ENABLE_FEATURE_ವಿಂಗಡಿಸು_OPTIMIZE_ಸ್ಮರಣೆ
+			ಆದರೆ (ಎಣಿಕೆ_ಗಮ್ಯ_optimize_dups != 0)
+				ಎಣಿಕೆ_ಗಮ್ಯ_optimize_dups--;
+			ಆದರೆ (ಎಣಿಕೆ_ಗಮ್ಯ_optimize_dups == 0) {
+				ಗಾತ್ರ_t len;
+				ಅಕ್ಷರ *new_ಸಾಲು;
 
 				/* On kernel/linux/arch/ *.[ch] files,
 				 * this reduces memory usage by 6%.
 				 *  yes | head -99999999 | sort
 				 * goes down from 1900Mb to 380 Mb.
 				 */
-				len = strlen(line);
-				if (len <= prev_len) {
-					new_line = prev_line + (prev_len - len);
-					if (strcmp(line, new_line) == 0) {
+				len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ಸಾಲು);
+				ಆದರೆ (len <= prev_len) {
+					new_ಸಾಲು = prev_ಸಾಲು + (prev_len - len);
+					ಆದರೆ (strcmp(ಸಾಲು, new_ಸಾಲು) == 0) {
 						/* it's a tail of the prev line */
-						if (can_drop_dups && prev_len == len) {
+						ಆದರೆ (can_drop_dups && prev_len == len) {
 							/* it's identical to prev line */
-							free(line);
-							continue;
+							ಬಿಡುಗಡೆ(ಸಾಲು);
+							ಮುಂದುವರಿ;
 						}
-						free(line);
-						line = new_line;
+						ಬಿಡುಗಡೆ(ಸಾಲು);
+						ಸಾಲು = new_ಸಾಲು;
 						/* continue using longer prev_line
 						 * for future tail tests.
 						 */
-						goto skip;
+						ಹೋಗು skip;
 					}
 				}
 				prev_len = len;
-				prev_line = line;
+				prev_ಸಾಲು = ಸಾಲು;
  skip: ;
 			}
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 //TODO: lighter version which only drops total dups if can_drop_dups == true
-#endif
-			lines = xrealloc_vector(lines, 6, linecount);
-			lines[linecount++] = line;
+#ಆದರೆ_ಅಂತ್ಯ
+			ಸಾಲುಗಳು = xrealloc_ಸದಿಶ(ಸಾಲುಗಳು, 6, linecount);
+			ಸಾಲುಗಳು[linecount++] = ಸಾಲು;
 		}
 		fclose_if_not_stdin(fp);
-	} while (*++argv);
+	} ಆಗ (*++argv);
 
-#if ENABLE_FEATURE_SORT_BIG
+#ಆದರೆ ENABLE_FEATURE_ವಿಂಗಡಿಸು_BIG
 	/* If no key, perform alphabetic sort */
-	if (!key_list)
-		add_key()->range[0] = 1;
+	ಆದರೆ (!ಕೀಲಿ_list)
+		ಕೂಡಿಸು_ಕೀಲಿ()->range[0] = 1;
 	/* Handle -c */
-	if (option_mask32 & FLAG_c) {
-		int j = (option_mask32 & FLAG_u) ? -1 : 0;
-		for (i = 1; i < linecount; i++) {
-			if (compare_keys(&lines[i-1], &lines[i]) > j) {
+	ಆದರೆ (option_mask32 & FLAG_c) {
+		ಪೂರ್ಣಾಂಕ j = (option_mask32 & FLAG_u) ? -1 : 0;
+		ಗಾಗಿ (i = 1; i < linecount; i++) {
+			ಆದರೆ (compare_ಕೀಲಿಗಳು(&ಸಾಲುಗಳು[i-1], &ಸಾಲುಗಳು[i]) > j) {
 				fprintf(stderr, "Check line %u\n", i);
-				return EXIT_FAILURE;
+				ಹಿಂತಿರುಗಿ EXIT_FAILURE;
 			}
 		}
-		return EXIT_SUCCESS;
+		ಹಿಂತಿರುಗಿ EXIT_SUCCESS;
 	}
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 	/* For stable sort, store original line position beyond terminating NUL */
-	if (option_mask32 & FLAG_s) {
-		for (i = 0; i < linecount; i++) {
+	ಆದರೆ (option_mask32 & FLAG_s) {
+		ಗಾಗಿ (i = 0; i < linecount; i++) {
 			uint32_t *p32;
-			char *line;
-			unsigned len;
+			ಅಕ್ಷರ *ಸಾಲು;
+			ಚಿಹ್ನೆರಹಿತ len;
 
-			line = lines[i];
-			len = (strlen(line) + 4) & (~3u);
-			lines[i] = line = xrealloc(line, len + 4);
-			p32 = (void*)(line + len);
+			ಸಾಲು = ಸಾಲುಗಳು[i];
+			len = (ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ಸಾಲು) + 4) & (~3u);
+			ಸಾಲುಗಳು[i] = ಸಾಲು = xrealloc(ಸಾಲು, len + 4);
+			p32 = (ಶೂನ್ಯ*)(ಸಾಲು + len);
 			*p32 = i;
 		}
 		/*option_mask32 |= FLAG_no_tie_break;*/
@@ -647,37 +647,37 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 	}
 
 	/* Perform the actual sort */
-	qsort(lines, linecount, sizeof(lines[0]), compare_keys);
+	qsort(ಸಾಲುಗಳು, linecount, ಗಾತ್ರ(ಸಾಲುಗಳು[0]), compare_ಕೀಲಿಗಳು);
 
 	/* Handle -u */
-	if (option_mask32 & FLAG_u) {
-		int j = 0;
+	ಆದರೆ (option_mask32 & FLAG_u) {
+		ಪೂರ್ಣಾಂಕ j = 0;
 		/* coreutils 6.3 drop lines for which only key is the same:
 		 * - disabling last-resort compare, or else compare_keys()
 		 * will be the same only for completely identical lines
 		 * - disabling -s (same reasons)
 		 */
 		option_mask32 = (option_mask32 | FLAG_no_tie_break) & (~FLAG_s);
-		for (i = 1; i < linecount; i++) {
-			if (compare_keys(&lines[j], &lines[i]) == 0)
-				free(lines[i]);
-			else
-				lines[++j] = lines[i];
+		ಗಾಗಿ (i = 1; i < linecount; i++) {
+			ಆದರೆ (compare_ಕೀಲಿಗಳು(&ಸಾಲುಗಳು[j], &ಸಾಲುಗಳು[i]) == 0)
+				ಬಿಡುಗಡೆ(ಸಾಲುಗಳು[i]);
+			ಇಲ್ಲದಿದ್ದರೆ
+				ಸಾಲುಗಳು[++j] = ಸಾಲುಗಳು[i];
 		}
-		if (linecount)
+		ಆದರೆ (linecount)
 			linecount = j+1;
 	}
 
 	/* Print it */
-#if ENABLE_FEATURE_SORT_BIG
+#ಆದರೆ ENABLE_FEATURE_ವಿಂಗಡಿಸು_BIG
 	/* Open output file _after_ we read all input ones */
-	if (option_mask32 & FLAG_o)
+	ಆದರೆ (option_mask32 & FLAG_o)
 		xmove_fd(xopen(str_o, O_WRONLY|O_CREAT|O_TRUNC), STDOUT_FILENO);
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 	{
-		int ch = (option_mask32 & FLAG_z) ? '\0' : '\n';
-		for (i = 0; i < linecount; i++)
-			printf("%s%c", lines[i], ch);
+		ಪೂರ್ಣಾಂಕ ch = (option_mask32 & FLAG_z) ? '\0' : '\n';
+		ಗಾಗಿ (i = 0; i < linecount; i++)
+			ಬರೆ("%s%c", ಸಾಲುಗಳು[i], ch);
 	}
 
 	fflush_stdout_and_exit_SUCCESS();

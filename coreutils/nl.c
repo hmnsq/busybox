@@ -33,51 +33,51 @@
 
 /* By default, selects -v1 -i1 -l1 -sTAB -w6 -nrn -hn -bt -fn */
 
-#include "libbb.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
 
-int nl_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int nl_main(int argc UNUSED_PARAM, char **argv)
+ಪೂರ್ಣಾಂಕ nl_main(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಂಕ nl_main(ಪೂರ್ಣಾಂಕ argc ಬಳಸದ_PARAM, ಅಕ್ಷರ **argv)
 {
-	struct number_state ns;
-	const char *opt_b = "t";
-	enum {
+	ರಚನೆ ಸಂಖ್ಯೆ_state ns;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *opt_b = "t";
+	ಎಣಿಕೆ {
 		OPT_p = (1 << 0),
 	};
-#if ENABLE_LONG_OPTS
-	static const char nl_longopts[] ALIGN1 =
-		"body-numbering\0"	Required_argument "b"
+#ಆದರೆ ENABLE_LONG_OPTS
+	ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ nl_longopts[] ALIGN1 =
+		"body-numbering\0"	Required_ವಾದ "b"
 	//	"footer-numbering\0"	Required_argument "f" - not implemented yet
 	//	"header-numbering\0"	Required_argument "h" - not implemented yet
 	//	"section-delimiter\0"	Required_argument "d" - not implemented yet
-		"line-increment\0"	Required_argument "i"
+		"line-increment\0"	Required_ವಾದ "i"
 	//	"join-blank-lines\0"	Required_argument "l" - not implemented yet
 	//	"number-format\0"	Required_argument "n" - not implemented yet
-		"no-renumber\0"		No_argument       "p" // no-op so far
-		"number-separator\0"	Required_argument "s"
-		"starting-line-number\0"Required_argument "v"
-		"number-width\0"	Required_argument "w"
+		"no-renumber\0"		No_ವಾದ       "p" // no-op so far
+		"number-separator\0"	Required_ವಾದ "s"
+		"starting-line-number\0"Required_ವಾದ "v"
+		"number-width\0"	Required_ವಾದ "w"
 	;
-#endif
-	int exitcode;
+#ಆದರೆ_ಅಂತ್ಯ
+	ಪೂರ್ಣಾಂಕ exitcode;
 
-	ns.width = 6;
-	ns.start = 1;
+	ns.ಅಗಲ = 6;
+	ns.ಆರಂಭ = 1;
 	ns.inc = 1;
 	ns.sep = "\t";
 	getopt32long(argv, "pw:+s:v:+i:+b:", nl_longopts,
-			&ns.width, &ns.sep, &ns.start, &ns.inc, &opt_b);
+			&ns.ಅಗಲ, &ns.sep, &ns.ಆರಂಭ, &ns.inc, &opt_b);
 	ns.all = (opt_b[0] == 'a');
 	ns.nonempty = (opt_b[0] == 't');
-	ns.empty_str = xasprintf("%*s", ns.width + (int)strlen(ns.sep), "");
+	ns.ಖಾಲಿಗಳು_str = xasprintf("%*s", ns.ಅಗಲ + (ಪೂರ್ಣಾಂಕ)ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ns.sep), "");
 
 	argv += optind;
-	if (!*argv)
-		*--argv = (char*)"-";
+	ಆದರೆ (!*argv)
+		*--argv = (ಅಕ್ಷರ*)"-";
 
 	exitcode = EXIT_SUCCESS;
-	do {
-		exitcode |= print_numbered_lines(&ns, *argv);
-	} while (*++argv);
+	ಮಾಡು {
+		exitcode |= print_numbered_ಸಾಲುಗಳು(&ns, *argv);
+	} ಆಗ (*++argv);
 
 	fflush_stdout_and_exit(exitcode);
 }

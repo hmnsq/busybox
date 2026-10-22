@@ -58,15 +58,15 @@
 //usage:       "$ ls -la /tmp/temp.mWiLjM\n"
 //usage:       "-rw-------    1 andersen andersen        0 Apr 25 17:10 /tmp/temp.mWiLjM\n"
 
-#include "libbb.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
 
-int mktemp_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int mktemp_main(int argc UNUSED_PARAM, char **argv)
+ಪೂರ್ಣಾಂಕ mktemp_main(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಂಕ mktemp_main(ಪೂರ್ಣಾಂಕ argc ಬಳಸದ_PARAM, ಅಕ್ಷರ **argv)
 {
-	const char *path;
-	char *chp;
-	unsigned opts;
-	enum {
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಮಾರ್ಗ;
+	ಅಕ್ಷರ *chp;
+	ಚಿಹ್ನೆರಹಿತ opts;
+	ಎಣಿಕೆ {
 		OPT_d = 1 << 0,
 		OPT_q = 1 << 1,
 		OPT_t = 1 << 2,
@@ -75,59 +75,59 @@ int mktemp_main(int argc UNUSED_PARAM, char **argv)
 		OPT_tmpdir = (1 << 5) * ENABLE_LONG_OPTS,
 	};
 
-	path = getenv("TMPDIR");
-	if (!path || path[0] == '\0')
-		path = "/tmp";
+	ಮಾರ್ಗ = getenv("TMPDIR");
+	ಆದರೆ (!ಮಾರ್ಗ || ಮಾರ್ಗ[0] == '\0')
+		ಮಾರ್ಗ = "/tmp";
 
-#if ENABLE_LONG_OPTS
+#ಆದರೆ ENABLE_LONG_OPTS
 	opts = getopt32long(argv, "^"
 		"dqtp:u"
 		"\0"
 		"?1" /* 1 arg max */,
-		"directory\0" No_argument       "d"
-		"quiet\0"     No_argument       "q"
-		"dry-run\0"   No_argument       "u"
-		"tmpdir\0"    Optional_argument "\xff"
-		, &path, &path
+		"directory\0" No_ವಾದ       "d"
+		"quiet\0"     No_ವಾದ       "q"
+		"dry-run\0"   No_ವಾದ       "u"
+		"tmpdir\0"    Optional_ವಾದ "\xff"
+		, &ಮಾರ್ಗ, &ಮಾರ್ಗ
 	);
-#else
-	opts = getopt32(argv, "^" "dqtp:u" "\0" "?1"/*1 arg max*/, &path);
-#endif
+#ಇಲ್ಲದಿದ್ದರೆ
+	opts = getopt32(argv, "^" "dqtp:u" "\0" "?1"/*1 arg max*/, &ಮಾರ್ಗ);
+#ಆದರೆ_ಅಂತ್ಯ
 
 	chp = argv[optind];
-	if (!chp) {
+	ಆದರೆ (!chp) {
 		/* GNU coreutils 8.4:
 		 * bare "mktemp" -> "mktemp -t tmp.XXXXXX"
 		 */
 		chp = xstrdup("tmp.XXXXXX");
 		opts |= OPT_t;
 	}
-#if 0
+#ಆದರೆ 0
 	/* Don't allow directory separator in template */
-	if ((opts & OPT_t) && bb_basename(chp) != chp) {
+	ಆದರೆ ((opts & OPT_t) && bb_basename(chp) != chp) {
 		errno = EINVAL;
-		goto error;
+		ಹೋಗು error;
 	}
-#endif
-	if (opts & (OPT_t|OPT_p|OPT_tmpdir))
-		chp = concat_path_file(path, chp);
+#ಆದರೆ_ಅಂತ್ಯ
+	ಆದರೆ (opts & (OPT_t|OPT_p|OPT_tmpdir))
+		chp = concat_ಮಾರ್ಗ_file(ಮಾರ್ಗ, chp);
 
-	if (opts & OPT_u) {
+	ಆದರೆ (opts & OPT_u) {
 		chp = mktemp(chp);
-		if (chp[0] == '\0')
-			goto error;
-	} else if (opts & OPT_d) {
-		if (mkdtemp(chp) == NULL)
-			goto error;
-	} else {
-		if (mkstemp(chp) < 0)
-			goto error;
+		ಆದರೆ (chp[0] == '\0')
+			ಹೋಗು error;
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (opts & OPT_d) {
+		ಆದರೆ (mkdtemp(chp) == ಖಾಲಿ)
+			ಹೋಗು error;
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		ಆದರೆ (mkstemp(chp) < 0)
+			ಹೋಗು error;
 	}
 	puts(chp);
-	return EXIT_SUCCESS;
+	ಹಿಂತಿರುಗಿ EXIT_SUCCESS;
  error:
-	if (opts & OPT_q)
-		return EXIT_FAILURE;
+	ಆದರೆ (opts & OPT_q)
+		ಹಿಂತಿರುಗಿ EXIT_FAILURE;
 	/* don't use chp as it gets mangled in case of error */
 	bb_perror_nomsg_and_die();
 }

@@ -59,7 +59,7 @@
 //usage:       "$ printf \"Val=%d\\n\" 5\n"
 //usage:       "Val=5\n"
 
-#include "libbb.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
 
 /* A note on bad input: neither bash 3.2 nor coreutils 6.10 stop on it.
  * They report it:
@@ -77,269 +77,269 @@
  * We try to be compatible.
  */
 
-typedef void FAST_FUNC (*converter)(const char *arg, void *result);
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಶೂನ್ಯ FAST_FUNC (*converter)(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *arg, ಶೂನ್ಯ *ಫಲಿತಾಂಶ);
 
-static int multiconvert(const char *arg, void *result, converter convert)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ multiconvert(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *arg, ಶೂನ್ಯ *ಫಲಿತಾಂಶ, converter convert)
 {
-	if (*arg == '"' || *arg == '\'') {
-		arg = utoa((unsigned char)arg[1]);
+	ಆದರೆ (*arg == '"' || *arg == '\'') {
+		arg = utoa((ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)arg[1]);
 	}
 	errno = 0;
-	convert(arg, result);
-	if (errno) {
-		bb_error_msg("invalid number '%s'", arg);
-		return 1;
+	convert(arg, ಫಲಿತಾಂಶ);
+	ಆದರೆ (errno) {
+		bb_error_ಸಂದೇಶ("invalid number '%s'", arg);
+		ಹಿಂತಿರುಗಿ 1;
 	}
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static void FAST_FUNC conv_strtoull(const char *arg, void *result)
+ಸ್ಥಿರ ಶೂನ್ಯ FAST_FUNC conv_strtoull(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *arg, ಶೂನ್ಯ *ಫಲಿತಾಂಶ)
 {
 	/* Allow leading '+' - bb_strtoull() by itself does not allow it,
 	 * and probably shouldn't (other callers might require purely numeric
 	 * inputs to be allowed.
 	 */
-	if (arg[0] == '+')
+	ಆದರೆ (arg[0] == '+')
 		arg++;
-	*(unsigned long long*)result = bb_strtoull(arg, NULL, 0);
+	*(ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ*)ಫಲಿತಾಂಶ = bb_strtoull(arg, ಖಾಲಿ, 0);
 	/* both coreutils 6.10 and bash 3.2:
 	 * $ printf '%x\n' -2
 	 * fffffffffffffffe
 	 * Mimic that:
 	 */
-	if (errno) {
-		*(unsigned long long*)result = bb_strtoll(arg, NULL, 0);
+	ಆದರೆ (errno) {
+		*(ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ*)ಫಲಿತಾಂಶ = bb_strtoll(arg, ಖಾಲಿ, 0);
 	}
 }
-static void FAST_FUNC conv_strtoll(const char *arg, void *result)
+ಸ್ಥಿರ ಶೂನ್ಯ FAST_FUNC conv_strtoll(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *arg, ಶೂನ್ಯ *ಫಲಿತಾಂಶ)
 {
-	if (arg[0] == '+')
+	ಆದರೆ (arg[0] == '+')
 		arg++;
-	*(long long*)result = bb_strtoll(arg, NULL, 0);
+	*(ದೀರ್ಘ ದೀರ್ಘ*)ಫಲಿತಾಂಶ = bb_strtoll(arg, ಖಾಲಿ, 0);
 }
-static void FAST_FUNC conv_strtod(const char *arg, void *result)
+ಸ್ಥಿರ ಶೂನ್ಯ FAST_FUNC conv_strtod(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *arg, ಶೂನ್ಯ *ಫಲಿತಾಂಶ)
 {
-	char *end;
+	ಅಕ್ಷರ *ಕೊನೆ;
 	/* Well, this one allows leading whitespace... so what? */
 	/* What I like much less is that "-" accepted too! :( */
 //TODO: needs setlocale(LC_NUMERIC, "C")?
-	*(double*)result = strtod(arg, &end);
-	if (end[0]) {
+	*(ದ್ವಿಗುಣ*)ಫಲಿತಾಂಶ = strtod(arg, &ಕೊನೆ);
+	ಆದರೆ (ಕೊನೆ[0]) {
 		errno = ERANGE;
-		*(double*)result = 0;
+		*(ದ್ವಿಗುಣ*)ಫಲಿತಾಂಶ = 0;
 	}
 }
 
 /* Callers should check errno to detect errors */
-static unsigned long long my_xstrtoull(const char *arg)
+ಸ್ಥಿರ ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ my_xstrtoull(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *arg)
 {
-	unsigned long long result;
-	if (multiconvert(arg, &result, conv_strtoull))
-		result = 0;
-	return result;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ ಫಲಿತಾಂಶ;
+	ಆದರೆ (multiconvert(arg, &ಫಲಿತಾಂಶ, conv_strtoull))
+		ಫಲಿತಾಂಶ = 0;
+	ಹಿಂತಿರುಗಿ ಫಲಿತಾಂಶ;
 }
-static long long my_xstrtoll(const char *arg)
+ಸ್ಥಿರ ದೀರ್ಘ ದೀರ್ಘ my_xstrtoll(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *arg)
 {
-	long long result;
-	if (multiconvert(arg, &result, conv_strtoll))
-		result = 0;
-	return result;
+	ದೀರ್ಘ ದೀರ್ಘ ಫಲಿತಾಂಶ;
+	ಆದರೆ (multiconvert(arg, &ಫಲಿತಾಂಶ, conv_strtoll))
+		ಫಲಿತಾಂಶ = 0;
+	ಹಿಂತಿರುಗಿ ಫಲಿತಾಂಶ;
 }
-static double my_xstrtod(const char *arg)
+ಸ್ಥಿರ ದ್ವಿಗುಣ my_xstrtod(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *arg)
 {
-	double result;
-	multiconvert(arg, &result, conv_strtod);
-	return result;
+	ದ್ವಿಗುಣ ಫಲಿತಾಂಶ;
+	multiconvert(arg, &ಫಲಿತಾಂಶ, conv_strtod);
+	ಹಿಂತಿರುಗಿ ಫಲಿತಾಂಶ;
 }
 
 /* Handles %b; return 1 if output is to be short-circuited by \c */
-static int print_esc_string(const char *str)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ print_esc_string(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *str)
 {
-	char c;
-	while ((c = *str) != '\0') {
+	ಅಕ್ಷರ c;
+	ಆಗ ((c = *str) != '\0') {
 		str++;
-		if (c == '\\') {
+		ಆದರೆ (c == '\\') {
 			/* %b also accepts 4-digit octals of the form \0### */
-			if (*str == '0') {
-				if ((unsigned char)(str[1] - '0') < 8) {
+			ಆದರೆ (*str == '0') {
+				ಆದರೆ ((ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)(str[1] - '0') < 8) {
 					/* 2nd char is 0..7: skip leading '0' */
 					str++;
 				}
 			}
-			else if (*str == 'c') {
-				return 1;
+			ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (*str == 'c') {
+				ಹಿಂತಿರುಗಿ 1;
 			}
 			{
 				/* optimization: don't force arg to be on-stack,
 				 * use another variable for that. */
-				const char *z = str;
+				ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *z = str;
 				c = bb_process_escape_sequence(&z);
 				str = z;
 			}
 		}
-		putchar(c);
+		ಅಕ್ಷರ_ಬರೆ(c);
 	}
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }
 
-static void print_direc(char *format, unsigned fmt_length,
-		int field_width, int precision,
-		const char *argument)
+ಸ್ಥಿರ ಶೂನ್ಯ print_direc(ಅಕ್ಷರ *format, ಚಿಹ್ನೆರಹಿತ fmt_ಉದ್ದಳತೆ,
+		ಪೂರ್ಣಾಂಕ ಕ್ಷೇತ್ರ_ಅಗಲ, ಪೂರ್ಣಾಂಕ precision,
+		ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ವಾದ)
 {
-	long long llv;
-	double dv;
-	char saved;
-	char *have_prec, *have_width;
+	ದೀರ್ಘ ದೀರ್ಘ llv;
+	ದ್ವಿಗುಣ dv;
+	ಅಕ್ಷರ saved;
+	ಅಕ್ಷರ *have_prec, *have_ಅಗಲ;
 
-	saved = format[fmt_length];
-	format[fmt_length] = '\0';
+	saved = format[fmt_ಉದ್ದಳತೆ];
+	format[fmt_ಉದ್ದಳತೆ] = '\0';
 
-	have_prec = strstr(format, ".*");
-	have_width = strchr(format, '*');
-	if (have_width - 1 == have_prec)
-		have_width = NULL;
+	have_prec = ಅಕ್ಷರಸರಣಿ_ಹುಡುಕು(format, ".*");
+	have_ಅಗಲ = strchr(format, '*');
+	ಆದರೆ (have_ಅಗಲ - 1 == have_prec)
+		have_ಅಗಲ = ಖಾಲಿ;
 
 	/* multiconvert sets errno = 0, but %s needs it cleared */
 	errno = 0;
 
-	switch (format[fmt_length - 1]) {
-	case 'c':
-		printf(format, *argument);
-		break;
-	case 'd':
-	case 'i':
-		llv = my_xstrtoll(skip_whitespace(argument));
+	ಆಯ್ಕೆ (format[fmt_ಉದ್ದಳತೆ - 1]) {
+	ಸ್ಥಿತಿ 'c':
+		ಬರೆ(format, *ವಾದ);
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ 'd':
+	ಸ್ಥಿತಿ 'i':
+		llv = my_xstrtoll(skip_whitespace(ವಾದ));
  print_long:
-		if (!have_width) {
-			if (!have_prec)
-				printf(format, llv);
-			else
-				printf(format, precision, llv);
-		} else {
-			if (!have_prec)
-				printf(format, field_width, llv);
-			else
-				printf(format, field_width, precision, llv);
+		ಆದರೆ (!have_ಅಗಲ) {
+			ಆದರೆ (!have_prec)
+				ಬರೆ(format, llv);
+			ಇಲ್ಲದಿದ್ದರೆ
+				ಬರೆ(format, precision, llv);
+		} ಇಲ್ಲದಿದ್ದರೆ {
+			ಆದರೆ (!have_prec)
+				ಬರೆ(format, ಕ್ಷೇತ್ರ_ಅಗಲ, llv);
+			ಇಲ್ಲದಿದ್ದರೆ
+				ಬರೆ(format, ಕ್ಷೇತ್ರ_ಅಗಲ, precision, llv);
 		}
-		break;
-	case 'o':
-	case 'u':
-	case 'x':
-	case 'X':
-		llv = my_xstrtoull(skip_whitespace(argument));
+		ನಿಲ್ಲಿಸು;
+	ಸ್ಥಿತಿ 'o':
+	ಸ್ಥಿತಿ 'u':
+	ಸ್ಥಿತಿ 'x':
+	ಸ್ಥಿತಿ 'X':
+		llv = my_xstrtoull(skip_whitespace(ವಾದ));
 		/* cheat: unsigned long and long have same width, so... */
-		goto print_long;
-	case 's':
+		ಹೋಗು print_long;
+	ಸ್ಥಿತಿ 's':
 		/* Are char* and long long the same? */
-		if (sizeof(argument) == sizeof(llv)) {
-			llv = (long long)(ptrdiff_t)argument;
-			goto print_long;
-		} else {
+		ಆದರೆ (ಗಾತ್ರ(ವಾದ) == ಗಾತ್ರ(llv)) {
+			llv = (ದೀರ್ಘ ದೀರ್ಘ)(ptrdiff_t)ವಾದ;
+			ಹೋಗು print_long;
+		} ಇಲ್ಲದಿದ್ದರೆ {
 			/* Hope compiler will optimize it out by moving call
 			 * instruction after the ifs... */
-			if (!have_width) {
-				if (!have_prec)
-					printf(format, argument, /*unused:*/ argument, argument);
-				else
-					printf(format, precision, argument, /*unused:*/ argument);
-			} else {
-				if (!have_prec)
-					printf(format, field_width, argument, /*unused:*/ argument);
-				else
-					printf(format, field_width, precision, argument);
+			ಆದರೆ (!have_ಅಗಲ) {
+				ಆದರೆ (!have_prec)
+					ಬರೆ(format, ವಾದ, /*unused:*/ ವಾದ, ವಾದ);
+				ಇಲ್ಲದಿದ್ದರೆ
+					ಬರೆ(format, precision, ವಾದ, /*unused:*/ ವಾದ);
+			} ಇಲ್ಲದಿದ್ದರೆ {
+				ಆದರೆ (!have_prec)
+					ಬರೆ(format, ಕ್ಷೇತ್ರ_ಅಗಲ, ವಾದ, /*unused:*/ ವಾದ);
+				ಇಲ್ಲದಿದ್ದರೆ
+					ಬರೆ(format, ಕ್ಷೇತ್ರ_ಅಗಲ, precision, ವಾದ);
 			}
-			break;
+			ನಿಲ್ಲಿಸು;
 		}
-	case 'f':
-	case 'e':
-	case 'E':
-	case 'g':
-	case 'G':
-		dv = my_xstrtod(argument);
-		if (!have_width) {
-			if (!have_prec)
-				printf(format, dv);
-			else
-				printf(format, precision, dv);
-		} else {
-			if (!have_prec)
-				printf(format, field_width, dv);
-			else
-				printf(format, field_width, precision, dv);
+	ಸ್ಥಿತಿ 'f':
+	ಸ್ಥಿತಿ 'e':
+	ಸ್ಥಿತಿ 'E':
+	ಸ್ಥಿತಿ 'g':
+	ಸ್ಥಿತಿ 'G':
+		dv = my_xstrtod(ವಾದ);
+		ಆದರೆ (!have_ಅಗಲ) {
+			ಆದರೆ (!have_prec)
+				ಬರೆ(format, dv);
+			ಇಲ್ಲದಿದ್ದರೆ
+				ಬರೆ(format, precision, dv);
+		} ಇಲ್ಲದಿದ್ದರೆ {
+			ಆದರೆ (!have_prec)
+				ಬರೆ(format, ಕ್ಷೇತ್ರ_ಅಗಲ, dv);
+			ಇಲ್ಲದಿದ್ದರೆ
+				ಬರೆ(format, ಕ್ಷೇತ್ರ_ಅಗಲ, precision, dv);
 		}
-		break;
+		ನಿಲ್ಲಿಸು;
 	} /* switch */
 
-	format[fmt_length] = saved;
+	format[fmt_ಉದ್ದಳತೆ] = saved;
 }
 
 /* Handle params for "%*.*f". Negative numbers are ok (compat). */
-static int get_width_prec(const char *str)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ get_ಅಗಲ_prec(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *str)
 {
-	int v = bb_strtoi(str, NULL, 10);
-	if (errno) {
-		bb_error_msg("invalid number '%s'", str);
+	ಪೂರ್ಣಾಂಕ v = bb_strtoi(str, ಖಾಲಿ, 10);
+	ಆದರೆ (errno) {
+		bb_error_ಸಂದೇಶ("invalid number '%s'", str);
 		v = 0;
 	}
-	return v;
+	ಹಿಂತಿರುಗಿ v;
 }
 
 /* Print the text in FORMAT, using ARGV for arguments to any '%' directives.
    Return advanced ARGV.  */
-static char **print_formatted(char *f, char **argv, int *conv_err)
+ಸ್ಥಿರ ಅಕ್ಷರ **print_formatted(ಅಕ್ಷರ *f, ಅಕ್ಷರ **argv, ಪೂರ್ಣಾಂಕ *conv_err)
 {
-	char *direc_start;      /* Start of % directive.  */
-	unsigned direc_length;  /* Length of % directive.  */
-	int field_width;        /* Arg to first '*' */
-	int precision;          /* Arg to second '*' */
-	char **saved_argv = argv;
+	ಅಕ್ಷರ *direc_ಆರಂಭ;      /* Start of % directive.  */
+	ಚಿಹ್ನೆರಹಿತ direc_ಉದ್ದಳತೆ;  /* Length of % directive.  */
+	ಪೂರ್ಣಾಂಕ ಕ್ಷೇತ್ರ_ಅಗಲ;        /* Arg to first '*' */
+	ಪೂರ್ಣಾಂಕ precision;          /* Arg to second '*' */
+	ಅಕ್ಷರ **saved_argv = argv;
 
-	for (; *f; ++f) {
-		switch (*f) {
-		case '%':
-			direc_start = f++;
-			direc_length = 1;
-			field_width = precision = 0;
-			if (*f == '%') {
+	ಗಾಗಿ (; *f; ++f) {
+		ಆಯ್ಕೆ (*f) {
+		ಸ್ಥಿತಿ '%':
+			direc_ಆರಂಭ = f++;
+			direc_ಉದ್ದಳತೆ = 1;
+			ಕ್ಷೇತ್ರ_ಅಗಲ = precision = 0;
+			ಆದರೆ (*f == '%') {
 				bb_putchar('%');
-				break;
+				ನಿಲ್ಲಿಸು;
 			}
-			if (*f == 'b') {
-				if (*argv) {
-					if (print_esc_string(*argv))
-						return saved_argv; /* causes main() to exit */
+			ಆದರೆ (*f == 'b') {
+				ಆದರೆ (*argv) {
+					ಆದರೆ (print_esc_string(*argv))
+						ಹಿಂತಿರುಗಿ saved_argv; /* causes main() to exit */
 					++argv;
 				}
-				break;
+				ನಿಲ್ಲಿಸು;
 			}
-			while (*f && strchr("-+ #0", *f)) {
+			ಆಗ (*f && strchr("-+ #0", *f)) {
 				++f;
-				++direc_length;
+				++direc_ಉದ್ದಳತೆ;
 			}
-			if (*f == '*') {
+			ಆದರೆ (*f == '*') {
 				++f;
-				++direc_length;
-				if (*argv)
-					field_width = get_width_prec(*argv++);
-			} else {
-				while (isdigit(*f)) {
+				++direc_ಉದ್ದಳತೆ;
+				ಆದರೆ (*argv)
+					ಕ್ಷೇತ್ರ_ಅಗಲ = get_ಅಗಲ_prec(*argv++);
+			} ಇಲ್ಲದಿದ್ದರೆ {
+				ಆಗ (ಅಂಕಿಯೇ(*f)) {
 					++f;
-					++direc_length;
+					++direc_ಉದ್ದಳತೆ;
 				}
 			}
-			if (*f == '.') {
+			ಆದರೆ (*f == '.') {
 				++f;
-				++direc_length;
-				if (*f == '*') {
+				++direc_ಉದ್ದಳತೆ;
+				ಆದರೆ (*f == '*') {
 					++f;
-					++direc_length;
-					if (*argv)
-						precision = get_width_prec(*argv++);
-				} else {
-					while (isdigit(*f)) {
+					++direc_ಉದ್ದಳತೆ;
+					ಆದರೆ (*argv)
+						precision = get_ಅಗಲ_prec(*argv++);
+				} ಇಲ್ಲದಿದ್ದರೆ {
+					ಆಗ (ಅಂಕಿಯೇ(*f)) {
 						++f;
-						++direc_length;
+						++direc_ಉದ್ದಳತೆ;
 					}
 				}
 			}
@@ -348,64 +348,64 @@ static char **print_formatted(char *f, char **argv, int *conv_err)
 			 * bash does not like "%lld", but coreutils
 			 * happily takes even "%Llllhhzhhzd"!
 			 * We are permissive like coreutils */
-			while ((*f | 0x20) == 'l' || *f == 'h' || *f == 'z') {
+			ಆಗ ((*f | 0x20) == 'l' || *f == 'h' || *f == 'z') {
 				overlapping_strcpy(f, f + 1);
 			}
 			/* Add "ll" if integer modifier, then print */
 			{
-				static const char format_chars[] ALIGN1 = "diouxXfeEgGcs";
-				char *p = strchr(format_chars, *f);
+				ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ format_chars[] ALIGN1 = "diouxXfeEgGcs";
+				ಅಕ್ಷರ *p = strchr(format_chars, *f);
 				/* needed - try "printf %" without it */
-				if (p == NULL || *f == '\0') {
-					bb_error_msg("%s: invalid format", direc_start);
+				ಆದರೆ (p == ಖಾಲಿ || *f == '\0') {
+					bb_error_ಸಂದೇಶ("%s: invalid format", direc_ಆರಂಭ);
 					/* causes main() to exit with error */
-					return saved_argv - 1;
+					ಹಿಂತಿರುಗಿ saved_argv - 1;
 				}
-				++direc_length;
-				if (p - format_chars <= 5) {
+				++direc_ಉದ್ದಳತೆ;
+				ಆದರೆ (p - format_chars <= 5) {
 					/* it is one of "diouxX" */
-					p = xmalloc(direc_length + 3);
-					memcpy(p, direc_start, direc_length);
-					p[direc_length + 1] = p[direc_length - 1];
-					p[direc_length - 1] = 'l';
-					p[direc_length] = 'l';
+					p = xmalloc(direc_ಉದ್ದಳತೆ + 3);
+					ಸ್ಮರಣೆ_ನಕಲು(p, direc_ಆರಂಭ, direc_ಉದ್ದಳತೆ);
+					p[direc_ಉದ್ದಳತೆ + 1] = p[direc_ಉದ್ದಳತೆ - 1];
+					p[direc_ಉದ್ದಳತೆ - 1] = 'l';
+					p[direc_ಉದ್ದಳತೆ] = 'l';
 					//bb_error_msg("<%s>", p);
-					direc_length += 2;
-					direc_start = p;
-				} else {
-					p = NULL;
+					direc_ಉದ್ದಳತೆ += 2;
+					direc_ಆರಂಭ = p;
+				} ಇಲ್ಲದಿದ್ದರೆ {
+					p = ಖಾಲಿ;
 				}
-				if (*argv) {
-					print_direc(direc_start, direc_length, field_width,
+				ಆದರೆ (*argv) {
+					print_direc(direc_ಆರಂಭ, direc_ಉದ್ದಳತೆ, ಕ್ಷೇತ್ರ_ಅಗಲ,
 								precision, *argv++);
-				} else {
-					print_direc(direc_start, direc_length, field_width,
+				} ಇಲ್ಲದಿದ್ದರೆ {
+					print_direc(direc_ಆರಂಭ, direc_ಉದ್ದಳತೆ, ಕ್ಷೇತ್ರ_ಅಗಲ,
 								precision, "");
 				}
 				*conv_err |= errno;
-				free(p);
+				ಬಿಡುಗಡೆ(p);
 			}
-			break;
-		case '\\':
-			if (*++f == 'c') {
-				return saved_argv; /* causes main() to exit */
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ '\\':
+			ಆದರೆ (*++f == 'c') {
+				ಹಿಂತಿರುಗಿ saved_argv; /* causes main() to exit */
 			}
-			bb_putchar(bb_process_escape_sequence((const char **)&f));
+			bb_putchar(bb_process_escape_sequence((ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ **)&f));
 			f--;
-			break;
-		default:
-			putchar(*f);
+			ನಿಲ್ಲಿಸು;
+		ಪೂರ್ವನಿಯೋಜಿತ:
+			ಅಕ್ಷರ_ಬರೆ(*f);
 		}
 	}
 
-	return argv;
+	ಹಿಂತಿರುಗಿ argv;
 }
 
-int printf_main(int argc UNUSED_PARAM, char **argv)
+ಪೂರ್ಣಾಂಕ printf_main(ಪೂರ್ಣಾಂಕ argc ಬಳಸದ_PARAM, ಅಕ್ಷರ **argv)
 {
-	int conv_err;
-	char *format;
-	char **argv2;
+	ಪೂರ್ಣಾಂಕ conv_err;
+	ಅಕ್ಷರ *format;
+	ಅಕ್ಷರ **argv2;
 
 	/* We must check that stdout is not closed.
 	 * The reason for this is highly non-obvious.
@@ -417,8 +417,8 @@ int printf_main(int argc UNUSED_PARAM, char **argv)
 	 * to output data no matter what. So it will try later,
 	 * and possibly will clobber future output. Not good. */
 // TODO: check fcntl() & O_ACCMODE == O_WRONLY or O_RDWR?
-	if (fcntl(1, F_GETFL) == -1)
-		return 1; /* match coreutils 6.10 (sans error msg to stderr) */
+	ಆದರೆ (fcntl(1, F_GETFL) == -1)
+		ಹಿಂತಿರುಗಿ 1; /* match coreutils 6.10 (sans error msg to stderr) */
 	//if (dup2(1, 1) != 1) - old way
 	//	return 1;
 
@@ -427,12 +427,12 @@ int printf_main(int argc UNUSED_PARAM, char **argv)
 	 * We will mimic coreutils. */
 	argv = skip_dash_dash(argv);
 
-	if (!argv[0]) {
-		if ((ENABLE_ASH_PRINTF || ENABLE_HUSH_PRINTF)
+	ಆದರೆ (!argv[0]) {
+		ಆದರೆ ((ENABLE_ASH_PRINTF || ENABLE_HUSH_PRINTF)
 		 && applet_name[0] != 'p'
 		) {
-			bb_simple_error_msg("usage: printf FORMAT [ARGUMENT...]");
-			return 2; /* bash compat */
+			bb_simple_error_ಸಂದೇಶ("usage: printf FORMAT [ARGUMENT...]");
+			ಹಿಂತಿರುಗಿ 2; /* bash compat */
 		}
 		bb_show_usage();
 	}
@@ -441,16 +441,16 @@ int printf_main(int argc UNUSED_PARAM, char **argv)
 	argv2 = argv + 1;
 
 	conv_err = 0;
-	do {
+	ಮಾಡು {
 		argv = argv2;
 		argv2 = print_formatted(format, argv, &conv_err);
-	} while (argv2 > argv && *argv2);
+	} ಆಗ (argv2 > argv && *argv2);
 
 	/* coreutils compat (bash doesn't do this):
 	if (*argv)
 		fprintf(stderr, "excess args ignored");
 	*/
 
-	return (argv2 < argv) /* if true, print_formatted errored out */
+	ಹಿಂತಿರುಗಿ (argv2 < argv) /* if true, print_formatted errored out */
 		|| conv_err; /* print_formatted saw invalid number */
 }

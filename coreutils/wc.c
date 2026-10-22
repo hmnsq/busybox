@@ -53,23 +53,23 @@
 /* BB_AUDIT SUSv3 compliant. */
 /* http://www.opengroup.org/onlinepubs/007904975/utilities/wc.html */
 
-#include "libbb.h"
-#include "unicode.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
+#ಅನ್ತರ್ಭಾವ "unicode.h"
 
-#if !ENABLE_LOCALE_SUPPORT
+#ಆದರೆ !ENABLE_LOCALE_SUPPORT
 # undef isprint
-# undef isspace
-# define isprint(c) ((unsigned)((c) - 0x20) <= (0x7e - 0x20))
-# define isspace(c) ((c) == ' ')
-#endif
+# undef ಖಾಲಿಯೇ
+# define isprint(c) ((ಚಿಹ್ನೆರಹಿತ)((c) - 0x20) <= (0x7e - 0x20))
+# define ಖಾಲಿಯೇ(c) ((c) == ' ')
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if ENABLE_FEATURE_WC_LARGE
-# define COUNT_T unsigned long long
-# define COUNT_FMT "llu"
-#else
-# define COUNT_T unsigned
-# define COUNT_FMT "u"
-#endif
+#ಆದರೆ ENABLE_FEATURE_WC_LARGE
+# define ಎಣಿಕೆ_T ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ
+# define ಎಣಿಕೆ_FMT "llu"
+#ಇಲ್ಲದಿದ್ದರೆ
+# define ಎಣಿಕೆ_T ಚಿಹ್ನೆರಹಿತ
+# define ಎಣಿಕೆ_FMT "u"
+#ಆದರೆ_ಅಂತ್ಯ
 
 /* We support -m even when UNICODE_SUPPORT is off,
  * we just don't advertise it in help text,
@@ -96,162 +96,162 @@
 /* Order is important if we want to be compatible with
  * column order in "wc -cmlwL" output:
  */
-enum {
-	WC_LINES    = 0, /* -l */
-	WC_WORDS    = 1, /* -w */
+ಎಣಿಕೆ {
+	WC_ಸಾಲುಗಳು    = 0, /* -l */
+	WC_ಪದಗಳು    = 1, /* -w */
 	WC_UNICHARS = 2, /* -m */
-	WC_BYTES    = 3, /* -c */
-	WC_LENGTH   = 4, /* -L */
-	NUM_WCS     = 5,
+	WC_ಬೈಟುಗಳು    = 3, /* -c */
+	WC_ಉದ್ದಳತೆ   = 4, /* -L */
+	ಅಂಕೆ_WCS     = 5,
 };
 
-int wc_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int wc_main(int argc UNUSED_PARAM, char **argv)
+ಪೂರ್ಣಾಂಕ wc_main(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಂಕ wc_main(ಪೂರ್ಣಾಂಕ argc ಬಳಸದ_PARAM, ಅಕ್ಷರ **argv)
 {
-	const char *arg;
-	const char *start_fmt = " %9"COUNT_FMT + 1;
-	const char *fname_fmt = " %s\n";
-	COUNT_T *pcounts;
-	COUNT_T counts[NUM_WCS];
-	COUNT_T totals[NUM_WCS];
-	int num_files;
-	smallint status = EXIT_SUCCESS;
-	unsigned print_type;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *arg;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಆರಂಭ_fmt = " %9"ಎಣಿಕೆ_FMT + 1;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fname_fmt = " %s\n";
+	ಎಣಿಕೆ_T *pcounts;
+	ಎಣಿಕೆ_T counts[ಅಂಕೆ_WCS];
+	ಎಣಿಕೆ_T totals[ಅಂಕೆ_WCS];
+	ಪೂರ್ಣಾಂಕ ಅಂಕೆ_files;
+	smallint ಸ್ಥಿತಿ_2 = EXIT_SUCCESS;
+	ಚಿಹ್ನೆರಹಿತ print_type;
 
 	init_unicode();
 
 	print_type = getopt32(argv, "lwmcL");
 
-	if (print_type == 0) {
-		print_type = (1 << WC_LINES) | (1 << WC_WORDS) | (1 << WC_BYTES);
+	ಆದರೆ (print_type == 0) {
+		print_type = (1 << WC_ಸಾಲುಗಳು) | (1 << WC_ಪದಗಳು) | (1 << WC_ಬೈಟುಗಳು);
 	}
 
 	argv += optind;
-	if (!argv[0]) {
-		*--argv = (char *) bb_msg_standard_input;
+	ಆದರೆ (!argv[0]) {
+		*--argv = (ಅಕ್ಷರ *) bb_ಸಂದೇಶ_standard_ಒಳಹರಿವು;
 		fname_fmt = "\n";
 	}
-	if (!argv[1]) { /* zero or one filename? */
-		if (!((print_type-1) & print_type)) /* exactly one option? */
-			start_fmt = "%"COUNT_FMT;
+	ಆದರೆ (!argv[1]) { /* zero or one filename? */
+		ಆದರೆ (!((print_type-1) & print_type)) /* exactly one option? */
+			ಆರಂಭ_fmt = "%"ಎಣಿಕೆ_FMT;
 	}
 
-	memset(totals, 0, sizeof(totals));
+	memset(totals, 0, ಗಾತ್ರ(totals));
 
 	pcounts = counts;
 
-	num_files = 0;
-	while ((arg = *argv++) != NULL) {
+	ಅಂಕೆ_files = 0;
+	ಆಗ ((arg = *argv++) != ಖಾಲಿ) {
 		FILE *fp;
-		const char *s;
-		unsigned u;
-		unsigned linepos;
-		smallint in_word;
+		ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s;
+		ಚಿಹ್ನೆರಹಿತ u;
+		ಚಿಹ್ನೆರಹಿತ linepos;
+		smallint ಒಳ_ಶಬ್ದ;
 
-		++num_files;
+		++ಅಂಕೆ_files;
 		fp = fopen_or_warn_stdin(arg);
-		if (!fp) {
-			status = EXIT_FAILURE;
-			continue;
+		ಆದರೆ (!fp) {
+			ಸ್ಥಿತಿ_2 = EXIT_FAILURE;
+			ಮುಂದುವರಿ;
 		}
 
-		memset(counts, 0, sizeof(counts));
+		memset(counts, 0, ಗಾತ್ರ(counts));
 		linepos = 0;
-		in_word = 0;
+		ಒಳ_ಶಬ್ದ = 0;
 
-		while (1) {
-			int c;
+		ಆಗ (1) {
+			ಪೂರ್ಣಾಂಕ c;
 			/* Our -w doesn't match GNU wc exactly... oh well */
 
 			c = getc(fp);
-			if (c == EOF) {
-				if (ferror(fp)) {
-					bb_simple_perror_msg(arg);
-					status = EXIT_FAILURE;
+			ಆದರೆ (c == EOF) {
+				ಆದರೆ (ferror(fp)) {
+					bb_simple_perror_ಸಂದೇಶ(arg);
+					ಸ್ಥಿತಿ_2 = EXIT_FAILURE;
 				}
-				goto DO_EOF;  /* Treat an EOF as '\r'. */
+				ಹೋಗು DO_EOF;  /* Treat an EOF as '\r'. */
 			}
 
 			/* Cater for -c and -m */
-			++counts[WC_BYTES];
-			if (unicode_status != UNICODE_ON /* every byte is a new char */
+			++counts[WC_ಬೈಟುಗಳು];
+			ಆದರೆ (unicode_ಸ್ಥಿತಿ != UNICODE_ON /* every byte is a new char */
 			 || (c & 0xc0) != 0x80 /* it isn't a 2nd+ byte of a Unicode char */
 			) {
 				++counts[WC_UNICHARS];
 			}
 
-			if (isprint_asciionly(c)) { /* FIXME: not unicode-aware */
+			ಆದರೆ (isprint_asciionly(c)) { /* FIXME: not unicode-aware */
 				++linepos;
-				if (!isspace(c)) {
-					in_word = 1;
-					continue;
+				ಆದರೆ (!ಖಾಲಿಯೇ(c)) {
+					ಒಳ_ಶಬ್ದ = 1;
+					ಮುಂದುವರಿ;
 				}
-			} else if ((unsigned)(c - 9) <= 4) {
+			} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ ((ಚಿಹ್ನೆರಹಿತ)(c - 9) <= 4) {
 				/* \t  9
 				 * \n 10
 				 * \v 11
 				 * \f 12
 				 * \r 13
 				 */
-				if (c == '\t') {
+				ಆದರೆ (c == '\t') {
 					linepos = (linepos | 7) + 1;
-				} else {  /* '\n', '\r', '\f', or '\v' */
+				} ಇಲ್ಲದಿದ್ದರೆ {  /* '\n', '\r', '\f', or '\v' */
  DO_EOF:
-					if (linepos > counts[WC_LENGTH]) {
-						counts[WC_LENGTH] = linepos;
+					ಆದರೆ (linepos > counts[WC_ಉದ್ದಳತೆ]) {
+						counts[WC_ಉದ್ದಳತೆ] = linepos;
 					}
-					if (c == '\n') {
-						++counts[WC_LINES];
+					ಆದರೆ (c == '\n') {
+						++counts[WC_ಸಾಲುಗಳು];
 					}
-					if (c != '\v') {
+					ಆದರೆ (c != '\v') {
 						linepos = 0;
 					}
 				}
-			} else {
-				continue;
+			} ಇಲ್ಲದಿದ್ದರೆ {
+				ಮುಂದುವರಿ;
 			}
 
-			counts[WC_WORDS] += in_word;
-			in_word = 0;
-			if (c == EOF) {
-				break;
+			counts[WC_ಪದಗಳು] += ಒಳ_ಶಬ್ದ;
+			ಒಳ_ಶಬ್ದ = 0;
+			ಆದರೆ (c == EOF) {
+				ನಿಲ್ಲಿಸು;
 			}
 		}
 
 		fclose_if_not_stdin(fp);
 
-		if (totals[WC_LENGTH] < counts[WC_LENGTH]) {
-			totals[WC_LENGTH] = counts[WC_LENGTH];
+		ಆದರೆ (totals[WC_ಉದ್ದಳತೆ] < counts[WC_ಉದ್ದಳತೆ]) {
+			totals[WC_ಉದ್ದಳತೆ] = counts[WC_ಉದ್ದಳತೆ];
 		}
-		totals[WC_LENGTH] -= counts[WC_LENGTH];
+		totals[WC_ಉದ್ದಳತೆ] -= counts[WC_ಉದ್ದಳತೆ];
 
  OUTPUT:
 		/* coreutils wc tries hard to print pretty columns
 		 * (saves results for all files, finds max col len etc...)
 		 * we won't try that hard, it will bloat us too much */
-		s = start_fmt;
+		s = ಆರಂಭ_fmt;
 		u = 0;
-		do {
-			if (print_type & (1 << u)) {
-				printf(s, pcounts[u]);
-				s = " %9"COUNT_FMT; /* Ok... restore the leading space. */
+		ಮಾಡು {
+			ಆದರೆ (print_type & (1 << u)) {
+				ಬರೆ(s, pcounts[u]);
+				s = " %9"ಎಣಿಕೆ_FMT; /* Ok... restore the leading space. */
 			}
 			totals[u] += pcounts[u];
-		} while (++u < NUM_WCS);
-		printf(fname_fmt, arg);
+		} ಆಗ (++u < ಅಂಕೆ_WCS);
+		ಬರೆ(fname_fmt, arg);
 	}
 
 	/* If more than one file was processed, we want the totals.  To save some
 	 * space, we set the pcounts ptr to the totals array.  This has the side
 	 * effect of trashing the totals array after outputting it, but that's
 	 * irrelavent since we no longer need it. */
-	if (num_files > 1) {
-		num_files = 0;  /* Make sure we don't get here again. */
+	ಆದರೆ (ಅಂಕೆ_files > 1) {
+		ಅಂಕೆ_files = 0;  /* Make sure we don't get here again. */
 		arg = "total";
 		pcounts = totals;
 		--argv;
-		goto OUTPUT;
+		ಹೋಗು OUTPUT;
 	}
 
-	fflush_stdout_and_exit(status);
+	fflush_stdout_and_exit(ಸ್ಥಿತಿ_2);
 }

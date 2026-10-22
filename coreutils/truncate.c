@@ -26,55 +26,55 @@
 //usage:#define truncate_example_usage
 //usage:	"$ truncate -s 1G foo"
 
-#include "libbb.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
 
-#if ENABLE_LFS
+#ಆದರೆ ENABLE_LFS
 # define XATOU_SFX xatoull_sfx
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 # define XATOU_SFX xatoul_sfx
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 /* This is a NOFORK applet. Be very careful! */
 
-int truncate_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int truncate_main(int argc UNUSED_PARAM, char **argv)
+ಪೂರ್ಣಾಂಕ truncate_main(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಂಕ truncate_main(ಪೂರ್ಣಾಂಕ argc ಬಳಸದ_PARAM, ಅಕ್ಷರ **argv)
 {
-	unsigned opts;
-	int flags = O_WRONLY | O_NONBLOCK;
-	int ret = EXIT_SUCCESS;
-	char *size_str;
-	off_t size;
+	ಚಿಹ್ನೆರಹಿತ opts;
+	ಪೂರ್ಣಾಂಕ flags = O_WRONLY | O_NONBLOCK;
+	ಪೂರ್ಣಾಂಕ ret = EXIT_SUCCESS;
+	ಅಕ್ಷರ *ಗಾತ್ರ_str;
+	off_t ಗಾತ್ರ_2;
 
-	enum {
+	ಎಣಿಕೆ {
 		OPT_NOCREATE  = (1 << 0),
-		OPT_SIZE = (1 << 1),
+		OPT_ಗಾತ್ರ = (1 << 1),
 	};
 
-	opts = getopt32(argv, "^" "cs:" "\0" "s:-1", &size_str);
+	opts = getopt32(argv, "^" "cs:" "\0" "s:-1", &ಗಾತ್ರ_str);
 
-	if (!(opts & OPT_NOCREATE))
+	ಆದರೆ (!(opts & OPT_NOCREATE))
 		flags |= O_CREAT;
 
 	// TODO: coreutils 8.17 also support "m" (lowercase) suffix
 	// with truncate, but not with dd!
 	// We share kMG_suffixes[], so we can't make both tools
 	// compatible at once...
-	size = XATOU_SFX(size_str, kMG_suffixes);
+	ಗಾತ್ರ_2 = XATOU_SFX(ಗಾತ್ರ_str, kMG_suffixes);
 
 	argv += optind;
-	while (*argv) {
-		int fd = open(*argv, flags, 0666);
-		if (fd < 0) {
-			if (errno != ENOENT || !(opts & OPT_NOCREATE)) {
-				bb_perror_msg("%s: open", *argv);
+	ಆಗ (*argv) {
+		ಪೂರ್ಣಾಂಕ fd = open(*argv, flags, 0666);
+		ಆದರೆ (fd < 0) {
+			ಆದರೆ (errno != ENOENT || !(opts & OPT_NOCREATE)) {
+				bb_perror_ಸಂದೇಶ("%s: open", *argv);
 				ret = EXIT_FAILURE;
 			}
 			/* else: ENOENT && OPT_NOCREATE:
 			 * do not report error, exitcode is also 0.
 			 */
-		} else {
-			if (ftruncate(fd, size) == -1) {
-				bb_perror_msg("%s: truncate", *argv);
+		} ಇಲ್ಲದಿದ್ದರೆ {
+			ಆದರೆ (ftruncate(fd, ಗಾತ್ರ_2) == -1) {
+				bb_perror_ಸಂದೇಶ("%s: truncate", *argv);
 				ret = EXIT_FAILURE;
 			}
 			xclose(fd);
@@ -82,5 +82,5 @@ int truncate_main(int argc UNUSED_PARAM, char **argv)
 		++argv;
 	}
 
-	return ret;
+	ಹಿಂತಿರುಗಿ ret;
 }

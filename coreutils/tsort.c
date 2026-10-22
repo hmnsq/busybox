@@ -27,127 +27,127 @@
 //usage:       "b\n"
 //usage:       "c\n"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
+#ಅನ್ತರ್ಭಾವ "common_bufsiz.h"
 
-struct node {
-	unsigned in_count;
-	unsigned out_count;
-	struct node **out;
-	char name[1];
+ರಚನೆ ಗಂಟು {
+	ಚಿಹ್ನೆರಹಿತ ಒಳ_ಎಣಿಕೆ;
+	ಚಿಹ್ನೆರಹಿತ ಹೊರಹೋಗು_ಎಣಿಕೆ;
+	ರಚನೆ ಗಂಟು **ಹೊರಹೋಗು;
+	ಅಕ್ಷರ name[1];
 };
 
-struct globals {
-	struct node **nodes;
-	unsigned nodes_len;
+ರಚನೆ globals {
+	ರಚನೆ ಗಂಟು **nodes;
+	ಚಿಹ್ನೆರಹಿತ nodes_len;
 };
-#define G (*(struct globals*)bb_common_bufsiz1)
-#define INIT_G() do { \
-	setup_common_bufsiz(); \
-	BUILD_BUG_ON(sizeof(G) > COMMON_BUFSIZE); \
-	G.nodes = NULL; \
+#ವ್ಯಾಖ್ಯಾನಿಸು G (*(ರಚನೆ globals*)bb_common_bufsiz1)
+#ವ್ಯಾಖ್ಯಾನಿಸು INIT_G() ಮಾಡು { \
+	ಸಿದ್ಧತೆ_common_bufsiz(); \
+	BUILD_BUG_ON(ಗಾತ್ರ(G) > COMMON_BUFSIZE); \
+	G.nodes = ಖಾಲಿ; \
 	G.nodes_len = 0; \
-} while (0)
+} ಆಗ (0)
 
-static struct node *
-get_node(const char *name)
+ಸ್ಥಿರ ರಚನೆ ಗಂಟು *
+get_ಗಂಟು(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *name)
 {
-	struct node *n;
-	unsigned a = 0;
-	unsigned b = G.nodes_len;
+	ರಚನೆ ಗಂಟು *n;
+	ಚಿಹ್ನೆರಹಿತ a = 0;
+	ಚಿಹ್ನೆರಹಿತ b = G.nodes_len;
 
 	/* Binary search for name */
-	while (a != b) {
-		unsigned m = (a + b) / 2;
-		int cmp = strcmp(name, G.nodes[m]->name);
-		if (cmp == 0)
-			return G.nodes[m]; /* found */
-		if (cmp < 0) {
+	ಆಗ (a != b) {
+		ಚಿಹ್ನೆರಹಿತ m = (a + b) / 2;
+		ಪೂರ್ಣಾಂಕ cmp = strcmp(name, G.nodes[m]->name);
+		ಆದರೆ (cmp == 0)
+			ಹಿಂತಿರುಗಿ G.nodes[m]; /*ಸಿಕ್ಕಿತು*/
+		ಆದರೆ (cmp < 0) {
 			b = m;
-		} else {
+		} ಇಲ್ಲದಿದ್ದರೆ {
 			a = m + 1;
 		}
 	}
 
 	/* Allocate new node */
-	n = xzalloc(sizeof(*n) + strlen(name));
+	n = xzalloc(ಗಾತ್ರ(*n) + ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(name));
 	//n->in_count = 0;
 	//n->out_count = 0;
 	//n->out = NULL;
 	strcpy(n->name, name);
 
 	/* Insert to maintain sort */
-	G.nodes = xrealloc(G.nodes, (G.nodes_len + 1) * sizeof(*G.nodes));
+	G.nodes = xrealloc(G.nodes, (G.nodes_len + 1) * ಗಾತ್ರ(*G.nodes));
 	memmove(&G.nodes[a + 1], &G.nodes[a],
-		(G.nodes_len - a) * sizeof(*G.nodes));
+		(G.nodes_len - a) * ಗಾತ್ರ(*G.nodes));
 	G.nodes[a] = n;
 	G.nodes_len++;
-	return n;
+	ಹಿಂತಿರುಗಿ n;
 }
 
-static void
-add_edge(struct node *a, struct node *b)
+ಸ್ಥಿರ ಶೂನ್ಯ
+ಕೂಡಿಸು_ಅಂಚು(ರಚನೆ ಗಂಟು *a, ರಚನೆ ಗಂಟು *b)
 {
-	a->out = xrealloc_vector(a->out, 6, a->out_count);
-	a->out[a->out_count++] = b;
-	b->in_count++;
+	a->ಹೊರಹೋಗು = xrealloc_ಸದಿಶ(a->ಹೊರಹೋಗು, 6, a->ಹೊರಹೋಗು_ಎಣಿಕೆ);
+	a->ಹೊರಹೋಗು[a->ಹೊರಹೋಗು_ಎಣಿಕೆ++] = b;
+	b->ಒಳ_ಎಣಿಕೆ++;
 }
 
-int tsort_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int tsort_main(int argc UNUSED_PARAM, char **argv)
+ಪೂರ್ಣಾಂಕ tsort_main(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಂಕ tsort_main(ಪೂರ್ಣಾಂಕ argc ಬಳಸದ_PARAM, ಅಕ್ಷರ **argv)
 {
-	char *line;
-	size_t linesz;
+	ಅಕ್ಷರ *ಸಾಲು;
+	ಗಾತ್ರ_t linesz;
 	ssize_t len;
-	struct node *a;
-	int cycles;
-	unsigned i;
-#if ENABLE_FEATURE_CLEAN_UP
-	unsigned max_len;
-#endif
+	ರಚನೆ ಗಂಟು *a;
+	ಪೂರ್ಣಾಂಕ ಚಕ್ರಗಳು;
+	ಚಿಹ್ನೆರಹಿತ i;
+#ಆದರೆ ENABLE_FEATURE_CLEAN_ಮೇಲೆ
+	ಚಿಹ್ನೆರಹಿತ max_len;
+#ಆದರೆ_ಅಂತ್ಯ
 
 	INIT_G();
 
-	if (argv[1]) {
-		if (argv[2])
+	ಆದರೆ (argv[1]) {
+		ಆದರೆ (argv[2])
 			bb_show_usage();
-		if (NOT_LONE_DASH(argv[1])) {
+		ಆದರೆ (NOT_LONE_DASH(argv[1])) {
 			close(STDIN_FILENO); /* == 0 */
 			xopen(argv[1], O_RDONLY); /* fd will be 0 */
 		}
 	}
 
 	/* Read in words separated by <blank>s */
-	a = NULL;
-	line = NULL;
+	a = ಖಾಲಿ;
+	ಸಾಲು = ಖಾಲಿ;
 	linesz = 0;
-	while ((len = getline(&line, &linesz, stdin)) != -1) {
-		char *s = line;
-		while (*(s = skip_whitespace(s)) != '\0') {
-			struct node *b;
-			char *word;
+	ಆಗ ((len = getline(&ಸಾಲು, &linesz, stdin)) != -1) {
+		ಅಕ್ಷರ *s = ಸಾಲು;
+		ಆಗ (*(s = skip_whitespace(s)) != '\0') {
+			ರಚನೆ ಗಂಟು *b;
+			ಅಕ್ಷರ *ಶಬ್ದ;
 
-			word = s;
+			ಶಬ್ದ = s;
 			s = skip_non_whitespace(s);
-			if (*s)
+			ಆದರೆ (*s)
 				*s++ = '\0';
 
 			/* Create nodes and edges for each word pair */
-			b = get_node(word);
-			if (!a) {
+			b = get_ಗಂಟು(ಶಬ್ದ);
+			ಆದರೆ (!a) {
 				a = b;
-			} else {
-				if (a != b)
-					add_edge(a, b);
-				a = NULL;
+			} ಇಲ್ಲದಿದ್ದರೆ {
+				ಆದರೆ (a != b)
+					ಕೂಡಿಸು_ಅಂಚು(a, b);
+				a = ಖಾಲಿ;
 			}
 		}
 	}
 // Most other tools do not check for input read error (treat them as EOF)
 //	die_if_ferror(in, input_filename);
-	if (a)
-		bb_simple_error_msg_and_die("odd input");
-	free(line);
+	ಆದರೆ (a)
+		bb_simple_error_ಸಂದೇಶ_and_die("odd input");
+	ಬಿಡುಗಡೆ(ಸಾಲು);
 
 	/*
 	 * Kahn's algorithm:
@@ -155,48 +155,48 @@ int tsort_main(int argc UNUSED_PARAM, char **argv)
 	 *   - repeat until the graph is empty
 	 *   - if any nodes are left, they form cycles.
 	 */
-	cycles = 0;
-#if ENABLE_FEATURE_CLEAN_UP
+	ಚಕ್ರಗಳು = 0;
+#ಆದರೆ ENABLE_FEATURE_CLEAN_ಮೇಲೆ
 	max_len = G.nodes_len;
-#endif
-	while (G.nodes_len) {
-		struct node *n;
+#ಆದರೆ_ಅಂತ್ಯ
+	ಆಗ (G.nodes_len) {
+		ರಚನೆ ಗಂಟು *n;
 
 		/* Search for first node with no incoming edges */
-		for (i = 0; i < G.nodes_len; i++) {
-			if (!G.nodes[i]->in_count)
-				break;
+		ಗಾಗಿ (i = 0; i < G.nodes_len; i++) {
+			ಆದರೆ (!G.nodes[i]->ಒಳ_ಎಣಿಕೆ)
+				ನಿಲ್ಲಿಸು;
 		}
-		if (i == G.nodes_len) {
+		ಆದರೆ (i == G.nodes_len) {
 			/* Must be a cycle; arbitraily break it at node 0 */
-			cycles++;
+			ಚಕ್ರಗಳು++;
 			i = 0;
-#ifndef TINY
-			bb_error_msg("cycle at %s", G.nodes[i]->name);
-#endif
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ TINY
+			bb_error_ಸಂದೇಶ("cycle at %s", G.nodes[i]->name);
+#ಆದರೆ_ಅಂತ್ಯ
 		}
 
 		/* Remove the node (need no longer maintain sort) */
 		n = G.nodes[i];
 		G.nodes[i] = G.nodes[--G.nodes_len];
-#if ENABLE_FEATURE_CLEAN_UP
+#ಆದರೆ ENABLE_FEATURE_CLEAN_ಮೇಲೆ
 		/* Keep reference to removed node so it can be freed */
 		G.nodes[G.nodes_len] = n;
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 		/* And remove its outgoing edges */
-		for (i = 0; i < n->out_count; i++)
-			n->out[i]->in_count--;
+		ಗಾಗಿ (i = 0; i < n->ಹೊರಹೋಗು_ಎಣಿಕೆ; i++)
+			n->ಹೊರಹೋಗು[i]->ಒಳ_ಎಣಿಕೆ--;
 
 		puts(n->name);
 	}
-#if ENABLE_FEATURE_CLEAN_UP
-	for (i = 0; i < max_len; i++) {
-		free(G.nodes[i]->out);
-		free(G.nodes[i]);
+#ಆದರೆ ENABLE_FEATURE_CLEAN_ಮೇಲೆ
+	ಗಾಗಿ (i = 0; i < max_len; i++) {
+		ಬಿಡುಗಡೆ(G.nodes[i]->ಹೊರಹೋಗು);
+		ಬಿಡುಗಡೆ(G.nodes[i]);
 	}
-	free(G.nodes);
-#endif
+	ಬಿಡುಗಡೆ(G.nodes);
+#ಆದರೆ_ಅಂತ್ಯ
 
-	fflush_stdout_and_exit(cycles ? 1 : 0);
+	fflush_stdout_and_exit(ಚಕ್ರಗಳು ? 1 : 0);
 }

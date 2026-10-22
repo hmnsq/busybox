@@ -40,140 +40,140 @@
 //usage:       "$ split TODO foo\n"
 //usage:       "$ cat TODO | split -a 2 -l 2 TODO_\n"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
+#ಅನ್ತರ್ಭಾವ "common_bufsiz.h"
 
-#if ENABLE_FEATURE_SPLIT_FANCY
-static const struct suffix_mult split_suffixes[] ALIGN_SUFFIX = {
+#ಆದರೆ ENABLE_FEATURE_ವಿಭಜಿಸು_FANCY
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ರಚನೆ suffix_mult ವಿಭಜಿಸು_suffixes[] ALIGN_SUFFIX = {
 	{ "b", 512 },
 	{ "k", 1024 },
 	{ "m", 1024*1024 },
 	{ "g", 1024*1024*1024 },
 	{ "", 0 }
 };
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 /* Increment the suffix part of the filename.
  * Returns NULL if we are out of filenames.
  */
-static char *next_file(char *old, unsigned suffix_len)
+ಸ್ಥಿರ ಅಕ್ಷರ *ಮುಂದಿನ_file(ಅಕ್ಷರ *old, ಚಿಹ್ನೆರಹಿತ suffix_len)
 {
-	size_t end = strlen(old);
-	unsigned i = 1;
-	char *curr;
+	ಗಾತ್ರ_t ಕೊನೆ = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(old);
+	ಚಿಹ್ನೆರಹಿತ i = 1;
+	ಅಕ್ಷರ *curr;
 
-	while (1) {
-		curr = old + end - i;
-		if (*curr < 'z') {
+	ಆಗ (1) {
+		curr = old + ಕೊನೆ - i;
+		ಆದರೆ (*curr < 'z') {
 			*curr += 1;
-			break;
+			ನಿಲ್ಲಿಸು;
 		}
 		i++;
-		if (i > suffix_len) {
-			return NULL;
+		ಆದರೆ (i > suffix_len) {
+			ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 		}
 		*curr = 'a';
 	}
 
-	return old;
+	ಹಿಂತಿರುಗಿ old;
 }
 
-#define read_buffer bb_common_bufsiz1
-enum { READ_BUFFER_SIZE = COMMON_BUFSIZE - 1 };
+#ವ್ಯಾಖ್ಯಾನಿಸು read_ಬಫರ್ bb_common_bufsiz1
+ಎಣಿಕೆ { READ_ಬಫರ್_ಗಾತ್ರ = COMMON_BUFSIZE - 1 };
 
-#define SPLIT_OPT_l (1<<0)
-#define SPLIT_OPT_b (1<<1)
-#define SPLIT_OPT_a (1<<2)
+#ವ್ಯಾಖ್ಯಾನಿಸು ವಿಭಜಿಸು_OPT_l (1<<0)
+#ವ್ಯಾಖ್ಯಾನಿಸು ವಿಭಜಿಸು_OPT_b (1<<1)
+#ವ್ಯಾಖ್ಯಾನಿಸು ವಿಭಜಿಸು_OPT_a (1<<2)
 
-int split_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int split_main(int argc UNUSED_PARAM, char **argv)
+ಪೂರ್ಣಾಂಕ ವಿಭಜಿಸು_main(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಂಕ ವಿಭಜಿಸು_main(ಪೂರ್ಣಾಂಕ argc ಬಳಸದ_PARAM, ಅಕ್ಷರ **argv)
 {
-	unsigned suffix_len = 2;
-	char *pfx;
-	char *count_p;
-	const char *sfx;
+	ಚಿಹ್ನೆರಹಿತ suffix_len = 2;
+	ಅಕ್ಷರ *pfx;
+	ಅಕ್ಷರ *ಎಣಿಕೆ_p;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *sfx;
 	off_t cnt = 1000;
-	off_t remaining = 0;
-	unsigned opt;
-	ssize_t bytes_read, to_write;
-	char *src;
+	off_t ಉಳಿದ = 0;
+	ಚಿಹ್ನೆರಹಿತ opt;
+	ssize_t ಬೈಟುಗಳು_read, ಗಮ್ಯ_write;
+	ಅಕ್ಷರ *src;
 
-	setup_common_bufsiz();
+	ಸಿದ್ಧತೆ_common_bufsiz();
 
 	opt = getopt32(argv, "^"
 			"l:b:a:+" /* -a N */
 			"\0" "?2"/*max 2 args*/,
-			&count_p, &count_p, &suffix_len
+			&ಎಣಿಕೆ_p, &ಎಣಿಕೆ_p, &suffix_len
 	);
 
-	if (opt & SPLIT_OPT_l)
-		cnt = XATOOFF(count_p);
-	if (opt & SPLIT_OPT_b) // FIXME: also needs XATOOFF
-		cnt = xatoull_sfx(count_p,
-				IF_FEATURE_SPLIT_FANCY(split_suffixes)
-				IF_NOT_FEATURE_SPLIT_FANCY(km_suffixes)
+	ಆದರೆ (opt & ವಿಭಜಿಸು_OPT_l)
+		cnt = XATOOFF(ಎಣಿಕೆ_p);
+	ಆದರೆ (opt & ವಿಭಜಿಸು_OPT_b) // FIXME: also needs XATOOFF
+		cnt = xatoull_sfx(ಎಣಿಕೆ_p,
+				IF_FEATURE_ವಿಭಜಿಸು_FANCY(ವಿಭಜಿಸು_suffixes)
+				IF_NOT_FEATURE_ವಿಭಜಿಸು_FANCY(km_suffixes)
 		);
 	sfx = "x";
 
 	argv += optind;
-	if (argv[0]) {
-		int fd;
-		if (argv[1])
+	ಆದರೆ (argv[0]) {
+		ಪೂರ್ಣಾಂಕ fd;
+		ಆದರೆ (argv[1])
 			sfx = argv[1];
 		fd = xopen_stdin(argv[0]);
 		xmove_fd(fd, STDIN_FILENO);
-	} else {
-		argv[0] = (char *) bb_msg_standard_input;
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		argv[0] = (ಅಕ್ಷರ *) bb_ಸಂದೇಶ_standard_ಒಳಹರಿವು;
 	}
 
-	if (NAME_MAX < strlen(sfx) + suffix_len)
-		bb_simple_error_msg_and_die("suffix too long");
+	ಆದರೆ (NAME_MAX < ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(sfx) + suffix_len)
+		bb_simple_error_ಸಂದೇಶ_and_die("suffix too long");
 
 	{
-		char *char_p = xzalloc(suffix_len + 1);
+		ಅಕ್ಷರ *char_p = xzalloc(suffix_len + 1);
 		memset(char_p, 'a', suffix_len);
 		pfx = xasprintf("%s%s", sfx, char_p);
-		if (ENABLE_FEATURE_CLEAN_UP)
-			free(char_p);
+		ಆದರೆ (ENABLE_FEATURE_CLEAN_ಮೇಲೆ)
+			ಬಿಡುಗಡೆ(char_p);
 	}
 
-	while (1) {
-		bytes_read = safe_read(STDIN_FILENO, read_buffer, READ_BUFFER_SIZE);
-		if (!bytes_read)
-			break;
-		if (bytes_read < 0)
-			bb_simple_perror_msg_and_die(argv[0]);
-		src = read_buffer;
-		do {
-			if (!remaining) {
-				if (!pfx)
-					bb_simple_error_msg_and_die("suffixes exhausted");
+	ಆಗ (1) {
+		ಬೈಟುಗಳು_read = ಸುರಕ್ಷಿತ_read(STDIN_FILENO, read_ಬಫರ್, READ_ಬಫರ್_ಗಾತ್ರ);
+		ಆದರೆ (!ಬೈಟುಗಳು_read)
+			ನಿಲ್ಲಿಸು;
+		ಆದರೆ (ಬೈಟುಗಳು_read < 0)
+			bb_simple_perror_ಸಂದೇಶ_and_die(argv[0]);
+		src = read_ಬಫರ್;
+		ಮಾಡು {
+			ಆದರೆ (!ಉಳಿದ) {
+				ಆದರೆ (!pfx)
+					bb_simple_error_ಸಂದೇಶ_and_die("suffixes exhausted");
 				xmove_fd(xopen(pfx, O_WRONLY | O_CREAT | O_TRUNC), 1);
-				pfx = next_file(pfx, suffix_len);
-				remaining = cnt;
+				pfx = ಮುಂದಿನ_file(pfx, suffix_len);
+				ಉಳಿದ = cnt;
 			}
 
-			if (opt & SPLIT_OPT_b) {
+			ಆದರೆ (opt & ವಿಭಜಿಸು_OPT_b) {
 				/* split by bytes */
-				to_write = (bytes_read < remaining) ? bytes_read : remaining;
-				remaining -= to_write;
-			} else {
+				ಗಮ್ಯ_write = (ಬೈಟುಗಳು_read < ಉಳಿದ) ? ಬೈಟುಗಳು_read : ಉಳಿದ;
+				ಉಳಿದ -= ಗಮ್ಯ_write;
+			} ಇಲ್ಲದಿದ್ದರೆ {
 				/* split by lines */
 				/* can be sped up by using _memrchr_
 				 * and writing many lines at once... */
-				char *end = memchr(src, '\n', bytes_read);
-				if (end) {
-					--remaining;
-					to_write = end - src + 1;
-				} else {
-					to_write = bytes_read;
+				ಅಕ್ಷರ *ಕೊನೆ = memchr(src, '\n', ಬೈಟುಗಳು_read);
+				ಆದರೆ (ಕೊನೆ) {
+					--ಉಳಿದ;
+					ಗಮ್ಯ_write = ಕೊನೆ - src + 1;
+				} ಇಲ್ಲದಿದ್ದರೆ {
+					ಗಮ್ಯ_write = ಬೈಟುಗಳು_read;
 				}
 			}
 
-			xwrite(STDOUT_FILENO, src, to_write);
-			bytes_read -= to_write;
-			src += to_write;
-		} while (bytes_read);
+			xwrite(STDOUT_FILENO, src, ಗಮ್ಯ_write);
+			ಬೈಟುಗಳು_read -= ಗಮ್ಯ_write;
+			src += ಗಮ್ಯ_write;
+		} ಆಗ (ಬೈಟುಗಳು_read);
 	}
-	return EXIT_SUCCESS;
+	ಹಿಂತಿರುಗಿ EXIT_SUCCESS;
 }

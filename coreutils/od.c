@@ -29,20 +29,20 @@
 //usage:       "Print FILE (or stdin) unambiguously, as octal bytes by default"
 //usage:#endif
 
-#include "libbb.h"
-#if ENABLE_DESKTOP
+#ಅನ್ತರ್ಭಾವ "libbb.h"
+#ಆದರೆ ENABLE_DESKTOP
 /* This one provides -t (busybox's own build script needs it) */
-#include "od_bloaty.c"
-#else
+#ಅನ್ತರ್ಭಾವ "od_bloaty.c"
+#ಇಲ್ಲದಿದ್ದರೆ
 
-#include "dump.h"
+#ಅನ್ತರ್ಭಾವ "dump.h"
 
-static void
-odoffset(dumper_t *dumper, int argc, char ***argvp)
+ಸ್ಥಿರ ಶೂನ್ಯ
+odoffset(dumper_t *dumper, ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ ***argvp)
 {
-	char *num, *p;
-	int base;
-	char *end;
+	ಅಕ್ಷರ *ಅಂಕೆ, *p;
+	ಪೂರ್ಣಾಂಕ ತಳ;
+	ಅಕ್ಷರ *ಕೊನೆ;
 
 	/*
 	 * The offset syntax of od(1) was genuinely bizarre.  First, if
@@ -58,87 +58,87 @@ odoffset(dumper_t *dumper, int argc, char ***argvp)
 	 */
 	p = **argvp;
 
-	if (!p) {
+	ಆದರೆ (!p) {
 		/* hey someone is probably piping to us ... */
-		return;
+		ಹಿಂತಿರುಗಿ;
 	}
 
-	if ((*p != '+')
+	ಆದರೆ ((*p != '+')
 		&& (argc < 2
-			|| (!isdigit(p[0])
+			|| (!ಅಂಕಿಯೇ(p[0])
 				&& ((p[0] != 'x') || !isxdigit(p[1])))))
-		return;
+		ಹಿಂತಿರುಗಿ;
 
-	base = 0;
+	ತಳ = 0;
 	/*
 	 * skip over leading '+', 'x[0-9a-fA-f]' or '0x', and
 	 * set base.
 	 */
-	if (p[0] == '+')
+	ಆದರೆ (p[0] == '+')
 		++p;
-	if (p[0] == 'x' && isxdigit(p[1])) {
+	ಆದರೆ (p[0] == 'x' && isxdigit(p[1])) {
 		++p;
-		base = 16;
-	} else if (p[0] == '0' && p[1] == 'x') {
+		ತಳ = 16;
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (p[0] == '0' && p[1] == 'x') {
 		p += 2;
-		base = 16;
+		ತಳ = 16;
 	}
 
 	/* skip over the number */
-	if (base == 16)
-		for (num = p; isxdigit(*p); ++p)
-			continue;
-	else
-		for (num = p; isdigit(*p); ++p)
-			continue;
+	ಆದರೆ (ತಳ == 16)
+		ಗಾಗಿ (ಅಂಕೆ = p; isxdigit(*p); ++p)
+			ಮುಂದುವರಿ;
+	ಇಲ್ಲದಿದ್ದರೆ
+		ಗಾಗಿ (ಅಂಕೆ = p; ಅಂಕಿಯೇ(*p); ++p)
+			ಮುಂದುವರಿ;
 
 	/* check for no number */
-	if (num == p)
-		return;
+	ಆದರೆ (ಅಂಕೆ == p)
+		ಹಿಂತಿರುಗಿ;
 
 	/* if terminates with a '.', base is decimal */
-	if (*p == '.') {
-		if (base)
-			return;
-		base = 10;
+	ಆದರೆ (*p == '.') {
+		ಆದರೆ (ತಳ)
+			ಹಿಂತಿರುಗಿ;
+		ತಳ = 10;
 	}
 
-	dumper->dump_skip = strtol(num, &end, base ? base : 8);
+	dumper->dump_skip = strtol(ಅಂಕೆ, &ಕೊನೆ, ತಳ ? ತಳ : 8);
 
 	/* if end isn't the same as p, we got a non-octal digit */
-	if (end != p)
+	ಆದರೆ (ಕೊನೆ != p)
 		dumper->dump_skip = 0;
-	else {
-		if (*p) {
-			if (*p == 'b') {
+	ಇಲ್ಲದಿದ್ದರೆ {
+		ಆದರೆ (*p) {
+			ಆದರೆ (*p == 'b') {
 				dumper->dump_skip *= 512;
 				++p;
-			} else if (*p == 'B') {
+			} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (*p == 'B') {
 				dumper->dump_skip *= 1024;
 				++p;
 			}
 		}
-		if (*p)
+		ಆದರೆ (*p)
 			dumper->dump_skip = 0;
-		else {
+		ಇಲ್ಲದಿದ್ದರೆ {
 			++*argvp;
 			/*
 			 * If the offset uses a non-octal base, the base of
 			 * the offset is changed as well.  This isn't pretty,
 			 * but it's easy.
 			 */
-#define TYPE_OFFSET 7
+#ವ್ಯಾಖ್ಯಾನಿಸು TYPE_ಸ್ಥಾನಾಂತರ 7
 			{
-				char x_or_d;
-				if (base == 16) {
+				ಅಕ್ಷರ x_or_d;
+				ಆದರೆ (ತಳ == 16) {
 					x_or_d = 'x';
-					goto DO_X_OR_D;
+					ಹೋಗು DO_X_OR_D;
 				}
-				if (base == 10) {
+				ಆದರೆ (ತಳ == 10) {
 					x_or_d = 'd';
  DO_X_OR_D:
-					dumper->fshead->nextfu->fmt[TYPE_OFFSET]
-						= dumper->fshead->nextfs->nextfu->fmt[TYPE_OFFSET]
+					dumper->fshead->nextfu->fmt[TYPE_ಸ್ಥಾನಾಂತರ]
+						= dumper->fshead->nextfs->nextfu->fmt[TYPE_ಸ್ಥಾನಾಂತರ]
 						= x_or_d;
 				}
 			}
@@ -159,7 +159,7 @@ odoffset(dumper_t *dumper, int argc, char ***argvp)
 // to disambiguate them.
 // The printf-style format is required and must be surrounded by " "s.
 // (Below, each string contains two format units)
-static const char *const add_strings[] ALIGN_PTR = {
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಸ್ಥಿರಾಂಕ ಕೂಡಿಸು_ಅಕ್ಷರಸರಣಿಗಳು[] ALIGN_PTR = {
 	"16/1 \" %3_u\""   "\"\n\"",            /* 0: a */
 	"8/2 \" %06o\""    "\"\n\"",            /* 1: B (undocumented in od), o */
 	"16/1 \" %03o\""   "\"\n\"",            /* 2: b */
@@ -174,52 +174,52 @@ static const char *const add_strings[] ALIGN_PTR = {
 	"4/4 \" %011o\""   "\"\n\"",            /* 11: O */
 	"8/2 \" %6d\""     "\"\n\"",            /* 12: s */
 	/* -I,L,l: depend on word width of the arch (what is "long"?) */
-#if ULONG_MAX > 0xffffffff
+#ಆದರೆ ULONG_MAX > 0xffffffff
 	"2/8 \" %20lld\""  "\"\n\"",            /* 13: I, L, l */
-#define L_ 13
-#else
+#ವ್ಯಾಖ್ಯಾನಿಸು L_ 13
+#ಇಲ್ಲದಿದ್ದರೆ
 	/* 32-bit arch: -I,L,l are the same as -i */
-#define L_ 10
-#endif
+#ವ್ಯಾಖ್ಯಾನಿಸು L_ 10
+#ಆದರೆ_ಅಂತ್ಯ
 };
 
-static const char od_opts[] ALIGN1 = "aBbcDdeFfHhIiLlOoXxsv";
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ od_opts[] ALIGN1 = "aBbcDdeFfHhIiLlOoXxsv";
 
-static const char od_o2si[] ALIGN1 = {
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ od_o2si[] ALIGN1 = {
 	0, 1, 2, 3, 5,     /* aBbcD */
 	4, 6, 6, 7, 8,     /* deFfH */
 	9, L_, 10, L_, L_, /* hIiLl */
 	11, 1, 8, 9, 12    /* OoXxs */
 };
 
-int od_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int od_main(int argc, char **argv)
+ಪೂರ್ಣಾಂಕ od_main(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಂಕ od_main(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv)
 {
-	int ch;
-	int first = 1;
-	char *p;
+	ಪೂರ್ಣಾಂಕ ch;
+	ಪೂರ್ಣಾಂಕ ಮೊದಲ = 1;
+	ಅಕ್ಷರ *p;
 	dumper_t *dumper = alloc_dumper();
 
-	while ((ch = getopt(argc, argv, od_opts)) > 0) {
-		if (ch == 'v') {
+	ಆಗ ((ch = getopt(argc, argv, od_opts)) > 0) {
+		ಆದರೆ (ch == 'v') {
 			dumper->dump_vflag = ALL;
-		} else if (((p = strchr(od_opts, ch)) != NULL) && (*p != '\0')) {
-			if (first) {
-				first = 0;
-				bb_dump_add(dumper, "\"%07.7_Ao\n\"");
-				bb_dump_add(dumper, "\"%07.7_ao\"");
-			} else {
-				bb_dump_add(dumper, "\"       \"");
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (((p = strchr(od_opts, ch)) != ಖಾಲಿ) && (*p != '\0')) {
+			ಆದರೆ (ಮೊದಲ) {
+				ಮೊದಲ = 0;
+				bb_dump_ಕೂಡಿಸು(dumper, "\"%07.7_Ao\n\"");
+				bb_dump_ಕೂಡಿಸು(dumper, "\"%07.7_ao\"");
+			} ಇಲ್ಲದಿದ್ದರೆ {
+				bb_dump_ಕೂಡಿಸು(dumper, "\"       \"");
 			}
-			bb_dump_add(dumper, add_strings[(int)od_o2si[(p - od_opts)]]);
-		} else {  /* P, p, w, or other unhandled */
+			bb_dump_ಕೂಡಿಸು(dumper, ಕೂಡಿಸು_ಅಕ್ಷರಸರಣಿಗಳು[(ಪೂರ್ಣಾಂಕ)od_o2si[(p - od_opts)]]);
+		} ಇಲ್ಲದಿದ್ದರೆ {  /* P, p, w, or other unhandled */
 			bb_show_usage();
 		}
 	}
-	if (!dumper->fshead) {
-		bb_dump_add(dumper, "\"%07.7_Ao\n\"");
-		bb_dump_add(dumper, "\"%07.7_ao\"");
-		bb_dump_add(dumper, add_strings[1]); /* -o format is default */
+	ಆದರೆ (!dumper->fshead) {
+		bb_dump_ಕೂಡಿಸು(dumper, "\"%07.7_Ao\n\"");
+		bb_dump_ಕೂಡಿಸು(dumper, "\"%07.7_ao\"");
+		bb_dump_ಕೂಡಿಸು(dumper, ಕೂಡಿಸು_ಅಕ್ಷರಸರಣಿಗಳು[1]); /* -o format is default */
 	}
 	dumper->od_eofstring = "\n";
 
@@ -228,9 +228,9 @@ int od_main(int argc, char **argv)
 
 	odoffset(dumper, argc, &argv);
 
-	return bb_dump_dump(dumper, argv);
+	ಹಿಂತಿರುಗಿ bb_dump_dump(dumper, argv);
 }
-#endif /* !ENABLE_DESKTOP */
+#ಆದರೆ_ಅಂತ್ಯ /* !ENABLE_DESKTOP */
 
 /*-
  * Copyright (c) 1990 The Regents of the University of California.

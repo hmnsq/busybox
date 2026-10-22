@@ -47,226 +47,226 @@
 //usage:       "root:x:0:0:root:/root:/bin/bash\n"
 //usage:       "daemon:x:1:1:daemon:/usr/sbin:/bin/sh\n"
 
-#include "libbb.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-#if !ENABLE_FEATURE_FANCY_HEAD
-# define print_first_N(fp,count,bytes) print_first_N(fp,count)
-#endif
-static void
-print_first_N(FILE *fp, unsigned long count, bool count_bytes)
+#ಆದರೆ !ENABLE_FEATURE_FANCY_ತಲೆ
+# define print_ಮೊದಲ_N(fp,ಎಣಿಕೆ_2,ಬೈಟುಗಳು) print_ಮೊದಲ_N(fp,ಎಣಿಕೆ_2)
+#ಆದರೆ_ಅಂತ್ಯ
+ಸ್ಥಿರ ಶೂನ್ಯ
+print_ಮೊದಲ_N(FILE *fp, ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ಎಣಿಕೆ_2, bool ಎಣಿಕೆ_ಬೈಟುಗಳು)
 {
-#if !ENABLE_FEATURE_FANCY_HEAD
-	const int count_bytes = 0;
-#endif
-	while (count) {
-		int c = getc(fp);
-		if (c == EOF)
-			break;
-		if (count_bytes || (c == '\n'))
-			--count;
-		putchar(c);
+#ಆದರೆ !ENABLE_FEATURE_FANCY_ತಲೆ
+	ಸ್ಥಿರಾಂಕ ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_ಬೈಟುಗಳು = 0;
+#ಆದರೆ_ಅಂತ್ಯ
+	ಆಗ (ಎಣಿಕೆ_2) {
+		ಪೂರ್ಣಾಂಕ c = getc(fp);
+		ಆದರೆ (c == EOF)
+			ನಿಲ್ಲಿಸು;
+		ಆದರೆ (ಎಣಿಕೆ_ಬೈಟುಗಳು || (c == '\n'))
+			--ಎಣಿಕೆ_2;
+		ಅಕ್ಷರ_ಬರೆ(c);
 	}
 }
 
-#if ENABLE_FEATURE_FANCY_HEAD
-static void
-print_except_N_last_bytes(FILE *fp, unsigned count)
+#ಆದರೆ ENABLE_FEATURE_FANCY_ತಲೆ
+ಸ್ಥಿರ ಶೂನ್ಯ
+print_except_N_ಕೊನೆಯ_ಬೈಟುಗಳು(FILE *fp, ಚಿಹ್ನೆರಹಿತ ಎಣಿಕೆ_2)
 {
-	unsigned char *circle = xmalloc(++count);
-	unsigned head = 0;
-	for (;;) {
-		int c;
+	ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *circle = xmalloc(++ಎಣಿಕೆ_2);
+	ಚಿಹ್ನೆರಹಿತ ತಲೆ = 0;
+	ಗಾಗಿ (;;) {
+		ಪೂರ್ಣಾಂಕ c;
 		c = getc(fp);
-		if (c == EOF)
-			goto ret;
-		circle[head++] = c;
-		if (head == count)
-			break;
+		ಆದರೆ (c == EOF)
+			ಹೋಗು ret;
+		circle[ತಲೆ++] = c;
+		ಆದರೆ (ತಲೆ == ಎಣಿಕೆ_2)
+			ನಿಲ್ಲಿಸು;
 	}
-	for (;;) {
-		int c;
-		if (head == count)
-			head = 0;
-		putchar(circle[head]);
+	ಗಾಗಿ (;;) {
+		ಪೂರ್ಣಾಂಕ c;
+		ಆದರೆ (ತಲೆ == ಎಣಿಕೆ_2)
+			ತಲೆ = 0;
+		ಅಕ್ಷರ_ಬರೆ(circle[ತಲೆ]);
 		c = getc(fp);
-		if (c == EOF)
-			goto ret;
-		circle[head] = c;
-		head++;
+		ಆದರೆ (c == EOF)
+			ಹೋಗು ret;
+		circle[ತಲೆ] = c;
+		ತಲೆ++;
 	}
  ret:
-	free(circle);
+	ಬಿಡುಗಡೆ(circle);
 }
 
-static void
-print_except_N_last_lines(FILE *fp, unsigned count)
+ಸ್ಥಿರ ಶೂನ್ಯ
+print_except_N_ಕೊನೆಯ_ಸಾಲುಗಳು(FILE *fp, ಚಿಹ್ನೆರಹಿತ ಎಣಿಕೆ_2)
 {
-	char **circle = xzalloc((++count) * sizeof(circle[0]));
-	unsigned head = 0;
-	for (;;) {
-		char *c;
+	ಅಕ್ಷರ **circle = xzalloc((++ಎಣಿಕೆ_2) * ಗಾತ್ರ(circle[0]));
+	ಚಿಹ್ನೆರಹಿತ ತಲೆ = 0;
+	ಗಾಗಿ (;;) {
+		ಅಕ್ಷರ *c;
 		c = xmalloc_fgets(fp);
-		if (!c)
-			goto ret;
-		circle[head++] = c;
-		if (head == count)
-			break;
+		ಆದರೆ (!c)
+			ಹೋಗು ret;
+		circle[ತಲೆ++] = c;
+		ಆದರೆ (ತಲೆ == ಎಣಿಕೆ_2)
+			ನಿಲ್ಲಿಸು;
 	}
-	for (;;) {
-		char *c;
-		if (head == count)
-			head = 0;
-		fputs_stdout(circle[head]);
+	ಗಾಗಿ (;;) {
+		ಅಕ್ಷರ *c;
+		ಆದರೆ (ತಲೆ == ಎಣಿಕೆ_2)
+			ತಲೆ = 0;
+		fputs_stdout(circle[ತಲೆ]);
 		c = xmalloc_fgets(fp);
-		if (!c)
-			goto ret;
-		free(circle[head]);
-		circle[head++] = c;
+		ಆದರೆ (!c)
+			ಹೋಗು ret;
+		ಬಿಡುಗಡೆ(circle[ತಲೆ]);
+		circle[ತಲೆ++] = c;
 	}
  ret:
-	head = 0;
-	for (;;) {
-		free(circle[head++]);
-		if (head == count)
-			break;
+	ತಲೆ = 0;
+	ಗಾಗಿ (;;) {
+		ಬಿಡುಗಡೆ(circle[ತಲೆ++]);
+		ಆದರೆ (ತಲೆ == ಎಣಿಕೆ_2)
+			ನಿಲ್ಲಿಸು;
 	}
-	free(circle);
+	ಬಿಡುಗಡೆ(circle);
 }
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 /* Must never be called */
-void print_except_N_last_bytes(FILE *fp, unsigned count);
-void print_except_N_last_lines(FILE *fp, unsigned count);
-#endif
+ಶೂನ್ಯ print_except_N_ಕೊನೆಯ_ಬೈಟುಗಳು(FILE *fp, ಚಿಹ್ನೆರಹಿತ ಎಣಿಕೆ_2);
+ಶೂನ್ಯ print_except_N_ಕೊನೆಯ_ಸಾಲುಗಳು(FILE *fp, ಚಿಹ್ನೆರಹಿತ ಎಣಿಕೆ_2);
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if !ENABLE_FEATURE_FANCY_HEAD
-# define eat_num(negative_N,p) eat_num(p)
-#endif
-static unsigned long
-eat_num(bool *negative_N, const char *p)
+#ಆದರೆ !ENABLE_FEATURE_FANCY_ತಲೆ
+# define eat_ಅಂಕೆ(negative_N,p) eat_ಅಂಕೆ(p)
+#ಆದರೆ_ಅಂತ್ಯ
+ಸ್ಥಿರ ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ
+eat_ಅಂಕೆ(bool *negative_N, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *p)
 {
-#if ENABLE_FEATURE_FANCY_HEAD
-	if (*p == '-') {
+#ಆದರೆ ENABLE_FEATURE_FANCY_ತಲೆ
+	ಆದರೆ (*p == '-') {
 		*negative_N = 1;
 		p++;
 	}
-#endif
-	return xatoul_sfx(p, bkm_suffixes);
+#ಆದರೆ_ಅಂತ್ಯ
+	ಹಿಂತಿರುಗಿ xatoul_sfx(p, bkm_suffixes);
 }
 
-static const char head_opts[] ALIGN1 =
+ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ ತಲೆ_opts[] ALIGN1 =
 	"n:"
-#if ENABLE_FEATURE_FANCY_HEAD
+#ಆದರೆ ENABLE_FEATURE_FANCY_ತಲೆ
 	"c:qv"
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 	;
 
-#define header_fmt_str "\n==> %s <==\n"
+#ವ್ಯಾಖ್ಯಾನಿಸು ಶೀರ್ಷಿಕೆ_fmt_str "\n==> %s <==\n"
 
-int head_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int head_main(int argc, char **argv)
+ಪೂರ್ಣಾಂಕ ತಲೆ_main(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಂಕ ತಲೆ_main(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv)
 {
-	unsigned long count = 10;
-#if ENABLE_FEATURE_FANCY_HEAD
-	int header_threshhold = 1;
-	bool count_bytes = 0;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ಎಣಿಕೆ_2 = 10;
+#ಆದರೆ ENABLE_FEATURE_FANCY_ತಲೆ
+	ಪೂರ್ಣಾಂಕ ಶೀರ್ಷಿಕೆ_threshhold = 1;
+	bool ಎಣಿಕೆ_ಬೈಟುಗಳು = 0;
 	bool negative_N = 0;
-#else
-# define header_threshhold 1
-# define count_bytes       0
+#ಇಲ್ಲದಿದ್ದರೆ
+# define ಶೀರ್ಷಿಕೆ_threshhold 1
+# define ಎಣಿಕೆ_ಬೈಟುಗಳು       0
 # define negative_N        0
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 	FILE *fp;
-	const char *fmt;
-	char *p;
-	int opt;
-	int retval = EXIT_SUCCESS;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fmt;
+	ಅಕ್ಷರ *p;
+	ಪೂರ್ಣಾಂಕ opt;
+	ಪೂರ್ಣಾಂಕ retval = EXIT_SUCCESS;
 
-#if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
+#ಆದರೆ ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_ತಲೆ
 	/* Allow legacy syntax of an initial numeric option without -n. */
-	if (argv[1] && argv[1][0] == '-'
-	 && isdigit(argv[1][1])
+	ಆದರೆ (argv[1] && argv[1][0] == '-'
+	 && ಅಂಕಿಯೇ(argv[1][1])
 	) {
 		--argc;
 		++argv;
 		p = argv[0] + 1;
-		goto GET_COUNT;
+		ಹೋಗು GET_ಎಣಿಕೆ;
 	}
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 	/* No size benefit in converting this to getopt32 */
-	while ((opt = getopt(argc, argv, head_opts)) > 0) {
-		switch (opt) {
-#if ENABLE_FEATURE_FANCY_HEAD
-		case 'q':
-			header_threshhold = INT_MAX;
-			break;
-		case 'v':
-			header_threshhold = -1;
-			break;
-		case 'c':
-			count_bytes = 1;
+	ಆಗ ((opt = getopt(argc, argv, ತಲೆ_opts)) > 0) {
+		ಆಯ್ಕೆ (opt) {
+#ಆದರೆ ENABLE_FEATURE_FANCY_ತಲೆ
+		ಸ್ಥಿತಿ 'q':
+			ಶೀರ್ಷಿಕೆ_threshhold = ಗರಿಷ್ಠ_ಪೂರ್ಣಾಂಕ;
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'v':
+			ಶೀರ್ಷಿಕೆ_threshhold = -1;
+			ನಿಲ್ಲಿಸು;
+		ಸ್ಥಿತಿ 'c':
+			ಎಣಿಕೆ_ಬೈಟುಗಳು = 1;
 			/* fall through */
-#endif
-		case 'n':
+#ಆದರೆ_ಅಂತ್ಯ
+		ಸ್ಥಿತಿ 'n':
 			p = optarg;
-#if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
- GET_COUNT:
-#endif
-			count = eat_num(&negative_N, p);
-			break;
-		default:
+#ಆದರೆ ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_ತಲೆ
+ GET_ಎಣಿಕೆ:
+#ಆದರೆ_ಅಂತ್ಯ
+			ಎಣಿಕೆ_2 = eat_ಅಂಕೆ(&negative_N, p);
+			ನಿಲ್ಲಿಸು;
+		ಪೂರ್ವನಿಯೋಜಿತ:
 			bb_show_usage();
 		}
 	}
 
 	argc -= optind;
 	argv += optind;
-	if (!*argv)
-		*--argv = (char*)"-";
+	ಆದರೆ (!*argv)
+		*--argv = (ಅಕ್ಷರ*)"-";
 
-	fmt = header_fmt_str + 1;
-	if (argc <= header_threshhold) {
-#if ENABLE_FEATURE_FANCY_HEAD
-		header_threshhold = 0;
-#else
+	fmt = ಶೀರ್ಷಿಕೆ_fmt_str + 1;
+	ಆದರೆ (argc <= ಶೀರ್ಷಿಕೆ_threshhold) {
+#ಆದರೆ ENABLE_FEATURE_FANCY_ತಲೆ
+		ಶೀರ್ಷಿಕೆ_threshhold = 0;
+#ಇಲ್ಲದಿದ್ದರೆ
 		fmt += 11; /* "" */
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 	}
-	if (negative_N) {
-		if (count >= INT_MAX / sizeof(char*))
-			bb_error_msg("count is too big: %lu", count);
+	ಆದರೆ (negative_N) {
+		ಆದರೆ (ಎಣಿಕೆ_2 >= ಗರಿಷ್ಠ_ಪೂರ್ಣಾಂಕ / ಗಾತ್ರ(ಅಕ್ಷರ*))
+			bb_error_ಸಂದೇಶ("count is too big: %lu", ಎಣಿಕೆ_2);
 	}
 
-	do {
+	ಮಾಡು {
 		fp = fopen_or_warn_stdin(*argv);
-		if (fp) {
-			if (fp == stdin) {
-				*argv = (char *) bb_msg_standard_input;
+		ಆದರೆ (fp) {
+			ಆದರೆ (fp == stdin) {
+				*argv = (ಅಕ್ಷರ *) bb_ಸಂದೇಶ_standard_ಒಳಹರಿವು;
 			}
-			if (header_threshhold) {
-				printf(fmt, *argv);
+			ಆದರೆ (ಶೀರ್ಷಿಕೆ_threshhold) {
+				ಬರೆ(fmt, *argv);
 			}
-			if (negative_N) {
-				if (count_bytes) {
-					print_except_N_last_bytes(fp, count);
-				} else {
-					print_except_N_last_lines(fp, count);
+			ಆದರೆ (negative_N) {
+				ಆದರೆ (ಎಣಿಕೆ_ಬೈಟುಗಳು) {
+					print_except_N_ಕೊನೆಯ_ಬೈಟುಗಳು(fp, ಎಣಿಕೆ_2);
+				} ಇಲ್ಲದಿದ್ದರೆ {
+					print_except_N_ಕೊನೆಯ_ಸಾಲುಗಳು(fp, ಎಣಿಕೆ_2);
 				}
-			} else {
-				print_first_N(fp, count, count_bytes);
+			} ಇಲ್ಲದಿದ್ದರೆ {
+				print_ಮೊದಲ_N(fp, ಎಣಿಕೆ_2, ಎಣಿಕೆ_ಬೈಟುಗಳು);
 			}
 			die_if_ferror_stdout();
-			if (fclose_if_not_stdin(fp)) {
-				bb_simple_perror_msg(*argv);
+			ಆದರೆ (fclose_if_not_stdin(fp)) {
+				bb_simple_perror_ಸಂದೇಶ(*argv);
 				retval = EXIT_FAILURE;
 			}
-		} else {
+		} ಇಲ್ಲದಿದ್ದರೆ {
 			retval = EXIT_FAILURE;
 		}
-		fmt = header_fmt_str;
-	} while (*++argv);
+		fmt = ಶೀರ್ಷಿಕೆ_fmt_str;
+	} ಆಗ (*++argv);
 
 	fflush_stdout_and_exit(retval);
 }

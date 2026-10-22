@@ -23,50 +23,50 @@
 //usage:     "\n	--ignore=N	Exclude N CPUs"
 //usage:	)
 
-#include "libbb.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
 
-int nproc_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int nproc_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+ಪೂರ್ಣಾಂಕ nproc_main(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಂಕ nproc_main(ಪೂರ್ಣಾಂಕ argc ಬಳಸದ_PARAM, ಅಕ್ಷರ **argv ಬಳಸದ_PARAM)
 {
-	int count = 0;
-#if ENABLE_LONG_OPTS
-	int ignore = 0;
-	int opts = getopt32long(argv, "\xfe:+",
-			"ignore\0" Required_argument "\xfe"
-			"all\0"    No_argument       "\xff"
+	ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2 = 0;
+#ಆದರೆ ENABLE_LONG_OPTS
+	ಪೂರ್ಣಾಂಕ ignore = 0;
+	ಪೂರ್ಣಾಂಕ opts = getopt32long(argv, "\xfe:+",
+			"ignore\0" Required_ವಾದ "\xfe"
+			"all\0"    No_ವಾದ       "\xff"
 			, &ignore
 	);
 
-	if (opts & (1 << 1)) {
+	ಆದರೆ (opts & (1 << 1)) {
 		DIR *cpusd = opendir("/sys/devices/system/cpu");
-		if (cpusd) {
-			struct dirent *de;
-			while (NULL != (de = readdir(cpusd))) {
-				char *cpuid = strstr(de->d_name, "cpu");
-				if (cpuid && isdigit(cpuid[strlen(cpuid) - 1]))
-					count++;
+		ಆದರೆ (cpusd) {
+			ರಚನೆ dirent *de;
+			ಆಗ (ಖಾಲಿ != (de = readdir(cpusd))) {
+				ಅಕ್ಷರ *cpuid = ಅಕ್ಷರಸರಣಿ_ಹುಡುಕು(de->d_name, "cpu");
+				ಆದರೆ (cpuid && ಅಂಕಿಯೇ(cpuid[ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(cpuid) - 1]))
+					ಎಣಿಕೆ_2++;
 			}
-			IF_FEATURE_CLEAN_UP(closedir(cpusd);)
+			IF_FEATURE_CLEAN_ಮೇಲೆ(closedir(cpusd);)
 		}
-	} else
-#endif
+	} ಇಲ್ಲದಿದ್ದರೆ
+#ಆದರೆ_ಅಂತ್ಯ
 	{
-		int i;
-		unsigned sz = 2 * 1024;
-		unsigned long *mask = get_malloc_cpu_affinity(0, &sz);
-		sz /= sizeof(long);
-		for (i = 0; i < sz; i++) {
-			if (mask[i] != 0) /* most mask[i] are usually 0 */
-				count += bb_popcnt_long(mask[i]);
+		ಪೂರ್ಣಾಂಕ i;
+		ಚಿಹ್ನೆರಹಿತ sz = 2 * 1024;
+		ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ *ಮುಖವಾಡ = get_malloc_cpu_affinity(0, &sz);
+		sz /= ಗಾತ್ರ(ದೀರ್ಘ);
+		ಗಾಗಿ (i = 0; i < sz; i++) {
+			ಆದರೆ (ಮುಖವಾಡ[i] != 0) /* most mask[i] are usually 0 */
+				ಎಣಿಕೆ_2 += bb_popcnt_long(ಮುಖವಾಡ[i]);
 		}
-		IF_FEATURE_CLEAN_UP(free(mask);)
+		IF_FEATURE_CLEAN_ಮೇಲೆ(ಬಿಡುಗಡೆ(ಮುಖವಾಡ);)
 	}
 
-	IF_LONG_OPTS(count -= ignore;)
-	if (count <= 0)
-		count = 1;
+	IF_LONG_OPTS(ಎಣಿಕೆ_2 -= ignore;)
+	ಆದರೆ (ಎಣಿಕೆ_2 <= 0)
+		ಎಣಿಕೆ_2 = 1;
 
-	printf("%u\n", count);
+	ಬರೆ("%u\n", ಎಣಿಕೆ_2);
 
-	return 0;
+	ಹಿಂತಿರುಗಿ 0;
 }

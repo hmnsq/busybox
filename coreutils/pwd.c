@@ -25,69 +25,69 @@
 //usage:       "$ pwd\n"
 //usage:       "/root\n"
 
-#include "libbb.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
 
-static int logical_getcwd(void)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ logical_getcwd(ಶೂನ್ಯ)
 {
-	struct stat st1;
-	struct stat st2;
-	char *wd;
-	char *p;
+	ರಚನೆ stat st1;
+	ರಚನೆ stat st2;
+	ಅಕ್ಷರ *wd;
+	ಅಕ್ಷರ *p;
 
 	wd = getenv("PWD");
-	if (!wd || wd[0] != '/')
-		return 0;
+	ಆದರೆ (!wd || wd[0] != '/')
+		ಹಿಂತಿರುಗಿ 0;
 
 	p = wd;
-	while (*p) {
+	ಆಗ (*p) {
 		/* doing strstr(p, "/.") by hand is smaller and faster... */
-		if (*p++ != '/')
-			continue;
-		if (*p != '.')
-			continue;
+		ಆದರೆ (*p++ != '/')
+			ಮುಂದುವರಿ;
+		ಆದರೆ (*p != '.')
+			ಮುಂದುವರಿ;
 		/* we found "/.", skip to next char */
 		p++;
-		if (*p == '.')
+		ಆದರೆ (*p == '.')
 			p++; /* we found "/.." */
-		if (*p == '\0' || *p == '/')
-			return 0; /* "/./" or "/../" component: bad */
+		ಆದರೆ (*p == '\0' || *p == '/')
+			ಹಿಂತಿರುಗಿ 0; /* "/./" or "/../" component: bad */
 	}
 
-	if (stat(wd, &st1) != 0)
-		return 0;
-	if (stat(".", &st2) != 0)
-		return 0;
-	if (st1.st_ino != st2.st_ino)
-		return 0;
-	if (st1.st_dev != st2.st_dev)
-		return 0;
+	ಆದರೆ (stat(wd, &st1) != 0)
+		ಹಿಂತಿರುಗಿ 0;
+	ಆದರೆ (stat(".", &st2) != 0)
+		ಹಿಂತಿರುಗಿ 0;
+	ಆದರೆ (st1.st_ino != st2.st_ino)
+		ಹಿಂತಿರುಗಿ 0;
+	ಆದರೆ (st1.st_dev != st2.st_dev)
+		ಹಿಂತಿರುಗಿ 0;
 
 	puts(wd);
-	return 1;
+	ಹಿಂತಿರುಗಿ 1;
 }
 
-int pwd_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int pwd_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+ಪೂರ್ಣಾಂಕ pwd_main(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಂಕ pwd_main(ಪೂರ್ಣಾಂಕ argc ಬಳಸದ_PARAM, ಅಕ್ಷರ **argv ಬಳಸದ_PARAM)
 {
-	char *buf;
+	ಅಕ್ಷರ *buf;
 
-	if (ENABLE_DESKTOP) {
+	ಆದರೆ (ENABLE_DESKTOP) {
 		/* TODO: assume -L if $POSIXLY_CORRECT? (coreutils does that)
 		 * Rationale:
 		 * POSIX requires a default of -L, but most scripts expect -P
 		 */
-		unsigned opt = getopt32(argv, "LP");
-		if ((opt & 1) && logical_getcwd())
-			return fflush_all();
+		ಚಿಹ್ನೆರಹಿತ opt = getopt32(argv, "LP");
+		ಆದರೆ ((opt & 1) && logical_getcwd())
+			ಹಿಂತಿರುಗಿ fflush_all();
 	}
 
-	buf = xrealloc_getcwd_or_warn(NULL);
+	buf = xrealloc_getcwd_or_warn(ಖಾಲಿ);
 
-	if (buf) {
+	ಆದರೆ (buf) {
 		puts(buf);
-		free(buf);
-		return fflush_all();
+		ಬಿಡುಗಡೆ(buf);
+		ಹಿಂತಿರುಗಿ fflush_all();
 	}
 
-	return EXIT_FAILURE;
+	ಹಿಂತಿರುಗಿ EXIT_FAILURE;
 }

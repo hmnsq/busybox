@@ -72,45 +72,45 @@
 //usage:       "104     ./docs\n"
 //usage:       "2417    .\n"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
+#ಅನ್ತರ್ಭಾವ "common_bufsiz.h"
 
-enum {
+ಎಣಿಕೆ {
 	OPT_a_files_too    = (1 << 0),
 	OPT_H_follow_links = (1 << 1),
 	OPT_k_kbytes       = (1 << 2),
 	OPT_L_follow_links = (1 << 3),
-	OPT_s_total_norecurse = (1 << 4),
+	OPT_s_ಒಟ್ಟು_norecurse = (1 << 4),
 	OPT_x_one_FS       = (1 << 5),
 	OPT_d_maxdepth     = (1 << 6),
 	OPT_l_hardlinks    = (1 << 7),
-	OPT_c_total        = (1 << 8),
+	OPT_c_ಒಟ್ಟು        = (1 << 8),
 	OPT_b              = (1 << 9),
 	OPT_h_for_humans   = (1 << 10),
 	OPT_m_mbytes       = (1 << 11),
 };
 
-struct globals {
-#if ENABLE_FEATURE_HUMAN_READABLE
-	unsigned long disp_unit;
-#else
-	unsigned disp_k;
-#endif
-	int max_print_depth;
-	bool status;
-	int slink_depth;
-	int du_depth;
+ರಚನೆ globals {
+#ಆದರೆ ENABLE_FEATURE_HUMAN_READABLE
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ disp_unit;
+#ಇಲ್ಲದಿದ್ದರೆ
+	ಚಿಹ್ನೆರಹಿತ disp_k;
+#ಆದರೆ_ಅಂತ್ಯ
+	ಪೂರ್ಣಾಂಕ max_print_ಆಳ;
+	bool ಸ್ಥಿತಿ_2;
+	ಪೂರ್ಣಾಂಕ slink_ಆಳ;
+	ಪೂರ್ಣಾಂಕ du_ಆಳ;
 	dev_t dir_dev;
 } FIX_ALIASING;
-#define G (*(struct globals*)bb_common_bufsiz1)
-#define INIT_G() do { setup_common_bufsiz(); } while (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು G (*(ರಚನೆ globals*)bb_common_bufsiz1)
+#ವ್ಯಾಖ್ಯಾನಿಸು INIT_G() ಮಾಡು { ಸಿದ್ಧತೆ_common_bufsiz(); } ಆಗ (0)
 
 
-static void print(unsigned long long size, const char *filename)
+ಸ್ಥಿರ ಶೂನ್ಯ print(ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ ಗಾತ್ರ_2, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *filename)
 {
 	/* TODO - May not want to defer error checking here. */
-#if ENABLE_FEATURE_HUMAN_READABLE
-# if ENABLE_DESKTOP
+#ಆದರೆ ENABLE_FEATURE_HUMAN_READABLE
+# ಆದರೆ ENABLE_DESKTOP
 	/* ~30 bytes of code for extra compat:
 	 * coreutils' du rounds sizes up:
 	 * for example,  1025k file is shown as "2" by du -m.
@@ -118,126 +118,126 @@ static void print(unsigned long long size, const char *filename)
 	 * else (fixed scale such as -m), we round up. To that end,
 	 * add yet another half of the unit before displaying:
 	 */
-	if (G.disp_unit)
-		size += (G.disp_unit-1) / (unsigned)(512 * 2);
+	ಆದರೆ (G.disp_unit)
+		ಗಾತ್ರ_2 += (G.disp_unit-1) / (ಚಿಹ್ನೆರಹಿತ)(512 * 2);
 # endif
-	printf("%s\t%s\n",
+	ಬರೆ("%s\t%s\n",
 			/* size x 512 / G.disp_unit.
 			 * If G.disp_unit == 0, show one fractional
 			 * and use suffixes
 			 */
-			make_human_readable_str(size, (option_mask32 & OPT_b) ? 1 : 512, G.disp_unit),
+			make_human_readable_str(ಗಾತ್ರ_2, (option_mask32 & OPT_b) ? 1 : 512, G.disp_unit),
 			filename);
-#else
-	if (G.disp_k) {
-		if (!(option_mask32 & OPT_b)) {
-			size++;
-			size >>= 1;
-		} else {
-			size >>= 10;
+#ಇಲ್ಲದಿದ್ದರೆ
+	ಆದರೆ (G.disp_k) {
+		ಆದರೆ (!(option_mask32 & OPT_b)) {
+			ಗಾತ್ರ_2++;
+			ಗಾತ್ರ_2 >>= 1;
+		} ಇಲ್ಲದಿದ್ದರೆ {
+			ಗಾತ್ರ_2 >>= 10;
 		}
 	}
-	printf("%llu\t%s\n", size, filename);
-#endif
+	ಬರೆ("%llu\t%s\n", ಗಾತ್ರ_2, filename);
+#ಆದರೆ_ಅಂತ್ಯ
 }
 
 /* tiny recursive du */
-static unsigned long long du(const char *filename)
+ಸ್ಥಿರ ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ du(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *filename)
 {
-	struct stat statbuf;
-	unsigned long long sum;
+	ರಚನೆ stat statbuf;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ ಮೊತ್ತ;
 
-	if (lstat(filename, &statbuf) != 0) {
-		bb_simple_perror_msg(filename);
-		G.status = EXIT_FAILURE;
-		return 0;
+	ಆದರೆ (lstat(filename, &statbuf) != 0) {
+		bb_simple_perror_ಸಂದೇಶ(filename);
+		G.ಸ್ಥಿತಿ_2 = EXIT_FAILURE;
+		ಹಿಂತಿರುಗಿ 0;
 	}
 
-	if (option_mask32 & OPT_x_one_FS) {
-		if (G.du_depth == 0) {
+	ಆದರೆ (option_mask32 & OPT_x_one_FS) {
+		ಆದರೆ (G.du_ಆಳ == 0) {
 			G.dir_dev = statbuf.st_dev;
-		} else if (G.dir_dev != statbuf.st_dev) {
-			return 0;
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (G.dir_dev != statbuf.st_dev) {
+			ಹಿಂತಿರುಗಿ 0;
 		}
 	}
 
-	sum = ((option_mask32 & OPT_b) ? statbuf.st_size : statbuf.st_blocks);
+	ಮೊತ್ತ = ((option_mask32 & OPT_b) ? statbuf.st_ಗಾತ್ರ : statbuf.st_ಖಂಡಗಳು);
 
-	if (S_ISLNK(statbuf.st_mode)) {
-		if (G.slink_depth > G.du_depth) { /* -H or -L */
-			if (stat(filename, &statbuf) != 0) {
-				bb_simple_perror_msg(filename);
-				G.status = EXIT_FAILURE;
-				return 0;
+	ಆದರೆ (S_ISLNK(statbuf.st_ಬಹುಲಕ)) {
+		ಆದರೆ (G.slink_ಆಳ > G.du_ಆಳ) { /* -H or -L */
+			ಆದರೆ (stat(filename, &statbuf) != 0) {
+				bb_simple_perror_ಸಂದೇಶ(filename);
+				G.ಸ್ಥಿತಿ_2 = EXIT_FAILURE;
+				ಹಿಂತಿರುಗಿ 0;
 			}
-			sum = ((option_mask32 & OPT_b) ? statbuf.st_size : statbuf.st_blocks);
-			if (G.slink_depth == 1) {
+			ಮೊತ್ತ = ((option_mask32 & OPT_b) ? statbuf.st_ಗಾತ್ರ : statbuf.st_ಖಂಡಗಳು);
+			ಆದರೆ (G.slink_ಆಳ == 1) {
 				/* Convert -H to -L */
-				G.slink_depth = INT_MAX;
+				G.slink_ಆಳ = ಗರಿಷ್ಠ_ಪೂರ್ಣಾಂಕ;
 			}
 		}
 	}
 
-	if (!(option_mask32 & OPT_l_hardlinks)
+	ಆದರೆ (!(option_mask32 & OPT_l_hardlinks)
 	 && statbuf.st_nlink > 1
 	) {
 		/* Add files/directories with links only once */
-		if (is_in_ino_dev_hashtable(&statbuf)) {
-			return 0;
+		ಆದರೆ (is_ಒಳ_ino_dev_hashtable(&statbuf)) {
+			ಹಿಂತಿರುಗಿ 0;
 		}
-		add_to_ino_dev_hashtable(&statbuf, NULL);
+		ಕೂಡಿಸು_ಗಮ್ಯ_ino_dev_hashtable(&statbuf, ಖಾಲಿ);
 	}
 
-	if (S_ISDIR(statbuf.st_mode)) {
+	ಆದರೆ (S_ISDIR(statbuf.st_ಬಹುಲಕ)) {
 		DIR *dir;
-		struct dirent *entry;
-		char *newfile;
+		ರಚನೆ dirent *ನಮೂದು;
+		ಅಕ್ಷರ *newfile;
 
 		dir = warn_opendir(filename);
-		if (!dir) {
-			G.status = EXIT_FAILURE;
-			return sum;
+		ಆದರೆ (!dir) {
+			G.ಸ್ಥಿತಿ_2 = EXIT_FAILURE;
+			ಹಿಂತಿರುಗಿ ಮೊತ್ತ;
 		}
 
-		while ((entry = readdir(dir))) {
-			newfile = concat_subpath_file(filename, entry->d_name);
-			if (newfile == NULL)
-				continue;
-			++G.du_depth;
-			sum += du(newfile);
-			--G.du_depth;
-			free(newfile);
+		ಆಗ ((ನಮೂದು = readdir(dir))) {
+			newfile = concat_subpath_file(filename, ನಮೂದು->d_name);
+			ಆದರೆ (newfile == ಖಾಲಿ)
+				ಮುಂದುವರಿ;
+			++G.du_ಆಳ;
+			ಮೊತ್ತ += du(newfile);
+			--G.du_ಆಳ;
+			ಬಿಡುಗಡೆ(newfile);
 		}
 		closedir(dir);
-	} else {
-		if (!(option_mask32 & OPT_a_files_too) && G.du_depth != 0)
-			return sum;
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		ಆದರೆ (!(option_mask32 & OPT_a_files_too) && G.du_ಆಳ != 0)
+			ಹಿಂತಿರುಗಿ ಮೊತ್ತ;
 	}
-	if (G.du_depth <= G.max_print_depth) {
-		print(sum, filename);
+	ಆದರೆ (G.du_ಆಳ <= G.max_print_ಆಳ) {
+		print(ಮೊತ್ತ, filename);
 	}
-	return sum;
+	ಹಿಂತಿರುಗಿ ಮೊತ್ತ;
 }
 
-int du_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int du_main(int argc UNUSED_PARAM, char **argv)
+ಪೂರ್ಣಾಂಕ du_main(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಂಕ du_main(ಪೂರ್ಣಾಂಕ argc ಬಳಸದ_PARAM, ಅಕ್ಷರ **argv)
 {
-	unsigned long long total;
-	int slink_depth_save;
-	unsigned opt;
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ ಒಟ್ಟು;
+	ಪೂರ್ಣಾಂಕ slink_ಆಳ_save;
+	ಚಿಹ್ನೆರಹಿತ opt;
 
 	INIT_G();
 
-#if ENABLE_FEATURE_HUMAN_READABLE
+#ಆದರೆ ENABLE_FEATURE_HUMAN_READABLE
 	IF_FEATURE_DU_DEFAULT_BLOCKSIZE_1K(G.disp_unit = 1024;)
 	IF_NOT_FEATURE_DU_DEFAULT_BLOCKSIZE_1K(G.disp_unit = 512;)
-	if (getenv("POSIXLY_CORRECT"))  /* TODO - a new libbb function? */
+	ಆದರೆ (getenv("POSIXLY_CORRECT"))  /* TODO - a new libbb function? */
 		G.disp_unit = 512;
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 	IF_FEATURE_DU_DEFAULT_BLOCKSIZE_1K(G.disp_k = 1;)
 	/* IF_NOT_FEATURE_DU_DEFAULT_BLOCKSIZE_1K(G.disp_k = 0;) - G is pre-zeroed */
-#endif
-	G.max_print_depth = INT_MAX;
+#ಆದರೆ_ಅಂತ್ಯ
+	G.max_print_ಆಳ = ಗರಿಷ್ಠ_ಪೂರ್ಣಾಂಕ;
 
 	/* Note: SUSv3 specifies that -a and -s options cannot be used together
 	 * in strictly conforming applications.  However, it also says that some
@@ -245,67 +245,67 @@ int du_main(int argc UNUSED_PARAM, char **argv)
 	 * gnu du exits with an error code in this case.  We choose to simply
 	 * ignore -a.  This is consistent with -s being equivalent to -d 0.
 	 */
-#if ENABLE_FEATURE_HUMAN_READABLE
+#ಆದರೆ ENABLE_FEATURE_HUMAN_READABLE
 	opt = getopt32(argv, "^"
 			"aHkLsxd:+lcbhm"
 			"\0" "h-km:k-hm:m-hk:H-L:L-H:s-d:d-s",
-			&G.max_print_depth
+			&G.max_print_ಆಳ
 	);
 	argv += optind;
-	if (opt & OPT_b) {
+	ಆದರೆ (opt & OPT_b) {
 		G.disp_unit = 1;
 	}
-	if (opt & OPT_h_for_humans) {
+	ಆದರೆ (opt & OPT_h_for_humans) {
 		G.disp_unit = 0;
 	}
-	if (opt & OPT_m_mbytes) {
+	ಆದರೆ (opt & OPT_m_mbytes) {
 		G.disp_unit = 1024*1024;
 	}
-	if (opt & OPT_k_kbytes) {
+	ಆದರೆ (opt & OPT_k_kbytes) {
 		G.disp_unit = 1024;
 	}
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 	opt = getopt32(argv, "^"
 			"aHkLsxd:+lcb"
 			"\0" "H-L:L-H:s-d:d-s",
-			&G.max_print_depth
+			&G.max_print_ಆಳ
 	);
 	argv += optind;
-# if !ENABLE_FEATURE_DU_DEFAULT_BLOCKSIZE_1K
-	if (opt & OPT_k_kbytes) {
+# ಆದರೆ !ENABLE_FEATURE_DU_DEFAULT_BLOCKSIZE_1K
+	ಆದರೆ (opt & OPT_k_kbytes) {
 		G.disp_k = 1;
 	}
 # endif
-#endif
-	if (opt & OPT_H_follow_links) {
-		G.slink_depth = 1;
+#ಆದರೆ_ಅಂತ್ಯ
+	ಆದರೆ (opt & OPT_H_follow_links) {
+		G.slink_ಆಳ = 1;
 	}
-	if (opt & OPT_L_follow_links) {
-		G.slink_depth = INT_MAX;
+	ಆದರೆ (opt & OPT_L_follow_links) {
+		G.slink_ಆಳ = ಗರಿಷ್ಠ_ಪೂರ್ಣಾಂಕ;
 	}
-	if (opt & OPT_s_total_norecurse) {
-		G.max_print_depth = 0;
+	ಆದರೆ (opt & OPT_s_ಒಟ್ಟು_norecurse) {
+		G.max_print_ಆಳ = 0;
 	}
 
 	/* go through remaining args (if any) */
-	if (!*argv) {
-		*--argv = (char*)".";
-		if (G.slink_depth == 1) {
-			G.slink_depth = 0;
+	ಆದರೆ (!*argv) {
+		*--argv = (ಅಕ್ಷರ*)".";
+		ಆದರೆ (G.slink_ಆಳ == 1) {
+			G.slink_ಆಳ = 0;
 		}
 	}
 
-	slink_depth_save = G.slink_depth;
-	total = 0;
-	do {
-		total += du(*argv);
-		G.slink_depth = slink_depth_save;
-	} while (*++argv);
+	slink_ಆಳ_save = G.slink_ಆಳ;
+	ಒಟ್ಟು = 0;
+	ಮಾಡು {
+		ಒಟ್ಟು += du(*argv);
+		G.slink_ಆಳ = slink_ಆಳ_save;
+	} ಆಗ (*++argv);
 
-	if (ENABLE_FEATURE_CLEAN_UP)
+	ಆದರೆ (ENABLE_FEATURE_CLEAN_ಮೇಲೆ)
 		reset_ino_dev_hashtable();
-	if (opt & OPT_c_total)
-		print(total, "total");
+	ಆದರೆ (opt & OPT_c_ಒಟ್ಟು)
+		print(ಒಟ್ಟು, "total");
 
-	fflush_stdout_and_exit(G.status);
+	fflush_stdout_and_exit(G.ಸ್ಥಿತಿ_2);
 }

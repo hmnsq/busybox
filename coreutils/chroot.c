@@ -32,22 +32,22 @@
 //usage:       "# ls -l /bin/ls\n"
 //usage:       "-rwxr-xr-x    1 root     root        40816 Feb  5 07:45 /bin/ls*\n"
 
-#include "libbb.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
 
-int chroot_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int chroot_main(int argc UNUSED_PARAM, char **argv)
+ಪೂರ್ಣಾಂಕ chroot_main(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಂಕ chroot_main(ಪೂರ್ಣಾಂಕ argc ಬಳಸದ_PARAM, ಅಕ್ಷರ **argv)
 {
 	++argv;
-	if (!*argv)
+	ಆದರೆ (!*argv)
 		bb_show_usage();
 
 	xchroot(*argv);
 
 	++argv;
-	if (!*argv) { /* no 2nd param (PROG), use shell */
+	ಆದರೆ (!*argv) { /* no 2nd param (PROG), use shell */
 		argv -= 2;
-		argv[0] = (char *) get_shell_name();
-		argv[1] = (char *) "-i"; /* GNU coreutils 8.4 compat */
+		argv[0] = (ಅಕ್ಷರ *) get_shell_name();
+		argv[1] = (ಅಕ್ಷರ *) "-i"; /* GNU coreutils 8.4 compat */
 		/*argv[2] = NULL; - already is */
 	}
 

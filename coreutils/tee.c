@@ -52,34 +52,34 @@
 //	-p	diagnose errors writing to non pipes
 // ^^^^ this should set SIGPIPE to SIG_IGN. EPIPE is ignored (same as "warn-nopipe")
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
+#ಅನ್ತರ್ಭಾವ "common_bufsiz.h"
 
-int tee_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int tee_main(int argc, char **argv)
+ಪೂರ್ಣಾಂಕ tee_main(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಂಕ tee_main(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv)
 {
-	const char *mode = "w\0a";
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಬಹುಲಕ = "w\0a";
 	FILE **files;
 	FILE **fp;
-	char **names;
-	char **np;
-	char retval;
+	ಅಕ್ಷರ **ಹೆಸರುಗಳು;
+	ಅಕ್ಷರ **np;
+	ಅಕ್ಷರ retval;
 //TODO: make unconditional
-#if ENABLE_FEATURE_TEE_USE_BLOCK_IO
+#ಆದರೆ ENABLE_FEATURE_TEE_USE_ಖಂಡ_IO
 	ssize_t c;
 # define buf bb_common_bufsiz1
-	setup_common_bufsiz();
-#else
-	int c;
-#endif
+	ಸಿದ್ಧತೆ_common_bufsiz();
+#ಇಲ್ಲದಿದ್ದರೆ
+	ಪೂರ್ಣಾಂಕ c;
+#ಆದರೆ_ಅಂತ್ಯ
 	retval = getopt32(argv, "ia");	/* 'a' must be 2nd */
 	argc -= optind;
 	argv += optind;
 
-	mode += (retval & 2);	/* Since 'a' is the 2nd option... */
+	ಬಹುಲಕ += (retval & 2);	/* Since 'a' is the 2nd option... */
 
-	if (retval & 1) {
-		signal(SIGINT, SIG_IGN);
+	ಆದರೆ (retval & 1) {
+		ಸಂಕೇತ(SIGINT, SIG_IGN);
 	}
 	retval = EXIT_SUCCESS;
 	/* if (opt_p || opt_output_error)
@@ -87,51 +87,51 @@ int tee_main(int argc, char **argv)
 	 */
 
 	/* Allocate an array of FILE *'s, with one extra for a sentinel. */
-	fp = files = xzalloc(sizeof(FILE *) * (argc + 2));
-	np = names = argv - 1;
+	fp = files = xzalloc(ಗಾತ್ರ(FILE *) * (argc + 2));
+	np = ಹೆಸರುಗಳು = argv - 1;
 
 	files[0] = stdout;
-	goto GOT_NEW_FILE;
+	ಹೋಗು GOT_NEW_FILE;
 
-	do {
+	ಮಾಡು {
 		*fp = stdout;
-		if (NOT_LONE_DASH(*argv)) {
-			*fp = fopen_or_warn(*argv, mode);
-			if (*fp == NULL) {
+		ಆದರೆ (NOT_LONE_DASH(*argv)) {
+			*fp = fopen_or_warn(*argv, ಬಹುಲಕ);
+			ಆದರೆ (*fp == ಖಾಲಿ) {
 				retval = EXIT_FAILURE;
 				argv++;
-				continue;
+				ಮುಂದುವರಿ;
 			}
 		}
 		*np = *argv++;
  GOT_NEW_FILE:
-		setbuf(*fp, NULL);	/* tee must not buffer output. */
+		setbuf(*fp, ಖಾಲಿ);	/* tee must not buffer output. */
 		fp++;
 		np++;
-	} while (*argv);
+	} ಆಗ (*argv);
 	/* names[0] will be filled later */
 
-#if ENABLE_FEATURE_TEE_USE_BLOCK_IO
-	while ((c = safe_read(STDIN_FILENO, buf, COMMON_BUFSIZE)) > 0) {
+#ಆದರೆ ENABLE_FEATURE_TEE_USE_ಖಂಡ_IO
+	ಆಗ ((c = ಸುರಕ್ಷಿತ_read(STDIN_FILENO, buf, COMMON_BUFSIZE)) > 0) {
 		fp = files;
-		do
+		ಮಾಡು
 			fwrite(buf, 1, c, *fp);
 			/* if (opt_p && fwrite() != c && !EPIPE) bb_error_msg("..."); */
-		while (*++fp);
+		ಆಗ (*++fp);
 	}
-	if (c < 0) {		/* Make sure read errors are signaled. */
+	ಆದರೆ (c < 0) {		/* Make sure read errors are signaled. */
 		retval = EXIT_FAILURE;
 	}
-#else
-	setvbuf(stdout, NULL, _IONBF, 0);
-	while ((c = getchar()) != EOF) {
+#ಇಲ್ಲದಿದ್ದರೆ
+	setvbuf(stdout, ಖಾಲಿ, _IONBF, 0);
+	ಆಗ ((c = getchar()) != EOF) {
 		fp = files;
-		do
+		ಮಾಡು
 			putc(c, *fp);
 			/* if (opt_p && putc() == EOF && !EPIPE) bb_error_msg("..."); */
-		while (*++fp);
+		ಆಗ (*++fp);
 	}
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 	/* Now we need to check for i/o errors on stdin and the various
 	 * output files.  Since we know that the first entry in the output
@@ -139,15 +139,15 @@ int tee_main(int argc, char **argv)
 	 * setting the first entry to stdin and checking stdout error
 	 * status with fflush_stdout_and_exit()... although fflush()ing
 	 * is unnecessary here. */
-	np = names;
+	np = ಹೆಸರುಗಳು;
 	fp = files;
-	names[0] = (char *) bb_msg_standard_input;
+	ಹೆಸರುಗಳು[0] = (ಅಕ್ಷರ *) bb_ಸಂದೇಶ_standard_ಒಳಹರಿವು;
 	files[0] = stdin;
-	do {	/* Now check for input and output errors. */
+	ಮಾಡು {	/* Now check for input and output errors. */
 		/* Checking ferror should be sufficient, but we may want to fclose.
 		 * If we do, remember not to close stdin! */
 		die_if_ferror(*fp++, *np++);
-	} while (*fp);
+	} ಆಗ (*fp);
 
 	fflush_stdout_and_exit(retval);
 }

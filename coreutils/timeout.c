@@ -45,62 +45,62 @@
 //usage:       "Default SIG: TERM."
 //usage:       "If it still exists in KILL_SECS seconds, send KILL.\n"
 
-#include "libbb.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
 
-static NOINLINE int timeout_wait(duration_t timeout, pid_t pid)
+ಸ್ಥಿರ NOINLINE ಪೂರ್ಣಾಂಕ timeout_wait(duration_t timeout, pid_t pid)
 {
 	/* Just sleep(HUGE_NUM); kill(parent) may kill wrong process! */
-	while (1) {
-#if ENABLE_FLOAT_DURATION
-		if (timeout < 1)
+	ಆಗ (1) {
+#ಆದರೆ ENABLE_FLOAT_DURATION
+		ಆದರೆ (timeout < 1)
 			sleep_for_duration(timeout);
-		else
-#endif
+		ಇಲ್ಲದಿದ್ದರೆ
+#ಆದರೆ_ಅಂತ್ಯ
 			sleep1();
-		if (--timeout <= 0)
-			break;
-		if (kill(pid, 0)) {
+		ಆದರೆ (--timeout <= 0)
+			ನಿಲ್ಲಿಸು;
+		ಆದರೆ (kill(pid, 0)) {
 			/* process is gone */
-			return EXIT_SUCCESS;
+			ಹಿಂತಿರುಗಿ EXIT_SUCCESS;
 		}
 	}
-	return EXIT_FAILURE;
+	ಹಿಂತಿರುಗಿ EXIT_FAILURE;
 }
 
-int timeout_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int timeout_main(int argc UNUSED_PARAM, char **argv)
+ಪೂರ್ಣಾಂಕ timeout_main(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಂಕ timeout_main(ಪೂರ್ಣಾಂಕ argc ಬಳಸದ_PARAM, ಅಕ್ಷರ **argv)
 {
-	int signo;
-	int status;
-	int parent = 0;
+	ಪೂರ್ಣಾಂಕ signo;
+	ಪೂರ್ಣಾಂಕ ಸ್ಥಿತಿ_2;
+	ಪೂರ್ಣಾಂಕ ಪೋಷಕ = 0;
 	duration_t timeout;
 	duration_t kill_timeout;
 	pid_t pid;
-#if !BB_MMU
-	char *sv1, *sv2;
-#endif
-	const char *opt_s = "TERM";
-	char *opt_k = NULL;
+#ಆದರೆ !BB_MMU
+	ಅಕ್ಷರ *sv1, *sv2;
+#ಆದರೆ_ಅಂತ್ಯ
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *opt_s = "TERM";
+	ಅಕ್ಷರ *opt_k = ಖಾಲಿ;
 
 	/* -p option is not documented, it is needed to support NOMMU. */
 
 	/* -t SECONDS; -p PARENT_PID */
 	/* '+': stop at first non-option */
-	getopt32(argv, "+s:k:" USE_FOR_NOMMU("p:+"), &opt_s, &opt_k, &parent);
+	getopt32(argv, "+s:k:" USE_FOR_NOMMU("p:+"), &opt_s, &opt_k, &ಪೋಷಕ);
 	/*argv += optind; - no, wait for bb_daemonize_or_rexec! */
 
 	signo = get_signum(opt_s);
-	if (signo < 0)
-		bb_error_msg_and_die("unknown signal '%s'", opt_s);
+	ಆದರೆ (signo < 0)
+		bb_error_ಸಂದೇಶ_and_die("unknown signal '%s'", opt_s);
 
 	kill_timeout = 0;
-	if (opt_k)
+	ಆದರೆ (opt_k)
 		kill_timeout = parse_duration_str(opt_k);
 
-	if (!argv[optind])
+	ಆದರೆ (!argv[optind])
 		bb_show_usage();
 	timeout = parse_duration_str(argv[optind++]);
-	if (!argv[optind]) /* no PROG? */
+	ಆದರೆ (!argv[optind]) /* no PROG? */
 		bb_show_usage();
 
 	/* We want to create a grandchild which will watch
@@ -111,48 +111,48 @@ int timeout_main(int argc UNUSED_PARAM, char **argv)
 	 * making child watch parent results in programs having
 	 * unexpected children.	*/
 
-	if (parent) /* we were re-execed, already grandchild */
-		goto grandchild;
+	ಆದರೆ (ಪೋಷಕ) /* we were re-execed, already grandchild */
+		ಹೋಗು grandchild;
 
-#if !BB_MMU
+#ಆದರೆ !BB_MMU
 	sv1 = argv[optind];
 	sv2 = argv[optind + 1];
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 	pid = xvfork();
-	if (pid == 0) {
+	ಆದರೆ (pid == 0) {
 		/* Child: spawn grandchild and exit */
-		parent = getppid();
-#if !BB_MMU
-		argv[optind] = xasprintf("-p%u", parent);
-		argv[optind + 1] = NULL;
-#endif
+		ಪೋಷಕ = getppid();
+#ಆದರೆ !BB_MMU
+		argv[optind] = xasprintf("-p%u", ಪೋಷಕ);
+		argv[optind + 1] = ಖಾಲಿ;
+#ಆದರೆ_ಅಂತ್ಯ
 		/* NB: exits with nonzero on error: */
 		bb_daemonize_or_rexec(0, argv);
 		/* Here we are grandchild. Sleep, then kill grandparent */
  grandchild:
-		if (timeout_wait(timeout, parent) == EXIT_SUCCESS)
-			return EXIT_SUCCESS;
-		kill(parent, signo);
+		ಆದರೆ (timeout_wait(timeout, ಪೋಷಕ) == EXIT_SUCCESS)
+			ಹಿಂತಿರುಗಿ EXIT_SUCCESS;
+		kill(ಪೋಷಕ, signo);
 
-		if (kill_timeout > 0) {
-			if (timeout_wait(kill_timeout, parent) == EXIT_SUCCESS)
-				return EXIT_SUCCESS;
-			kill(parent, SIGKILL);
+		ಆದರೆ (kill_timeout > 0) {
+			ಆದರೆ (timeout_wait(kill_timeout, ಪೋಷಕ) == EXIT_SUCCESS)
+				ಹಿಂತಿರುಗಿ EXIT_SUCCESS;
+			kill(ಪೋಷಕ, SIGKILL);
 		}
 
-		return EXIT_SUCCESS;
+		ಹಿಂತಿರುಗಿ EXIT_SUCCESS;
 	}
 
-	/* Parent */
-	wait(&status); /* wait for child to die */
+	/*ಪೋಷಕ*/
+	wait(&ಸ್ಥಿತಿ_2); /* wait for child to die */
 	/* Did intermediate [v]fork or exec fail? */
-	if (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
-		return EXIT_FAILURE;
+	ಆದರೆ (!WIFEXITED(ಸ್ಥಿತಿ_2) || WEXITSTATUS(ಸ್ಥಿತಿ_2) != 0)
+		ಹಿಂತಿರುಗಿ EXIT_FAILURE;
 	/* Ok, exec a program as requested */
 	argv += optind;
-#if !BB_MMU
+#ಆದರೆ !BB_MMU
 	argv[0] = sv1;
 	argv[1] = sv2;
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 	BB_EXECVP_or_die(argv);
 }

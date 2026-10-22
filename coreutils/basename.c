@@ -43,15 +43,15 @@
 //usage:       "$ basename /foo/bar.txt .txt\n"
 //usage:       "bar"
 
-#include "libbb.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
 
 /* This is a NOFORK applet. Be very careful! */
 
-int basename_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int basename_main(int argc UNUSED_PARAM, char **argv)
+ಪೂರ್ಣಾಂಕ basename_main(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಂಕ basename_main(ಪೂರ್ಣಾಂಕ argc ಬಳಸದ_PARAM, ಅಕ್ಷರ **argv)
 {
-	unsigned opts;
-	const char *suffix = NULL;
+	ಚಿಹ್ನೆರಹಿತ opts;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *suffix = ಖಾಲಿ;
 
 	/* '+': stop at first non-option */
 	opts = getopt32(argv, "^+" "as:"
@@ -60,23 +60,23 @@ int basename_main(int argc UNUSED_PARAM, char **argv)
 	);
 	argv += optind;
 
-	do {
-		char *s;
-		size_t m;
+	ಮಾಡು {
+		ಅಕ್ಷರ *s;
+		ಗಾತ್ರ_t m;
 
 		/* It should strip slash: /abc/def/ -> def */
-		s = bb_get_last_path_component_strip(*argv++);
-		m = strlen(s);
-		if (!opts) {
-			if (*argv) {
+		s = bb_get_ಕೊನೆಯ_ಮಾರ್ಗ_component_strip(*argv++);
+		m = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(s);
+		ಆದರೆ (!opts) {
+			ಆದರೆ (*argv) {
 				suffix = *argv;
-				if (argv[1])
+				ಆದರೆ (argv[1])
 					bb_show_usage();
 			}
 		}
-		if (suffix) {
-			size_t n = strlen(suffix);
-			if ((m > n) && (strcmp(s + m - n, suffix) == 0)) {
+		ಆದರೆ (suffix) {
+			ಗಾತ್ರ_t n = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(suffix);
+			ಆದರೆ ((m > n) && (strcmp(s + m - n, suffix) == 0)) {
 				m -= n;
 				/*s[m] = '\0'; - redundant */
 			}
@@ -84,9 +84,9 @@ int basename_main(int argc UNUSED_PARAM, char **argv)
 		/* puts(s) will do, but we can do without stdio this way: */
 		s[m++] = '\n';
 		/* NB: != is correct here: */
-		if (full_write(STDOUT_FILENO, s, m) != (ssize_t)m)
-			return EXIT_FAILURE;
-	} while (opts && *argv);
+		ಆದರೆ (ತುಂಬಿದ_write(STDOUT_FILENO, s, m) != (ssize_t)m)
+			ಹಿಂತಿರುಗಿ EXIT_FAILURE;
+	} ಆಗ (opts && *argv);
 
-	return EXIT_SUCCESS;
+	ಹಿಂತಿರುಗಿ EXIT_SUCCESS;
 }

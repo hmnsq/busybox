@@ -105,30 +105,30 @@
 //usage:     "\n	-t DIR	Copy all SOURCEs into DIR"
 //usage:     "\n	-u	Copy only newer files"
 
-#include "libbb.h"
-#include "libcoreutils/coreutils.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
+#ಅನ್ತರ್ಭಾವ "libcoreutils/coreutils.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-int cp_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int cp_main(int argc, char **argv)
+ಪೂರ್ಣಾಂಕ cp_main(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಂಕ cp_main(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv)
 {
-	struct stat source_stat;
-	struct stat dest_stat;
-	const char *last;
-	const char *dest;
-	int s_flags;
-	int d_flags;
-	int flags;
-	int status;
-#if ENABLE_FEATURE_CP_LONG_OPTIONS
-	enum {
+	ರಚನೆ stat ಮೂಲ_stat;
+	ರಚನೆ stat dest_stat;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಕೊನೆಯ;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *dest;
+	ಪೂರ್ಣಾಂಕ s_flags;
+	ಪೂರ್ಣಾಂಕ d_flags;
+	ಪೂರ್ಣಾಂಕ flags;
+	ಪೂರ್ಣಾಂಕ ಸ್ಥಿತಿ_2;
+#ಆದರೆ ENABLE_FEATURE_CP_LONG_OPTIONS
+	ಎಣಿಕೆ {
 		/*OPT_rmdest  = FILEUTILS_RMDEST = 1 << FILEUTILS_CP_OPTBITS */
 		OPT_parents = 1 << (FILEUTILS_CP_OPTBITS+1),
 		OPT_reflink = 1 << (FILEUTILS_CP_OPTBITS+2),
 	};
-# if ENABLE_FEATURE_CP_REFLINK
-	char *reflink = NULL;
+# ಆದರೆ ENABLE_FEATURE_CP_REFLINK
+	ಅಕ್ಷರ *reflink = ಖಾಲಿ;
 # endif
 	flags = getopt32long(argv, "^"
 		FILEUTILS_CP_OPTSTR
@@ -141,48 +141,48 @@ int cp_main(int argc, char **argv)
 		// -a = -pdR
 		// -i overrides -n and vice versa (last wins)
 		"-1:l--s:s--l:Pd:rRd:Rd:apdR:i-n:n-i",
-		"archive\0"        No_argument "a"
-		"force\0"          No_argument "f"
-		"interactive\0"    No_argument "i"
-		"no-clobber\0"     No_argument "n"
-		"link\0"           No_argument "l"
-		"dereference\0"    No_argument "L"
-		"no-dereference\0" No_argument "P"
-		"recursive\0"      No_argument "R"
-		"symbolic-link\0"  No_argument "s"
-		"no-target-directory\0" No_argument "T"
-		"target-directory\0" Required_argument "t"
-		"verbose\0"        No_argument "v"
-		"update\0"         No_argument "u"
-		"remove-destination\0" No_argument "\xff"
-		"parents\0"        No_argument "\xfe"
-# if ENABLE_FEATURE_CP_REFLINK
-		"reflink\0"        Optional_argument "\xfd"
+		"archive\0"        No_ವಾದ "a"
+		"force\0"          No_ವಾದ "f"
+		"interactive\0"    No_ವಾದ "i"
+		"no-clobber\0"     No_ವಾದ "n"
+		"link\0"           No_ವಾದ "l"
+		"dereference\0"    No_ವಾದ "L"
+		"no-dereference\0" No_ವಾದ "P"
+		"recursive\0"      No_ವಾದ "R"
+		"symbolic-link\0"  No_ವಾದ "s"
+		"no-target-directory\0" No_ವಾದ "T"
+		"target-directory\0" Required_ವಾದ "t"
+		"verbose\0"        No_ವಾದ "v"
+		"update\0"         No_ವಾದ "u"
+		"remove-destination\0" No_ವಾದ "\xff"
+		"parents\0"        No_ವಾದ "\xfe"
+# ಆದರೆ ENABLE_FEATURE_CP_REFLINK
+		"reflink\0"        Optional_ವಾದ "\xfd"
 # endif
-		, &last
-# if ENABLE_FEATURE_CP_REFLINK
+		, &ಕೊನೆಯ
+# ಆದರೆ ENABLE_FEATURE_CP_REFLINK
 		, &reflink
 # endif
 	);
-# if ENABLE_FEATURE_CP_REFLINK
-	BUILD_BUG_ON((int)OPT_reflink != (int)FILEUTILS_REFLINK);
-	if (flags & FILEUTILS_REFLINK) {
-		if (!reflink)
+# ಆದರೆ ENABLE_FEATURE_CP_REFLINK
+	BUILD_BUG_ON((ಪೂರ್ಣಾಂಕ)OPT_reflink != (ಪೂರ್ಣಾಂಕ)FILEUTILS_REFLINK);
+	ಆದರೆ (flags & FILEUTILS_REFLINK) {
+		ಆದರೆ (!reflink)
 			flags |= FILEUTILS_REFLINK_ALWAYS;
-		else if (strcmp(reflink, "always") == 0)
+		ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (strcmp(reflink, "always") == 0)
 			flags |= FILEUTILS_REFLINK_ALWAYS;
-		else if (strcmp(reflink, "auto") != 0)
+		ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (strcmp(reflink, "auto") != 0)
 			bb_show_usage();
 	}
 # endif
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 	flags = getopt32(argv, "^"
 		FILEUTILS_CP_OPTSTR
 		"\0"
 		"-1:l--s:s--l:Pd:rRd:Rd:apdR"
-		, &last
+		, &ಕೊನೆಯ
 	);
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 	argc -= optind;
 	argv += optind;
 	/* Reverse this bit. If there is -d, bit is not set: */
@@ -191,95 +191,95 @@ int cp_main(int argc, char **argv)
 	 * by default, "cp" derefs symlinks (creates regular dest files),
 	 * but "cp -R" does not. We switch off deref if -r or -R (see above).
 	 * However, "cp -RL" must still deref symlinks: */
-	if (flags & FILEUTILS_DEREF_SOFTLINK) /* -L */
+	ಆದರೆ (flags & FILEUTILS_DEREF_SOFTLINK) /* -L */
 		flags |= FILEUTILS_DEREFERENCE;
 
-#if ENABLE_SELINUX
-	if (flags & FILEUTILS_PRESERVE_SECURITY_CONTEXT) {
+#ಆದರೆ ENABLE_SELINUX
+	ಆದರೆ (flags & FILEUTILS_PRESERVE_SECURITY_CONTEXT) {
 		selinux_or_die();
 	}
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-	status = EXIT_SUCCESS;
-	if (!(flags & FILEUTILS_TARGET_DIR)) {
-		last = argv[argc - 1];
-		if (argc < 2)
+	ಸ್ಥಿತಿ_2 = EXIT_SUCCESS;
+	ಆದರೆ (!(flags & FILEUTILS_ಗುರಿ_DIR)) {
+		ಕೊನೆಯ = argv[argc - 1];
+		ಆದರೆ (argc < 2)
 			bb_show_usage();
-		if (argc != 2) {
-			if (flags & FILEUTILS_NO_TARGET_DIR)
+		ಆದರೆ (argc != 2) {
+			ಆದರೆ (flags & FILEUTILS_NO_ಗುರಿ_DIR)
 				bb_show_usage();
 			/* "cp A B C... DIR" - target must be dir */
-		} else /* argc == 2 */ {
+		} ಇಲ್ಲದಿದ್ದರೆ /* argc == 2 */ {
 			/* "cp A B" - only case where target can be not a dir */
-			s_flags = cp_mv_stat2(*argv, &source_stat,
+			s_flags = cp_mv_stat2(*argv, &ಮೂಲ_stat,
 					(flags & FILEUTILS_DEREFERENCE) ? stat : lstat);
-			if (s_flags < 0) /* error other than ENOENT */
-				return EXIT_FAILURE;
-			d_flags = cp_mv_stat(last, &dest_stat);
-			if (d_flags < 0) /* error other than ENOENT */
-				return EXIT_FAILURE;
+			ಆದರೆ (s_flags < 0) /* error other than ENOENT */
+				ಹಿಂತಿರುಗಿ EXIT_FAILURE;
+			d_flags = cp_mv_stat(ಕೊನೆಯ, &dest_stat);
+			ಆದರೆ (d_flags < 0) /* error other than ENOENT */
+				ಹಿಂತಿರುಗಿ EXIT_FAILURE;
 
-			if (flags & FILEUTILS_NO_TARGET_DIR) { /* -T */
-				if (!(s_flags & 2) && (d_flags & 2))
+			ಆದರೆ (flags & FILEUTILS_NO_ಗುರಿ_DIR) { /* -T */
+				ಆದರೆ (!(s_flags & 2) && (d_flags & 2))
 					/* cp -T NOTDIR DIR */
-					bb_error_msg_and_die("'%s' is a directory", last);
+					bb_error_ಸಂದೇಶ_and_die("'%s' is a directory", ಕೊನೆಯ);
 			}
 
-#if ENABLE_FEATURE_CP_LONG_OPTIONS
+#ಆದರೆ ENABLE_FEATURE_CP_LONG_OPTIONS
 			//bb_error_msg("flags:%x FILEUTILS_RMDEST:%x OPT_parents:%x",
 			//	flags, FILEUTILS_RMDEST, OPT_parents);
-			if (flags & OPT_parents) {
-				if (!(d_flags & 2)) {
-					bb_simple_error_msg_and_die("with --parents, the destination must be a directory");
+			ಆದರೆ (flags & OPT_parents) {
+				ಆದರೆ (!(d_flags & 2)) {
+					bb_simple_error_ಸಂದೇಶ_and_die("with --parents, the destination must be a directory");
 				}
 			}
-			if (flags & FILEUTILS_RMDEST) {
+			ಆದರೆ (flags & FILEUTILS_RMDEST) {
 				flags |= FILEUTILS_FORCE;
 			}
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 			/* ...if neither is a directory...  */
-			if (!((s_flags | d_flags) & 2)
+			ಆದರೆ (!((s_flags | d_flags) & 2)
 			    /* ...or: recursing, the 1st is a directory, and the 2nd doesn't exist... */
 			 || ((flags & FILEUTILS_RECUR) && (s_flags & 2) && !d_flags)
-			 || (flags & FILEUTILS_NO_TARGET_DIR)
+			 || (flags & FILEUTILS_NO_ಗುರಿ_DIR)
 			) {
 				/* Do a simple copy */
-				dest = last;
-				goto DO_COPY; /* NB: argc==2 -> *++argv==last */
+				dest = ಕೊನೆಯ;
+				ಹೋಗು DO_COPY; /* NB: argc==2 -> *++argv==last */
 			}
 		}
 	}
 	/* else: last is DIR from "-t DIR" */
 
-	while (1) {
-#if ENABLE_FEATURE_CP_LONG_OPTIONS
-		if (flags & OPT_parents) {
-			char *dest_dup;
-			char *dest_dir;
-			dest = concat_path_file(last, *argv);
+	ಆಗ (1) {
+#ಆದರೆ ENABLE_FEATURE_CP_LONG_OPTIONS
+		ಆದರೆ (flags & OPT_parents) {
+			ಅಕ್ಷರ *dest_dup;
+			ಅಕ್ಷರ *dest_dir;
+			dest = concat_ಮಾರ್ಗ_file(ಕೊನೆಯ, *argv);
 			dest_dup = xstrdup(dest);
 			dest_dir = dirname(dest_dup);
-			if (bb_make_directory(dest_dir, -1, FILEUTILS_RECUR)) {
-				return EXIT_FAILURE;
+			ಆದರೆ (bb_make_directory(dest_dir, -1, FILEUTILS_RECUR)) {
+				ಹಿಂತಿರುಗಿ EXIT_FAILURE;
 			}
-			free(dest_dup);
-			goto DO_COPY;
+			ಬಿಡುಗಡೆ(dest_dup);
+			ಹೋಗು DO_COPY;
 		}
-#endif
-		dest = concat_path_file(last, bb_get_last_path_component_strip(*argv));
+#ಆದರೆ_ಅಂತ್ಯ
+		dest = concat_ಮಾರ್ಗ_file(ಕೊನೆಯ, bb_get_ಕೊನೆಯ_ಮಾರ್ಗ_component_strip(*argv));
  DO_COPY:
-		if (copy_file(*argv, dest, flags) < 0) {
-			status = EXIT_FAILURE;
+		ಆದರೆ (copy_file(*argv, dest, flags) < 0) {
+			ಸ್ಥಿತಿ_2 = EXIT_FAILURE;
 		}
-		if (!*++argv || *argv == last) {
+		ಆದರೆ (!*++argv || *argv == ಕೊನೆಯ) {
 			/* possibly leaking dest... */
-			break;
+			ನಿಲ್ಲಿಸು;
 		}
 		/* don't move up: dest may be == last and not malloced! */
-		free((void*)dest);
+		ಬಿಡುಗಡೆ((ಶೂನ್ಯ*)dest);
 	}
 
 	/* Exit. We are NOEXEC, not NOFORK. We do exit at the end of main() */
-	return status;
+	ಹಿಂತಿರುಗಿ ಸ್ಥಿತಿ_2;
 }

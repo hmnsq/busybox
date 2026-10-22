@@ -97,28 +97,28 @@
 //usage:       "Filesystem          512-blocks      Used Available Capacity Mounted on\n"
 //usage:       "/dev/sda3             17381728  17107080    274648      98% /\n"
 
-#include <mntent.h>
-#include <sys/statvfs.h>
-#include "libbb.h"
-#include "unicode.h"
+#ಅನ್ತರ್ಭಾವ <mntent.h>
+#ಅನ್ತರ್ಭಾವ <sys/statvfs.h>
+#ಅನ್ತರ್ಭಾವ "libbb.h"
+#ಅನ್ತರ್ಭಾವ "unicode.h"
 
-#if !ENABLE_FEATURE_HUMAN_READABLE
-static unsigned long kscale(unsigned long b, unsigned long bs)
+#ಆದರೆ !ENABLE_FEATURE_HUMAN_READABLE
+ಸ್ಥಿರ ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ kscale(ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ b, ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ bs)
 {
-	return (b * (unsigned long long) bs + 1024/2) / 1024;
+	ಹಿಂತಿರುಗಿ (b * (ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ) bs + 1024/2) / 1024;
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-int df_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int df_main(int argc UNUSED_PARAM, char **argv)
+ಪೂರ್ಣಾಂಕ df_main(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಂಕ df_main(ಪೂರ್ಣಾಂಕ argc ಬಳಸದ_PARAM, ಅಕ್ಷರ **argv)
 {
-	unsigned long df_disp_hr = 1024;
-	exitcode_t status = EXIT_SUCCESS;
-	unsigned opt;
-	FILE *mount_table;
-	struct mntent *mount_entry;
-	struct statvfs s;
-	enum {
+	ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ df_disp_hr = 1024;
+	exitcode_t ಸ್ಥಿತಿ_2 = EXIT_SUCCESS;
+	ಚಿಹ್ನೆರಹಿತ opt;
+	FILE *mount_ಕೋಷ್ಟಕ;
+	ರಚನೆ mntent *mount_ನಮೂದು;
+	ರಚನೆ statvfs s;
+	ಎಣಿಕೆ {
 		OPT_KILO     = (1 << 0),
 		OPT_POSIX    = (1 << 1),
 		OPT_FSTYPE   = (1 << 2),
@@ -130,8 +130,8 @@ int df_main(int argc UNUSED_PARAM, char **argv)
 		OPT_HUMANDEC = (1 << (5 + 3*ENABLE_FEATURE_DF_FANCY)) * ENABLE_FEATURE_HUMAN_READABLE,
 		OPT_MEGA     = (1 << (6 + 3*ENABLE_FEATURE_DF_FANCY)) * ENABLE_FEATURE_HUMAN_READABLE,
 	};
-	const char *disp_units_hdr = NULL;
-	char *chp, *opt_t;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *disp_units_hdr = ಖಾಲಿ;
+	ಅಕ್ಷರ *chp, *opt_t;
 
 	init_unicode();
 
@@ -139,7 +139,7 @@ int df_main(int argc UNUSED_PARAM, char **argv)
 	 * Disk space is shown in 1K blocks by default, unless the environment
 	 * variable POSIXLY_CORRECT is set, in which case 512-byte blocks are used.
 	 */
-	if (getenv("POSIXLY_CORRECT")) /* TODO - a new libbb function? */
+	ಆದರೆ (getenv("POSIXLY_CORRECT")) /* TODO - a new libbb function? */
 		df_disp_hr = 512;
 
 	opt = getopt32(argv, "^"
@@ -147,24 +147,24 @@ int df_main(int argc UNUSED_PARAM, char **argv)
 			IF_FEATURE_DF_FANCY("aiB:")
 			IF_FEATURE_HUMAN_READABLE("hHm")
 			"\0"
-#if ENABLE_FEATURE_HUMAN_READABLE && ENABLE_FEATURE_DF_FANCY
+#ಆದರೆ ENABLE_FEATURE_HUMAN_READABLE && ENABLE_FEATURE_DF_FANCY
 			"k-mB:m-Bk:B-km"
-#elif ENABLE_FEATURE_HUMAN_READABLE
+#ಅಥವಾಆದರೆ ENABLE_FEATURE_HUMAN_READABLE
 			"k-m:m-k"
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 			, &opt_t
 			IF_FEATURE_DF_FANCY(, &chp)
 	);
-	if (opt & OPT_MEGA)
+	ಆದರೆ (opt & OPT_MEGA)
 		df_disp_hr = 1024*1024;
 
-	if (opt & OPT_BSIZE) {
+	ಆದರೆ (opt & OPT_BSIZE) {
 		/* GNU coreutils 8.25 accepts "-BMiB" form too */
-		int i;
-		for (i = 0; kmg_i_suffixes[i].suffix[0]; i++) {
-			if (strcmp(kmg_i_suffixes[i].suffix, chp) == 0) {
+		ಪೂರ್ಣಾಂಕ i;
+		ಗಾಗಿ (i = 0; kmg_i_suffixes[i].suffix[0]; i++) {
+			ಆದರೆ (strcmp(kmg_i_suffixes[i].suffix, chp) == 0) {
 				df_disp_hr = kmg_i_suffixes[i].mult;
-				goto got_it;
+				ಹೋಗು got_it;
 			}
 		}
 		/* Range used to disallow 0 */
@@ -172,180 +172,180 @@ int df_main(int argc UNUSED_PARAM, char **argv)
  got_it: ;
 	}
 
-	if (opt & (OPT_HUMAN|OPT_HUMANDEC)) {
+	ಆದರೆ (opt & (OPT_HUMAN|OPT_HUMANDEC)) {
 		df_disp_hr = 0;
 //TODO: need to add support in make_human_readable_str() for "decimal human readable"
 		//if (opt & OPT_HUMANDEC)
 		//	df_disp_hr--;
 		disp_units_hdr = "     Size";
 	}
-	if (opt & OPT_INODE)
+	ಆದರೆ (opt & OPT_INODE)
 		disp_units_hdr = "   Inodes";
 
-	if (disp_units_hdr == NULL) {
-#if ENABLE_FEATURE_HUMAN_READABLE
+	ಆದರೆ (disp_units_hdr == ಖಾಲಿ) {
+#ಆದರೆ ENABLE_FEATURE_HUMAN_READABLE
 		disp_units_hdr = xasprintf("%s-blocks",
 			/* print df_disp_hr, show no fractionals,
 			 * use suffixes if OPT_POSIX is set in opt */
 			make_human_readable_str(df_disp_hr, 0, !!(opt & OPT_POSIX))
 		);
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 		disp_units_hdr = xasprintf("%lu-blocks", df_disp_hr);
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 	}
 
-	printf("Filesystem           %s%-15sUsed Available %s Mounted on\n",
+	ಬರೆ("Filesystem           %s%-15sUsed Available %s Mounted on\n",
 			(opt & OPT_FSTYPE) ? "Type       " : "",
 			disp_units_hdr,
 			(opt & OPT_POSIX) ? "Capacity" : "Use%");
 
-	mount_table = NULL;
+	mount_ಕೋಷ್ಟಕ = ಖಾಲಿ;
 	argv += optind;
-	if (!argv[0]) {
-		mount_table = setmntent(bb_path_mtab_file, "r");
-		if (!mount_table)
-			bb_simple_perror_msg_and_die(bb_path_mtab_file);
+	ಆದರೆ (!argv[0]) {
+		mount_ಕೋಷ್ಟಕ = setmntent(bb_ಮಾರ್ಗ_mtab_file, "r");
+		ಆದರೆ (!mount_ಕೋಷ್ಟಕ)
+			bb_simple_perror_ಸಂದೇಶ_and_die(bb_ಮಾರ್ಗ_mtab_file);
 	}
 
-	while (1) {
-		const char *device;
-		const char *mount_point;
-		const char *fs_type;
+	ಆಗ (1) {
+		ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *device;
+		ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *mount_ಬಿಂದು;
+		ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fs_type;
 
-		if (mount_table) {
-			mount_entry = getmntent(mount_table);
-			if (!mount_entry) {
-				endmntent(mount_table);
-				break;
+		ಆದರೆ (mount_ಕೋಷ್ಟಕ) {
+			mount_ನಮೂದು = getmntent(mount_ಕೋಷ್ಟಕ);
+			ಆದರೆ (!mount_ನಮೂದು) {
+				endmntent(mount_ಕೋಷ್ಟಕ);
+				ನಿಲ್ಲಿಸು;
 			}
-		} else {
-			mount_point = *argv++;
-			if (!mount_point)
-				break;
-			mount_entry = find_mount_point(mount_point, 1);
-			if (!mount_entry) {
-				bb_error_msg("%s: can't find mount point", mount_point);
- set_error:
-				status = EXIT_FAILURE;
-				continue;
+		} ಇಲ್ಲದಿದ್ದರೆ {
+			mount_ಬಿಂದು = *argv++;
+			ಆದರೆ (!mount_ಬಿಂದು)
+				ನಿಲ್ಲಿಸು;
+			mount_ನಮೂದು = ಕಂಡುಹಿಡಿ_mount_ಬಿಂದು(mount_ಬಿಂದು, 1);
+			ಆದರೆ (!mount_ನಮೂದು) {
+				bb_error_ಸಂದೇಶ("%s: can't find mount point", mount_ಬಿಂದು);
+ ಗಣ_error:
+				ಸ್ಥಿತಿ_2 = EXIT_FAILURE;
+				ಮುಂದುವರಿ;
 			}
 		}
 
-		device = mount_entry->mnt_fsname;
+		device = mount_ನಮೂದು->mnt_fsname;
 
 		/* GNU coreutils 6.10 skips certain mounts, try to be compatible */
-		if (ENABLE_FEATURE_SKIP_ROOTFS && strcmp(device, "rootfs") == 0)
-			continue;
+		ಆದರೆ (ENABLE_FEATURE_SKIP_ROOTFS && strcmp(device, "rootfs") == 0)
+			ಮುಂದುವರಿ;
 
-		mount_point = mount_entry->mnt_dir;
-		fs_type = mount_entry->mnt_type;
+		mount_ಬಿಂದು = mount_ನಮೂದು->mnt_dir;
+		fs_type = mount_ನಮೂದು->mnt_type;
 
-		if (opt & OPT_t) {
-			if (strcmp(fs_type, opt_t) != 0)
-				continue;
+		ಆದರೆ (opt & OPT_t) {
+			ಆದರೆ (strcmp(fs_type, opt_t) != 0)
+				ಮುಂದುವರಿ;
 		}
 
-		if (statvfs(mount_point, &s) != 0) {
-			bb_simple_perror_msg(mount_point);
-			goto set_error;
+		ಆದರೆ (statvfs(mount_ಬಿಂದು, &s) != 0) {
+			bb_simple_perror_ಸಂದೇಶ(mount_ಬಿಂದು);
+			ಹೋಗು ಗಣ_error;
 		}
 		/* Some uclibc versions were seen to lose f_frsize
 		 * (kernel does return it, but then uclibc does not copy it)
 		 */
-		if (s.f_frsize == 0)
+		ಆದರೆ (s.f_frsize == 0)
 			s.f_frsize = s.f_bsize;
 
-		if ((s.f_blocks > 0) || !mount_table || (opt & OPT_ALL)) {
-			unsigned long long blocks_used;
-			unsigned long long blocks_total;
-			unsigned blocks_percent_used;
+		ಆದರೆ ((s.f_blocks > 0) || !mount_ಕೋಷ್ಟಕ || (opt & OPT_ALL)) {
+			ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ ಖಂಡಗಳು_ಬಳಸಿದ;
+			ಚಿಹ್ನೆರಹಿತ ದೀರ್ಘ ದೀರ್ಘ ಖಂಡಗಳು_ಒಟ್ಟು;
+			ಚಿಹ್ನೆರಹಿತ ಖಂಡಗಳು_percent_ಬಳಸಿದ;
 
-			if (opt & OPT_INODE) {
+			ಆದರೆ (opt & OPT_INODE) {
 				s.f_blocks = s.f_files;
 				s.f_bavail = s.f_bfree = s.f_ffree;
 				s.f_frsize = 1;
-				if (df_disp_hr)
+				ಆದರೆ (df_disp_hr)
 					df_disp_hr = 1;
 			}
-			blocks_used = s.f_blocks - s.f_bfree;
-			blocks_total = blocks_used + s.f_bavail;
-			blocks_percent_used = blocks_total; /* 0% if blocks_total == 0, else... */
-			if (blocks_total != 0) {
+			ಖಂಡಗಳು_ಬಳಸಿದ = s.f_blocks - s.f_bfree;
+			ಖಂಡಗಳು_ಒಟ್ಟು = ಖಂಡಗಳು_ಬಳಸಿದ + s.f_bavail;
+			ಖಂಡಗಳು_percent_ಬಳಸಿದ = ಖಂಡಗಳು_ಒಟ್ಟು; /* 0% if blocks_total == 0, else... */
+			ಆದರೆ (ಖಂಡಗಳು_ಒಟ್ಟು != 0) {
 				/* Downscale sizes for narrower division */
-				unsigned u;
-				while (blocks_total >= INT_MAX / 101) {
-					blocks_total >>= 1;
-					blocks_used >>= 1;
+				ಚಿಹ್ನೆರಹಿತ u;
+				ಆಗ (ಖಂಡಗಳು_ಒಟ್ಟು >= ಗರಿಷ್ಠ_ಪೂರ್ಣಾಂಕ / 101) {
+					ಖಂಡಗಳು_ಒಟ್ಟು >>= 1;
+					ಖಂಡಗಳು_ಬಳಸಿದ >>= 1;
 				}
-				u = (unsigned)blocks_used * 100u + (unsigned)blocks_total / 2;
-				blocks_percent_used = u / (unsigned)blocks_total;
+				u = (ಚಿಹ್ನೆರಹಿತ)ಖಂಡಗಳು_ಬಳಸಿದ * 100u + (ಚಿಹ್ನೆರಹಿತ)ಖಂಡಗಳು_ಒಟ್ಟು / 2;
+				ಖಂಡಗಳು_percent_ಬಳಸಿದ = u / (ಚಿಹ್ನೆರಹಿತ)ಖಂಡಗಳು_ಒಟ್ಟು;
 			}
 
-#ifdef WHY_WE_DO_IT_FOR_DEV_ROOT_ONLY
-			if (strcmp(device, "/dev/root") == 0) {
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ WHY_WE_DO_IT_FOR_DEV_ಬೇರು_ONLY
+			ಆದರೆ (strcmp(device, "/dev/root") == 0) {
 				/* Adjusts device to be the real root device,
 				 * or leaves device alone if it can't find it */
-				device = find_block_device("/");
-				if (!device) {
-					goto set_error;
+				device = ಕಂಡುಹಿಡಿ_ಖಂಡ_device("/");
+				ಆದರೆ (!device) {
+					ಹೋಗು ಗಣ_error;
 				}
 			}
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if ENABLE_UNICODE_SUPPORT
+#ಆದರೆ ENABLE_UNICODE_SUPPORT
 			{
 				uni_stat_t uni_stat;
-				char *uni_dev = unicode_conv_to_printable(&uni_stat, device);
-				if (uni_stat.unicode_width > 20 && !(opt & OPT_POSIX)) {
-					printf("%s\n%20s", uni_dev, "");
-				} else {
-					printf("%s%*s", uni_dev, 20 - (int)uni_stat.unicode_width, "");
+				ಅಕ್ಷರ *uni_dev = unicode_conv_ಗಮ್ಯ_printable(&uni_stat, device);
+				ಆದರೆ (uni_stat.unicode_ಅಗಲ > 20 && !(opt & OPT_POSIX)) {
+					ಬರೆ("%s\n%20s", uni_dev, "");
+				} ಇಲ್ಲದಿದ್ದರೆ {
+					ಬರೆ("%s%*s", uni_dev, 20 - (ಪೂರ್ಣಾಂಕ)uni_stat.unicode_ಅಗಲ, "");
 				}
-				free(uni_dev);
-				if (opt & OPT_FSTYPE) {
-					char *uni_type = unicode_conv_to_printable(&uni_stat, fs_type);
-					if (uni_stat.unicode_width > 10 && !(opt & OPT_POSIX))
-						printf(" %s\n%31s", uni_type, "");
-					else
-						printf(" %s%*s", uni_type, 10 - (int)uni_stat.unicode_width, "");
-					free(uni_type);
+				ಬಿಡುಗಡೆ(uni_dev);
+				ಆದರೆ (opt & OPT_FSTYPE) {
+					ಅಕ್ಷರ *uni_type = unicode_conv_ಗಮ್ಯ_printable(&uni_stat, fs_type);
+					ಆದರೆ (uni_stat.unicode_ಅಗಲ > 10 && !(opt & OPT_POSIX))
+						ಬರೆ(" %s\n%31s", uni_type, "");
+					ಇಲ್ಲದಿದ್ದರೆ
+						ಬರೆ(" %s%*s", uni_type, 10 - (ಪೂರ್ಣಾಂಕ)uni_stat.unicode_ಅಗಲ, "");
+					ಬಿಡುಗಡೆ(uni_type);
 				}
 			}
-#else
-			if (printf("\n%-20s" + 1, device) > 20 && !(opt & OPT_POSIX))
-				printf("\n%-20s", "");
-			if (opt & OPT_FSTYPE) {
-				if (printf(" %-10s", fs_type) > 11 && !(opt & OPT_POSIX))
-					printf("\n%-30s", "");
+#ಇಲ್ಲದಿದ್ದರೆ
+			ಆದರೆ (ಬರೆ("\n%-20s" + 1, device) > 20 && !(opt & OPT_POSIX))
+				ಬರೆ("\n%-20s", "");
+			ಆದರೆ (opt & OPT_FSTYPE) {
+				ಆದರೆ (ಬರೆ(" %-10s", fs_type) > 11 && !(opt & OPT_POSIX))
+					ಬರೆ("\n%-30s", "");
 			}
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if ENABLE_FEATURE_HUMAN_READABLE
-			printf(" %9s ",
+#ಆದರೆ ENABLE_FEATURE_HUMAN_READABLE
+			ಬರೆ(" %9s ",
 				/* f_blocks x f_frsize / df_disp_hr, show one fractional,
 				 * use suffixes if df_disp_hr == 0 */
 				make_human_readable_str(s.f_blocks, s.f_frsize, df_disp_hr));
 
-			printf(" %9s " + 1,
+			ಬರೆ(" %9s " + 1,
 				/* EXPR x f_frsize / df_disp_hr, show one fractional,
 				 * use suffixes if df_disp_hr == 0 */
 				make_human_readable_str((s.f_blocks - s.f_bfree),
 						s.f_frsize, df_disp_hr));
 
-			printf("%9s %3u%% %s\n",
+			ಬರೆ("%9s %3u%% %s\n",
 				/* f_bavail x f_frsize / df_disp_hr, show one fractional,
 				 * use suffixes if df_disp_hr == 0 */
 				make_human_readable_str(s.f_bavail, s.f_frsize, df_disp_hr),
-				blocks_percent_used, mount_point);
-#else
-			printf(" %9lu %9lu %9lu %3u%% %s\n",
+				ಖಂಡಗಳು_percent_ಬಳಸಿದ, mount_ಬಿಂದು);
+#ಇಲ್ಲದಿದ್ದರೆ
+			ಬರೆ(" %9lu %9lu %9lu %3u%% %s\n",
 				kscale(s.f_blocks, s.f_frsize),
 				kscale(s.f_blocks - s.f_bfree, s.f_frsize),
 				kscale(s.f_bavail, s.f_frsize),
-				blocks_percent_used, mount_point);
-#endif
+				ಖಂಡಗಳು_percent_ಬಳಸಿದ, mount_ಬಿಂದು);
+#ಆದರೆ_ಅಂತ್ಯ
 		}
 	}
 
-	return status;
+	ಹಿಂತಿರುಗಿ ಸ್ಥಿತಿ_2;
 }

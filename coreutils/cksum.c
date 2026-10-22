@@ -27,80 +27,80 @@
 //usage:#define cksum_full_usage "\n\n"
 //usage:       "Calculate CRC32 checksum of FILEs"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
+#ಅನ್ತರ್ಭಾವ "common_bufsiz.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-#define IS_CKSUM (ENABLE_CKSUM && (!ENABLE_CRC32 || applet_name[1] == 'k'))
-#define IS_CRC32 (ENABLE_CRC32 && (!ENABLE_CKSUM || applet_name[1] == 'r'))
+#ವ್ಯಾಖ್ಯಾನಿಸು IS_CKSUM (ENABLE_CKSUM && (!ENABLE_ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32 || applet_name[1] == 'k'))
+#ವ್ಯಾಖ್ಯಾನಿಸು IS_ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32 (ENABLE_ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32 && (!ENABLE_CKSUM || applet_name[1] == 'r'))
 
-int cksum_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int cksum_main(int argc UNUSED_PARAM, char **argv)
+ಪೂರ್ಣಾಂಕ cksum_main(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಂಕ cksum_main(ಪೂರ್ಣಾಂಕ argc ಬಳಸದ_PARAM, ಅಕ್ಷರ **argv)
 {
-	uint32_t *crc32_table = crc32_filltable(NULL, IS_CKSUM);
-	exitcode_t exit_code = EXIT_SUCCESS;
+	uint32_t *ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_ಕೋಷ್ಟಕ = ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_filltable(ಖಾಲಿ, IS_CKSUM);
+	exitcode_t exit_ಸಂಕೇತ = EXIT_SUCCESS;
 
-#if ENABLE_DESKTOP
+#ಆದರೆ ENABLE_DESKTOP
 	getopt32(argv, ""); /* cksum coreutils 6.9 compat */
 	argv += optind;
-#else
+#ಇಲ್ಲದಿದ್ದರೆ
 	argv++;
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-	setup_common_bufsiz();
-	do {
-		uint32_t crc;
+	ಸಿದ್ಧತೆ_common_bufsiz();
+	ಮಾಡು {
+		uint32_t ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ;
 		IF_CKSUM(off_t filesize;)
-		const char *fname = *argv ? *argv : bb_msg_standard_input;
-		int fd = open_or_warn_stdin(fname);
+		ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *fname = *argv ? *argv : bb_ಸಂದೇಶ_standard_ಒಳಹರಿವು;
+		ಪೂರ್ಣಾಂಕ fd = open_or_warn_stdin(fname);
 
-		if (fd < 0) {
-			exit_code = EXIT_FAILURE;
-			continue;
+		ಆದರೆ (fd < 0) {
+			exit_ಸಂಕೇತ = EXIT_FAILURE;
+			ಮುಂದುವರಿ;
 		}
 
-		crc = IS_CKSUM ? 0 : 0xffffffff;
+		ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = IS_CKSUM ? 0 : 0xffffffff;
 		IF_CKSUM(filesize = 0;)
-#define read_buf bb_common_bufsiz1
-		for (;;) {
-			int bytes_read = safe_read(fd, read_buf, COMMON_BUFSIZE);
-			if (bytes_read < 0)
-				bb_simple_perror_msg_and_die(fname);
-			if (bytes_read > 0) {
-				IF_CKSUM(filesize += bytes_read;)
-			} else {
+#ವ್ಯಾಖ್ಯಾನಿಸು read_buf bb_common_bufsiz1
+		ಗಾಗಿ (;;) {
+			ಪೂರ್ಣಾಂಕ ಬೈಟುಗಳು_read = ಸುರಕ್ಷಿತ_read(fd, read_buf, COMMON_BUFSIZE);
+			ಆದರೆ (ಬೈಟುಗಳು_read < 0)
+				bb_simple_perror_ಸಂದೇಶ_and_die(fname);
+			ಆದರೆ (ಬೈಟುಗಳು_read > 0) {
+				IF_CKSUM(filesize += ಬೈಟುಗಳು_read;)
+			} ಇಲ್ಲದಿದ್ದರೆ {
 				IF_CKSUM(uoff_t t;)
 
 				close(fd);
-				if (IS_CRC32)
-					break;
-#if ENABLE_CKSUM
+				ಆದರೆ (IS_ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32)
+					ನಿಲ್ಲಿಸು;
+#ಆದರೆ ENABLE_CKSUM
 				fd = -1; /* break flag */
 				/* Checksum filesize bytes, LSB first */
 				t = filesize;
 				/*bytes_read = 0; - already is */
-				while (t != 0) {
-					read_buf[bytes_read++] = (uint8_t)t;
+				ಆಗ (t != 0) {
+					read_buf[ಬೈಟುಗಳು_read++] = (uint8_t)t;
 					t >>= 8;
 				}
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 			}
-			crc = (IS_CKSUM ? crc32_block_endian1 : crc32_block_endian0)(crc, read_buf, bytes_read, crc32_table);
-			if (ENABLE_CKSUM && fd < 0)
-				break;
+			ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = (IS_CKSUM ? ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_ಖಂಡ_endian1 : ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_ಖಂಡ_endian0)(ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ, read_buf, ಬೈಟುಗಳು_read, ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ_32_ಕೋಷ್ಟಕ);
+			ಆದರೆ (ENABLE_CKSUM && fd < 0)
+				ನಿಲ್ಲಿಸು;
 		}
 
-		crc = ~crc;
-#if ENABLE_CKSUM
-		if (IS_CKSUM)
-			printf((*argv ? "%u %"OFF_FMT"u %s\n" : "%u %"OFF_FMT"u\n"),
-				(unsigned)crc, filesize, *argv);
-		else
-#endif
-			printf((*argv ? "%08x %s\n" : "%08x\n"),
-				(unsigned)crc, *argv);
-	} while (*argv && *++argv);
+		ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ = ~ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ;
+#ಆದರೆ ENABLE_CKSUM
+		ಆದರೆ (IS_CKSUM)
+			ಬರೆ((*argv ? "%u %"OFF_FMT"u %s\n" : "%u %"OFF_FMT"u\n"),
+				(ಚಿಹ್ನೆರಹಿತ)ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ, filesize, *argv);
+		ಇಲ್ಲದಿದ್ದರೆ
+#ಆದರೆ_ಅಂತ್ಯ
+			ಬರೆ((*argv ? "%08x %s\n" : "%08x\n"),
+				(ಚಿಹ್ನೆರಹಿತ)ಚಕ್ರೀಯ_ಪರೀಕ್ಷೆ, *argv);
+	} ಆಗ (*argv && *++argv);
 
-	fflush_stdout_and_exit(exit_code);
+	fflush_stdout_and_exit(exit_ಸಂಕೇತ);
 }

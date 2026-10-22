@@ -49,30 +49,30 @@
 //usage:     "\n	-0	NUL terminated output"
 //usage:     "\n	-u NAME	Remove variable from environment"
 
-#include "libbb.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
 
-int env_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int env_main(int argc UNUSED_PARAM, char **argv)
+ಪೂರ್ಣಾಂಕ env_main(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಂಕ env_main(ಪೂರ್ಣಾಂಕ argc ಬಳಸದ_PARAM, ಅಕ್ಷರ **argv)
 {
-	unsigned opts;
-	llist_t *unset_env = NULL;
+	ಚಿಹ್ನೆರಹಿತ opts;
+	llist_t *unset_env = ಖಾಲಿ;
 
 	opts = getopt32long(argv, "+i0u:*",
-			"ignore-environment\0" No_argument       "i"
-			"null\0"               No_argument       "0"
-			"unset\0"              Required_argument "u"
+			"ignore-environment\0" No_ವಾದ       "i"
+			"null\0"               No_ವಾದ       "0"
+			"unset\0"              Required_ವಾದ "u"
 			, &unset_env
 	);
 	argv += optind;
-	if (argv[0] && LONE_DASH(argv[0])) {
+	ಆದರೆ (argv[0] && LONE_DASH(argv[0])) {
 		opts |= 1;
 		++argv;
 	}
-	if (opts & 1) {
+	ಆದರೆ (opts & 1) {
 		clearenv();
 	}
-	while (unset_env) {
-		char *var = llist_pop(&unset_env);
+	ಆಗ (unset_env) {
+		ಅಕ್ಷರ *var = llist_ತೆಗೆ(&unset_env);
 		/* This does not handle -uVAR=VAL
 		 * (coreutils _sets_ the variable in that case): */
 		/*unsetenv(var);*/
@@ -81,22 +81,22 @@ int env_main(int argc UNUSED_PARAM, char **argv)
 		putenv(var);
 	}
 
-	while (*argv && (strchr(*argv, '=') != NULL)) {
-		if (putenv(*argv) < 0) {
-			bb_simple_perror_msg_and_die("putenv");
+	ಆಗ (*argv && (strchr(*argv, '=') != ಖಾಲಿ)) {
+		ಆದರೆ (putenv(*argv) < 0) {
+			bb_simple_perror_ಸಂದೇಶ_and_die("putenv");
 		}
 		++argv;
 	}
 
-	if (argv[0]) {
+	ಆದರೆ (argv[0]) {
 		BB_EXECVP_or_die(argv);
 	}
 
-	if (environ) { /* clearenv() may set environ == NULL! */
-		char **ep;
+	ಆದರೆ (environ) { /* clearenv() may set environ == NULL! */
+		ಅಕ್ಷರ **ep;
 		opts = (opts & 2) ? 0 : '\n';
-		for (ep = environ; *ep; ep++) {
-			printf("%s%c", *ep, opts);
+		ಗಾಗಿ (ep = environ; *ep; ep++) {
+			ಬರೆ("%s%c", *ep, opts);
 		}
 	}
 

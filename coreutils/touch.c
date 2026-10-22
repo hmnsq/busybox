@@ -70,26 +70,26 @@
  *      change the specified time: WORD is access, atime, or use
  */
 
-#include "libbb.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
 
-int touch_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int touch_main(int argc UNUSED_PARAM, char **argv)
+ಪೂರ್ಣಾಂಕ touch_main(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಂಕ touch_main(ಪೂರ್ಣಾಂಕ argc ಬಳಸದ_PARAM, ಅಕ್ಷರ **argv)
 {
-	int fd;
-	int opts;
-	exitcode_t status = EXIT_SUCCESS;
-#if ENABLE_FEATURE_TOUCH_SUSV3
-	char *reference_file;
-	char *date_str;
+	ಪೂರ್ಣಾಂಕ fd;
+	ಪೂರ್ಣಾಂಕ opts;
+	exitcode_t ಸ್ಥಿತಿ_2 = EXIT_SUCCESS;
+#ಆದರೆ ENABLE_FEATURE_TOUCH_SUSV3
+	ಅಕ್ಷರ *reference_file;
+	ಅಕ್ಷರ *date_str;
 	/* timebuf[0] is atime, timebuf[1] is mtime */
-	struct timespec timebuf[2];
-#else
-# define reference_file NULL
-# define date_str       NULL
-# define timebuf        ((struct timespec*)NULL)
-#endif
+	ರಚನೆ timespec timebuf[2];
+#ಇಲ್ಲದಿದ್ದರೆ
+# define reference_file ಖಾಲಿ
+# define date_str       ಖಾಲಿ
+# define timebuf        ((ರಚನೆ timespec*)ಖಾಲಿ)
+#ಆದರೆ_ಅಂತ್ಯ
 
-	enum {
+	ಎಣಿಕೆ {
 		OPT_c = (1 << 0),
 		OPT_h = (1 << 1),
 		OPT_r = (1 << 2) * ENABLE_FEATURE_TOUCH_SUSV3,
@@ -98,15 +98,15 @@ int touch_main(int argc UNUSED_PARAM, char **argv)
 		OPT_a = (1 << 5) * ENABLE_FEATURE_TOUCH_SUSV3,
 		OPT_m = (1 << 6) * ENABLE_FEATURE_TOUCH_SUSV3,
 	};
-#if ENABLE_LONG_OPTS
-	static const char touch_longopts[] ALIGN1 =
+#ಆದರೆ ENABLE_LONG_OPTS
+	ಸ್ಥಿರ ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ touch_longopts[] ALIGN1 =
 		/* name, has_arg, val */
-		"no-create\0"        No_argument       "c"
-		"no-dereference\0"   No_argument       "h"
-		IF_FEATURE_TOUCH_SUSV3("reference\0"        Required_argument "r")
-		IF_FEATURE_TOUCH_SUSV3("date\0"             Required_argument "d")
+		"no-create\0"        No_ವಾದ       "c"
+		"no-dereference\0"   No_ವಾದ       "h"
+		IF_FEATURE_TOUCH_SUSV3("reference\0"        Required_ವಾದ "r")
+		IF_FEATURE_TOUCH_SUSV3("date\0"             Required_ವಾದ "d")
 	;
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 	/* -d and -t both set time. In coreutils,
 	 * accepted data format differs a bit between -d and -t.
 	 * We accept the same formats for both
@@ -120,38 +120,38 @@ int touch_main(int argc UNUSED_PARAM, char **argv)
 		/* coreutils forbids -r and -t at once: */ IF_FEATURE_TOUCH_SUSV3(":r--t:t--r")
 		/* but allows these combinations: "r--d:d--r:t--d:d--t" */
 		, touch_longopts
-#if ENABLE_FEATURE_TOUCH_SUSV3
+#ಆದರೆ ENABLE_FEATURE_TOUCH_SUSV3
 		, &reference_file
 		, &date_str
 		, &date_str
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 	);
 
-#if ENABLE_FEATURE_TOUCH_SUSV3
+#ಆದರೆ ENABLE_FEATURE_TOUCH_SUSV3
 	timebuf[0].tv_nsec = timebuf[1].tv_nsec = UTIME_NOW;
-	if (opts & OPT_r) {
-		struct stat stbuf;
+	ಆದರೆ (opts & OPT_r) {
+		ರಚನೆ stat stbuf;
 		xstat(reference_file, &stbuf);
 		timebuf[0].tv_sec = stbuf.st_atime;
 		timebuf[1].tv_sec = stbuf.st_mtime;
 		timebuf[0].tv_nsec = stbuf.st_atim.tv_nsec;
 		timebuf[1].tv_nsec = stbuf.st_mtim.tv_nsec;
 	}
-	if (opts & (OPT_d|OPT_t)) {
-		struct tm tm_time;
-		time_t t;
-		int check_dst;
+	ಆದರೆ (opts & (OPT_d|OPT_t)) {
+		ರಚನೆ tm tm_ಸಮಯ;
+		ಸಮಯ_t t;
+		ಪೂರ್ಣಾಂಕ check_dst;
 
 		//memset(&tm_time, 0, sizeof(tm_time));
 		/* Better than memset: makes "HH:MM" dates meaningful */
-		time(&t);
-		localtime_r(&t, &tm_time);
-		check_dst = parse_datestr(date_str, &tm_time);
+		ಸಮಯ(&t);
+		localtime_r(&t, &tm_ಸಮಯ);
+		check_dst = parse_datestr(date_str, &tm_ಸಮಯ);
 
 		/* Correct any day of week and day of year etc. fields */
-		if (check_dst)
-			tm_time.tm_isdst = -1;  /* recheck dst unless date is UTC */
-		t = validate_tm_time(date_str, &tm_time);
+		ಆದರೆ (check_dst)
+			tm_ಸಮಯ.tm_isdst = -1;  /* recheck dst unless date is UTC */
+		t = validate_tm_ಸಮಯ(date_str, &tm_ಸಮಯ);
 
 		timebuf[1].tv_sec = timebuf[0].tv_sec = t;
 		timebuf[1].tv_nsec = timebuf[0].tv_nsec = 0;
@@ -159,35 +159,35 @@ int touch_main(int argc UNUSED_PARAM, char **argv)
 	/* If both -a and -m specified, both times should be set.
 	 * IOW: set OMIT only if one, not both, of them is given!
 	 */
-	if ((opts & (OPT_a|OPT_m)) == OPT_a)
+	ಆದರೆ ((opts & (OPT_a|OPT_m)) == OPT_a)
 		timebuf[1].tv_nsec = UTIME_OMIT;
-	if ((opts & (OPT_a|OPT_m)) == OPT_m)
+	ಆದರೆ ((opts & (OPT_a|OPT_m)) == OPT_m)
 		timebuf[0].tv_nsec = UTIME_OMIT;
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 	argv += optind;
-	do {
-		int result = utimensat(AT_FDCWD, *argv, timebuf,
+	ಮಾಡು {
+		ಪೂರ್ಣಾಂಕ ಫಲಿತಾಂಶ = utimensat(AT_FDCWD, *argv, timebuf,
 				(opts & OPT_h) ? AT_SYMLINK_NOFOLLOW : 0);
-		if (result != 0) {
-			if (errno == ENOENT) { /* no such file? */
-				if (opts & OPT_c) {
+		ಆದರೆ (ಫಲಿತಾಂಶ != 0) {
+			ಆದರೆ (errno == ENOENT) { /* no such file? */
+				ಆದರೆ (opts & OPT_c) {
 					/* Creation is disabled, so ignore */
-					continue;
+					ಮುಂದುವರಿ;
 				}
 				/* Try to create the file */
 				fd = open(*argv, O_RDWR | O_CREAT, 0666);
-				if (fd >= 0) {
-					if (opts & (OPT_r|OPT_d|OPT_t))
+				ಆದರೆ (fd >= 0) {
+					ಆದರೆ (opts & (OPT_r|OPT_d|OPT_t))
 						futimens(fd, timebuf);
 					xclose(fd);
-					continue;
+					ಮುಂದುವರಿ;
 				}
 			}
-			status = EXIT_FAILURE;
-			bb_simple_perror_msg(*argv);
+			ಸ್ಥಿತಿ_2 = EXIT_FAILURE;
+			bb_simple_perror_ಸಂದೇಶ(*argv);
 		}
-	} while (*++argv);
+	} ಆಗ (*++argv);
 
-	return status;
+	ಹಿಂತಿರುಗಿ ಸ್ಥಿತಿ_2;
 }

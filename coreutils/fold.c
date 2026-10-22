@@ -28,159 +28,159 @@
 //usage:     "\n	-s	Break at spaces"
 //usage:     "\n	-w	Use WIDTH columns instead of 80"
 
-#include "libbb.h"
-#include "unicode.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
+#ಅನ್ತರ್ಭಾವ "unicode.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
 /* Must match getopt32 call */
-#define FLAG_COUNT_BYTES        1
-#define FLAG_BREAK_SPACES       2
-#define FLAG_WIDTH              4
+#ವ್ಯಾಖ್ಯಾನಿಸು FLAG_ಎಣಿಕೆ_ಬೈಟುಗಳು        1
+#ವ್ಯಾಖ್ಯಾನಿಸು FLAG_BREAK_SPACES       2
+#ವ್ಯಾಖ್ಯಾನಿಸು FLAG_ಅಗಲ              4
 
 /* Assuming the current column is COLUMN, return the column that
    printing C will move the cursor to.
    The first column is 0. */
-static int adjust_column(unsigned column, char c)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ adjust_ಸ್ತಂಭ(ಚಿಹ್ನೆರಹಿತ ಸ್ತಂಭ, ಅಕ್ಷರ c)
 {
-	if (option_mask32 & FLAG_COUNT_BYTES)
-		return ++column;
+	ಆದರೆ (option_mask32 & FLAG_ಎಣಿಕೆ_ಬೈಟುಗಳು)
+		ಹಿಂತಿರುಗಿ ++ಸ್ತಂಭ;
 
-	if (c == '\t')
-		return column + 8 - column % 8;
+	ಆದರೆ (c == '\t')
+		ಹಿಂತಿರುಗಿ ಸ್ತಂಭ + 8 - ಸ್ತಂಭ % 8;
 
-	if (c == '\b') {
-		if ((int)--column < 0)
-			column = 0;
+	ಆದರೆ (c == '\b') {
+		ಆದರೆ ((ಪೂರ್ಣಾಂಕ)--ಸ್ತಂಭ < 0)
+			ಸ್ತಂಭ = 0;
 	}
-	else if (c == '\r')
-		column = 0;
-	else { /* just a printable char */
-		if (unicode_status != UNICODE_ON /* every byte is a new char */
+	ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (c == '\r')
+		ಸ್ತಂಭ = 0;
+	ಇಲ್ಲದಿದ್ದರೆ { /* just a printable char */
+		ಆದರೆ (unicode_ಸ್ಥಿತಿ != UNICODE_ON /* every byte is a new char */
 		 || (c & 0xc0) != 0x80 /* it isn't a 2nd+ byte of a Unicode char */
 		) {
-			column++;
+			ಸ್ತಂಭ++;
 		}
 	}
-	return column;
+	ಹಿಂತಿರುಗಿ ಸ್ತಂಭ;
 }
 
 /* Note that this function can write NULs, unlike fputs etc. */
-static void write2stdout(const void *buf, unsigned size)
+ಸ್ಥಿರ ಶೂನ್ಯ write2stdout(ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *buf, ಚಿಹ್ನೆರಹಿತ ಗಾತ್ರ_2)
 {
-	fwrite(buf, 1, size, stdout);
+	fwrite(buf, 1, ಗಾತ್ರ_2, stdout);
 }
 
-int fold_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int fold_main(int argc UNUSED_PARAM, char **argv)
+ಪೂರ್ಣಾಂಕ fold_main(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಂಕ fold_main(ಪೂರ್ಣಾಂಕ argc ಬಳಸದ_PARAM, ಅಕ್ಷರ **argv)
 {
-	char *line_out = NULL;
-	const char *w_opt = "80";
-	unsigned width;
+	ಅಕ್ಷರ *ಸಾಲು_ಹೊರಹೋಗು = ಖಾಲಿ;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *w_opt = "80";
+	ಚಿಹ್ನೆರಹಿತ ಅಗಲ;
 	exitcode_t exitcode = EXIT_SUCCESS;
 
 	init_unicode();
 
-	if (ENABLE_INCLUDE_SUSv2) {
+	ಆದರೆ (ENABLE_INCLUDE_SUSv2) {
 		/* Turn any numeric options into -w options.  */
-		int i;
-		for (i = 1; argv[i]; i++) {
-			const char *a = argv[i];
-			if (*a == '-') {
+		ಪೂರ್ಣಾಂಕ i;
+		ಗಾಗಿ (i = 1; argv[i]; i++) {
+			ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *a = argv[i];
+			ಆದರೆ (*a == '-') {
 				a++;
-				if (*a == '-' && !a[1]) /* "--" */
-					break;
-				if (isdigit(*a))
+				ಆದರೆ (*a == '-' && !a[1]) /* "--" */
+					ನಿಲ್ಲಿಸು;
+				ಆದರೆ (ಅಂಕಿಯೇ(*a))
 					argv[i] = xasprintf("-w%s", a);
 			}
 		}
 	}
 
 	getopt32(argv, "bsw:", &w_opt);
-	width = xatou_range(w_opt, 1, 10000);
+	ಅಗಲ = xatou_range(w_opt, 1, 10000);
 
 	argv += optind;
-	if (!*argv)
-		*--argv = (char*)"-";
+	ಆದರೆ (!*argv)
+		*--argv = (ಅಕ್ಷರ*)"-";
 
-	do {
+	ಮಾಡು {
 		FILE *istream = fopen_or_warn_stdin(*argv);
-		int c;
-		unsigned column = 0;     /* Screen column where next char will go */
-		unsigned offset_out = 0; /* Index in 'line_out' for next char */
+		ಪೂರ್ಣಾಂಕ c;
+		ಚಿಹ್ನೆರಹಿತ ಸ್ತಂಭ = 0;     /* Screen column where next char will go */
+		ಚಿಹ್ನೆರಹಿತ ಸ್ಥಾನಾಂತರ_ಹೊರಹೋಗು = 0; /* Index in 'line_out' for next char */
 
-		if (istream == NULL) {
+		ಆದರೆ (istream == ಖಾಲಿ) {
 			exitcode = EXIT_FAILURE;
-			continue;
+			ಮುಂದುವರಿ;
 		}
 
-		while ((c = getc(istream)) != EOF) {
+		ಆಗ ((c = getc(istream)) != EOF) {
 			/* We grow line_out in chunks of 0x1000 bytes */
-			if ((offset_out & 0xfff) == 0) {
-				line_out = xrealloc(line_out, offset_out + 0x1000);
+			ಆದರೆ ((ಸ್ಥಾನಾಂತರ_ಹೊರಹೋಗು & 0xfff) == 0) {
+				ಸಾಲು_ಹೊರಹೋಗು = xrealloc(ಸಾಲು_ಹೊರಹೋಗು, ಸ್ಥಾನಾಂತರ_ಹೊರಹೋಗು + 0x1000);
 			}
  rescan:
-			line_out[offset_out] = c;
-			if (c == '\n') {
-				write2stdout(line_out, offset_out + 1);
-				column = offset_out = 0;
-				continue;
+			ಸಾಲು_ಹೊರಹೋಗು[ಸ್ಥಾನಾಂತರ_ಹೊರಹೋಗು] = c;
+			ಆದರೆ (c == '\n') {
+				write2stdout(ಸಾಲು_ಹೊರಹೋಗು, ಸ್ಥಾನಾಂತರ_ಹೊರಹೋಗು + 1);
+				ಸ್ತಂಭ = ಸ್ಥಾನಾಂತರ_ಹೊರಹೋಗು = 0;
+				ಮುಂದುವರಿ;
 			}
-			column = adjust_column(column, c);
-			if (column <= width || offset_out == 0) {
+			ಸ್ತಂಭ = adjust_ಸ್ತಂಭ(ಸ್ತಂಭ, c);
+			ಆದರೆ (ಸ್ತಂಭ <= ಅಗಲ || ಸ್ಥಾನಾಂತರ_ಹೊರಹೋಗು == 0) {
 				/* offset_out == 0 case happens
 				 * with small width (say, 1) and tabs.
 				 * The very first tab already goes to column 8,
 				 * but we must not wrap it */
-				offset_out++;
-				continue;
+				ಸ್ಥಾನಾಂತರ_ಹೊರಹೋಗು++;
+				ಮುಂದುವರಿ;
 			}
 
 			/* This character would make the line too long.
 			 * Print the line plus a newline, and make this character
 			 * start the next line */
-			if (option_mask32 & FLAG_BREAK_SPACES) {
-				unsigned i;
-				unsigned logical_end;
+			ಆದರೆ (option_mask32 & FLAG_BREAK_SPACES) {
+				ಚಿಹ್ನೆರಹಿತ i;
+				ಚಿಹ್ನೆರಹಿತ logical_ಕೊನೆ;
 
 				/* Look for the last blank. */
-				for (logical_end = offset_out - 1; (int)logical_end >= 0; logical_end--) {
-					if (!isblank(line_out[logical_end]))
-						continue;
+				ಗಾಗಿ (logical_ಕೊನೆ = ಸ್ಥಾನಾಂತರ_ಹೊರಹೋಗು - 1; (ಪೂರ್ಣಾಂಕ)logical_ಕೊನೆ >= 0; logical_ಕೊನೆ--) {
+					ಆದರೆ (!isblank(ಸಾಲು_ಹೊರಹೋಗು[logical_ಕೊನೆ]))
+						ಮುಂದುವರಿ;
 
 					/* Found a space or tab.
 					 * Output up to and including it, and start a new line */
-					logical_end++;
+					logical_ಕೊನೆ++;
 					/*line_out[logical_end] = '\n'; - NO! this nukes one buffered character */
-					write2stdout(line_out, logical_end);
-					putchar('\n');
+					write2stdout(ಸಾಲು_ಹೊರಹೋಗು, logical_ಕೊನೆ);
+					ಅಕ್ಷರ_ಬರೆ('\n');
 					/* Move the remainder to the beginning of the next line.
 					 * The areas being copied here might overlap. */
-					memmove(line_out, line_out + logical_end, offset_out - logical_end);
-					offset_out -= logical_end;
-					for (column = i = 0; i < offset_out; i++) {
-						column = adjust_column(column, line_out[i]);
+					memmove(ಸಾಲು_ಹೊರಹೋಗು, ಸಾಲು_ಹೊರಹೋಗು + logical_ಕೊನೆ, ಸ್ಥಾನಾಂತರ_ಹೊರಹೋಗು - logical_ಕೊನೆ);
+					ಸ್ಥಾನಾಂತರ_ಹೊರಹೋಗು -= logical_ಕೊನೆ;
+					ಗಾಗಿ (ಸ್ತಂಭ = i = 0; i < ಸ್ಥಾನಾಂತರ_ಹೊರಹೋಗು; i++) {
+						ಸ್ತಂಭ = adjust_ಸ್ತಂಭ(ಸ್ತಂಭ, ಸಾಲು_ಹೊರಹೋಗು[i]);
 					}
-					goto rescan;
+					ಹೋಗು rescan;
 				}
 				/* No blank found, wrap will split the overlong word */
 			}
 			/* Output what we accumulated up to now, and start a new line */
-			line_out[offset_out] = '\n';
-			write2stdout(line_out, offset_out + 1);
-			column = offset_out = 0;
-			goto rescan;
+			ಸಾಲು_ಹೊರಹೋಗು[ಸ್ಥಾನಾಂತರ_ಹೊರಹೋಗು] = '\n';
+			write2stdout(ಸಾಲು_ಹೊರಹೋಗು, ಸ್ಥಾನಾಂತರ_ಹೊರಹೋಗು + 1);
+			ಸ್ತಂಭ = ಸ್ಥಾನಾಂತರ_ಹೊರಹೋಗು = 0;
+			ಹೋಗು rescan;
 		} /* while (not EOF) */
 
-		if (offset_out) {
-			write2stdout(line_out, offset_out);
+		ಆದರೆ (ಸ್ಥಾನಾಂತರ_ಹೊರಹೋಗು) {
+			write2stdout(ಸಾಲು_ಹೊರಹೋಗು, ಸ್ಥಾನಾಂತರ_ಹೊರಹೋಗು);
 		}
 
-		if (fclose_if_not_stdin(istream)) {
-			bb_simple_perror_msg(*argv);
+		ಆದರೆ (fclose_if_not_stdin(istream)) {
+			bb_simple_perror_ಸಂದೇಶ(*argv);
 			exitcode = EXIT_FAILURE;
 		}
-	} while (*++argv);
+	} ಆಗ (*++argv);
 
 	fflush_stdout_and_exit(exitcode);
 }

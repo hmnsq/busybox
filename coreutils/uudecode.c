@@ -31,131 +31,131 @@
 //usage:       "$ ls -l busybox\n"
 //usage:       "-rwxr-xr-x   1 ams      ams        245264 Jun  7 21:35 busybox\n"
 
-#include "libbb.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
 
-#if ENABLE_UUDECODE
-static void FAST_FUNC read_stduu(FILE *src_stream, FILE *dst_stream, int flags UNUSED_PARAM)
+#ಆದರೆ ENABLE_UUDECODE
+ಸ್ಥಿರ ಶೂನ್ಯ FAST_FUNC read_stduu(FILE *src_ಹರಿವು, FILE *dst_ಹರಿವು, ಪೂರ್ಣಾಂಕ flags ಬಳಸದ_PARAM)
 {
-	char *line;
+	ಅಕ್ಷರ *ಸಾಲು;
 
-	for (;;) {
-		int encoded_len, str_len;
-		char *line_ptr, *dst;
-		size_t line_len;
+	ಗಾಗಿ (;;) {
+		ಪೂರ್ಣಾಂಕ encoded_len, str_len;
+		ಅಕ್ಷರ *ಸಾಲು_ptr, *dst;
+		ಗಾತ್ರ_t ಸಾಲು_len;
 
-		line_len = 64 * 1024;
-		line = xmalloc_fgets_str_len(src_stream, "\n", &line_len);
-		if (!line)
-			break;
+		ಸಾಲು_len = 64 * 1024;
+		ಸಾಲು = xmalloc_fgets_str_len(src_ಹರಿವು, "\n", &ಸಾಲು_len);
+		ಆದರೆ (!ಸಾಲು)
+			ನಿಲ್ಲಿಸು;
 		/* Handle both Unix and MSDOS text.
 		 * Note: space should not be trimmed, some encoders use it instead of "`"
 		 * for padding of last incomplete 4-char block.
 		 */
-		str_len = line_len;
-		while (--str_len >= 0
-		 && (line[str_len] == '\n' || line[str_len] == '\r')
+		str_len = ಸಾಲು_len;
+		ಆಗ (--str_len >= 0
+		 && (ಸಾಲು[str_len] == '\n' || ಸಾಲು[str_len] == '\r')
 		) {
-			line[str_len] = '\0';
+			ಸಾಲು[str_len] = '\0';
 		}
 
-		if (strcmp(line, "end") == 0) {
-			return; /* the only non-error exit */
+		ಆದರೆ (strcmp(ಸಾಲು, "end") == 0) {
+			ಹಿಂತಿರುಗಿ; /* the only non-error exit */
 		}
 
-		line_ptr = line;
-		while (*line_ptr) {
-			*line_ptr = (*line_ptr - 0x20) & 0x3f;
-			line_ptr++;
+		ಸಾಲು_ptr = ಸಾಲು;
+		ಆಗ (*ಸಾಲು_ptr) {
+			*ಸಾಲು_ptr = (*ಸಾಲು_ptr - 0x20) & 0x3f;
+			ಸಾಲು_ptr++;
 		}
-		str_len = line_ptr - line;
+		str_len = ಸಾಲು_ptr - ಸಾಲು;
 
-		encoded_len = line[0] * 4 / 3;
+		encoded_len = ಸಾಲು[0] * 4 / 3;
 		/* Check that line is not too short. (we tolerate
 		 * overly _long_ line to accommodate possible extra "`").
 		 * Empty line case is also caught here. */
-		if (str_len <= encoded_len) {
-			break; /* go to bb_error_msg_and_die("short file"); */
+		ಆದರೆ (str_len <= encoded_len) {
+			ನಿಲ್ಲಿಸು; /* go to bb_error_msg_and_die("short file"); */
 		}
-		if (encoded_len <= 0) {
+		ಆದರೆ (encoded_len <= 0) {
 			/* Ignore the "`\n" line, why is it even in the encode file ? */
-			free(line);
-			continue;
+			ಬಿಡುಗಡೆ(ಸಾಲು);
+			ಮುಂದುವರಿ;
 		}
-		if (encoded_len > 60) {
-			bb_simple_error_msg_and_die("line too long");
+		ಆದರೆ (encoded_len > 60) {
+			bb_simple_error_ಸಂದೇಶ_and_die("line too long");
 		}
 
-		dst = line;
-		line_ptr = line + 1;
-		do {
+		dst = ಸಾಲು;
+		ಸಾಲು_ptr = ಸಾಲು + 1;
+		ಮಾಡು {
 			/* Merge four 6 bit chars to three 8 bit chars */
-			*dst++ = line_ptr[0] << 2 | line_ptr[1] >> 4;
+			*dst++ = ಸಾಲು_ptr[0] << 2 | ಸಾಲು_ptr[1] >> 4;
 			encoded_len--;
-			if (encoded_len == 0) {
-				break;
+			ಆದರೆ (encoded_len == 0) {
+				ನಿಲ್ಲಿಸು;
 			}
 
-			*dst++ = line_ptr[1] << 4 | line_ptr[2] >> 2;
+			*dst++ = ಸಾಲು_ptr[1] << 4 | ಸಾಲು_ptr[2] >> 2;
 			encoded_len--;
-			if (encoded_len == 0) {
-				break;
+			ಆದರೆ (encoded_len == 0) {
+				ನಿಲ್ಲಿಸು;
 			}
 
-			*dst++ = line_ptr[2] << 6 | line_ptr[3];
-			line_ptr += 4;
+			*dst++ = ಸಾಲು_ptr[2] << 6 | ಸಾಲು_ptr[3];
+			ಸಾಲು_ptr += 4;
 			encoded_len -= 2;
-		} while (encoded_len > 0);
-		fwrite(line, 1, dst - line, dst_stream);
-		free(line);
+		} ಆಗ (encoded_len > 0);
+		fwrite(ಸಾಲು, 1, dst - ಸಾಲು, dst_ಹರಿವು);
+		ಬಿಡುಗಡೆ(ಸಾಲು);
 	}
-	bb_simple_error_msg_and_die("short file");
+	bb_simple_error_ಸಂದೇಶ_and_die("short file");
 }
 
-int uudecode_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int uudecode_main(int argc UNUSED_PARAM, char **argv)
+ಪೂರ್ಣಾಂಕ uudecode_main(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಂಕ uudecode_main(ಪೂರ್ಣಾಂಕ argc ಬಳಸದ_PARAM, ಅಕ್ಷರ **argv)
 {
-	FILE *src_stream;
-	char *outname = NULL;
-	char *line;
+	FILE *src_ಹರಿವು;
+	ಅಕ್ಷರ *outname = ಖಾಲಿ;
+	ಅಕ್ಷರ *ಸಾಲು;
 
 	getopt32(argv, "^" "o:" "\0" "?1"/* 1 arg max*/, &outname);
 	argv += optind;
 
-	if (!argv[0])
-		*--argv = (char*)"-";
-	src_stream = xfopen_stdin(argv[0]);
+	ಆದರೆ (!argv[0])
+		*--argv = (ಅಕ್ಷರ*)"-";
+	src_ಹರಿವು = xfopen_stdin(argv[0]);
 
 	/* Search for the start of the encoding */
-	while ((line = xmalloc_fgetline(src_stream)) != NULL) {
-		void FAST_FUNC (*decode_fn_ptr)(FILE *src, FILE *dst, int flags);
-		char *line_ptr;
-		FILE *dst_stream;
-		int mode;
+	ಆಗ ((ಸಾಲು = xmalloc_fgetline(src_ಹರಿವು)) != ಖಾಲಿ) {
+		ಶೂನ್ಯ FAST_FUNC (*decode_fn_ptr)(FILE *src, FILE *dst, ಪೂರ್ಣಾಂಕ flags);
+		ಅಕ್ಷರ *ಸಾಲು_ptr;
+		FILE *dst_ಹರಿವು;
+		ಪೂರ್ಣಾಂಕ ಬಹುಲಕ;
 
-		if (is_prefixed_with(line, "begin-base64 ")) {
-			line_ptr = line + 13;
+		ಆದರೆ (is_prefixed_with(ಸಾಲು, "begin-base64 ")) {
+			ಸಾಲು_ptr = ಸಾಲು + 13;
 			decode_fn_ptr = read_base64;
-		} else if (is_prefixed_with(line, "begin ")) {
-			line_ptr = line + 6;
+		} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (is_prefixed_with(ಸಾಲು, "begin ")) {
+			ಸಾಲು_ptr = ಸಾಲು + 6;
 			decode_fn_ptr = read_stduu;
-		} else {
-			free(line);
-			continue;
+		} ಇಲ್ಲದಿದ್ದರೆ {
+			ಬಿಡುಗಡೆ(ಸಾಲು);
+			ಮುಂದುವರಿ;
 		}
 
 		/* begin line found. decode and exit */
-		mode = bb_strtou(line_ptr, NULL, 8);
-		if (outname == NULL) {
-			outname = strchr(line_ptr, ' ');
-			if (!outname)
-				break;
+		ಬಹುಲಕ = bb_strtou(ಸಾಲು_ptr, ಖಾಲಿ, 8);
+		ಆದರೆ (outname == ಖಾಲಿ) {
+			outname = strchr(ಸಾಲು_ptr, ' ');
+			ಆದರೆ (!outname)
+				ನಿಲ್ಲಿಸು;
 			outname++;
 			trim(outname); /* remove trailing space (and '\r' for DOS text) */
-			if (!outname[0])
-				break;
+			ಆದರೆ (!outname[0])
+				ನಿಲ್ಲಿಸು;
 		}
-		dst_stream = stdout;
-		if (NOT_LONE_DASH(outname)
+		dst_ಹರಿವು = stdout;
+		ಆದರೆ (NOT_LONE_DASH(outname)
 /* https://pubs.opengroup.org/onlinepubs/9699919799/utilities/uudecode.html
  * https://pubs.opengroup.org/onlinepubs/9699919799/utilities/uuencode.html
  * The above says that output file name specified in input file
@@ -165,17 +165,17 @@ int uudecode_main(int argc UNUSED_PARAM, char **argv)
  */
 		 && (!ENABLE_DESKTOP || strcmp(outname, "/dev/stdout") != 0)
 		) {
-			dst_stream = xfopen_for_write(outname);
-			fchmod(fileno(dst_stream), mode & (S_IRWXU | S_IRWXG | S_IRWXO));
+			dst_ಹರಿವು = xfopen_for_write(outname);
+			fchmod(fileno(dst_ಹರಿವು), ಬಹುಲಕ & (S_IRWXU | S_IRWXG | S_IRWXO));
 		}
-		free(line);
-		decode_fn_ptr(src_stream, dst_stream, /*flags:*/ BASE64_FLAG_UU_STOP + BASE64_FLAG_NO_STOP_CHAR);
+		ಬಿಡುಗಡೆ(ಸಾಲು);
+		decode_fn_ptr(src_ಹರಿವು, dst_ಹರಿವು, /*flags:*/ BASE64_FLAG_UU_STOP + BASE64_FLAG_NO_STOP_CHAR);
 		/* fclose_if_not_stdin(src_stream); - redundant */
-		return EXIT_SUCCESS;
+		ಹಿಂತಿರುಗಿ EXIT_SUCCESS;
 	}
-	bb_simple_error_msg_and_die("no 'begin' line");
+	bb_simple_error_ಸಂದೇಶ_and_die("no 'begin' line");
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 //config:config BASE32
 //config:	bool "base32 (5.5 kb)"
@@ -214,147 +214,147 @@ int uudecode_main(int argc UNUSED_PARAM, char **argv)
 //kbuild:lib-$(CONFIG_BASE64) += uudecode.o
 //kbuild:lib-$(CONFIG_BASE32) += uudecode.o
 
-#if ENABLE_BASE32 || ENABLE_BASE64
+#ಆದರೆ ENABLE_BASE32 || ENABLE_BASE64
 
-# if ENABLE_BASE32
-static void bb_b32encode(char *p, const void *src, int length)
+# ಆದರೆ ENABLE_BASE32
+ಸ್ಥಿರ ಶೂನ್ಯ bb_b32encode(ಅಕ್ಷರ *p, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *src, ಪೂರ್ಣಾಂಕ ಉದ್ದಳತೆ)
 {
-#define tbl bb_uuenc_tbl_base32
-	const unsigned char *s = src;
+#ವ್ಯಾಖ್ಯಾನಿಸು tbl bb_uuenc_tbl_base32
+	ಸ್ಥಿರಾಂಕ ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ *s = src;
 
 	/* Transform 5x8 bits to 8x5 bits */
-	while (length > 0) {
-		unsigned cur, next;
+	ಆಗ (ಉದ್ದಳತೆ > 0) {
+		ಚಿಹ್ನೆರಹಿತ cur, ಮುಂದಿನ;
 
-		length--;
+		ಉದ್ದಳತೆ--;
 		cur = *s++;
 		*p++ = tbl[cur >> 3];			// xxxxx--- -------- -------- -------- --------
 		cur &= 7;
 
-		next = 0;
-		if (--length >= 0)
-			next = *s++;
-		*p++ = tbl[(cur << 2) + (next >> 6)];	// -----xxx xx------ -------- -------- --------
-		cur = next & 0x3f;
+		ಮುಂದಿನ = 0;
+		ಆದರೆ (--ಉದ್ದಳತೆ >= 0)
+			ಮುಂದಿನ = *s++;
+		*p++ = tbl[(cur << 2) + (ಮುಂದಿನ >> 6)];	// -----xxx xx------ -------- -------- --------
+		cur = ಮುಂದಿನ & 0x3f;
 
 		*p++ = tbl[cur >> 1];			// -------- --xxxxx- -------- -------- --------
 		cur &= 1;
 
-		next = 0;
-		if (--length >= 0)
-			next = *s++;
-		*p++ = tbl[(cur << 4) + (next >> 4)];	// -------- -------x xxxx---- -------- --------
-		cur = next & 0xf;
+		ಮುಂದಿನ = 0;
+		ಆದರೆ (--ಉದ್ದಳತೆ >= 0)
+			ಮುಂದಿನ = *s++;
+		*p++ = tbl[(cur << 4) + (ಮುಂದಿನ >> 4)];	// -------- -------x xxxx---- -------- --------
+		cur = ಮುಂದಿನ & 0xf;
 
-		next = 0;
-		if (--length >= 0)
-			next = *s++;
-		*p++ = tbl[(cur << 1) + (next >> 7)];	// -------- -------- ----xxxx x------- --------
-		cur = next & 0x7f;
+		ಮುಂದಿನ = 0;
+		ಆದರೆ (--ಉದ್ದಳತೆ >= 0)
+			ಮುಂದಿನ = *s++;
+		*p++ = tbl[(cur << 1) + (ಮುಂದಿನ >> 7)];	// -------- -------- ----xxxx x------- --------
+		cur = ಮುಂದಿನ & 0x7f;
 
 		*p++ = tbl[cur >> 2];			// -------- -------- -------- -xxxxx-- --------
 		cur &= 3;
 
-		next = 0;
-		if (--length >= 0)
-			next = *s++;
-		*p++ = tbl[(cur << 3) + (next >> 5)];	// -------- -------- -------- ------xx xxx-----
-		cur = next & 0x1f;
+		ಮುಂದಿನ = 0;
+		ಆದರೆ (--ಉದ್ದಳತೆ >= 0)
+			ಮುಂದಿನ = *s++;
+		*p++ = tbl[(cur << 3) + (ಮುಂದಿನ >> 5)];	// -------- -------- -------- ------xx xxx-----
+		cur = ಮುಂದಿನ & 0x1f;
 
 		*p++ = tbl[cur];			// -------- -------- -------- -------- ---xxxxx
 	}
-#undef tbl
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು tbl
 	/* Zero-terminate */
 	*p = '\0';
 	/* Pad as necessary */
-	length = ((-length) * 3) >> 1; /* -4 => 6 pad chars, -3 => 4, -2 => 3, -1 => 1 */
-	while (length--) {
+	ಉದ್ದಳತೆ = ((-ಉದ್ದಳತೆ) * 3) >> 1; /* -4 => 6 pad chars, -3 => 4, -2 => 3, -1 => 1 */
+	ಆಗ (ಉದ್ದಳತೆ--) {
 		*--p = '=';
 	}
 }
-# else
-void bb_b32encode(char *p, const void *src, int length); /* undefined */
+# ಇಲ್ಲದಿದ್ದರೆ
+ಶೂನ್ಯ bb_b32encode(ಅಕ್ಷರ *p, ಸ್ಥಿರಾಂಕ ಶೂನ್ಯ *src, ಪೂರ್ಣಾಂಕ ಉದ್ದಳತೆ); /* undefined */
 # endif
 
-int baseNUM_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int baseNUM_main(int argc UNUSED_PARAM, char **argv)
+ಪೂರ್ಣಾಂಕ ತಳ_ಅಂಕೆ_main(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಂಕ ತಳ_ಅಂಕೆ_main(ಪೂರ್ಣಾಂಕ argc ಬಳಸದ_PARAM, ಅಕ್ಷರ **argv)
 {
-	FILE *src_stream;
-	unsigned opts;
-	unsigned col = 76;
+	FILE *src_ಹರಿವು;
+	ಚಿಹ್ನೆರಹಿತ opts;
+	ಚಿಹ್ನೆರಹಿತ ಲಂಬಸಾಲು = 76;
 
-	opts = getopt32(argv, "^" "diw:+" "\0" "?1"/* 1 arg max*/, &col);
+	opts = getopt32(argv, "^" "diw:+" "\0" "?1"/* 1 arg max*/, &ಲಂಬಸಾಲು);
 	argv += optind;
 
-	if (!argv[0])
-		*--argv = (char*)"-";
-	src_stream = xfopen_stdin(argv[0]);
-	if (opts & 1) {
+	ಆದರೆ (!argv[0])
+		*--argv = (ಅಕ್ಷರ*)"-";
+	src_ಹರಿವು = xfopen_stdin(argv[0]);
+	ಆದರೆ (opts & 1) {
 		/* -d: decode */
-		int flags = (unsigned char)EOF;
-		if (ENABLE_BASE32 && (!ENABLE_BASE64 || applet_name[4] == '3'))
-			flags = ((unsigned char)EOF) | BASE64_32;
-		read_base64(src_stream, stdout, flags);
-	} else {
-		enum {
-			SRC_BUF_SIZE = 3 * 5 * 32, /* this *MUST* be a multiple of 3 and 5 */
-			DST_BUF_SIZE = 8 * ((SRC_BUF_SIZE + 4) / 5), /* max growth on encode (base32 case) */
+		ಪೂರ್ಣಾಂಕ flags = (ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)EOF;
+		ಆದರೆ (ENABLE_BASE32 && (!ENABLE_BASE64 || applet_name[4] == '3'))
+			flags = ((ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ)EOF) | BASE64_32;
+		read_base64(src_ಹರಿವು, stdout, flags);
+	} ಇಲ್ಲದಿದ್ದರೆ {
+		ಎಣಿಕೆ {
+			SRC_BUF_ಗಾತ್ರ = 3 * 5 * 32, /* this *MUST* be a multiple of 3 and 5 */
+			DST_BUF_ಗಾತ್ರ = 8 * ((SRC_BUF_ಗಾತ್ರ + 4) / 5), /* max growth on encode (base32 case) */
 		};
 		/* Use one buffer for both input and output:
 		 * encoding reads input "left-to-right",
 		 * it's safe to place source at the end of the buffer and
 		 * overwrite it while encoding, just be careful to have a gap.
 		 */
-		char dst_buf[((DST_BUF_SIZE + /*gap:*/ 16) /*round up to 16:*/ | 0xf) + 1];
-#define src_buf (dst_buf + sizeof(dst_buf) - SRC_BUF_SIZE)
-		int src_fd, rem;
+		ಅಕ್ಷರ dst_buf[((DST_BUF_ಗಾತ್ರ + /*gap:*/ 16) /*round up to 16:*/ | 0xf) + 1];
+#ವ್ಯಾಖ್ಯಾನಿಸು src_buf (dst_buf + ಗಾತ್ರ(dst_buf) - SRC_BUF_ಗಾತ್ರ)
+		ಪೂರ್ಣಾಂಕ src_fd, rem;
 
-		src_fd = fileno(src_stream);
+		src_fd = fileno(src_ಹರಿವು);
 		rem = 0;
-		while (1) {
-			size_t size = full_read(src_fd, src_buf, SRC_BUF_SIZE);
-			if ((ssize_t)size < 0)
-				bb_simple_perror_msg_and_die(bb_msg_read_error);
-			if (size == 0) {
-				if (rem != 0) bb_putchar('\n');
-				break;
+		ಆಗ (1) {
+			ಗಾತ್ರ_t ಗಾತ್ರ_2 = ತುಂಬಿದ_read(src_fd, src_buf, SRC_BUF_ಗಾತ್ರ);
+			ಆದರೆ ((ssize_t)ಗಾತ್ರ_2 < 0)
+				bb_simple_perror_ಸಂದೇಶ_and_die(bb_ಸಂದೇಶ_read_error);
+			ಆದರೆ (ಗಾತ್ರ_2 == 0) {
+				ಆದರೆ (rem != 0) bb_putchar('\n');
+				ನಿಲ್ಲಿಸು;
 			}
 
 			/* Encode the buffer we just read in */
-			if (ENABLE_BASE32 && (!ENABLE_BASE64 || applet_name[4] == '3')) {
-				bb_b32encode(dst_buf, src_buf, size);
-				size = 8 * ((size + 4) / 5);
-			} else {
-				bb_uuencode(dst_buf, src_buf, size, bb_uuenc_tbl_base64);
-				size = 4 * ((size + 2) / 3);
+			ಆದರೆ (ENABLE_BASE32 && (!ENABLE_BASE64 || applet_name[4] == '3')) {
+				bb_b32encode(dst_buf, src_buf, ಗಾತ್ರ_2);
+				ಗಾತ್ರ_2 = 8 * ((ಗಾತ್ರ_2 + 4) / 5);
+			} ಇಲ್ಲದಿದ್ದರೆ {
+				bb_uuencode(dst_buf, src_buf, ಗಾತ್ರ_2, bb_uuenc_tbl_base64);
+				ಗಾತ್ರ_2 = 4 * ((ಗಾತ್ರ_2 + 2) / 3);
 			}
 
-			if (col == 0) {
+			ಆದರೆ (ಲಂಬಸಾಲು == 0) {
 				fputs_stdout(dst_buf);
-			} else {
-				char *result = dst_buf;
-				if (rem == 0)
-					rem = col;
-				while (1) {
-					int out = size < rem ? size : rem;
-					rem -= out;
-					printf(rem != 0 ? "%.*s" : "%.*s\n", out, result);
-					if (rem != 0)
-						break;
-					size -= out;
-					if (size == 0)
-						break;
-					result += out;
-					rem = col;
+			} ಇಲ್ಲದಿದ್ದರೆ {
+				ಅಕ್ಷರ *ಫಲಿತಾಂಶ = dst_buf;
+				ಆದರೆ (rem == 0)
+					rem = ಲಂಬಸಾಲು;
+				ಆಗ (1) {
+					ಪೂರ್ಣಾಂಕ ಹೊರಹೋಗು = ಗಾತ್ರ_2 < rem ? ಗಾತ್ರ_2 : rem;
+					rem -= ಹೊರಹೋಗು;
+					ಬರೆ(rem != 0 ? "%.*s" : "%.*s\n", ಹೊರಹೋಗು, ಫಲಿತಾಂಶ);
+					ಆದರೆ (rem != 0)
+						ನಿಲ್ಲಿಸು;
+					ಗಾತ್ರ_2 -= ಹೊರಹೋಗು;
+					ಆದರೆ (ಗಾತ್ರ_2 == 0)
+						ನಿಲ್ಲಿಸು;
+					ಫಲಿತಾಂಶ += ಹೊರಹೋಗು;
+					rem = ಲಂಬಸಾಲು;
 				}
 			}
 		}
-#undef src_buf
+#ವ್ಯಾಖ್ಯಾನ_ರದ್ದು src_buf
 	}
 
 	fflush_stdout_and_exit_SUCCESS();
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 /* Test script.
 Put this into an empty dir with busybox binary, an run.
@@ -375,16 +375,16 @@ for f in A*; do
     echo uuencode $f
     ./uuencode    $f <$f >u_$f
     ./uuencode -m $f <$f >m_$f
-done
+ಮುಗಿದ
 mkdir unpk_u unpk_m 2>/dev/null
 for f in u_*; do
     ./uudecode <$f -o unpk_u/${f:2}
     diff -a ${f:2} unpk_u/${f:2} >/dev/null 2>&1
     echo uudecode $f: $?
-done
+ಮುಗಿದ
 for f in m_*; do
     ./uudecode <$f -o unpk_m/${f:2}
     diff -a ${f:2} unpk_m/${f:2} >/dev/null 2>&1
     echo uudecode $f: $?
-done
+ಮುಗಿದ
 */

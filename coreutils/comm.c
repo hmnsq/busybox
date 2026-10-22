@@ -25,93 +25,93 @@
 //usage:     "\n	-2	Suppress lines unique to FILE2"
 //usage:     "\n	-3	Suppress lines common to both files"
 
-#include "libbb.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
 
-#define COMM_OPT_1 (1 << 0)
-#define COMM_OPT_2 (1 << 1)
-#define COMM_OPT_3 (1 << 2)
+#ವ್ಯಾಖ್ಯಾನಿಸು COMM_OPT_1 (1 << 0)
+#ವ್ಯಾಖ್ಯಾನಿಸು COMM_OPT_2 (1 << 1)
+#ವ್ಯಾಖ್ಯಾನಿಸು COMM_OPT_3 (1 << 2)
 
 /* writeline outputs the input given, appropriately aligned according to class */
-static void writeline(char *line, int class)
+ಸ್ಥಿರ ಶೂನ್ಯ writeline(ಅಕ್ಷರ *ಸಾಲು, ಪೂರ್ಣಾಂಕ class)
 {
-	int flags = option_mask32;
-	if (class == 0) {
-		if (flags & COMM_OPT_1)
-			return;
-	} else if (class == 1) {
-		if (flags & COMM_OPT_2)
-			return;
-		if (!(flags & COMM_OPT_1))
-			putchar('\t');
-	} else /*if (class == 2)*/ {
-		if (flags & COMM_OPT_3)
-			return;
-		if (!(flags & COMM_OPT_1))
-			putchar('\t');
-		if (!(flags & COMM_OPT_2))
-			putchar('\t');
+	ಪೂರ್ಣಾಂಕ flags = option_mask32;
+	ಆದರೆ (class == 0) {
+		ಆದರೆ (flags & COMM_OPT_1)
+			ಹಿಂತಿರುಗಿ;
+	} ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (class == 1) {
+		ಆದರೆ (flags & COMM_OPT_2)
+			ಹಿಂತಿರುಗಿ;
+		ಆದರೆ (!(flags & COMM_OPT_1))
+			ಅಕ್ಷರ_ಬರೆ('\t');
+	} ಇಲ್ಲದಿದ್ದರೆ /*if (class == 2)*/ {
+		ಆದರೆ (flags & COMM_OPT_3)
+			ಹಿಂತಿರುಗಿ;
+		ಆದರೆ (!(flags & COMM_OPT_1))
+			ಅಕ್ಷರ_ಬರೆ('\t');
+		ಆದರೆ (!(flags & COMM_OPT_2))
+			ಅಕ್ಷರ_ಬರೆ('\t');
 	}
-	puts(line);
+	puts(ಸಾಲು);
 }
 
-int comm_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int comm_main(int argc UNUSED_PARAM, char **argv)
+ಪೂರ್ಣಾಂಕ comm_main(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಂಕ comm_main(ಪೂರ್ಣಾಂಕ argc ಬಳಸದ_PARAM, ಅಕ್ಷರ **argv)
 {
-	char *thisline[2];
-	FILE *stream[2];
-	int i;
-	int order;
+	ಅಕ್ಷರ *thisline[2];
+	FILE *ಹರಿವು[2];
+	ಪೂರ್ಣಾಂಕ i;
+	ಪೂರ್ಣಾಂಕ ಕ್ರಮ;
 
 	getopt32(argv, "^" "123" "\0" "=2");
 	argv += optind;
 
-	for (i = 0; i < 2; ++i) {
-		stream[i] = xfopen_stdin(argv[i]);
+	ಗಾಗಿ (i = 0; i < 2; ++i) {
+		ಹರಿವು[i] = xfopen_stdin(argv[i]);
 	}
 
-	order = 0;
-	thisline[1] = thisline[0] = NULL;
-	while (1) {
-		if (order <= 0) {
-			free(thisline[0]);
-			thisline[0] = xmalloc_fgetline(stream[0]);
+	ಕ್ರಮ = 0;
+	thisline[1] = thisline[0] = ಖಾಲಿ;
+	ಆಗ (1) {
+		ಆದರೆ (ಕ್ರಮ <= 0) {
+			ಬಿಡುಗಡೆ(thisline[0]);
+			thisline[0] = xmalloc_fgetline(ಹರಿವು[0]);
 		}
-		if (order >= 0) {
-			free(thisline[1]);
-			thisline[1] = xmalloc_fgetline(stream[1]);
+		ಆದರೆ (ಕ್ರಮ >= 0) {
+			ಬಿಡುಗಡೆ(thisline[1]);
+			thisline[1] = xmalloc_fgetline(ಹರಿವು[1]);
 		}
 
 		i = !thisline[0] + (!thisline[1] << 1);
-		if (i)
-			break;
-		order = strcmp(thisline[0], thisline[1]);
+		ಆದರೆ (i)
+			ನಿಲ್ಲಿಸು;
+		ಕ್ರಮ = strcmp(thisline[0], thisline[1]);
 
-		if (order >= 0)
-			writeline(thisline[1], order ? 1 : 2);
-		else
+		ಆದರೆ (ಕ್ರಮ >= 0)
+			writeline(thisline[1], ಕ್ರಮ ? 1 : 2);
+		ಇಲ್ಲದಿದ್ದರೆ
 			writeline(thisline[0], 0);
 	}
 
 	/* EOF at least on one of the streams */
 	i &= 1;
-	if (thisline[i]) {
+	ಆದರೆ (thisline[i]) {
 		/* stream[i] is not at EOF yet */
 		/* we did not print thisline[i] yet */
-		char *p = thisline[i];
+		ಅಕ್ಷರ *p = thisline[i];
 		writeline(p, i);
-		while (1) {
-			free(p);
-			p = xmalloc_fgetline(stream[i]);
-			if (!p)
-				break;
+		ಆಗ (1) {
+			ಬಿಡುಗಡೆ(p);
+			p = xmalloc_fgetline(ಹರಿವು[i]);
+			ಆದರೆ (!p)
+				ನಿಲ್ಲಿಸು;
 			writeline(p, i);
 		}
 	}
 
-	if (ENABLE_FEATURE_CLEAN_UP) {
-		fclose(stream[0]);
-		fclose(stream[1]);
+	ಆದರೆ (ENABLE_FEATURE_CLEAN_ಮೇಲೆ) {
+		fclose(ಹರಿವು[0]);
+		fclose(ಹರಿವು[1]);
 	}
 
-	return EXIT_SUCCESS;
+	ಹಿಂತಿರುಗಿ EXIT_SUCCESS;
 }

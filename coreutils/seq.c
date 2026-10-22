@@ -25,48 +25,48 @@
 //usage:     "\n	-w	Pad with leading zeros"
 //usage:     "\n	-s SEP	String separator"
 
-#include "libbb.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-int seq_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int seq_main(int argc, char **argv)
+ಪೂರ್ಣಾಂಕ seq_main(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಂಕ seq_main(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv)
 {
-	enum {
+	ಎಣಿಕೆ {
 		OPT_w = (1 << 0),
 		OPT_s = (1 << 1),
 	};
-	double first, last, increment, v;
-	unsigned n;
-	unsigned width;
-	unsigned frac_part;
-	const char *sep, *opt_s = "\n";
-	char *saved;
-	unsigned opt;
+	ದ್ವಿಗುಣ ಮೊದಲ, ಕೊನೆಯ, increment, v;
+	ಚಿಹ್ನೆರಹಿತ n;
+	ಚಿಹ್ನೆರಹಿತ ಅಗಲ;
+	ಚಿಹ್ನೆರಹಿತ frac_part;
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *sep, *opt_s = "\n";
+	ಅಕ್ಷರ *saved;
+	ಚಿಹ್ನೆರಹಿತ opt;
 
-#if ENABLE_LOCALE_SUPPORT
+#ಆದರೆ ENABLE_LOCALE_SUPPORT
 	/* Undo busybox.c: on input, we want to use dot
 	 * as fractional separator, regardless of current locale */
 	setlocale(LC_NUMERIC, "C");
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 	/* Cater for negative arguments: if we see one, truncate argv[] on it */
 	n = 0;
-	for (;;) {
-		char c;
+	ಗಾಗಿ (;;) {
+		ಅಕ್ಷರ c;
 		saved = argv[++n];
-		if (!saved)
-			break;
-		if (saved[0] != '-') {
+		ಆದರೆ (!saved)
+			ನಿಲ್ಲಿಸು;
+		ಆದರೆ (saved[0] != '-') {
 			// break; // "seq -s : -1 1" won't be treated correctly
-			continue;
+			ಮುಂದುವರಿ;
 		}
 // "seq -s -1 1 9" is not treated correctly, but such usage
 // (delimiter string which looks like negative number) is very unlikely
 		c = saved[1];
-		if (c == '.' || (c >= '0' && c <= '9')) {
-			argv[n] = NULL;
-			break;
+		ಆದರೆ (c == '.' || (c >= '0' && c <= '9')) {
+			argv[n] = ಖಾಲಿ;
+			ನಿಲ್ಲಿಸು;
 		}
 	}
 	opt = getopt32(argv, "+ws:", &opt_s); /* "+": stop at first non-option */
@@ -75,68 +75,68 @@ int seq_main(int argc, char **argv)
 
 	argc -= optind;
 	argv += optind;
-	first = increment = 1;
+	ಮೊದಲ = increment = 1;
 	errno = 0;
-	switch (argc) {
-			char *pp;
-		case 3:
+	ಆಯ್ಕೆ (argc) {
+			ಅಕ್ಷರ *pp;
+		ಸ್ಥಿತಿ 3:
 			increment = strtod(argv[1], &pp);
 			errno |= *pp;
-		case 2:
-			first = strtod(argv[0], &pp);
+		ಸ್ಥಿತಿ 2:
+			ಮೊದಲ = strtod(argv[0], &pp);
 			errno |= *pp;
-		case 1:
-			last = strtod(argv[argc-1], &pp);
-			if (!errno && *pp == '\0')
-				break;
-		default:
+		ಸ್ಥಿತಿ 1:
+			ಕೊನೆಯ = strtod(argv[argc-1], &pp);
+			ಆದರೆ (!errno && *pp == '\0')
+				ನಿಲ್ಲಿಸು;
+		ಪೂರ್ವನಿಯೋಜಿತ:
 			bb_show_usage();
 	}
 
-#if ENABLE_LOCALE_SUPPORT
+#ಆದರೆ ENABLE_LOCALE_SUPPORT
 	setlocale(LC_NUMERIC, "");
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
 	/* Last checked to be compatible with: coreutils-6.10 */
-	width = 0;
+	ಅಗಲ = 0;
 	frac_part = 0;
-	while (1) {
-		char *dot = strchrnul(*argv, '.');
-		int w = (dot - *argv);
-		int f = strlen(dot);
-		if (width < w)
-			width = w;
+	ಆಗ (1) {
+		ಅಕ್ಷರ *dot = strchrnul(*argv, '.');
+		ಪೂರ್ಣಾಂಕ w = (dot - *argv);
+		ಪೂರ್ಣಾಂಕ f = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(dot);
+		ಆದರೆ (ಅಗಲ < w)
+			ಅಗಲ = w;
 		argv++;
-		if (!*argv)
-			break;
+		ಆದರೆ (!*argv)
+			ನಿಲ್ಲಿಸು;
 		/* Why do the above _before_ frac check below?
 		 * Try "seq 1 2.0" and "seq 1.0 2.0":
 		 * coreutils never pay attention to the number
 		 * of fractional digits in last arg. */
-		if (frac_part < f)
+		ಆದರೆ (frac_part < f)
 			frac_part = f;
 	}
-	if (frac_part) {
+	ಆದರೆ (frac_part) {
 		frac_part--;
-		if (frac_part)
-			width += frac_part + 1;
+		ಆದರೆ (frac_part)
+			ಅಗಲ += frac_part + 1;
 	}
-	if (!(opt & OPT_w))
-		width = 0;
+	ಆದರೆ (!(opt & OPT_w))
+		ಅಗಲ = 0;
 
 	sep = "";
-	v = first;
+	v = ಮೊದಲ;
 	n = 0;
-	while (increment >= 0 ? v <= last : v >= last) {
-		if (printf("%s%0*.*f", sep, width, frac_part, v) < 0)
-			break; /* I/O error, bail out (yes, this really happens) */
+	ಆಗ (increment >= 0 ? v <= ಕೊನೆಯ : v >= ಕೊನೆಯ) {
+		ಆದರೆ (ಬರೆ("%s%0*.*f", sep, ಅಗಲ, frac_part, v) < 0)
+			ನಿಲ್ಲಿಸು; /* I/O error, bail out (yes, this really happens) */
 		sep = opt_s;
 		/* v += increment; - would accumulate floating point errors */
 		n++;
-		v = first + n * increment;
+		v = ಮೊದಲ + n * increment;
 	}
-	if (n) /* if while loop executed at least once */
+	ಆದರೆ (n) /* if while loop executed at least once */
 		bb_putchar('\n');
 
-	return fflush_all();
+	ಹಿಂತಿರುಗಿ fflush_all();
 }

@@ -54,10 +54,10 @@
 //usage:     "\n	-f	Convert only leading blanks"
 //usage:     "\n	-t N	Tabstops every N chars"
 
-#include "libbb.h"
-#include "unicode.h"
+#ಅನ್ತರ್ಭಾವ "libbb.h"
+#ಅನ್ತರ್ಭಾವ "unicode.h"
 
-enum {
+ಎಣಿಕೆ {
 	OPT_INITIAL     = 1 << 0,
 	OPT_TABS        = 1 << 1,
 	OPT_ALL         = 1 << 2,
@@ -67,27 +67,27 @@ enum {
 //coreutils 8.30 preserves NULs but treats them as chars of width zero:
 //AB<nul><tab>C will expand <tab> to 6 spaces, not 5.
 
-#if ENABLE_EXPAND
-static void expand(FILE *file, unsigned tab_size, unsigned opt)
+#ಆದರೆ ENABLE_EXPAND
+ಸ್ಥಿರ ಶೂನ್ಯ expand(FILE *file, ಚಿಹ್ನೆರಹಿತ tab_ಗಾತ್ರ, ಚಿಹ್ನೆರಹಿತ opt)
 {
 
-	for (;;) {
-		char *line;
-		char *ptr;
-		char *ptr_strbeg;
+	ಗಾಗಿ (;;) {
+		ಅಕ್ಷರ *ಸಾಲು;
+		ಅಕ್ಷರ *ptr;
+		ಅಕ್ಷರ *ptr_strbeg;
 //commented-out code handles NULs, +90 bytes of code, not tested much
 //		size_t linelen;
 //		unsigned len = 0;
 
 //		linelen = 1024 * 1024;
 //		line = xmalloc_fgets_str_len(file, "\n", &linelen);
-		line = xmalloc_fgets(file); //
-		if (!line)
-			break;
-		ptr = ptr_strbeg = line;
-		for (;;) {
-			unsigned char c = *ptr;
-			if (c == '\0') {
+		ಸಾಲು = xmalloc_fgets(file); //
+		ಆದರೆ (!ಸಾಲು)
+			ನಿಲ್ಲಿಸು;
+		ptr = ptr_strbeg = ಸಾಲು;
+		ಗಾಗಿ (;;) {
+			ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ c = *ptr;
+			ಆದರೆ (c == '\0') {
 //				size_t rem = line + linelen - ptr;
 //				if (rem > 0) {
 //# if ENABLE_UNICODE_SUPPORT
@@ -101,153 +101,153 @@ static void expand(FILE *file, unsigned tab_size, unsigned opt)
 //					linelen--;
 //					continue;
 //				}
-				break;
+				ನಿಲ್ಲಿಸು;
 			}
-			if ((opt & OPT_INITIAL) && !isblank(c)) {
+			ಆದರೆ ((opt & OPT_INITIAL) && !isblank(c)) {
 				/* not space or tab */
-				break;
+				ನಿಲ್ಲಿಸು;
 			}
-			if (c == '\t') {
-				unsigned len = 0; //
+			ಆದರೆ (c == '\t') {
+				ಚಿಹ್ನೆರಹಿತ len = 0; //
 				*ptr = '\0';
-# if ENABLE_UNICODE_SUPPORT
+# ಆದರೆ ENABLE_UNICODE_SUPPORT
 				len += unicode_strwidth(ptr_strbeg);
-# else
+# ಇಲ್ಲದಿದ್ದರೆ
 				len += ptr - ptr_strbeg;
 # endif
-				len = tab_size - (len % tab_size);
+				len = tab_ಗಾತ್ರ - (len % tab_ಗಾತ್ರ);
 				/*while (ptr[1] == '\t') { ptr++; len += tab_size; } - can handle many tabs at once */
-				printf("%s%*s", ptr_strbeg, len, "");
+				ಬರೆ("%s%*s", ptr_strbeg, len, "");
 //				len = 0;
 				ptr_strbeg = ptr + 1;
 			}
 			ptr++;
 		}
 		fputs_stdout(ptr_strbeg);
-		free(line);
+		ಬಿಡುಗಡೆ(ಸಾಲು);
 	}
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-#if ENABLE_UNEXPAND
-static void unexpand(FILE *file, unsigned tab_size, unsigned opt)
+#ಆದರೆ ENABLE_UNEXPAND
+ಸ್ಥಿರ ಶೂನ್ಯ unexpand(FILE *file, ಚಿಹ್ನೆರಹಿತ tab_ಗಾತ್ರ, ಚಿಹ್ನೆರಹಿತ opt)
 {
-	char *line;
+	ಅಕ್ಷರ *ಸಾಲು;
 
-	while ((line = xmalloc_fgets(file)) != NULL) {
-		char *ptr = line;
-		unsigned column = 0;
+	ಆಗ ((ಸಾಲು = xmalloc_fgets(file)) != ಖಾಲಿ) {
+		ಅಕ್ಷರ *ptr = ಸಾಲು;
+		ಚಿಹ್ನೆರಹಿತ ಸ್ತಂಭ = 0;
 
-		while (*ptr) {
-			unsigned n;
-			unsigned len = 0;
+		ಆಗ (*ptr) {
+			ಚಿಹ್ನೆರಹಿತ n;
+			ಚಿಹ್ನೆರಹಿತ len = 0;
 
-			while (*ptr == ' ') {
+			ಆಗ (*ptr == ' ') {
 				ptr++;
 				len++;
 			}
-			column += len;
-			if (*ptr == '\t') {
-				column += tab_size - (column % tab_size);
+			ಸ್ತಂಭ += len;
+			ಆದರೆ (*ptr == '\t') {
+				ಸ್ತಂಭ += tab_ಗಾತ್ರ - (ಸ್ತಂಭ % tab_ಗಾತ್ರ);
 				ptr++;
-				continue;
+				ಮುಂದುವರಿ;
 			}
 
-			n = column / tab_size;
-			if (n) {
-				len = column = column % tab_size;
-				while (n--)
-					putchar('\t');
+			n = ಸ್ತಂಭ / tab_ಗಾತ್ರ;
+			ಆದರೆ (n) {
+				len = ಸ್ತಂಭ = ಸ್ತಂಭ % tab_ಗಾತ್ರ;
+				ಆಗ (n--)
+					ಅಕ್ಷರ_ಬರೆ('\t');
 			}
 
-			if (!(opt & OPT_ALL) && ptr != line) {
-				printf("%*s%s", len, "", ptr);
-				break;
+			ಆದರೆ (!(opt & OPT_ALL) && ptr != ಸಾಲು) {
+				ಬರೆ("%*s%s", len, "", ptr);
+				ನಿಲ್ಲಿಸು;
 			}
 			n = strcspn(ptr, "\t ");
-			printf("%*s%.*s", len, "", n, ptr);
-# if ENABLE_UNICODE_SUPPORT
+			ಬರೆ("%*s%.*s", len, "", n, ptr);
+# ಆದರೆ ENABLE_UNICODE_SUPPORT
 			{
-				char c = ptr[n];
+				ಅಕ್ಷರ c = ptr[n];
 				ptr[n] = '\0';
 				len = unicode_strwidth(ptr);
 				ptr[n] = c;
 			}
-# else
+# ಇಲ್ಲದಿದ್ದರೆ
 			len = n;
 # endif
 			ptr += n;
-			column = (column + len) % tab_size;
+			ಸ್ತಂಭ = (ಸ್ತಂಭ + len) % tab_ಗಾತ್ರ;
 		}
-		free(line);
+		ಬಿಡುಗಡೆ(ಸಾಲು);
 	}
 }
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
 
-int expand_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int expand_main(int argc UNUSED_PARAM, char **argv)
+ಪೂರ್ಣಾಂಕ expand_main(ಪೂರ್ಣಾಂಕ argc, ಅಕ್ಷರ **argv) MAIN_EXTERNALLY_VISIBLE;
+ಪೂರ್ಣಾಂಕ expand_main(ಪೂರ್ಣಾಂಕ argc ಬಳಸದ_PARAM, ಅಕ್ಷರ **argv)
 {
 	/* Default 8 spaces for 1 tab */
-	const char *opt_t = "8";
+	ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *opt_t = "8";
 	FILE *file;
-	unsigned tab_size;
-	unsigned opt;
-	exitcode_t exit_status = EXIT_SUCCESS;
+	ಚಿಹ್ನೆರಹಿತ tab_ಗಾತ್ರ;
+	ಚಿಹ್ನೆರಹಿತ opt;
+	exitcode_t exit_ಸ್ಥಿತಿ = EXIT_SUCCESS;
 
 	init_unicode();
 
-	if (ENABLE_EXPAND && (!ENABLE_UNEXPAND || applet_name[0] == 'e')) {
+	ಆದರೆ (ENABLE_EXPAND && (!ENABLE_UNEXPAND || applet_name[0] == 'e')) {
 		opt = getopt32long(argv, "it:",
-				"initial\0"          No_argument       "i"
-				"tabs\0"             Required_argument "t"
+				"initial\0"          No_ವಾದ       "i"
+				"tabs\0"             Required_ವಾದ "t"
 				, &opt_t
 		);
-	} else {
+	} ಇಲ್ಲದಿದ್ದರೆ {
 		opt = getopt32long(argv, "^"
 				"ft:a"
 				"\0"
 				"ta" /* -t NUM sets -a */,
-				"first-only\0"       No_argument       "f"
-				"tabs\0"             Required_argument "t"
-				"all\0"              No_argument       "a"
+				"first-only\0"       No_ವಾದ       "f"
+				"tabs\0"             Required_ವಾದ "t"
+				"all\0"              No_ವಾದ       "a"
 				, &opt_t
 		);
 		/* -t implies -a, but an explicit -f overrides */
-		if (opt & OPT_INITIAL) opt &= ~OPT_ALL;
+		ಆದರೆ (opt & OPT_INITIAL) opt &= ~OPT_ALL;
 	}
-	tab_size = xatou_range(opt_t, 1, UINT_MAX);
+	tab_ಗಾತ್ರ = xatou_range(opt_t, 1, UINT_MAX);
 
 	argv += optind;
 
-	if (!*argv) {
-		*--argv = (char*)bb_msg_standard_input;
+	ಆದರೆ (!*argv) {
+		*--argv = (ಅಕ್ಷರ*)bb_ಸಂದೇಶ_standard_ಒಳಹರಿವು;
 	}
-	do {
+	ಮಾಡು {
 		file = fopen_or_warn_stdin(*argv);
-		if (!file) {
-			exit_status = EXIT_FAILURE;
-			continue;
+		ಆದರೆ (!file) {
+			exit_ಸ್ಥಿತಿ = EXIT_FAILURE;
+			ಮುಂದುವರಿ;
 		}
 
-		if (ENABLE_EXPAND && (!ENABLE_UNEXPAND || applet_name[0] == 'e'))
-			IF_EXPAND(expand(file, tab_size, opt));
-		else
-			IF_UNEXPAND(unexpand(file, tab_size, opt));
+		ಆದರೆ (ENABLE_EXPAND && (!ENABLE_UNEXPAND || applet_name[0] == 'e'))
+			IF_EXPAND(expand(file, tab_ಗಾತ್ರ, opt));
+		ಇಲ್ಲದಿದ್ದರೆ
+			IF_UNEXPAND(unexpand(file, tab_ಗಾತ್ರ, opt));
 
 		/* Check and close the file */
-		if (fclose_if_not_stdin(file)) {
-			bb_simple_perror_msg(*argv);
-			exit_status = EXIT_FAILURE;
+		ಆದರೆ (fclose_if_not_stdin(file)) {
+			bb_simple_perror_ಸಂದೇಶ(*argv);
+			exit_ಸ್ಥಿತಿ = EXIT_FAILURE;
 		}
 		/* If stdin also clear EOF */
-		if (file == stdin)
+		ಆದರೆ (file == stdin)
 			clearerr(file);
-	} while (*++argv);
+	} ಆಗ (*++argv);
 
 	/* Now close stdin also */
 	/* (if we didn't read from it, it's a no-op) */
-	if (fclose(stdin))
-		bb_simple_perror_msg_and_die(bb_msg_standard_input);
+	ಆದರೆ (fclose(stdin))
+		bb_simple_perror_ಸಂದೇಶ_and_die(bb_ಸಂದೇಶ_standard_ಒಳಹರಿವು);
 
-	fflush_stdout_and_exit(exit_status);
+	fflush_stdout_and_exit(exit_ಸ್ಥಿತಿ);
 }
