@@ -49,13 +49,13 @@
 //usage:     "\n	-0	NUL terminated output"
 //usage:     "\n	-u NAME	Remove variable from environment"
 
-#include "libbb.h"
+#अन्तर्भाव "libbb.h"
 
-int env_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int env_main(int argc UNUSED_PARAM, char **argv)
+पूर्णाङ्क env_main(पूर्णाङ्क argc, वर्ण **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णाङ्क env_main(पूर्णाङ्क argc UNUSED_PARAM, वर्ण **argv)
 {
 	unsigned opts;
-	llist_t *unset_env = NULL;
+	llist_t *unset_env = रिक्त;
 
 	opts = getopt32long(argv, "+i0u:*",
 			"ignore-environment\0" No_argument       "i"
@@ -64,15 +64,15 @@ int env_main(int argc UNUSED_PARAM, char **argv)
 			, &unset_env
 	);
 	argv += optind;
-	if (argv[0] && LONE_DASH(argv[0])) {
+	सचे (argv[0] && LONE_DASH(argv[0])) {
 		opts |= 1;
 		++argv;
 	}
-	if (opts & 1) {
+	सचे (opts & 1) {
 		clearenv();
 	}
-	while (unset_env) {
-		char *var = llist_pop(&unset_env);
+	याव (unset_env) {
+		वर्ण *var = llist_निष्कासय(&unset_env);
 		/* This does not handle -uVAR=VAL
 		 * (coreutils _sets_ the variable in that case): */
 		/*unsetenv(var);*/
@@ -81,21 +81,21 @@ int env_main(int argc UNUSED_PARAM, char **argv)
 		putenv(var);
 	}
 
-	while (*argv && (strchr(*argv, '=') != NULL)) {
-		if (putenv(*argv) < 0) {
-			bb_simple_perror_msg_and_die("putenv");
+	याव (*argv && (strchr(*argv, '=') != रिक्त)) {
+		सचे (putenv(*argv) < 0) {
+			bb_simple_perror_सन्देशः_and_die("putenv");
 		}
 		++argv;
 	}
 
-	if (argv[0]) {
+	सचे (argv[0]) {
 		BB_EXECVP_or_die(argv);
 	}
 
-	if (environ) { /* clearenv() may set environ == NULL! */
-		char **ep;
+	सचे (environ) { /* clearenv() may set environ == NULL! */
+		वर्ण **ep;
 		opts = (opts & 2) ? 0 : '\n';
-		for (ep = environ; *ep; ep++) {
+		अत्थाय (ep = environ; *ep; ep++) {
 			printf("%s%c", *ep, opts);
 		}
 	}

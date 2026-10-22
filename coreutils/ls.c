@@ -163,15 +163,15 @@
 //usage:     "\n	--color[={always,never,auto}]"
 //usage:	)
 
-#include "libbb.h"
-#include "common_bufsiz.h"
-#include "unicode.h"
+#अन्तर्भाव "libbb.h"
+#अन्तर्भाव "common_bufsiz.h"
+#अन्तर्भाव "unicode.h"
 
 
 /* This is a NOEXEC applet. Be very careful! */
 
 
-#if ENABLE_FTPD
+#सचे ENABLE_FTPD
 /* ftpd uses ls, and without timestamps Mozilla won't understand
  * ftpd's LIST output.
  */
@@ -186,7 +186,7 @@
 #endif
 
 
-enum {
+गणना {
 TERMINAL_WIDTH  = 80, /* use 79 if terminal has linefold bug */
 
 SPLIT_FILE      = 0,
@@ -218,7 +218,7 @@ SPLIT_SUBDIR    = 2,
 	IF_FEATURE_HUMAN_READABLE("h")   /* 1, 27 */ \
 	IF_FEATURE_LS_WIDTH("T:w:")      /* 2, 29 */
 
-enum {
+गणना {
 	OPT_C = (1 << 0),
 	OPT_a = (1 << 1),
 	OPT_d = (1 << 2),
@@ -279,10 +279,10 @@ enum {
 /*
  * a directory entry and its stat info
  */
-struct dnode {
-	const char *name;       /* usually basename, but think "ls -l dir/file" */
-	const char *fullname;   /* full name (usable for stat etc) */
-	struct dnode *dn_next;  /* for linked list */
+संरचना dnode {
+	ध्रुव वर्ण *name;       /* usually basename, but think "ls -l dir/file" */
+	ध्रुव वर्ण *fullname;   /* full name (usable for stat etc) */
+	संरचना dnode *dn_next;  /* for linked list */
 	IF_SELINUX(security_context_t sid;)
 	smallint fname_allocated;
 
@@ -304,7 +304,7 @@ struct dnode {
 	/* Same names as in struct stat, but with dn_ instead of st_ pfx: */
 	mode_t    dn_mode; /* obtained with lstat OR stat, depending on -L etc */
 	off_t     dn_size;
-#if ENABLE_FEATURE_LS_TIMESTAMPS || ENABLE_FEATURE_LS_SORTFILES
+#सचे ENABLE_FEATURE_LS_TIMESTAMPS || ENABLE_FEATURE_LS_SORTFILES
 	time_t    dn_time;
 #endif
 	ino_t     dn_ino;
@@ -312,40 +312,40 @@ struct dnode {
 	nlink_t   dn_nlink;
 	uid_t     dn_uid;
 	gid_t     dn_gid;
-	int       dn_rdev_maj;
-	int       dn_rdev_min;
+	पूर्णाङ्क       dn_rdev_maj;
+	पूर्णाङ्क       dn_rdev_min;
 //	dev_t     dn_dev;
 //	blksize_t dn_blksize;
 };
 
-struct globals {
-#if ENABLE_FEATURE_LS_COLOR
+संरचना globals {
+#सचे ENABLE_FEATURE_LS_COLOR
 	smallint show_color;
 # define G_show_color (G.show_color)
-#else
+#अञ्ञथा
 # define G_show_color 0
 #endif
 	smallint exit_code;
 	smallint show_dirname;
-#if ENABLE_FEATURE_LS_WIDTH
+#सचे ENABLE_FEATURE_LS_WIDTH
 	unsigned terminal_width;
 # define G_terminal_width (G.terminal_width)
-#else
+#अञ्ञथा
 # define G_terminal_width TERMINAL_WIDTH
 #endif
-#if ENABLE_FEATURE_LS_TIMESTAMPS
+#सचे ENABLE_FEATURE_LS_TIMESTAMPS
 	/* Do time() just once. Saves one syscall per file for "ls -l" */
 	time_t current_time_t;
 #endif
 } FIX_ALIASING;
-#define G (*(struct globals*)bb_common_bufsiz1)
-#define INIT_G() do { \
+#define G (*(संरचना globals*)bb_common_bufsiz1)
+#define INIT_G() करोहि { \
 	setup_common_bufsiz(); \
 	/* we have to zero it out because of NOEXEC */ \
-	memset(&G, 0, sizeof(G)); \
+	memset(&G, 0, परिमाण(G)); \
 	IF_FEATURE_LS_WIDTH(G_terminal_width = TERMINAL_WIDTH;) \
 	IF_FEATURE_LS_TIMESTAMPS(time(&G.current_time_t);) \
-} while (0)
+} याव (0)
 
 #define ESC "\033"
 
@@ -383,39 +383,39 @@ struct globals {
 	"\01\00\01\07\01\07\01\07\00\07\01\07\01\07\07\01" \
 	[TYPEINDEX(mode)])
 
-#if ENABLE_FEATURE_LS_COLOR
+#सचे ENABLE_FEATURE_LS_COLOR
 /* mode of zero is interpreted as "unknown" (stat failed) */
-static char fgcolor(mode_t mode)
+स्थिर वर्ण fgcolor(mode_t mode)
 {
-	if (S_ISREG(mode) && (mode & (S_IXUSR | S_IXGRP | S_IXOTH)))
-		return COLOR(0xF000);	/* File is executable ... */
-	return COLOR(mode);
+	सचे (S_ISREG(mode) && (mode & (S_IXUSR | S_IXGRP | S_IXOTH)))
+		पटिनिवत्त COLOR(0xF000);	/* File is executable ... */
+	पटिनिवत्त COLOR(mode);
 }
-static char bold(mode_t mode)
+स्थिर वर्ण bold(mode_t mode)
 {
-	if (S_ISREG(mode) && (mode & (S_IXUSR | S_IXGRP | S_IXOTH)))
-		return ATTR(0xF000);	/* File is executable ... */
-	return ATTR(mode);
-}
-#endif
-
-#if ENABLE_FEATURE_LS_FILETYPES
-static char append_char(mode_t mode)
-{
-	if (!(option_mask32 & (OPT_F|OPT_p)))
-		return '\0';
-
-	if (S_ISDIR(mode))
-		return '/';
-	if (!(option_mask32 & OPT_F))
-		return '\0';
-	if (S_ISREG(mode) && (mode & (S_IXUSR | S_IXGRP | S_IXOTH)))
-		return '*';
-	return APPCHAR(mode);
+	सचे (S_ISREG(mode) && (mode & (S_IXUSR | S_IXGRP | S_IXOTH)))
+		पटिनिवत्त ATTR(0xF000);	/* File is executable ... */
+	पटिनिवत्त ATTR(mode);
 }
 #endif
 
-static unsigned calc_name_len(const char *name)
+#सचे ENABLE_FEATURE_LS_FILETYPES
+स्थिर वर्ण append_char(mode_t mode)
+{
+	सचे (!(option_mask32 & (OPT_F|OPT_p)))
+		पटिनिवत्त '\0';
+
+	सचे (S_ISDIR(mode))
+		पटिनिवत्त '/';
+	सचे (!(option_mask32 & OPT_F))
+		पटिनिवत्त '\0';
+	सचे (S_ISREG(mode) && (mode & (S_IXUSR | S_IXGRP | S_IXOTH)))
+		पटिनिवत्त '*';
+	पटिनिवत्त APPCHAR(mode);
+}
+#endif
+
+स्थिर unsigned calc_name_len(ध्रुव वर्ण *name)
 {
 	unsigned len;
 	uni_stat_t uni_stat;
@@ -423,18 +423,18 @@ static unsigned calc_name_len(const char *name)
 	// TODO: quote tab as \t, etc, if -Q
 	name = printable_string2(&uni_stat, name);
 
-	if (!(option_mask32 & OPT_Q)) {
-		return uni_stat.unicode_width;
+	सचे (!(option_mask32 & OPT_Q)) {
+		पटिनिवत्त uni_stat.unicode_width;
 	}
 
 	len = 2 + uni_stat.unicode_width;
-	while (*name) {
-		if (*name == '"' || *name == '\\') {
+	याव (*name) {
+		सचे (*name == '"' || *name == '\\') {
 			len++;
 		}
 		name++;
 	}
-	return len;
+	पटिनिवत्त len;
 }
 
 /* Return the number of used columns.
@@ -444,7 +444,7 @@ static unsigned calc_name_len(const char *name)
  * ls -b (--escape) = octal escapes (although it doesn't look like working)
  * ls -N (--literal) = not escape at all
  */
-static unsigned print_name(const char *name)
+स्थिर unsigned print_name(ध्रुव वर्ण *name)
 {
 	unsigned len;
 	uni_stat_t uni_stat;
@@ -452,15 +452,15 @@ static unsigned print_name(const char *name)
 	// TODO: quote tab as \t, etc, if -Q
 	name = printable_string2(&uni_stat, name);
 
-	if (!(option_mask32 & OPT_Q)) {
+	सचे (!(option_mask32 & OPT_Q)) {
 		fputs_stdout(name);
-		return uni_stat.unicode_width;
+		पटिनिवत्त uni_stat.unicode_width;
 	}
 
 	len = 2 + uni_stat.unicode_width;
 	putchar('"');
-	while (*name) {
-		if (*name == '"' || *name == '\\') {
+	याव (*name) {
+		सचे (*name == '"' || *name == '\\') {
 			putchar('\\');
 			len++;
 		}
@@ -468,117 +468,117 @@ static unsigned print_name(const char *name)
 		name++;
 	}
 	putchar('"');
-	return len;
+	पटिनिवत्त len;
 }
 
 /* Return the number of used columns.
  * Note that only columnar output uses return value,
  * -l and -1 modes don't care.
  */
-static NOINLINE unsigned display_single(const struct dnode *dn)
+स्थिर NOINLINE unsigned display_single(ध्रुव संरचना dnode *dn)
 {
 	unsigned column = 0;
-	char *lpath;
-	int opt;
-#if ENABLE_FEATURE_LS_FILETYPES || ENABLE_FEATURE_LS_COLOR
-	struct stat statbuf;
+	वर्ण *lpath;
+	पूर्णाङ्क opt;
+#सचे ENABLE_FEATURE_LS_FILETYPES || ENABLE_FEATURE_LS_COLOR
+	संरचना stat statbuf;
 #endif
-#if ENABLE_FEATURE_LS_FILETYPES
-	char append = append_char(dn->dn_mode);
+#सचे ENABLE_FEATURE_LS_FILETYPES
+	वर्ण append = append_char(dn->dn_mode);
 #endif
 
 	opt = option_mask32;
 
 	/* Do readlink early, so that if it fails, error message
 	 * does not appear *inside* the "ls -l" line */
-	lpath = NULL;
-	if (opt & OPT_l)
-		if (S_ISLNK(dn->dn_mode))
+	lpath = रिक्त;
+	सचे (opt & OPT_l)
+		सचे (S_ISLNK(dn->dn_mode))
 			lpath = xmalloc_readlink_or_warn(dn->fullname);
 
-	if (opt & OPT_i) /* show inode# */
+	सचे (opt & OPT_i) /* show inode# */
 		column += printf("%7llu ", (long long) dn->dn_ino);
-	if (opt & OPT_s) { /* show allocated blocks */
-		if (opt & OPT_h) {
+	सचे (opt & OPT_s) { /* show allocated blocks */
+		सचे (opt & OPT_h) {
 			column += printf("%"HUMAN_READABLE_MAX_WIDTH_STR"s ",
 				/* print size, show one fractional, use suffixes */
 				make_human_readable_str((off_t)dn->dn_blocks << 9, 1, 0)
 			);
-		} else {
+		} अञ्ञथा {
 			column += printf("%6"OFF_FMT"u ", (off_t)(dn->dn_blocks >> 1));
 		}
 	}
-	if (opt & OPT_l) {
+	सचे (opt & OPT_l) {
 		/* long listing: show mode */
-		char modestr[12];
+		वर्ण modestr[12];
 		column += printf("%-10s ", bb_mode_string(modestr, dn->dn_mode));
 		/* long listing: show number of links */
 		column += printf("%4lu ", (long) dn->dn_nlink);
 		/* long listing: show user/group */
-		if (opt & OPT_n) {
-			if (opt & OPT_g)
-				column += printf("%-8u ", (int) dn->dn_gid);
-			else
+		सचे (opt & OPT_n) {
+			सचे (opt & OPT_g)
+				column += printf("%-8u ", (पूर्णाङ्क) dn->dn_gid);
+			अञ्ञथा
 				column += printf("%-8u %-8u ",
-						(int) dn->dn_uid,
-						(int) dn->dn_gid);
+						(पूर्णाङ्क) dn->dn_uid,
+						(पूर्णाङ्क) dn->dn_gid);
 		}
-#if ENABLE_FEATURE_LS_USERNAME
-		else {
-			if (opt & OPT_g) {
+#सचे ENABLE_FEATURE_LS_USERNAME
+		अञ्ञथा {
+			सचे (opt & OPT_g) {
 				column += printf("%-8s ",
 					get_cached_groupname(dn->dn_gid));
-			} else {
+			} अञ्ञथा {
 				column += printf("%-8s %-8s ",
 					get_cached_username(dn->dn_uid),
 					get_cached_groupname(dn->dn_gid));
 			}
 		}
 #endif
-#if ENABLE_SELINUX
+#सचे ENABLE_SELINUX
 	}
-	if (opt & OPT_Z) {
+	सचे (opt & OPT_Z) {
 		column += printf("%-32s ", dn->sid ? dn->sid : "?");
 		freecon(dn->sid);
 	}
-	if (opt & OPT_l) {
+	सचे (opt & OPT_l) {
 #endif
 		/* long listing: show size */
-		if (S_ISBLK(dn->dn_mode) || S_ISCHR(dn->dn_mode)) {
+		सचे (S_ISBLK(dn->dn_mode) || S_ISCHR(dn->dn_mode)) {
 			column += printf("%4u, %3u ",
 					dn->dn_rdev_maj,
 					dn->dn_rdev_min);
-		} else {
-			if (opt & OPT_h) {
+		} अञ्ञथा {
+			सचे (opt & OPT_h) {
 				column += printf("%"HUMAN_READABLE_MAX_WIDTH_STR"s ",
 					/* print size, show one fractional, use suffixes */
 					make_human_readable_str(dn->dn_size, 1, 0)
 				);
-			} else {
+			} अञ्ञथा {
 				column += printf("%9"OFF_FMT"u ", dn->dn_size);
 			}
 		}
-#if ENABLE_FEATURE_LS_TIMESTAMPS
+#सचे ENABLE_FEATURE_LS_TIMESTAMPS
 		/* long listing: show {m,c,a}time */
-		if (opt & OPT_full_time) { /* --full-time */
+		सचे (opt & OPT_full_time) { /* --full-time */
 			/* coreutils 8.4 ls --full-time prints:
 			 * 2009-07-13 17:49:27.000000000 +0200
 			 * we don't show fractional seconds.
 			 */
-			char buf[sizeof("YYYY-mm-dd HH:MM:SS TIMEZONE")];
-			strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S %z",
+			वर्ण buf[परिमाण("YYYY-mm-dd HH:MM:SS TIMEZONE")];
+			strftime(buf, परिमाण(buf), "%Y-%m-%d %H:%M:%S %z",
 					localtime(&dn->dn_time));
 			column += printf("%s ", buf);
-		} else { /* ordinary time format */
+		} अञ्ञथा { /* ordinary time format */
 			/* G.current_time_t is ~== time(NULL) */
-			char *filetime = ctime(&dn->dn_time);
+			वर्ण *filetime = ctime(&dn->dn_time);
 			/* filetime's format: "Wed Jun 30 21:49:08 1993\n" */
 			time_t age = G.current_time_t - dn->dn_time;
-			if (age < 3600L * 24 * 365 / 2 && age > -15 * 60) {
+			सचे (age < 3600L * 24 * 365 / 2 && age > -15 * 60) {
 				/* less than 6 months old */
 				/* "mmm dd hh:mm " */
 				printf("%.12s ", filetime + 4);
-			} else {
+			} अञ्ञथा {
 				/* "mmm dd  yyyy " */
 				/* "mmm dd yyyyy " after year 9999 :) */
 				strchr(filetime + 20, '\n')[0] = ' ';
@@ -589,72 +589,72 @@ static NOINLINE unsigned display_single(const struct dnode *dn)
 #endif
 	}
 
-#if ENABLE_FEATURE_LS_COLOR
-	if (G_show_color) {
+#सचे ENABLE_FEATURE_LS_COLOR
+	सचे (G_show_color) {
 		mode_t mode = dn->dn_mode_lstat;
-		if (!mode)
-			if (lstat(dn->fullname, &statbuf) == 0)
+		सचे (!mode)
+			सचे (lstat(dn->fullname, &statbuf) == 0)
 				mode = statbuf.st_mode;
 		printf(ESC"[%u;%um", bold(mode), fgcolor(mode));
 	}
 #endif
 	column += print_name(dn->name);
-	if (G_show_color) {
+	सचे (G_show_color) {
 		printf(ESC"[m");
 	}
 
-	if (lpath) {
+	सचे (lpath) {
 		printf(" -> ");
-#if ENABLE_FEATURE_LS_FILETYPES || ENABLE_FEATURE_LS_COLOR
-		if ((opt & (OPT_F|OPT_p))
+#सचे ENABLE_FEATURE_LS_FILETYPES || ENABLE_FEATURE_LS_COLOR
+		सचे ((opt & (OPT_F|OPT_p))
 		 || G_show_color
 		) {
 			mode_t mode = dn->dn_mode_stat;
-			if (!mode)
-				if (stat(dn->fullname, &statbuf) == 0)
+			सचे (!mode)
+				सचे (stat(dn->fullname, &statbuf) == 0)
 					mode = statbuf.st_mode;
-# if ENABLE_FEATURE_LS_FILETYPES
+# सचे ENABLE_FEATURE_LS_FILETYPES
 			append = append_char(mode);
 # endif
-# if ENABLE_FEATURE_LS_COLOR
-			if (G_show_color) {
+# सचे ENABLE_FEATURE_LS_COLOR
+			सचे (G_show_color) {
 				printf(ESC"[%u;%um", bold(mode), fgcolor(mode));
 			}
 # endif
 		}
 #endif
 		column += print_name(lpath) + 4;
-		free(lpath);
-		if (G_show_color) {
+		मुक्त(lpath);
+		सचे (G_show_color) {
 			printf(ESC"[m");
 		}
 	}
-#if ENABLE_FEATURE_LS_FILETYPES
-	if (opt & (OPT_F|OPT_p)) {
-		if (append) {
+#सचे ENABLE_FEATURE_LS_FILETYPES
+	सचे (opt & (OPT_F|OPT_p)) {
+		सचे (append) {
 			putchar(append);
 			column++;
 		}
 	}
 #endif
 
-	return column;
+	पटिनिवत्त column;
 }
 
-static void display_files(struct dnode **dn, unsigned nfiles)
+स्थिर शून्य display_files(संरचना dnode **dn, unsigned nfiles)
 {
 	unsigned i, ncols, nrows, row, nc;
 	unsigned column;
 	unsigned nexttab;
 	unsigned column_width = 0; /* used only by coulmnal output */
 
-	if (option_mask32 & (OPT_l|OPT_1)) {
+	सचे (option_mask32 & (OPT_l|OPT_1)) {
 		ncols = 1;
-	} else {
+	} अञ्ञथा {
 		/* find the longest file name, use that as the column width */
-		for (i = 0; dn[i]; i++) {
-			int len = calc_name_len(dn[i]->name);
-			if (column_width < len)
+		अत्थाय (i = 0; dn[i]; i++) {
+			पूर्णाङ्क len = calc_name_len(dn[i]->name);
+			सचे (column_width < len)
 				column_width = len;
 		}
 		column_width += 2
@@ -665,26 +665,26 @@ static void display_files(struct dnode **dn, unsigned nfiles)
 		ncols = (unsigned)G_terminal_width / column_width;
 	}
 
-	if (ncols > 1) {
+	सचे (ncols > 1) {
 		nrows = nfiles / ncols;
-		if (nrows * ncols < nfiles)
+		सचे (nrows * ncols < nfiles)
 			nrows++;                /* round up fractionals */
-	} else {
+	} अञ्ञथा {
 		nrows = nfiles;
 		ncols = 1;
 	}
 
 	column = 0;
 	nexttab = 0;
-	for (row = 0; row < nrows; row++) {
-		for (nc = 0; nc < ncols; nc++) {
+	अत्थाय (row = 0; row < nrows; row++) {
+		अत्थाय (nc = 0; nc < ncols; nc++) {
 			/* reach into the array based on the column and row */
-			if (option_mask32 & OPT_x)
+			सचे (option_mask32 & OPT_x)
 				i = (row * ncols) + nc;	/* display across row */
-			else
+			अञ्ञथा
 				i = (nc * nrows) + row;	/* display by column */
-			if (i < nfiles) {
-				if (column > 0) {
+			सचे (i < nfiles) {
+				सचे (column > 0) {
 					nexttab -= column;
 					printf("%*s", nexttab, "");
 					column += nexttab;
@@ -701,39 +701,39 @@ static void display_files(struct dnode **dn, unsigned nfiles)
 
 /*** Dir scanning code ***/
 
-static struct dnode *my_stat(const char *fullname, const char *name, int force_follow)
+स्थिर संरचना dnode *my_stat(ध्रुव वर्ण *fullname, ध्रुव वर्ण *name, पूर्णाङ्क force_follow)
 {
-	struct stat statbuf;
-	struct dnode *cur;
+	संरचना stat statbuf;
+	संरचना dnode *cur;
 
-	cur = xzalloc(sizeof(*cur));
+	cur = xzalloc(परिमाण(*cur));
 	cur->fullname = fullname;
 	cur->name = name;
 
-	if ((option_mask32 & OPT_L) || force_follow) {
-#if ENABLE_SELINUX
-		if (option_mask32 & OPT_Z) {
+	सचे ((option_mask32 & OPT_L) || force_follow) {
+#सचे ENABLE_SELINUX
+		सचे (option_mask32 & OPT_Z) {
 			getfilecon(fullname, &cur->sid);
 		}
 #endif
-		if (stat(fullname, &statbuf)) {
-			bb_simple_perror_msg(fullname);
+		सचे (stat(fullname, &statbuf)) {
+			bb_simple_perror_सन्देशः(fullname);
 			G.exit_code = EXIT_FAILURE;
-			free(cur);
-			return NULL;
+			मुक्त(cur);
+			पटिनिवत्त रिक्त;
 		}
 		cur->dn_mode_stat = statbuf.st_mode;
-	} else {
-#if ENABLE_SELINUX
-		if (option_mask32 & OPT_Z) {
+	} अञ्ञथा {
+#सचे ENABLE_SELINUX
+		सचे (option_mask32 & OPT_Z) {
 			lgetfilecon(fullname, &cur->sid);
 		}
 #endif
-		if (lstat(fullname, &statbuf)) {
-			bb_simple_perror_msg(fullname);
+		सचे (lstat(fullname, &statbuf)) {
+			bb_simple_perror_सन्देशः(fullname);
 			G.exit_code = EXIT_FAILURE;
-			free(cur);
-			return NULL;
+			मुक्त(cur);
+			पटिनिवत्त रिक्त;
 		}
 		cur->dn_mode_lstat = statbuf.st_mode;
 	}
@@ -741,11 +741,11 @@ static struct dnode *my_stat(const char *fullname, const char *name, int force_f
 	/* cur->dstat = statbuf: */
 	cur->dn_mode   = statbuf.st_mode  ;
 	cur->dn_size   = statbuf.st_size  ;
-#if ENABLE_FEATURE_LS_TIMESTAMPS || ENABLE_FEATURE_LS_SORTFILES
+#सचे ENABLE_FEATURE_LS_TIMESTAMPS || ENABLE_FEATURE_LS_SORTFILES
 	cur->dn_time   = statbuf.st_mtime ;
-	if (option_mask32 & OPT_u)
+	सचे (option_mask32 & OPT_u)
 		cur->dn_time = statbuf.st_atime;
-	if (option_mask32 & OPT_c)
+	सचे (option_mask32 & OPT_c)
 		cur->dn_time = statbuf.st_ctime;
 #endif
 	cur->dn_ino    = statbuf.st_ino   ;
@@ -756,26 +756,26 @@ static struct dnode *my_stat(const char *fullname, const char *name, int force_f
 	cur->dn_rdev_maj = major(statbuf.st_rdev);
 	cur->dn_rdev_min = minor(statbuf.st_rdev);
 
-	return cur;
+	पटिनिवत्त cur;
 }
 
-static unsigned count_dirs(struct dnode **dn, int which)
+स्थिर unsigned गणनम्_dirs(संरचना dnode **dn, पूर्णाङ्क which)
 {
 	unsigned dirs, all;
 
-	if (!dn)
-		return 0;
+	सचे (!dn)
+		पटिनिवत्त 0;
 
 	dirs = all = 0;
-	for (; *dn; dn++) {
-		const char *name;
+	अत्थाय (; *dn; dn++) {
+		ध्रुव वर्ण *name;
 
 		all++;
-		if (!S_ISDIR((*dn)->dn_mode))
-			continue;
+		सचे (!S_ISDIR((*dn)->dn_mode))
+			अनुवर्त;
 
 		name = (*dn)->name;
-		if (which != SPLIT_SUBDIR /* if not requested to skip . / .. */
+		सचे (which != SPLIT_SUBDIR /* if not requested to skip . / .. */
 		 /* or if it's not . or .. */
 		 || name[0] != '.'
 		 || (name[1] && (name[1] != '.' || name[2]))
@@ -783,177 +783,177 @@ static unsigned count_dirs(struct dnode **dn, int which)
 			dirs++;
 		}
 	}
-	return which != SPLIT_FILE ? dirs : all - dirs;
+	पटिनिवत्त which != SPLIT_FILE ? dirs : all - dirs;
 }
 
 /* get memory to hold an array of pointers */
-static struct dnode **dnalloc(unsigned num)
+स्थिर संरचना dnode **dnalloc(unsigned अङ्कः)
 {
-	if (num < 1)
-		return NULL;
+	सचे (अङ्कः < 1)
+		पटिनिवत्त रिक्त;
 
-	num++; /* so that we have terminating NULL */
-	return xzalloc(num * sizeof(struct dnode *));
+	अङ्कः++; /* so that we have terminating NULL */
+	पटिनिवत्त xzalloc(अङ्कः * परिमाण(संरचना dnode *));
 }
 
-#if ENABLE_FEATURE_LS_RECURSIVE
-static void dfree(struct dnode **dnp)
+#सचे ENABLE_FEATURE_LS_RECURSIVE
+स्थिर शून्य dfree(संरचना dnode **dnp)
 {
 	unsigned i;
 
-	if (dnp == NULL)
-		return;
+	सचे (dnp == रिक्त)
+		पटिनिवत्त;
 
-	for (i = 0; dnp[i]; i++) {
-		struct dnode *cur = dnp[i];
-		if (cur->fname_allocated)
-			free((char*)cur->fullname);
-		free(cur);
+	अत्थाय (i = 0; dnp[i]; i++) {
+		संरचना dnode *cur = dnp[i];
+		सचे (cur->fname_allocated)
+			मुक्त((वर्ण*)cur->fullname);
+		मुक्त(cur);
 	}
-	free(dnp);
+	मुक्त(dnp);
 }
-#else
-#define dfree(...) ((void)0)
+#अञ्ञथा
+#define dfree(...) ((शून्य)0)
 #endif
 
 /* Returns NULL-terminated malloced vector of pointers (or NULL) */
-static struct dnode **splitdnarray(struct dnode **dn, int which)
+स्थिर संरचना dnode **splitdnarray(संरचना dnode **dn, पूर्णाङ्क which)
 {
 	unsigned dncnt, d;
-	struct dnode **dnp;
+	संरचना dnode **dnp;
 
-	if (dn == NULL)
-		return NULL;
+	सचे (dn == रिक्त)
+		पटिनिवत्त रिक्त;
 
 	/* count how many dirs or files there are */
-	dncnt = count_dirs(dn, which);
+	dncnt = गणनम्_dirs(dn, which);
 
 	/* allocate a file array and a dir array */
 	dnp = dnalloc(dncnt);
 
 	/* copy the entrys into the file or dir array */
-	for (d = 0; *dn; dn++) {
-		if (S_ISDIR((*dn)->dn_mode)) {
-			const char *name;
+	अत्थाय (d = 0; *dn; dn++) {
+		सचे (S_ISDIR((*dn)->dn_mode)) {
+			ध्रुव वर्ण *name;
 
-			if (which == SPLIT_FILE)
-				continue;
+			सचे (which == SPLIT_FILE)
+				अनुवर्त;
 
 			name = (*dn)->name;
-			if ((which & SPLIT_DIR) /* any dir... */
+			सचे ((which & SPLIT_DIR) /* any dir... */
 			/* ... or not . or .. */
 			 || name[0] != '.'
 			 || (name[1] && (name[1] != '.' || name[2]))
 			) {
 				dnp[d++] = *dn;
 			}
-		} else
-		if (which == SPLIT_FILE) {
+		} अञ्ञथा
+		सचे (which == SPLIT_FILE) {
 			dnp[d++] = *dn;
 		}
 	}
-	return dnp;
+	पटिनिवत्त dnp;
 }
 
-#if ENABLE_FEATURE_LS_SORTFILES
-static int sortcmp(const void *a, const void *b)
+#सचे ENABLE_FEATURE_LS_SORTFILES
+स्थिर पूर्णाङ्क sortcmp(ध्रुव शून्य *a, ध्रुव शून्य *b)
 {
-	struct dnode *d1 = *(struct dnode **)a;
-	struct dnode *d2 = *(struct dnode **)b;
+	संरचना dnode *d1 = *(संरचना dnode **)a;
+	संरचना dnode *d2 = *(संरचना dnode **)b;
 	unsigned opt = option_mask32;
 	off_t dif;
 
 	dif = 0; /* assume sort by name */
 	// TODO: use pre-initialized function pointer
 	// instead of branch forest
-	if (opt & OPT_dirs_first) {
+	सचे (opt & OPT_dirs_first) {
 		dif = S_ISDIR(d2->dn_mode) - S_ISDIR(d1->dn_mode);
-		if (dif != 0)
-			goto maybe_invert_and_ret;
+		सचे (dif != 0)
+			गच्छ maybe_invert_and_ret;
 	}
 
-	if (opt & OPT_S) { /* sort by size */
+	सचे (opt & OPT_S) { /* sort by size */
 		dif = (d2->dn_size - d1->dn_size);
-	} else
-	if (opt & OPT_t) { /* sort by time */
+	} अञ्ञथा
+	सचे (opt & OPT_t) { /* sort by time */
 		dif = (d2->dn_time - d1->dn_time);
-	} else
-#if defined(HAVE_STRVERSCMP) && HAVE_STRVERSCMP == 1
-	if (opt & OPT_v) { /* sort by version */
+	} अञ्ञथा
+#सचे defined(HAVE_STRVERSCMP) && HAVE_STRVERSCMP == 1
+	सचे (opt & OPT_v) { /* sort by version */
 		dif = strverscmp(d1->name, d2->name);
-	} else
+	} अञ्ञथा
 #endif
-	if (opt & OPT_X) { /* sort by extension */
+	सचे (opt & OPT_X) { /* sort by extension */
 		dif = strcmp(strchrnul(d1->name, '.'), strchrnul(d2->name, '.'));
 	}
-	if (dif == 0) {
+	सचे (dif == 0) {
 		/* sort by name, use as tie breaker for other sorts */
-		if (ENABLE_LOCALE_SUPPORT)
+		सचे (ENABLE_LOCALE_SUPPORT)
 			dif = strcoll(d1->name, d2->name);
-		else
+		अञ्ञथा
 			dif = strcmp(d1->name, d2->name);
-	} else {
+	} अञ्ञथा {
 		/* Make dif fit into an int */
-		if (sizeof(dif) > sizeof(int)) {
-			enum { BITS_TO_SHIFT = 8 * (sizeof(dif) - sizeof(int)) };
+		सचे (परिमाण(dif) > परिमाण(पूर्णाङ्क)) {
+			गणना { BITS_TO_SHIFT = 8 * (परिमाण(dif) - परिमाण(पूर्णाङ्क)) };
 			/* shift leaving only "int" worth of bits */
 			/* (this requires dif != 0, and here it is nonzero) */
-			dif = 1 | (int)((uoff_t)dif >> BITS_TO_SHIFT);
+			dif = 1 | (पूर्णाङ्क)((uoff_t)dif >> BITS_TO_SHIFT);
 		}
 	}
  maybe_invert_and_ret:
-	return (opt & OPT_r) ? -(int)dif : (int)dif;
+	पटिनिवत्त (opt & OPT_r) ? -(पूर्णाङ्क)dif : (पूर्णाङ्क)dif;
 }
 
-static void dnsort(struct dnode **dn, int size)
+स्थिर शून्य dnsort(संरचना dnode **dn, पूर्णाङ्क size)
 {
-	qsort(dn, size, sizeof(*dn), sortcmp);
+	qsort(dn, size, परिमाण(*dn), sortcmp);
 }
 
-static void sort_and_display_files(struct dnode **dn, unsigned nfiles)
+स्थिर शून्य sort_and_display_files(संरचना dnode **dn, unsigned nfiles)
 {
 	dnsort(dn, nfiles);
 	display_files(dn, nfiles);
 }
-#else
-# define dnsort(dn, size) ((void)0)
+#अञ्ञथा
+# define dnsort(dn, size) ((शून्य)0)
 # define sort_and_display_files(dn, nfiles) display_files(dn, nfiles)
 #endif
 
 /* Returns NULL-terminated malloced vector of pointers (or NULL) */
-static struct dnode **scan_one_dir(const char *path, unsigned *nfiles_p)
+स्थिर संरचना dnode **scan_one_dir(ध्रुव वर्ण *path, unsigned *nfiles_p)
 {
-	struct dnode *dn, *cur, **dnp;
-	struct dirent *entry;
+	संरचना dnode *dn, *cur, **dnp;
+	संरचना dirent *entry;
 	DIR *dir;
 	unsigned i, nfiles;
 
 	*nfiles_p = 0;
 	dir = warn_opendir(path);
-	if (dir == NULL) {
+	सचे (dir == रिक्त) {
 		G.exit_code = EXIT_FAILURE;
-		return NULL;	/* could not open the dir */
+		पटिनिवत्त रिक्त;	/* could not open the dir */
 	}
-	dn = NULL;
+	dn = रिक्त;
 	nfiles = 0;
-	while ((entry = readdir(dir)) != NULL) {
-		char *fullname;
+	याव ((entry = readdir(dir)) != रिक्त) {
+		वर्ण *fullname;
 
 		/* are we going to list the file- it may be . or .. or a hidden file */
-		if (entry->d_name[0] == '.') {
-			if (!(option_mask32 & (OPT_a|OPT_A)))
-				continue; /* skip all dotfiles if no -a/-A */
-			if (!(option_mask32 & OPT_a)
+		सचे (entry->d_name[0] == '.') {
+			सचे (!(option_mask32 & (OPT_a|OPT_A)))
+				अनुवर्त; /* skip all dotfiles if no -a/-A */
+			सचे (!(option_mask32 & OPT_a)
 			 && (!entry->d_name[1] || (entry->d_name[1] == '.' && !entry->d_name[2]))
 			) {
-				continue; /* if only -A, skip . and .. but show other dotfiles */
+				अनुवर्त; /* if only -A, skip . and .. but show other dotfiles */
 			}
 		}
 		fullname = concat_path_file(path, entry->d_name);
 		cur = my_stat(fullname, bb_basename(fullname), 0);
-		if (!cur) {
-			free(fullname);
-			continue;
+		सचे (!cur) {
+			मुक्त(fullname);
+			अनुवर्त;
 		}
 		cur->fname_allocated = 1;
 		cur->dn_next = dn;
@@ -962,25 +962,25 @@ static struct dnode **scan_one_dir(const char *path, unsigned *nfiles_p)
 	}
 	closedir(dir);
 
-	if (dn == NULL)
-		return NULL;
+	सचे (dn == रिक्त)
+		पटिनिवत्त रिक्त;
 
 	/* now that we know how many files there are
 	 * allocate memory for an array to hold dnode pointers
 	 */
 	*nfiles_p = nfiles;
 	dnp = dnalloc(nfiles);
-	for (i = 0; /* i < nfiles - detected via !dn below */; i++) {
+	अत्थाय (i = 0; /* i < nfiles - detected via !dn below */; i++) {
 		dnp[i] = dn;	/* save pointer to node in array */
 		dn = dn->dn_next;
-		if (!dn)
-			break;
+		सचे (!dn)
+			भङ्ग;
 	}
 
-	return dnp;
+	पटिनिवत्त dnp;
 }
 
-#if ENABLE_DESKTOP
+#सचे ENABLE_DESKTOP
 /* http://www.opengroup.org/onlinepubs/9699919799/utilities/ls.html
  * If any of the -l, -n, -s options is specified, each list
  * of files within the directory shall be preceded by a
@@ -991,11 +991,11 @@ static struct dnode **scan_one_dir(const char *path, unsigned *nfiles_p)
  * number of units.
  */
 /* by Jorgen Overgaard (jorgen AT antistaten.se) */
-static off_t calculate_blocks(struct dnode **dn)
+स्थिर off_t calculate_blocks(संरचना dnode **dn)
 {
 	uoff_t blocks = 1;
-	if (dn) {
-		while (*dn) {
+	सचे (dn) {
+		याव (*dn) {
 			/* st_blocks is in 512 byte blocks */
 			blocks += (*dn)->dn_blocks;
 			dn++;
@@ -1005,53 +1005,53 @@ static off_t calculate_blocks(struct dnode **dn)
 	/* Even though standard says use 512 byte blocks, coreutils use 1k */
 	/* Actually, we round up by calculating (blocks + 1) / 2,
 	 * "+ 1" was done when we initialized blocks to 1 */
-	return blocks >> 1;
+	पटिनिवत्त blocks >> 1;
 }
 #endif
 
-static void scan_and_display_dirs_recur(struct dnode **dn, int first)
+स्थिर शून्य scan_and_display_dirs_recur(संरचना dnode **dn, पूर्णाङ्क first)
 {
 	unsigned nfiles;
-	struct dnode **subdnp;
+	संरचना dnode **subdnp;
 
-	for (; *dn; dn++) {
-		if (G.show_dirname || (option_mask32 & OPT_R)) {
-			if (!first)
+	अत्थाय (; *dn; dn++) {
+		सचे (G.show_dirname || (option_mask32 & OPT_R)) {
+			सचे (!first)
 				bb_putchar('\n');
 			first = 0;
 			printf("%s:\n", (*dn)->fullname);
 		}
 		subdnp = scan_one_dir((*dn)->fullname, &nfiles);
-#if ENABLE_DESKTOP
-		if (option_mask32 & (OPT_s|OPT_l)) {
-			if (option_mask32 & OPT_h) {
+#सचे ENABLE_DESKTOP
+		सचे (option_mask32 & (OPT_s|OPT_l)) {
+			सचे (option_mask32 & OPT_h) {
 				printf("total %-"HUMAN_READABLE_MAX_WIDTH_STR"s\n",
 					/* print size, no fractions, use suffixes */
 					make_human_readable_str(calculate_blocks(subdnp) * 1024,
 								0, 0)
 				);
-			} else {
+			} अञ्ञथा {
 				printf("total %"OFF_FMT"u\n", calculate_blocks(subdnp));
 			}
 		}
 #endif
-		if (nfiles > 0) {
+		सचे (nfiles > 0) {
 			/* list all files at this level */
 			sort_and_display_files(subdnp, nfiles);
 
-			if (ENABLE_FEATURE_LS_RECURSIVE
+			सचे (ENABLE_FEATURE_LS_RECURSIVE
 			 && (option_mask32 & OPT_R)
 			) {
-				struct dnode **dnd;
+				संरचना dnode **dnd;
 				unsigned dndirs;
 				/* recursive - list the sub-dirs */
 				dnd = splitdnarray(subdnp, SPLIT_SUBDIR);
-				dndirs = count_dirs(subdnp, SPLIT_SUBDIR);
-				if (dndirs > 0) {
+				dndirs = गणनम्_dirs(subdnp, SPLIT_SUBDIR);
+				सचे (dndirs > 0) {
 					dnsort(dnd, dndirs);
 					scan_and_display_dirs_recur(dnd, 0);
 					/* free the array of dnode pointers to the dirs */
-					free(dnd);
+					मुक्त(dnd);
 				}
 			}
 			/* free the dnodes and the fullname mem */
@@ -1061,19 +1061,19 @@ static void scan_and_display_dirs_recur(struct dnode **dn, int first)
 }
 
 
-int ls_main(int argc UNUSED_PARAM, char **argv)
+पूर्णाङ्क ls_main(पूर्णाङ्क argc UNUSED_PARAM, वर्ण **argv)
 {	/*      ^^^^^^^^^^^^^^^^^ note: if FTPD, argc can be wrong, see ftpd.c */
-	struct dnode **dnd;
-	struct dnode **dnf;
-	struct dnode **dnp;
-	struct dnode *dn;
-	struct dnode *cur;
+	संरचना dnode **dnd;
+	संरचना dnode **dnf;
+	संरचना dnode **dnp;
+	संरचना dnode *dn;
+	संरचना dnode *cur;
 	unsigned opt;
 	unsigned nfiles;
 	unsigned dnfiles;
 	unsigned dndirs;
 	unsigned i;
-#if ENABLE_FEATURE_LS_COLOR
+#सचे ENABLE_FEATURE_LS_COLOR
 	/* colored LS support by JaWi, janwillem.janssen@lxtreme.nl */
 	/* coreutils 6.10:
 	 * # ls --color=BOGUS
@@ -1084,14 +1084,14 @@ int ls_main(int argc UNUSED_PARAM, char **argv)
 	 * 'auto', 'tty', 'if-tty'
 	 * (and substrings: "--color=alwa" work too)
 	 */
-	static const char color_str[] ALIGN1 =
+	स्थिर ध्रुव वर्ण color_str[] ALIGN1 =
 		"always\0""yes\0""force\0"
 		"auto\0""tty\0""if-tty\0";
 	/* need to initialize since --color has _an optional_ argument */
-	const char *color_opt = color_str; /* "always" */
+	ध्रुव वर्ण *color_opt = color_str; /* "always" */
 #endif
-#if ENABLE_LONG_OPTS
-	static const char ls_longopts[] ALIGN1 =
+#सचे ENABLE_LONG_OPTS
+	स्थिर ध्रुव वर्ण ls_longopts[] ALIGN1 =
 		"full-time\0" No_argument "\xff"
 		"group-directories-first\0" No_argument "\xfe"
 		IF_FEATURE_LS_COLOR("color\0" Optional_argument "\xfd")
@@ -1102,7 +1102,7 @@ int ls_main(int argc UNUSED_PARAM, char **argv)
 
 	init_unicode();
 
-#if ENABLE_FEATURE_LS_WIDTH
+#सचे ENABLE_FEATURE_LS_WIDTH
 	/* obtain the terminal width */
 	G_terminal_width = get_terminal_width(STDIN_FILENO);
 	/* go one less... */
@@ -1130,50 +1130,50 @@ int ls_main(int argc UNUSED_PARAM, char **argv)
 			/* -w NUM: */
 			IF_FEATURE_LS_WIDTH(":w+")
 		, ls_longopts
-		IF_FEATURE_LS_WIDTH(, /*-T*/ NULL, /*-w*/ &G_terminal_width)
+		IF_FEATURE_LS_WIDTH(, /*-T*/ रिक्त, /*-w*/ &G_terminal_width)
 		IF_FEATURE_LS_COLOR(, &color_opt)
 	);
-#if 0 /* option bits debug */
-	bb_error_msg("opt:0x%08x l:%x H:%x color:%x dirs:%x", opt, OPT_l, OPT_H, OPT_color, OPT_dirs_first);
-	if (opt & OPT_c         ) bb_error_msg("-c");
-	if (opt & OPT_l         ) bb_error_msg("-l");
-	if (opt & OPT_H         ) bb_error_msg("-H");
-	if (opt & OPT_color     ) bb_error_msg("--color");
-	if (opt & OPT_dirs_first) bb_error_msg("--group-directories-first");
-	if (opt & OPT_full_time ) bb_error_msg("--full-time");
+#सचे 0 /* option bits debug */
+	bb_error_सन्देशः("opt:0x%08x l:%x H:%x color:%x dirs:%x", opt, OPT_l, OPT_H, OPT_color, OPT_dirs_first);
+	सचे (opt & OPT_c         ) bb_error_सन्देशः("-c");
+	सचे (opt & OPT_l         ) bb_error_सन्देशः("-l");
+	सचे (opt & OPT_H         ) bb_error_सन्देशः("-H");
+	सचे (opt & OPT_color     ) bb_error_सन्देशः("--color");
+	सचे (opt & OPT_dirs_first) bb_error_सन्देशः("--group-directories-first");
+	सचे (opt & OPT_full_time ) bb_error_सन्देशः("--full-time");
 	exit(0);
 #endif
 
-#if ENABLE_SELINUX
-	if (opt & OPT_Z) {
-		if (!is_selinux_enabled())
+#सचे ENABLE_SELINUX
+	सचे (opt & OPT_Z) {
+		सचे (!is_selinux_enabled())
 			option_mask32 &= ~OPT_Z;
 	}
 #endif
 
-#if ENABLE_FEATURE_LS_COLOR
+#सचे ENABLE_FEATURE_LS_COLOR
 	/* set G_show_color = 1/0 */
-	if (ENABLE_FEATURE_LS_COLOR_IS_DEFAULT && !is_TERM_dumb()) {
-		char *p = getenv("LS_COLORS");
+	सचे (ENABLE_FEATURE_LS_COLOR_IS_DEFAULT && !is_TERM_dumb()) {
+		वर्ण *p = getenv("LS_COLORS");
 		/* LS_COLORS is unset, or (not empty && not "none") ? */
-		if (!p || (p[0] && strcmp(p, "none") != 0)) {
-			if (isatty(STDOUT_FILENO)) {
+		सचे (!p || (p[0] && strcmp(p, "none") != 0)) {
+			सचे (isatty(STDOUT_FILENO)) {
 				/* check isatty() last because it's expensive (syscall) */
 				G_show_color = 1;
 			}
 		}
 	}
-	if (opt & OPT_color) {
-		if (color_opt[0] == 'n')
+	सचे (opt & OPT_color) {
+		सचे (color_opt[0] == 'n')
 			G_show_color = 0;
-		else switch (index_in_substrings(color_str, color_opt)) {
-		case 3:
-		case 4:
-		case 5:
-			if (!is_TERM_dumb() && isatty(STDOUT_FILENO)) {
-		case 0:
-		case 1:
-		case 2:
+		अञ्ञथा विकल्प (index_in_substrings(color_str, color_opt)) {
+		पक्ष 3:
+		पक्ष 4:
+		पक्ष 5:
+			सचे (!is_TERM_dumb() && isatty(STDOUT_FILENO)) {
+		पक्ष 0:
+		पक्ष 1:
+		पक्ष 2:
 				G_show_color = 1;
 			}
 		}
@@ -1181,40 +1181,40 @@ int ls_main(int argc UNUSED_PARAM, char **argv)
 #endif
 
 	/* sort out which command line options take precedence */
-	if (ENABLE_FEATURE_LS_RECURSIVE && (opt & OPT_d))
+	सचे (ENABLE_FEATURE_LS_RECURSIVE && (opt & OPT_d))
 		option_mask32 &= ~OPT_R;	/* no recurse if listing only dir */
-	if (!(opt & OPT_l)) { /* not -l? */
-		if (ENABLE_FEATURE_LS_TIMESTAMPS && ENABLE_FEATURE_LS_SORTFILES) {
+	सचे (!(opt & OPT_l)) { /* not -l? */
+		सचे (ENABLE_FEATURE_LS_TIMESTAMPS && ENABLE_FEATURE_LS_SORTFILES) {
 			/* when to sort by time? -t[cu] sorts by time even with -l */
 			/* (this is achieved by opt_flags[] element for -t) */
 			/* without -l, bare -c or -u enable sort too */
 			/* (with -l, bare -c or -u just select which time to show) */
-			if (opt & (OPT_c|OPT_u)) {
+			सचे (opt & (OPT_c|OPT_u)) {
 				option_mask32 |= OPT_t;
 			}
 		}
 	}
 
 	/* choose a display format if one was not already specified by an option */
-	if (!(option_mask32 & (OPT_l|OPT_1|OPT_x|OPT_C)))
+	सचे (!(option_mask32 & (OPT_l|OPT_1|OPT_x|OPT_C)))
 		option_mask32 |= (isatty(STDOUT_FILENO) ? OPT_C : OPT_1);
 
-	if (ENABLE_FTPD && applet_name[0] == 'f') {
+	सचे (ENABLE_FTPD && applet_name[0] == 'f') {
 		/* ftpd secret backdoor. dirs first are much nicer */
 		option_mask32 |= OPT_dirs_first;
 	}
 
 	argv += optind;
-	if (!argv[0])
-		*--argv = (char*)".";
+	सचे (!argv[0])
+		*--argv = (वर्ण*)".";
 
-	if (argv[1])
+	सचे (argv[1])
 		G.show_dirname = 1; /* 2 or more items? label directories */
 
 	/* stuff the command line file names into a dnode array */
-	dn = NULL;
+	dn = रिक्त;
 	nfiles = 0;
-	do {
+	करोहि {
 		cur = my_stat(*argv, *argv,
 			/* follow links on command line unless -l, -i, -s or -F: */
 			!(option_mask32 & (OPT_l|OPT_i|OPT_s|OPT_F))
@@ -1223,50 +1223,50 @@ int ls_main(int argc UNUSED_PARAM, char **argv)
 			/* ... or if -L, but my_stat always follows links if -L */
 		);
 		argv++;
-		if (!cur)
-			continue;
+		सचे (!cur)
+			अनुवर्त;
 		/*cur->fname_allocated = 0; - already is */
 		cur->dn_next = dn;
 		dn = cur;
 		nfiles++;
-	} while (*argv);
+	} याव (*argv);
 
 	/* nfiles _may_ be 0 here - try "ls doesnt_exist" */
-	if (nfiles == 0)
-		return G.exit_code;
+	सचे (nfiles == 0)
+		पटिनिवत्त G.exit_code;
 
 	/* now that we know how many files there are
 	 * allocate memory for an array to hold dnode pointers
 	 */
 	dnp = dnalloc(nfiles);
-	for (i = 0; /* i < nfiles - detected via !dn below */; i++) {
+	अत्थाय (i = 0; /* i < nfiles - detected via !dn below */; i++) {
 		dnp[i] = dn;	/* save pointer to node in array */
 		dn = dn->dn_next;
-		if (!dn)
-			break;
+		सचे (!dn)
+			भङ्ग;
 	}
 
-	if (option_mask32 & OPT_d) {
+	सचे (option_mask32 & OPT_d) {
 		sort_and_display_files(dnp, nfiles);
-	} else {
+	} अञ्ञथा {
 		dnd = splitdnarray(dnp, SPLIT_DIR);
 		dnf = splitdnarray(dnp, SPLIT_FILE);
-		dndirs = count_dirs(dnp, SPLIT_DIR);
+		dndirs = गणनम्_dirs(dnp, SPLIT_DIR);
 		dnfiles = nfiles - dndirs;
-		if (dnfiles > 0) {
+		सचे (dnfiles > 0) {
 			sort_and_display_files(dnf, dnfiles);
-			if (ENABLE_FEATURE_CLEAN_UP)
-				free(dnf);
+			सचे (ENABLE_FEATURE_CLEAN_UP)
+				मुक्त(dnf);
 		}
-		if (dndirs > 0) {
+		सचे (dndirs > 0) {
 			dnsort(dnd, dndirs);
 			scan_and_display_dirs_recur(dnd, dnfiles == 0);
-			if (ENABLE_FEATURE_CLEAN_UP)
-				free(dnd);
+			सचे (ENABLE_FEATURE_CLEAN_UP)
+				मुक्त(dnd);
 		}
 	}
 
-	if (ENABLE_FEATURE_CLEAN_UP)
+	सचे (ENABLE_FEATURE_CLEAN_UP)
 		dfree(dnp);
-	return G.exit_code;
+	पटिनिवत्त G.exit_code;
 }

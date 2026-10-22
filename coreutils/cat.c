@@ -69,10 +69,10 @@
 //usage:       "$ cat /proc/uptime\n"
 //usage:       "110716.72 17.67"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#अन्तर्भाव "libbb.h"
+#अन्तर्भाव "common_bufsiz.h"
 
-#if ENABLE_FEATURE_CATV
+#सचे ENABLE_FEATURE_CATV
 /*
  * cat -v implementation for busybox
  *
@@ -107,47 +107,47 @@
 /* -A occupies bit (1<<3) */
 #define CAT_OPT_n ((1<<4) * ENABLE_FEATURE_CATN)
 #define CAT_OPT_b ((1<<5) * ENABLE_FEATURE_CATN)
-static int catv(unsigned opts, char **argv)
+स्थिर पूर्णाङ्क catv(unsigned opts, वर्ण **argv)
 {
-	int retval = EXIT_SUCCESS;
-	int fd;
-#if ENABLE_FEATURE_CATN
+	पूर्णाङ्क retval = EXIT_SUCCESS;
+	पूर्णाङ्क fd;
+#सचे ENABLE_FEATURE_CATN
 	bool eol_seen = (opts & (CAT_OPT_n|CAT_OPT_b));
 	unsigned eol_char = (eol_seen ? '\n' : 0x100);
-	unsigned skip_num_on = (opts & CAT_OPT_b) ? '\n' : 0x100;
+	unsigned skip_अङ्कः_on = (opts & CAT_OPT_b) ? '\n' : 0x100;
 	unsigned lineno = 0;
 #endif
 
 	BUILD_BUG_ON(CAT_OPT_e != VISIBLE_ENDLINE);
 	BUILD_BUG_ON(CAT_OPT_t != VISIBLE_SHOW_TABS);
-#if 0 /* These consts match, we can just pass "opts" to visible() */
-	if (opts & CAT_OPT_e)
+#सचे 0 /* These consts match, we can just pass "opts" to visible() */
+	सचे (opts & CAT_OPT_e)
 		flags |= VISIBLE_ENDLINE;
-	if (opts & CAT_OPT_t)
+	सचे (opts & CAT_OPT_t)
 		flags |= VISIBLE_SHOW_TABS;
 #endif
 
 #define read_buf bb_common_bufsiz1
 	setup_common_bufsiz();
-	do {
+	करोहि {
 		fd = open_or_warn_stdin(*argv);
-		if (fd < 0) {
+		सचे (fd < 0) {
 			retval = EXIT_FAILURE;
-			continue;
+			अनुवर्त;
 		}
-		for (;;) {
-			int i, res;
+		अत्थाय (;;) {
+			पूर्णाङ्क i, res;
 
-			res = read(fd, read_buf, COMMON_BUFSIZE);
-			if (res < 0)
+			res = पठ(fd, read_buf, COMMON_BUFSIZE);
+			सचे (res < 0)
 				retval = EXIT_FAILURE;
-			if (res <= 0)
-				break;
-			for (i = 0; i < res; i++) {
-				unsigned char c = read_buf[i];
-				char buf[sizeof("M-^c")];
-#if ENABLE_FEATURE_CATN
-				if (eol_seen && c != skip_num_on)
+			सचे (res <= 0)
+				भङ्ग;
+			अत्थाय (i = 0; i < res; i++) {
+				unsigned वर्ण c = read_buf[i];
+				वर्ण buf[परिमाण("M-^c")];
+#सचे ENABLE_FEATURE_CATN
+				सचे (eol_seen && c != skip_अङ्कः_on)
 					printf("%6u  ", ++lineno);
 				eol_seen = (c == eol_char);
 #endif
@@ -155,9 +155,9 @@ static int catv(unsigned opts, char **argv)
 				fputs_stdout(buf);
 			}
 		}
-		if (ENABLE_FEATURE_CLEAN_UP && fd)
+		सचे (ENABLE_FEATURE_CLEAN_UP && fd)
 			close(fd);
-	} while (*++argv);
+	} याव (*++argv);
 
 	fflush_stdout_and_exit(retval);
 }
@@ -165,10 +165,10 @@ static int catv(unsigned opts, char **argv)
 #undef CAT_OPT_b
 #endif
 
-int cat_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int cat_main(int argc UNUSED_PARAM, char **argv)
+पूर्णाङ्क cat_main(पूर्णाङ्क argc, वर्ण **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णाङ्क cat_main(पूर्णाङ्क argc UNUSED_PARAM, वर्ण **argv)
 {
-#if ENABLE_FEATURE_CATV || ENABLE_FEATURE_CATN
+#सचे ENABLE_FEATURE_CATV || ENABLE_FEATURE_CATN
 	unsigned opts;
 
 	opts =
@@ -181,37 +181,37 @@ int cat_main(int argc UNUSED_PARAM, char **argv)
 	argv += optind;
 
 	/* Read from stdin if there's nothing else to do. */
-	if (!argv[0])
-		*--argv = (char*)"-";
+	सचे (!argv[0])
+		*--argv = (वर्ण*)"-";
 
-#if ENABLE_FEATURE_CATV
-	if (opts & 7)
-		return catv(opts, argv);
+#सचे ENABLE_FEATURE_CATV
+	सचे (opts & 7)
+		पटिनिवत्त catv(opts, argv);
 	opts >>= 4;
 #endif
 
-#if ENABLE_FEATURE_CATN
+#सचे ENABLE_FEATURE_CATN
 # define CAT_OPT_n (1<<0)
 # define CAT_OPT_b (1<<1)
-	if (opts & (CAT_OPT_n|CAT_OPT_b)) { /* -n or -b */
-		struct number_state ns;
-		int exitcode;
+	सचे (opts & (CAT_OPT_n|CAT_OPT_b)) { /* -n or -b */
+		संरचना सङ्ख्या_state ns;
+		पूर्णाङ्क exitcode;
 
 		ns.width = 6;
 		ns.start = 1;
 		ns.inc = 1;
 		ns.sep = "\t";
-		ns.empty_str = NULL;
+		ns.empty_str = रिक्त;
 		ns.all = !(opts & CAT_OPT_b); /* -n without -b */
 		ns.nonempty = (opts & CAT_OPT_b); /* -b (with or without -n) */
 		exitcode = EXIT_SUCCESS;
-		do {
-			exitcode |= print_numbered_lines(&ns, *argv);
-		} while (*++argv);
+		करोहि {
+			exitcode |= print_numbered_पङ्क्तयः(&ns, *argv);
+		} याव (*++argv);
 		fflush_stdout_and_exit(exitcode);
 	}
 	/*opts >>= 2;*/
 #endif
 
-	return bb_cat(argv);
+	पटिनिवत्त bb_cat(argv);
 }

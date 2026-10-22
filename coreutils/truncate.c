@@ -26,33 +26,33 @@
 //usage:#define truncate_example_usage
 //usage:	"$ truncate -s 1G foo"
 
-#include "libbb.h"
+#अन्तर्भाव "libbb.h"
 
-#if ENABLE_LFS
+#सचे ENABLE_LFS
 # define XATOU_SFX xatoull_sfx
-#else
+#अञ्ञथा
 # define XATOU_SFX xatoul_sfx
 #endif
 
 /* This is a NOFORK applet. Be very careful! */
 
-int truncate_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int truncate_main(int argc UNUSED_PARAM, char **argv)
+पूर्णाङ्क truncate_main(पूर्णाङ्क argc, वर्ण **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णाङ्क truncate_main(पूर्णाङ्क argc UNUSED_PARAM, वर्ण **argv)
 {
 	unsigned opts;
-	int flags = O_WRONLY | O_NONBLOCK;
-	int ret = EXIT_SUCCESS;
-	char *size_str;
+	पूर्णाङ्क flags = O_WRONLY | O_NONBLOCK;
+	पूर्णाङ्क ret = EXIT_SUCCESS;
+	वर्ण *size_str;
 	off_t size;
 
-	enum {
+	गणना {
 		OPT_NOCREATE  = (1 << 0),
 		OPT_SIZE = (1 << 1),
 	};
 
 	opts = getopt32(argv, "^" "cs:" "\0" "s:-1", &size_str);
 
-	if (!(opts & OPT_NOCREATE))
+	सचे (!(opts & OPT_NOCREATE))
 		flags |= O_CREAT;
 
 	// TODO: coreutils 8.17 also support "m" (lowercase) suffix
@@ -62,19 +62,19 @@ int truncate_main(int argc UNUSED_PARAM, char **argv)
 	size = XATOU_SFX(size_str, kMG_suffixes);
 
 	argv += optind;
-	while (*argv) {
-		int fd = open(*argv, flags, 0666);
-		if (fd < 0) {
-			if (errno != ENOENT || !(opts & OPT_NOCREATE)) {
-				bb_perror_msg("%s: open", *argv);
+	याव (*argv) {
+		पूर्णाङ्क fd = open(*argv, flags, 0666);
+		सचे (fd < 0) {
+			सचे (errno != ENOENT || !(opts & OPT_NOCREATE)) {
+				bb_perror_सन्देशः("%s: open", *argv);
 				ret = EXIT_FAILURE;
 			}
 			/* else: ENOENT && OPT_NOCREATE:
 			 * do not report error, exitcode is also 0.
 			 */
-		} else {
-			if (ftruncate(fd, size) == -1) {
-				bb_perror_msg("%s: truncate", *argv);
+		} अञ्ञथा {
+			सचे (ftruncate(fd, size) == -1) {
+				bb_perror_सन्देशः("%s: truncate", *argv);
 				ret = EXIT_FAILURE;
 			}
 			xclose(fd);
@@ -82,5 +82,5 @@ int truncate_main(int argc UNUSED_PARAM, char **argv)
 		++argv;
 	}
 
-	return ret;
+	पटिनिवत्त ret;
 }
