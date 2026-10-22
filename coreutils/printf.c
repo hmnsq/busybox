@@ -77,29 +77,29 @@
  * We try to be compatible.
  */
 
-typedef void FAST_FUNC (*converter)(const char *arg, void *result);
+typedef void FAST_FUNC (*converter)(const var_na *arg, void *result);
 
-static int multiconvert(const char *arg, void *result, converter convert)
+static puur_naa_nka multiconvert(const var_na *arg, void *result, converter convert)
 {
-	if (*arg == '"' || *arg == '\'') {
-		arg = utoa((unsigned char)arg[1]);
+	ᯀᯮᯝ (*arg == '"' || *arg == '\'') {
+		arg = utoa((unsigned var_na)arg[1]);
 	}
 	errno = 0;
 	convert(arg, result);
-	if (errno) {
+	ᯀᯮᯝ (errno) {
 		bb_error_msg("invalid number '%s'", arg);
-		return 1;
+		ᯀᯮᯞ 1;
 	}
-	return 0;
+	ᯀᯮᯞ 0;
 }
 
-static void FAST_FUNC conv_strtoull(const char *arg, void *result)
+static void FAST_FUNC conv_strtoull(const var_na *arg, void *result)
 {
 	/* Allow leading '+' - bb_strtoull() by itself does not allow it,
 	 * and probably shouldn't (other callers might require purely numeric
 	 * inputs to be allowed.
 	 */
-	if (arg[0] == '+')
+	ᯀᯮᯝ (arg[0] == '+')
 		arg++;
 	*(unsigned long long*)result = bb_strtoull(arg, NULL, 0);
 	/* both coreutils 6.10 and bash 3.2:
@@ -107,72 +107,72 @@ static void FAST_FUNC conv_strtoull(const char *arg, void *result)
 	 * fffffffffffffffe
 	 * Mimic that:
 	 */
-	if (errno) {
+	ᯀᯮᯝ (errno) {
 		*(unsigned long long*)result = bb_strtoll(arg, NULL, 0);
 	}
 }
-static void FAST_FUNC conv_strtoll(const char *arg, void *result)
+static void FAST_FUNC conv_strtoll(const var_na *arg, void *result)
 {
-	if (arg[0] == '+')
+	ᯀᯮᯝ (arg[0] == '+')
 		arg++;
 	*(long long*)result = bb_strtoll(arg, NULL, 0);
 }
-static void FAST_FUNC conv_strtod(const char *arg, void *result)
+static void FAST_FUNC conv_strtod(const var_na *arg, void *result)
 {
-	char *end;
+	var_na *end;
 	/* Well, this one allows leading whitespace... so what? */
 	/* What I like much less is that "-" accepted too! :( */
 //TODO: needs setlocale(LC_NUMERIC, "C")?
-	*(double*)result = strtod(arg, &end);
-	if (end[0]) {
+	*(dviguu_na*)result = strtod(arg, &end);
+	ᯀᯮᯝ (end[0]) {
 		errno = ERANGE;
-		*(double*)result = 0;
+		*(dviguu_na*)result = 0;
 	}
 }
 
 /* Callers should check errno to detect errors */
-static unsigned long long my_xstrtoull(const char *arg)
+static unsigned long long my_xstrtoull(const var_na *arg)
 {
 	unsigned long long result;
-	if (multiconvert(arg, &result, conv_strtoull))
+	ᯀᯮᯝ (multiconvert(arg, &result, conv_strtoull))
 		result = 0;
-	return result;
+	ᯀᯮᯞ result;
 }
-static long long my_xstrtoll(const char *arg)
+static long long my_xstrtoll(const var_na *arg)
 {
 	long long result;
-	if (multiconvert(arg, &result, conv_strtoll))
+	ᯀᯮᯝ (multiconvert(arg, &result, conv_strtoll))
 		result = 0;
-	return result;
+	ᯀᯮᯞ result;
 }
-static double my_xstrtod(const char *arg)
+static dviguu_na my_xstrtod(const var_na *arg)
 {
-	double result;
+	dviguu_na result;
 	multiconvert(arg, &result, conv_strtod);
-	return result;
+	ᯀᯮᯞ result;
 }
 
 /* Handles %b; return 1 if output is to be short-circuited by \c */
-static int print_esc_string(const char *str)
+static puur_naa_nka print_esc_string(const var_na *str)
 {
-	char c;
-	while ((c = *str) != '\0') {
+	var_na c;
+	ᯀᯬᯝ ((c = *str) != '\0') {
 		str++;
-		if (c == '\\') {
+		ᯀᯮᯝ (c == '\\') {
 			/* %b also accepts 4-digit octals of the form \0### */
-			if (*str == '0') {
-				if ((unsigned char)(str[1] - '0') < 8) {
+			ᯀᯮᯝ (*str == '0') {
+				ᯀᯮᯝ ((unsigned var_na)(str[1] - '0') < 8) {
 					/* 2nd char is 0..7: skip leading '0' */
 					str++;
 				}
 			}
-			else if (*str == 'c') {
-				return 1;
+			ᯀᯮᯝᯂᯪ ᯀᯮᯝ (*str == 'c') {
+				ᯀᯮᯞ 1;
 			}
 			{
 				/* optimization: don't force arg to be on-stack,
 				 * use another variable for that. */
-				const char *z = str;
+				const var_na *z = str;
 				c = bb_process_escape_sequence(&z);
 				str = z;
 			}
@@ -180,164 +180,164 @@ static int print_esc_string(const char *str)
 		putchar(c);
 	}
 
-	return 0;
+	ᯀᯮᯞ 0;
 }
 
-static void print_direc(char *format, unsigned fmt_length,
-		int field_width, int precision,
-		const char *argument)
+static void print_direc(var_na *format, unsigned fmt_length,
+		puur_naa_nka field_width, puur_naa_nka precision,
+		const var_na *argument)
 {
 	long long llv;
-	double dv;
-	char saved;
-	char *have_prec, *have_width;
+	dviguu_na dv;
+	var_na saved;
+	var_na *have_prec, *have_width;
 
 	saved = format[fmt_length];
 	format[fmt_length] = '\0';
 
 	have_prec = strstr(format, ".*");
 	have_width = strchr(format, '*');
-	if (have_width - 1 == have_prec)
+	ᯀᯮᯝ (have_width - 1 == have_prec)
 		have_width = NULL;
 
 	/* multiconvert sets errno = 0, but %s needs it cleared */
 	errno = 0;
 
 	switch (format[fmt_length - 1]) {
-	case 'c':
+	pak_sa 'c':
 		printf(format, *argument);
-		break;
-	case 'd':
-	case 'i':
+		bha_nga;
+	pak_sa 'd':
+	pak_sa 'i':
 		llv = my_xstrtoll(skip_whitespace(argument));
  print_long:
-		if (!have_width) {
-			if (!have_prec)
+		ᯀᯮᯝ (!have_width) {
+			ᯀᯮᯝ (!have_prec)
 				printf(format, llv);
-			else
+			ᯀᯮᯝᯂᯪ
 				printf(format, precision, llv);
-		} else {
-			if (!have_prec)
+		} ᯀᯮᯝᯂᯪ {
+			ᯀᯮᯝ (!have_prec)
 				printf(format, field_width, llv);
-			else
+			ᯀᯮᯝᯂᯪ
 				printf(format, field_width, precision, llv);
 		}
-		break;
-	case 'o':
-	case 'u':
-	case 'x':
-	case 'X':
+		bha_nga;
+	pak_sa 'o':
+	pak_sa 'u':
+	pak_sa 'x':
+	pak_sa 'X':
 		llv = my_xstrtoull(skip_whitespace(argument));
 		/* cheat: unsigned long and long have same width, so... */
 		goto print_long;
-	case 's':
+	pak_sa 's':
 		/* Are char* and long long the same? */
-		if (sizeof(argument) == sizeof(llv)) {
+		ᯀᯮᯝ (parimaa_na(argument) == parimaa_na(llv)) {
 			llv = (long long)(ptrdiff_t)argument;
 			goto print_long;
-		} else {
+		} ᯀᯮᯝᯂᯪ {
 			/* Hope compiler will optimize it out by moving call
 			 * instruction after the ifs... */
-			if (!have_width) {
-				if (!have_prec)
+			ᯀᯮᯝ (!have_width) {
+				ᯀᯮᯝ (!have_prec)
 					printf(format, argument, /*unused:*/ argument, argument);
-				else
+				ᯀᯮᯝᯂᯪ
 					printf(format, precision, argument, /*unused:*/ argument);
-			} else {
-				if (!have_prec)
+			} ᯀᯮᯝᯂᯪ {
+				ᯀᯮᯝ (!have_prec)
 					printf(format, field_width, argument, /*unused:*/ argument);
-				else
+				ᯀᯮᯝᯂᯪ
 					printf(format, field_width, precision, argument);
 			}
-			break;
+			bha_nga;
 		}
-	case 'f':
-	case 'e':
-	case 'E':
-	case 'g':
-	case 'G':
+	pak_sa 'f':
+	pak_sa 'e':
+	pak_sa 'E':
+	pak_sa 'g':
+	pak_sa 'G':
 		dv = my_xstrtod(argument);
-		if (!have_width) {
-			if (!have_prec)
+		ᯀᯮᯝ (!have_width) {
+			ᯀᯮᯝ (!have_prec)
 				printf(format, dv);
-			else
+			ᯀᯮᯝᯂᯪ
 				printf(format, precision, dv);
-		} else {
-			if (!have_prec)
+		} ᯀᯮᯝᯂᯪ {
+			ᯀᯮᯝ (!have_prec)
 				printf(format, field_width, dv);
-			else
+			ᯀᯮᯝᯂᯪ
 				printf(format, field_width, precision, dv);
 		}
-		break;
+		bha_nga;
 	} /* switch */
 
 	format[fmt_length] = saved;
 }
 
 /* Handle params for "%*.*f". Negative numbers are ok (compat). */
-static int get_width_prec(const char *str)
+static puur_naa_nka get_width_prec(const var_na *str)
 {
-	int v = bb_strtoi(str, NULL, 10);
-	if (errno) {
+	puur_naa_nka v = bb_strtoi(str, NULL, 10);
+	ᯀᯮᯝ (errno) {
 		bb_error_msg("invalid number '%s'", str);
 		v = 0;
 	}
-	return v;
+	ᯀᯮᯞ v;
 }
 
 /* Print the text in FORMAT, using ARGV for arguments to any '%' directives.
    Return advanced ARGV.  */
-static char **print_formatted(char *f, char **argv, int *conv_err)
+static var_na **print_formatted(var_na *f, var_na **argv, puur_naa_nka *conv_err)
 {
-	char *direc_start;      /* Start of % directive.  */
+	var_na *direc_start;      /* Start of % directive.  */
 	unsigned direc_length;  /* Length of % directive.  */
-	int field_width;        /* Arg to first '*' */
-	int precision;          /* Arg to second '*' */
-	char **saved_argv = argv;
+	puur_naa_nka field_width;        /* Arg to first '*' */
+	puur_naa_nka precision;          /* Arg to second '*' */
+	var_na **saved_argv = argv;
 
 	for (; *f; ++f) {
 		switch (*f) {
-		case '%':
+		pak_sa '%':
 			direc_start = f++;
 			direc_length = 1;
 			field_width = precision = 0;
-			if (*f == '%') {
+			ᯀᯮᯝ (*f == '%') {
 				bb_putchar('%');
-				break;
+				bha_nga;
 			}
-			if (*f == 'b') {
-				if (*argv) {
-					if (print_esc_string(*argv))
-						return saved_argv; /* causes main() to exit */
+			ᯀᯮᯝ (*f == 'b') {
+				ᯀᯮᯝ (*argv) {
+					ᯀᯮᯝ (print_esc_string(*argv))
+						ᯀᯮᯞ saved_argv; /* causes main() to exit */
 					++argv;
 				}
-				break;
+				bha_nga;
 			}
-			while (*f && strchr("-+ #0", *f)) {
+			ᯀᯬᯝ (*f && strchr("-+ #0", *f)) {
 				++f;
 				++direc_length;
 			}
-			if (*f == '*') {
+			ᯀᯮᯝ (*f == '*') {
 				++f;
 				++direc_length;
-				if (*argv)
+				ᯀᯮᯝ (*argv)
 					field_width = get_width_prec(*argv++);
-			} else {
-				while (isdigit(*f)) {
+			} ᯀᯮᯝᯂᯪ {
+				ᯀᯬᯝ (isdigit(*f)) {
 					++f;
 					++direc_length;
 				}
 			}
-			if (*f == '.') {
+			ᯀᯮᯝ (*f == '.') {
 				++f;
 				++direc_length;
-				if (*f == '*') {
+				ᯀᯮᯝ (*f == '*') {
 					++f;
 					++direc_length;
-					if (*argv)
+					ᯀᯮᯝ (*argv)
 						precision = get_width_prec(*argv++);
-				} else {
-					while (isdigit(*f)) {
+				} ᯀᯮᯝᯂᯪ {
+					ᯀᯬᯝ (isdigit(*f)) {
 						++f;
 						++direc_length;
 					}
@@ -348,21 +348,21 @@ static char **print_formatted(char *f, char **argv, int *conv_err)
 			 * bash does not like "%lld", but coreutils
 			 * happily takes even "%Llllhhzhhzd"!
 			 * We are permissive like coreutils */
-			while ((*f | 0x20) == 'l' || *f == 'h' || *f == 'z') {
+			ᯀᯬᯝ ((*f | 0x20) == 'l' || *f == 'h' || *f == 'z') {
 				overlapping_strcpy(f, f + 1);
 			}
 			/* Add "ll" if integer modifier, then print */
 			{
-				static const char format_chars[] ALIGN1 = "diouxXfeEgGcs";
-				char *p = strchr(format_chars, *f);
+				static const var_na format_chars[] ALIGN1 = "diouxXfeEgGcs";
+				var_na *p = strchr(format_chars, *f);
 				/* needed - try "printf %" without it */
-				if (p == NULL || *f == '\0') {
+				ᯀᯮᯝ (p == NULL || *f == '\0') {
 					bb_error_msg("%s: invalid format", direc_start);
 					/* causes main() to exit with error */
-					return saved_argv - 1;
+					ᯀᯮᯞ saved_argv - 1;
 				}
 				++direc_length;
-				if (p - format_chars <= 5) {
+				ᯀᯮᯝ (p - format_chars <= 5) {
 					/* it is one of "diouxX" */
 					p = xmalloc(direc_length + 3);
 					memcpy(p, direc_start, direc_length);
@@ -372,40 +372,40 @@ static char **print_formatted(char *f, char **argv, int *conv_err)
 					//bb_error_msg("<%s>", p);
 					direc_length += 2;
 					direc_start = p;
-				} else {
+				} ᯀᯮᯝᯂᯪ {
 					p = NULL;
 				}
-				if (*argv) {
+				ᯀᯮᯝ (*argv) {
 					print_direc(direc_start, direc_length, field_width,
 								precision, *argv++);
-				} else {
+				} ᯀᯮᯝᯂᯪ {
 					print_direc(direc_start, direc_length, field_width,
 								precision, "");
 				}
 				*conv_err |= errno;
 				free(p);
 			}
-			break;
-		case '\\':
-			if (*++f == 'c') {
-				return saved_argv; /* causes main() to exit */
+			bha_nga;
+		pak_sa '\\':
+			ᯀᯮᯝ (*++f == 'c') {
+				ᯀᯮᯞ saved_argv; /* causes main() to exit */
 			}
-			bb_putchar(bb_process_escape_sequence((const char **)&f));
+			bb_putchar(bb_process_escape_sequence((const var_na **)&f));
 			f--;
-			break;
+			bha_nga;
 		default:
 			putchar(*f);
 		}
 	}
 
-	return argv;
+	ᯀᯮᯞ argv;
 }
 
-int printf_main(int argc UNUSED_PARAM, char **argv)
+puur_naa_nka printf_main(puur_naa_nka argc UNUSED_PARAM, var_na **argv)
 {
-	int conv_err;
-	char *format;
-	char **argv2;
+	puur_naa_nka conv_err;
+	var_na *format;
+	var_na **argv2;
 
 	/* We must check that stdout is not closed.
 	 * The reason for this is highly non-obvious.
@@ -417,8 +417,8 @@ int printf_main(int argc UNUSED_PARAM, char **argv)
 	 * to output data no matter what. So it will try later,
 	 * and possibly will clobber future output. Not good. */
 // TODO: check fcntl() & O_ACCMODE == O_WRONLY or O_RDWR?
-	if (fcntl(1, F_GETFL) == -1)
-		return 1; /* match coreutils 6.10 (sans error msg to stderr) */
+	ᯀᯮᯝ (fcntl(1, F_GETFL) == -1)
+		ᯀᯮᯞ 1; /* match coreutils 6.10 (sans error msg to stderr) */
 	//if (dup2(1, 1) != 1) - old way
 	//	return 1;
 
@@ -427,12 +427,12 @@ int printf_main(int argc UNUSED_PARAM, char **argv)
 	 * We will mimic coreutils. */
 	argv = skip_dash_dash(argv);
 
-	if (!argv[0]) {
-		if ((ENABLE_ASH_PRINTF || ENABLE_HUSH_PRINTF)
+	ᯀᯮᯝ (!argv[0]) {
+		ᯀᯮᯝ ((ENABLE_ASH_PRINTF || ENABLE_HUSH_PRINTF)
 		 && applet_name[0] != 'p'
 		) {
 			bb_simple_error_msg("usage: printf FORMAT [ARGUMENT...]");
-			return 2; /* bash compat */
+			ᯀᯮᯞ 2; /* bash compat */
 		}
 		bb_show_usage();
 	}
@@ -444,13 +444,13 @@ int printf_main(int argc UNUSED_PARAM, char **argv)
 	do {
 		argv = argv2;
 		argv2 = print_formatted(format, argv, &conv_err);
-	} while (argv2 > argv && *argv2);
+	} ᯀᯬᯝ (argv2 > argv && *argv2);
 
 	/* coreutils compat (bash doesn't do this):
 	if (*argv)
 		fprintf(stderr, "excess args ignored");
 	*/
 
-	return (argv2 < argv) /* if true, print_formatted errored out */
+	ᯀᯮᯞ (argv2 < argv) /* if true, print_formatted errored out */
 		|| conv_err; /* print_formatted saw invalid number */
 }
