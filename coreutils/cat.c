@@ -69,10 +69,10 @@
 //usage:       "$ cat /proc/uptime\n"
 //usage:       "110716.72 17.67"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#అన్తర్భావ "libbb.h"
+#అన్తర్భావ "common_bufsiz.h"
 
-#if ENABLE_FEATURE_CATV
+#ఒకవేళ ENABLE_FEATURE_CATV
 /*
  * cat -v implementation for busybox
  *
@@ -101,78 +101,78 @@
  * to achieve "cat -v" effect. The actual effect would be "users pissed off
  * by gratuitous incompatibility".
  */
-#define CAT_OPT_e (1<<0)
-#define CAT_OPT_t (1<<1)
-#define CAT_OPT_v (1<<2)
+#నిర్వచించు CAT_OPT_e (1<<0)
+#నిర్వచించు CAT_OPT_t (1<<1)
+#నిర్వచించు CAT_OPT_v (1<<2)
 /* -A occupies bit (1<<3) */
-#define CAT_OPT_n ((1<<4) * ENABLE_FEATURE_CATN)
-#define CAT_OPT_b ((1<<5) * ENABLE_FEATURE_CATN)
-static int catv(unsigned opts, char **argv)
+#నిర్వచించు CAT_OPT_n ((1<<4) * ENABLE_FEATURE_CATN)
+#నిర్వచించు CAT_OPT_b ((1<<5) * ENABLE_FEATURE_CATN)
+స్థిర పూర్ణాంకం catv(గుర్తులేని opts, అక్షరం **argv)
 {
-	int retval = EXIT_SUCCESS;
-	int fd;
-#if ENABLE_FEATURE_CATN
-	bool eol_seen = (opts & (CAT_OPT_n|CAT_OPT_b));
-	unsigned eol_char = (eol_seen ? '\n' : 0x100);
-	unsigned skip_num_on = (opts & CAT_OPT_b) ? '\n' : 0x100;
-	unsigned lineno = 0;
-#endif
+	పూర్ణాంకం retval = EXIT_SUCCESS;
+	పూర్ణాంకం fd;
+#ఒకవేళ ENABLE_FEATURE_CATN
+	bool eol_చూసిన = (opts & (CAT_OPT_n|CAT_OPT_b));
+	గుర్తులేని eol_char = (eol_చూసిన ? '\n' : 0x100);
+	గుర్తులేని skip_అంకె_on = (opts & CAT_OPT_b) ? '\n' : 0x100;
+	గుర్తులేని lineno = 0;
+#అయితే_ముగింపు
 
 	BUILD_BUG_ON(CAT_OPT_e != VISIBLE_ENDLINE);
 	BUILD_BUG_ON(CAT_OPT_t != VISIBLE_SHOW_TABS);
-#if 0 /* These consts match, we can just pass "opts" to visible() */
-	if (opts & CAT_OPT_e)
+#ఒకవేళ 0 /* These consts match, we can just pass "opts" to visible() */
+	ఒకవేళ (opts & CAT_OPT_e)
 		flags |= VISIBLE_ENDLINE;
-	if (opts & CAT_OPT_t)
+	ఒకవేళ (opts & CAT_OPT_t)
 		flags |= VISIBLE_SHOW_TABS;
-#endif
+#అయితే_ముగింపు
 
-#define read_buf bb_common_bufsiz1
-	setup_common_bufsiz();
-	do {
+#నిర్వచించు read_buf bb_common_bufsiz1
+	అమరిక_common_bufsiz();
+	చేయి {
 		fd = open_or_warn_stdin(*argv);
-		if (fd < 0) {
+		ఒకవేళ (fd < 0) {
 			retval = EXIT_FAILURE;
-			continue;
+			కొనసాగు;
 		}
-		for (;;) {
-			int i, res;
+		కొరకు (;;) {
+			పూర్ణాంకం i, res;
 
-			res = read(fd, read_buf, COMMON_BUFSIZE);
-			if (res < 0)
+			res = పఠ(fd, read_buf, COMMON_BUFSIZE);
+			ఒకవేళ (res < 0)
 				retval = EXIT_FAILURE;
-			if (res <= 0)
-				break;
-			for (i = 0; i < res; i++) {
-				unsigned char c = read_buf[i];
-				char buf[sizeof("M-^c")];
-#if ENABLE_FEATURE_CATN
-				if (eol_seen && c != skip_num_on)
-					printf("%6u  ", ++lineno);
-				eol_seen = (c == eol_char);
-#endif
+			ఒకవేళ (res <= 0)
+				ఆపు;
+			కొరకు (i = 0; i < res; i++) {
+				గుర్తులేని అక్షరం c = read_buf[i];
+				అక్షరం buf[పరిమాణం("M-^c")];
+#ఒకవేళ ENABLE_FEATURE_CATN
+				ఒకవేళ (eol_చూసిన && c != skip_అంకె_on)
+					రాయి("%6u  ", ++lineno);
+				eol_చూసిన = (c == eol_char);
+#అయితే_ముగింపు
 				visible(c, buf, opts);
 				fputs_stdout(buf);
 			}
 		}
-		if (ENABLE_FEATURE_CLEAN_UP && fd)
+		ఒకవేళ (ENABLE_FEATURE_CLEAN_పైకి && fd)
 			close(fd);
-	} while (*++argv);
+	} అయితే (*++argv);
 
 	fflush_stdout_and_exit(retval);
 }
-#undef CAT_OPT_n
-#undef CAT_OPT_b
-#endif
+#నిర్వచనం_రద్దు CAT_OPT_n
+#నిర్వచనం_రద్దు CAT_OPT_b
+#అయితే_ముగింపు
 
-int cat_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int cat_main(int argc UNUSED_PARAM, char **argv)
+పూర్ణాంకం cat_main(పూర్ణాంకం argc, అక్షరం **argv) MAIN_EXTERNALLY_VISIBLE;
+పూర్ణాంకం cat_main(పూర్ణాంకం argc వాడని_PARAM, అక్షరం **argv)
 {
-#if ENABLE_FEATURE_CATV || ENABLE_FEATURE_CATN
-	unsigned opts;
+#ఒకవేళ ENABLE_FEATURE_CATV || ENABLE_FEATURE_CATN
+	గుర్తులేని opts;
 
 	opts =
-#endif
+#అయితే_ముగింపు
 	getopt32(argv, IF_FEATURE_CATV("^")
 		/* -u is ignored ("unbuffered") */
 		IF_FEATURE_CATV("etvA")IF_FEATURE_CATN("nb")"u"
@@ -181,37 +181,37 @@ int cat_main(int argc UNUSED_PARAM, char **argv)
 	argv += optind;
 
 	/* Read from stdin if there's nothing else to do. */
-	if (!argv[0])
-		*--argv = (char*)"-";
+	ఒకవేళ (!argv[0])
+		*--argv = (అక్షరం*)"-";
 
-#if ENABLE_FEATURE_CATV
-	if (opts & 7)
-		return catv(opts, argv);
+#ఒకవేళ ENABLE_FEATURE_CATV
+	ఒకవేళ (opts & 7)
+		తిరిగి catv(opts, argv);
 	opts >>= 4;
-#endif
+#అయితే_ముగింపు
 
-#if ENABLE_FEATURE_CATN
+#ఒకవేళ ENABLE_FEATURE_CATN
 # define CAT_OPT_n (1<<0)
 # define CAT_OPT_b (1<<1)
-	if (opts & (CAT_OPT_n|CAT_OPT_b)) { /* -n or -b */
-		struct number_state ns;
-		int exitcode;
+	ఒకవేళ (opts & (CAT_OPT_n|CAT_OPT_b)) { /* -n or -b */
+		నిర్మాణం సంఖ్య_state ns;
+		పూర్ణాంకం exitcode;
 
-		ns.width = 6;
-		ns.start = 1;
+		ns.వెడల్పు = 6;
+		ns.ప్రారంభం = 1;
 		ns.inc = 1;
 		ns.sep = "\t";
-		ns.empty_str = NULL;
+		ns.ఖాళీలు_str = ఖాళీ;
 		ns.all = !(opts & CAT_OPT_b); /* -n without -b */
 		ns.nonempty = (opts & CAT_OPT_b); /* -b (with or without -n) */
 		exitcode = EXIT_SUCCESS;
-		do {
-			exitcode |= print_numbered_lines(&ns, *argv);
-		} while (*++argv);
+		చేయి {
+			exitcode |= print_numbered_పంక్తులు(&ns, *argv);
+		} అయితే (*++argv);
 		fflush_stdout_and_exit(exitcode);
 	}
 	/*opts >>= 2;*/
-#endif
+#అయితే_ముగింపు
 
-	return bb_cat(argv);
+	తిరిగి bb_cat(argv);
 }

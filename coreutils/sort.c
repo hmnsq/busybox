@@ -89,10 +89,10 @@
 //usage:	)
 //usage:       ""
 
-#include "libbb.h"
+#అన్తర్భావ "libbb.h"
 
 /* These are sort types */
-enum {
+గణన {
 	FLAG_n  = 1 << 0,       /* Numeric sort */
 	FLAG_g  = 1 << 1,       /* Sort using strtod() */
 	FLAG_h  = 1 << 2,       /* Sort using strtod(), plus KMGT suffixes */
@@ -105,7 +105,7 @@ enum {
 	FLAG_z  = 1 << 8,       /* Input and output is NUL terminated, not \n */
 /* These can be applied to search keys, the previous four can't */
 	FLAG_b  = 1 << 9,       /* Ignore leading blanks */
-	FLAG_r  = 1 << 10,      /* Reverse */
+	FLAG_r  = 1 << 10,      /*తిరగేయి*/
 	FLAG_d  = 1 << 11,      /* Ignore !(isalnum()|isspace()) */
 	FLAG_f  = 1 << 12,      /* Force uppercase */
 	FLAG_i  = 1 << 13,      /* Ignore !isprint() */
@@ -119,355 +119,355 @@ enum {
 	FLAG_no_tie_break = 0x40000000,
 };
 
-static const char sort_opt_str[] ALIGN1 = "^"
+స్థిర స్థిరరాశి అక్షరం క్రమీకరించు_opt_str[] ALIGN1 = "^"
 			"nghMVucszbrdfimS:T:o:k:*t:"
 			"\0" "o--o:t--t"/*-t, -o: at most one of each*/;
 /*
  * OPT_STR must not be string literal, needs to have stable address:
  * code uses "strchr(OPT_STR,c) - OPT_STR" idiom.
  */
-#define OPT_STR (sort_opt_str + 1)
+#నిర్వచించు OPT_STR (క్రమీకరించు_opt_str + 1)
 
-#if ENABLE_FEATURE_SORT_BIG
-static char key_separator;
+#ఒకవేళ ENABLE_FEATURE_క్రమీకరించు_BIG
+స్థిర అక్షరం కీలకం_separator;
 
-static struct sort_key {
-	struct sort_key *next_key;  /* linked list */
-	unsigned range[4];          /* start word, start char, end word, end char */
-	unsigned flags;
-} *key_list;
+స్థిర నిర్మాణం క్రమీకరించు_కీలకం {
+	నిర్మాణం క్రమీకరించు_కీలకం *తదుపరి_కీలకం;  /* linked list */
+	గుర్తులేని range[4];          /* start word, start char, end word, end char */
+	గుర్తులేని flags;
+} *కీలకం_list;
 
 
 /* This is a NOEXEC applet. Be very careful! */
 
 
-static char *get_key(char *str, struct sort_key *key, int flags)
+స్థిర అక్షరం *get_కీలకం(అక్షరం *str, నిర్మాణం క్రమీకరించు_కీలకం *కీలకం, పూర్ణాంకం flags)
 {
-	int start = start; /* for compiler */
-	int end;
-	int len, j;
-	unsigned i;
+	పూర్ణాంకం ప్రారంభం = ప్రారంభం; /* for compiler */
+	పూర్ణాంకం చివర;
+	పూర్ణాంకం len, j;
+	గుర్తులేని i;
 
 	/* Special case whole string, so we don't have to make a copy */
-	if (key->range[0] == 1 && !key->range[1] && !key->range[2] && !key->range[3]
+	ఒకవేళ (కీలకం->range[0] == 1 && !కీలకం->range[1] && !కీలకం->range[2] && !కీలకం->range[3]
 	 && !(flags & (FLAG_b | FLAG_d | FLAG_f | FLAG_i | FLAG_bb))
 	) {
-		return str;
+		తిరిగి str;
 	}
 
 	/* Find start of key on first pass, end on second pass */
-	len = strlen(str);
-	for (j = 0; j < 2; j++) {
-		if (!key->range[2*j])
-			end = len;
+	len = అక్షరశ్రేణి_పొడవు(str);
+	కొరకు (j = 0; j < 2; j++) {
+		ఒకవేళ (!కీలకం->range[2*j])
+			చివర = len;
 		/* Loop through fields */
-		else {
-			unsigned char ch = 0;
+		లేకపోతే {
+			గుర్తులేని అక్షరం ch = 0;
 
-			end = 0;
-			for (i = 1; i < key->range[2*j] + j; i++) {
-				if (key_separator) {
+			చివర = 0;
+			కొరకు (i = 1; i < కీలకం->range[2*j] + j; i++) {
+				ఒకవేళ (కీలకం_separator) {
 					/* Skip body of key and separator */
-					while ((ch = str[end]) != '\0') {
-							end++;
-						if (ch == key_separator)
-							break;
+					అయితే ((ch = str[చివర]) != '\0') {
+							చివర++;
+						ఒకవేళ (ch == కీలకం_separator)
+							ఆపు;
 					}
-				} else {
+				} లేకపోతే {
 					/* Skip leading blanks */
-					while (isspace(str[end]))
-						end++;
+					అయితే (ఖాళీనా(str[చివర]))
+						చివర++;
 					/* Skip body of key */
-					while (str[end] != '\0') {
-						if (isspace(str[end]))
-							break;
-						end++;
+					అయితే (str[చివర] != '\0') {
+						ఒకవేళ (ఖాళీనా(str[చివర]))
+							ఆపు;
+						చివర++;
 					}
 				}
 			}
 			/* Remove last delim: "abc:def:" => "abc:def" */
-			if (j && ch) {
+			ఒకవేళ (j && ch) {
 				//if (str[end-1] != key_separator)
 				//  bb_error_msg(_and_die("BUG! "
 				//  "str[start:%d,end:%d]:'%.*s'",
 				//  start, end, (int)(end-start), &str[start]);
-				end--;
+				చివర--;
 			}
 		}
-		if (!j) start = end;
+		ఒకవేళ (!j) ప్రారంభం = చివర;
 	}
 	/* Strip leading whitespace if necessary */
-	if (flags & FLAG_b)
+	ఒకవేళ (flags & FLAG_b)
 		/* not using skip_whitespace() for speed */
-		while (isspace(str[start])) start++;
+		అయితే (ఖాళీనా(str[ప్రారంభం])) ప్రారంభం++;
 	/* Strip trailing whitespace if necessary */
-	if (flags & FLAG_bb)
-		while (end > start && isspace(str[end-1])) end--;
+	ఒకవేళ (flags & FLAG_bb)
+		అయితే (చివర > ప్రారంభం && ఖాళీనా(str[చివర-1])) చివర--;
 	/* -kSTART,N.ENDCHAR: honor ENDCHAR (1-based) */
-	if (key->range[3]) {
-		end = key->range[3];
-		if (end > len) end = len;
+	ఒకవేళ (కీలకం->range[3]) {
+		చివర = కీలకం->range[3];
+		ఒకవేళ (చివర > len) చివర = len;
 	}
 	/* -kN.STARTCHAR[,...]: honor STARTCHAR (1-based) */
-	if (key->range[1]) {
-		start += key->range[1] - 1;
-		if (start > len) start = len;
+	ఒకవేళ (కీలకం->range[1]) {
+		ప్రారంభం += కీలకం->range[1] - 1;
+		ఒకవేళ (ప్రారంభం > len) ప్రారంభం = len;
 	}
 	/* Make the copy */
-	if (end < start)
-		end = start;
-	str = xstrndup(str+start, end-start);
+	ఒకవేళ (చివర < ప్రారంభం)
+		చివర = ప్రారంభం;
+	str = xstrndup(str+ప్రారంభం, చివర-ప్రారంభం);
 	/* Handle -d */
-	if (flags & FLAG_d) {
-		for (start = end = 0; str[end]; end++)
-			if (isspace(str[end]) || isalnum(str[end]))
-				str[start++] = str[end];
-		str[start] = '\0';
+	ఒకవేళ (flags & FLAG_d) {
+		కొరకు (ప్రారంభం = చివర = 0; str[చివర]; చివర++)
+			ఒకవేళ (ఖాళీనా(str[చివర]) || అక్షరమా_అంకెనా(str[చివర]))
+				str[ప్రారంభం++] = str[చివర];
+		str[ప్రారంభం] = '\0';
 	}
 	/* Handle -i */
-	if (flags & FLAG_i) {
-		for (start = end = 0; str[end]; end++)
-			if (isprint_asciionly(str[end]))
-				str[start++] = str[end];
-		str[start] = '\0';
+	ఒకవేళ (flags & FLAG_i) {
+		కొరకు (ప్రారంభం = చివర = 0; str[చివర]; చివర++)
+			ఒకవేళ (isprint_asciionly(str[చివర]))
+				str[ప్రారంభం++] = str[చివర];
+		str[ప్రారంభం] = '\0';
 	}
 	/* Handle -f */
-	if (flags & FLAG_f)
-		for (i = 0; str[i]; i++)
-			str[i] = toupper(str[i]);
+	ఒకవేళ (flags & FLAG_f)
+		కొరకు (i = 0; str[i]; i++)
+			str[i] = పెద్ద_అక్షరం(str[i]);
 
-	return str;
+	తిరిగి str;
 }
 
-static struct sort_key *add_key(void)
+స్థిర నిర్మాణం క్రమీకరించు_కీలకం *కూడు_కీలకం(శూన్య)
 {
-	struct sort_key **pkey = &key_list;
-	while (*pkey)
-		pkey = &((*pkey)->next_key);
-	return *pkey = xzalloc(sizeof(struct sort_key));
+	నిర్మాణం క్రమీకరించు_కీలకం **pkey = &కీలకం_list;
+	అయితే (*pkey)
+		pkey = &((*pkey)->తదుపరి_కీలకం);
+	తిరిగి *pkey = xzalloc(పరిమాణం(నిర్మాణం క్రమీకరించు_కీలకం));
 }
 
-#define GET_LINE(fp) \
+#నిర్వచించు GET_పంక్తి(fp) \
 	((option_mask32 & FLAG_z) \
-	? bb_get_chunk_from_file(fp, NULL) \
+	? bb_get_chunk_from_file(fp, ఖాళీ) \
 	: xmalloc_fgetline(fp))
-#else
-#define GET_LINE(fp) xmalloc_fgetline(fp)
-#endif
+#లేకపోతే
+#నిర్వచించు GET_పంక్తి(fp) xmalloc_fgetline(fp)
+#అయితే_ముగింపు
 
-#if ENABLE_FEATURE_SORT_BIG
-static int scale_suffix(const char *tail)
+#ఒకవేళ ENABLE_FEATURE_క్రమీకరించు_BIG
+స్థిర పూర్ణాంకం scale_suffix(స్థిరరాశి అక్షరం *తోక)
 {
-	static const char suffix[] ALIGN1 = "kmgtpezy";
-	const char *s;
-	int n;
+	స్థిర స్థిరరాశి అక్షరం suffix[] ALIGN1 = "kmgtpezy";
+	స్థిరరాశి అక్షరం *s;
+	పూర్ణాంకం n;
 
-	if (!tail[0])
-		return -1;
-	s = strchr(suffix, tail[0] | 0x20);
-	if (!s)
-		return -1;
+	ఒకవేళ (!తోక[0])
+		తిరిగి -1;
+	s = strchr(suffix, తోక[0] | 0x20);
+	ఒకవేళ (!s)
+		తిరిగి -1;
 	n = s - suffix;
-	if (n != 0 && tail[0] >= 'a')
-		return -1; /* mg... not accepted, only MG... */
-	return n;
+	ఒకవేళ (n != 0 && తోక[0] >= 'a')
+		తిరిగి -1; /* mg... not accepted, only MG... */
+	తిరిగి n;
 }
-#endif
+#అయితే_ముగింపు
 
 /* Iterate through keys list and perform comparisons */
-static int compare_keys(const void *xarg, const void *yarg)
+స్థిర పూర్ణాంకం compare_కీలకాలు(స్థిరరాశి శూన్య *xarg, స్థిరరాశి శూన్య *yarg)
 {
-	int flags = option_mask32, retval = 0;
-	char *x, *y;
+	పూర్ణాంకం flags = option_mask32, retval = 0;
+	అక్షరం *x, *y;
 
-#if ENABLE_FEATURE_SORT_BIG
-	struct sort_key *key;
+#ఒకవేళ ENABLE_FEATURE_క్రమీకరించు_BIG
+	నిర్మాణం క్రమీకరించు_కీలకం *కీలకం;
 
-	for (key = key_list; !retval && key; key = key->next_key) {
-		flags = key->flags ? key->flags : option_mask32;
+	కొరకు (కీలకం = కీలకం_list; !retval && కీలకం; కీలకం = కీలకం->తదుపరి_కీలకం) {
+		flags = కీలకం->flags ? కీలకం->flags : option_mask32;
 		/* Chop out and modify key chunks, handling -dfib */
-		x = get_key(*(char **)xarg, key, flags);
-		y = get_key(*(char **)yarg, key, flags);
-#else
+		x = get_కీలకం(*(అక్షరం **)xarg, కీలకం, flags);
+		y = get_కీలకం(*(అక్షరం **)yarg, కీలకం, flags);
+#లేకపోతే
 	/* This curly bracket serves no purpose but to match the nesting
 	 * level of the for () loop we're not using */
 	{
-		x = *(char **)xarg;
-		y = *(char **)yarg;
-#endif
+		x = *(అక్షరం **)xarg;
+		y = *(అక్షరం **)yarg;
+#అయితే_ముగింపు
 		/* Perform actual comparison */
-		switch (flags & (FLAG_n | FLAG_g | FLAG_h | FLAG_M | FLAG_V)) {
-		default:
-			bb_simple_error_msg_and_die("unknown sort type");
-			break;
-#if defined(HAVE_STRVERSCMP) && HAVE_STRVERSCMP == 1
-		case FLAG_V:
+		ఎంపిక (flags & (FLAG_n | FLAG_g | FLAG_h | FLAG_M | FLAG_V)) {
+		అప్రమేయ:
+			bb_simple_error_సందేశం_and_die("unknown sort type");
+			ఆపు;
+#ఒకవేళ defined(HAVE_STRVERSCMP) && HAVE_STRVERSCMP == 1
+		స్థితి FLAG_V:
 			retval = strverscmp(x, y);
-			break;
-#endif
+			ఆపు;
+#అయితే_ముగింపు
 		/* Ascii sort */
-		case 0:
-#if ENABLE_LOCALE_SUPPORT
+		స్థితి 0:
+#ఒకవేళ ENABLE_LOCALE_SUPPORT
 			retval = strcoll(x, y);
-#else
+#లేకపోతే
 			retval = strcmp(x, y);
-#endif
-			break;
-#if ENABLE_FEATURE_SORT_BIG
-		case FLAG_g:
-		case FLAG_h: {
-			char *xx, *yy;
+#అయితే_ముగింపు
+			ఆపు;
+#ఒకవేళ ENABLE_FEATURE_క్రమీకరించు_BIG
+		స్థితి FLAG_g:
+		స్థితి FLAG_h: {
+			అక్షరం *xx, *yy;
 //TODO: needs setlocale(LC_NUMERIC, "C")?
-			double dx = strtod(x, &xx);
-			double dy = strtod(y, &yy);
+			ద్విగుణ dx = strtod(x, &xx);
+			ద్విగుణ dy = strtod(y, &yy);
 			/* not numbers < NaN < -infinity < numbers < +infinity) */
-			if (x == xx)
+			ఒకవేళ (x == xx)
 				retval = (y == yy ? 0 : -1);
-			else if (y == yy)
+			లేకపోతే ఒకవేళ (y == yy)
 				retval = 1;
 			/* Check for isnan */
-			else if (dx != dx)
+			లేకపోతే ఒకవేళ (dx != dx)
 				retval = (dy != dy) ? 0 : -1;
-			else if (dy != dy)
+			లేకపోతే ఒకవేళ (dy != dy)
 				retval = 1;
-			else {
-				if (flags & FLAG_h) {
-					int xs = scale_suffix(xx);
-					int ys = scale_suffix(yy);
-					if (xs != ys) {
+			లేకపోతే {
+				ఒకవేళ (flags & FLAG_h) {
+					పూర్ణాంకం xs = scale_suffix(xx);
+					పూర్ణాంకం ys = scale_suffix(yy);
+					ఒకవేళ (xs != ys) {
 						retval = xs - ys;
-						break;
+						ఆపు;
 					}
 				}
 				/* Check for infinity.  Could underflow, but it avoids libm. */
-				if (1.0 / dx == 0.0) {
-					if (dx < 0)
+				ఒకవేళ (1.0 / dx == 0.0) {
+					ఒకవేళ (dx < 0)
 						retval = (1.0 / dy == 0.0 && dy < 0) ? 0 : -1;
-					else
+					లేకపోతే
 						retval = (1.0 / dy == 0.0 && dy > 0) ? 0 : 1;
-				} else if (1.0 / dy == 0.0)
+				} లేకపోతే ఒకవేళ (1.0 / dy == 0.0)
 					retval = (dy < 0) ? 1 : -1;
-				else
+				లేకపోతే
 					retval = (dx > dy) ? 1 : ((dx < dy) ? -1 : 0);
 			}
-			break;
+			ఆపు;
 		}
-		case FLAG_M: {
-			struct tm thyme;
-			int dx;
-			char *xx, *yy;
+		స్థితి FLAG_M: {
+			నిర్మాణం tm thyme;
+			పూర్ణాంకం dx;
+			అక్షరం *xx, *yy;
 
 			xx = strptime(skip_whitespace(x), "%b", &thyme);
 			dx = thyme.tm_mon;
 			yy = strptime(skip_whitespace(y), "%b", &thyme);
-			if (!xx)
+			ఒకవేళ (!xx)
 				retval = (!yy) ? 0 : -1;
-			else if (!yy)
+			లేకపోతే ఒకవేళ (!yy)
 				retval = 1;
-			else
+			లేకపోతే
 				retval = dx - thyme.tm_mon;
-			break;
+			ఆపు;
 		}
 		/* Full floating point version of -n */
-		case FLAG_n: {
-			double dx = atof(x);
-			double dy = atof(y);
+		స్థితి FLAG_n: {
+			ద్విగుణ dx = atof(x);
+			ద్విగుణ dy = atof(y);
 			retval = (dx > dy) ? 1 : ((dx < dy) ? -1 : 0);
-			break;
+			ఆపు;
 		}
 		} /* switch */
 		/* Free key copies. */
-		if (x != *(char **)xarg) free(x);
-		if (y != *(char **)yarg) free(y);
+		ఒకవేళ (x != *(అక్షరం **)xarg) విడుదల(x);
+		ఒకవేళ (y != *(అక్షరం **)yarg) విడుదల(y);
 		/* if (retval) break; - done by for () anyway */
-#else
+#లేకపోతే
 		/* Integer version of -n for tiny systems */
-		case FLAG_n:
+		స్థితి FLAG_n:
 			retval = atoi(x) - atoi(y);
-			break;
+			ఆపు;
 		} /* switch */
-#endif
+#అయితే_ముగింపు
 	} /* for */
 
-	if (retval == 0) {
+	ఒకవేళ (retval == 0) {
 		/* So far lines are "the same" */
 
-		if (option_mask32 & FLAG_s) {
+		ఒకవేళ (option_mask32 & FLAG_s) {
 			/* "Stable sort": later line is "greater than",
 			 * IOW: do not allow qsort() to swap equal lines.
 			 */
 			uint32_t *p32;
 			uint32_t x32, y32;
-			char *line;
-			unsigned len;
+			అక్షరం *పంక్తి;
+			గుర్తులేని len;
 
-			line = *(char**)xarg;
-			len = (strlen(line) + 4) & (~3u);
-			p32 = (void*)(line + len);
+			పంక్తి = *(అక్షరం**)xarg;
+			len = (అక్షరశ్రేణి_పొడవు(పంక్తి) + 4) & (~3u);
+			p32 = (శూన్య*)(పంక్తి + len);
 			x32 = *p32;
-			line = *(char**)yarg;
-			len = (strlen(line) + 4) & (~3u);
-			p32 = (void*)(line + len);
+			పంక్తి = *(అక్షరం**)yarg;
+			len = (అక్షరశ్రేణి_పొడవు(పంక్తి) + 4) & (~3u);
+			p32 = (శూన్య*)(పంక్తి + len);
 			y32 = *p32;
 
 			/* If x > y, 1, else -1 */
 			retval = (x32 > y32) * 2 - 1;
 			/* Here, -r has no effect! */
-			return retval;
+			తిరిగి retval;
 		}
-		if (!(option_mask32 & FLAG_no_tie_break)) {
+		ఒకవేళ (!(option_mask32 & FLAG_no_tie_break)) {
 			/* fallback sort */
 			flags = option_mask32;
-			retval = strcmp(*(char **)xarg, *(char **)yarg);
+			retval = strcmp(*(అక్షరం **)xarg, *(అక్షరం **)yarg);
 		}
 	}
 
-	if (flags & FLAG_r)
-		return -retval;
+	ఒకవేళ (flags & FLAG_r)
+		తిరిగి -retval;
 
-	return retval;
+	తిరిగి retval;
 }
 
-#if ENABLE_FEATURE_SORT_BIG
-static unsigned str2u(char **str)
+#ఒకవేళ ENABLE_FEATURE_క్రమీకరించు_BIG
+స్థిర గుర్తులేని str2u(అక్షరం **str)
 {
-	unsigned long lu;
-	if (!isdigit((*str)[0]))
-		bb_simple_error_msg_and_die("bad field specification");
+	గుర్తులేని దీర్ఘ lu;
+	ఒకవేళ (!అంకెనా((*str)[0]))
+		bb_simple_error_సందేశం_and_die("bad field specification");
 	lu = strtoul(*str, str, 10);
-	if ((sizeof(long) > sizeof(int) && lu > INT_MAX) || !lu)
-		bb_simple_error_msg_and_die("bad field specification");
-	return lu;
+	ఒకవేళ ((పరిమాణం(దీర్ఘ) > పరిమాణం(పూర్ణాంకం) && lu > గరిష్ఠ_పూర్ణాంకం) || !lu)
+		bb_simple_error_సందేశం_and_die("bad field specification");
+	తిరిగి lu;
 }
-#endif
+#అయితే_ముగింపు
 
-int sort_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int sort_main(int argc UNUSED_PARAM, char **argv)
+పూర్ణాంకం క్రమీకరించు_main(పూర్ణాంకం argc, అక్షరం **argv) MAIN_EXTERNALLY_VISIBLE;
+పూర్ణాంకం క్రమీకరించు_main(పూర్ణాంకం argc వాడని_PARAM, అక్షరం **argv)
 {
-	char **lines;
-	char *str_ignored, *str_o, *str_t;
-	llist_t *lst_k = NULL;
-	int i;
-	int linecount;
-	unsigned opts;
-#if ENABLE_FEATURE_SORT_OPTIMIZE_MEMORY
+	అక్షరం **పంక్తులు;
+	అక్షరం *str_ignored, *str_o, *str_t;
+	llist_t *lst_k = ఖాళీ;
+	పూర్ణాంకం i;
+	పూర్ణాంకం linecount;
+	గుర్తులేని opts;
+#ఒకవేళ ENABLE_FEATURE_క్రమీకరించు_OPTIMIZE_జ్ఞాపకం
 	bool can_drop_dups;
-	size_t prev_len = 0;
-	char *prev_line = (char*) "";
+	కొలత_t prev_len = 0;
+	అక్షరం *prev_పంక్తి = (అక్షరం*) "";
 	/* Postpone optimizing if the input is small, < 16k lines:
 	 * even just free()ing duplicate lines takes time.
 	 */
-	size_t count_to_optimize_dups = 0x3fff;
-#endif
+	కొలత_t లెక్క_గమ్యం_optimize_dups = 0x3fff;
+#అయితే_ముగింపు
 
 	xfunc_error_retval = 2;
 
 	/* Parse command line options */
 	opts = getopt32(argv,
-			sort_opt_str,
+			క్రమీకరించు_opt_str,
 			&str_ignored, &str_ignored, &str_o, &lst_k, &str_t
 	);
-#if ENABLE_FEATURE_SORT_OPTIMIZE_MEMORY
+#ఒకవేళ ENABLE_FEATURE_క్రమీకరించు_OPTIMIZE_జ్ఞాపకం
 	/* Can drop dups only if -u but no "complicating" options,
 	 * IOW: if we do a full line compares. Safe options:
 	 * -o FILE Output to FILE
@@ -487,159 +487,159 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 	/* Stable sort needs every line to be uniquely allocated,
 	 * disable optimization to reuse strings:
 	 */
-	if (opts & FLAG_s)
-		count_to_optimize_dups = (size_t)-1L;
-#endif
+	ఒకవేళ (opts & FLAG_s)
+		లెక్క_గమ్యం_optimize_dups = (కొలత_t)-1L;
+#అయితే_ముగింపు
 	/* global b strips leading and trailing spaces */
-	if (opts & FLAG_b)
+	ఒకవేళ (opts & FLAG_b)
 		option_mask32 |= FLAG_bb;
-#if ENABLE_FEATURE_SORT_BIG
-	if (opts & FLAG_t) {
-		if (!str_t[0] || str_t[1])
-			bb_simple_error_msg_and_die("bad -t parameter");
-		key_separator = str_t[0];
+#ఒకవేళ ENABLE_FEATURE_క్రమీకరించు_BIG
+	ఒకవేళ (opts & FLAG_t) {
+		ఒకవేళ (!str_t[0] || str_t[1])
+			bb_simple_error_సందేశం_and_die("bad -t parameter");
+		కీలకం_separator = str_t[0];
 	}
 	/* note: below this point we use option_mask32, not opts,
 	 * since that reduces register pressure and makes code smaller */
 
 	/* Parse sort key */
-	while (lst_k) {
-		enum {
+	అయితే (lst_k) {
+		గణన {
 			FLAG_allowed_for_k =
 				FLAG_n | /* Numeric sort */
 				FLAG_g | /* Sort using strtod() */
 				FLAG_h | /* Sort using strtod(), plus KMGT suffixes */
 				FLAG_M | /* Sort date */
 				FLAG_b | /* Ignore leading blanks */
-				FLAG_r | /* Reverse */
+				FLAG_r | /*తిరగేయి*/
 				FLAG_d | /* Ignore !(isalnum()|isspace()) */
 				FLAG_f | /* Force uppercase */
 				FLAG_i | /* Ignore !isprint() */
 			0
 		};
-		struct sort_key *key = add_key();
-		char *str_k = llist_pop(&lst_k);
+		నిర్మాణం క్రమీకరించు_కీలకం *కీలకం = కూడు_కీలకం();
+		అక్షరం *str_k = llist_తీయి(&lst_k);
 
 		i = 0; /* i==0 before comma, 1 after (-k3,6) */
-		while (*str_k) {
+		అయితే (*str_k) {
 			/* Start of range */
 			/* Cannot use bb_strtou - suffix can be a letter */
-			key->range[2*i] = str2u(&str_k);
-			if (*str_k == '.') {
+			కీలకం->range[2*i] = str2u(&str_k);
+			ఒకవేళ (*str_k == '.') {
 				str_k++;
-				key->range[2*i+1] = str2u(&str_k);
+				కీలకం->range[2*i+1] = str2u(&str_k);
 			}
-			while (*str_k) {
-				int flag;
-				const char *idx;
+			అయితే (*str_k) {
+				పూర్ణాంకం flag;
+				స్థిరరాశి అక్షరం *idx;
 
-				if (*str_k == ',' && !i++) {
+				ఒకవేళ (*str_k == ',' && !i++) {
 					str_k++;
-					break;
+					ఆపు;
 				} /* no else needed: fall through to syntax error
 					because comma isn't in OPT_STR */
 				idx = strchr(OPT_STR, *str_k);
-				if (!idx)
-					bb_simple_error_msg_and_die("unknown key option");
+				ఒకవేళ (!idx)
+					bb_simple_error_సందేశం_and_die("unknown key option");
 				flag = 1 << (idx - OPT_STR);
-				if (flag & ~FLAG_allowed_for_k)
-					bb_simple_error_msg_and_die("unknown sort type");
+				ఒకవేళ (flag & ~FLAG_allowed_for_k)
+					bb_simple_error_సందేశం_and_die("unknown sort type");
 				/* b after ',' means strip _trailing_ space */
-				if (i && flag == FLAG_b)
+				ఒకవేళ (i && flag == FLAG_b)
 					flag = FLAG_bb;
-				key->flags |= flag;
+				కీలకం->flags |= flag;
 				str_k++;
 			}
 		}
 	}
-#endif
+#అయితే_ముగింపు
 
 	/* Open input files and read data */
 	argv += optind;
-	if (!*argv)
-		*--argv = (char*)"-";
+	ఒకవేళ (!*argv)
+		*--argv = (అక్షరం*)"-";
 	linecount = 0;
-	lines = NULL;
-	do {
+	పంక్తులు = ఖాళీ;
+	చేయి {
 		/* coreutils 6.9 compat: abort on first open error,
 		 * do not continue to next file: */
 		FILE *fp = xfopen_stdin(*argv);
-		for (;;) {
-			char *line = GET_LINE(fp);
-			if (!line)
-				break;
+		కొరకు (;;) {
+			అక్షరం *పంక్తి = GET_పంక్తి(fp);
+			ఒకవేళ (!పంక్తి)
+				ఆపు;
 
-#if ENABLE_FEATURE_SORT_OPTIMIZE_MEMORY
-			if (count_to_optimize_dups != 0)
-				count_to_optimize_dups--;
-			if (count_to_optimize_dups == 0) {
-				size_t len;
-				char *new_line;
+#ఒకవేళ ENABLE_FEATURE_క్రమీకరించు_OPTIMIZE_జ్ఞాపకం
+			ఒకవేళ (లెక్క_గమ్యం_optimize_dups != 0)
+				లెక్క_గమ్యం_optimize_dups--;
+			ఒకవేళ (లెక్క_గమ్యం_optimize_dups == 0) {
+				కొలత_t len;
+				అక్షరం *new_పంక్తి;
 
 				/* On kernel/linux/arch/ *.[ch] files,
 				 * this reduces memory usage by 6%.
 				 *  yes | head -99999999 | sort
 				 * goes down from 1900Mb to 380 Mb.
 				 */
-				len = strlen(line);
-				if (len <= prev_len) {
-					new_line = prev_line + (prev_len - len);
-					if (strcmp(line, new_line) == 0) {
+				len = అక్షరశ్రేణి_పొడవు(పంక్తి);
+				ఒకవేళ (len <= prev_len) {
+					new_పంక్తి = prev_పంక్తి + (prev_len - len);
+					ఒకవేళ (strcmp(పంక్తి, new_పంక్తి) == 0) {
 						/* it's a tail of the prev line */
-						if (can_drop_dups && prev_len == len) {
+						ఒకవేళ (can_drop_dups && prev_len == len) {
 							/* it's identical to prev line */
-							free(line);
-							continue;
+							విడుదల(పంక్తి);
+							కొనసాగు;
 						}
-						free(line);
-						line = new_line;
+						విడుదల(పంక్తి);
+						పంక్తి = new_పంక్తి;
 						/* continue using longer prev_line
 						 * for future tail tests.
 						 */
-						goto skip;
+						వెళ్ళు skip;
 					}
 				}
 				prev_len = len;
-				prev_line = line;
+				prev_పంక్తి = పంక్తి;
  skip: ;
 			}
-#else
+#లేకపోతే
 //TODO: lighter version which only drops total dups if can_drop_dups == true
-#endif
-			lines = xrealloc_vector(lines, 6, linecount);
-			lines[linecount++] = line;
+#అయితే_ముగింపు
+			పంక్తులు = xrealloc_సదిశ(పంక్తులు, 6, linecount);
+			పంక్తులు[linecount++] = పంక్తి;
 		}
 		fclose_if_not_stdin(fp);
-	} while (*++argv);
+	} అయితే (*++argv);
 
-#if ENABLE_FEATURE_SORT_BIG
+#ఒకవేళ ENABLE_FEATURE_క్రమీకరించు_BIG
 	/* If no key, perform alphabetic sort */
-	if (!key_list)
-		add_key()->range[0] = 1;
+	ఒకవేళ (!కీలకం_list)
+		కూడు_కీలకం()->range[0] = 1;
 	/* Handle -c */
-	if (option_mask32 & FLAG_c) {
-		int j = (option_mask32 & FLAG_u) ? -1 : 0;
-		for (i = 1; i < linecount; i++) {
-			if (compare_keys(&lines[i-1], &lines[i]) > j) {
+	ఒకవేళ (option_mask32 & FLAG_c) {
+		పూర్ణాంకం j = (option_mask32 & FLAG_u) ? -1 : 0;
+		కొరకు (i = 1; i < linecount; i++) {
+			ఒకవేళ (compare_కీలకాలు(&పంక్తులు[i-1], &పంక్తులు[i]) > j) {
 				fprintf(stderr, "Check line %u\n", i);
-				return EXIT_FAILURE;
+				తిరిగి EXIT_FAILURE;
 			}
 		}
-		return EXIT_SUCCESS;
+		తిరిగి EXIT_SUCCESS;
 	}
-#endif
+#అయితే_ముగింపు
 
 	/* For stable sort, store original line position beyond terminating NUL */
-	if (option_mask32 & FLAG_s) {
-		for (i = 0; i < linecount; i++) {
+	ఒకవేళ (option_mask32 & FLAG_s) {
+		కొరకు (i = 0; i < linecount; i++) {
 			uint32_t *p32;
-			char *line;
-			unsigned len;
+			అక్షరం *పంక్తి;
+			గుర్తులేని len;
 
-			line = lines[i];
-			len = (strlen(line) + 4) & (~3u);
-			lines[i] = line = xrealloc(line, len + 4);
-			p32 = (void*)(line + len);
+			పంక్తి = పంక్తులు[i];
+			len = (అక్షరశ్రేణి_పొడవు(పంక్తి) + 4) & (~3u);
+			పంక్తులు[i] = పంక్తి = xrealloc(పంక్తి, len + 4);
+			p32 = (శూన్య*)(పంక్తి + len);
 			*p32 = i;
 		}
 		/*option_mask32 |= FLAG_no_tie_break;*/
@@ -647,37 +647,37 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 	}
 
 	/* Perform the actual sort */
-	qsort(lines, linecount, sizeof(lines[0]), compare_keys);
+	qsort(పంక్తులు, linecount, పరిమాణం(పంక్తులు[0]), compare_కీలకాలు);
 
 	/* Handle -u */
-	if (option_mask32 & FLAG_u) {
-		int j = 0;
+	ఒకవేళ (option_mask32 & FLAG_u) {
+		పూర్ణాంకం j = 0;
 		/* coreutils 6.3 drop lines for which only key is the same:
 		 * - disabling last-resort compare, or else compare_keys()
 		 * will be the same only for completely identical lines
 		 * - disabling -s (same reasons)
 		 */
 		option_mask32 = (option_mask32 | FLAG_no_tie_break) & (~FLAG_s);
-		for (i = 1; i < linecount; i++) {
-			if (compare_keys(&lines[j], &lines[i]) == 0)
-				free(lines[i]);
-			else
-				lines[++j] = lines[i];
+		కొరకు (i = 1; i < linecount; i++) {
+			ఒకవేళ (compare_కీలకాలు(&పంక్తులు[j], &పంక్తులు[i]) == 0)
+				విడుదల(పంక్తులు[i]);
+			లేకపోతే
+				పంక్తులు[++j] = పంక్తులు[i];
 		}
-		if (linecount)
+		ఒకవేళ (linecount)
 			linecount = j+1;
 	}
 
 	/* Print it */
-#if ENABLE_FEATURE_SORT_BIG
+#ఒకవేళ ENABLE_FEATURE_క్రమీకరించు_BIG
 	/* Open output file _after_ we read all input ones */
-	if (option_mask32 & FLAG_o)
+	ఒకవేళ (option_mask32 & FLAG_o)
 		xmove_fd(xopen(str_o, O_WRONLY|O_CREAT|O_TRUNC), STDOUT_FILENO);
-#endif
+#అయితే_ముగింపు
 	{
-		int ch = (option_mask32 & FLAG_z) ? '\0' : '\n';
-		for (i = 0; i < linecount; i++)
-			printf("%s%c", lines[i], ch);
+		పూర్ణాంకం ch = (option_mask32 & FLAG_z) ? '\0' : '\n';
+		కొరకు (i = 0; i < linecount; i++)
+			రాయి("%s%c", పంక్తులు[i], ch);
 	}
 
 	fflush_stdout_and_exit_SUCCESS();

@@ -20,8 +20,8 @@
 
 
 /* #include "libbb.h" - done in od.c */
-#include "common_bufsiz.h"
-#define assert(a) ((void)0)
+#అన్తర్భావ "common_bufsiz.h"
+#నిర్వచించు ప్రతిజ్ఞా(a) ((శూన్య)0)
 
 
 //usage:#if ENABLE_DESKTOP
@@ -38,7 +38,7 @@
 //usage:       "Print FILEs (or stdin) unambiguously, as octal bytes by default"
 //usage:#endif
 
-enum {
+గణన {
 	OPT_A = 1 << 0,
 	OPT_N = 1 << 1,
 	OPT_a = 1 << 2,
@@ -70,48 +70,48 @@ enum {
 	OPT_traditional = (1 << 25) * ENABLE_LONG_OPTS,
 };
 
-#define OD_GETOPT32() getopt32long(argv, \
+#నిర్వచించు OD_GETOPT32() getopt32long(argv, \
 	"A:N:abcdDfhHiIj:lLoOBt:*vxXsS:w:+:", od_longopts, \
 	/* -w with optional param */ \
 	/* -S was -s and also had optional parameter */ \
 	/* but in coreutils 6.3 it was renamed and now has */ \
 	/* _mandatory_ parameter */ \
-	&str_A, &str_N, &str_j, &lst_t, &str_S, &G.bytes_per_block)
+	&str_A, &str_N, &str_j, &lst_t, &str_S, &G.బైట్లు_చొప్పున_ఖండం)
 
 
 /* Check for 0x7f is a coreutils 6.3 addition */
-#define ISPRINT(c) (((c) >= ' ') && (c) < 0x7f)
+#నిర్వచించు ISPRINT(c) (((c) >= ' ') && (c) < 0x7f)
 
-typedef long double longdouble_t;
-typedef unsigned long long ulonglong_t;
-typedef long long llong;
+రకనిర్వచనం దీర్ఘ ద్విగుణ longdouble_t;
+రకనిర్వచనం గుర్తులేని దీర్ఘ దీర్ఘ ulonglong_t;
+రకనిర్వచనం దీర్ఘ దీర్ఘ llong;
 
-#if ENABLE_LFS
+#ఒకవేళ ENABLE_LFS
 # define xstrtooff_sfx xstrtoull_sfx
-#else
+#లేకపోతే
 # define xstrtooff_sfx xstrtoul_sfx
-#endif
+#అయితే_ముగింపు
 
 /* The default number of input bytes per output line.  */
-#define DEFAULT_BYTES_PER_BLOCK 16
+#నిర్వచించు DEFAULT_బైట్లు_చొప్పున_ఖండం 16
 
 /* The number of decimal digits of precision in a float.  */
-#ifndef FLT_DIG
+#నిర్వచితం_కాకపోతే FLT_DIG
 # define FLT_DIG 7
-#endif
+#అయితే_ముగింపు
 
 /* The number of decimal digits of precision in a double.  */
-#ifndef DBL_DIG
+#నిర్వచితం_కాకపోతే DBL_DIG
 # define DBL_DIG 15
-#endif
+#అయితే_ముగింపు
 
 /* The number of decimal digits of precision in a long double.  */
-#ifndef LDBL_DIG
+#నిర్వచితం_కాకపోతే LDBL_DIG
 # define LDBL_DIG DBL_DIG
-#endif
+#అయితే_ముగింపు
 
-enum size_spec {
-	NO_SIZE,
+గణన కొలత_spec {
+	NO_కొలత,
 	CHAR,
 	SHORT,
 	INT,
@@ -120,28 +120,28 @@ enum size_spec {
 	FLOAT_SINGLE,
 	FLOAT_DOUBLE,
 	FLOAT_LONG_DOUBLE,
-	N_SIZE_SPECS
+	N_కొలత_SPECS
 };
 
-enum output_format {
+గణన output_format {
 	SIGNED_DECIMAL,
 	UNSIGNED_DECIMAL,
 	OCTAL,
 	HEXADECIMAL,
-	FLOATING_POINT,
+	FLOATING_బిందువు,
 	NAMED_CHARACTER,
 	CHARACTER
 };
 
 /* Each output format specification (from '-t spec' or from
    old-style options) is represented by one of these structures.  */
-struct tspec {
-	enum output_format fmt;
-	enum size_spec size;
-	void (*print_function) (size_t, const char *, const char *);
-	char *fmt_string;
-	int hexl_mode_trailer;
-	int field_width;
+నిర్మాణం tspec {
+	గణన output_format fmt;
+	గణన కొలత_spec కొలత;
+	శూన్య (*print_function) (కొలత_t, స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *);
+	అక్షరం *fmt_string;
+	పూర్ణాంకం hexl_బహుళకం_trailer;
+	పూర్ణాంకం క్షేత్రం_వెడల్పు;
 };
 
 /* Convert the number of 8-bit bytes of a binary representation to
@@ -154,55 +154,55 @@ struct tspec {
    10	unsigned decimal
    8	unsigned hexadecimal  */
 
-static const uint8_t bytes_to_oct_digits[] ALIGN1 =
+స్థిర స్థిరరాశి uint8_t బైట్లు_గమ్యం_oct_digits[] ALIGN1 =
 {0, 3, 6, 8, 11, 14, 16, 19, 22, 25, 27, 30, 32, 35, 38, 41, 43};
 
-static const uint8_t bytes_to_signed_dec_digits[] ALIGN1 =
+స్థిర స్థిరరాశి uint8_t బైట్లు_గమ్యం_signed_dec_digits[] ALIGN1 =
 {1, 4, 6, 8, 11, 13, 16, 18, 20, 23, 25, 28, 30, 33, 35, 37, 40};
 
-static const uint8_t bytes_to_unsigned_dec_digits[] ALIGN1 =
+స్థిర స్థిరరాశి uint8_t బైట్లు_గమ్యం_unsigned_dec_digits[] ALIGN1 =
 {0, 3, 5, 8, 10, 13, 15, 17, 20, 22, 25, 27, 29, 32, 34, 37, 39};
 
-static const uint8_t bytes_to_hex_digits[] ALIGN1 =
+స్థిర స్థిరరాశి uint8_t బైట్లు_గమ్యం_hex_digits[] ALIGN1 =
 {0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32};
 
 /* Convert enum size_spec to the size of the named type.  */
-static const signed char width_bytes[] ALIGN1 = {
+స్థిర స్థిరరాశి గుర్తుగల అక్షరం వెడల్పు_బైట్లు[] ALIGN1 = {
 	-1,
-	sizeof(char),
-	sizeof(short),
-	sizeof(int),
-	sizeof(long),
-	sizeof(ulonglong_t),
-	sizeof(float),
-	sizeof(double),
-	sizeof(longdouble_t)
+	పరిమాణం(అక్షరం),
+	పరిమాణం(పొట్టి),
+	పరిమాణం(పూర్ణాంకం),
+	పరిమాణం(దీర్ఘ),
+	పరిమాణం(ulonglong_t),
+	పరిమాణం(దశాంశం),
+	పరిమాణం(ద్విగుణ),
+	పరిమాణం(longdouble_t)
 };
 /* Ensure that for each member of 'enum size_spec' there is an
    initializer in the width_bytes array.  */
-struct ERR_width_bytes_has_bad_size {
-	char ERR_width_bytes_has_bad_size[ARRAY_SIZE(width_bytes) == N_SIZE_SPECS ? 1 : -1];
+నిర్మాణం ERR_వెడల్పు_బైట్లు_has_bad_కొలత {
+	అక్షరం ERR_వెడల్పు_బైట్లు_has_bad_కొలత[ARRAY_కొలత(వెడల్పు_బైట్లు) == N_కొలత_SPECS ? 1 : -1];
 };
 
-struct globals {
-	smallint exit_code;
+నిర్మాణం globals {
+	smallint exit_సంకేతం;
 
-	unsigned string_min;
+	గుర్తులేని string_min;
 
 	/* An array of specs describing how to format each input block.  */
-	unsigned n_specs;
-	struct tspec *spec;
+	గుర్తులేని n_specs;
+	నిర్మాణం tspec *spec;
 
 	/* Function that accepts an address and an optional following char,
 	   and prints the address and char to stdout.  */
-	void (*format_address)(off_t, char);
+	శూన్య (*format_చిరునామా)(off_t, అక్షరం);
 
 	/* The difference between the old-style pseudo starting address and
 	   the number of bytes to skip.  */
-#if ENABLE_LONG_OPTS
-	off_t pseudo_offset;
-# define G_pseudo_offset G.pseudo_offset
-#endif
+#ఒకవేళ ENABLE_LONG_OPTS
+	off_t pseudo_స్థానభ్రంశం;
+# define G_pseudo_స్థానభ్రంశం G.pseudo_స్థానభ్రంశం
+#అయితే_ముగింపు
 	/* When zero, MAX_BYTES_TO_FORMAT and END_OFFSET are ignored, and all
 	   input is formatted.  */
 
@@ -210,196 +210,196 @@ struct globals {
 	   a multiple of the least common multiple of the sizes associated with
 	   the specified output types.  It should be as large as possible, but
 	   no larger than 16 -- unless specified with the -w option.  */
-	unsigned bytes_per_block; /* have to use unsigned, not size_t */
+	గుర్తులేని బైట్లు_చొప్పున_ఖండం; /* have to use unsigned, not size_t */
 
 	/* A NULL-terminated list of the file-arguments from the command line.  */
-	const char *const *file_list;
+	స్థిరరాశి అక్షరం *స్థిరరాశి *file_list;
 
 	/* The input stream associated with the current file.  */
-	FILE *in_stream;
+	FILE *లోపల_ప్రవాహం;
 
-	bool not_first;
+	bool not_మొదటి;
 	bool prev_pair_equal;
 
-	char address_fmt[sizeof("%0n"OFF_FMT"xc")];
+	అక్షరం చిరునామా_fmt[పరిమాణం("%0n"OFF_FMT"xc")];
 } FIX_ALIASING;
 /* Corresponds to 'x' above */
-#define address_base_char G.address_fmt[sizeof(G.address_fmt)-3]
+#నిర్వచించు చిరునామా_పునాది_char G.చిరునామా_fmt[పరిమాణం(G.చిరునామా_fmt)-3]
 /* Corresponds to 'n' above */
-#define address_pad_len_char G.address_fmt[2]
+#నిర్వచించు చిరునామా_pad_len_char G.చిరునామా_fmt[2]
 
-#if !ENABLE_LONG_OPTS
-enum { G_pseudo_offset = 0 };
-#endif
-#define G (*(struct globals*)bb_common_bufsiz1)
-#define INIT_G() do { \
-	setup_common_bufsiz(); \
-	BUILD_BUG_ON(sizeof(G) > COMMON_BUFSIZE); \
-	G.bytes_per_block = 32; \
-	strcpy(G.address_fmt, "%0n"OFF_FMT"xc"); \
-} while (0)
+#ఒకవేళ !ENABLE_LONG_OPTS
+గణన { G_pseudo_స్థానభ్రంశం = 0 };
+#అయితే_ముగింపు
+#నిర్వచించు G (*(నిర్మాణం globals*)bb_common_bufsiz1)
+#నిర్వచించు INIT_G() చేయి { \
+	అమరిక_common_bufsiz(); \
+	BUILD_BUG_ON(పరిమాణం(G) > COMMON_BUFSIZE); \
+	G.బైట్లు_చొప్పున_ఖండం = 32; \
+	strcpy(G.చిరునామా_fmt, "%0n"OFF_FMT"xc"); \
+} అయితే (0)
 
 
-#define MAX_INTEGRAL_TYPE_SIZE sizeof(ulonglong_t)
-static const unsigned char integral_type_size[MAX_INTEGRAL_TYPE_SIZE + 1] ALIGN1 = {
-	[sizeof(char)] = CHAR,
-#if USHRT_MAX != UCHAR_MAX
-	[sizeof(short)] = SHORT,
-#endif
-#if UINT_MAX != USHRT_MAX
-	[sizeof(int)] = INT,
-#endif
-#if ULONG_MAX != UINT_MAX
-	[sizeof(long)] = LONG,
-#endif
-#if ULLONG_MAX != ULONG_MAX
-	[sizeof(ulonglong_t)] = LONG_LONG,
-#endif
+#నిర్వచించు MAX_INTEGRAL_TYPE_కొలత పరిమాణం(ulonglong_t)
+స్థిర స్థిరరాశి గుర్తులేని అక్షరం integral_type_కొలత[MAX_INTEGRAL_TYPE_కొలత + 1] ALIGN1 = {
+	[పరిమాణం(అక్షరం)] = CHAR,
+#ఒకవేళ USHRT_MAX != UCHAR_MAX
+	[పరిమాణం(పొట్టి)] = SHORT,
+#అయితే_ముగింపు
+#ఒకవేళ UINT_MAX != USHRT_MAX
+	[పరిమాణం(పూర్ణాంకం)] = INT,
+#అయితే_ముగింపు
+#ఒకవేళ ULONG_MAX != UINT_MAX
+	[పరిమాణం(దీర్ఘ)] = LONG,
+#అయితే_ముగింపు
+#ఒకవేళ ULLONG_MAX != ULONG_MAX
+	[పరిమాణం(ulonglong_t)] = LONG_LONG,
+#అయితే_ముగింపు
 };
 
-#define MAX_FP_TYPE_SIZE sizeof(longdouble_t)
-static const unsigned char fp_type_size[MAX_FP_TYPE_SIZE + 1] ALIGN1 = {
+#నిర్వచించు MAX_FP_TYPE_కొలత పరిమాణం(longdouble_t)
+స్థిర స్థిరరాశి గుర్తులేని అక్షరం fp_type_కొలత[MAX_FP_TYPE_కొలత + 1] ALIGN1 = {
 	/* gcc seems to allow repeated indexes. Last one wins */
-	[sizeof(longdouble_t)] = FLOAT_LONG_DOUBLE,
-	[sizeof(double)] = FLOAT_DOUBLE,
-	[sizeof(float)] = FLOAT_SINGLE
+	[పరిమాణం(longdouble_t)] = FLOAT_LONG_DOUBLE,
+	[పరిమాణం(ద్విగుణ)] = FLOAT_DOUBLE,
+	[పరిమాణం(దశాంశం)] = FLOAT_SINGLE
 };
 
 
-static unsigned
-gcd(unsigned u, unsigned v)
+స్థిర గుర్తులేని
+గరిష్ఠ_సామాన్య_భాజకం(గుర్తులేని u, గుర్తులేని v)
 {
-	unsigned t;
-	while (v != 0) {
+	గుర్తులేని t;
+	అయితే (v != 0) {
 		t = u % v;
 		u = v;
 		v = t;
 	}
-	return u;
+	తిరిగి u;
 }
 
 /* Compute the least common multiple of U and V.  */
-static unsigned
-lcm(unsigned u, unsigned v) {
-	unsigned t = gcd(u, v);
-	if (t == 0)
-		return 0;
-	return u * v / t;
+స్థిర గుర్తులేని
+lcm(గుర్తులేని u, గుర్తులేని v) {
+	గుర్తులేని t = గరిష్ఠ_సామాన్య_భాజకం(u, v);
+	ఒకవేళ (t == 0)
+		తిరిగి 0;
+	తిరిగి u * v / t;
 }
 
-static void
-print_s_char(size_t n_bytes, const char *block, const char *fmt_string)
+స్థిర శూన్య
+print_s_char(కొలత_t n_బైట్లు, స్థిరరాశి అక్షరం *ఖండం, స్థిరరాశి అక్షరం *fmt_string)
 {
-	while (n_bytes--) {
-		int tmp = *(signed char *) block;
-		printf(fmt_string, tmp);
-		block += sizeof(unsigned char);
+	అయితే (n_బైట్లు--) {
+		పూర్ణాంకం tmp = *(గుర్తుగల అక్షరం *) ఖండం;
+		రాయి(fmt_string, tmp);
+		ఖండం += పరిమాణం(గుర్తులేని అక్షరం);
 	}
 }
 
-static void
-print_char(size_t n_bytes, const char *block, const char *fmt_string)
+స్థిర శూన్య
+print_char(కొలత_t n_బైట్లు, స్థిరరాశి అక్షరం *ఖండం, స్థిరరాశి అక్షరం *fmt_string)
 {
-	while (n_bytes--) {
-		unsigned tmp = *(unsigned char *) block;
-		printf(fmt_string, tmp);
-		block += sizeof(unsigned char);
+	అయితే (n_బైట్లు--) {
+		గుర్తులేని tmp = *(గుర్తులేని అక్షరం *) ఖండం;
+		రాయి(fmt_string, tmp);
+		ఖండం += పరిమాణం(గుర్తులేని అక్షరం);
 	}
 }
 
-static void
-print_s_short(size_t n_bytes, const char *block, const char *fmt_string)
+స్థిర శూన్య
+print_s_short(కొలత_t n_బైట్లు, స్థిరరాశి అక్షరం *ఖండం, స్థిరరాశి అక్షరం *fmt_string)
 {
-	n_bytes /= sizeof(signed short);
-	while (n_bytes--) {
-		int tmp = *(signed short *) block;
-		printf(fmt_string, tmp);
-		block += sizeof(unsigned short);
+	n_బైట్లు /= పరిమాణం(గుర్తుగల పొట్టి);
+	అయితే (n_బైట్లు--) {
+		పూర్ణాంకం tmp = *(గుర్తుగల పొట్టి *) ఖండం;
+		రాయి(fmt_string, tmp);
+		ఖండం += పరిమాణం(గుర్తులేని పొట్టి);
 	}
 }
 
-static void
-print_short(size_t n_bytes, const char *block, const char *fmt_string)
+స్థిర శూన్య
+print_short(కొలత_t n_బైట్లు, స్థిరరాశి అక్షరం *ఖండం, స్థిరరాశి అక్షరం *fmt_string)
 {
-	n_bytes /= sizeof(unsigned short);
-	while (n_bytes--) {
-		unsigned tmp = *(unsigned short *) block;
-		printf(fmt_string, tmp);
-		block += sizeof(unsigned short);
+	n_బైట్లు /= పరిమాణం(గుర్తులేని పొట్టి);
+	అయితే (n_బైట్లు--) {
+		గుర్తులేని tmp = *(గుర్తులేని పొట్టి *) ఖండం;
+		రాయి(fmt_string, tmp);
+		ఖండం += పరిమాణం(గుర్తులేని పొట్టి);
 	}
 }
 
-static void
-print_int(size_t n_bytes, const char *block, const char *fmt_string)
+స్థిర శూన్య
+print_int(కొలత_t n_బైట్లు, స్థిరరాశి అక్షరం *ఖండం, స్థిరరాశి అక్షరం *fmt_string)
 {
-	n_bytes /= sizeof(unsigned);
-	while (n_bytes--) {
-		unsigned tmp = *(unsigned *) block;
-		printf(fmt_string, tmp);
-		block += sizeof(unsigned);
+	n_బైట్లు /= పరిమాణం(గుర్తులేని);
+	అయితే (n_బైట్లు--) {
+		గుర్తులేని tmp = *(గుర్తులేని *) ఖండం;
+		రాయి(fmt_string, tmp);
+		ఖండం += పరిమాణం(గుర్తులేని);
 	}
 }
 
-#if UINT_MAX == ULONG_MAX
+#ఒకవేళ UINT_MAX == ULONG_MAX
 # define print_long print_int
-#else
-static void
-print_long(size_t n_bytes, const char *block, const char *fmt_string)
+#లేకపోతే
+స్థిర శూన్య
+print_long(కొలత_t n_బైట్లు, స్థిరరాశి అక్షరం *ఖండం, స్థిరరాశి అక్షరం *fmt_string)
 {
-	n_bytes /= sizeof(unsigned long);
-	while (n_bytes--) {
-		unsigned long tmp = *(unsigned long *) block;
-		printf(fmt_string, tmp);
-		block += sizeof(unsigned long);
+	n_బైట్లు /= పరిమాణం(గుర్తులేని దీర్ఘ);
+	అయితే (n_బైట్లు--) {
+		గుర్తులేని దీర్ఘ tmp = *(గుర్తులేని దీర్ఘ *) ఖండం;
+		రాయి(fmt_string, tmp);
+		ఖండం += పరిమాణం(గుర్తులేని దీర్ఘ);
 	}
 }
-#endif
+#అయితే_ముగింపు
 
-#if ULONG_MAX == ULLONG_MAX
+#ఒకవేళ ULONG_MAX == ULLONG_MAX
 # define print_long_long print_long
-#else
-static void
-print_long_long(size_t n_bytes, const char *block, const char *fmt_string)
+#లేకపోతే
+స్థిర శూన్య
+print_long_long(కొలత_t n_బైట్లు, స్థిరరాశి అక్షరం *ఖండం, స్థిరరాశి అక్షరం *fmt_string)
 {
-	n_bytes /= sizeof(ulonglong_t);
-	while (n_bytes--) {
-		ulonglong_t tmp = *(ulonglong_t *) block;
-		printf(fmt_string, tmp);
-		block += sizeof(ulonglong_t);
+	n_బైట్లు /= పరిమాణం(ulonglong_t);
+	అయితే (n_బైట్లు--) {
+		ulonglong_t tmp = *(ulonglong_t *) ఖండం;
+		రాయి(fmt_string, tmp);
+		ఖండం += పరిమాణం(ulonglong_t);
 	}
 }
-#endif
+#అయితే_ముగింపు
 
-static void
-print_float(size_t n_bytes, const char *block, const char *fmt_string)
+స్థిర శూన్య
+print_float(కొలత_t n_బైట్లు, స్థిరరాశి అక్షరం *ఖండం, స్థిరరాశి అక్షరం *fmt_string)
 {
-	n_bytes /= sizeof(float);
-	while (n_bytes--) {
-		float tmp = *(float *) block;
-		printf(fmt_string, tmp);
-		block += sizeof(float);
-	}
-}
-
-static void
-print_double(size_t n_bytes, const char *block, const char *fmt_string)
-{
-	n_bytes /= sizeof(double);
-	while (n_bytes--) {
-		double tmp = *(double *) block;
-		printf(fmt_string, tmp);
-		block += sizeof(double);
+	n_బైట్లు /= పరిమాణం(దశాంశం);
+	అయితే (n_బైట్లు--) {
+		దశాంశం tmp = *(దశాంశం *) ఖండం;
+		రాయి(fmt_string, tmp);
+		ఖండం += పరిమాణం(దశాంశం);
 	}
 }
 
-static void
-print_long_double(size_t n_bytes, const char *block, const char *fmt_string)
+స్థిర శూన్య
+print_double(కొలత_t n_బైట్లు, స్థిరరాశి అక్షరం *ఖండం, స్థిరరాశి అక్షరం *fmt_string)
 {
-	n_bytes /= sizeof(longdouble_t);
-	while (n_bytes--) {
-		longdouble_t tmp = *(longdouble_t *) block;
-		printf(fmt_string, tmp);
-		block += sizeof(longdouble_t);
+	n_బైట్లు /= పరిమాణం(ద్విగుణ);
+	అయితే (n_బైట్లు--) {
+		ద్విగుణ tmp = *(ద్విగుణ *) ఖండం;
+		రాయి(fmt_string, tmp);
+		ఖండం += పరిమాణం(ద్విగుణ);
+	}
+}
+
+స్థిర శూన్య
+print_long_double(కొలత_t n_బైట్లు, స్థిరరాశి అక్షరం *ఖండం, స్థిరరాశి అక్షరం *fmt_string)
+{
+	n_బైట్లు /= పరిమాణం(longdouble_t);
+	అయితే (n_బైట్లు--) {
+		longdouble_t tmp = *(longdouble_t *) ఖండం;
+		రాయి(fmt_string, tmp);
+		ఖండం += పరిమాణం(longdouble_t);
 	}
 }
 
@@ -407,12 +407,12 @@ print_long_double(size_t n_bytes, const char *block, const char *fmt_string)
  * Remember, someday you may want to pump gigabytes through this thing.
  * Saving a dozen of .text bytes here is counter-productive */
 
-static void
-print_named_ascii(size_t n_bytes, const char *block,
-		const char *unused_fmt_string UNUSED_PARAM)
+స్థిర శూన్య
+print_named_ascii(కొలత_t n_బైట్లు, స్థిరరాశి అక్షరం *ఖండం,
+		స్థిరరాశి అక్షరం *వాడని_fmt_string వాడని_PARAM)
 {
 	/* Names for some non-printing characters.  */
-	static const char charname[33][3] ALIGN1 = {
+	స్థిర స్థిరరాశి అక్షరం charname[33][3] ALIGN1 = {
 		"nul", "soh", "stx", "etx", "eot", "enq", "ack", "bel",
 		" bs", " ht", " nl", " vt", " ff", " cr", " so", " si",
 		"dle", "dc1", "dc2", "dc3", "dc4", "nak", "syn", "etb",
@@ -420,24 +420,24 @@ print_named_ascii(size_t n_bytes, const char *block,
 		" sp"
 	};
 	// buf[N] pos:  01234 56789
-	char buf[12] = "   x\0 xxx\0";
+	అక్షరం buf[12] = "   x\0 xxx\0";
 	// [12] because we take three 32bit stack slots anyway, and
 	// gcc is too dumb to initialize with constant stores,
 	// it copies initializer from rodata. Oh well.
 	// https://gcc.gnu.org/bugzilla/show_bug.cgi?id=65410
 
-	while (n_bytes--) {
-		unsigned masked_c = *(unsigned char *) block++;
+	అయితే (n_బైట్లు--) {
+		గుర్తులేని masked_c = *(గుర్తులేని అక్షరం *) ఖండం++;
 
 		masked_c &= 0x7f;
-		if (masked_c == 0x7f) {
+		ఒకవేళ (masked_c == 0x7f) {
 			fputs_stdout(" del");
-			continue;
+			కొనసాగు;
 		}
-		if (masked_c > ' ') {
+		ఒకవేళ (masked_c > ' ') {
 			buf[3] = masked_c;
 			fputs_stdout(buf);
-			continue;
+			కొనసాగు;
 		}
 		/* Why? Because printf(" %3.3s") is much slower... */
 		buf[6] = charname[masked_c][0];
@@ -447,48 +447,48 @@ print_named_ascii(size_t n_bytes, const char *block,
 	}
 }
 
-static void
-print_ascii(size_t n_bytes, const char *block,
-		const char *unused_fmt_string UNUSED_PARAM)
+స్థిర శూన్య
+print_ascii(కొలత_t n_బైట్లు, స్థిరరాశి అక్షరం *ఖండం,
+		స్థిరరాశి అక్షరం *వాడని_fmt_string వాడని_PARAM)
 {
 	// buf[N] pos:  01234 56789
-	char buf[12] = "   x\0 xxx\0";
+	అక్షరం buf[12] = "   x\0 xxx\0";
 
-	while (n_bytes--) {
-		const char *s;
-		unsigned c = *(unsigned char *) block++;
+	అయితే (n_బైట్లు--) {
+		స్థిరరాశి అక్షరం *s;
+		గుర్తులేని c = *(గుర్తులేని అక్షరం *) ఖండం++;
 
-		if (ISPRINT(c)) {
+		ఒకవేళ (ISPRINT(c)) {
 			buf[3] = c;
 			fputs_stdout(buf);
-			continue;
+			కొనసాగు;
 		}
-		switch (c) {
-		case '\0':
+		ఎంపిక (c) {
+		స్థితి '\0':
 			s = "  \\0";
-			break;
-		case '\007':
+			ఆపు;
+		స్థితి '\007':
 			s = "  \\a";
-			break;
-		case '\b':
+			ఆపు;
+		స్థితి '\b':
 			s = "  \\b";
-			break;
-		case '\f':
+			ఆపు;
+		స్థితి '\f':
 			s = "  \\f";
-			break;
-		case '\n':
+			ఆపు;
+		స్థితి '\n':
 			s = "  \\n";
-			break;
-		case '\r':
+			ఆపు;
+		స్థితి '\r':
 			s = "  \\r";
-			break;
-		case '\t':
+			ఆపు;
+		స్థితి '\t':
 			s = "  \\t";
-			break;
-		case '\v':
+			ఆపు;
+		స్థితి '\v':
 			s = "  \\v";
-			break;
-		default:
+			ఆపు;
+		అప్రమేయ:
 			buf[6] = (c >> 6 & 3) + '0';
 			buf[7] = (c >> 3 & 7) + '0';
 			buf[8] = (c & 7) + '0';
@@ -505,21 +505,21 @@ print_ascii(size_t n_bytes, const char *block,
    interpreted as standard input.  If any file open fails, give an error
    message and return nonzero.  */
 
-static void
-open_next_file(void)
+స్థిర శూన్య
+open_తదుపరి_file(శూన్య)
 {
-	while (1) {
-		if (!*G.file_list)
-			return;
-		G.in_stream = fopen_or_warn_stdin(*G.file_list++);
-		if (G.in_stream) {
-			break;
+	అయితే (1) {
+		ఒకవేళ (!*G.file_list)
+			తిరిగి;
+		G.లోపల_ప్రవాహం = fopen_or_warn_stdin(*G.file_list++);
+		ఒకవేళ (G.లోపల_ప్రవాహం) {
+			ఆపు;
 		}
-		G.exit_code = 1;
+		G.exit_సంకేతం = 1;
 	}
 
-	if ((option_mask32 & (OPT_N|OPT_S)) == OPT_N)
-		setbuf(G.in_stream, NULL);
+	ఒకవేళ ((option_mask32 & (OPT_N|OPT_S)) == OPT_N)
+		setbuf(G.లోపల_ప్రవాహం, ఖాళీ);
 }
 
 /* Test whether there have been errors on in_stream, and close it if
@@ -529,23 +529,23 @@ open_next_file(void)
    have occurred.  IN_ERRNO, if nonzero, is the error number
    corresponding to the most recent action for IN_STREAM.  */
 
-static void
-check_and_close(void)
+స్థిర శూన్య
+check_and_close(శూన్య)
 {
-	if (G.in_stream) {
-		if (ferror(G.in_stream))	{
-			bb_error_msg("%s: read error", (G.in_stream == stdin)
-					? bb_msg_standard_input
+	ఒకవేళ (G.లోపల_ప్రవాహం) {
+		ఒకవేళ (ferror(G.లోపల_ప్రవాహం))	{
+			bb_error_సందేశం("%s: read error", (G.లోపల_ప్రవాహం == stdin)
+					? bb_సందేశం_standard_ఆదానం
 					: G.file_list[-1]
 			);
-			G.exit_code = 1;
+			G.exit_సంకేతం = 1;
 		}
-		fclose_if_not_stdin(G.in_stream);
-		G.in_stream = NULL;
+		fclose_if_not_stdin(G.లోపల_ప్రవాహం);
+		G.లోపల_ప్రవాహం = ఖాళీ;
 	}
 
-	if (ferror(stdout)) {
-		bb_simple_error_msg_and_die(bb_msg_write_error);
+	ఒకవేళ (ferror(stdout)) {
+		bb_simple_error_సందేశం_and_die(bb_సందేశం_write_error);
 	}
 }
 
@@ -563,80 +563,80 @@ check_and_close(void)
    S_ORIG is solely for reporting errors.  It should be the full format
    string argument. */
 
-static NOINLINE const char *
-decode_one_format(const char *s_orig, const char *s, struct tspec *tspec)
+స్థిర NOINLINE స్థిరరాశి అక్షరం *
+decode_one_format(స్థిరరాశి అక్షరం *s_orig, స్థిరరాశి అక్షరం *s, నిర్మాణం tspec *tspec)
 {
-	enum size_spec size_spec;
-	unsigned size;
-	enum output_format fmt;
-	const char *p;
-	char *end;
-	char *fmt_string = NULL;
-	void (*print_function) (size_t, const char *, const char *);
-	unsigned c;
-	unsigned field_width = 0;
-	int pos;
+	గణన కొలత_spec కొలత_spec;
+	గుర్తులేని కొలత;
+	గణన output_format fmt;
+	స్థిరరాశి అక్షరం *p;
+	అక్షరం *చివర;
+	అక్షరం *fmt_string = ఖాళీ;
+	శూన్య (*print_function) (కొలత_t, స్థిరరాశి అక్షరం *, స్థిరరాశి అక్షరం *);
+	గుర్తులేని c;
+	గుర్తులేని క్షేత్రం_వెడల్పు = 0;
+	పూర్ణాంకం pos;
 
-	switch (*s) {
-	case 'd':
-	case 'o':
-	case 'u':
-	case 'x': {
-		static const char CSIL[] ALIGN1 = "CSIL";
+	ఎంపిక (*s) {
+	స్థితి 'd':
+	స్థితి 'o':
+	స్థితి 'u':
+	స్థితి 'x': {
+		స్థిర స్థిరరాశి అక్షరం CSIL[] ALIGN1 = "CSIL";
 
 		c = *s++;
 		p = strchr(CSIL, *s);
 		/* if *s == NUL, p != NULL! Testcase: "od -tx" */
-		if (!p || *p == '\0') {
-			size = sizeof(int);
-			if (isdigit(s[0])) {
-				size = bb_strtou(s, &end, 0);
-				if (errno == ERANGE
-				 || MAX_INTEGRAL_TYPE_SIZE < size
-				 || integral_type_size[size] == NO_SIZE
+		ఒకవేళ (!p || *p == '\0') {
+			కొలత = పరిమాణం(పూర్ణాంకం);
+			ఒకవేళ (అంకెనా(s[0])) {
+				కొలత = bb_strtou(s, &చివర, 0);
+				ఒకవేళ (errno == ERANGE
+				 || MAX_INTEGRAL_TYPE_కొలత < కొలత
+				 || integral_type_కొలత[కొలత] == NO_కొలత
 				) {
-					bb_error_msg_and_die("invalid type string '%s'; "
+					bb_error_సందేశం_and_die("invalid type string '%s'; "
 						"%u-byte %s type is not supported",
-						s_orig, size, "integral");
+						s_orig, కొలత, "integral");
 				}
-				s = end;
+				s = చివర;
 			}
-		} else {
-			static const uint8_t CSIL_sizeof[4] = {
-				sizeof(char),
-				sizeof(short),
-				sizeof(int),
-				sizeof(long),
+		} లేకపోతే {
+			స్థిర స్థిరరాశి uint8_t CSIL_sizeof[4] = {
+				పరిమాణం(అక్షరం),
+				పరిమాణం(పొట్టి),
+				పరిమాణం(పూర్ణాంకం),
+				పరిమాణం(దీర్ఘ),
 			};
-			size = CSIL_sizeof[p - CSIL];
+			కొలత = CSIL_sizeof[p - CSIL];
 			s++; /* skip C/S/I/L */
 		}
 
-#define ISPEC_TO_FORMAT(Spec, Min_format, Long_format, Max_format) \
+#నిర్వచించు ISPEC_గమ్యం_FORMAT(Spec, Min_format, Long_format, Max_format) \
 	((Spec) == LONG_LONG ? (Max_format) \
 	: ((Spec) == LONG ? (Long_format) : (Min_format)))
 
-#define FMT_BYTES_ALLOCATED 9
-		size_spec = integral_type_size[size];
+#నిర్వచించు FMT_బైట్లు_ALLOCATED 9
+		కొలత_spec = integral_type_కొలత[కొలత];
 
 		{
-			static const char doux[] ALIGN1 = "doux";
-			static const char doux_fmt_letter[][4] = {
+			స్థిర స్థిరరాశి అక్షరం doux[] ALIGN1 = "doux";
+			స్థిర స్థిరరాశి అక్షరం doux_fmt_letter[][4] = {
 				"lld", "llo", "llu", "llx"
 			};
-			static const enum output_format doux_fmt[] = {
+			స్థిర స్థిరరాశి గణన output_format doux_fmt[] = {
 				SIGNED_DECIMAL,
 				OCTAL,
 				UNSIGNED_DECIMAL,
 				HEXADECIMAL,
 			};
-			static const uint8_t *const doux_bytes_to_XXX[] = {
-				bytes_to_signed_dec_digits,
-				bytes_to_oct_digits,
-				bytes_to_unsigned_dec_digits,
-				bytes_to_hex_digits,
+			స్థిర స్థిరరాశి uint8_t *స్థిరరాశి doux_బైట్లు_గమ్యం_XXX[] = {
+				బైట్లు_గమ్యం_signed_dec_digits,
+				బైట్లు_గమ్యం_oct_digits,
+				బైట్లు_గమ్యం_unsigned_dec_digits,
+				బైట్లు_గమ్యం_hex_digits,
 			};
-			static const char doux_fmtstring[][sizeof(" %%0%u%s")] ALIGN1 = {
+			స్థిర స్థిరరాశి అక్షరం doux_fmtstring[][పరిమాణం(" %%0%u%s")] ALIGN1 = {
 				" %%%u%s",
 				" %%0%u%s",
 				" %%%u%s",
@@ -645,141 +645,141 @@ decode_one_format(const char *s_orig, const char *s, struct tspec *tspec)
 
 			pos = strchr(doux, c) - doux;
 			fmt = doux_fmt[pos];
-			field_width = doux_bytes_to_XXX[pos][size];
+			క్షేత్రం_వెడల్పు = doux_బైట్లు_గమ్యం_XXX[pos][కొలత];
 			p = doux_fmt_letter[pos] + 2;
-			if (size_spec == LONG) p--;
-			if (size_spec == LONG_LONG) p -= 2;
-			fmt_string = xasprintf(doux_fmtstring[pos], field_width, p);
+			ఒకవేళ (కొలత_spec == LONG) p--;
+			ఒకవేళ (కొలత_spec == LONG_LONG) p -= 2;
+			fmt_string = xasprintf(doux_fmtstring[pos], క్షేత్రం_వెడల్పు, p);
 		}
 
-		switch (size_spec) {
-		case CHAR:
+		ఎంపిక (కొలత_spec) {
+		స్థితి CHAR:
 			print_function = (fmt == SIGNED_DECIMAL
 				    ? print_s_char
 				    : print_char);
-			break;
-		case SHORT:
+			ఆపు;
+		స్థితి SHORT:
 			print_function = (fmt == SIGNED_DECIMAL
 				    ? print_s_short
 				    : print_short);
-			break;
-		case INT:
+			ఆపు;
+		స్థితి INT:
 			print_function = print_int;
-			break;
-		case LONG:
+			ఆపు;
+		స్థితి LONG:
 			print_function = print_long;
-			break;
-		default: /* case LONG_LONG: */
+			ఆపు;
+		అప్రమేయ: /* case LONG_LONG: */
 			print_function = print_long_long;
-			break;
+			ఆపు;
 		}
-		break;
+		ఆపు;
 	}
 
-	case 'f': {
-		static const char FDL[] ALIGN1 = "FDL";
+	స్థితి 'f': {
+		స్థిర స్థిరరాశి అక్షరం FDL[] ALIGN1 = "FDL";
 
-		fmt = FLOATING_POINT;
+		fmt = FLOATING_బిందువు;
 		++s;
 		p = strchr(FDL, *s);
-		if (!p || *p == '\0') {
-			size = sizeof(double);
-			if (isdigit(s[0])) {
-				size = bb_strtou(s, &end, 0);
-				if (errno == ERANGE || size > MAX_FP_TYPE_SIZE
-				 || fp_type_size[size] == NO_SIZE
+		ఒకవేళ (!p || *p == '\0') {
+			కొలత = పరిమాణం(ద్విగుణ);
+			ఒకవేళ (అంకెనా(s[0])) {
+				కొలత = bb_strtou(s, &చివర, 0);
+				ఒకవేళ (errno == ERANGE || కొలత > MAX_FP_TYPE_కొలత
+				 || fp_type_కొలత[కొలత] == NO_కొలత
 				) {
-					bb_error_msg_and_die("invalid type string '%s'; "
+					bb_error_సందేశం_and_die("invalid type string '%s'; "
 						"%u-byte %s type is not supported",
-						s_orig, size, "floating point");
+						s_orig, కొలత, "floating point");
 				}
-				s = end;
+				s = చివర;
 			}
-		} else {
-			static const uint8_t FDL_sizeof[] = {
-				sizeof(float),
-				sizeof(double),
-				sizeof(longdouble_t),
+		} లేకపోతే {
+			స్థిర స్థిరరాశి uint8_t FDL_sizeof[] = {
+				పరిమాణం(దశాంశం),
+				పరిమాణం(ద్విగుణ),
+				పరిమాణం(longdouble_t),
 			};
 
-			size = FDL_sizeof[p - FDL];
+			కొలత = FDL_sizeof[p - FDL];
 			s++; /* skip F/D/L */
 		}
 
-		size_spec = fp_type_size[size];
+		కొలత_spec = fp_type_కొలత[కొలత];
 
-		switch (size_spec) {
-		case FLOAT_SINGLE:
+		ఎంపిక (కొలత_spec) {
+		స్థితి FLOAT_SINGLE:
 			print_function = print_float;
-			field_width = FLT_DIG + 8;
+			క్షేత్రం_వెడల్పు = FLT_DIG + 8;
 			/* Don't use %#e; not all systems support it.  */
-			fmt_string = xasprintf(" %%%d.%de", field_width, FLT_DIG);
-			break;
-		case FLOAT_DOUBLE:
+			fmt_string = xasprintf(" %%%d.%de", క్షేత్రం_వెడల్పు, FLT_DIG);
+			ఆపు;
+		స్థితి FLOAT_DOUBLE:
 			print_function = print_double;
-			field_width = DBL_DIG + 8;
-			fmt_string = xasprintf(" %%%d.%de", field_width, DBL_DIG);
-			break;
-		default: /* case FLOAT_LONG_DOUBLE: */
+			క్షేత్రం_వెడల్పు = DBL_DIG + 8;
+			fmt_string = xasprintf(" %%%d.%de", క్షేత్రం_వెడల్పు, DBL_DIG);
+			ఆపు;
+		అప్రమేయ: /* case FLOAT_LONG_DOUBLE: */
 			print_function = print_long_double;
-			field_width = LDBL_DIG + 8;
-			fmt_string = xasprintf(" %%%d.%dLe", field_width, LDBL_DIG);
-			break;
+			క్షేత్రం_వెడల్పు = LDBL_DIG + 8;
+			fmt_string = xasprintf(" %%%d.%dLe", క్షేత్రం_వెడల్పు, LDBL_DIG);
+			ఆపు;
 		}
-		break;
+		ఆపు;
 	}
 
-	case 'a':
+	స్థితి 'a':
 		++s;
 		fmt = NAMED_CHARACTER;
-		size_spec = CHAR;
+		కొలత_spec = CHAR;
 		print_function = print_named_ascii;
-		field_width = 3;
-		break;
-	case 'c':
+		క్షేత్రం_వెడల్పు = 3;
+		ఆపు;
+	స్థితి 'c':
 		++s;
 		fmt = CHARACTER;
-		size_spec = CHAR;
+		కొలత_spec = CHAR;
 		print_function = print_ascii;
-		field_width = 3;
-		break;
-	default:
-		bb_error_msg_and_die("invalid character '%c' "
+		క్షేత్రం_వెడల్పు = 3;
+		ఆపు;
+	అప్రమేయ:
+		bb_error_సందేశం_and_die("invalid character '%c' "
 				"in type string '%s'", *s, s_orig);
 	}
 
-	tspec->size = size_spec;
+	tspec->కొలత = కొలత_spec;
 	tspec->fmt = fmt;
 	tspec->print_function = print_function;
 	tspec->fmt_string = fmt_string;
 
-	tspec->field_width = field_width;
-	tspec->hexl_mode_trailer = (*s == 'z');
-	if (tspec->hexl_mode_trailer)
+	tspec->క్షేత్రం_వెడల్పు = క్షేత్రం_వెడల్పు;
+	tspec->hexl_బహుళకం_trailer = (*s == 'z');
+	ఒకవేళ (tspec->hexl_బహుళకం_trailer)
 		s++;
 
-	return s;
+	తిరిగి s;
 }
 
 /* Decode the modern od format string S.  Append the decoded
    representation to the global array SPEC, reallocating SPEC if
    necessary.  */
 
-static void
-decode_format_string(const char *s)
+స్థిర శూన్య
+decode_format_string(స్థిరరాశి అక్షరం *s)
 {
-	const char *s_orig = s;
+	స్థిరరాశి అక్షరం *s_orig = s;
 
-	while (*s != '\0') {
-		struct tspec tspec;
-		const char *next;
+	అయితే (*s != '\0') {
+		నిర్మాణం tspec tspec;
+		స్థిరరాశి అక్షరం *తదుపరి;
 
-		next = decode_one_format(s_orig, s, &tspec);
+		తదుపరి = decode_one_format(s_orig, s, &tspec);
 
-		assert(s != next);
-		s = next;
-		G.spec = xrealloc_vector(G.spec, 4, G.n_specs);
-		memcpy(&G.spec[G.n_specs], &tspec, sizeof(G.spec[0]));
+		ప్రతిజ్ఞా(s != తదుపరి);
+		s = తదుపరి;
+		G.spec = xrealloc_సదిశ(G.spec, 4, G.n_specs);
+		జ్ఞాపకం_నకలు(&G.spec[G.n_specs], &tspec, పరిమాణం(G.spec[0]));
 		G.n_specs++;
 	}
 }
@@ -791,14 +791,14 @@ decode_format_string(const char *s)
    nonzero.  When possible, use seek rather than read operations to
    advance IN_STREAM.  */
 
-static void
+స్థిర శూన్య
 skip(off_t n_skip)
 {
-	if (n_skip == 0)
-		return;
+	ఒకవేళ (n_skip == 0)
+		తిరిగి;
 
-	while (G.in_stream) { /* !EOF */
-		struct stat file_stats;
+	అయితే (G.లోపల_ప్రవాహం) { /* !EOF */
+		నిర్మాణం stat file_stats;
 
 		/* First try seeking.  For large offsets, this extra work is
 		   worthwhile.  If the offset is below some threshold it may be
@@ -815,88 +815,88 @@ skip(off_t n_skip)
 			   If the number of bytes left to skip is at least
 			   as large as the size of the current file, we can
 			   decrement n_skip and go on to the next file.  */
-		if (fstat(fileno(G.in_stream), &file_stats) == 0
-		 && S_ISREG(file_stats.st_mode) && file_stats.st_size > 0
+		ఒకవేళ (fstat(fileno(G.లోపల_ప్రవాహం), &file_stats) == 0
+		 && S_ISREG(file_stats.st_బహుళకం) && file_stats.st_కొలత > 0
 		) {
-			if (file_stats.st_size < n_skip) {
-				n_skip -= file_stats.st_size;
+			ఒకవేళ (file_stats.st_కొలత < n_skip) {
+				n_skip -= file_stats.st_కొలత;
 				/* take "check & close / open_next" route */
-			} else {
-				if (fseeko(G.in_stream, n_skip, SEEK_CUR) != 0)
-					G.exit_code = 1;
-				return;
+			} లేకపోతే {
+				ఒకవేళ (fseeko(G.లోపల_ప్రవాహం, n_skip, SEEK_CUR) != 0)
+					G.exit_సంకేతం = 1;
+				తిరిగి;
 			}
-		} else {
+		} లేకపోతే {
 			/* If it's not a regular file with positive size,
 			   position the file pointer by reading.  */
-			char buf[1024];
-			size_t n_bytes_to_read = 1024;
-			size_t n_bytes_read;
+			అక్షరం buf[1024];
+			కొలత_t n_బైట్లు_గమ్యం_read = 1024;
+			కొలత_t n_బైట్లు_read;
 
-			while (n_skip > 0) {
-				if (n_skip < n_bytes_to_read)
-					n_bytes_to_read = n_skip;
-				n_bytes_read = fread(buf, 1, n_bytes_to_read, G.in_stream);
-				n_skip -= n_bytes_read;
-				if (n_bytes_read != n_bytes_to_read)
-					break; /* EOF on this file or error */
+			అయితే (n_skip > 0) {
+				ఒకవేళ (n_skip < n_బైట్లు_గమ్యం_read)
+					n_బైట్లు_గమ్యం_read = n_skip;
+				n_బైట్లు_read = fread(buf, 1, n_బైట్లు_గమ్యం_read, G.లోపల_ప్రవాహం);
+				n_skip -= n_బైట్లు_read;
+				ఒకవేళ (n_బైట్లు_read != n_బైట్లు_గమ్యం_read)
+					ఆపు; /* EOF on this file or error */
 			}
 		}
-		if (n_skip == 0)
-			return;
+		ఒకవేళ (n_skip == 0)
+			తిరిగి;
 
 		check_and_close();
-		open_next_file();
+		open_తదుపరి_file();
 	}
 
-	if (n_skip)
-		bb_simple_error_msg_and_die("can't skip past end of combined input");
+	ఒకవేళ (n_skip)
+		bb_simple_error_సందేశం_and_die("can't skip past end of combined input");
 }
 
 
-typedef void FN_format_address(off_t address, char c);
+రకనిర్వచనం శూన్య FN_format_చిరునామా(off_t చిరునామా, అక్షరం c);
 
-static void
-format_address_none(off_t address UNUSED_PARAM, char c UNUSED_PARAM)
+స్థిర శూన్య
+format_చిరునామా_none(off_t చిరునామా వాడని_PARAM, అక్షరం c వాడని_PARAM)
 {
 }
 
-static void
-format_address_std(off_t address, char c)
+స్థిర శూన్య
+format_చిరునామా_std(off_t చిరునామా, అక్షరం c)
 {
 	/* Corresponds to 'c' */
-	G.address_fmt[sizeof(G.address_fmt)-2] = c;
-	printf(G.address_fmt, address);
+	G.చిరునామా_fmt[పరిమాణం(G.చిరునామా_fmt)-2] = c;
+	రాయి(G.చిరునామా_fmt, చిరునామా);
 }
 
-#if ENABLE_LONG_OPTS
+#ఒకవేళ ENABLE_LONG_OPTS
 /* only used with --traditional */
-static void
-format_address_paren(off_t address, char c)
+స్థిర శూన్య
+format_చిరునామా_paren(off_t చిరునామా, అక్షరం c)
 {
-	putchar('(');
-	format_address_std(address, ')');
-	if (c) putchar(c);
+	అక్షరం_రాయి('(');
+	format_చిరునామా_std(చిరునామా, ')');
+	ఒకవేళ (c) అక్షరం_రాయి(c);
 }
 
-static void
-format_address_label(off_t address, char c)
+స్థిర శూన్య
+format_చిరునామా_label(off_t చిరునామా, అక్షరం c)
 {
-	format_address_std(address, ' ');
-	format_address_paren(address + G_pseudo_offset, c);
+	format_చిరునామా_std(చిరునామా, ' ');
+	format_చిరునామా_paren(చిరునామా + G_pseudo_స్థానభ్రంశం, c);
 }
-#endif
+#అయితే_ముగింపు
 
-static void
-dump_hexl_mode_trailer(size_t n_bytes, const char *block)
+స్థిర శూన్య
+dump_hexl_బహుళకం_trailer(కొలత_t n_బైట్లు, స్థిరరాశి అక్షరం *ఖండం)
 {
 	fputs_stdout("  >");
-	while (n_bytes--) {
-		unsigned c = *(unsigned char *) block++;
+	అయితే (n_బైట్లు--) {
+		గుర్తులేని c = *(గుర్తులేని అక్షరం *) ఖండం++;
 		c = (ISPRINT(c) ? c : '.');
-		putchar(c);
+		అక్షరం_రాయి(c);
 	}
-	putchar('<');
+	అక్షరం_రాయి('<');
 }
 
 /* Write N_BYTES bytes from CURR_BLOCK to standard output once for each
@@ -910,83 +910,83 @@ dump_hexl_mode_trailer(size_t n_bytes, const char *block)
    That condition may be false only for the last input block -- and then
    only when it has not been padded to length BYTES_PER_BLOCK.  */
 
-static void
-write_block(off_t current_offset, size_t n_bytes,
-		const char *prev_block, const char *curr_block)
+స్థిర శూన్య
+write_ఖండం(off_t current_స్థానభ్రంశం, కొలత_t n_బైట్లు,
+		స్థిరరాశి అక్షరం *prev_ఖండం, స్థిరరాశి అక్షరం *curr_ఖండం)
 {
-	unsigned i;
+	గుర్తులేని i;
 
-	if (!(option_mask32 & OPT_v)
-	 && G.not_first
-	 && n_bytes == G.bytes_per_block
-	 && memcmp(prev_block, curr_block, G.bytes_per_block) == 0
+	ఒకవేళ (!(option_mask32 & OPT_v)
+	 && G.not_మొదటి
+	 && n_బైట్లు == G.బైట్లు_చొప్పున_ఖండం
+	 && memcmp(prev_ఖండం, curr_ఖండం, G.బైట్లు_చొప్పున_ఖండం) == 0
 	) {
-		if (G.prev_pair_equal) {
+		ఒకవేళ (G.prev_pair_equal) {
 			/* The two preceding blocks were equal, and the current
 			   block is the same as the last one, so print nothing.  */
-		} else {
+		} లేకపోతే {
 			puts("*");
 			G.prev_pair_equal = 1;
 		}
-	} else {
-		G.not_first = 1;
+	} లేకపోతే {
+		G.not_మొదటి = 1;
 		G.prev_pair_equal = 0;
-		for (i = 0; i < G.n_specs; i++) {
-			if (i == 0)
-				G.format_address(current_offset, '\0');
-			else
-				printf("%*s", address_pad_len_char - '0', "");
-			(*G.spec[i].print_function) (n_bytes, curr_block, G.spec[i].fmt_string);
-			if (G.spec[i].hexl_mode_trailer) {
+		కొరకు (i = 0; i < G.n_specs; i++) {
+			ఒకవేళ (i == 0)
+				G.format_చిరునామా(current_స్థానభ్రంశం, '\0');
+			లేకపోతే
+				రాయి("%*s", చిరునామా_pad_len_char - '0', "");
+			(*G.spec[i].print_function) (n_బైట్లు, curr_ఖండం, G.spec[i].fmt_string);
+			ఒకవేళ (G.spec[i].hexl_బహుళకం_trailer) {
 				/* space-pad out to full line width, then dump the trailer */
-				unsigned datum_width = width_bytes[G.spec[i].size];
-				unsigned blank_fields = (G.bytes_per_block - n_bytes) / datum_width;
-				unsigned field_width = G.spec[i].field_width + 1;
-				printf("%*s", blank_fields * field_width, "");
-				dump_hexl_mode_trailer(n_bytes, curr_block);
+				గుర్తులేని datum_వెడల్పు = వెడల్పు_బైట్లు[G.spec[i].కొలత];
+				గుర్తులేని blank_fields = (G.బైట్లు_చొప్పున_ఖండం - n_బైట్లు) / datum_వెడల్పు;
+				గుర్తులేని క్షేత్రం_వెడల్పు = G.spec[i].క్షేత్రం_వెడల్పు + 1;
+				రాయి("%*s", blank_fields * క్షేత్రం_వెడల్పు, "");
+				dump_hexl_బహుళకం_trailer(n_బైట్లు, curr_ఖండం);
 			}
-			putchar('\n');
+			అక్షరం_రాయి('\n');
 		}
 	}
 }
 
-static void
-read_block(size_t n, char *block, size_t *n_bytes_in_buffer)
+స్థిర శూన్య
+read_ఖండం(కొలత_t n, అక్షరం *ఖండం, కొలత_t *n_బైట్లు_లోపల_బఫరు)
 {
-	assert(0 < n && n <= G.bytes_per_block);
+	ప్రతిజ్ఞా(0 < n && n <= G.బైట్లు_చొప్పున_ఖండం);
 
-	*n_bytes_in_buffer = 0;
+	*n_బైట్లు_లోపల_బఫరు = 0;
 
-	if (n == 0)
-		return;
+	ఒకవేళ (n == 0)
+		తిరిగి;
 
-	while (G.in_stream != NULL) { /* EOF.  */
-		size_t n_needed;
-		size_t n_read;
+	అయితే (G.లోపల_ప్రవాహం != ఖాళీ) { /* EOF.  */
+		కొలత_t n_needed;
+		కొలత_t n_read;
 
-		n_needed = n - *n_bytes_in_buffer;
-		n_read = fread(block + *n_bytes_in_buffer, 1, n_needed, G.in_stream);
-		*n_bytes_in_buffer += n_read;
-		if (n_read == n_needed)
-			break;
+		n_needed = n - *n_బైట్లు_లోపల_బఫరు;
+		n_read = fread(ఖండం + *n_బైట్లు_లోపల_బఫరు, 1, n_needed, G.లోపల_ప్రవాహం);
+		*n_బైట్లు_లోపల_బఫరు += n_read;
+		ఒకవేళ (n_read == n_needed)
+			ఆపు;
 		/* error check is done in check_and_close */
 		check_and_close();
-		open_next_file();
+		open_తదుపరి_file();
 	}
 }
 
 /* Return the least common multiple of the sizes associated
    with the format specs.  */
 
-static int
-get_lcm(void)
+స్థిర పూర్ణాంకం
+get_lcm(శూన్య)
 {
-	size_t i;
-	int l_c_m = 1;
+	కొలత_t i;
+	పూర్ణాంకం l_c_m = 1;
 
-	for (i = 0; i < G.n_specs; i++)
-		l_c_m = lcm(l_c_m, width_bytes[(int) G.spec[i].size]);
-	return l_c_m;
+	కొరకు (i = 0; i < G.n_specs; i++)
+		l_c_m = lcm(l_c_m, వెడల్పు_బైట్లు[(పూర్ణాంకం) G.spec[i].కొలత]);
+	తిరిగి l_c_m;
 }
 
 /* Read a chunk of size BYTES_PER_BLOCK from the input files, write the
@@ -999,67 +999,67 @@ get_lcm(void)
    write on a line by itself the offset of the byte after the last byte
    read.  */
 
-static void
-dump(off_t current_offset, off_t end_offset)
+స్థిర శూన్య
+dump(off_t current_స్థానభ్రంశం, off_t చివర_స్థానభ్రంశం)
 {
-	char *block[2];
-	int idx;
-	size_t n_bytes_read;
+	అక్షరం *ఖండం[2];
+	పూర్ణాంకం idx;
+	కొలత_t n_బైట్లు_read;
 
-	block[0] = xmalloc(2 * G.bytes_per_block);
-	block[1] = block[0] + G.bytes_per_block;
+	ఖండం[0] = xmalloc(2 * G.బైట్లు_చొప్పున_ఖండం);
+	ఖండం[1] = ఖండం[0] + G.బైట్లు_చొప్పున_ఖండం;
 
 	idx = 0;
-	if (option_mask32 & OPT_N) {
-		while (1) {
-			size_t n_needed;
-			if (current_offset >= end_offset) {
-				n_bytes_read = 0;
-				break;
+	ఒకవేళ (option_mask32 & OPT_N) {
+		అయితే (1) {
+			కొలత_t n_needed;
+			ఒకవేళ (current_స్థానభ్రంశం >= చివర_స్థానభ్రంశం) {
+				n_బైట్లు_read = 0;
+				ఆపు;
 			}
-			n_needed = MIN(end_offset - current_offset, (off_t) G.bytes_per_block);
-			read_block(n_needed, block[idx], &n_bytes_read);
-			if (n_bytes_read < G.bytes_per_block)
-				break;
-			assert(n_bytes_read == G.bytes_per_block);
-			write_block(current_offset, n_bytes_read, block[idx ^ 1], block[idx]);
-			current_offset += n_bytes_read;
+			n_needed = MIN(చివర_స్థానభ్రంశం - current_స్థానభ్రంశం, (off_t) G.బైట్లు_చొప్పున_ఖండం);
+			read_ఖండం(n_needed, ఖండం[idx], &n_బైట్లు_read);
+			ఒకవేళ (n_బైట్లు_read < G.బైట్లు_చొప్పున_ఖండం)
+				ఆపు;
+			ప్రతిజ్ఞా(n_బైట్లు_read == G.బైట్లు_చొప్పున_ఖండం);
+			write_ఖండం(current_స్థానభ్రంశం, n_బైట్లు_read, ఖండం[idx ^ 1], ఖండం[idx]);
+			current_స్థానభ్రంశం += n_బైట్లు_read;
 			idx ^= 1;
 		}
-	} else {
-		while (1) {
-			read_block(G.bytes_per_block, block[idx], &n_bytes_read);
-			if (n_bytes_read < G.bytes_per_block)
-				break;
-			assert(n_bytes_read == G.bytes_per_block);
-			write_block(current_offset, n_bytes_read, block[idx ^ 1], block[idx]);
-			current_offset += n_bytes_read;
+	} లేకపోతే {
+		అయితే (1) {
+			read_ఖండం(G.బైట్లు_చొప్పున_ఖండం, ఖండం[idx], &n_బైట్లు_read);
+			ఒకవేళ (n_బైట్లు_read < G.బైట్లు_చొప్పున_ఖండం)
+				ఆపు;
+			ప్రతిజ్ఞా(n_బైట్లు_read == G.బైట్లు_చొప్పున_ఖండం);
+			write_ఖండం(current_స్థానభ్రంశం, n_బైట్లు_read, ఖండం[idx ^ 1], ఖండం[idx]);
+			current_స్థానభ్రంశం += n_బైట్లు_read;
 			idx ^= 1;
 		}
 	}
 
-	if (n_bytes_read > 0) {
-		int l_c_m;
-		size_t bytes_to_write;
+	ఒకవేళ (n_బైట్లు_read > 0) {
+		పూర్ణాంకం l_c_m;
+		కొలత_t బైట్లు_గమ్యం_write;
 
 		l_c_m = get_lcm();
 
 		/* Make bytes_to_write the smallest multiple of l_c_m that
 		   is at least as large as n_bytes_read.  */
-		bytes_to_write = l_c_m * ((n_bytes_read + l_c_m - 1) / l_c_m);
+		బైట్లు_గమ్యం_write = l_c_m * ((n_బైట్లు_read + l_c_m - 1) / l_c_m);
 
-		memset(block[idx] + n_bytes_read, 0, bytes_to_write - n_bytes_read);
-		write_block(current_offset, bytes_to_write,
-				block[idx ^ 1], block[idx]);
-		current_offset += n_bytes_read;
+		memset(ఖండం[idx] + n_బైట్లు_read, 0, బైట్లు_గమ్యం_write - n_బైట్లు_read);
+		write_ఖండం(current_స్థానభ్రంశం, బైట్లు_గమ్యం_write,
+				ఖండం[idx ^ 1], ఖండం[idx]);
+		current_స్థానభ్రంశం += n_బైట్లు_read;
 	}
 
-	G.format_address(current_offset, '\n');
+	G.format_చిరునామా(current_స్థానభ్రంశం, '\n');
 
-	if ((option_mask32 & OPT_N) && current_offset >= end_offset)
+	ఒకవేళ ((option_mask32 & OPT_N) && current_స్థానభ్రంశం >= చివర_స్థానభ్రంశం)
 		check_and_close();
 
-	free(block[0]);
+	విడుదల(ఖండం[0]);
 }
 
 /* Read N bytes into BLOCK from the concatenation of the input files
@@ -1082,197 +1082,197 @@ dump(off_t current_offset, off_t end_offset)
    Based on a function written by Richard Stallman for a
    traditional version of od.  */
 
-static void
-dump_strings(off_t address, off_t end_offset)
+స్థిర శూన్య
+dump_అక్షరశ్రేణులు(off_t చిరునామా, off_t చివర_స్థానభ్రంశం)
 {
-	unsigned bufsize = MAX(100, G.string_min);
-	unsigned char *buf = xmalloc(bufsize);
+	గుర్తులేని bufsize = MAX(100, G.string_min);
+	గుర్తులేని అక్షరం *buf = xmalloc(bufsize);
 
-	while (1) {
-		size_t i;
-		int c;
+	అయితే (1) {
+		కొలత_t i;
+		పూర్ణాంకం c;
 
 		/* See if the next 'G.string_min' chars are all printing chars.  */
  tryline:
-		if ((option_mask32 & OPT_N) && (end_offset - G.string_min <= address))
-			break;
+		ఒకవేళ ((option_mask32 & OPT_N) && (చివర_స్థానభ్రంశం - G.string_min <= చిరునామా))
+			ఆపు;
 		i = 0;
-		while (!(option_mask32 & OPT_N) || address < end_offset) {
-			if (i == bufsize) {
+		అయితే (!(option_mask32 & OPT_N) || చిరునామా < చివర_స్థానభ్రంశం) {
+			ఒకవేళ (i == bufsize) {
 				bufsize += bufsize/8;
 				buf = xrealloc(buf, bufsize);
 			}
 
-			while (G.in_stream) { /* !EOF */
-				c = fgetc(G.in_stream);
-				if (c != EOF)
-					goto got_char;
+			అయితే (G.లోపల_ప్రవాహం) { /* !EOF */
+				c = fgetc(G.లోపల_ప్రవాహం);
+				ఒకవేళ (c != EOF)
+					వెళ్ళు got_char;
 				check_and_close();
-				open_next_file();
+				open_తదుపరి_file();
 			}
 			/* EOF */
-			goto ret;
+			వెళ్ళు ret;
  got_char:
-			address++;
-			if (!c)
-				break;
-			if (!ISPRINT(c))
-				goto tryline;	/* It isn't; give up on this string.  */
+			చిరునామా++;
+			ఒకవేళ (!c)
+				ఆపు;
+			ఒకవేళ (!ISPRINT(c))
+				వెళ్ళు tryline;	/* It isn't; give up on this string.  */
 			buf[i++] = c;		/* String continues; store it all.  */
 		}
 
-		if (i < G.string_min)		/* Too short! */
-			goto tryline;
+		ఒకవేళ (i < G.string_min)		/* Too short! */
+			వెళ్ళు tryline;
 
 		/* If we get here, the string is all printable and NUL-terminated */
 		buf[i] = 0;
-		G.format_address(address - i - 1, ' ');
+		G.format_చిరునామా(చిరునామా - i - 1, ' ');
 
-		for (i = 0; (c = buf[i]); i++) {
-			switch (c) {
-			case '\007': fputs_stdout("\\a"); break;
-			case '\b': fputs_stdout("\\b"); break;
-			case '\f': fputs_stdout("\\f"); break;
-			case '\n': fputs_stdout("\\n"); break;
-			case '\r': fputs_stdout("\\r"); break;
-			case '\t': fputs_stdout("\\t"); break;
-			case '\v': fputs_stdout("\\v"); break;
-			default: putchar(c);
+		కొరకు (i = 0; (c = buf[i]); i++) {
+			ఎంపిక (c) {
+			స్థితి '\007': fputs_stdout("\\a"); ఆపు;
+			స్థితి '\b': fputs_stdout("\\b"); ఆపు;
+			స్థితి '\f': fputs_stdout("\\f"); ఆపు;
+			స్థితి '\n': fputs_stdout("\\n"); ఆపు;
+			స్థితి '\r': fputs_stdout("\\r"); ఆపు;
+			స్థితి '\t': fputs_stdout("\\t"); ఆపు;
+			స్థితి '\v': fputs_stdout("\\v"); ఆపు;
+			అప్రమేయ: అక్షరం_రాయి(c);
 			}
 		}
-		putchar('\n');
+		అక్షరం_రాయి('\n');
 	}
 
 	/* We reach this point only if we search through
 	   (max_bytes_to_format - G.string_min) bytes before reaching EOF.  */
 	check_and_close();
  ret:
-	free(buf);
+	విడుదల(buf);
 }
 
-#if ENABLE_LONG_OPTS
+#ఒకవేళ ENABLE_LONG_OPTS
 /* If S is a valid traditional offset specification with an optional
    leading '+' return nonzero and set *OFFSET to the offset it denotes.  */
 
-static int
-parse_old_offset(const char *s, off_t *offset)
+స్థిర పూర్ణాంకం
+parse_old_స్థానభ్రంశం(స్థిరరాశి అక్షరం *s, off_t *స్థానభ్రంశం)
 {
-	static const struct suffix_mult Bb[] ALIGN_SUFFIX = {
+	స్థిర స్థిరరాశి నిర్మాణం suffix_mult Bb[] ALIGN_SUFFIX = {
 		{ "B", 1024 },
 		{ "b", 512 },
 		{ "", 0 }
 	};
-	char *p;
-	int radix;
+	అక్షరం *p;
+	పూర్ణాంకం radix;
 
 	/* Skip over any leading '+'. */
-	if (s[0] == '+') ++s;
-	if (!isdigit(s[0])) return 0; /* not a number */
+	ఒకవేళ (s[0] == '+') ++s;
+	ఒకవేళ (!అంకెనా(s[0])) తిరిగి 0; /* not a number */
 
 	/* Determine the radix we'll use to interpret S.  If there is a '.',
 	 * it's decimal, otherwise, if the string begins with '0X'or '0x',
 	 * it's hexadecimal, else octal.  */
 	p = strchr(s, '.');
 	radix = 8;
-	if (p) {
+	ఒకవేళ (p) {
 		p[0] = '\0'; /* cheating */
 		radix = 10;
-	} else if (s[0] == '0' && (s[1] == 'x' || s[1] == 'X'))
+	} లేకపోతే ఒకవేళ (s[0] == '0' && (s[1] == 'x' || s[1] == 'X'))
 		radix = 16;
 
-	*offset = xstrtooff_sfx(s, radix, Bb);
-	if (p) p[0] = '.';
+	*స్థానభ్రంశం = xstrtooff_sfx(s, radix, Bb);
+	ఒకవేళ (p) p[0] = '.';
 
-	return (*offset >= 0);
+	తిరిగి (*స్థానభ్రంశం >= 0);
 }
-#endif
+#అయితే_ముగింపు
 
-int od_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int od_main(int argc UNUSED_PARAM, char **argv)
+పూర్ణాంకం od_main(పూర్ణాంకం argc, అక్షరం **argv) MAIN_EXTERNALLY_VISIBLE;
+పూర్ణాంకం od_main(పూర్ణాంకం argc వాడని_PARAM, అక్షరం **argv)
 {
-#if ENABLE_LONG_OPTS
-	static const char od_longopts[] ALIGN1 =
-		"skip-bytes\0"        Required_argument "j"
-		"address-radix\0"     Required_argument "A"
-		"read-bytes\0"        Required_argument "N"
-		"format\0"            Required_argument "t"
-		"output-duplicates\0" No_argument       "v"
+#ఒకవేళ ENABLE_LONG_OPTS
+	స్థిర స్థిరరాశి అక్షరం od_longopts[] ALIGN1 =
+		"skip-bytes\0"        Required_వాదం "j"
+		"address-radix\0"     Required_వాదం "A"
+		"read-bytes\0"        Required_వాదం "N"
+		"format\0"            Required_వాదం "t"
+		"output-duplicates\0" No_వాదం       "v"
 		/* Yes, it's true: -S NUM, but --strings[=NUM]!
 		 * that is, NUM is mandatory for -S but optional for --strings!
 		 */
-		"strings\0"           Optional_argument "S"
-		"width\0"             Optional_argument "w"
-		"traditional\0"       No_argument       "\xff"
+		"strings\0"           Optional_వాదం "S"
+		"width\0"             Optional_వాదం "w"
+		"traditional\0"       No_వాదం       "\xff"
 		;
-#endif
-	const char *str_A, *str_N, *str_j, *str_S = "3";
-	llist_t *lst_t = NULL;
-	unsigned opt;
-	int l_c_m;
+#అయితే_ముగింపు
+	స్థిరరాశి అక్షరం *str_A, *str_N, *str_j, *str_S = "3";
+	llist_t *lst_t = ఖాళీ;
+	గుర్తులేని opt;
+	పూర్ణాంకం l_c_m;
 	/* The number of input bytes to skip before formatting and writing.  */
-	off_t n_bytes_to_skip = 0;
+	off_t n_బైట్లు_గమ్యం_skip = 0;
 	/* The offset of the first byte after the last byte to be formatted.  */
-	off_t end_offset = 0;
+	off_t చివర_స్థానభ్రంశం = 0;
 	/* The maximum number of bytes that will be formatted.  */
-	off_t max_bytes_to_format = 0;
+	off_t max_బైట్లు_గమ్యం_format = 0;
 
 	INIT_G();
 
 	/*G.spec = NULL; - already is */
-	G.format_address = format_address_std;
-	address_base_char = 'o';
-	address_pad_len_char = '7';
+	G.format_చిరునామా = format_చిరునామా_std;
+	చిరునామా_పునాది_char = 'o';
+	చిరునామా_pad_len_char = '7';
 
 	/* Parse command line */
 	opt = OD_GETOPT32();
 	argv += optind;
-	if (opt & OPT_A) {
-		static const char doxn[] ALIGN1 = "doxn";
-		static const char doxn_address_base_char[] ALIGN1 = {
+	ఒకవేళ (opt & OPT_A) {
+		స్థిర స్థిరరాశి అక్షరం doxn[] ALIGN1 = "doxn";
+		స్థిర స్థిరరాశి అక్షరం doxn_చిరునామా_పునాది_char[] ALIGN1 = {
 			'u', 'o', 'x', /* '?' fourth one is not important */
 		};
-		static const uint8_t doxn_address_pad_len_char[] ALIGN1 = {
+		స్థిర స్థిరరాశి uint8_t doxn_చిరునామా_pad_len_char[] ALIGN1 = {
 			'7', '7', '6', /* '?' */
 		};
-		char *p;
-		int pos;
+		అక్షరం *p;
+		పూర్ణాంకం pos;
 		p = strchr(doxn, str_A[0]);
-		if (!p)
-			bb_error_msg_and_die("bad output address radix "
+		ఒకవేళ (!p)
+			bb_error_సందేశం_and_die("bad output address radix "
 				"'%c' (must be [doxn])", str_A[0]);
 		pos = p - doxn;
-		if (pos == 3) G.format_address = format_address_none;
-		address_base_char = doxn_address_base_char[pos];
-		address_pad_len_char = doxn_address_pad_len_char[pos];
+		ఒకవేళ (pos == 3) G.format_చిరునామా = format_చిరునామా_none;
+		చిరునామా_పునాది_char = doxn_చిరునామా_పునాది_char[pos];
+		చిరునామా_pad_len_char = doxn_చిరునామా_pad_len_char[pos];
 	}
-	if (opt & OPT_N) {
-		max_bytes_to_format = xstrtooff_sfx(str_N, 0, bkm_suffixes);
+	ఒకవేళ (opt & OPT_N) {
+		max_బైట్లు_గమ్యం_format = xstrtooff_sfx(str_N, 0, bkm_suffixes);
 	}
 
-	if (opt & OPT_a) decode_format_string("a");
-	if (opt & OPT_b) decode_format_string("oC");
-	if (opt & OPT_c) decode_format_string("c");
-	if (opt & OPT_d) decode_format_string("u2");
-	if (opt & OPT_D) decode_format_string("uI");
-	if (opt & OPT_f) decode_format_string("fF");
-	if (opt & (OPT_h|OPT_x)) decode_format_string("x2");
-	if (opt & (OPT_H|OPT_X)) decode_format_string("xI");
+	ఒకవేళ (opt & OPT_a) decode_format_string("a");
+	ఒకవేళ (opt & OPT_b) decode_format_string("oC");
+	ఒకవేళ (opt & OPT_c) decode_format_string("c");
+	ఒకవేళ (opt & OPT_d) decode_format_string("u2");
+	ఒకవేళ (opt & OPT_D) decode_format_string("uI");
+	ఒకవేళ (opt & OPT_f) decode_format_string("fF");
+	ఒకవేళ (opt & (OPT_h|OPT_x)) decode_format_string("x2");
+	ఒకవేళ (opt & (OPT_H|OPT_X)) decode_format_string("xI");
 	/* -I,L,l: depend on word width of the arch (what is "long"?) */
-#if ULONG_MAX > 0xffffffff
-	if (opt & OPT_i) decode_format_string("dI");
-	if (opt & (OPT_I|OPT_l|OPT_L)) decode_format_string("dL");
-#else
+#ఒకవేళ ULONG_MAX > 0xffffffff
+	ఒకవేళ (opt & OPT_i) decode_format_string("dI");
+	ఒకవేళ (opt & (OPT_I|OPT_l|OPT_L)) decode_format_string("dL");
+#లేకపోతే
 	/* 32-bit arch: -I,L,l are the same as -i */
-	if (opt & (OPT_i|OPT_I|OPT_l|OPT_L)) decode_format_string("dI");
-#endif
-	if (opt & OPT_j) n_bytes_to_skip = xstrtooff_sfx(str_j, 0, bkm_suffixes);
-	if (opt & (OPT_o|OPT_B)) decode_format_string("o2");
-	if (opt & OPT_O) decode_format_string("oI");
-	while (lst_t) {
-		decode_format_string(llist_pop(&lst_t));
+	ఒకవేళ (opt & (OPT_i|OPT_I|OPT_l|OPT_L)) decode_format_string("dI");
+#అయితే_ముగింపు
+	ఒకవేళ (opt & OPT_j) n_బైట్లు_గమ్యం_skip = xstrtooff_sfx(str_j, 0, bkm_suffixes);
+	ఒకవేళ (opt & (OPT_o|OPT_B)) decode_format_string("o2");
+	ఒకవేళ (opt & OPT_O) decode_format_string("oI");
+	అయితే (lst_t) {
+		decode_format_string(llist_తీయి(&lst_t));
 	}
-	if (opt & OPT_s) decode_format_string("d2");
-	if (opt & OPT_S) {
+	ఒకవేళ (opt & OPT_s) decode_format_string("d2");
+	ఒకవేళ (opt & OPT_S) {
 		G.string_min = xstrtou_sfx(str_S, 0, bkm_suffixes);
 	}
 
@@ -1289,71 +1289,71 @@ int od_main(int argc UNUSED_PARAM, char **argv)
 	 * FIXME: POSIX 1003.1-2001 with XSI requires support for the
 	 * traditional syntax even if --traditional is not given.  */
 
-#if ENABLE_LONG_OPTS
-	if (opt & OPT_traditional) {
-		if (argv[0]) {
-			off_t pseudo_start = -1;
+#ఒకవేళ ENABLE_LONG_OPTS
+	ఒకవేళ (opt & OPT_traditional) {
+		ఒకవేళ (argv[0]) {
+			off_t pseudo_ప్రారంభం = -1;
 			off_t o1, o2;
 
-			if (!argv[1]) { /* one arg */
-				if (parse_old_offset(argv[0], &o1)) {
+			ఒకవేళ (!argv[1]) { /* one arg */
+				ఒకవేళ (parse_old_స్థానభ్రంశం(argv[0], &o1)) {
 					/* od --traditional OFFSET */
-					n_bytes_to_skip = o1;
+					n_బైట్లు_గమ్యం_skip = o1;
 					argv++;
 				}
 				/* od --traditional FILE */
-			} else if (!argv[2]) { /* two args */
-				if (parse_old_offset(argv[0], &o1)
-				 && parse_old_offset(argv[1], &o2)
+			} లేకపోతే ఒకవేళ (!argv[2]) { /* two args */
+				ఒకవేళ (parse_old_స్థానభ్రంశం(argv[0], &o1)
+				 && parse_old_స్థానభ్రంశం(argv[1], &o2)
 				) {
 					/* od --traditional OFFSET LABEL */
-					n_bytes_to_skip = o1;
-					pseudo_start = o2;
+					n_బైట్లు_గమ్యం_skip = o1;
+					pseudo_ప్రారంభం = o2;
 					argv += 2;
-				} else if (parse_old_offset(argv[1], &o2)) {
+				} లేకపోతే ఒకవేళ (parse_old_స్థానభ్రంశం(argv[1], &o2)) {
 					/* od --traditional FILE OFFSET */
-					n_bytes_to_skip = o2;
-					argv[1] = NULL;
-				} else {
-					bb_error_msg_and_die("invalid second argument '%s'", argv[1]);
+					n_బైట్లు_గమ్యం_skip = o2;
+					argv[1] = ఖాళీ;
+				} లేకపోతే {
+					bb_error_సందేశం_and_die("invalid second argument '%s'", argv[1]);
 				}
-			} else if (!argv[3]) { /* three args */
-				if (parse_old_offset(argv[1], &o1)
-				 && parse_old_offset(argv[2], &o2)
+			} లేకపోతే ఒకవేళ (!argv[3]) { /* three args */
+				ఒకవేళ (parse_old_స్థానభ్రంశం(argv[1], &o1)
+				 && parse_old_స్థానభ్రంశం(argv[2], &o2)
 				) {
 					/* od --traditional FILE OFFSET LABEL */
-					n_bytes_to_skip = o1;
-					pseudo_start = o2;
-					argv[1] = NULL;
-				} else {
-					bb_simple_error_msg_and_die("the last two arguments must be offsets");
+					n_బైట్లు_గమ్యం_skip = o1;
+					pseudo_ప్రారంభం = o2;
+					argv[1] = ఖాళీ;
+				} లేకపోతే {
+					bb_simple_error_సందేశం_and_die("the last two arguments must be offsets");
 				}
-			} else { /* >3 args */
-				bb_simple_error_msg_and_die("too many arguments");
+			} లేకపోతే { /* >3 args */
+				bb_simple_error_సందేశం_and_die("too many arguments");
 			}
 
-			if (pseudo_start >= 0) {
-				if (G.format_address == format_address_none) {
-					address_base_char = 'o';
-					address_pad_len_char = '7';
-					G.format_address = format_address_paren;
-				} else {
-					G.format_address = format_address_label;
+			ఒకవేళ (pseudo_ప్రారంభం >= 0) {
+				ఒకవేళ (G.format_చిరునామా == format_చిరునామా_none) {
+					చిరునామా_పునాది_char = 'o';
+					చిరునామా_pad_len_char = '7';
+					G.format_చిరునామా = format_చిరునామా_paren;
+				} లేకపోతే {
+					G.format_చిరునామా = format_చిరునామా_label;
 				}
-				G_pseudo_offset = pseudo_start - n_bytes_to_skip;
+				G_pseudo_స్థానభ్రంశం = pseudo_ప్రారంభం - n_బైట్లు_గమ్యం_skip;
 			}
 		}
 		/* else: od --traditional (without args) */
 	}
-#endif
+#అయితే_ముగింపు
 
-	if (option_mask32 & OPT_N) {
-		end_offset = n_bytes_to_skip + max_bytes_to_format;
-		if (end_offset < n_bytes_to_skip)
-			bb_simple_error_msg_and_die("SKIP + SIZE is too large");
+	ఒకవేళ (option_mask32 & OPT_N) {
+		చివర_స్థానభ్రంశం = n_బైట్లు_గమ్యం_skip + max_బైట్లు_గమ్యం_format;
+		ఒకవేళ (చివర_స్థానభ్రంశం < n_బైట్లు_గమ్యం_skip)
+			bb_simple_error_సందేశం_and_die("SKIP + SIZE is too large");
 	}
 
-	if (G.n_specs == 0) {
+	ఒకవేళ (G.n_specs == 0) {
 		decode_format_string("o2");
 		/*G.n_specs = 1; - done by decode_format_string */
 	}
@@ -1362,52 +1362,52 @@ int od_main(int argc UNUSED_PARAM, char **argv)
 	   set the global pointer FILE_LIST so that it
 	   references the null-terminated list of one name: "-".  */
 	G.file_list = bb_argv_dash;
-	if (argv[0]) {
+	ఒకవేళ (argv[0]) {
 		/* Set the global pointer FILE_LIST so that it
 		   references the first file-argument on the command-line.  */
-		G.file_list = (char const *const *) argv;
+		G.file_list = (అక్షరం స్థిరరాశి *స్థిరరాశి *) argv;
 	}
 
 	/* Open the first input file */
-	open_next_file();
+	open_తదుపరి_file();
 	/* Skip over any unwanted header bytes */
-	skip(n_bytes_to_skip);
-	if (!G.in_stream)
-		return EXIT_FAILURE;
+	skip(n_బైట్లు_గమ్యం_skip);
+	ఒకవేళ (!G.లోపల_ప్రవాహం)
+		తిరిగి EXIT_FAILURE;
 
 	/* Compute output block length */
 	l_c_m = get_lcm();
 
-	if (opt & OPT_w) { /* -w: width */
-		if (!G.bytes_per_block || G.bytes_per_block % l_c_m != 0) {
-			bb_error_msg("warning: invalid width %u; using %d instead",
-					(unsigned)G.bytes_per_block, l_c_m);
-			G.bytes_per_block = l_c_m;
+	ఒకవేళ (opt & OPT_w) { /* -w: width */
+		ఒకవేళ (!G.బైట్లు_చొప్పున_ఖండం || G.బైట్లు_చొప్పున_ఖండం % l_c_m != 0) {
+			bb_error_సందేశం("warning: invalid width %u; using %d instead",
+					(గుర్తులేని)G.బైట్లు_చొప్పున_ఖండం, l_c_m);
+			G.బైట్లు_చొప్పున_ఖండం = l_c_m;
 		}
-	} else {
-		G.bytes_per_block = l_c_m;
-		if (l_c_m < DEFAULT_BYTES_PER_BLOCK)
-			G.bytes_per_block *= DEFAULT_BYTES_PER_BLOCK / l_c_m;
+	} లేకపోతే {
+		G.బైట్లు_చొప్పున_ఖండం = l_c_m;
+		ఒకవేళ (l_c_m < DEFAULT_బైట్లు_చొప్పున_ఖండం)
+			G.బైట్లు_చొప్పున_ఖండం *= DEFAULT_బైట్లు_చొప్పున_ఖండం / l_c_m;
 	}
 
-#ifdef DEBUG
+#నిర్వచితమైతే DEBUG
 	{
-		int i;
-		for (i = 0; i < G.n_specs; i++) {
-			printf("%d: fmt='%s' width=%d\n",
+		పూర్ణాంకం i;
+		కొరకు (i = 0; i < G.n_specs; i++) {
+			రాయి("%d: fmt='%s' width=%d\n",
 				i, G.spec[i].fmt_string,
-				width_bytes[G.spec[i].size]);
+				వెడల్పు_బైట్లు[G.spec[i].కొలత]);
 		}
 	}
-#endif
+#అయితే_ముగింపు
 
-	if (option_mask32 & OPT_S)
-		dump_strings(n_bytes_to_skip, end_offset);
-	else
-		dump(n_bytes_to_skip, end_offset);
+	ఒకవేళ (option_mask32 & OPT_S)
+		dump_అక్షరశ్రేణులు(n_బైట్లు_గమ్యం_skip, చివర_స్థానభ్రంశం);
+	లేకపోతే
+		dump(n_బైట్లు_గమ్యం_skip, చివర_స్థానభ్రంశం);
 
-	if (fclose(stdin))
-		bb_simple_perror_msg_and_die(bb_msg_standard_input);
+	ఒకవేళ (fclose(stdin))
+		bb_simple_perror_సందేశం_and_die(bb_సందేశం_standard_ఆదానం);
 
-	return G.exit_code;
+	తిరిగి G.exit_సంకేతం;
 }

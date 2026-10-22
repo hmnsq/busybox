@@ -26,55 +26,55 @@
 //usage:#define truncate_example_usage
 //usage:	"$ truncate -s 1G foo"
 
-#include "libbb.h"
+#అన్తర్భావ "libbb.h"
 
-#if ENABLE_LFS
+#ఒకవేళ ENABLE_LFS
 # define XATOU_SFX xatoull_sfx
-#else
+#లేకపోతే
 # define XATOU_SFX xatoul_sfx
-#endif
+#అయితే_ముగింపు
 
 /* This is a NOFORK applet. Be very careful! */
 
-int truncate_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int truncate_main(int argc UNUSED_PARAM, char **argv)
+పూర్ణాంకం truncate_main(పూర్ణాంకం argc, అక్షరం **argv) MAIN_EXTERNALLY_VISIBLE;
+పూర్ణాంకం truncate_main(పూర్ణాంకం argc వాడని_PARAM, అక్షరం **argv)
 {
-	unsigned opts;
-	int flags = O_WRONLY | O_NONBLOCK;
-	int ret = EXIT_SUCCESS;
-	char *size_str;
-	off_t size;
+	గుర్తులేని opts;
+	పూర్ణాంకం flags = O_WRONLY | O_NONBLOCK;
+	పూర్ణాంకం ret = EXIT_SUCCESS;
+	అక్షరం *కొలత_str;
+	off_t కొలత;
 
-	enum {
+	గణన {
 		OPT_NOCREATE  = (1 << 0),
-		OPT_SIZE = (1 << 1),
+		OPT_కొలత = (1 << 1),
 	};
 
-	opts = getopt32(argv, "^" "cs:" "\0" "s:-1", &size_str);
+	opts = getopt32(argv, "^" "cs:" "\0" "s:-1", &కొలత_str);
 
-	if (!(opts & OPT_NOCREATE))
+	ఒకవేళ (!(opts & OPT_NOCREATE))
 		flags |= O_CREAT;
 
 	// TODO: coreutils 8.17 also support "m" (lowercase) suffix
 	// with truncate, but not with dd!
 	// We share kMG_suffixes[], so we can't make both tools
 	// compatible at once...
-	size = XATOU_SFX(size_str, kMG_suffixes);
+	కొలత = XATOU_SFX(కొలత_str, kMG_suffixes);
 
 	argv += optind;
-	while (*argv) {
-		int fd = open(*argv, flags, 0666);
-		if (fd < 0) {
-			if (errno != ENOENT || !(opts & OPT_NOCREATE)) {
-				bb_perror_msg("%s: open", *argv);
+	అయితే (*argv) {
+		పూర్ణాంకం fd = open(*argv, flags, 0666);
+		ఒకవేళ (fd < 0) {
+			ఒకవేళ (errno != ENOENT || !(opts & OPT_NOCREATE)) {
+				bb_perror_సందేశం("%s: open", *argv);
 				ret = EXIT_FAILURE;
 			}
 			/* else: ENOENT && OPT_NOCREATE:
 			 * do not report error, exitcode is also 0.
 			 */
-		} else {
-			if (ftruncate(fd, size) == -1) {
-				bb_perror_msg("%s: truncate", *argv);
+		} లేకపోతే {
+			ఒకవేళ (ftruncate(fd, కొలత) == -1) {
+				bb_perror_సందేశం("%s: truncate", *argv);
 				ret = EXIT_FAILURE;
 			}
 			xclose(fd);
@@ -82,5 +82,5 @@ int truncate_main(int argc UNUSED_PARAM, char **argv)
 		++argv;
 	}
 
-	return ret;
+	తిరిగి ret;
 }

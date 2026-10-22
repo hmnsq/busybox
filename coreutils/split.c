@@ -40,140 +40,140 @@
 //usage:       "$ split TODO foo\n"
 //usage:       "$ cat TODO | split -a 2 -l 2 TODO_\n"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#అన్తర్భావ "libbb.h"
+#అన్తర్భావ "common_bufsiz.h"
 
-#if ENABLE_FEATURE_SPLIT_FANCY
-static const struct suffix_mult split_suffixes[] ALIGN_SUFFIX = {
+#ఒకవేళ ENABLE_FEATURE_విభజించు_FANCY
+స్థిర స్థిరరాశి నిర్మాణం suffix_mult విభజించు_suffixes[] ALIGN_SUFFIX = {
 	{ "b", 512 },
 	{ "k", 1024 },
 	{ "m", 1024*1024 },
 	{ "g", 1024*1024*1024 },
 	{ "", 0 }
 };
-#endif
+#అయితే_ముగింపు
 
 /* Increment the suffix part of the filename.
  * Returns NULL if we are out of filenames.
  */
-static char *next_file(char *old, unsigned suffix_len)
+స్థిర అక్షరం *తదుపరి_file(అక్షరం *old, గుర్తులేని suffix_len)
 {
-	size_t end = strlen(old);
-	unsigned i = 1;
-	char *curr;
+	కొలత_t చివర = అక్షరశ్రేణి_పొడవు(old);
+	గుర్తులేని i = 1;
+	అక్షరం *curr;
 
-	while (1) {
-		curr = old + end - i;
-		if (*curr < 'z') {
+	అయితే (1) {
+		curr = old + చివర - i;
+		ఒకవేళ (*curr < 'z') {
 			*curr += 1;
-			break;
+			ఆపు;
 		}
 		i++;
-		if (i > suffix_len) {
-			return NULL;
+		ఒకవేళ (i > suffix_len) {
+			తిరిగి ఖాళీ;
 		}
 		*curr = 'a';
 	}
 
-	return old;
+	తిరిగి old;
 }
 
-#define read_buffer bb_common_bufsiz1
-enum { READ_BUFFER_SIZE = COMMON_BUFSIZE - 1 };
+#నిర్వచించు read_బఫరు bb_common_bufsiz1
+గణన { READ_బఫరు_కొలత = COMMON_BUFSIZE - 1 };
 
-#define SPLIT_OPT_l (1<<0)
-#define SPLIT_OPT_b (1<<1)
-#define SPLIT_OPT_a (1<<2)
+#నిర్వచించు విభజించు_OPT_l (1<<0)
+#నిర్వచించు విభజించు_OPT_b (1<<1)
+#నిర్వచించు విభజించు_OPT_a (1<<2)
 
-int split_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int split_main(int argc UNUSED_PARAM, char **argv)
+పూర్ణాంకం విభజించు_main(పూర్ణాంకం argc, అక్షరం **argv) MAIN_EXTERNALLY_VISIBLE;
+పూర్ణాంకం విభజించు_main(పూర్ణాంకం argc వాడని_PARAM, అక్షరం **argv)
 {
-	unsigned suffix_len = 2;
-	char *pfx;
-	char *count_p;
-	const char *sfx;
+	గుర్తులేని suffix_len = 2;
+	అక్షరం *pfx;
+	అక్షరం *లెక్క_p;
+	స్థిరరాశి అక్షరం *sfx;
 	off_t cnt = 1000;
-	off_t remaining = 0;
-	unsigned opt;
-	ssize_t bytes_read, to_write;
-	char *src;
+	off_t మిగిలిన = 0;
+	గుర్తులేని opt;
+	ssize_t బైట్లు_read, గమ్యం_write;
+	అక్షరం *src;
 
-	setup_common_bufsiz();
+	అమరిక_common_bufsiz();
 
 	opt = getopt32(argv, "^"
 			"l:b:a:+" /* -a N */
 			"\0" "?2"/*max 2 args*/,
-			&count_p, &count_p, &suffix_len
+			&లెక్క_p, &లెక్క_p, &suffix_len
 	);
 
-	if (opt & SPLIT_OPT_l)
-		cnt = XATOOFF(count_p);
-	if (opt & SPLIT_OPT_b) // FIXME: also needs XATOOFF
-		cnt = xatoull_sfx(count_p,
-				IF_FEATURE_SPLIT_FANCY(split_suffixes)
-				IF_NOT_FEATURE_SPLIT_FANCY(km_suffixes)
+	ఒకవేళ (opt & విభజించు_OPT_l)
+		cnt = XATOOFF(లెక్క_p);
+	ఒకవేళ (opt & విభజించు_OPT_b) // FIXME: also needs XATOOFF
+		cnt = xatoull_sfx(లెక్క_p,
+				IF_FEATURE_విభజించు_FANCY(విభజించు_suffixes)
+				IF_NOT_FEATURE_విభజించు_FANCY(km_suffixes)
 		);
 	sfx = "x";
 
 	argv += optind;
-	if (argv[0]) {
-		int fd;
-		if (argv[1])
+	ఒకవేళ (argv[0]) {
+		పూర్ణాంకం fd;
+		ఒకవేళ (argv[1])
 			sfx = argv[1];
 		fd = xopen_stdin(argv[0]);
 		xmove_fd(fd, STDIN_FILENO);
-	} else {
-		argv[0] = (char *) bb_msg_standard_input;
+	} లేకపోతే {
+		argv[0] = (అక్షరం *) bb_సందేశం_standard_ఆదానం;
 	}
 
-	if (NAME_MAX < strlen(sfx) + suffix_len)
-		bb_simple_error_msg_and_die("suffix too long");
+	ఒకవేళ (NAME_MAX < అక్షరశ్రేణి_పొడవు(sfx) + suffix_len)
+		bb_simple_error_సందేశం_and_die("suffix too long");
 
 	{
-		char *char_p = xzalloc(suffix_len + 1);
+		అక్షరం *char_p = xzalloc(suffix_len + 1);
 		memset(char_p, 'a', suffix_len);
 		pfx = xasprintf("%s%s", sfx, char_p);
-		if (ENABLE_FEATURE_CLEAN_UP)
-			free(char_p);
+		ఒకవేళ (ENABLE_FEATURE_CLEAN_పైకి)
+			విడుదల(char_p);
 	}
 
-	while (1) {
-		bytes_read = safe_read(STDIN_FILENO, read_buffer, READ_BUFFER_SIZE);
-		if (!bytes_read)
-			break;
-		if (bytes_read < 0)
-			bb_simple_perror_msg_and_die(argv[0]);
-		src = read_buffer;
-		do {
-			if (!remaining) {
-				if (!pfx)
-					bb_simple_error_msg_and_die("suffixes exhausted");
+	అయితే (1) {
+		బైట్లు_read = సురక్షిత_read(STDIN_FILENO, read_బఫరు, READ_బఫరు_కొలత);
+		ఒకవేళ (!బైట్లు_read)
+			ఆపు;
+		ఒకవేళ (బైట్లు_read < 0)
+			bb_simple_perror_సందేశం_and_die(argv[0]);
+		src = read_బఫరు;
+		చేయి {
+			ఒకవేళ (!మిగిలిన) {
+				ఒకవేళ (!pfx)
+					bb_simple_error_సందేశం_and_die("suffixes exhausted");
 				xmove_fd(xopen(pfx, O_WRONLY | O_CREAT | O_TRUNC), 1);
-				pfx = next_file(pfx, suffix_len);
-				remaining = cnt;
+				pfx = తదుపరి_file(pfx, suffix_len);
+				మిగిలిన = cnt;
 			}
 
-			if (opt & SPLIT_OPT_b) {
+			ఒకవేళ (opt & విభజించు_OPT_b) {
 				/* split by bytes */
-				to_write = (bytes_read < remaining) ? bytes_read : remaining;
-				remaining -= to_write;
-			} else {
+				గమ్యం_write = (బైట్లు_read < మిగిలిన) ? బైట్లు_read : మిగిలిన;
+				మిగిలిన -= గమ్యం_write;
+			} లేకపోతే {
 				/* split by lines */
 				/* can be sped up by using _memrchr_
 				 * and writing many lines at once... */
-				char *end = memchr(src, '\n', bytes_read);
-				if (end) {
-					--remaining;
-					to_write = end - src + 1;
-				} else {
-					to_write = bytes_read;
+				అక్షరం *చివర = memchr(src, '\n', బైట్లు_read);
+				ఒకవేళ (చివర) {
+					--మిగిలిన;
+					గమ్యం_write = చివర - src + 1;
+				} లేకపోతే {
+					గమ్యం_write = బైట్లు_read;
 				}
 			}
 
-			xwrite(STDOUT_FILENO, src, to_write);
-			bytes_read -= to_write;
-			src += to_write;
-		} while (bytes_read);
+			xwrite(STDOUT_FILENO, src, గమ్యం_write);
+			బైట్లు_read -= గమ్యం_write;
+			src += గమ్యం_write;
+		} అయితే (బైట్లు_read);
 	}
-	return EXIT_SUCCESS;
+	తిరిగి EXIT_SUCCESS;
 }

@@ -84,60 +84,60 @@
 //usage:     "\n	-a	Show all"
 //usage:     "\n	-H	Print column headers"
 
-#include "libbb.h"
+#అన్తర్భావ "libbb.h"
 
-static void idle_string(char *str6, time_t t)
+స్థిర శూన్య idle_string(అక్షరం *str6, సమయం_t t)
 {
-	t = time(NULL) - t;
+	t = సమయం(ఖాళీ) - t;
 
 	/*if (t < 60) {
 		str6[0] = '.';
 		str6[1] = '\0';
 		return;
 	}*/
-	if (t >= 0 && t < (24 * 60 * 60)) {
+	ఒకవేళ (t >= 0 && t < (24 * 60 * 60)) {
 		sprintf(str6, "%02d:%02d",
-				(int) (t / (60 * 60)),
-				(int) ((t % (60 * 60)) / 60));
-		return;
+				(పూర్ణాంకం) (t / (60 * 60)),
+				(పూర్ణాంకం) ((t % (60 * 60)) / 60));
+		తిరిగి;
 	}
 	strcpy(str6, "old");
 }
 
-int who_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int who_main(int argc UNUSED_PARAM, char **argv)
+పూర్ణాంకం who_main(పూర్ణాంకం argc, అక్షరం **argv) MAIN_EXTERNALLY_VISIBLE;
+పూర్ణాంకం who_main(పూర్ణాంకం argc వాడని_PARAM, అక్షరం **argv)
 {
-#define CNT_APPLET (ENABLE_USERS + ENABLE_W + ENABLE_WHO)
-	int do_users = (ENABLE_USERS && (CNT_APPLET == 1 || applet_name[0] == 'u'));
-	int do_w     = (ENABLE_W     && (CNT_APPLET == 1 || applet_name[1] == '\0'));
-	int do_who   = (ENABLE_WHO   && (CNT_APPLET == 1 || applet_name[1] == 'h'));
-	struct utmpx *ut;
-	unsigned opt;
-	const char *fmt = "%s";
+#నిర్వచించు CNT_APPLET (ENABLE_USERS + ENABLE_W + ENABLE_WHO)
+	పూర్ణాంకం do_users = (ENABLE_USERS && (CNT_APPLET == 1 || applet_name[0] == 'u'));
+	పూర్ణాంకం do_w     = (ENABLE_W     && (CNT_APPLET == 1 || applet_name[1] == '\0'));
+	పూర్ణాంకం do_who   = (ENABLE_WHO   && (CNT_APPLET == 1 || applet_name[1] == 'h'));
+	నిర్మాణం utmpx *ut;
+	గుర్తులేని opt;
+	స్థిరరాశి అక్షరం *fmt = "%s";
 
 	opt = getopt32(argv, do_who ? "^" "aH" "\0" "=0": "^" "" "\0" "=0");
-	if ((opt & 2) || do_w) /* -H or we are w */
+	ఒకవేళ ((opt & 2) || do_w) /* -H or we are w */
 		puts("USER\t\tTTY\t\tIDLE\tTIME\t\t HOST");
 
 	setutxent();
-	while ((ut = getutxent()) != NULL) {
-		if (ut->ut_user[0]
+	అయితే ((ut = getutxent()) != ఖాళీ) {
+		ఒకవేళ (ut->ut_user[0]
 		 && ((opt & 1) || ut->ut_type == USER_PROCESS)
 		) {
-			if (!do_users) {
-				char str6[6];
-				char name[sizeof("/dev/") + sizeof(ut->ut_line) + 1];
-				struct stat st;
-				time_t seconds;
+			ఒకవేళ (!do_users) {
+				అక్షరం str6[6];
+				అక్షరం name[పరిమాణం("/dev/") + పరిమాణం(ut->ut_పంక్తి) + 1];
+				నిర్మాణం stat st;
+				సమయం_t seconds;
 
 				str6[0] = '?';
 				str6[1] = '\0';
 				strcpy(name, "/dev/");
-				safe_strncpy(ut->ut_line[0] == '/' ? name : name + sizeof("/dev/")-1,
-					ut->ut_line,
-					sizeof(ut->ut_line)+1
+				సురక్షిత_strncpy(ut->ut_పంక్తి[0] == '/' ? name : name + పరిమాణం("/dev/")-1,
+					ut->ut_పంక్తి,
+					పరిమాణం(ut->ut_పంక్తి)+1
 				);
-				if (stat(name, &st) == 0)
+				ఒకవేళ (stat(name, &st) == 0)
 					idle_string(str6, st.st_atime);
 				/* manpages say ut_tv.tv_sec *is* time_t,
 				 * but some systems have it wrong */
@@ -146,25 +146,25 @@ int who_main(int argc UNUSED_PARAM, char **argv)
 				 * "Nov 10 19:33:20": 15 chars
 				 * "2010-11-10 19:33": 16 chars
 				 */
-				printf("%-15.*s %-15.*s %-7s %-16.16s %.*s\n",
-						(int)sizeof(ut->ut_user), ut->ut_user,
-						(int)sizeof(ut->ut_line), ut->ut_line,
+				రాయి("%-15.*s %-15.*s %-7s %-16.16s %.*s\n",
+						(పూర్ణాంకం)పరిమాణం(ut->ut_user), ut->ut_user,
+						(పూర్ణాంకం)పరిమాణం(ut->ut_పంక్తి), ut->ut_పంక్తి,
 						str6,
 // TODO: with LANG=en_US.UTF-8, who from coreutils 8.25 shows
 // TIME col as "2017-04-06 18:47" (the default format is "Apr  6 18:47").
 // The former format looks saner to me. Switch to it unconditionally?
 						ctime(&seconds) + 4,
-						(int)sizeof(ut->ut_host), ut->ut_host
+						(పూర్ణాంకం)పరిమాణం(ut->ut_host), ut->ut_host
 				);
-			} else {
-				printf(fmt, ut->ut_user);
+			} లేకపోతే {
+				రాయి(fmt, ut->ut_user);
 				fmt = " %s";
 			}
 		}
 	}
-	if (do_users)
+	ఒకవేళ (do_users)
 		bb_putchar('\n');
-	if (ENABLE_FEATURE_CLEAN_UP)
+	ఒకవేళ (ENABLE_FEATURE_CLEAN_పైకి)
 		endutxent();
-	return EXIT_SUCCESS;
+	తిరిగి EXIT_SUCCESS;
 }

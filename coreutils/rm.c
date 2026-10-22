@@ -35,42 +35,42 @@
 //usage:#define rm_example_usage
 //usage:       "$ rm -rf /tmp/foo\n"
 
-#include "libbb.h"
+#అన్తర్భావ "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-int rm_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int rm_main(int argc UNUSED_PARAM, char **argv)
+పూర్ణాంకం rm_main(పూర్ణాంకం argc, అక్షరం **argv) MAIN_EXTERNALLY_VISIBLE;
+పూర్ణాంకం rm_main(పూర్ణాంకం argc వాడని_PARAM, అక్షరం **argv)
 {
-	int status = 0;
-	int flags = 0;
-	unsigned opt;
+	పూర్ణాంకం స్థితి_2 = 0;
+	పూర్ణాంకం flags = 0;
+	గుర్తులేని opt;
 
 	opt = getopt32(argv, "^" "fiRrv" "\0" "f-i:i-f");
 	argv += optind;
-	if (opt & 1)
+	ఒకవేళ (opt & 1)
 		flags |= FILEUTILS_FORCE;
-	if (opt & 2)
+	ఒకవేళ (opt & 2)
 		flags |= FILEUTILS_INTERACTIVE;
-	if (opt & (8|4))
+	ఒకవేళ (opt & (8|4))
 		flags |= FILEUTILS_RECUR;
-	if ((opt & 16) && FILEUTILS_VERBOSE)
+	ఒకవేళ ((opt & 16) && FILEUTILS_VERBOSE)
 		flags |= FILEUTILS_VERBOSE;
 
-	if (*argv != NULL) {
-		do {
-			const char *base = bb_get_last_path_component_strip(*argv);
+	ఒకవేళ (*argv != ఖాళీ) {
+		చేయి {
+			స్థిరరాశి అక్షరం *పునాది = bb_get_చివరి_మార్గం_component_strip(*argv);
 
-			if (DOT_OR_DOTDOT(base)) {
-				bb_simple_error_msg("can't remove '.' or '..'");
-			} else if (remove_file(*argv, flags) >= 0) {
-				continue;
+			ఒకవేళ (DOT_OR_DOTDOT(పునాది)) {
+				bb_simple_error_సందేశం("can't remove '.' or '..'");
+			} లేకపోతే ఒకవేళ (remove_file(*argv, flags) >= 0) {
+				కొనసాగు;
 			}
-			status = 1;
-		} while (*++argv);
-	} else if (!(flags & FILEUTILS_FORCE)) {
+			స్థితి_2 = 1;
+		} అయితే (*++argv);
+	} లేకపోతే ఒకవేళ (!(flags & FILEUTILS_FORCE)) {
 		bb_show_usage();
 	}
 
-	return status;
+	తిరిగి స్థితి_2;
 }

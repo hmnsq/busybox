@@ -25,48 +25,48 @@
 //usage:     "\n	-w	Pad with leading zeros"
 //usage:     "\n	-s SEP	String separator"
 
-#include "libbb.h"
+#అన్తర్భావ "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-int seq_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int seq_main(int argc, char **argv)
+పూర్ణాంకం seq_main(పూర్ణాంకం argc, అక్షరం **argv) MAIN_EXTERNALLY_VISIBLE;
+పూర్ణాంకం seq_main(పూర్ణాంకం argc, అక్షరం **argv)
 {
-	enum {
+	గణన {
 		OPT_w = (1 << 0),
 		OPT_s = (1 << 1),
 	};
-	double first, last, increment, v;
-	unsigned n;
-	unsigned width;
-	unsigned frac_part;
-	const char *sep, *opt_s = "\n";
-	char *saved;
-	unsigned opt;
+	ద్విగుణ మొదటి, చివరి, increment, v;
+	గుర్తులేని n;
+	గుర్తులేని వెడల్పు;
+	గుర్తులేని frac_part;
+	స్థిరరాశి అక్షరం *sep, *opt_s = "\n";
+	అక్షరం *saved;
+	గుర్తులేని opt;
 
-#if ENABLE_LOCALE_SUPPORT
+#ఒకవేళ ENABLE_LOCALE_SUPPORT
 	/* Undo busybox.c: on input, we want to use dot
 	 * as fractional separator, regardless of current locale */
 	setlocale(LC_NUMERIC, "C");
-#endif
+#అయితే_ముగింపు
 
 	/* Cater for negative arguments: if we see one, truncate argv[] on it */
 	n = 0;
-	for (;;) {
-		char c;
+	కొరకు (;;) {
+		అక్షరం c;
 		saved = argv[++n];
-		if (!saved)
-			break;
-		if (saved[0] != '-') {
+		ఒకవేళ (!saved)
+			ఆపు;
+		ఒకవేళ (saved[0] != '-') {
 			// break; // "seq -s : -1 1" won't be treated correctly
-			continue;
+			కొనసాగు;
 		}
 // "seq -s -1 1 9" is not treated correctly, but such usage
 // (delimiter string which looks like negative number) is very unlikely
 		c = saved[1];
-		if (c == '.' || (c >= '0' && c <= '9')) {
-			argv[n] = NULL;
-			break;
+		ఒకవేళ (c == '.' || (c >= '0' && c <= '9')) {
+			argv[n] = ఖాళీ;
+			ఆపు;
 		}
 	}
 	opt = getopt32(argv, "+ws:", &opt_s); /* "+": stop at first non-option */
@@ -75,68 +75,68 @@ int seq_main(int argc, char **argv)
 
 	argc -= optind;
 	argv += optind;
-	first = increment = 1;
+	మొదటి = increment = 1;
 	errno = 0;
-	switch (argc) {
-			char *pp;
-		case 3:
+	ఎంపిక (argc) {
+			అక్షరం *pp;
+		స్థితి 3:
 			increment = strtod(argv[1], &pp);
 			errno |= *pp;
-		case 2:
-			first = strtod(argv[0], &pp);
+		స్థితి 2:
+			మొదటి = strtod(argv[0], &pp);
 			errno |= *pp;
-		case 1:
-			last = strtod(argv[argc-1], &pp);
-			if (!errno && *pp == '\0')
-				break;
-		default:
+		స్థితి 1:
+			చివరి = strtod(argv[argc-1], &pp);
+			ఒకవేళ (!errno && *pp == '\0')
+				ఆపు;
+		అప్రమేయ:
 			bb_show_usage();
 	}
 
-#if ENABLE_LOCALE_SUPPORT
+#ఒకవేళ ENABLE_LOCALE_SUPPORT
 	setlocale(LC_NUMERIC, "");
-#endif
+#అయితే_ముగింపు
 
 	/* Last checked to be compatible with: coreutils-6.10 */
-	width = 0;
+	వెడల్పు = 0;
 	frac_part = 0;
-	while (1) {
-		char *dot = strchrnul(*argv, '.');
-		int w = (dot - *argv);
-		int f = strlen(dot);
-		if (width < w)
-			width = w;
+	అయితే (1) {
+		అక్షరం *dot = strchrnul(*argv, '.');
+		పూర్ణాంకం w = (dot - *argv);
+		పూర్ణాంకం f = అక్షరశ్రేణి_పొడవు(dot);
+		ఒకవేళ (వెడల్పు < w)
+			వెడల్పు = w;
 		argv++;
-		if (!*argv)
-			break;
+		ఒకవేళ (!*argv)
+			ఆపు;
 		/* Why do the above _before_ frac check below?
 		 * Try "seq 1 2.0" and "seq 1.0 2.0":
 		 * coreutils never pay attention to the number
 		 * of fractional digits in last arg. */
-		if (frac_part < f)
+		ఒకవేళ (frac_part < f)
 			frac_part = f;
 	}
-	if (frac_part) {
+	ఒకవేళ (frac_part) {
 		frac_part--;
-		if (frac_part)
-			width += frac_part + 1;
+		ఒకవేళ (frac_part)
+			వెడల్పు += frac_part + 1;
 	}
-	if (!(opt & OPT_w))
-		width = 0;
+	ఒకవేళ (!(opt & OPT_w))
+		వెడల్పు = 0;
 
 	sep = "";
-	v = first;
+	v = మొదటి;
 	n = 0;
-	while (increment >= 0 ? v <= last : v >= last) {
-		if (printf("%s%0*.*f", sep, width, frac_part, v) < 0)
-			break; /* I/O error, bail out (yes, this really happens) */
+	అయితే (increment >= 0 ? v <= చివరి : v >= చివరి) {
+		ఒకవేళ (రాయి("%s%0*.*f", sep, వెడల్పు, frac_part, v) < 0)
+			ఆపు; /* I/O error, bail out (yes, this really happens) */
 		sep = opt_s;
 		/* v += increment; - would accumulate floating point errors */
 		n++;
-		v = first + n * increment;
+		v = మొదటి + n * increment;
 	}
-	if (n) /* if while loop executed at least once */
+	ఒకవేళ (n) /* if while loop executed at least once */
 		bb_putchar('\n');
 
-	return fflush_all();
+	తిరిగి fflush_all();
 }

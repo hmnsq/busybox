@@ -124,11 +124,11 @@
 // --quiet   don't print OK for each successfully verified file
 // --status  don't output anything, status code shows success
 
-#include "libbb.h"
+#అన్తర్భావ "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-enum {
+గణన {
 	/* 4th letter of applet_name is... */
 	HASH_MD5 = 's', /* "md5>s<um" */
 	HASH_SHA1 = '1',
@@ -137,225 +137,225 @@ enum {
 	HASH_SHA512 = '5',
 };
 
-#define FLAG_SILENT  1
-#define FLAG_CHECK   2
-#define FLAG_WARN    4
+#నిర్వచించు FLAG_SILENT  1
+#నిర్వచించు FLAG_CHECK   2
+#నిర్వచించు FLAG_WARN    4
 
 /* This might be useful elsewhere */
-static unsigned char *hash_bin_to_hex(unsigned char *hash_value,
-				unsigned hash_length)
+స్థిర గుర్తులేని అక్షరం *hash_bin_గమ్యం_hex(గుర్తులేని అక్షరం *hash_విలువ,
+				గుర్తులేని hash_నిడివి)
 {
 	/* xzalloc zero-terminates */
-	char *hex_value = xzalloc((hash_length * 2) + 1);
-	bin2hex(hex_value, (char*)hash_value, hash_length);
-	return (unsigned char *)hex_value;
+	అక్షరం *hex_విలువ = xzalloc((hash_నిడివి * 2) + 1);
+	bin2hex(hex_విలువ, (అక్షరం*)hash_విలువ, hash_నిడివి);
+	తిరిగి (గుర్తులేని అక్షరం *)hex_విలువ;
 }
 
-#define BUFSZ (CONFIG_FEATURE_COPYBUF_KB < 4 ? 4096 : CONFIG_FEATURE_COPYBUF_KB * 1024)
+#నిర్వచించు BUFSZ (CONFIG_FEATURE_COPYBUF_KB < 4 ? 4096 : CONFIG_FEATURE_COPYBUF_KB * 1024)
 
-#if !ENABLE_SHA3SUM
+#ఒకవేళ !ENABLE_SHA3_కూడిక
 # define hash_file(b,f,w) hash_file(b,f)
-#endif
-static uint8_t *hash_file(unsigned char *in_buf, const char *filename, unsigned sha3_width)
+#అయితే_ముగింపు
+స్థిర uint8_t *hash_file(గుర్తులేని అక్షరం *లోపల_buf, స్థిరరాశి అక్షరం *filename, గుర్తులేని sha3_వెడల్పు)
 {
-	int src_fd, hash_len, count;
-	union _ctx_ {
+	పూర్ణాంకం src_fd, hash_len, లెక్క;
+	సంఘం _ctx_ {
 		sha3_ctx_t sha3;
 		sha512_ctx_t sha512;
 		sha256_ctx_t sha256;
 		sha1_ctx_t sha1;
 		md5_ctx_t md5;
 	} context;
-	uint8_t *hash_value;
-	void FAST_FUNC (*update)(void*, const void*, size_t);
-	unsigned FAST_FUNC (*final)(void*, void*);
-	char hash_algo;
+	uint8_t *hash_విలువ;
+	శూన్య FAST_FUNC (*update)(శూన్య*, స్థిరరాశి శూన్య*, కొలత_t);
+	గుర్తులేని FAST_FUNC (*final)(శూన్య*, శూన్య*);
+	అక్షరం hash_algo;
 
 	src_fd = open_or_warn_stdin(filename);
-	if (src_fd < 0) {
-		return NULL;
+	ఒకవేళ (src_fd < 0) {
+		తిరిగి ఖాళీ;
 	}
 
 	hash_algo = applet_name[3];
 
 	/* figure specific hash algorithms */
-	if (ENABLE_MD5SUM && hash_algo == HASH_MD5) {
+	ఒకవేళ (ENABLE_MD5_కూడిక && hash_algo == HASH_MD5) {
 		md5_begin(&context.md5);
-		update = (void*)md5_hash;
-		final = (void*)md5_end;
+		update = (శూన్య*)md5_hash;
+		final = (శూన్య*)md5_చివర;
 		hash_len = 16;
 	}
-	else if (ENABLE_SHA1SUM && hash_algo == HASH_SHA1) {
+	లేకపోతే ఒకవేళ (ENABLE_SHA1_కూడిక && hash_algo == HASH_SHA1) {
 		sha1_begin(&context.sha1);
-		update = (void*)sha1_hash;
-		final = (void*)sha1_end;
+		update = (శూన్య*)sha1_hash;
+		final = (శూన్య*)sha1_చివర;
 		hash_len = 20;
 	}
-	else if (ENABLE_SHA256SUM && hash_algo == HASH_SHA256) {
+	లేకపోతే ఒకవేళ (ENABLE_SHA256_కూడిక && hash_algo == HASH_SHA256) {
 		sha256_begin(&context.sha256);
-		update = (void*)sha256_hash;
-		final = (void*)sha256_end;
+		update = (శూన్య*)sha256_hash;
+		final = (శూన్య*)sha256_చివర;
 		hash_len = 32;
 	}
-	else if (ENABLE_SHA512SUM && hash_algo == HASH_SHA512) {
+	లేకపోతే ఒకవేళ (ENABLE_SHA512_కూడిక && hash_algo == HASH_SHA512) {
 		sha512_begin(&context.sha512);
-		update = (void*)sha512_hash;
-		final = (void*)sha512_end;
+		update = (శూన్య*)sha512_hash;
+		final = (శూన్య*)sha512_చివర;
 		hash_len = 64;
 	}
-#if ENABLE_SHA3SUM
-	else if (ENABLE_SHA3SUM && hash_algo == HASH_SHA3) {
+#ఒకవేళ ENABLE_SHA3_కూడిక
+	లేకపోతే ఒకవేళ (ENABLE_SHA3_కూడిక && hash_algo == HASH_SHA3) {
 		sha3_begin(&context.sha3);
-		update = (void*)sha3_hash;
-		final = (void*)sha3_end;
+		update = (శూన్య*)sha3_hash;
+		final = (శూన్య*)sha3_చివర;
 		/*
 		 * Should support 224, 256, 384, 512.
 		 * We allow any value which does not blow the algorithm up.
 		 */
-		if (sha3_width >= 1600/2 /* input block can't be <= 0 */
-		 || sha3_width == 0      /* hash len can't be 0 */
-		 || (sha3_width & 0x1f)  /* should be multiple of 32 */
+		ఒకవేళ (sha3_వెడల్పు >= 1600/2 /* input block can't be <= 0 */
+		 || sha3_వెడల్పు == 0      /* hash len can't be 0 */
+		 || (sha3_వెడల్పు & 0x1f)  /* should be multiple of 32 */
 		/* (because input uses up to 8 byte wide word XORs. 32/4=8) */
 		) {
-			bb_error_msg_and_die("bad -a%u", sha3_width);
+			bb_error_సందేశం_and_die("bad -a%u", sha3_వెడల్పు);
 		}
-		sha3_width /= 4;
-		context.sha3.input_block_bytes = 1600/8 - sha3_width;
-		hash_len = sha3_width/2;
+		sha3_వెడల్పు /= 4;
+		context.sha3.ఆదానం_ఖండం_బైట్లు = 1600/8 - sha3_వెడల్పు;
+		hash_len = sha3_వెడల్పు/2;
 	}
-#endif
-	else {
+#అయితే_ముగింపు
+	లేకపోతే {
 		xfunc_die(); /* can't reach this */
 	}
 
 	{
-		while ((count = safe_read(src_fd, in_buf, BUFSZ)) > 0) {
-			update(&context, in_buf, count);
+		అయితే ((లెక్క = సురక్షిత_read(src_fd, లోపల_buf, BUFSZ)) > 0) {
+			update(&context, లోపల_buf, లెక్క);
 		}
-		hash_value = NULL;
-		if (count < 0)
-			bb_perror_msg("can't read '%s'", filename);
-		else /* count == 0 */ {
-			final(&context, in_buf);
-			hash_value = hash_bin_to_hex(in_buf, hash_len);
+		hash_విలువ = ఖాళీ;
+		ఒకవేళ (లెక్క < 0)
+			bb_perror_సందేశం("can't read '%s'", filename);
+		లేకపోతే /* count == 0 */ {
+			final(&context, లోపల_buf);
+			hash_విలువ = hash_bin_గమ్యం_hex(లోపల_buf, hash_len);
 		}
 	}
 
-	if (src_fd != STDIN_FILENO) {
+	ఒకవేళ (src_fd != STDIN_FILENO) {
 		close(src_fd);
 	}
 
-	return hash_value;
+	తిరిగి hash_విలువ;
 }
 
-int md5_sha1_sum_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int md5_sha1_sum_main(int argc UNUSED_PARAM, char **argv)
+పూర్ణాంకం md5_sha1_కూడిక_main(పూర్ణాంకం argc, అక్షరం **argv) MAIN_EXTERNALLY_VISIBLE;
+పూర్ణాంకం md5_sha1_కూడిక_main(పూర్ణాంకం argc వాడని_PARAM, అక్షరం **argv)
 {
-	unsigned char *in_buf;
-	int return_value = EXIT_SUCCESS;
-	unsigned flags;
-#if ENABLE_SHA3SUM
-	unsigned sha3_width = 224;
-#endif
+	గుర్తులేని అక్షరం *లోపల_buf;
+	పూర్ణాంకం return_విలువ = EXIT_SUCCESS;
+	గుర్తులేని flags;
+#ఒకవేళ ENABLE_SHA3_కూడిక
+	గుర్తులేని sha3_వెడల్పు = 224;
+#అయితే_ముగింపు
 
-	if (ENABLE_FEATURE_MD5_SHA1_SUM_CHECK) {
+	ఒకవేళ (ENABLE_FEATURE_MD5_SHA1_కూడిక_CHECK) {
 		/* -b "binary", -t "text" are ignored (shaNNNsum compat) */
 		/* -s and -w require -c */
-#if ENABLE_SHA3SUM
-		if (applet_name[3] == HASH_SHA3)
-			flags = getopt32(argv, "^" "scwbta:+" "\0" "s?c:w?c", &sha3_width);
-		else
-#endif
+#ఒకవేళ ENABLE_SHA3_కూడిక
+		ఒకవేళ (applet_name[3] == HASH_SHA3)
+			flags = getopt32(argv, "^" "scwbta:+" "\0" "s?c:w?c", &sha3_వెడల్పు);
+		లేకపోతే
+#అయితే_ముగింపు
 			flags = getopt32(argv, "^" "scwbt" "\0" "s?c:w?c");
-	} else {
-#if ENABLE_SHA3SUM
-		if (applet_name[3] == HASH_SHA3)
-			getopt32(argv, "a:+", &sha3_width);
-		else
-#endif
+	} లేకపోతే {
+#ఒకవేళ ENABLE_SHA3_కూడిక
+		ఒకవేళ (applet_name[3] == HASH_SHA3)
+			getopt32(argv, "a:+", &sha3_వెడల్పు);
+		లేకపోతే
+#అయితే_ముగింపు
 			getopt32(argv, "");
 	}
 	argv += optind;
 	//argc -= optind;
-	if (!*argv)
-		*--argv = (char*)"-";
+	ఒకవేళ (!*argv)
+		*--argv = (అక్షరం*)"-";
 
 	/* The buffer is not alloc/freed for each input file:
 	 * for big values of COPYBUF_KB, this helps to keep its pages
 	 * pre-faulted and possibly even fully cached on local CPU.
 	 */
-	in_buf = xmalloc(BUFSZ);
+	లోపల_buf = xmalloc(BUFSZ);
 
-	do {
-		if (ENABLE_FEATURE_MD5_SHA1_SUM_CHECK && (flags & FLAG_CHECK)) {
-			FILE *pre_computed_stream;
-			char *line;
-			int count_total = 0;
-			int count_failed = 0;
+	చేయి {
+		ఒకవేళ (ENABLE_FEATURE_MD5_SHA1_కూడిక_CHECK && (flags & FLAG_CHECK)) {
+			FILE *pre_computed_ప్రవాహం;
+			అక్షరం *పంక్తి;
+			పూర్ణాంకం లెక్క_మొత్తం = 0;
+			పూర్ణాంకం లెక్క_failed = 0;
 
-			pre_computed_stream = xfopen_stdin(*argv);
+			pre_computed_ప్రవాహం = xfopen_stdin(*argv);
 
-			while ((line = xmalloc_fgetline(pre_computed_stream)) != NULL) {
-				uint8_t *hash_value;
-				char *filename_ptr;
+			అయితే ((పంక్తి = xmalloc_fgetline(pre_computed_ప్రవాహం)) != ఖాళీ) {
+				uint8_t *hash_విలువ;
+				అక్షరం *filename_ptr;
 
-				count_total++;
-				filename_ptr = strchr(line, ' ');
-				if (!filename_ptr) {
-					if (flags & FLAG_WARN) {
-						bb_simple_error_msg("invalid format");
+				లెక్క_మొత్తం++;
+				filename_ptr = strchr(పంక్తి, ' ');
+				ఒకవేళ (!filename_ptr) {
+					ఒకవేళ (flags & FLAG_WARN) {
+						bb_simple_error_సందేశం("invalid format");
 					}
-					count_failed++;
-					return_value = EXIT_FAILURE;
-					free(line);
-					continue;
+					లెక్క_failed++;
+					return_విలువ = EXIT_FAILURE;
+					విడుదల(పంక్తి);
+					కొనసాగు;
 				}
 				*filename_ptr++ = '\0';
 				/* coreutils 9.1 allows "HASH FILENAME" format,
 				 * with only one space. Skip the 'correct'
 				 * "  " or " *" delimiter if it is there:
 				 */
-				if (*filename_ptr == ' ' || *filename_ptr == '*')
+				ఒకవేళ (*filename_ptr == ' ' || *filename_ptr == '*')
 					filename_ptr++;
 
-				hash_value = hash_file(in_buf, filename_ptr, sha3_width);
+				hash_విలువ = hash_file(లోపల_buf, filename_ptr, sha3_వెడల్పు);
 
-				if (hash_value && (strcasecmp((char*)hash_value, line) == 0)) {
-					if (!(flags & FLAG_SILENT))
-						printf("%s: OK\n", filename_ptr);
-				} else {
-					if (!(flags & FLAG_SILENT))
-						printf("%s: FAILED\n", filename_ptr);
-					count_failed++;
-					return_value = EXIT_FAILURE;
+				ఒకవేళ (hash_విలువ && (strcasecmp((అక్షరం*)hash_విలువ, పంక్తి) == 0)) {
+					ఒకవేళ (!(flags & FLAG_SILENT))
+						రాయి("%s: OK\n", filename_ptr);
+				} లేకపోతే {
+					ఒకవేళ (!(flags & FLAG_SILENT))
+						రాయి("%s: FAILED\n", filename_ptr);
+					లెక్క_failed++;
+					return_విలువ = EXIT_FAILURE;
 				}
 				/* possible free(NULL) */
-				free(hash_value);
-				free(line);
+				విడుదల(hash_విలువ);
+				విడుదల(పంక్తి);
 			}
-			if (count_failed && !(flags & FLAG_SILENT)) {
-				bb_error_msg("WARNING: %d of %d computed checksums did NOT match",
-						count_failed, count_total);
+			ఒకవేళ (లెక్క_failed && !(flags & FLAG_SILENT)) {
+				bb_error_సందేశం("WARNING: %d of %d computed checksums did NOT match",
+						లెక్క_failed, లెక్క_మొత్తం);
 			}
-			if (count_total == 0) {
-				return_value = EXIT_FAILURE;
+			ఒకవేళ (లెక్క_మొత్తం == 0) {
+				return_విలువ = EXIT_FAILURE;
 				/*
 				 * md5sum from GNU coreutils 8.25 says:
 				 * md5sum: <FILE>: no properly formatted MD5 checksum lines found
 				 */
-				bb_error_msg("%s: no checksum lines found", *argv);
+				bb_error_సందేశం("%s: no checksum lines found", *argv);
 			}
-			fclose_if_not_stdin(pre_computed_stream);
-		} else {
-			uint8_t *hash_value = hash_file(in_buf, *argv, sha3_width);
-			if (hash_value == NULL) {
-				return_value = EXIT_FAILURE;
-			} else {
-				printf("%s  %s\n", hash_value, *argv);
-				free(hash_value);
+			fclose_if_not_stdin(pre_computed_ప్రవాహం);
+		} లేకపోతే {
+			uint8_t *hash_విలువ = hash_file(లోపల_buf, *argv, sha3_వెడల్పు);
+			ఒకవేళ (hash_విలువ == ఖాళీ) {
+				return_విలువ = EXIT_FAILURE;
+			} లేకపోతే {
+				రాయి("%s  %s\n", hash_విలువ, *argv);
+				విడుదల(hash_విలువ);
 			}
 		}
-	} while (*++argv);
+	} అయితే (*++argv);
 
-	return return_value;
+	తిరిగి return_విలువ;
 }

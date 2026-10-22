@@ -58,15 +58,15 @@
 //usage:       "$ ls -la /tmp/temp.mWiLjM\n"
 //usage:       "-rw-------    1 andersen andersen        0 Apr 25 17:10 /tmp/temp.mWiLjM\n"
 
-#include "libbb.h"
+#అన్తర్భావ "libbb.h"
 
-int mktemp_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int mktemp_main(int argc UNUSED_PARAM, char **argv)
+పూర్ణాంకం mktemp_main(పూర్ణాంకం argc, అక్షరం **argv) MAIN_EXTERNALLY_VISIBLE;
+పూర్ణాంకం mktemp_main(పూర్ణాంకం argc వాడని_PARAM, అక్షరం **argv)
 {
-	const char *path;
-	char *chp;
-	unsigned opts;
-	enum {
+	స్థిరరాశి అక్షరం *మార్గం;
+	అక్షరం *chp;
+	గుర్తులేని opts;
+	గణన {
 		OPT_d = 1 << 0,
 		OPT_q = 1 << 1,
 		OPT_t = 1 << 2,
@@ -75,59 +75,59 @@ int mktemp_main(int argc UNUSED_PARAM, char **argv)
 		OPT_tmpdir = (1 << 5) * ENABLE_LONG_OPTS,
 	};
 
-	path = getenv("TMPDIR");
-	if (!path || path[0] == '\0')
-		path = "/tmp";
+	మార్గం = getenv("TMPDIR");
+	ఒకవేళ (!మార్గం || మార్గం[0] == '\0')
+		మార్గం = "/tmp";
 
-#if ENABLE_LONG_OPTS
+#ఒకవేళ ENABLE_LONG_OPTS
 	opts = getopt32long(argv, "^"
 		"dqtp:u"
 		"\0"
 		"?1" /* 1 arg max */,
-		"directory\0" No_argument       "d"
-		"quiet\0"     No_argument       "q"
-		"dry-run\0"   No_argument       "u"
-		"tmpdir\0"    Optional_argument "\xff"
-		, &path, &path
+		"directory\0" No_వాదం       "d"
+		"quiet\0"     No_వాదం       "q"
+		"dry-run\0"   No_వాదం       "u"
+		"tmpdir\0"    Optional_వాదం "\xff"
+		, &మార్గం, &మార్గం
 	);
-#else
-	opts = getopt32(argv, "^" "dqtp:u" "\0" "?1"/*1 arg max*/, &path);
-#endif
+#లేకపోతే
+	opts = getopt32(argv, "^" "dqtp:u" "\0" "?1"/*1 arg max*/, &మార్గం);
+#అయితే_ముగింపు
 
 	chp = argv[optind];
-	if (!chp) {
+	ఒకవేళ (!chp) {
 		/* GNU coreutils 8.4:
 		 * bare "mktemp" -> "mktemp -t tmp.XXXXXX"
 		 */
 		chp = xstrdup("tmp.XXXXXX");
 		opts |= OPT_t;
 	}
-#if 0
+#ఒకవేళ 0
 	/* Don't allow directory separator in template */
-	if ((opts & OPT_t) && bb_basename(chp) != chp) {
+	ఒకవేళ ((opts & OPT_t) && bb_basename(chp) != chp) {
 		errno = EINVAL;
-		goto error;
+		వెళ్ళు error;
 	}
-#endif
-	if (opts & (OPT_t|OPT_p|OPT_tmpdir))
-		chp = concat_path_file(path, chp);
+#అయితే_ముగింపు
+	ఒకవేళ (opts & (OPT_t|OPT_p|OPT_tmpdir))
+		chp = concat_మార్గం_file(మార్గం, chp);
 
-	if (opts & OPT_u) {
+	ఒకవేళ (opts & OPT_u) {
 		chp = mktemp(chp);
-		if (chp[0] == '\0')
-			goto error;
-	} else if (opts & OPT_d) {
-		if (mkdtemp(chp) == NULL)
-			goto error;
-	} else {
-		if (mkstemp(chp) < 0)
-			goto error;
+		ఒకవేళ (chp[0] == '\0')
+			వెళ్ళు error;
+	} లేకపోతే ఒకవేళ (opts & OPT_d) {
+		ఒకవేళ (mkdtemp(chp) == ఖాళీ)
+			వెళ్ళు error;
+	} లేకపోతే {
+		ఒకవేళ (mkstemp(chp) < 0)
+			వెళ్ళు error;
 	}
 	puts(chp);
-	return EXIT_SUCCESS;
+	తిరిగి EXIT_SUCCESS;
  error:
-	if (opts & OPT_q)
-		return EXIT_FAILURE;
+	ఒకవేళ (opts & OPT_q)
+		తిరిగి EXIT_FAILURE;
 	/* don't use chp as it gets mangled in case of error */
 	bb_perror_nomsg_and_die();
 }

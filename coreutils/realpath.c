@@ -25,28 +25,28 @@
 //usage:#define realpath_full_usage "\n\n"
 //usage:       "Print absolute pathnames of FILEs"
 
-#include "libbb.h"
+#అన్తర్భావ "libbb.h"
 
-int realpath_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int realpath_main(int argc UNUSED_PARAM, char **argv)
+పూర్ణాంకం realpath_main(పూర్ణాంకం argc, అక్షరం **argv) MAIN_EXTERNALLY_VISIBLE;
+పూర్ణాంకం realpath_main(పూర్ణాంకం argc వాడని_PARAM, అక్షరం **argv)
 {
-	int retval = EXIT_SUCCESS;
+	పూర్ణాంకం retval = EXIT_SUCCESS;
 
-	if (!*++argv) {
+	ఒకవేళ (!*++argv) {
 		bb_show_usage();
 	}
 
-	do {
+	చేయి {
 		/* NOFORK: only one alloc is allowed; must free */
-		char *resolved_path = xmalloc_realpath_coreutils(*argv);
-		if (resolved_path != NULL) {
-			puts(resolved_path);
-			free(resolved_path);
-		} else {
+		అక్షరం *resolved_మార్గం = xmalloc_realpath_coreutils(*argv);
+		ఒకవేళ (resolved_మార్గం != ఖాళీ) {
+			puts(resolved_మార్గం);
+			విడుదల(resolved_మార్గం);
+		} లేకపోతే {
 			retval = EXIT_FAILURE;
-			bb_simple_perror_msg(*argv);
+			bb_simple_perror_సందేశం(*argv);
 		}
-	} while (*++argv);
+	} అయితే (*++argv);
 
 	fflush_stdout_and_exit(retval);
 }

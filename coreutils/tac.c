@@ -27,25 +27,25 @@
 //usage:#define tac_full_usage "\n\n"
 //usage:	"Concatenate FILEs and print them in reverse"
 
-#include "libbb.h"
+#అన్తర్భావ "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-struct lstring {
-	int size;
-	char buf[1];
+నిర్మాణం lstring {
+	పూర్ణాంకం కొలత;
+	అక్షరం buf[1];
 };
 
-int tac_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int tac_main(int argc UNUSED_PARAM, char **argv)
+పూర్ణాంకం tac_main(పూర్ణాంకం argc, అక్షరం **argv) MAIN_EXTERNALLY_VISIBLE;
+పూర్ణాంకం tac_main(పూర్ణాంకం argc వాడని_PARAM, అక్షరం **argv)
 {
-	char **name;
+	అక్షరం **name;
 	FILE *f;
-	struct lstring *line = NULL;
-	llist_t *list = NULL;
-	int retval = EXIT_SUCCESS;
+	నిర్మాణం lstring *పంక్తి = ఖాళీ;
+	llist_t *list = ఖాళీ;
+	పూర్ణాంకం retval = EXIT_SUCCESS;
 
-#if ENABLE_DESKTOP
+#ఒకవేళ ENABLE_DESKTOP
 /* tac from coreutils 6.9 supports:
        -b, --before
               attach the separator before instead of after
@@ -57,61 +57,61 @@ We support none, but at least we will complain or handle "--":
 */
 	getopt32(argv, "");
 	argv += optind;
-#else
+#లేకపోతే
 	argv++;
-#endif
-	if (!*argv)
-		*--argv = (char *)"-";
+#అయితే_ముగింపు
+	ఒకవేళ (!*argv)
+		*--argv = (అక్షరం *)"-";
 	/* We will read from last file to first */
 	name = argv;
-	while (*name)
+	అయితే (*name)
 		name++;
 
-	do {
-		int ch, i;
+	చేయి {
+		పూర్ణాంకం ch, i;
 
 		name--;
 		f = fopen_or_warn_stdin(*name);
-		if (f == NULL) {
+		ఒకవేళ (f == ఖాళీ) {
 			/* error message is printed by fopen_or_warn_stdin */
 			retval = EXIT_FAILURE;
-			continue;
+			కొనసాగు;
 		}
 
 		errno = i = 0;
-		do {
+		చేయి {
 			ch = fgetc(f);
-			if (ch != EOF) {
-				if (!(i & 0x7f))
+			ఒకవేళ (ch != EOF) {
+				ఒకవేళ (!(i & 0x7f))
 					/* Grow on every 128th char */
-					line = xrealloc(line, i + 0x7f + sizeof(int) + 1);
-				line->buf[i++] = ch;
+					పంక్తి = xrealloc(పంక్తి, i + 0x7f + పరిమాణం(పూర్ణాంకం) + 1);
+				పంక్తి->buf[i++] = ch;
 			}
-			if (ch == '\n' || (ch == EOF && i != 0)) {
-				line = xrealloc(line, i + sizeof(int));
-				line->size = i;
-				llist_add_to(&list, line);
-				line = NULL;
+			ఒకవేళ (ch == '\n' || (ch == EOF && i != 0)) {
+				పంక్తి = xrealloc(పంక్తి, i + పరిమాణం(పూర్ణాంకం));
+				పంక్తి->కొలత = i;
+				llist_కూడు_గమ్యం(&list, పంక్తి);
+				పంక్తి = ఖాళీ;
 				i = 0;
 			}
-		} while (ch != EOF);
+		} అయితే (ch != EOF);
 		/* fgetc sets errno to ENOENT on EOF, we don't want
 		 * to warn on this non-error! */
-		if (errno && errno != ENOENT) {
-			bb_simple_perror_msg(*name);
+		ఒకవేళ (errno && errno != ENOENT) {
+			bb_simple_perror_సందేశం(*name);
 			retval = EXIT_FAILURE;
 		}
-	} while (name != argv);
+	} అయితే (name != argv);
 
-	while (list) {
-		line = (struct lstring *)list->data;
-		xwrite(STDOUT_FILENO, line->buf, line->size);
-		if (ENABLE_FEATURE_CLEAN_UP) {
-			free(llist_pop(&list));
-		} else {
+	అయితే (list) {
+		పంక్తి = (నిర్మాణం lstring *)list->దత్తాంశం;
+		xwrite(STDOUT_FILENO, పంక్తి->buf, పంక్తి->కొలత);
+		ఒకవేళ (ENABLE_FEATURE_CLEAN_పైకి) {
+			విడుదల(llist_తీయి(&list));
+		} లేకపోతే {
 			list = list->link;
 		}
 	}
 
-	return retval;
+	తిరిగి retval;
 }

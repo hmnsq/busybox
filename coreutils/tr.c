@@ -60,9 +60,9 @@
 //usage:       "$ echo \"gdkkn vnqkc\" | tr [a-y] [b-z]\n"
 //usage:       "hello world\n"
 
-#include "libbb.h"
+#అన్తర్భావ "libbb.h"
 
-enum {
+గణన {
 	ASCII = 256,
 	/* string buffer needs to be at least as big as the whole "alphabet".
 	 * BUFSIZ == ASCII is ok, but we will realloc in expand
@@ -71,18 +71,18 @@ enum {
 	TR_BUFSIZ = (BUFSIZ > ASCII*2) ? BUFSIZ : ASCII*2,
 };
 
-static void map(char *pvector,
-		char *string1, unsigned string1_len,
-		char *string2, unsigned string2_len)
+స్థిర శూన్య map(అక్షరం *pvector,
+		అక్షరం *string1, గుర్తులేని string1_len,
+		అక్షరం *string2, గుర్తులేని string2_len)
 {
-	char last = '0';
-	unsigned i, j;
+	అక్షరం చివరి = '0';
+	గుర్తులేని i, j;
 
-	for (j = 0, i = 0; i < string1_len; i++) {
-		if (string2_len <= j)
-			pvector[(unsigned char)(string1[i])] = last;
-		else
-			pvector[(unsigned char)(string1[i])] = last = string2[j++];
+	కొరకు (j = 0, i = 0; i < string1_len; i++) {
+		ఒకవేళ (string2_len <= j)
+			pvector[(గుర్తులేని అక్షరం)(string1[i])] = చివరి;
+		లేకపోతే
+			pvector[(గుర్తులేని అక్షరం)(string1[i])] = చివరి = string2[j++];
 	}
 }
 
@@ -99,25 +99,25 @@ static void map(char *pvector,
  * # echo qwe123 | /usr/bin/tr 123456789 '[d*]'
  * qweddd
  */
-static unsigned expand(char *arg, char **buffer_p)
+స్థిర గుర్తులేని expand(అక్షరం *arg, అక్షరం **బఫరు_p)
 {
-	char *buffer = *buffer_p;
-	unsigned pos = 0;
-	unsigned size = TR_BUFSIZ;
-	unsigned i; /* can't be unsigned char: must be able to hold 256 */
-	unsigned char ac;
+	అక్షరం *బఫరు = *బఫరు_p;
+	గుర్తులేని pos = 0;
+	గుర్తులేని కొలత = TR_BUFSIZ;
+	గుర్తులేని i; /* can't be unsigned char: must be able to hold 256 */
+	గుర్తులేని అక్షరం ac;
 
-	while (*arg) {
-		if (pos + ASCII > size) {
-			size += ASCII;
-			*buffer_p = buffer = xrealloc(buffer, size);
+	అయితే (*arg) {
+		ఒకవేళ (pos + ASCII > కొలత) {
+			కొలత += ASCII;
+			*బఫరు_p = బఫరు = xrealloc(బఫరు, కొలత);
 		}
-		if (*arg == '\\') {
-			const char *z;
+		ఒకవేళ (*arg == '\\') {
+			స్థిరరాశి అక్షరం *z;
 			arg++;
 			z = arg;
 			ac = bb_process_escape_sequence(&z);
-			arg = (char *)z;
+			arg = (అక్షరం *)z;
 			arg--;
 			*arg = ac;
 			/*
@@ -125,44 +125,44 @@ static unsigned expand(char *arg, char **buffer_p)
 			 * If not, current char will be treated anyway.
 			 */
 		}
-		if (arg[1] == '-') { /* "0-9..." */
+		ఒకవేళ (arg[1] == '-') { /* "0-9..." */
 			ac = arg[2];
-			if (ac == '\0') { /* "0-": copy verbatim */
-				buffer[pos++] = *arg++; /* copy '0' */
-				continue; /* next iter will copy '-' and stop */
+			ఒకవేళ (ac == '\0') { /* "0-": copy verbatim */
+				బఫరు[pos++] = *arg++; /* copy '0' */
+				కొనసాగు; /* next iter will copy '-' and stop */
 			}
-			i = (unsigned char) *arg;
+			i = (గుర్తులేని అక్షరం) *arg;
 			arg += 3; /* skip 0-9 or 0-\ */
-			if (ac == '\\') {
-				const char *z;
+			ఒకవేళ (ac == '\\') {
+				స్థిరరాశి అక్షరం *z;
 				z = arg;
 				ac = bb_process_escape_sequence(&z);
-				arg = (char *)z;
+				arg = (అక్షరం *)z;
 			}
-			while (i <= ac) /* ok: i is unsigned _int_ */
-				buffer[pos++] = i++;
-			continue;
+			అయితే (i <= ac) /* ok: i is unsigned _int_ */
+				బఫరు[pos++] = i++;
+			కొనసాగు;
 		}
-		if ((ENABLE_FEATURE_TR_CLASSES || ENABLE_FEATURE_TR_EQUIV)
+		ఒకవేళ ((ENABLE_FEATURE_TR_CLASSES || ENABLE_FEATURE_TR_EQUIV)
 		 && *arg == '['
 		) {
 			arg++;
-			i = (unsigned char) *arg++;
+			i = (గుర్తులేని అక్షరం) *arg++;
 			/* "[xyz...". i=x, arg points to y */
-			if (ENABLE_FEATURE_TR_CLASSES && i == ':') { /* [:class:] */
-#define CLO ":]\0"
-				static const char classes[] ALIGN1 =
+			ఒకవేళ (ENABLE_FEATURE_TR_CLASSES && i == ':') { /* [:class:] */
+#నిర్వచించు CLO ":]\0"
+				స్థిర స్థిరరాశి అక్షరం classes[] ALIGN1 =
 					"alpha"CLO "alnum"CLO "digit"CLO
 					"lower"CLO "upper"CLO "space"CLO
 					"blank"CLO "punct"CLO "cntrl"CLO
 					"xdigit"CLO;
-				enum {
+				గణన {
 					CLASS_invalid = 0, /* we increment the retval */
 					CLASS_alpha = 1,
 					CLASS_alnum = 2,
 					CLASS_digit = 3,
-					CLASS_lower = 4,
-					CLASS_upper = 5,
+					CLASS_క్రింది = 4,
+					CLASS_పై = 5,
 					CLASS_space = 6,
 					CLASS_blank = 7,
 					CLASS_punct = 8,
@@ -172,65 +172,65 @@ static unsigned expand(char *arg, char **buffer_p)
 					//CLASS_print = 12,
 				};
 				smalluint j;
-				char *tmp;
+				అక్షరం *tmp;
 
 				/* xdigit needs 8, not 7 */
 				i = 7 + (arg[0] == 'x');
 				tmp = xstrndup(arg, i);
-				j = index_in_strings(classes, tmp) + 1;
-				free(tmp);
+				j = సూచీ_లోపల_అక్షరశ్రేణులు(classes, tmp) + 1;
+				విడుదల(tmp);
 
-				if (j == CLASS_invalid)
-					goto skip_bracket;
+				ఒకవేళ (j == CLASS_invalid)
+					వెళ్ళు skip_bracket;
 
 				arg += i;
-				if (j == CLASS_alnum || j == CLASS_digit || j == CLASS_xdigit) {
-					for (i = '0'; i <= '9'; i++)
-						buffer[pos++] = i;
+				ఒకవేళ (j == CLASS_alnum || j == CLASS_digit || j == CLASS_xdigit) {
+					కొరకు (i = '0'; i <= '9'; i++)
+						బఫరు[pos++] = i;
 				}
-				if (j == CLASS_alpha || j == CLASS_alnum || j == CLASS_upper) {
-					for (i = 'A'; i <= 'Z'; i++)
-						buffer[pos++] = i;
+				ఒకవేళ (j == CLASS_alpha || j == CLASS_alnum || j == CLASS_పై) {
+					కొరకు (i = 'A'; i <= 'Z'; i++)
+						బఫరు[pos++] = i;
 				}
-				if (j == CLASS_alpha || j == CLASS_alnum || j == CLASS_lower) {
-					for (i = 'a'; i <= 'z'; i++)
-						buffer[pos++] = i;
+				ఒకవేళ (j == CLASS_alpha || j == CLASS_alnum || j == CLASS_క్రింది) {
+					కొరకు (i = 'a'; i <= 'z'; i++)
+						బఫరు[pos++] = i;
 				}
-				if (j == CLASS_space || j == CLASS_blank) {
-					buffer[pos++] = '\t';
-					if (j == CLASS_space) {
-						buffer[pos++] = '\n';
-						buffer[pos++] = '\v';
-						buffer[pos++] = '\f';
-						buffer[pos++] = '\r';
+				ఒకవేళ (j == CLASS_space || j == CLASS_blank) {
+					బఫరు[pos++] = '\t';
+					ఒకవేళ (j == CLASS_space) {
+						బఫరు[pos++] = '\n';
+						బఫరు[pos++] = '\v';
+						బఫరు[pos++] = '\f';
+						బఫరు[pos++] = '\r';
 					}
-					buffer[pos++] = ' ';
+					బఫరు[pos++] = ' ';
 				}
-				if (j == CLASS_punct || j == CLASS_cntrl) {
-					for (i = '\0'; i < ASCII; i++) {
-						if ((j == CLASS_punct && isprint_asciionly(i) && !isalnum(i) && !isspace(i))
+				ఒకవేళ (j == CLASS_punct || j == CLASS_cntrl) {
+					కొరకు (i = '\0'; i < ASCII; i++) {
+						ఒకవేళ ((j == CLASS_punct && isprint_asciionly(i) && !అక్షరమా_అంకెనా(i) && !ఖాళీనా(i))
 						 || (j == CLASS_cntrl && iscntrl(i))
 						) {
-							buffer[pos++] = i;
+							బఫరు[pos++] = i;
 						}
 					}
 				}
-				if (j == CLASS_xdigit) {
-					for (i = 'A'; i <= 'F'; i++) {
-						buffer[pos + 6] = i | 0x20;
-						buffer[pos++] = i;
+				ఒకవేళ (j == CLASS_xdigit) {
+					కొరకు (i = 'A'; i <= 'F'; i++) {
+						బఫరు[pos + 6] = i | 0x20;
+						బఫరు[pos++] = i;
 					}
 					pos += 6;
 				}
-				continue;
+				కొనసాగు;
 			}
 			/* "[xyz...", i=x, arg points to y */
-			if (ENABLE_FEATURE_TR_EQUIV && i == '=') { /* [=CHAR=] */
-				buffer[pos++] = *arg; /* copy CHAR */
-				if (!arg[0] || arg[1] != '=' || arg[2] != ']')
+			ఒకవేళ (ENABLE_FEATURE_TR_EQUIV && i == '=') { /* [=CHAR=] */
+				బఫరు[pos++] = *arg; /* copy CHAR */
+				ఒకవేళ (!arg[0] || arg[1] != '=' || arg[2] != ']')
 					bb_show_usage();
 				arg += 3;  /* skip CHAR=] */
-				continue;
+				కొనసాగు;
 			}
 			/* The rest of "[xyz..." cases is treated as normal
 			 * string, "[" has no special meaning here:
@@ -241,55 +241,55 @@ static unsigned expand(char *arg, char **buffer_p)
  skip_bracket:
 			arg -= 2; /* points to "[" in "[xyz..." */
 		}
-		buffer[pos++] = *arg++;
+		బఫరు[pos++] = *arg++;
 	}
-	return pos;
+	తిరిగి pos;
 }
 
 /* NB: buffer is guaranteed to be at least TR_BUFSIZE
  * (which is >= ASCII) big.
  */
-static int complement(char *buffer, int buffer_len)
+స్థిర పూర్ణాంకం complement(అక్షరం *బఫరు, పూర్ణాంకం బఫరు_len)
 {
-	int len;
-	char conv[ASCII];
-	unsigned char ch;
+	పూర్ణాంకం len;
+	అక్షరం conv[ASCII];
+	గుర్తులేని అక్షరం ch;
 
 	len = 0;
 	ch = '\0';
-	while (1) {
-		if (memchr(buffer, ch, buffer_len) == NULL)
+	అయితే (1) {
+		ఒకవేళ (memchr(బఫరు, ch, బఫరు_len) == ఖాళీ)
 			conv[len++] = ch;
-		if (++ch == '\0')
-			break;
+		ఒకవేళ (++ch == '\0')
+			ఆపు;
 	}
-	memcpy(buffer, conv, len);
-	return len;
+	జ్ఞాపకం_నకలు(బఫరు, conv, len);
+	తిరిగి len;
 }
 
-int tr_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int tr_main(int argc UNUSED_PARAM, char **argv)
+పూర్ణాంకం tr_main(పూర్ణాంకం argc, అక్షరం **argv) MAIN_EXTERNALLY_VISIBLE;
+పూర్ణాంకం tr_main(పూర్ణాంకం argc వాడని_PARAM, అక్షరం **argv)
 {
-	int i;
+	పూర్ణాంకం i;
 	smalluint opts;
 	ssize_t read_chars;
-	size_t in_index, out_index;
-	unsigned last = UCHAR_MAX + 1; /* not equal to any char */
-	unsigned char coded, c;
-	char *str1 = xmalloc(TR_BUFSIZ);
-	char *str2 = xmalloc(TR_BUFSIZ);
-	int str2_length;
-	int str1_length;
-	char *vector = xzalloc(ASCII * 3);
-	char *invec  = vector + ASCII;
-	char *outvec = vector + ASCII * 2;
+	కొలత_t లోపల_సూచీ, బహిర్గతం_సూచీ;
+	గుర్తులేని చివరి = UCHAR_MAX + 1; /* not equal to any char */
+	గుర్తులేని అక్షరం coded, c;
+	అక్షరం *str1 = xmalloc(TR_BUFSIZ);
+	అక్షరం *str2 = xmalloc(TR_BUFSIZ);
+	పూర్ణాంకం str2_నిడివి;
+	పూర్ణాంకం str1_నిడివి;
+	అక్షరం *సదిశ = xzalloc(ASCII * 3);
+	అక్షరం *invec  = సదిశ + ASCII;
+	అక్షరం *outvec = సదిశ + ASCII * 2;
 
-#define TR_OPT_complement   (3 << 0)
-#define TR_OPT_delete       (1 << 2)
-#define TR_OPT_squeeze_reps (1 << 3)
+#నిర్వచించు TR_OPT_complement   (3 << 0)
+#నిర్వచించు TR_OPT_delete       (1 << 2)
+#నిర్వచించు TR_OPT_squeeze_reps (1 << 3)
 
-	for (i = 0; i < ASCII; i++) {
-		vector[i] = i;
+	కొరకు (i = 0; i < ASCII; i++) {
+		సదిశ[i] = i;
 		/*invec[i] = outvec[i] = FALSE; - done by xzalloc */
 	}
 
@@ -302,59 +302,59 @@ int tr_main(int argc UNUSED_PARAM, char **argv)
 	opts = getopt32(argv, "^+" "Ccds" "\0" "-1:?2");
 	argv += optind;
 
-	str1_length = expand(*argv++, &str1);
-	str2_length = 0;
-	if (opts & TR_OPT_complement)
-		str1_length = complement(str1, str1_length);
-	if (*argv) {
-		if (argv[0][0] == '\0')
-			bb_simple_error_msg_and_die("STRING2 cannot be empty");
-		str2_length = expand(*argv, &str2);
-		map(vector, str1, str1_length,
-				str2, str2_length);
+	str1_నిడివి = expand(*argv++, &str1);
+	str2_నిడివి = 0;
+	ఒకవేళ (opts & TR_OPT_complement)
+		str1_నిడివి = complement(str1, str1_నిడివి);
+	ఒకవేళ (*argv) {
+		ఒకవేళ (argv[0][0] == '\0')
+			bb_simple_error_సందేశం_and_die("STRING2 cannot be empty");
+		str2_నిడివి = expand(*argv, &str2);
+		map(సదిశ, str1, str1_నిడివి,
+				str2, str2_నిడివి);
 	}
-	for (i = 0; i < str1_length; i++)
-		invec[(unsigned char)(str1[i])] = TRUE;
-	for (i = 0; i < str2_length; i++)
-		outvec[(unsigned char)(str2[i])] = TRUE;
+	కొరకు (i = 0; i < str1_నిడివి; i++)
+		invec[(గుర్తులేని అక్షరం)(str1[i])] = TRUE;
+	కొరకు (i = 0; i < str2_నిడివి; i++)
+		outvec[(గుర్తులేని అక్షరం)(str2[i])] = TRUE;
 
-	goto start_from;
+	వెళ్ళు ప్రారంభం_from;
 
 	/* In this loop, str1 space is reused as input buffer,
 	 * str2 - as output one. */
-	for (;;) {
+	కొరకు (;;) {
 		/* If we're out of input, flush output and read more input. */
-		if ((ssize_t)in_index == read_chars) {
-			if (out_index) {
-				xwrite(STDOUT_FILENO, str2, out_index);
- start_from:
-				out_index = 0;
+		ఒకవేళ ((ssize_t)లోపల_సూచీ == read_chars) {
+			ఒకవేళ (బహిర్గతం_సూచీ) {
+				xwrite(STDOUT_FILENO, str2, బహిర్గతం_సూచీ);
+ ప్రారంభం_from:
+				బహిర్గతం_సూచీ = 0;
 			}
-			read_chars = safe_read(STDIN_FILENO, str1, TR_BUFSIZ);
-			if (read_chars <= 0) {
-				if (read_chars < 0)
-					bb_simple_perror_msg_and_die(bb_msg_read_error);
-				break;
+			read_chars = సురక్షిత_read(STDIN_FILENO, str1, TR_BUFSIZ);
+			ఒకవేళ (read_chars <= 0) {
+				ఒకవేళ (read_chars < 0)
+					bb_simple_perror_సందేశం_and_die(bb_సందేశం_read_error);
+				ఆపు;
 			}
-			in_index = 0;
+			లోపల_సూచీ = 0;
 		}
-		c = str1[in_index++];
-		if ((opts & TR_OPT_delete) && invec[c])
-			continue;
-		coded = vector[c];
-		if ((opts & TR_OPT_squeeze_reps) && last == coded
+		c = str1[లోపల_సూచీ++];
+		ఒకవేళ ((opts & TR_OPT_delete) && invec[c])
+			కొనసాగు;
+		coded = సదిశ[c];
+		ఒకవేళ ((opts & TR_OPT_squeeze_reps) && చివరి == coded
 		 && (invec[c] || outvec[coded])
 		) {
-			continue;
+			కొనసాగు;
 		}
-		str2[out_index++] = last = coded;
+		str2[బహిర్గతం_సూచీ++] = చివరి = coded;
 	}
 
-	if (ENABLE_FEATURE_CLEAN_UP) {
-		free(vector);
-		free(str2);
-		free(str1);
+	ఒకవేళ (ENABLE_FEATURE_CLEAN_పైకి) {
+		విడుదల(సదిశ);
+		విడుదల(str2);
+		విడుదల(str1);
 	}
 
-	return EXIT_SUCCESS;
+	తిరిగి EXIT_SUCCESS;
 }

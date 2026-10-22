@@ -36,26 +36,26 @@
 //usage:#define mv_example_usage
 //usage:       "$ mv /tmp/foo /bin/bar\n"
 
-#include "libbb.h"
-#include "libcoreutils/coreutils.h"
+#అన్తర్భావ "libbb.h"
+#అన్తర్భావ "libcoreutils/coreutils.h"
 
-int mv_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int mv_main(int argc, char **argv)
+పూర్ణాంకం mv_main(పూర్ణాంకం argc, అక్షరం **argv) MAIN_EXTERNALLY_VISIBLE;
+పూర్ణాంకం mv_main(పూర్ణాంకం argc, అక్షరం **argv)
 {
-	struct stat statbuf;
-	const char *last;
-	const char *dest;
-	unsigned flags;
-	int dest_exists;
-	int status = 0;
-	int copy_flag = 0;
+	నిర్మాణం stat statbuf;
+	స్థిరరాశి అక్షరం *చివరి;
+	స్థిరరాశి అక్షరం *dest;
+	గుర్తులేని flags;
+	పూర్ణాంకం dest_exists;
+	పూర్ణాంకం స్థితి_2 = 0;
+	పూర్ణాంకం copy_flag = 0;
 
-#define OPT_FORCE       (1 << 0)
-#define OPT_INTERACTIVE (1 << 1)
-#define OPT_NOCLOBBER   (1 << 2)
-#define OPT_DESTNOTDIR  (1 << 3)
-#define OPT_DESTDIR     (1 << 4)
-#define OPT_VERBOSE     ((1 << 5) * ENABLE_FEATURE_VERBOSE)
+#నిర్వచించు OPT_FORCE       (1 << 0)
+#నిర్వచించు OPT_INTERACTIVE (1 << 1)
+#నిర్వచించు OPT_NOCLOBBER   (1 << 2)
+#నిర్వచించు OPT_DESTNOTDIR  (1 << 3)
+#నిర్వచించు OPT_DESTDIR     (1 << 4)
+#నిర్వచించు OPT_VERBOSE     ((1 << 5) * ENABLE_FEATURE_VERBOSE)
 	flags = getopt32long(argv, "^"
 			"finTt:v"
 			"\0"
@@ -65,127 +65,127 @@ int mv_main(int argc, char **argv)
 			":f-in:i-fn:n-fi"
 	/* -t and -T don't mix */
 			":t--T:T--t",
-			"interactive\0" No_argument "i"
-			"force\0"       No_argument "f"
-			"no-clobber\0"  No_argument "n"
-			"no-target-directory\0" No_argument "T"
-			"target-directory\0" Required_argument "t"
+			"interactive\0" No_వాదం "i"
+			"force\0"       No_వాదం "f"
+			"no-clobber\0"  No_వాదం "n"
+			"no-target-directory\0" No_వాదం "T"
+			"target-directory\0" Required_వాదం "t"
 			IF_FEATURE_VERBOSE(
-			"verbose\0"     No_argument "v"
+			"verbose\0"     No_వాదం "v"
 			)
-			, &last
+			, &చివరి
 	);
 	argc -= optind;
 	argv += optind;
 
-	if (!(flags & OPT_DESTDIR)) {
-		last = argv[argc - 1];
-		if (argc < 2)
+	ఒకవేళ (!(flags & OPT_DESTDIR)) {
+		చివరి = argv[argc - 1];
+		ఒకవేళ (argc < 2)
 			bb_show_usage();
-		if (argc != 2) {
-			if (flags & OPT_DESTNOTDIR)
+		ఒకవేళ (argc != 2) {
+			ఒకవేళ (flags & OPT_DESTNOTDIR)
 				bb_show_usage();
 			/* "mv A B C... DIR" - target must be dir */
-		} else /* argc == 2 */ {
+		} లేకపోతే /* argc == 2 */ {
 			/* "mv A B" - only case where target can be not a dir */
-			dest_exists = cp_mv_stat(last, &statbuf);
-			if (dest_exists < 0) { /* error other than ENOENT */
-				return EXIT_FAILURE;
+			dest_exists = cp_mv_stat(చివరి, &statbuf);
+			ఒకవేళ (dest_exists < 0) { /* error other than ENOENT */
+				తిరిగి EXIT_FAILURE;
 			}
-			if (!(dest_exists & 2)) {
+			ఒకవేళ (!(dest_exists & 2)) {
 				/* last is not a directory */
-				dest = last;
-				goto DO_MOVE;
+				dest = చివరి;
+				వెళ్ళు DO_MOVE;
 			}
 			/* last is a directory */
-			if (flags & OPT_DESTNOTDIR) {
-				if (stat(argv[0], &statbuf) == 0 && !S_ISDIR(statbuf.st_mode))
-					bb_error_msg_and_die("'%s' is a directory", last);
+			ఒకవేళ (flags & OPT_DESTNOTDIR) {
+				ఒకవేళ (stat(argv[0], &statbuf) == 0 && !S_ISDIR(statbuf.st_బహుళకం))
+					bb_error_సందేశం_and_die("'%s' is a directory", చివరి);
 				/* "mv -T DIR1 DIR2" is allowed (renames a dir) */
-				dest = last;
-				goto DO_MOVE;
+				dest = చివరి;
+				వెళ్ళు DO_MOVE;
 			}
 			/* else: fall through into "do { move SRC to DIR/SRC } while" loop */
 		}
 	}
 	/* else: last is DIR from "-t DIR" */
 
-	do {
-		dest = concat_path_file(last, bb_get_last_path_component_strip(*argv));
+	చేయి {
+		dest = concat_మార్గం_file(చివరి, bb_get_చివరి_మార్గం_component_strip(*argv));
 		dest_exists = cp_mv_stat(dest, &statbuf);
-		if (dest_exists < 0) {
-			goto RET_1;
+		ఒకవేళ (dest_exists < 0) {
+			వెళ్ళు RET_1;
 		}
 
  DO_MOVE:
-		if (dest_exists) {
-			if (flags & OPT_NOCLOBBER)
-				goto RET_0;
-			if (!(flags & OPT_FORCE)
+		ఒకవేళ (dest_exists) {
+			ఒకవేళ (flags & OPT_NOCLOBBER)
+				వెళ్ళు RET_0;
+			ఒకవేళ (!(flags & OPT_FORCE)
 			 && ((access(dest, W_OK) < 0 && isatty(0))
 			    || (flags & OPT_INTERACTIVE))
 			) {
-				if (fprintf(stderr, "mv: overwrite '%s'? ", dest) < 0) {
-					goto RET_1;  /* Ouch! fprintf failed! */
+				ఒకవేళ (fprintf(stderr, "mv: overwrite '%s'? ", dest) < 0) {
+					వెళ్ళు RET_1;  /* Ouch! fprintf failed! */
 				}
-				if (!bb_ask_y_confirmation()) {
-					goto RET_0;
+				ఒకవేళ (!bb_ask_y_confirmation()) {
+					వెళ్ళు RET_0;
 				}
 			}
 		}
 
-		if (rename(*argv, dest) < 0) {
-			int source_exists;
+		ఒకవేళ (rename(*argv, dest) < 0) {
+			పూర్ణాంకం ఆధారం_exists;
 
-			if (errno != EXDEV
-			 || (source_exists = cp_mv_stat2(*argv, &statbuf, lstat)) < 1
+			ఒకవేళ (errno != EXDEV
+			 || (ఆధారం_exists = cp_mv_stat2(*argv, &statbuf, lstat)) < 1
 			) {
-				bb_perror_msg("can't rename '%s'", *argv);
-			} else {
-				static const char fmt[] ALIGN1 =
+				bb_perror_సందేశం("can't rename '%s'", *argv);
+			} లేకపోతే {
+				స్థిర స్థిరరాశి అక్షరం fmt[] ALIGN1 =
 					"can't overwrite %sdirectory with %sdirectory";
 
-				if (dest_exists) {
-					if (dest_exists == 3) {
-						if (source_exists != 3) {
-							bb_error_msg(fmt, "", "non-");
-							goto RET_1;
+				ఒకవేళ (dest_exists) {
+					ఒకవేళ (dest_exists == 3) {
+						ఒకవేళ (ఆధారం_exists != 3) {
+							bb_error_సందేశం(fmt, "", "non-");
+							వెళ్ళు RET_1;
 						}
-					} else {
-						if (source_exists == 3) {
-							bb_error_msg(fmt, "non-", "");
-							goto RET_1;
+					} లేకపోతే {
+						ఒకవేళ (ఆధారం_exists == 3) {
+							bb_error_సందేశం(fmt, "non-", "");
+							వెళ్ళు RET_1;
 						}
 					}
-					if (unlink(dest) < 0) {
-						bb_perror_msg("can't remove '%s'", dest);
-						goto RET_1;
+					ఒకవేళ (unlink(dest) < 0) {
+						bb_perror_సందేశం("can't remove '%s'", dest);
+						వెళ్ళు RET_1;
 					}
 				}
 				/* FILEUTILS_RECUR also prevents nasties like
 				 * "read from device and write contents to dst"
 				 * instead of "create same device node" */
-				copy_flag = FILEUTILS_RECUR | FILEUTILS_PRESERVE_STATUS;
-#if ENABLE_SELINUX
+				copy_flag = FILEUTILS_RECUR | FILEUTILS_PRESERVE_స్థితి;
+#ఒకవేళ ENABLE_SELINUX
 				copy_flag |= FILEUTILS_PRESERVE_SECURITY_CONTEXT;
-#endif
-				if ((copy_file(*argv, dest, copy_flag) >= 0)
+#అయితే_ముగింపు
+				ఒకవేళ ((copy_file(*argv, dest, copy_flag) >= 0)
 				 && (remove_file(*argv, FILEUTILS_RECUR | FILEUTILS_FORCE) >= 0)
 				) {
-					goto RET_0;
+					వెళ్ళు RET_0;
 				}
 			}
  RET_1:
-			status = 1;
+			స్థితి_2 = 1;
 		}
  RET_0:
-		if (flags & OPT_VERBOSE) {
-			printf("'%s' -> '%s'\n", *argv, dest);
+		ఒకవేళ (flags & OPT_VERBOSE) {
+			రాయి("'%s' -> '%s'\n", *argv, dest);
 		}
-		if (dest != last) {
-			free((void *) dest);
+		ఒకవేళ (dest != చివరి) {
+			విడుదల((శూన్య *) dest);
 		}
-	} while (*++argv && *argv != last);
+	} అయితే (*++argv && *argv != చివరి);
 
-	return status;
+	తిరిగి స్థితి_2;
 }

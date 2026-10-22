@@ -29,20 +29,20 @@
 //usage:       "Print FILE (or stdin) unambiguously, as octal bytes by default"
 //usage:#endif
 
-#include "libbb.h"
-#if ENABLE_DESKTOP
+#అన్తర్భావ "libbb.h"
+#ఒకవేళ ENABLE_DESKTOP
 /* This one provides -t (busybox's own build script needs it) */
-#include "od_bloaty.c"
-#else
+#అన్తర్భావ "od_bloaty.c"
+#లేకపోతే
 
-#include "dump.h"
+#అన్తర్భావ "dump.h"
 
-static void
-odoffset(dumper_t *dumper, int argc, char ***argvp)
+స్థిర శూన్య
+odoffset(dumper_t *dumper, పూర్ణాంకం argc, అక్షరం ***argvp)
 {
-	char *num, *p;
-	int base;
-	char *end;
+	అక్షరం *అంకె, *p;
+	పూర్ణాంకం పునాది;
+	అక్షరం *చివర;
 
 	/*
 	 * The offset syntax of od(1) was genuinely bizarre.  First, if
@@ -58,87 +58,87 @@ odoffset(dumper_t *dumper, int argc, char ***argvp)
 	 */
 	p = **argvp;
 
-	if (!p) {
+	ఒకవేళ (!p) {
 		/* hey someone is probably piping to us ... */
-		return;
+		తిరిగి;
 	}
 
-	if ((*p != '+')
+	ఒకవేళ ((*p != '+')
 		&& (argc < 2
-			|| (!isdigit(p[0])
+			|| (!అంకెనా(p[0])
 				&& ((p[0] != 'x') || !isxdigit(p[1])))))
-		return;
+		తిరిగి;
 
-	base = 0;
+	పునాది = 0;
 	/*
 	 * skip over leading '+', 'x[0-9a-fA-f]' or '0x', and
 	 * set base.
 	 */
-	if (p[0] == '+')
+	ఒకవేళ (p[0] == '+')
 		++p;
-	if (p[0] == 'x' && isxdigit(p[1])) {
+	ఒకవేళ (p[0] == 'x' && isxdigit(p[1])) {
 		++p;
-		base = 16;
-	} else if (p[0] == '0' && p[1] == 'x') {
+		పునాది = 16;
+	} లేకపోతే ఒకవేళ (p[0] == '0' && p[1] == 'x') {
 		p += 2;
-		base = 16;
+		పునాది = 16;
 	}
 
 	/* skip over the number */
-	if (base == 16)
-		for (num = p; isxdigit(*p); ++p)
-			continue;
-	else
-		for (num = p; isdigit(*p); ++p)
-			continue;
+	ఒకవేళ (పునాది == 16)
+		కొరకు (అంకె = p; isxdigit(*p); ++p)
+			కొనసాగు;
+	లేకపోతే
+		కొరకు (అంకె = p; అంకెనా(*p); ++p)
+			కొనసాగు;
 
 	/* check for no number */
-	if (num == p)
-		return;
+	ఒకవేళ (అంకె == p)
+		తిరిగి;
 
 	/* if terminates with a '.', base is decimal */
-	if (*p == '.') {
-		if (base)
-			return;
-		base = 10;
+	ఒకవేళ (*p == '.') {
+		ఒకవేళ (పునాది)
+			తిరిగి;
+		పునాది = 10;
 	}
 
-	dumper->dump_skip = strtol(num, &end, base ? base : 8);
+	dumper->dump_skip = strtol(అంకె, &చివర, పునాది ? పునాది : 8);
 
 	/* if end isn't the same as p, we got a non-octal digit */
-	if (end != p)
+	ఒకవేళ (చివర != p)
 		dumper->dump_skip = 0;
-	else {
-		if (*p) {
-			if (*p == 'b') {
+	లేకపోతే {
+		ఒకవేళ (*p) {
+			ఒకవేళ (*p == 'b') {
 				dumper->dump_skip *= 512;
 				++p;
-			} else if (*p == 'B') {
+			} లేకపోతే ఒకవేళ (*p == 'B') {
 				dumper->dump_skip *= 1024;
 				++p;
 			}
 		}
-		if (*p)
+		ఒకవేళ (*p)
 			dumper->dump_skip = 0;
-		else {
+		లేకపోతే {
 			++*argvp;
 			/*
 			 * If the offset uses a non-octal base, the base of
 			 * the offset is changed as well.  This isn't pretty,
 			 * but it's easy.
 			 */
-#define TYPE_OFFSET 7
+#నిర్వచించు TYPE_స్థానభ్రంశం 7
 			{
-				char x_or_d;
-				if (base == 16) {
+				అక్షరం x_or_d;
+				ఒకవేళ (పునాది == 16) {
 					x_or_d = 'x';
-					goto DO_X_OR_D;
+					వెళ్ళు DO_X_OR_D;
 				}
-				if (base == 10) {
+				ఒకవేళ (పునాది == 10) {
 					x_or_d = 'd';
  DO_X_OR_D:
-					dumper->fshead->nextfu->fmt[TYPE_OFFSET]
-						= dumper->fshead->nextfs->nextfu->fmt[TYPE_OFFSET]
+					dumper->fshead->nextfu->fmt[TYPE_స్థానభ్రంశం]
+						= dumper->fshead->nextfs->nextfu->fmt[TYPE_స్థానభ్రంశం]
 						= x_or_d;
 				}
 			}
@@ -159,7 +159,7 @@ odoffset(dumper_t *dumper, int argc, char ***argvp)
 // to disambiguate them.
 // The printf-style format is required and must be surrounded by " "s.
 // (Below, each string contains two format units)
-static const char *const add_strings[] ALIGN_PTR = {
+స్థిర స్థిరరాశి అక్షరం *స్థిరరాశి కూడు_అక్షరశ్రేణులు[] ALIGN_PTR = {
 	"16/1 \" %3_u\""   "\"\n\"",            /* 0: a */
 	"8/2 \" %06o\""    "\"\n\"",            /* 1: B (undocumented in od), o */
 	"16/1 \" %03o\""   "\"\n\"",            /* 2: b */
@@ -174,52 +174,52 @@ static const char *const add_strings[] ALIGN_PTR = {
 	"4/4 \" %011o\""   "\"\n\"",            /* 11: O */
 	"8/2 \" %6d\""     "\"\n\"",            /* 12: s */
 	/* -I,L,l: depend on word width of the arch (what is "long"?) */
-#if ULONG_MAX > 0xffffffff
+#ఒకవేళ ULONG_MAX > 0xffffffff
 	"2/8 \" %20lld\""  "\"\n\"",            /* 13: I, L, l */
-#define L_ 13
-#else
+#నిర్వచించు L_ 13
+#లేకపోతే
 	/* 32-bit arch: -I,L,l are the same as -i */
-#define L_ 10
-#endif
+#నిర్వచించు L_ 10
+#అయితే_ముగింపు
 };
 
-static const char od_opts[] ALIGN1 = "aBbcDdeFfHhIiLlOoXxsv";
+స్థిర స్థిరరాశి అక్షరం od_opts[] ALIGN1 = "aBbcDdeFfHhIiLlOoXxsv";
 
-static const char od_o2si[] ALIGN1 = {
+స్థిర స్థిరరాశి అక్షరం od_o2si[] ALIGN1 = {
 	0, 1, 2, 3, 5,     /* aBbcD */
 	4, 6, 6, 7, 8,     /* deFfH */
 	9, L_, 10, L_, L_, /* hIiLl */
 	11, 1, 8, 9, 12    /* OoXxs */
 };
 
-int od_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int od_main(int argc, char **argv)
+పూర్ణాంకం od_main(పూర్ణాంకం argc, అక్షరం **argv) MAIN_EXTERNALLY_VISIBLE;
+పూర్ణాంకం od_main(పూర్ణాంకం argc, అక్షరం **argv)
 {
-	int ch;
-	int first = 1;
-	char *p;
+	పూర్ణాంకం ch;
+	పూర్ణాంకం మొదటి = 1;
+	అక్షరం *p;
 	dumper_t *dumper = alloc_dumper();
 
-	while ((ch = getopt(argc, argv, od_opts)) > 0) {
-		if (ch == 'v') {
+	అయితే ((ch = getopt(argc, argv, od_opts)) > 0) {
+		ఒకవేళ (ch == 'v') {
 			dumper->dump_vflag = ALL;
-		} else if (((p = strchr(od_opts, ch)) != NULL) && (*p != '\0')) {
-			if (first) {
-				first = 0;
-				bb_dump_add(dumper, "\"%07.7_Ao\n\"");
-				bb_dump_add(dumper, "\"%07.7_ao\"");
-			} else {
-				bb_dump_add(dumper, "\"       \"");
+		} లేకపోతే ఒకవేళ (((p = strchr(od_opts, ch)) != ఖాళీ) && (*p != '\0')) {
+			ఒకవేళ (మొదటి) {
+				మొదటి = 0;
+				bb_dump_కూడు(dumper, "\"%07.7_Ao\n\"");
+				bb_dump_కూడు(dumper, "\"%07.7_ao\"");
+			} లేకపోతే {
+				bb_dump_కూడు(dumper, "\"       \"");
 			}
-			bb_dump_add(dumper, add_strings[(int)od_o2si[(p - od_opts)]]);
-		} else {  /* P, p, w, or other unhandled */
+			bb_dump_కూడు(dumper, కూడు_అక్షరశ్రేణులు[(పూర్ణాంకం)od_o2si[(p - od_opts)]]);
+		} లేకపోతే {  /* P, p, w, or other unhandled */
 			bb_show_usage();
 		}
 	}
-	if (!dumper->fshead) {
-		bb_dump_add(dumper, "\"%07.7_Ao\n\"");
-		bb_dump_add(dumper, "\"%07.7_ao\"");
-		bb_dump_add(dumper, add_strings[1]); /* -o format is default */
+	ఒకవేళ (!dumper->fshead) {
+		bb_dump_కూడు(dumper, "\"%07.7_Ao\n\"");
+		bb_dump_కూడు(dumper, "\"%07.7_ao\"");
+		bb_dump_కూడు(dumper, కూడు_అక్షరశ్రేణులు[1]); /* -o format is default */
 	}
 	dumper->od_eofstring = "\n";
 
@@ -228,9 +228,9 @@ int od_main(int argc, char **argv)
 
 	odoffset(dumper, argc, &argv);
 
-	return bb_dump_dump(dumper, argv);
+	తిరిగి bb_dump_dump(dumper, argv);
 }
-#endif /* !ENABLE_DESKTOP */
+#అయితే_ముగింపు /* !ENABLE_DESKTOP */
 
 /*-
  * Copyright (c) 1990 The Regents of the University of California.

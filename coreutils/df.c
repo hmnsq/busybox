@@ -97,28 +97,28 @@
 //usage:       "Filesystem          512-blocks      Used Available Capacity Mounted on\n"
 //usage:       "/dev/sda3             17381728  17107080    274648      98% /\n"
 
-#include <mntent.h>
-#include <sys/statvfs.h>
-#include "libbb.h"
-#include "unicode.h"
+#అన్తర్భావ <mntent.h>
+#అన్తర్భావ <sys/statvfs.h>
+#అన్తర్భావ "libbb.h"
+#అన్తర్భావ "unicode.h"
 
-#if !ENABLE_FEATURE_HUMAN_READABLE
-static unsigned long kscale(unsigned long b, unsigned long bs)
+#ఒకవేళ !ENABLE_FEATURE_HUMAN_READABLE
+స్థిర గుర్తులేని దీర్ఘ kscale(గుర్తులేని దీర్ఘ b, గుర్తులేని దీర్ఘ bs)
 {
-	return (b * (unsigned long long) bs + 1024/2) / 1024;
+	తిరిగి (b * (గుర్తులేని దీర్ఘ దీర్ఘ) bs + 1024/2) / 1024;
 }
-#endif
+#అయితే_ముగింపు
 
-int df_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int df_main(int argc UNUSED_PARAM, char **argv)
+పూర్ణాంకం df_main(పూర్ణాంకం argc, అక్షరం **argv) MAIN_EXTERNALLY_VISIBLE;
+పూర్ణాంకం df_main(పూర్ణాంకం argc వాడని_PARAM, అక్షరం **argv)
 {
-	unsigned long df_disp_hr = 1024;
-	exitcode_t status = EXIT_SUCCESS;
-	unsigned opt;
-	FILE *mount_table;
-	struct mntent *mount_entry;
-	struct statvfs s;
-	enum {
+	గుర్తులేని దీర్ఘ df_disp_hr = 1024;
+	exitcode_t స్థితి_2 = EXIT_SUCCESS;
+	గుర్తులేని opt;
+	FILE *mount_పట్టిక;
+	నిర్మాణం mntent *mount_నమోదు;
+	నిర్మాణం statvfs s;
+	గణన {
 		OPT_KILO     = (1 << 0),
 		OPT_POSIX    = (1 << 1),
 		OPT_FSTYPE   = (1 << 2),
@@ -130,8 +130,8 @@ int df_main(int argc UNUSED_PARAM, char **argv)
 		OPT_HUMANDEC = (1 << (5 + 3*ENABLE_FEATURE_DF_FANCY)) * ENABLE_FEATURE_HUMAN_READABLE,
 		OPT_MEGA     = (1 << (6 + 3*ENABLE_FEATURE_DF_FANCY)) * ENABLE_FEATURE_HUMAN_READABLE,
 	};
-	const char *disp_units_hdr = NULL;
-	char *chp, *opt_t;
+	స్థిరరాశి అక్షరం *disp_units_hdr = ఖాళీ;
+	అక్షరం *chp, *opt_t;
 
 	init_unicode();
 
@@ -139,7 +139,7 @@ int df_main(int argc UNUSED_PARAM, char **argv)
 	 * Disk space is shown in 1K blocks by default, unless the environment
 	 * variable POSIXLY_CORRECT is set, in which case 512-byte blocks are used.
 	 */
-	if (getenv("POSIXLY_CORRECT")) /* TODO - a new libbb function? */
+	ఒకవేళ (getenv("POSIXLY_CORRECT")) /* TODO - a new libbb function? */
 		df_disp_hr = 512;
 
 	opt = getopt32(argv, "^"
@@ -147,24 +147,24 @@ int df_main(int argc UNUSED_PARAM, char **argv)
 			IF_FEATURE_DF_FANCY("aiB:")
 			IF_FEATURE_HUMAN_READABLE("hHm")
 			"\0"
-#if ENABLE_FEATURE_HUMAN_READABLE && ENABLE_FEATURE_DF_FANCY
+#ఒకవేళ ENABLE_FEATURE_HUMAN_READABLE && ENABLE_FEATURE_DF_FANCY
 			"k-mB:m-Bk:B-km"
-#elif ENABLE_FEATURE_HUMAN_READABLE
+#లేదావేళ ENABLE_FEATURE_HUMAN_READABLE
 			"k-m:m-k"
-#endif
+#అయితే_ముగింపు
 			, &opt_t
 			IF_FEATURE_DF_FANCY(, &chp)
 	);
-	if (opt & OPT_MEGA)
+	ఒకవేళ (opt & OPT_MEGA)
 		df_disp_hr = 1024*1024;
 
-	if (opt & OPT_BSIZE) {
+	ఒకవేళ (opt & OPT_BSIZE) {
 		/* GNU coreutils 8.25 accepts "-BMiB" form too */
-		int i;
-		for (i = 0; kmg_i_suffixes[i].suffix[0]; i++) {
-			if (strcmp(kmg_i_suffixes[i].suffix, chp) == 0) {
+		పూర్ణాంకం i;
+		కొరకు (i = 0; kmg_i_suffixes[i].suffix[0]; i++) {
+			ఒకవేళ (strcmp(kmg_i_suffixes[i].suffix, chp) == 0) {
 				df_disp_hr = kmg_i_suffixes[i].mult;
-				goto got_it;
+				వెళ్ళు got_it;
 			}
 		}
 		/* Range used to disallow 0 */
@@ -172,180 +172,180 @@ int df_main(int argc UNUSED_PARAM, char **argv)
  got_it: ;
 	}
 
-	if (opt & (OPT_HUMAN|OPT_HUMANDEC)) {
+	ఒకవేళ (opt & (OPT_HUMAN|OPT_HUMANDEC)) {
 		df_disp_hr = 0;
 //TODO: need to add support in make_human_readable_str() for "decimal human readable"
 		//if (opt & OPT_HUMANDEC)
 		//	df_disp_hr--;
 		disp_units_hdr = "     Size";
 	}
-	if (opt & OPT_INODE)
+	ఒకవేళ (opt & OPT_INODE)
 		disp_units_hdr = "   Inodes";
 
-	if (disp_units_hdr == NULL) {
-#if ENABLE_FEATURE_HUMAN_READABLE
+	ఒకవేళ (disp_units_hdr == ఖాళీ) {
+#ఒకవేళ ENABLE_FEATURE_HUMAN_READABLE
 		disp_units_hdr = xasprintf("%s-blocks",
 			/* print df_disp_hr, show no fractionals,
 			 * use suffixes if OPT_POSIX is set in opt */
 			make_human_readable_str(df_disp_hr, 0, !!(opt & OPT_POSIX))
 		);
-#else
+#లేకపోతే
 		disp_units_hdr = xasprintf("%lu-blocks", df_disp_hr);
-#endif
+#అయితే_ముగింపు
 	}
 
-	printf("Filesystem           %s%-15sUsed Available %s Mounted on\n",
+	రాయి("Filesystem           %s%-15sUsed Available %s Mounted on\n",
 			(opt & OPT_FSTYPE) ? "Type       " : "",
 			disp_units_hdr,
 			(opt & OPT_POSIX) ? "Capacity" : "Use%");
 
-	mount_table = NULL;
+	mount_పట్టిక = ఖాళీ;
 	argv += optind;
-	if (!argv[0]) {
-		mount_table = setmntent(bb_path_mtab_file, "r");
-		if (!mount_table)
-			bb_simple_perror_msg_and_die(bb_path_mtab_file);
+	ఒకవేళ (!argv[0]) {
+		mount_పట్టిక = setmntent(bb_మార్గం_mtab_file, "r");
+		ఒకవేళ (!mount_పట్టిక)
+			bb_simple_perror_సందేశం_and_die(bb_మార్గం_mtab_file);
 	}
 
-	while (1) {
-		const char *device;
-		const char *mount_point;
-		const char *fs_type;
+	అయితే (1) {
+		స్థిరరాశి అక్షరం *device;
+		స్థిరరాశి అక్షరం *mount_బిందువు;
+		స్థిరరాశి అక్షరం *fs_type;
 
-		if (mount_table) {
-			mount_entry = getmntent(mount_table);
-			if (!mount_entry) {
-				endmntent(mount_table);
-				break;
+		ఒకవేళ (mount_పట్టిక) {
+			mount_నమోదు = getmntent(mount_పట్టిక);
+			ఒకవేళ (!mount_నమోదు) {
+				endmntent(mount_పట్టిక);
+				ఆపు;
 			}
-		} else {
-			mount_point = *argv++;
-			if (!mount_point)
-				break;
-			mount_entry = find_mount_point(mount_point, 1);
-			if (!mount_entry) {
-				bb_error_msg("%s: can't find mount point", mount_point);
- set_error:
-				status = EXIT_FAILURE;
-				continue;
+		} లేకపోతే {
+			mount_బిందువు = *argv++;
+			ఒకవేళ (!mount_బిందువు)
+				ఆపు;
+			mount_నమోదు = కనుగొను_mount_బిందువు(mount_బిందువు, 1);
+			ఒకవేళ (!mount_నమోదు) {
+				bb_error_సందేశం("%s: can't find mount point", mount_బిందువు);
+ సమితి_error:
+				స్థితి_2 = EXIT_FAILURE;
+				కొనసాగు;
 			}
 		}
 
-		device = mount_entry->mnt_fsname;
+		device = mount_నమోదు->mnt_fsname;
 
 		/* GNU coreutils 6.10 skips certain mounts, try to be compatible */
-		if (ENABLE_FEATURE_SKIP_ROOTFS && strcmp(device, "rootfs") == 0)
-			continue;
+		ఒకవేళ (ENABLE_FEATURE_SKIP_ROOTFS && strcmp(device, "rootfs") == 0)
+			కొనసాగు;
 
-		mount_point = mount_entry->mnt_dir;
-		fs_type = mount_entry->mnt_type;
+		mount_బిందువు = mount_నమోదు->mnt_dir;
+		fs_type = mount_నమోదు->mnt_type;
 
-		if (opt & OPT_t) {
-			if (strcmp(fs_type, opt_t) != 0)
-				continue;
+		ఒకవేళ (opt & OPT_t) {
+			ఒకవేళ (strcmp(fs_type, opt_t) != 0)
+				కొనసాగు;
 		}
 
-		if (statvfs(mount_point, &s) != 0) {
-			bb_simple_perror_msg(mount_point);
-			goto set_error;
+		ఒకవేళ (statvfs(mount_బిందువు, &s) != 0) {
+			bb_simple_perror_సందేశం(mount_బిందువు);
+			వెళ్ళు సమితి_error;
 		}
 		/* Some uclibc versions were seen to lose f_frsize
 		 * (kernel does return it, but then uclibc does not copy it)
 		 */
-		if (s.f_frsize == 0)
+		ఒకవేళ (s.f_frsize == 0)
 			s.f_frsize = s.f_bsize;
 
-		if ((s.f_blocks > 0) || !mount_table || (opt & OPT_ALL)) {
-			unsigned long long blocks_used;
-			unsigned long long blocks_total;
-			unsigned blocks_percent_used;
+		ఒకవేళ ((s.f_blocks > 0) || !mount_పట్టిక || (opt & OPT_ALL)) {
+			గుర్తులేని దీర్ఘ దీర్ఘ ఖండాలు_వాడిన;
+			గుర్తులేని దీర్ఘ దీర్ఘ ఖండాలు_మొత్తం;
+			గుర్తులేని ఖండాలు_percent_వాడిన;
 
-			if (opt & OPT_INODE) {
+			ఒకవేళ (opt & OPT_INODE) {
 				s.f_blocks = s.f_files;
 				s.f_bavail = s.f_bfree = s.f_ffree;
 				s.f_frsize = 1;
-				if (df_disp_hr)
+				ఒకవేళ (df_disp_hr)
 					df_disp_hr = 1;
 			}
-			blocks_used = s.f_blocks - s.f_bfree;
-			blocks_total = blocks_used + s.f_bavail;
-			blocks_percent_used = blocks_total; /* 0% if blocks_total == 0, else... */
-			if (blocks_total != 0) {
+			ఖండాలు_వాడిన = s.f_blocks - s.f_bfree;
+			ఖండాలు_మొత్తం = ఖండాలు_వాడిన + s.f_bavail;
+			ఖండాలు_percent_వాడిన = ఖండాలు_మొత్తం; /* 0% if blocks_total == 0, else... */
+			ఒకవేళ (ఖండాలు_మొత్తం != 0) {
 				/* Downscale sizes for narrower division */
-				unsigned u;
-				while (blocks_total >= INT_MAX / 101) {
-					blocks_total >>= 1;
-					blocks_used >>= 1;
+				గుర్తులేని u;
+				అయితే (ఖండాలు_మొత్తం >= గరిష్ఠ_పూర్ణాంకం / 101) {
+					ఖండాలు_మొత్తం >>= 1;
+					ఖండాలు_వాడిన >>= 1;
 				}
-				u = (unsigned)blocks_used * 100u + (unsigned)blocks_total / 2;
-				blocks_percent_used = u / (unsigned)blocks_total;
+				u = (గుర్తులేని)ఖండాలు_వాడిన * 100u + (గుర్తులేని)ఖండాలు_మొత్తం / 2;
+				ఖండాలు_percent_వాడిన = u / (గుర్తులేని)ఖండాలు_మొత్తం;
 			}
 
-#ifdef WHY_WE_DO_IT_FOR_DEV_ROOT_ONLY
-			if (strcmp(device, "/dev/root") == 0) {
+#నిర్వచితమైతే WHY_WE_DO_IT_FOR_DEV_మూలం_ONLY
+			ఒకవేళ (strcmp(device, "/dev/root") == 0) {
 				/* Adjusts device to be the real root device,
 				 * or leaves device alone if it can't find it */
-				device = find_block_device("/");
-				if (!device) {
-					goto set_error;
+				device = కనుగొను_ఖండం_device("/");
+				ఒకవేళ (!device) {
+					వెళ్ళు సమితి_error;
 				}
 			}
-#endif
+#అయితే_ముగింపు
 
-#if ENABLE_UNICODE_SUPPORT
+#ఒకవేళ ENABLE_UNICODE_SUPPORT
 			{
 				uni_stat_t uni_stat;
-				char *uni_dev = unicode_conv_to_printable(&uni_stat, device);
-				if (uni_stat.unicode_width > 20 && !(opt & OPT_POSIX)) {
-					printf("%s\n%20s", uni_dev, "");
-				} else {
-					printf("%s%*s", uni_dev, 20 - (int)uni_stat.unicode_width, "");
+				అక్షరం *uni_dev = unicode_conv_గమ్యం_printable(&uni_stat, device);
+				ఒకవేళ (uni_stat.unicode_వెడల్పు > 20 && !(opt & OPT_POSIX)) {
+					రాయి("%s\n%20s", uni_dev, "");
+				} లేకపోతే {
+					రాయి("%s%*s", uni_dev, 20 - (పూర్ణాంకం)uni_stat.unicode_వెడల్పు, "");
 				}
-				free(uni_dev);
-				if (opt & OPT_FSTYPE) {
-					char *uni_type = unicode_conv_to_printable(&uni_stat, fs_type);
-					if (uni_stat.unicode_width > 10 && !(opt & OPT_POSIX))
-						printf(" %s\n%31s", uni_type, "");
-					else
-						printf(" %s%*s", uni_type, 10 - (int)uni_stat.unicode_width, "");
-					free(uni_type);
+				విడుదల(uni_dev);
+				ఒకవేళ (opt & OPT_FSTYPE) {
+					అక్షరం *uni_type = unicode_conv_గమ్యం_printable(&uni_stat, fs_type);
+					ఒకవేళ (uni_stat.unicode_వెడల్పు > 10 && !(opt & OPT_POSIX))
+						రాయి(" %s\n%31s", uni_type, "");
+					లేకపోతే
+						రాయి(" %s%*s", uni_type, 10 - (పూర్ణాంకం)uni_stat.unicode_వెడల్పు, "");
+					విడుదల(uni_type);
 				}
 			}
-#else
-			if (printf("\n%-20s" + 1, device) > 20 && !(opt & OPT_POSIX))
-				printf("\n%-20s", "");
-			if (opt & OPT_FSTYPE) {
-				if (printf(" %-10s", fs_type) > 11 && !(opt & OPT_POSIX))
-					printf("\n%-30s", "");
+#లేకపోతే
+			ఒకవేళ (రాయి("\n%-20s" + 1, device) > 20 && !(opt & OPT_POSIX))
+				రాయి("\n%-20s", "");
+			ఒకవేళ (opt & OPT_FSTYPE) {
+				ఒకవేళ (రాయి(" %-10s", fs_type) > 11 && !(opt & OPT_POSIX))
+					రాయి("\n%-30s", "");
 			}
-#endif
+#అయితే_ముగింపు
 
-#if ENABLE_FEATURE_HUMAN_READABLE
-			printf(" %9s ",
+#ఒకవేళ ENABLE_FEATURE_HUMAN_READABLE
+			రాయి(" %9s ",
 				/* f_blocks x f_frsize / df_disp_hr, show one fractional,
 				 * use suffixes if df_disp_hr == 0 */
 				make_human_readable_str(s.f_blocks, s.f_frsize, df_disp_hr));
 
-			printf(" %9s " + 1,
+			రాయి(" %9s " + 1,
 				/* EXPR x f_frsize / df_disp_hr, show one fractional,
 				 * use suffixes if df_disp_hr == 0 */
 				make_human_readable_str((s.f_blocks - s.f_bfree),
 						s.f_frsize, df_disp_hr));
 
-			printf("%9s %3u%% %s\n",
+			రాయి("%9s %3u%% %s\n",
 				/* f_bavail x f_frsize / df_disp_hr, show one fractional,
 				 * use suffixes if df_disp_hr == 0 */
 				make_human_readable_str(s.f_bavail, s.f_frsize, df_disp_hr),
-				blocks_percent_used, mount_point);
-#else
-			printf(" %9lu %9lu %9lu %3u%% %s\n",
+				ఖండాలు_percent_వాడిన, mount_బిందువు);
+#లేకపోతే
+			రాయి(" %9lu %9lu %9lu %3u%% %s\n",
 				kscale(s.f_blocks, s.f_frsize),
 				kscale(s.f_blocks - s.f_bfree, s.f_frsize),
 				kscale(s.f_bavail, s.f_frsize),
-				blocks_percent_used, mount_point);
-#endif
+				ఖండాలు_percent_వాడిన, mount_బిందువు);
+#అయితే_ముగింపు
 		}
 	}
 
-	return status;
+	తిరిగి స్థితి_2;
 }

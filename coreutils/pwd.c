@@ -25,69 +25,69 @@
 //usage:       "$ pwd\n"
 //usage:       "/root\n"
 
-#include "libbb.h"
+#అన్తర్భావ "libbb.h"
 
-static int logical_getcwd(void)
+స్థిర పూర్ణాంకం logical_getcwd(శూన్య)
 {
-	struct stat st1;
-	struct stat st2;
-	char *wd;
-	char *p;
+	నిర్మాణం stat st1;
+	నిర్మాణం stat st2;
+	అక్షరం *wd;
+	అక్షరం *p;
 
 	wd = getenv("PWD");
-	if (!wd || wd[0] != '/')
-		return 0;
+	ఒకవేళ (!wd || wd[0] != '/')
+		తిరిగి 0;
 
 	p = wd;
-	while (*p) {
+	అయితే (*p) {
 		/* doing strstr(p, "/.") by hand is smaller and faster... */
-		if (*p++ != '/')
-			continue;
-		if (*p != '.')
-			continue;
+		ఒకవేళ (*p++ != '/')
+			కొనసాగు;
+		ఒకవేళ (*p != '.')
+			కొనసాగు;
 		/* we found "/.", skip to next char */
 		p++;
-		if (*p == '.')
+		ఒకవేళ (*p == '.')
 			p++; /* we found "/.." */
-		if (*p == '\0' || *p == '/')
-			return 0; /* "/./" or "/../" component: bad */
+		ఒకవేళ (*p == '\0' || *p == '/')
+			తిరిగి 0; /* "/./" or "/../" component: bad */
 	}
 
-	if (stat(wd, &st1) != 0)
-		return 0;
-	if (stat(".", &st2) != 0)
-		return 0;
-	if (st1.st_ino != st2.st_ino)
-		return 0;
-	if (st1.st_dev != st2.st_dev)
-		return 0;
+	ఒకవేళ (stat(wd, &st1) != 0)
+		తిరిగి 0;
+	ఒకవేళ (stat(".", &st2) != 0)
+		తిరిగి 0;
+	ఒకవేళ (st1.st_ino != st2.st_ino)
+		తిరిగి 0;
+	ఒకవేళ (st1.st_dev != st2.st_dev)
+		తిరిగి 0;
 
 	puts(wd);
-	return 1;
+	తిరిగి 1;
 }
 
-int pwd_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int pwd_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+పూర్ణాంకం pwd_main(పూర్ణాంకం argc, అక్షరం **argv) MAIN_EXTERNALLY_VISIBLE;
+పూర్ణాంకం pwd_main(పూర్ణాంకం argc వాడని_PARAM, అక్షరం **argv వాడని_PARAM)
 {
-	char *buf;
+	అక్షరం *buf;
 
-	if (ENABLE_DESKTOP) {
+	ఒకవేళ (ENABLE_DESKTOP) {
 		/* TODO: assume -L if $POSIXLY_CORRECT? (coreutils does that)
 		 * Rationale:
 		 * POSIX requires a default of -L, but most scripts expect -P
 		 */
-		unsigned opt = getopt32(argv, "LP");
-		if ((opt & 1) && logical_getcwd())
-			return fflush_all();
+		గుర్తులేని opt = getopt32(argv, "LP");
+		ఒకవేళ ((opt & 1) && logical_getcwd())
+			తిరిగి fflush_all();
 	}
 
-	buf = xrealloc_getcwd_or_warn(NULL);
+	buf = xrealloc_getcwd_or_warn(ఖాళీ);
 
-	if (buf) {
+	ఒకవేళ (buf) {
 		puts(buf);
-		free(buf);
-		return fflush_all();
+		విడుదల(buf);
+		తిరిగి fflush_all();
 	}
 
-	return EXIT_FAILURE;
+	తిరిగి EXIT_FAILURE;
 }

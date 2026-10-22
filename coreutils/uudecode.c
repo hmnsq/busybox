@@ -31,131 +31,131 @@
 //usage:       "$ ls -l busybox\n"
 //usage:       "-rwxr-xr-x   1 ams      ams        245264 Jun  7 21:35 busybox\n"
 
-#include "libbb.h"
+#అన్తర్భావ "libbb.h"
 
-#if ENABLE_UUDECODE
-static void FAST_FUNC read_stduu(FILE *src_stream, FILE *dst_stream, int flags UNUSED_PARAM)
+#ఒకవేళ ENABLE_UUDECODE
+స్థిర శూన్య FAST_FUNC read_stduu(FILE *src_ప్రవాహం, FILE *dst_ప్రవాహం, పూర్ణాంకం flags వాడని_PARAM)
 {
-	char *line;
+	అక్షరం *పంక్తి;
 
-	for (;;) {
-		int encoded_len, str_len;
-		char *line_ptr, *dst;
-		size_t line_len;
+	కొరకు (;;) {
+		పూర్ణాంకం encoded_len, str_len;
+		అక్షరం *పంక్తి_ptr, *dst;
+		కొలత_t పంక్తి_len;
 
-		line_len = 64 * 1024;
-		line = xmalloc_fgets_str_len(src_stream, "\n", &line_len);
-		if (!line)
-			break;
+		పంక్తి_len = 64 * 1024;
+		పంక్తి = xmalloc_fgets_str_len(src_ప్రవాహం, "\n", &పంక్తి_len);
+		ఒకవేళ (!పంక్తి)
+			ఆపు;
 		/* Handle both Unix and MSDOS text.
 		 * Note: space should not be trimmed, some encoders use it instead of "`"
 		 * for padding of last incomplete 4-char block.
 		 */
-		str_len = line_len;
-		while (--str_len >= 0
-		 && (line[str_len] == '\n' || line[str_len] == '\r')
+		str_len = పంక్తి_len;
+		అయితే (--str_len >= 0
+		 && (పంక్తి[str_len] == '\n' || పంక్తి[str_len] == '\r')
 		) {
-			line[str_len] = '\0';
+			పంక్తి[str_len] = '\0';
 		}
 
-		if (strcmp(line, "end") == 0) {
-			return; /* the only non-error exit */
+		ఒకవేళ (strcmp(పంక్తి, "end") == 0) {
+			తిరిగి; /* the only non-error exit */
 		}
 
-		line_ptr = line;
-		while (*line_ptr) {
-			*line_ptr = (*line_ptr - 0x20) & 0x3f;
-			line_ptr++;
+		పంక్తి_ptr = పంక్తి;
+		అయితే (*పంక్తి_ptr) {
+			*పంక్తి_ptr = (*పంక్తి_ptr - 0x20) & 0x3f;
+			పంక్తి_ptr++;
 		}
-		str_len = line_ptr - line;
+		str_len = పంక్తి_ptr - పంక్తి;
 
-		encoded_len = line[0] * 4 / 3;
+		encoded_len = పంక్తి[0] * 4 / 3;
 		/* Check that line is not too short. (we tolerate
 		 * overly _long_ line to accommodate possible extra "`").
 		 * Empty line case is also caught here. */
-		if (str_len <= encoded_len) {
-			break; /* go to bb_error_msg_and_die("short file"); */
+		ఒకవేళ (str_len <= encoded_len) {
+			ఆపు; /* go to bb_error_msg_and_die("short file"); */
 		}
-		if (encoded_len <= 0) {
+		ఒకవేళ (encoded_len <= 0) {
 			/* Ignore the "`\n" line, why is it even in the encode file ? */
-			free(line);
-			continue;
+			విడుదల(పంక్తి);
+			కొనసాగు;
 		}
-		if (encoded_len > 60) {
-			bb_simple_error_msg_and_die("line too long");
+		ఒకవేళ (encoded_len > 60) {
+			bb_simple_error_సందేశం_and_die("line too long");
 		}
 
-		dst = line;
-		line_ptr = line + 1;
-		do {
+		dst = పంక్తి;
+		పంక్తి_ptr = పంక్తి + 1;
+		చేయి {
 			/* Merge four 6 bit chars to three 8 bit chars */
-			*dst++ = line_ptr[0] << 2 | line_ptr[1] >> 4;
+			*dst++ = పంక్తి_ptr[0] << 2 | పంక్తి_ptr[1] >> 4;
 			encoded_len--;
-			if (encoded_len == 0) {
-				break;
+			ఒకవేళ (encoded_len == 0) {
+				ఆపు;
 			}
 
-			*dst++ = line_ptr[1] << 4 | line_ptr[2] >> 2;
+			*dst++ = పంక్తి_ptr[1] << 4 | పంక్తి_ptr[2] >> 2;
 			encoded_len--;
-			if (encoded_len == 0) {
-				break;
+			ఒకవేళ (encoded_len == 0) {
+				ఆపు;
 			}
 
-			*dst++ = line_ptr[2] << 6 | line_ptr[3];
-			line_ptr += 4;
+			*dst++ = పంక్తి_ptr[2] << 6 | పంక్తి_ptr[3];
+			పంక్తి_ptr += 4;
 			encoded_len -= 2;
-		} while (encoded_len > 0);
-		fwrite(line, 1, dst - line, dst_stream);
-		free(line);
+		} అయితే (encoded_len > 0);
+		fwrite(పంక్తి, 1, dst - పంక్తి, dst_ప్రవాహం);
+		విడుదల(పంక్తి);
 	}
-	bb_simple_error_msg_and_die("short file");
+	bb_simple_error_సందేశం_and_die("short file");
 }
 
-int uudecode_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int uudecode_main(int argc UNUSED_PARAM, char **argv)
+పూర్ణాంకం uudecode_main(పూర్ణాంకం argc, అక్షరం **argv) MAIN_EXTERNALLY_VISIBLE;
+పూర్ణాంకం uudecode_main(పూర్ణాంకం argc వాడని_PARAM, అక్షరం **argv)
 {
-	FILE *src_stream;
-	char *outname = NULL;
-	char *line;
+	FILE *src_ప్రవాహం;
+	అక్షరం *outname = ఖాళీ;
+	అక్షరం *పంక్తి;
 
 	getopt32(argv, "^" "o:" "\0" "?1"/* 1 arg max*/, &outname);
 	argv += optind;
 
-	if (!argv[0])
-		*--argv = (char*)"-";
-	src_stream = xfopen_stdin(argv[0]);
+	ఒకవేళ (!argv[0])
+		*--argv = (అక్షరం*)"-";
+	src_ప్రవాహం = xfopen_stdin(argv[0]);
 
 	/* Search for the start of the encoding */
-	while ((line = xmalloc_fgetline(src_stream)) != NULL) {
-		void FAST_FUNC (*decode_fn_ptr)(FILE *src, FILE *dst, int flags);
-		char *line_ptr;
-		FILE *dst_stream;
-		int mode;
+	అయితే ((పంక్తి = xmalloc_fgetline(src_ప్రవాహం)) != ఖాళీ) {
+		శూన్య FAST_FUNC (*decode_fn_ptr)(FILE *src, FILE *dst, పూర్ణాంకం flags);
+		అక్షరం *పంక్తి_ptr;
+		FILE *dst_ప్రవాహం;
+		పూర్ణాంకం బహుళకం;
 
-		if (is_prefixed_with(line, "begin-base64 ")) {
-			line_ptr = line + 13;
+		ఒకవేళ (is_prefixed_with(పంక్తి, "begin-base64 ")) {
+			పంక్తి_ptr = పంక్తి + 13;
 			decode_fn_ptr = read_base64;
-		} else if (is_prefixed_with(line, "begin ")) {
-			line_ptr = line + 6;
+		} లేకపోతే ఒకవేళ (is_prefixed_with(పంక్తి, "begin ")) {
+			పంక్తి_ptr = పంక్తి + 6;
 			decode_fn_ptr = read_stduu;
-		} else {
-			free(line);
-			continue;
+		} లేకపోతే {
+			విడుదల(పంక్తి);
+			కొనసాగు;
 		}
 
 		/* begin line found. decode and exit */
-		mode = bb_strtou(line_ptr, NULL, 8);
-		if (outname == NULL) {
-			outname = strchr(line_ptr, ' ');
-			if (!outname)
-				break;
+		బహుళకం = bb_strtou(పంక్తి_ptr, ఖాళీ, 8);
+		ఒకవేళ (outname == ఖాళీ) {
+			outname = strchr(పంక్తి_ptr, ' ');
+			ఒకవేళ (!outname)
+				ఆపు;
 			outname++;
 			trim(outname); /* remove trailing space (and '\r' for DOS text) */
-			if (!outname[0])
-				break;
+			ఒకవేళ (!outname[0])
+				ఆపు;
 		}
-		dst_stream = stdout;
-		if (NOT_LONE_DASH(outname)
+		dst_ప్రవాహం = stdout;
+		ఒకవేళ (NOT_LONE_DASH(outname)
 /* https://pubs.opengroup.org/onlinepubs/9699919799/utilities/uudecode.html
  * https://pubs.opengroup.org/onlinepubs/9699919799/utilities/uuencode.html
  * The above says that output file name specified in input file
@@ -165,17 +165,17 @@ int uudecode_main(int argc UNUSED_PARAM, char **argv)
  */
 		 && (!ENABLE_DESKTOP || strcmp(outname, "/dev/stdout") != 0)
 		) {
-			dst_stream = xfopen_for_write(outname);
-			fchmod(fileno(dst_stream), mode & (S_IRWXU | S_IRWXG | S_IRWXO));
+			dst_ప్రవాహం = xfopen_for_write(outname);
+			fchmod(fileno(dst_ప్రవాహం), బహుళకం & (S_IRWXU | S_IRWXG | S_IRWXO));
 		}
-		free(line);
-		decode_fn_ptr(src_stream, dst_stream, /*flags:*/ BASE64_FLAG_UU_STOP + BASE64_FLAG_NO_STOP_CHAR);
+		విడుదల(పంక్తి);
+		decode_fn_ptr(src_ప్రవాహం, dst_ప్రవాహం, /*flags:*/ BASE64_FLAG_UU_STOP + BASE64_FLAG_NO_STOP_CHAR);
 		/* fclose_if_not_stdin(src_stream); - redundant */
-		return EXIT_SUCCESS;
+		తిరిగి EXIT_SUCCESS;
 	}
-	bb_simple_error_msg_and_die("no 'begin' line");
+	bb_simple_error_సందేశం_and_die("no 'begin' line");
 }
-#endif
+#అయితే_ముగింపు
 
 //config:config BASE32
 //config:	bool "base32 (5.5 kb)"
@@ -214,147 +214,147 @@ int uudecode_main(int argc UNUSED_PARAM, char **argv)
 //kbuild:lib-$(CONFIG_BASE64) += uudecode.o
 //kbuild:lib-$(CONFIG_BASE32) += uudecode.o
 
-#if ENABLE_BASE32 || ENABLE_BASE64
+#ఒకవేళ ENABLE_BASE32 || ENABLE_BASE64
 
-# if ENABLE_BASE32
-static void bb_b32encode(char *p, const void *src, int length)
+# ఒకవేళ ENABLE_BASE32
+స్థిర శూన్య bb_b32encode(అక్షరం *p, స్థిరరాశి శూన్య *src, పూర్ణాంకం నిడివి)
 {
-#define tbl bb_uuenc_tbl_base32
-	const unsigned char *s = src;
+#నిర్వచించు tbl bb_uuenc_tbl_base32
+	స్థిరరాశి గుర్తులేని అక్షరం *s = src;
 
 	/* Transform 5x8 bits to 8x5 bits */
-	while (length > 0) {
-		unsigned cur, next;
+	అయితే (నిడివి > 0) {
+		గుర్తులేని cur, తదుపరి;
 
-		length--;
+		నిడివి--;
 		cur = *s++;
 		*p++ = tbl[cur >> 3];			// xxxxx--- -------- -------- -------- --------
 		cur &= 7;
 
-		next = 0;
-		if (--length >= 0)
-			next = *s++;
-		*p++ = tbl[(cur << 2) + (next >> 6)];	// -----xxx xx------ -------- -------- --------
-		cur = next & 0x3f;
+		తదుపరి = 0;
+		ఒకవేళ (--నిడివి >= 0)
+			తదుపరి = *s++;
+		*p++ = tbl[(cur << 2) + (తదుపరి >> 6)];	// -----xxx xx------ -------- -------- --------
+		cur = తదుపరి & 0x3f;
 
 		*p++ = tbl[cur >> 1];			// -------- --xxxxx- -------- -------- --------
 		cur &= 1;
 
-		next = 0;
-		if (--length >= 0)
-			next = *s++;
-		*p++ = tbl[(cur << 4) + (next >> 4)];	// -------- -------x xxxx---- -------- --------
-		cur = next & 0xf;
+		తదుపరి = 0;
+		ఒకవేళ (--నిడివి >= 0)
+			తదుపరి = *s++;
+		*p++ = tbl[(cur << 4) + (తదుపరి >> 4)];	// -------- -------x xxxx---- -------- --------
+		cur = తదుపరి & 0xf;
 
-		next = 0;
-		if (--length >= 0)
-			next = *s++;
-		*p++ = tbl[(cur << 1) + (next >> 7)];	// -------- -------- ----xxxx x------- --------
-		cur = next & 0x7f;
+		తదుపరి = 0;
+		ఒకవేళ (--నిడివి >= 0)
+			తదుపరి = *s++;
+		*p++ = tbl[(cur << 1) + (తదుపరి >> 7)];	// -------- -------- ----xxxx x------- --------
+		cur = తదుపరి & 0x7f;
 
 		*p++ = tbl[cur >> 2];			// -------- -------- -------- -xxxxx-- --------
 		cur &= 3;
 
-		next = 0;
-		if (--length >= 0)
-			next = *s++;
-		*p++ = tbl[(cur << 3) + (next >> 5)];	// -------- -------- -------- ------xx xxx-----
-		cur = next & 0x1f;
+		తదుపరి = 0;
+		ఒకవేళ (--నిడివి >= 0)
+			తదుపరి = *s++;
+		*p++ = tbl[(cur << 3) + (తదుపరి >> 5)];	// -------- -------- -------- ------xx xxx-----
+		cur = తదుపరి & 0x1f;
 
 		*p++ = tbl[cur];			// -------- -------- -------- -------- ---xxxxx
 	}
-#undef tbl
+#నిర్వచనం_రద్దు tbl
 	/* Zero-terminate */
 	*p = '\0';
 	/* Pad as necessary */
-	length = ((-length) * 3) >> 1; /* -4 => 6 pad chars, -3 => 4, -2 => 3, -1 => 1 */
-	while (length--) {
+	నిడివి = ((-నిడివి) * 3) >> 1; /* -4 => 6 pad chars, -3 => 4, -2 => 3, -1 => 1 */
+	అయితే (నిడివి--) {
 		*--p = '=';
 	}
 }
-# else
-void bb_b32encode(char *p, const void *src, int length); /* undefined */
+# లేకపోతే
+శూన్య bb_b32encode(అక్షరం *p, స్థిరరాశి శూన్య *src, పూర్ణాంకం నిడివి); /* undefined */
 # endif
 
-int baseNUM_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int baseNUM_main(int argc UNUSED_PARAM, char **argv)
+పూర్ణాంకం పునాది_అంకె_main(పూర్ణాంకం argc, అక్షరం **argv) MAIN_EXTERNALLY_VISIBLE;
+పూర్ణాంకం పునాది_అంకె_main(పూర్ణాంకం argc వాడని_PARAM, అక్షరం **argv)
 {
-	FILE *src_stream;
-	unsigned opts;
-	unsigned col = 76;
+	FILE *src_ప్రవాహం;
+	గుర్తులేని opts;
+	గుర్తులేని నిలువు = 76;
 
-	opts = getopt32(argv, "^" "diw:+" "\0" "?1"/* 1 arg max*/, &col);
+	opts = getopt32(argv, "^" "diw:+" "\0" "?1"/* 1 arg max*/, &నిలువు);
 	argv += optind;
 
-	if (!argv[0])
-		*--argv = (char*)"-";
-	src_stream = xfopen_stdin(argv[0]);
-	if (opts & 1) {
+	ఒకవేళ (!argv[0])
+		*--argv = (అక్షరం*)"-";
+	src_ప్రవాహం = xfopen_stdin(argv[0]);
+	ఒకవేళ (opts & 1) {
 		/* -d: decode */
-		int flags = (unsigned char)EOF;
-		if (ENABLE_BASE32 && (!ENABLE_BASE64 || applet_name[4] == '3'))
-			flags = ((unsigned char)EOF) | BASE64_32;
-		read_base64(src_stream, stdout, flags);
-	} else {
-		enum {
-			SRC_BUF_SIZE = 3 * 5 * 32, /* this *MUST* be a multiple of 3 and 5 */
-			DST_BUF_SIZE = 8 * ((SRC_BUF_SIZE + 4) / 5), /* max growth on encode (base32 case) */
+		పూర్ణాంకం flags = (గుర్తులేని అక్షరం)EOF;
+		ఒకవేళ (ENABLE_BASE32 && (!ENABLE_BASE64 || applet_name[4] == '3'))
+			flags = ((గుర్తులేని అక్షరం)EOF) | BASE64_32;
+		read_base64(src_ప్రవాహం, stdout, flags);
+	} లేకపోతే {
+		గణన {
+			SRC_BUF_కొలత = 3 * 5 * 32, /* this *MUST* be a multiple of 3 and 5 */
+			DST_BUF_కొలత = 8 * ((SRC_BUF_కొలత + 4) / 5), /* max growth on encode (base32 case) */
 		};
 		/* Use one buffer for both input and output:
 		 * encoding reads input "left-to-right",
 		 * it's safe to place source at the end of the buffer and
 		 * overwrite it while encoding, just be careful to have a gap.
 		 */
-		char dst_buf[((DST_BUF_SIZE + /*gap:*/ 16) /*round up to 16:*/ | 0xf) + 1];
-#define src_buf (dst_buf + sizeof(dst_buf) - SRC_BUF_SIZE)
-		int src_fd, rem;
+		అక్షరం dst_buf[((DST_BUF_కొలత + /*gap:*/ 16) /*round up to 16:*/ | 0xf) + 1];
+#నిర్వచించు src_buf (dst_buf + పరిమాణం(dst_buf) - SRC_BUF_కొలత)
+		పూర్ణాంకం src_fd, rem;
 
-		src_fd = fileno(src_stream);
+		src_fd = fileno(src_ప్రవాహం);
 		rem = 0;
-		while (1) {
-			size_t size = full_read(src_fd, src_buf, SRC_BUF_SIZE);
-			if ((ssize_t)size < 0)
-				bb_simple_perror_msg_and_die(bb_msg_read_error);
-			if (size == 0) {
-				if (rem != 0) bb_putchar('\n');
-				break;
+		అయితే (1) {
+			కొలత_t కొలత = నిండిన_read(src_fd, src_buf, SRC_BUF_కొలత);
+			ఒకవేళ ((ssize_t)కొలత < 0)
+				bb_simple_perror_సందేశం_and_die(bb_సందేశం_read_error);
+			ఒకవేళ (కొలత == 0) {
+				ఒకవేళ (rem != 0) bb_putchar('\n');
+				ఆపు;
 			}
 
 			/* Encode the buffer we just read in */
-			if (ENABLE_BASE32 && (!ENABLE_BASE64 || applet_name[4] == '3')) {
-				bb_b32encode(dst_buf, src_buf, size);
-				size = 8 * ((size + 4) / 5);
-			} else {
-				bb_uuencode(dst_buf, src_buf, size, bb_uuenc_tbl_base64);
-				size = 4 * ((size + 2) / 3);
+			ఒకవేళ (ENABLE_BASE32 && (!ENABLE_BASE64 || applet_name[4] == '3')) {
+				bb_b32encode(dst_buf, src_buf, కొలత);
+				కొలత = 8 * ((కొలత + 4) / 5);
+			} లేకపోతే {
+				bb_uuencode(dst_buf, src_buf, కొలత, bb_uuenc_tbl_base64);
+				కొలత = 4 * ((కొలత + 2) / 3);
 			}
 
-			if (col == 0) {
+			ఒకవేళ (నిలువు == 0) {
 				fputs_stdout(dst_buf);
-			} else {
-				char *result = dst_buf;
-				if (rem == 0)
-					rem = col;
-				while (1) {
-					int out = size < rem ? size : rem;
-					rem -= out;
-					printf(rem != 0 ? "%.*s" : "%.*s\n", out, result);
-					if (rem != 0)
-						break;
-					size -= out;
-					if (size == 0)
-						break;
-					result += out;
-					rem = col;
+			} లేకపోతే {
+				అక్షరం *ఫలితం = dst_buf;
+				ఒకవేళ (rem == 0)
+					rem = నిలువు;
+				అయితే (1) {
+					పూర్ణాంకం బహిర్గతం = కొలత < rem ? కొలత : rem;
+					rem -= బహిర్గతం;
+					రాయి(rem != 0 ? "%.*s" : "%.*s\n", బహిర్గతం, ఫలితం);
+					ఒకవేళ (rem != 0)
+						ఆపు;
+					కొలత -= బహిర్గతం;
+					ఒకవేళ (కొలత == 0)
+						ఆపు;
+					ఫలితం += బహిర్గతం;
+					rem = నిలువు;
 				}
 			}
 		}
-#undef src_buf
+#నిర్వచనం_రద్దు src_buf
 	}
 
 	fflush_stdout_and_exit_SUCCESS();
 }
-#endif
+#అయితే_ముగింపు
 
 /* Test script.
 Put this into an empty dir with busybox binary, an run.
@@ -375,16 +375,16 @@ for f in A*; do
     echo uuencode $f
     ./uuencode    $f <$f >u_$f
     ./uuencode -m $f <$f >m_$f
-done
+పూర్తి
 mkdir unpk_u unpk_m 2>/dev/null
 for f in u_*; do
     ./uudecode <$f -o unpk_u/${f:2}
     diff -a ${f:2} unpk_u/${f:2} >/dev/null 2>&1
     echo uudecode $f: $?
-done
+పూర్తి
 for f in m_*; do
     ./uudecode <$f -o unpk_m/${f:2}
     diff -a ${f:2} unpk_m/${f:2} >/dev/null 2>&1
     echo uudecode $f: $?
-done
+పూర్తి
 */

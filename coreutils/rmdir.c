@@ -31,65 +31,65 @@
 //usage:#define rmdir_example_usage
 //usage:       "# rmdir /tmp/foo\n"
 
-#include "libbb.h"
+#అన్తర్భావ "libbb.h"
 
 /* This is a NOFORK applet. Be very careful! */
 
 
-#define PARENTS          (1 << 0)
-#define VERBOSE          ((1 << 1) * ENABLE_FEATURE_VERBOSE)
-#define IGNORE_NON_EMPTY ((1 << 2) * ENABLE_LONG_OPTS)
+#నిర్వచించు PARENTS          (1 << 0)
+#నిర్వచించు VERBOSE          ((1 << 1) * ENABLE_FEATURE_VERBOSE)
+#నిర్వచించు IGNORE_NON_ఖాళీలు ((1 << 2) * ENABLE_LONG_OPTS)
 
-int rmdir_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int rmdir_main(int argc UNUSED_PARAM, char **argv)
+పూర్ణాంకం rmdir_main(పూర్ణాంకం argc, అక్షరం **argv) MAIN_EXTERNALLY_VISIBLE;
+పూర్ణాంకం rmdir_main(పూర్ణాంకం argc వాడని_PARAM, అక్షరం **argv)
 {
-	int status = EXIT_SUCCESS;
-	int flags;
-	char *path;
+	పూర్ణాంకం స్థితి_2 = EXIT_SUCCESS;
+	పూర్ణాంకం flags;
+	అక్షరం *మార్గం;
 
 	flags = getopt32long(argv, "pv",
-		"parents\0"                  No_argument "p"
+		"parents\0"                  No_వాదం "p"
 		/* Debian etch: many packages fail to be purged or installed
 		 * because they desperately want this option: */
-		"ignore-fail-on-non-empty\0" No_argument "\xff"
+		"ignore-fail-on-non-empty\0" No_వాదం "\xff"
 		IF_FEATURE_VERBOSE(
-		"verbose\0"                  No_argument "v"
+		"verbose\0"                  No_వాదం "v"
 		)
 	);
 	argv += optind;
 
-	if (!*argv) {
+	ఒకవేళ (!*argv) {
 		bb_show_usage();
 	}
 
-	do {
-		path = *argv;
+	చేయి {
+		మార్గం = *argv;
 
-		while (1) {
-			if (flags & VERBOSE) {
-				printf("rmdir: removing directory, '%s'\n", path);
+		అయితే (1) {
+			ఒకవేళ (flags & VERBOSE) {
+				రాయి("rmdir: removing directory, '%s'\n", మార్గం);
 			}
 
-			if (rmdir(path) < 0) {
-#if ENABLE_LONG_OPTS
-				if ((flags & IGNORE_NON_EMPTY) && errno == ENOTEMPTY)
-					break;
-#endif
-				bb_perror_msg("'%s'", path);  /* Match gnu rmdir msg. */
-				status = EXIT_FAILURE;
-			} else if (flags & PARENTS) {
+			ఒకవేళ (rmdir(మార్గం) < 0) {
+#ఒకవేళ ENABLE_LONG_OPTS
+				ఒకవేళ ((flags & IGNORE_NON_ఖాళీలు) && errno == ENOTEMPTY)
+					ఆపు;
+#అయితే_ముగింపు
+				bb_perror_సందేశం("'%s'", మార్గం);  /* Match gnu rmdir msg. */
+				స్థితి_2 = EXIT_FAILURE;
+			} లేకపోతే ఒకవేళ (flags & PARENTS) {
 				/* Note: path was not "" since rmdir succeeded. */
-				path = dirname(path);
+				మార్గం = dirname(మార్గం);
 				/* Path is now just the parent component.  Dirname
 				 * returns "." if there are no parents.
 				 */
-				if (NOT_LONE_CHAR(path, '.')) {
-					continue;
+				ఒకవేళ (NOT_LONE_CHAR(మార్గం, '.')) {
+					కొనసాగు;
 				}
 			}
-			break;
+			ఆపు;
 		}
-	} while (*++argv);
+	} అయితే (*++argv);
 
-	return status;
+	తిరిగి స్థితి_2;
 }

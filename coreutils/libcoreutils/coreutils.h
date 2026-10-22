@@ -2,18 +2,18 @@
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-#ifndef COREUTILS_H
-#define COREUTILS_H 1
+#నిర్వచితం_కాకపోతే COREUTILS_H
+#నిర్వచించు COREUTILS_H 1
 
-PUSH_AND_SET_FUNCTION_VISIBILITY_TO_HIDDEN
+నెట్టు_AND_సమితి_FUNCTION_VISIBILITY_గమ్యం_HIDDEN
 
-typedef int (*stat_func)(const char *fn, struct stat *ps);
+రకనిర్వచనం పూర్ణాంకం (*stat_func)(స్థిరరాశి అక్షరం *fn, నిర్మాణం stat *ps);
 
-int cp_mv_stat2(const char *fn, struct stat *fn_stat, stat_func sf) FAST_FUNC;
-int cp_mv_stat(const char *fn, struct stat *fn_stat) FAST_FUNC;
+పూర్ణాంకం cp_mv_stat2(స్థిరరాశి అక్షరం *fn, నిర్మాణం stat *fn_stat, stat_func sf) FAST_FUNC;
+పూర్ణాంకం cp_mv_stat(స్థిరరాశి అక్షరం *fn, నిర్మాణం stat *fn_stat) FAST_FUNC;
 
-mode_t getopt_mk_fifo_nod(char **argv) FAST_FUNC;
+బహుళకం_t getopt_mk_fifo_nod(అక్షరం **argv) FAST_FUNC;
 
-POP_SAVED_FUNCTION_VISIBILITY
+తీయి_SAVED_FUNCTION_VISIBILITY
 
-#endif
+#అయితే_ముగింపు

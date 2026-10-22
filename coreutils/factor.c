@@ -18,46 +18,46 @@
 //usage:#define factor_full_usage "\n\n"
 //usage:       "Print prime factors"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#అన్తర్భావ "libbb.h"
+#అన్తర్భావ "common_bufsiz.h"
 
-#if 0
-# define dbg(...) bb_error_msg(__VA_ARGS__)
-#else
-# define dbg(...) ((void)0)
-#endif
+#ఒకవేళ 0
+# define dbg(...) bb_error_సందేశం(__VA_ARGS__)
+#లేకపోతే
+# define dbg(...) ((శూన్య)0)
+#అయితే_ముగింపు
 
-typedef unsigned long long wide_t;
+రకనిర్వచనం గుర్తులేని దీర్ఘ దీర్ఘ wide_t;
 
-#if ULLONG_MAX == (UINT_MAX * UINT_MAX + 2 * UINT_MAX)
+#ఒకవేళ ULLONG_MAX == (UINT_MAX * UINT_MAX + 2 * UINT_MAX)
 /* "unsigned" is half as wide as ullong */
-typedef unsigned half_t;
-#define HALF_MAX UINT_MAX
-#define HALF_FMT ""
-#elif ULLONG_MAX == (ULONG_MAX * ULONG_MAX + 2 * ULONG_MAX)
+రకనిర్వచనం గుర్తులేని half_t;
+#నిర్వచించు HALF_MAX UINT_MAX
+#నిర్వచించు HALF_FMT ""
+#లేదావేళ ULLONG_MAX == (ULONG_MAX * ULONG_MAX + 2 * ULONG_MAX)
 /* long is half as wide as ullong */
-typedef unsigned long half_t;
-#define HALF_MAX ULONG_MAX
-#define HALF_FMT "l"
-#else
-#error Cant find an integer type which is half as wide as ullong
-#endif
+రకనిర్వచనం గుర్తులేని దీర్ఘ half_t;
+#నిర్వచించు HALF_MAX ULONG_MAX
+#నిర్వచించు HALF_FMT "l"
+#లేకపోతే
+#దోషం Cant కనుగొను an integer type which is half as wide as ullong
+#అయితే_ముగింపు
 
 /* The trial divisor increment wheel.  Use it to skip over divisors that
  * are composites of 2, 3, 5, 7, or 11.
  * Larger wheels improve sieving only slightly, but quickly grow in size
  * (adding just one prime, 13, results in 5766 element sieve).
  */
-#define R(a,b,c,d,e,f,g,h,i,j,A,B,C,D,E,F,G,H,I,J,x) \
+#నిర్వచించు R(a,b,c,d,e,f,g,h,i,j,A,B,C,D,E,F,G,H,I,J,x) \
 	(((uint64_t)(a<<0) | (b<<3) | (c<<6) | (d<<9) | (e<<12) | (f<<15) | (g<<18) | (h<<21) | (i<<24) | (j<<27)) << 1)  | \
 	(((uint64_t)(A<<0) | (B<<3) | (C<<6) | (D<<9) | (E<<12) | (F<<15) | (G<<18) | (H<<21) | (I<<24) | (J<<27)) << 31) | \
 	((uint64_t)x << 61)
-#define P(a,b,c,d,e,f,g,h,i,j,A,B,C,D,E,F,G,H,I,J,x) \
+#నిర్వచించు P(a,b,c,d,e,f,g,h,i,j,A,B,C,D,E,F,G,H,I,J,x) \
 	R(	(a/2),(b/2),(c/2),(d/2),(e/2),(f/2),(g/2),(h/2),(i/2),(j/2), \
 		(A/2),(B/2),(C/2),(D/2),(E/2),(F/2),(G/2),(H/2),(I/2),(J/2), \
 		(x/2) \
 	)
-static const uint64_t packed_wheel[] = {
+స్థిర స్థిరరాశి uint64_t packed_wheel[] = {
 	/* 1, 2, */
 	P( 2, 4, 2, 4, 2, 4, 6, 2, 6, 4, 2, 4, 6, 6, 2, 6, 4, 2, 6, 4, 6),
 	P( 8, 4, 2, 4, 2, 4,14, 4, 6, 2,10, 2, 6, 6, 4, 2, 4, 6, 2,10, 2),
@@ -83,12 +83,12 @@ static const uint64_t packed_wheel[] = {
 	P( 2,10, 2, 6, 4, 2, 4, 6, 6, 2,10, 2, 6, 4,14, 4, 2, 4, 2, 4, 8),
 	P( 6, 4, 6, 2, 4, 6, 2, 6, 6, 4, 2, 4, 6, 2, 6, 4, 2, 4,12, 2,12),
 };
-#undef P
-#undef R
-#define WHEEL_START 5
-#define WHEEL_SIZE (5 + 24 * 20)
-#define square_count (((uint8_t*)&bb_common_bufsiz1)[0])
-#define wheel_tab    (((uint8_t*)&bb_common_bufsiz1) + 1)
+#నిర్వచనం_రద్దు P
+#నిర్వచనం_రద్దు R
+#నిర్వచించు WHEEL_ప్రారంభం 5
+#నిర్వచించు WHEEL_కొలత (5 + 24 * 20)
+#నిర్వచించు వర్గం_లెక్క (((uint8_t*)&bb_common_bufsiz1)[0])
+#నిర్వచించు wheel_tab    (((uint8_t*)&bb_common_bufsiz1) + 1)
 /*
  * Why, you ask?
  * plain byte array:
@@ -98,18 +98,18 @@ static const uint64_t packed_wheel[] = {
  *	packed_wheel              -     184    +184
  *	factor_main             108     163     +55
  */
-static void unpack_wheel(void)
+స్థిర శూన్య unpack_wheel(శూన్య)
 {
-	int i;
+	పూర్ణాంకం i;
 	uint8_t *p;
 
-	setup_common_bufsiz();
+	అమరిక_common_bufsiz();
 	wheel_tab[0] = 1;
 	wheel_tab[1] = 2;
 	p = &wheel_tab[2];
-	for (i = 0; i < ARRAY_SIZE(packed_wheel); i++) {
+	కొరకు (i = 0; i < ARRAY_కొలత(packed_wheel); i++) {
 		uint64_t v = packed_wheel[i];
-		while ((v & 0xe) != 0) {
+		అయితే ((v & 0xe) != 0) {
 			*p = v & 0xe;
 			//printf("%2u,", *p);
 			p++;
@@ -120,21 +120,21 @@ static void unpack_wheel(void)
 }
 
 /* Prevent inlining, factorize() needs all help it can get with reducing register pressure */
-static NOINLINE void print_w(wide_t n)
+స్థిర NOINLINE శూన్య print_w(wide_t n)
 {
-	unsigned rep = square_count;
-	do
-		printf(" %llu", n);
-	while (--rep != 0);
+	గుర్తులేని rep = వర్గం_లెక్క;
+	చేయి
+		రాయి(" %llu", n);
+	అయితే (--rep != 0);
 }
-static NOINLINE void print_h(half_t n)
+స్థిర NOINLINE శూన్య print_h(half_t n)
 {
 	print_w(n);
 }
 
-static void factorize(wide_t N);
+స్థిర శూన్య factorize(wide_t N);
 
-static half_t isqrt_odd(wide_t N)
+స్థిర half_t isqrt_odd(wide_t N)
 {
 	half_t s = isqrt(N);
 	/* s^2 is <= N, (s+1)^2 > N */
@@ -144,28 +144,28 @@ static half_t isqrt_odd(wide_t N)
 	 * factor 18446743988964486098 = 2 * 3037000493 * 3037000493
 	 * factor 18446743902517389507 = 3 * 2479700513 * 2479700513
 	 */
-	if ((wide_t)s * s == N) {
+	ఒకవేళ ((wide_t)s * s == N) {
 		/* factorize sqrt(N), printing each factor twice */
-		square_count *= 2;
+		వర్గం_లెక్క *= 2;
 		factorize(s);
 		/* Let caller know we recursed */
-		return 0;
+		తిరిగి 0;
 	}
 
 	/* Subtract 1 from even s, odd s won't change: */
 	/* (doesnt work for zero, but we know that s != 0 here) */
 	s = (s - 1) | 1;
-	return s;
+	తిరిగి s;
 }
 
-static NOINLINE void factorize(wide_t N)
+స్థిర NOINLINE శూన్య factorize(wide_t N)
 {
-	unsigned w;
-	half_t factor;
-	half_t max_factor;
+	గుర్తులేని w;
+	half_t గుణకం;
+	half_t max_గుణకం;
 
-	if (N < 4)
-		goto end;
+	ఒకవేళ (N < 4)
+		వెళ్ళు చివర;
 
 	/* The code needs to be optimized for the case where
 	 * there are large prime factors. For example,
@@ -181,58 +181,58 @@ static NOINLINE void factorize(wide_t N)
 	 * The slowest case (largest prime) for N < 2^64 is
 	 * factor 18446744073709551557 (0xffffffffffffffc5).
 	 */
-	max_factor = isqrt_odd(N);
-	if (!max_factor)
-		return; /* square was detected and recursively factored */
-	factor = 2;
+	max_గుణకం = isqrt_odd(N);
+	ఒకవేళ (!max_గుణకం)
+		తిరిగి; /* square was detected and recursively factored */
+	గుణకం = 2;
 	w = 0;
-	for (;;) {
+	కొరకు (;;) {
 		half_t fw;
 
 		/* The division is the most costly part of the loop.
 		 * On 64bit CPUs, takes at best 12 cycles, often ~20.
 		 */
-		while ((N % factor) == 0) { /* not likely */
-			N = N / factor;
-			print_h(factor);
-			max_factor = isqrt_odd(N);
-			if (!max_factor)
-				return; /* square was detected */
+		అయితే ((N % గుణకం) == 0) { /* not likely */
+			N = N / గుణకం;
+			print_h(గుణకం);
+			max_గుణకం = isqrt_odd(N);
+			ఒకవేళ (!max_గుణకం)
+				తిరిగి; /* square was detected */
 		}
-		if (factor >= max_factor)
-			break;
-		fw = factor + wheel_tab[w];
-		if (fw < factor)
-			break; /* overflow */
-		factor = fw;
+		ఒకవేళ (గుణకం >= max_గుణకం)
+			ఆపు;
+		fw = గుణకం + wheel_tab[w];
+		ఒకవేళ (fw < గుణకం)
+			ఆపు; /*అధికప్రవాహం*/
+		గుణకం = fw;
 		w++;
-		if (w < WHEEL_SIZE)
-			continue;
-		w = WHEEL_START;
+		ఒకవేళ (w < WHEEL_కొలత)
+			కొనసాగు;
+		w = WHEEL_ప్రారంభం;
 	}
- end:
-	if (N > 1)
+ చివర:
+	ఒకవేళ (N > 1)
 		print_w(N);
 	bb_putchar('\n');
 }
 
-static void factorize_numstr(const char *numstr)
+స్థిర శూన్య factorize_numstr(స్థిరరాశి అక్షరం *numstr)
 {
 	wide_t N;
 
 	/* Leading + is ok (coreutils compat) */
-	if (*numstr == '+')
+	ఒకవేళ (*numstr == '+')
 		numstr++;
-	N = bb_strtoull(numstr, NULL, 10);
-	if (errno)
+	N = bb_strtoull(numstr, ఖాళీ, 10);
+	ఒకవేళ (errno)
 		bb_show_usage();
-	printf("%llu:", N);
-	square_count = 1;
+	రాయి("%llu:", N);
+	వర్గం_లెక్క = 1;
 	factorize(N);
 }
 
-int factor_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int factor_main(int argc UNUSED_PARAM, char **argv)
+పూర్ణాంకం గుణకం_main(పూర్ణాంకం argc, అక్షరం **argv) MAIN_EXTERNALLY_VISIBLE;
+పూర్ణాంకం గుణకం_main(పూర్ణాంకం argc వాడని_PARAM, అక్షరం **argv)
 {
 	unpack_wheel();
 
@@ -241,33 +241,33 @@ int factor_main(int argc UNUSED_PARAM, char **argv)
 	//argv += optind;
 	argv++;
 
-	if (!*argv) {
+	ఒకవేళ (!*argv) {
 		/* Read from stdin, several numbers per line are accepted */
-		for (;;) {
-			char *numstr, *line;
-			line = xmalloc_fgetline(stdin);
-			if (!line)
-				return EXIT_SUCCESS;
-			numstr = line;
-			for (;;) {
-				char *end;
+		కొరకు (;;) {
+			అక్షరం *numstr, *పంక్తి;
+			పంక్తి = xmalloc_fgetline(stdin);
+			ఒకవేళ (!పంక్తి)
+				తిరిగి EXIT_SUCCESS;
+			numstr = పంక్తి;
+			కొరకు (;;) {
+				అక్షరం *చివర;
 				numstr = skip_whitespace(numstr);
-				if (!numstr[0])
-					break;
-				end = skip_non_whitespace(numstr);
-				if (*end != '\0')
-					*end++ = '\0';
+				ఒకవేళ (!numstr[0])
+					ఆపు;
+				చివర = skip_non_whitespace(numstr);
+				ఒకవేళ (*చివర != '\0')
+					*చివర++ = '\0';
 				factorize_numstr(numstr);
-				numstr = end;
+				numstr = చివర;
 			}
-			free(line);
+			విడుదల(పంక్తి);
 		}
 	}
 
-	do {
+	చేయి {
 		/* Leading spaces are ok (coreutils compat) */
 		factorize_numstr(skip_whitespace(*argv));
-	} while (*++argv);
+	} అయితే (*++argv);
 
-	return EXIT_SUCCESS;
+	తిరిగి EXIT_SUCCESS;
 }

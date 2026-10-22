@@ -18,31 +18,31 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-#include "libbb.h"
-#include "coreutils.h"
+#అన్తర్భావ "libbb.h"
+#అన్తర్భావ "coreutils.h"
 
-mode_t FAST_FUNC getopt_mk_fifo_nod(char **argv)
+బహుళకం_t FAST_FUNC getopt_mk_fifo_nod(అక్షరం **argv)
 {
-	mode_t mode = 0666;
-	char *smode = NULL;
-#if ENABLE_SELINUX
+	బహుళకం_t బహుళకం = 0666;
+	అక్షరం *smode = ఖాళీ;
+#ఒకవేళ ENABLE_SELINUX
 	security_context_t scontext;
-#endif
-	int opt;
+#అయితే_ముగింపు
+	పూర్ణాంకం opt;
 	opt = getopt32(argv, "m:" IF_SELINUX("Z:"), &smode IF_SELINUX(,&scontext));
-	if (opt & 1) {
-		mode = bb_parse_mode(smode, mode);
-		if (mode != (mode_t)-1) /* if mode is valid */
+	ఒకవేళ (opt & 1) {
+		బహుళకం = bb_parse_బహుళకం(smode, బహుళకం);
+		ఒకవేళ (బహుళకం != (బహుళకం_t)-1) /* if mode is valid */
 			/* make future mknod/mkfifo set mode bits exactly */
 			umask(0);
 	}
 
-#if ENABLE_SELINUX
-	if (opt & 2) {
+#ఒకవేళ ENABLE_SELINUX
+	ఒకవేళ (opt & 2) {
 		selinux_or_die();
 		setfscreatecon_or_die(scontext);
 	}
-#endif
+#అయితే_ముగింపు
 
-	return mode;
+	తిరిగి బహుళకం;
 }

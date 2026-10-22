@@ -59,7 +59,7 @@
 //usage:       "$ printf \"Val=%d\\n\" 5\n"
 //usage:       "Val=5\n"
 
-#include "libbb.h"
+#అన్తర్భావ "libbb.h"
 
 /* A note on bad input: neither bash 3.2 nor coreutils 6.10 stop on it.
  * They report it:
@@ -77,269 +77,269 @@
  * We try to be compatible.
  */
 
-typedef void FAST_FUNC (*converter)(const char *arg, void *result);
+రకనిర్వచనం శూన్య FAST_FUNC (*converter)(స్థిరరాశి అక్షరం *arg, శూన్య *ఫలితం);
 
-static int multiconvert(const char *arg, void *result, converter convert)
+స్థిర పూర్ణాంకం multiconvert(స్థిరరాశి అక్షరం *arg, శూన్య *ఫలితం, converter convert)
 {
-	if (*arg == '"' || *arg == '\'') {
-		arg = utoa((unsigned char)arg[1]);
+	ఒకవేళ (*arg == '"' || *arg == '\'') {
+		arg = utoa((గుర్తులేని అక్షరం)arg[1]);
 	}
 	errno = 0;
-	convert(arg, result);
-	if (errno) {
-		bb_error_msg("invalid number '%s'", arg);
-		return 1;
+	convert(arg, ఫలితం);
+	ఒకవేళ (errno) {
+		bb_error_సందేశం("invalid number '%s'", arg);
+		తిరిగి 1;
 	}
-	return 0;
+	తిరిగి 0;
 }
 
-static void FAST_FUNC conv_strtoull(const char *arg, void *result)
+స్థిర శూన్య FAST_FUNC conv_strtoull(స్థిరరాశి అక్షరం *arg, శూన్య *ఫలితం)
 {
 	/* Allow leading '+' - bb_strtoull() by itself does not allow it,
 	 * and probably shouldn't (other callers might require purely numeric
 	 * inputs to be allowed.
 	 */
-	if (arg[0] == '+')
+	ఒకవేళ (arg[0] == '+')
 		arg++;
-	*(unsigned long long*)result = bb_strtoull(arg, NULL, 0);
+	*(గుర్తులేని దీర్ఘ దీర్ఘ*)ఫలితం = bb_strtoull(arg, ఖాళీ, 0);
 	/* both coreutils 6.10 and bash 3.2:
 	 * $ printf '%x\n' -2
 	 * fffffffffffffffe
 	 * Mimic that:
 	 */
-	if (errno) {
-		*(unsigned long long*)result = bb_strtoll(arg, NULL, 0);
+	ఒకవేళ (errno) {
+		*(గుర్తులేని దీర్ఘ దీర్ఘ*)ఫలితం = bb_strtoll(arg, ఖాళీ, 0);
 	}
 }
-static void FAST_FUNC conv_strtoll(const char *arg, void *result)
+స్థిర శూన్య FAST_FUNC conv_strtoll(స్థిరరాశి అక్షరం *arg, శూన్య *ఫలితం)
 {
-	if (arg[0] == '+')
+	ఒకవేళ (arg[0] == '+')
 		arg++;
-	*(long long*)result = bb_strtoll(arg, NULL, 0);
+	*(దీర్ఘ దీర్ఘ*)ఫలితం = bb_strtoll(arg, ఖాళీ, 0);
 }
-static void FAST_FUNC conv_strtod(const char *arg, void *result)
+స్థిర శూన్య FAST_FUNC conv_strtod(స్థిరరాశి అక్షరం *arg, శూన్య *ఫలితం)
 {
-	char *end;
+	అక్షరం *చివర;
 	/* Well, this one allows leading whitespace... so what? */
 	/* What I like much less is that "-" accepted too! :( */
 //TODO: needs setlocale(LC_NUMERIC, "C")?
-	*(double*)result = strtod(arg, &end);
-	if (end[0]) {
+	*(ద్విగుణ*)ఫలితం = strtod(arg, &చివర);
+	ఒకవేళ (చివర[0]) {
 		errno = ERANGE;
-		*(double*)result = 0;
+		*(ద్విగుణ*)ఫలితం = 0;
 	}
 }
 
 /* Callers should check errno to detect errors */
-static unsigned long long my_xstrtoull(const char *arg)
+స్థిర గుర్తులేని దీర్ఘ దీర్ఘ my_xstrtoull(స్థిరరాశి అక్షరం *arg)
 {
-	unsigned long long result;
-	if (multiconvert(arg, &result, conv_strtoull))
-		result = 0;
-	return result;
+	గుర్తులేని దీర్ఘ దీర్ఘ ఫలితం;
+	ఒకవేళ (multiconvert(arg, &ఫలితం, conv_strtoull))
+		ఫలితం = 0;
+	తిరిగి ఫలితం;
 }
-static long long my_xstrtoll(const char *arg)
+స్థిర దీర్ఘ దీర్ఘ my_xstrtoll(స్థిరరాశి అక్షరం *arg)
 {
-	long long result;
-	if (multiconvert(arg, &result, conv_strtoll))
-		result = 0;
-	return result;
+	దీర్ఘ దీర్ఘ ఫలితం;
+	ఒకవేళ (multiconvert(arg, &ఫలితం, conv_strtoll))
+		ఫలితం = 0;
+	తిరిగి ఫలితం;
 }
-static double my_xstrtod(const char *arg)
+స్థిర ద్విగుణ my_xstrtod(స్థిరరాశి అక్షరం *arg)
 {
-	double result;
-	multiconvert(arg, &result, conv_strtod);
-	return result;
+	ద్విగుణ ఫలితం;
+	multiconvert(arg, &ఫలితం, conv_strtod);
+	తిరిగి ఫలితం;
 }
 
 /* Handles %b; return 1 if output is to be short-circuited by \c */
-static int print_esc_string(const char *str)
+స్థిర పూర్ణాంకం print_esc_string(స్థిరరాశి అక్షరం *str)
 {
-	char c;
-	while ((c = *str) != '\0') {
+	అక్షరం c;
+	అయితే ((c = *str) != '\0') {
 		str++;
-		if (c == '\\') {
+		ఒకవేళ (c == '\\') {
 			/* %b also accepts 4-digit octals of the form \0### */
-			if (*str == '0') {
-				if ((unsigned char)(str[1] - '0') < 8) {
+			ఒకవేళ (*str == '0') {
+				ఒకవేళ ((గుర్తులేని అక్షరం)(str[1] - '0') < 8) {
 					/* 2nd char is 0..7: skip leading '0' */
 					str++;
 				}
 			}
-			else if (*str == 'c') {
-				return 1;
+			లేకపోతే ఒకవేళ (*str == 'c') {
+				తిరిగి 1;
 			}
 			{
 				/* optimization: don't force arg to be on-stack,
 				 * use another variable for that. */
-				const char *z = str;
+				స్థిరరాశి అక్షరం *z = str;
 				c = bb_process_escape_sequence(&z);
 				str = z;
 			}
 		}
-		putchar(c);
+		అక్షరం_రాయి(c);
 	}
 
-	return 0;
+	తిరిగి 0;
 }
 
-static void print_direc(char *format, unsigned fmt_length,
-		int field_width, int precision,
-		const char *argument)
+స్థిర శూన్య print_direc(అక్షరం *format, గుర్తులేని fmt_నిడివి,
+		పూర్ణాంకం క్షేత్రం_వెడల్పు, పూర్ణాంకం precision,
+		స్థిరరాశి అక్షరం *వాదం)
 {
-	long long llv;
-	double dv;
-	char saved;
-	char *have_prec, *have_width;
+	దీర్ఘ దీర్ఘ llv;
+	ద్విగుణ dv;
+	అక్షరం saved;
+	అక్షరం *have_prec, *have_వెడల్పు;
 
-	saved = format[fmt_length];
-	format[fmt_length] = '\0';
+	saved = format[fmt_నిడివి];
+	format[fmt_నిడివి] = '\0';
 
-	have_prec = strstr(format, ".*");
-	have_width = strchr(format, '*');
-	if (have_width - 1 == have_prec)
-		have_width = NULL;
+	have_prec = అక్షరశ్రేణి_శోధన(format, ".*");
+	have_వెడల్పు = strchr(format, '*');
+	ఒకవేళ (have_వెడల్పు - 1 == have_prec)
+		have_వెడల్పు = ఖాళీ;
 
 	/* multiconvert sets errno = 0, but %s needs it cleared */
 	errno = 0;
 
-	switch (format[fmt_length - 1]) {
-	case 'c':
-		printf(format, *argument);
-		break;
-	case 'd':
-	case 'i':
-		llv = my_xstrtoll(skip_whitespace(argument));
+	ఎంపిక (format[fmt_నిడివి - 1]) {
+	స్థితి 'c':
+		రాయి(format, *వాదం);
+		ఆపు;
+	స్థితి 'd':
+	స్థితి 'i':
+		llv = my_xstrtoll(skip_whitespace(వాదం));
  print_long:
-		if (!have_width) {
-			if (!have_prec)
-				printf(format, llv);
-			else
-				printf(format, precision, llv);
-		} else {
-			if (!have_prec)
-				printf(format, field_width, llv);
-			else
-				printf(format, field_width, precision, llv);
+		ఒకవేళ (!have_వెడల్పు) {
+			ఒకవేళ (!have_prec)
+				రాయి(format, llv);
+			లేకపోతే
+				రాయి(format, precision, llv);
+		} లేకపోతే {
+			ఒకవేళ (!have_prec)
+				రాయి(format, క్షేత్రం_వెడల్పు, llv);
+			లేకపోతే
+				రాయి(format, క్షేత్రం_వెడల్పు, precision, llv);
 		}
-		break;
-	case 'o':
-	case 'u':
-	case 'x':
-	case 'X':
-		llv = my_xstrtoull(skip_whitespace(argument));
+		ఆపు;
+	స్థితి 'o':
+	స్థితి 'u':
+	స్థితి 'x':
+	స్థితి 'X':
+		llv = my_xstrtoull(skip_whitespace(వాదం));
 		/* cheat: unsigned long and long have same width, so... */
-		goto print_long;
-	case 's':
+		వెళ్ళు print_long;
+	స్థితి 's':
 		/* Are char* and long long the same? */
-		if (sizeof(argument) == sizeof(llv)) {
-			llv = (long long)(ptrdiff_t)argument;
-			goto print_long;
-		} else {
+		ఒకవేళ (పరిమాణం(వాదం) == పరిమాణం(llv)) {
+			llv = (దీర్ఘ దీర్ఘ)(ptrdiff_t)వాదం;
+			వెళ్ళు print_long;
+		} లేకపోతే {
 			/* Hope compiler will optimize it out by moving call
 			 * instruction after the ifs... */
-			if (!have_width) {
-				if (!have_prec)
-					printf(format, argument, /*unused:*/ argument, argument);
-				else
-					printf(format, precision, argument, /*unused:*/ argument);
-			} else {
-				if (!have_prec)
-					printf(format, field_width, argument, /*unused:*/ argument);
-				else
-					printf(format, field_width, precision, argument);
+			ఒకవేళ (!have_వెడల్పు) {
+				ఒకవేళ (!have_prec)
+					రాయి(format, వాదం, /*unused:*/ వాదం, వాదం);
+				లేకపోతే
+					రాయి(format, precision, వాదం, /*unused:*/ వాదం);
+			} లేకపోతే {
+				ఒకవేళ (!have_prec)
+					రాయి(format, క్షేత్రం_వెడల్పు, వాదం, /*unused:*/ వాదం);
+				లేకపోతే
+					రాయి(format, క్షేత్రం_వెడల్పు, precision, వాదం);
 			}
-			break;
+			ఆపు;
 		}
-	case 'f':
-	case 'e':
-	case 'E':
-	case 'g':
-	case 'G':
-		dv = my_xstrtod(argument);
-		if (!have_width) {
-			if (!have_prec)
-				printf(format, dv);
-			else
-				printf(format, precision, dv);
-		} else {
-			if (!have_prec)
-				printf(format, field_width, dv);
-			else
-				printf(format, field_width, precision, dv);
+	స్థితి 'f':
+	స్థితి 'e':
+	స్థితి 'E':
+	స్థితి 'g':
+	స్థితి 'G':
+		dv = my_xstrtod(వాదం);
+		ఒకవేళ (!have_వెడల్పు) {
+			ఒకవేళ (!have_prec)
+				రాయి(format, dv);
+			లేకపోతే
+				రాయి(format, precision, dv);
+		} లేకపోతే {
+			ఒకవేళ (!have_prec)
+				రాయి(format, క్షేత్రం_వెడల్పు, dv);
+			లేకపోతే
+				రాయి(format, క్షేత్రం_వెడల్పు, precision, dv);
 		}
-		break;
+		ఆపు;
 	} /* switch */
 
-	format[fmt_length] = saved;
+	format[fmt_నిడివి] = saved;
 }
 
 /* Handle params for "%*.*f". Negative numbers are ok (compat). */
-static int get_width_prec(const char *str)
+స్థిర పూర్ణాంకం get_వెడల్పు_prec(స్థిరరాశి అక్షరం *str)
 {
-	int v = bb_strtoi(str, NULL, 10);
-	if (errno) {
-		bb_error_msg("invalid number '%s'", str);
+	పూర్ణాంకం v = bb_strtoi(str, ఖాళీ, 10);
+	ఒకవేళ (errno) {
+		bb_error_సందేశం("invalid number '%s'", str);
 		v = 0;
 	}
-	return v;
+	తిరిగి v;
 }
 
 /* Print the text in FORMAT, using ARGV for arguments to any '%' directives.
    Return advanced ARGV.  */
-static char **print_formatted(char *f, char **argv, int *conv_err)
+స్థిర అక్షరం **print_formatted(అక్షరం *f, అక్షరం **argv, పూర్ణాంకం *conv_err)
 {
-	char *direc_start;      /* Start of % directive.  */
-	unsigned direc_length;  /* Length of % directive.  */
-	int field_width;        /* Arg to first '*' */
-	int precision;          /* Arg to second '*' */
-	char **saved_argv = argv;
+	అక్షరం *direc_ప్రారంభం;      /* Start of % directive.  */
+	గుర్తులేని direc_నిడివి;  /* Length of % directive.  */
+	పూర్ణాంకం క్షేత్రం_వెడల్పు;        /* Arg to first '*' */
+	పూర్ణాంకం precision;          /* Arg to second '*' */
+	అక్షరం **saved_argv = argv;
 
-	for (; *f; ++f) {
-		switch (*f) {
-		case '%':
-			direc_start = f++;
-			direc_length = 1;
-			field_width = precision = 0;
-			if (*f == '%') {
+	కొరకు (; *f; ++f) {
+		ఎంపిక (*f) {
+		స్థితి '%':
+			direc_ప్రారంభం = f++;
+			direc_నిడివి = 1;
+			క్షేత్రం_వెడల్పు = precision = 0;
+			ఒకవేళ (*f == '%') {
 				bb_putchar('%');
-				break;
+				ఆపు;
 			}
-			if (*f == 'b') {
-				if (*argv) {
-					if (print_esc_string(*argv))
-						return saved_argv; /* causes main() to exit */
+			ఒకవేళ (*f == 'b') {
+				ఒకవేళ (*argv) {
+					ఒకవేళ (print_esc_string(*argv))
+						తిరిగి saved_argv; /* causes main() to exit */
 					++argv;
 				}
-				break;
+				ఆపు;
 			}
-			while (*f && strchr("-+ #0", *f)) {
+			అయితే (*f && strchr("-+ #0", *f)) {
 				++f;
-				++direc_length;
+				++direc_నిడివి;
 			}
-			if (*f == '*') {
+			ఒకవేళ (*f == '*') {
 				++f;
-				++direc_length;
-				if (*argv)
-					field_width = get_width_prec(*argv++);
-			} else {
-				while (isdigit(*f)) {
+				++direc_నిడివి;
+				ఒకవేళ (*argv)
+					క్షేత్రం_వెడల్పు = get_వెడల్పు_prec(*argv++);
+			} లేకపోతే {
+				అయితే (అంకెనా(*f)) {
 					++f;
-					++direc_length;
+					++direc_నిడివి;
 				}
 			}
-			if (*f == '.') {
+			ఒకవేళ (*f == '.') {
 				++f;
-				++direc_length;
-				if (*f == '*') {
+				++direc_నిడివి;
+				ఒకవేళ (*f == '*') {
 					++f;
-					++direc_length;
-					if (*argv)
-						precision = get_width_prec(*argv++);
-				} else {
-					while (isdigit(*f)) {
+					++direc_నిడివి;
+					ఒకవేళ (*argv)
+						precision = get_వెడల్పు_prec(*argv++);
+				} లేకపోతే {
+					అయితే (అంకెనా(*f)) {
 						++f;
-						++direc_length;
+						++direc_నిడివి;
 					}
 				}
 			}
@@ -348,64 +348,64 @@ static char **print_formatted(char *f, char **argv, int *conv_err)
 			 * bash does not like "%lld", but coreutils
 			 * happily takes even "%Llllhhzhhzd"!
 			 * We are permissive like coreutils */
-			while ((*f | 0x20) == 'l' || *f == 'h' || *f == 'z') {
+			అయితే ((*f | 0x20) == 'l' || *f == 'h' || *f == 'z') {
 				overlapping_strcpy(f, f + 1);
 			}
 			/* Add "ll" if integer modifier, then print */
 			{
-				static const char format_chars[] ALIGN1 = "diouxXfeEgGcs";
-				char *p = strchr(format_chars, *f);
+				స్థిర స్థిరరాశి అక్షరం format_chars[] ALIGN1 = "diouxXfeEgGcs";
+				అక్షరం *p = strchr(format_chars, *f);
 				/* needed - try "printf %" without it */
-				if (p == NULL || *f == '\0') {
-					bb_error_msg("%s: invalid format", direc_start);
+				ఒకవేళ (p == ఖాళీ || *f == '\0') {
+					bb_error_సందేశం("%s: invalid format", direc_ప్రారంభం);
 					/* causes main() to exit with error */
-					return saved_argv - 1;
+					తిరిగి saved_argv - 1;
 				}
-				++direc_length;
-				if (p - format_chars <= 5) {
+				++direc_నిడివి;
+				ఒకవేళ (p - format_chars <= 5) {
 					/* it is one of "diouxX" */
-					p = xmalloc(direc_length + 3);
-					memcpy(p, direc_start, direc_length);
-					p[direc_length + 1] = p[direc_length - 1];
-					p[direc_length - 1] = 'l';
-					p[direc_length] = 'l';
+					p = xmalloc(direc_నిడివి + 3);
+					జ్ఞాపకం_నకలు(p, direc_ప్రారంభం, direc_నిడివి);
+					p[direc_నిడివి + 1] = p[direc_నిడివి - 1];
+					p[direc_నిడివి - 1] = 'l';
+					p[direc_నిడివి] = 'l';
 					//bb_error_msg("<%s>", p);
-					direc_length += 2;
-					direc_start = p;
-				} else {
-					p = NULL;
+					direc_నిడివి += 2;
+					direc_ప్రారంభం = p;
+				} లేకపోతే {
+					p = ఖాళీ;
 				}
-				if (*argv) {
-					print_direc(direc_start, direc_length, field_width,
+				ఒకవేళ (*argv) {
+					print_direc(direc_ప్రారంభం, direc_నిడివి, క్షేత్రం_వెడల్పు,
 								precision, *argv++);
-				} else {
-					print_direc(direc_start, direc_length, field_width,
+				} లేకపోతే {
+					print_direc(direc_ప్రారంభం, direc_నిడివి, క్షేత్రం_వెడల్పు,
 								precision, "");
 				}
 				*conv_err |= errno;
-				free(p);
+				విడుదల(p);
 			}
-			break;
-		case '\\':
-			if (*++f == 'c') {
-				return saved_argv; /* causes main() to exit */
+			ఆపు;
+		స్థితి '\\':
+			ఒకవేళ (*++f == 'c') {
+				తిరిగి saved_argv; /* causes main() to exit */
 			}
-			bb_putchar(bb_process_escape_sequence((const char **)&f));
+			bb_putchar(bb_process_escape_sequence((స్థిరరాశి అక్షరం **)&f));
 			f--;
-			break;
-		default:
-			putchar(*f);
+			ఆపు;
+		అప్రమేయ:
+			అక్షరం_రాయి(*f);
 		}
 	}
 
-	return argv;
+	తిరిగి argv;
 }
 
-int printf_main(int argc UNUSED_PARAM, char **argv)
+పూర్ణాంకం printf_main(పూర్ణాంకం argc వాడని_PARAM, అక్షరం **argv)
 {
-	int conv_err;
-	char *format;
-	char **argv2;
+	పూర్ణాంకం conv_err;
+	అక్షరం *format;
+	అక్షరం **argv2;
 
 	/* We must check that stdout is not closed.
 	 * The reason for this is highly non-obvious.
@@ -417,8 +417,8 @@ int printf_main(int argc UNUSED_PARAM, char **argv)
 	 * to output data no matter what. So it will try later,
 	 * and possibly will clobber future output. Not good. */
 // TODO: check fcntl() & O_ACCMODE == O_WRONLY or O_RDWR?
-	if (fcntl(1, F_GETFL) == -1)
-		return 1; /* match coreutils 6.10 (sans error msg to stderr) */
+	ఒకవేళ (fcntl(1, F_GETFL) == -1)
+		తిరిగి 1; /* match coreutils 6.10 (sans error msg to stderr) */
 	//if (dup2(1, 1) != 1) - old way
 	//	return 1;
 
@@ -427,12 +427,12 @@ int printf_main(int argc UNUSED_PARAM, char **argv)
 	 * We will mimic coreutils. */
 	argv = skip_dash_dash(argv);
 
-	if (!argv[0]) {
-		if ((ENABLE_ASH_PRINTF || ENABLE_HUSH_PRINTF)
+	ఒకవేళ (!argv[0]) {
+		ఒకవేళ ((ENABLE_ASH_PRINTF || ENABLE_HUSH_PRINTF)
 		 && applet_name[0] != 'p'
 		) {
-			bb_simple_error_msg("usage: printf FORMAT [ARGUMENT...]");
-			return 2; /* bash compat */
+			bb_simple_error_సందేశం("usage: printf FORMAT [ARGUMENT...]");
+			తిరిగి 2; /* bash compat */
 		}
 		bb_show_usage();
 	}
@@ -441,16 +441,16 @@ int printf_main(int argc UNUSED_PARAM, char **argv)
 	argv2 = argv + 1;
 
 	conv_err = 0;
-	do {
+	చేయి {
 		argv = argv2;
 		argv2 = print_formatted(format, argv, &conv_err);
-	} while (argv2 > argv && *argv2);
+	} అయితే (argv2 > argv && *argv2);
 
 	/* coreutils compat (bash doesn't do this):
 	if (*argv)
 		fprintf(stderr, "excess args ignored");
 	*/
 
-	return (argv2 < argv) /* if true, print_formatted errored out */
+	తిరిగి (argv2 < argv) /* if true, print_formatted errored out */
 		|| conv_err; /* print_formatted saw invalid number */
 }

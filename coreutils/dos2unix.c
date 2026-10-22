@@ -47,75 +47,75 @@
 //usage:     "\n	-u	dos2unix"
 //usage:     "\n	-d	unix2dos"
 
-#include "libbb.h"
+#అన్తర్భావ "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-enum {
+గణన {
 	CT_UNIX2DOS = 1,
 	CT_DOS2UNIX
 };
 
 /* if fn is NULL then input is stdin and output is stdout */
-static void convert(char *fn, int conv_type)
+స్థిర శూన్య convert(అక్షరం *fn, పూర్ణాంకం conv_type)
 {
-	FILE *in, *out;
-	int ch;
-	char *temp_fn = temp_fn; /* for compiler */
-	char *resolved_fn = resolved_fn;
+	FILE *లోపల, *బహిర్గతం;
+	పూర్ణాంకం ch;
+	అక్షరం *తాత్కాలిక_fn = తాత్కాలిక_fn; /* for compiler */
+	అక్షరం *resolved_fn = resolved_fn;
 
-	in = stdin;
-	out = stdout;
-	if (fn != NULL) {
-		struct stat st;
-		int fd;
+	లోపల = stdin;
+	బహిర్గతం = stdout;
+	ఒకవేళ (fn != ఖాళీ) {
+		నిర్మాణం stat st;
+		పూర్ణాంకం fd;
 
 		resolved_fn = xmalloc_follow_symlinks(fn);
-		if (resolved_fn == NULL)
-			bb_simple_perror_msg_and_die(fn);
-		in = xfopen_for_read(resolved_fn);
-		xfstat(fileno(in), &st, resolved_fn);
+		ఒకవేళ (resolved_fn == ఖాళీ)
+			bb_simple_perror_సందేశం_and_die(fn);
+		లోపల = xfopen_for_read(resolved_fn);
+		xfstat(fileno(లోపల), &st, resolved_fn);
 
-		temp_fn = xasprintf("%sXXXXXX", resolved_fn);
-		fd = xmkstemp(temp_fn);
-		if (fchmod(fd, st.st_mode) == -1)
-			bb_simple_perror_msg_and_die(temp_fn);
+		తాత్కాలిక_fn = xasprintf("%sXXXXXX", resolved_fn);
+		fd = xmkstemp(తాత్కాలిక_fn);
+		ఒకవేళ (fchmod(fd, st.st_బహుళకం) == -1)
+			bb_simple_perror_సందేశం_and_die(తాత్కాలిక_fn);
 		fchown(fd, st.st_uid, st.st_gid);
 
-		out = xfdopen_for_write(fd);
+		బహిర్గతం = xfdopen_for_write(fd);
 	}
 
-	while ((ch = fgetc(in)) != EOF) {
-		if (ch == '\r')
-			continue;
-		if (ch == '\n')
-			if (conv_type == CT_UNIX2DOS)
-				fputc('\r', out);
-		fputc(ch, out);
+	అయితే ((ch = fgetc(లోపల)) != EOF) {
+		ఒకవేళ (ch == '\r')
+			కొనసాగు;
+		ఒకవేళ (ch == '\n')
+			ఒకవేళ (conv_type == CT_UNIX2DOS)
+				fputc('\r', బహిర్గతం);
+		fputc(ch, బహిర్గతం);
 	}
 
-	if (fn != NULL) {
-		if (fclose(in) < 0 || fclose(out) < 0) {
-			unlink(temp_fn);
+	ఒకవేళ (fn != ఖాళీ) {
+		ఒకవేళ (fclose(లోపల) < 0 || fclose(బహిర్గతం) < 0) {
+			unlink(తాత్కాలిక_fn);
 			bb_perror_nomsg_and_die();
 		}
-		xrename(temp_fn, resolved_fn);
-		free(temp_fn);
-		free(resolved_fn);
+		xrename(తాత్కాలిక_fn, resolved_fn);
+		విడుదల(తాత్కాలిక_fn);
+		విడుదల(resolved_fn);
 	}
 }
 
-int dos2unix_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int dos2unix_main(int argc UNUSED_PARAM, char **argv)
+పూర్ణాంకం dos2unix_main(పూర్ణాంకం argc, అక్షరం **argv) MAIN_EXTERNALLY_VISIBLE;
+పూర్ణాంకం dos2unix_main(పూర్ణాంకం argc వాడని_PARAM, అక్షరం **argv)
 {
-	int o, conv_type;
+	పూర్ణాంకం o, conv_type;
 
 	/* See if we are supposed to be doing dos2unix or unix2dos */
-	if (ENABLE_DOS2UNIX
+	ఒకవేళ (ENABLE_DOS2UNIX
 	 && (!ENABLE_UNIX2DOS || applet_name[0] == 'd')
 	) {
 		conv_type = CT_DOS2UNIX;
-	} else {
+	} లేకపోతే {
 		conv_type = CT_UNIX2DOS;
 	}
 
@@ -124,14 +124,14 @@ int dos2unix_main(int argc UNUSED_PARAM, char **argv)
 
 	/* Do the conversion requested by an argument else do the default
 	 * conversion depending on our name.  */
-	if (o)
+	ఒకవేళ (o)
 		conv_type = o;
 
 	argv += optind;
-	do {
+	చేయి {
 		/* might be convert(NULL) if there is no filename given */
 		convert(*argv, conv_type);
-	} while (*argv && *++argv);
+	} అయితే (*argv && *++argv);
 
-	return 0;
+	తిరిగి 0;
 }

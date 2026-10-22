@@ -47,226 +47,226 @@
 //usage:       "root:x:0:0:root:/root:/bin/bash\n"
 //usage:       "daemon:x:1:1:daemon:/usr/sbin:/bin/sh\n"
 
-#include "libbb.h"
+#అన్తర్భావ "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-#if !ENABLE_FEATURE_FANCY_HEAD
-# define print_first_N(fp,count,bytes) print_first_N(fp,count)
-#endif
-static void
-print_first_N(FILE *fp, unsigned long count, bool count_bytes)
+#ఒకవేళ !ENABLE_FEATURE_FANCY_తల
+# define print_మొదటి_N(fp,లెక్క,బైట్లు) print_మొదటి_N(fp,లెక్క)
+#అయితే_ముగింపు
+స్థిర శూన్య
+print_మొదటి_N(FILE *fp, గుర్తులేని దీర్ఘ లెక్క, bool లెక్క_బైట్లు)
 {
-#if !ENABLE_FEATURE_FANCY_HEAD
-	const int count_bytes = 0;
-#endif
-	while (count) {
-		int c = getc(fp);
-		if (c == EOF)
-			break;
-		if (count_bytes || (c == '\n'))
-			--count;
-		putchar(c);
+#ఒకవేళ !ENABLE_FEATURE_FANCY_తల
+	స్థిరరాశి పూర్ణాంకం లెక్క_బైట్లు = 0;
+#అయితే_ముగింపు
+	అయితే (లెక్క) {
+		పూర్ణాంకం c = getc(fp);
+		ఒకవేళ (c == EOF)
+			ఆపు;
+		ఒకవేళ (లెక్క_బైట్లు || (c == '\n'))
+			--లెక్క;
+		అక్షరం_రాయి(c);
 	}
 }
 
-#if ENABLE_FEATURE_FANCY_HEAD
-static void
-print_except_N_last_bytes(FILE *fp, unsigned count)
+#ఒకవేళ ENABLE_FEATURE_FANCY_తల
+స్థిర శూన్య
+print_except_N_చివరి_బైట్లు(FILE *fp, గుర్తులేని లెక్క)
 {
-	unsigned char *circle = xmalloc(++count);
-	unsigned head = 0;
-	for (;;) {
-		int c;
+	గుర్తులేని అక్షరం *circle = xmalloc(++లెక్క);
+	గుర్తులేని తల = 0;
+	కొరకు (;;) {
+		పూర్ణాంకం c;
 		c = getc(fp);
-		if (c == EOF)
-			goto ret;
-		circle[head++] = c;
-		if (head == count)
-			break;
+		ఒకవేళ (c == EOF)
+			వెళ్ళు ret;
+		circle[తల++] = c;
+		ఒకవేళ (తల == లెక్క)
+			ఆపు;
 	}
-	for (;;) {
-		int c;
-		if (head == count)
-			head = 0;
-		putchar(circle[head]);
+	కొరకు (;;) {
+		పూర్ణాంకం c;
+		ఒకవేళ (తల == లెక్క)
+			తల = 0;
+		అక్షరం_రాయి(circle[తల]);
 		c = getc(fp);
-		if (c == EOF)
-			goto ret;
-		circle[head] = c;
-		head++;
+		ఒకవేళ (c == EOF)
+			వెళ్ళు ret;
+		circle[తల] = c;
+		తల++;
 	}
  ret:
-	free(circle);
+	విడుదల(circle);
 }
 
-static void
-print_except_N_last_lines(FILE *fp, unsigned count)
+స్థిర శూన్య
+print_except_N_చివరి_పంక్తులు(FILE *fp, గుర్తులేని లెక్క)
 {
-	char **circle = xzalloc((++count) * sizeof(circle[0]));
-	unsigned head = 0;
-	for (;;) {
-		char *c;
+	అక్షరం **circle = xzalloc((++లెక్క) * పరిమాణం(circle[0]));
+	గుర్తులేని తల = 0;
+	కొరకు (;;) {
+		అక్షరం *c;
 		c = xmalloc_fgets(fp);
-		if (!c)
-			goto ret;
-		circle[head++] = c;
-		if (head == count)
-			break;
+		ఒకవేళ (!c)
+			వెళ్ళు ret;
+		circle[తల++] = c;
+		ఒకవేళ (తల == లెక్క)
+			ఆపు;
 	}
-	for (;;) {
-		char *c;
-		if (head == count)
-			head = 0;
-		fputs_stdout(circle[head]);
+	కొరకు (;;) {
+		అక్షరం *c;
+		ఒకవేళ (తల == లెక్క)
+			తల = 0;
+		fputs_stdout(circle[తల]);
 		c = xmalloc_fgets(fp);
-		if (!c)
-			goto ret;
-		free(circle[head]);
-		circle[head++] = c;
+		ఒకవేళ (!c)
+			వెళ్ళు ret;
+		విడుదల(circle[తల]);
+		circle[తల++] = c;
 	}
  ret:
-	head = 0;
-	for (;;) {
-		free(circle[head++]);
-		if (head == count)
-			break;
+	తల = 0;
+	కొరకు (;;) {
+		విడుదల(circle[తల++]);
+		ఒకవేళ (తల == లెక్క)
+			ఆపు;
 	}
-	free(circle);
+	విడుదల(circle);
 }
-#else
+#లేకపోతే
 /* Must never be called */
-void print_except_N_last_bytes(FILE *fp, unsigned count);
-void print_except_N_last_lines(FILE *fp, unsigned count);
-#endif
+శూన్య print_except_N_చివరి_బైట్లు(FILE *fp, గుర్తులేని లెక్క);
+శూన్య print_except_N_చివరి_పంక్తులు(FILE *fp, గుర్తులేని లెక్క);
+#అయితే_ముగింపు
 
-#if !ENABLE_FEATURE_FANCY_HEAD
-# define eat_num(negative_N,p) eat_num(p)
-#endif
-static unsigned long
-eat_num(bool *negative_N, const char *p)
+#ఒకవేళ !ENABLE_FEATURE_FANCY_తల
+# define eat_అంకె(negative_N,p) eat_అంకె(p)
+#అయితే_ముగింపు
+స్థిర గుర్తులేని దీర్ఘ
+eat_అంకె(bool *negative_N, స్థిరరాశి అక్షరం *p)
 {
-#if ENABLE_FEATURE_FANCY_HEAD
-	if (*p == '-') {
+#ఒకవేళ ENABLE_FEATURE_FANCY_తల
+	ఒకవేళ (*p == '-') {
 		*negative_N = 1;
 		p++;
 	}
-#endif
-	return xatoul_sfx(p, bkm_suffixes);
+#అయితే_ముగింపు
+	తిరిగి xatoul_sfx(p, bkm_suffixes);
 }
 
-static const char head_opts[] ALIGN1 =
+స్థిర స్థిరరాశి అక్షరం తల_opts[] ALIGN1 =
 	"n:"
-#if ENABLE_FEATURE_FANCY_HEAD
+#ఒకవేళ ENABLE_FEATURE_FANCY_తల
 	"c:qv"
-#endif
+#అయితే_ముగింపు
 	;
 
-#define header_fmt_str "\n==> %s <==\n"
+#నిర్వచించు శీర్షిక_fmt_str "\n==> %s <==\n"
 
-int head_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int head_main(int argc, char **argv)
+పూర్ణాంకం తల_main(పూర్ణాంకం argc, అక్షరం **argv) MAIN_EXTERNALLY_VISIBLE;
+పూర్ణాంకం తల_main(పూర్ణాంకం argc, అక్షరం **argv)
 {
-	unsigned long count = 10;
-#if ENABLE_FEATURE_FANCY_HEAD
-	int header_threshhold = 1;
-	bool count_bytes = 0;
+	గుర్తులేని దీర్ఘ లెక్క = 10;
+#ఒకవేళ ENABLE_FEATURE_FANCY_తల
+	పూర్ణాంకం శీర్షిక_threshhold = 1;
+	bool లెక్క_బైట్లు = 0;
 	bool negative_N = 0;
-#else
-# define header_threshhold 1
-# define count_bytes       0
+#లేకపోతే
+# define శీర్షిక_threshhold 1
+# define లెక్క_బైట్లు       0
 # define negative_N        0
-#endif
+#అయితే_ముగింపు
 	FILE *fp;
-	const char *fmt;
-	char *p;
-	int opt;
-	int retval = EXIT_SUCCESS;
+	స్థిరరాశి అక్షరం *fmt;
+	అక్షరం *p;
+	పూర్ణాంకం opt;
+	పూర్ణాంకం retval = EXIT_SUCCESS;
 
-#if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
+#ఒకవేళ ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_తల
 	/* Allow legacy syntax of an initial numeric option without -n. */
-	if (argv[1] && argv[1][0] == '-'
-	 && isdigit(argv[1][1])
+	ఒకవేళ (argv[1] && argv[1][0] == '-'
+	 && అంకెనా(argv[1][1])
 	) {
 		--argc;
 		++argv;
 		p = argv[0] + 1;
-		goto GET_COUNT;
+		వెళ్ళు GET_లెక్క;
 	}
-#endif
+#అయితే_ముగింపు
 
 	/* No size benefit in converting this to getopt32 */
-	while ((opt = getopt(argc, argv, head_opts)) > 0) {
-		switch (opt) {
-#if ENABLE_FEATURE_FANCY_HEAD
-		case 'q':
-			header_threshhold = INT_MAX;
-			break;
-		case 'v':
-			header_threshhold = -1;
-			break;
-		case 'c':
-			count_bytes = 1;
+	అయితే ((opt = getopt(argc, argv, తల_opts)) > 0) {
+		ఎంపిక (opt) {
+#ఒకవేళ ENABLE_FEATURE_FANCY_తల
+		స్థితి 'q':
+			శీర్షిక_threshhold = గరిష్ఠ_పూర్ణాంకం;
+			ఆపు;
+		స్థితి 'v':
+			శీర్షిక_threshhold = -1;
+			ఆపు;
+		స్థితి 'c':
+			లెక్క_బైట్లు = 1;
 			/* fall through */
-#endif
-		case 'n':
+#అయితే_ముగింపు
+		స్థితి 'n':
 			p = optarg;
-#if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
- GET_COUNT:
-#endif
-			count = eat_num(&negative_N, p);
-			break;
-		default:
+#ఒకవేళ ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_తల
+ GET_లెక్క:
+#అయితే_ముగింపు
+			లెక్క = eat_అంకె(&negative_N, p);
+			ఆపు;
+		అప్రమేయ:
 			bb_show_usage();
 		}
 	}
 
 	argc -= optind;
 	argv += optind;
-	if (!*argv)
-		*--argv = (char*)"-";
+	ఒకవేళ (!*argv)
+		*--argv = (అక్షరం*)"-";
 
-	fmt = header_fmt_str + 1;
-	if (argc <= header_threshhold) {
-#if ENABLE_FEATURE_FANCY_HEAD
-		header_threshhold = 0;
-#else
+	fmt = శీర్షిక_fmt_str + 1;
+	ఒకవేళ (argc <= శీర్షిక_threshhold) {
+#ఒకవేళ ENABLE_FEATURE_FANCY_తల
+		శీర్షిక_threshhold = 0;
+#లేకపోతే
 		fmt += 11; /* "" */
-#endif
+#అయితే_ముగింపు
 	}
-	if (negative_N) {
-		if (count >= INT_MAX / sizeof(char*))
-			bb_error_msg("count is too big: %lu", count);
+	ఒకవేళ (negative_N) {
+		ఒకవేళ (లెక్క >= గరిష్ఠ_పూర్ణాంకం / పరిమాణం(అక్షరం*))
+			bb_error_సందేశం("count is too big: %lu", లెక్క);
 	}
 
-	do {
+	చేయి {
 		fp = fopen_or_warn_stdin(*argv);
-		if (fp) {
-			if (fp == stdin) {
-				*argv = (char *) bb_msg_standard_input;
+		ఒకవేళ (fp) {
+			ఒకవేళ (fp == stdin) {
+				*argv = (అక్షరం *) bb_సందేశం_standard_ఆదానం;
 			}
-			if (header_threshhold) {
-				printf(fmt, *argv);
+			ఒకవేళ (శీర్షిక_threshhold) {
+				రాయి(fmt, *argv);
 			}
-			if (negative_N) {
-				if (count_bytes) {
-					print_except_N_last_bytes(fp, count);
-				} else {
-					print_except_N_last_lines(fp, count);
+			ఒకవేళ (negative_N) {
+				ఒకవేళ (లెక్క_బైట్లు) {
+					print_except_N_చివరి_బైట్లు(fp, లెక్క);
+				} లేకపోతే {
+					print_except_N_చివరి_పంక్తులు(fp, లెక్క);
 				}
-			} else {
-				print_first_N(fp, count, count_bytes);
+			} లేకపోతే {
+				print_మొదటి_N(fp, లెక్క, లెక్క_బైట్లు);
 			}
 			die_if_ferror_stdout();
-			if (fclose_if_not_stdin(fp)) {
-				bb_simple_perror_msg(*argv);
+			ఒకవేళ (fclose_if_not_stdin(fp)) {
+				bb_simple_perror_సందేశం(*argv);
 				retval = EXIT_FAILURE;
 			}
-		} else {
+		} లేకపోతే {
 			retval = EXIT_FAILURE;
 		}
-		fmt = header_fmt_str;
-	} while (*++argv);
+		fmt = శీర్షిక_fmt_str;
+	} అయితే (*++argv);
 
 	fflush_stdout_and_exit(retval);
 }

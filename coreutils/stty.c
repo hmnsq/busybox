@@ -34,267 +34,267 @@
  * are done on the specified device, or stdin if none was specified.
  */
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#అన్తర్భావ "libbb.h"
+#అన్తర్భావ "common_bufsiz.h"
 
-#ifndef _POSIX_VDISABLE
-# define _POSIX_VDISABLE ((unsigned char) 0)
-#endif
+#నిర్వచితం_కాకపోతే _POSIX_VDISABLE
+# define _POSIX_VDISABLE ((గుర్తులేని అక్షరం) 0)
+#అయితే_ముగింపు
 
-#define Control(c) ((c) & 0x1f)
+#నిర్వచించు Control(c) ((c) & 0x1f)
 /* Canonical values for control characters */
-#ifndef CINTR
+#నిర్వచితం_కాకపోతే CINTR
 # define CINTR Control('c')
-#endif
-#ifndef CQUIT
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే CQUIT
 # define CQUIT 28
-#endif
-#ifndef CERASE
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే CERASE
 # define CERASE 127
-#endif
-#ifndef CKILL
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే CKILL
 # define CKILL Control('u')
-#endif
-#ifndef CEOF
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే CEOF
 # define CEOF Control('d')
-#endif
-#ifndef CEOL
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే CEOL
 # define CEOL _POSIX_VDISABLE
-#endif
-#ifndef CSTART
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే CSTART
 # define CSTART Control('q')
-#endif
-#ifndef CSTOP
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే CSTOP
 # define CSTOP Control('s')
-#endif
-#ifndef CSUSP
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే CSUSP
 # define CSUSP Control('z')
-#endif
-#if defined(VEOL2) && !defined(CEOL2)
+#అయితే_ముగింపు
+#ఒకవేళ defined(VEOL2) && !defined(CEOL2)
 # define CEOL2 _POSIX_VDISABLE
-#endif
+#అయితే_ముగింపు
 /* glibc-2.12.1 uses only VSWTC name */
-#if defined(VSWTC) && !defined(VSWTCH)
+#ఒకవేళ defined(VSWTC) && !defined(VSWTCH)
 # define VSWTCH VSWTC
-#endif
+#అయితే_ముగింపు
 /* ISC renamed swtch to susp for termios, but we'll accept either name */
-#if defined(VSUSP) && !defined(VSWTCH)
+#ఒకవేళ defined(VSUSP) && !defined(VSWTCH)
 # define VSWTCH VSUSP
 # define CSWTCH CSUSP
-#endif
-#if defined(VSWTCH) && !defined(CSWTCH)
+#అయితే_ముగింపు
+#ఒకవేళ defined(VSWTCH) && !defined(CSWTCH)
 # define CSWTCH _POSIX_VDISABLE
-#endif
+#అయితే_ముగింపు
 
 /* SunOS 5.3 loses (^Z doesn't work) if 'swtch' is the same as 'susp'.
    So the default is to disable 'swtch.'  */
-#if defined(__sparc__) && defined(__svr4__)
+#ఒకవేళ defined(__sparc__) && defined(__svr4__)
 # undef CSWTCH
 # define CSWTCH _POSIX_VDISABLE
-#endif
+#అయితే_ముగింపు
 
-#if defined(VWERSE) && !defined(VWERASE)       /* AIX-3.2.5 */
+#ఒకవేళ defined(VWERSE) && !defined(VWERASE)       /* AIX-3.2.5 */
 # define VWERASE VWERSE
-#endif
-#if defined(VDSUSP) && !defined(CDSUSP)
+#అయితే_ముగింపు
+#ఒకవేళ defined(VDSUSP) && !defined(CDSUSP)
 # define CDSUSP Control('y')
-#endif
-#if !defined(VREPRINT) && defined(VRPRNT)       /* Irix 4.0.5 */
+#అయితే_ముగింపు
+#ఒకవేళ !defined(VREPRINT) && defined(VRPRNT)       /* Irix 4.0.5 */
 # define VREPRINT VRPRNT
-#endif
-#if defined(VREPRINT) && !defined(CRPRNT)
+#అయితే_ముగింపు
+#ఒకవేళ defined(VREPRINT) && !defined(CRPRNT)
 # define CRPRNT Control('r')
-#endif
-#if defined(VWERASE) && !defined(CWERASE)
+#అయితే_ముగింపు
+#ఒకవేళ defined(VWERASE) && !defined(CWERASE)
 # define CWERASE Control('w')
-#endif
-#if defined(VLNEXT) && !defined(CLNEXT)
+#అయితే_ముగింపు
+#ఒకవేళ defined(VLNEXT) && !defined(CLNEXT)
 # define CLNEXT Control('v')
-#endif
-#if defined(VDISCARD) && !defined(VFLUSHO)
+#అయితే_ముగింపు
+#ఒకవేళ defined(VDISCARD) && !defined(VFLUSHO)
 # define VFLUSHO VDISCARD
-#endif
-#if defined(VFLUSH) && !defined(VFLUSHO)        /* Ultrix 4.2 */
+#అయితే_ముగింపు
+#ఒకవేళ defined(VFLUSH) && !defined(VFLUSHO)        /* Ultrix 4.2 */
 # define VFLUSHO VFLUSH
-#endif
-#if defined(CTLECH) && !defined(ECHOCTL)        /* Ultrix 4.3 */
+#అయితే_ముగింపు
+#ఒకవేళ defined(CTLECH) && !defined(ECHOCTL)        /* Ultrix 4.3 */
 # define ECHOCTL CTLECH
-#endif
-#if defined(TCTLECH) && !defined(ECHOCTL)       /* Ultrix 4.2 */
+#అయితే_ముగింపు
+#ఒకవేళ defined(TCTLECH) && !defined(ECHOCTL)       /* Ultrix 4.2 */
 # define ECHOCTL TCTLECH
-#endif
-#if defined(CRTKIL) && !defined(ECHOKE)         /* Ultrix 4.2 and 4.3 */
+#అయితే_ముగింపు
+#ఒకవేళ defined(CRTKIL) && !defined(ECHOKE)         /* Ultrix 4.2 and 4.3 */
 # define ECHOKE CRTKIL
-#endif
-#if defined(VFLUSHO) && !defined(CFLUSHO)
+#అయితే_ముగింపు
+#ఒకవేళ defined(VFLUSHO) && !defined(CFLUSHO)
 # define CFLUSHO Control('o')
-#endif
-#if defined(VSTATUS) && !defined(CSTATUS)
+#అయితే_ముగింపు
+#ఒకవేళ defined(VSTATUS) && !defined(CSTATUS)
 # define CSTATUS Control('t')
-#endif
+#అయితే_ముగింపు
 
 /* Save us from #ifdef forest plague */
-#ifndef BSDLY
+#నిర్వచితం_కాకపోతే BSDLY
 # define BSDLY 0
-#endif
-#ifndef CIBAUD
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే CIBAUD
 # define CIBAUD 0
-#endif
-#ifndef CRDLY
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే CRDLY
 # define CRDLY 0
-#endif
-#ifndef CMSPAR
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే CMSPAR
 # define CMSPAR 0
-#endif
-#ifndef CRTSCTS
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే CRTSCTS
 # define CRTSCTS 0
-#endif
-#ifndef ECHOCTL
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే ECHOCTL
 # define ECHOCTL 0
-#endif
-#ifndef ECHOKE
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే ECHOKE
 # define ECHOKE 0
-#endif
-#ifndef ECHOPRT
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే ECHOPRT
 # define ECHOPRT 0
-#endif
-#ifndef FFDLY
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే FFDLY
 # define FFDLY 0
-#endif
-#ifndef IEXTEN
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే IEXTEN
 # define IEXTEN 0
-#endif
-#ifndef IMAXBEL
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే IMAXBEL
 # define IMAXBEL 0
-#endif
-#ifndef IUCLC
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే IUCLC
 # define IUCLC 0
-#endif
-#ifndef IXANY
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే IXANY
 # define IXANY 0
-#endif
-#ifndef NLDLY
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే NLDLY
 # define NLDLY 0
-#endif
-#ifndef OCRNL
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే OCRNL
 # define OCRNL 0
-#endif
-#ifndef OFDEL
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే OFDEL
 # define OFDEL 0
-#endif
-#ifndef OFILL
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే OFILL
 # define OFILL 0
-#endif
-#ifndef OLCUC
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే OLCUC
 # define OLCUC 0
-#endif
-#ifndef ONLCR
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే ONLCR
 # define ONLCR 0
-#endif
-#ifndef ONLRET
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే ONLRET
 # define ONLRET 0
-#endif
-#ifndef ONOCR
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే ONOCR
 # define ONOCR 0
-#endif
-#ifndef OXTABS
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే OXTABS
 # define OXTABS 0
-#endif
-#ifndef TABDLY
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే TABDLY
 # define TABDLY 0
-#endif
-#ifndef TAB1
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే TAB1
 # define TAB1 0
-#endif
-#ifndef TAB2
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే TAB2
 # define TAB2 0
-#endif
-#ifndef TOSTOP
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే TOSTOP
 # define TOSTOP 0
-#endif
-#ifndef VDSUSP
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే VDSUSP
 # define VDSUSP 0
-#endif
-#ifndef VEOL2
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే VEOL2
 # define VEOL2 0
-#endif
-#ifndef VFLUSHO
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే VFLUSHO
 # define VFLUSHO 0
-#endif
-#ifndef VLNEXT
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే VLNEXT
 # define VLNEXT 0
-#endif
-#ifndef VREPRINT
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే VREPRINT
 # define VREPRINT 0
-#endif
-#ifndef VSTATUS
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే VSTATUS
 # define VSTATUS 0
-#endif
-#ifndef VSWTCH
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే VSWTCH
 # define VSWTCH 0
-#endif
-#ifndef VTDLY
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే VTDLY
 # define VTDLY 0
-#endif
-#ifndef VWERASE
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే VWERASE
 # define VWERASE 0
-#endif
-#ifndef XCASE
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే XCASE
 # define XCASE 0
-#endif
-#ifndef IUTF8
+#అయితే_ముగింపు
+#నిర్వచితం_కాకపోతే IUTF8
 # define IUTF8 0
-#endif
+#అయితే_ముగింపు
 
 /* Which speeds to set */
-enum speed_setting {
-	input_speed, output_speed, both_speeds
+గణన వేగం_setting {
+	ఆదానం_వేగం, output_వేగం, both_speeds
 };
 
 /* Which member(s) of 'struct termios' a mode uses */
-enum {
-	control, input, output, local, combination
+గణన {
+	control, ఆదానం, output, local, combination
 };
-static tcflag_t *get_ptr_to_tcflag(unsigned type, const struct termios *mode)
+స్థిర tcflag_t *get_ptr_గమ్యం_tcflag(గుర్తులేని type, స్థిరరాశి నిర్మాణం termios *బహుళకం)
 {
-	static const uint8_t tcflag_offsets[] ALIGN1 = {
-		offsetof(struct termios, c_cflag), /* control */
-		offsetof(struct termios, c_iflag), /* input */
-		offsetof(struct termios, c_oflag), /* output */
-		offsetof(struct termios, c_lflag)  /* local */
+	స్థిర స్థిరరాశి uint8_t tcflag_offsets[] ALIGN1 = {
+		offsetof(నిర్మాణం termios, c_cflag), /* control */
+		offsetof(నిర్మాణం termios, c_iflag), /*ఆదానం*/
+		offsetof(నిర్మాణం termios, c_oflag), /* output */
+		offsetof(నిర్మాణం termios, c_lflag)  /* local */
 	};
-	if (type <= local) {
-		return (tcflag_t*) (((char*)mode) + tcflag_offsets[type]);
+	ఒకవేళ (type <= local) {
+		తిరిగి (tcflag_t*) (((అక్షరం*)బహుళకం) + tcflag_offsets[type]);
 	}
-	return NULL;
+	తిరిగి ఖాళీ;
 }
 
 /* Flags for 'struct mode_info' */
-#define SANE_SET 1              /* Set in 'sane' mode                  */
-#define SANE_UNSET 2            /* Unset in 'sane' mode                */
-#define REV 4                   /* Can be turned off by prepending '-' */
-#define OMIT 8                  /* Don't display value                 */
+#నిర్వచించు SANE_సమితి 1              /* Set in 'sane' mode                  */
+#నిర్వచించు SANE_UNSET 2            /* Unset in 'sane' mode                */
+#నిర్వచించు REV 4                   /* Can be turned off by prepending '-' */
+#నిర్వచించు OMIT 8                  /* Don't display value                 */
 
 
 /* Each mode.
  * This structure should be kept as small as humanly possible.
  */
-struct mode_info {
-	const uint8_t type;           /* Which structure element to change    */
-	const uint8_t flags;          /* Setting and display options          */
+నిర్మాణం బహుళకం_info {
+	స్థిరరాశి uint8_t type;           /* Which structure element to change    */
+	స్థిరరాశి uint8_t flags;          /* Setting and display options          */
 	/* only these values are ever used, so... */
-#if   (CSIZE | NLDLY | CRDLY | TABDLY | BSDLY | VTDLY | FFDLY) < 0x100
-	const uint8_t mask;
-#elif (CSIZE | NLDLY | CRDLY | TABDLY | BSDLY | VTDLY | FFDLY) < 0x10000
-	const uint16_t mask;
-#else
-	const tcflag_t mask;          /* Other bits to turn off for this mode */
-#endif
+#ఒకవేళ   (CSIZE | NLDLY | CRDLY | TABDLY | BSDLY | VTDLY | FFDLY) < 0x100
+	స్థిరరాశి uint8_t ముసుగు;
+#లేదావేళ (CSIZE | NLDLY | CRDLY | TABDLY | BSDLY | VTDLY | FFDLY) < 0x10000
+	స్థిరరాశి uint16_t ముసుగు;
+#లేకపోతే
+	స్థిరరాశి tcflag_t ముసుగు;          /* Other bits to turn off for this mode */
+#అయితే_ముగింపు
 	/* was using short here, but ppc32 was unhappy */
-	const tcflag_t bits;          /* Bits to set for this mode            */
+	స్థిరరాశి tcflag_t బిట్లు;          /* Bits to set for this mode            */
 };
 
-enum {
+గణన {
 	/* Must match mode_name[] and mode_info[] order! */
 	IDX_evenp = 0,
 	IDX_parity,
@@ -309,357 +309,357 @@ enum {
 	IDX_cbreak,
 	IDX_crt,
 	IDX_dec,
-#if IXANY
+#ఒకవేళ IXANY
 	IDX_decctlq,
-#endif
-#if TABDLY || OXTABS
+#అయితే_ముగింపు
+#ఒకవేళ TABDLY || OXTABS
 	IDX_tabs,
-#endif
-#if XCASE && IUCLC && OLCUC
+#అయితే_ముగింపు
+#ఒకవేళ XCASE && IUCLC && OLCUC
 	IDX_lcase,
 	IDX_LCASE,
-#endif
+#అయితే_ముగింపు
 };
 
-#define MI_ENTRY(N,T,F,B,M) N "\0"
+#నిర్వచించు MI_నమోదు(N,T,F,B,M) N "\0"
 
 /* Mode names given on command line */
-static const char mode_name[] ALIGN1 =
-	MI_ENTRY("evenp",    combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("parity",   combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("oddp",     combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("nl",       combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("ek",       combination, OMIT,              0,          0 )
-	MI_ENTRY("sane",     combination, OMIT,              0,          0 )
-	MI_ENTRY("cooked",   combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("raw",      combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("pass8",    combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("litout",   combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("cbreak",   combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("crt",      combination, OMIT,              0,          0 )
-	MI_ENTRY("dec",      combination, OMIT,              0,          0 )
-#if IXANY
-	MI_ENTRY("decctlq",  combination, REV        | OMIT, 0,          0 )
-#endif
-#if TABDLY || OXTABS
-	MI_ENTRY("tabs",     combination, REV        | OMIT, 0,          0 )
-#endif
-#if XCASE && IUCLC && OLCUC
-	MI_ENTRY("lcase",    combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("LCASE",    combination, REV        | OMIT, 0,          0 )
-#endif
-	MI_ENTRY("parenb",   control,     REV,               PARENB,     0 )
-	MI_ENTRY("parodd",   control,     REV,               PARODD,     0 )
-#if CMSPAR
-	MI_ENTRY("cmspar",   control,     REV,               CMSPAR,     0 )
-#endif
-	MI_ENTRY("cs5",      control,     0,                 CS5,     CSIZE)
-	MI_ENTRY("cs6",      control,     0,                 CS6,     CSIZE)
-	MI_ENTRY("cs7",      control,     0,                 CS7,     CSIZE)
-	MI_ENTRY("cs8",      control,     0,                 CS8,     CSIZE)
-	MI_ENTRY("hupcl",    control,     REV,               HUPCL,      0 )
-	MI_ENTRY("hup",      control,     REV        | OMIT, HUPCL,      0 )
-	MI_ENTRY("cstopb",   control,     REV,               CSTOPB,     0 )
-	MI_ENTRY("cread",    control,     SANE_SET   | REV,  CREAD,      0 )
-	MI_ENTRY("clocal",   control,     REV,               CLOCAL,     0 )
-#if CRTSCTS
-	MI_ENTRY("crtscts",  control,     REV,               CRTSCTS,    0 )
-#endif
-	MI_ENTRY("ignbrk",   input,       SANE_UNSET | REV,  IGNBRK,     0 )
-	MI_ENTRY("brkint",   input,       SANE_SET   | REV,  BRKINT,     0 )
-	MI_ENTRY("ignpar",   input,       REV,               IGNPAR,     0 )
-	MI_ENTRY("parmrk",   input,       REV,               PARMRK,     0 )
-	MI_ENTRY("inpck",    input,       REV,               INPCK,      0 )
-	MI_ENTRY("istrip",   input,       REV,               ISTRIP,     0 )
-	MI_ENTRY("inlcr",    input,       SANE_UNSET | REV,  INLCR,      0 )
-	MI_ENTRY("igncr",    input,       SANE_UNSET | REV,  IGNCR,      0 )
-	MI_ENTRY("icrnl",    input,       SANE_SET   | REV,  ICRNL,      0 )
-	MI_ENTRY("ixon",     input,       REV,               IXON,       0 )
-	MI_ENTRY("ixoff",    input,       SANE_UNSET | REV,  IXOFF,      0 )
-	MI_ENTRY("tandem",   input,       OMIT       | REV,  IXOFF,      0 )
-#if IUCLC
-	MI_ENTRY("iuclc",    input,       SANE_UNSET | REV,  IUCLC,      0 )
-#endif
-#if IXANY
-	MI_ENTRY("ixany",    input,       SANE_UNSET | REV,  IXANY,      0 )
-#endif
-#if IMAXBEL
-	MI_ENTRY("imaxbel",  input,       SANE_SET   | REV,  IMAXBEL,    0 )
-#endif
-#if IUTF8
-	MI_ENTRY("iutf8",    input,       SANE_UNSET | REV,  IUTF8,      0 )
-#endif
-	MI_ENTRY("opost",    output,      SANE_SET   | REV,  OPOST,      0 )
-#if OLCUC
-	MI_ENTRY("olcuc",    output,      SANE_UNSET | REV,  OLCUC,      0 )
-#endif
-#if OCRNL
-	MI_ENTRY("ocrnl",    output,      SANE_UNSET | REV,  OCRNL,      0 )
-#endif
-#if ONLCR
-	MI_ENTRY("onlcr",    output,      SANE_SET   | REV,  ONLCR,      0 )
-#endif
-#if ONOCR
-	MI_ENTRY("onocr",    output,      SANE_UNSET | REV,  ONOCR,      0 )
-#endif
-#if ONLRET
-	MI_ENTRY("onlret",   output,      SANE_UNSET | REV,  ONLRET,     0 )
-#endif
-#if OFILL
-	MI_ENTRY("ofill",    output,      SANE_UNSET | REV,  OFILL,      0 )
-#endif
-#if OFDEL
-	MI_ENTRY("ofdel",    output,      SANE_UNSET | REV,  OFDEL,      0 )
-#endif
-#if NLDLY
-	MI_ENTRY("nl1",      output,      SANE_UNSET,        NL1,     NLDLY)
-	MI_ENTRY("nl0",      output,      SANE_SET,          NL0,     NLDLY)
-#endif
-#if CRDLY
-	MI_ENTRY("cr3",      output,      SANE_UNSET,        CR3,     CRDLY)
-	MI_ENTRY("cr2",      output,      SANE_UNSET,        CR2,     CRDLY)
-	MI_ENTRY("cr1",      output,      SANE_UNSET,        CR1,     CRDLY)
-	MI_ENTRY("cr0",      output,      SANE_SET,          CR0,     CRDLY)
-#endif
+స్థిర స్థిరరాశి అక్షరం బహుళకం_name[] ALIGN1 =
+	MI_నమోదు("evenp",    combination, REV        | OMIT, 0,          0 )
+	MI_నమోదు("parity",   combination, REV        | OMIT, 0,          0 )
+	MI_నమోదు("oddp",     combination, REV        | OMIT, 0,          0 )
+	MI_నమోదు("nl",       combination, REV        | OMIT, 0,          0 )
+	MI_నమోదు("ek",       combination, OMIT,              0,          0 )
+	MI_నమోదు("sane",     combination, OMIT,              0,          0 )
+	MI_నమోదు("cooked",   combination, REV        | OMIT, 0,          0 )
+	MI_నమోదు("raw",      combination, REV        | OMIT, 0,          0 )
+	MI_నమోదు("pass8",    combination, REV        | OMIT, 0,          0 )
+	MI_నమోదు("litout",   combination, REV        | OMIT, 0,          0 )
+	MI_నమోదు("cbreak",   combination, REV        | OMIT, 0,          0 )
+	MI_నమోదు("crt",      combination, OMIT,              0,          0 )
+	MI_నమోదు("dec",      combination, OMIT,              0,          0 )
+#ఒకవేళ IXANY
+	MI_నమోదు("decctlq",  combination, REV        | OMIT, 0,          0 )
+#అయితే_ముగింపు
+#ఒకవేళ TABDLY || OXTABS
+	MI_నమోదు("tabs",     combination, REV        | OMIT, 0,          0 )
+#అయితే_ముగింపు
+#ఒకవేళ XCASE && IUCLC && OLCUC
+	MI_నమోదు("lcase",    combination, REV        | OMIT, 0,          0 )
+	MI_నమోదు("LCASE",    combination, REV        | OMIT, 0,          0 )
+#అయితే_ముగింపు
+	MI_నమోదు("parenb",   control,     REV,               PARENB,     0 )
+	MI_నమోదు("parodd",   control,     REV,               PARODD,     0 )
+#ఒకవేళ CMSPAR
+	MI_నమోదు("cmspar",   control,     REV,               CMSPAR,     0 )
+#అయితే_ముగింపు
+	MI_నమోదు("cs5",      control,     0,                 CS5,     CSIZE)
+	MI_నమోదు("cs6",      control,     0,                 CS6,     CSIZE)
+	MI_నమోదు("cs7",      control,     0,                 CS7,     CSIZE)
+	MI_నమోదు("cs8",      control,     0,                 CS8,     CSIZE)
+	MI_నమోదు("hupcl",    control,     REV,               HUPCL,      0 )
+	MI_నమోదు("hup",      control,     REV        | OMIT, HUPCL,      0 )
+	MI_నమోదు("cstopb",   control,     REV,               CSTOPB,     0 )
+	MI_నమోదు("cread",    control,     SANE_సమితి   | REV,  CREAD,      0 )
+	MI_నమోదు("clocal",   control,     REV,               CLOCAL,     0 )
+#ఒకవేళ CRTSCTS
+	MI_నమోదు("crtscts",  control,     REV,               CRTSCTS,    0 )
+#అయితే_ముగింపు
+	MI_నమోదు("ignbrk",   ఆదానం,       SANE_UNSET | REV,  IGNBRK,     0 )
+	MI_నమోదు("brkint",   ఆదానం,       SANE_సమితి   | REV,  BRKINT,     0 )
+	MI_నమోదు("ignpar",   ఆదానం,       REV,               IGNPAR,     0 )
+	MI_నమోదు("parmrk",   ఆదానం,       REV,               PARMRK,     0 )
+	MI_నమోదు("inpck",    ఆదానం,       REV,               INPCK,      0 )
+	MI_నమోదు("istrip",   ఆదానం,       REV,               ISTRIP,     0 )
+	MI_నమోదు("inlcr",    ఆదానం,       SANE_UNSET | REV,  INLCR,      0 )
+	MI_నమోదు("igncr",    ఆదానం,       SANE_UNSET | REV,  IGNCR,      0 )
+	MI_నమోదు("icrnl",    ఆదానం,       SANE_సమితి   | REV,  ICRNL,      0 )
+	MI_నమోదు("ixon",     ఆదానం,       REV,               IXON,       0 )
+	MI_నమోదు("ixoff",    ఆదానం,       SANE_UNSET | REV,  IXOFF,      0 )
+	MI_నమోదు("tandem",   ఆదానం,       OMIT       | REV,  IXOFF,      0 )
+#ఒకవేళ IUCLC
+	MI_నమోదు("iuclc",    ఆదానం,       SANE_UNSET | REV,  IUCLC,      0 )
+#అయితే_ముగింపు
+#ఒకవేళ IXANY
+	MI_నమోదు("ixany",    ఆదానం,       SANE_UNSET | REV,  IXANY,      0 )
+#అయితే_ముగింపు
+#ఒకవేళ IMAXBEL
+	MI_నమోదు("imaxbel",  ఆదానం,       SANE_సమితి   | REV,  IMAXBEL,    0 )
+#అయితే_ముగింపు
+#ఒకవేళ IUTF8
+	MI_నమోదు("iutf8",    ఆదానం,       SANE_UNSET | REV,  IUTF8,      0 )
+#అయితే_ముగింపు
+	MI_నమోదు("opost",    output,      SANE_సమితి   | REV,  OPOST,      0 )
+#ఒకవేళ OLCUC
+	MI_నమోదు("olcuc",    output,      SANE_UNSET | REV,  OLCUC,      0 )
+#అయితే_ముగింపు
+#ఒకవేళ OCRNL
+	MI_నమోదు("ocrnl",    output,      SANE_UNSET | REV,  OCRNL,      0 )
+#అయితే_ముగింపు
+#ఒకవేళ ONLCR
+	MI_నమోదు("onlcr",    output,      SANE_సమితి   | REV,  ONLCR,      0 )
+#అయితే_ముగింపు
+#ఒకవేళ ONOCR
+	MI_నమోదు("onocr",    output,      SANE_UNSET | REV,  ONOCR,      0 )
+#అయితే_ముగింపు
+#ఒకవేళ ONLRET
+	MI_నమోదు("onlret",   output,      SANE_UNSET | REV,  ONLRET,     0 )
+#అయితే_ముగింపు
+#ఒకవేళ OFILL
+	MI_నమోదు("ofill",    output,      SANE_UNSET | REV,  OFILL,      0 )
+#అయితే_ముగింపు
+#ఒకవేళ OFDEL
+	MI_నమోదు("ofdel",    output,      SANE_UNSET | REV,  OFDEL,      0 )
+#అయితే_ముగింపు
+#ఒకవేళ NLDLY
+	MI_నమోదు("nl1",      output,      SANE_UNSET,        NL1,     NLDLY)
+	MI_నమోదు("nl0",      output,      SANE_సమితి,          NL0,     NLDLY)
+#అయితే_ముగింపు
+#ఒకవేళ CRDLY
+	MI_నమోదు("cr3",      output,      SANE_UNSET,        CR3,     CRDLY)
+	MI_నమోదు("cr2",      output,      SANE_UNSET,        CR2,     CRDLY)
+	MI_నమోదు("cr1",      output,      SANE_UNSET,        CR1,     CRDLY)
+	MI_నమోదు("cr0",      output,      SANE_సమితి,          CR0,     CRDLY)
+#అయితే_ముగింపు
 
-#if TABDLY
-	MI_ENTRY("tab3",     output,      SANE_UNSET,        TAB3,   TABDLY)
-# if TAB2
-	MI_ENTRY("tab2",     output,      SANE_UNSET,        TAB2,   TABDLY)
+#ఒకవేళ TABDLY
+	MI_నమోదు("tab3",     output,      SANE_UNSET,        TAB3,   TABDLY)
+# ఒకవేళ TAB2
+	MI_నమోదు("tab2",     output,      SANE_UNSET,        TAB2,   TABDLY)
 # endif
-# if TAB1
-	MI_ENTRY("tab1",     output,      SANE_UNSET,        TAB1,   TABDLY)
+# ఒకవేళ TAB1
+	MI_నమోదు("tab1",     output,      SANE_UNSET,        TAB1,   TABDLY)
 # endif
-	MI_ENTRY("tab0",     output,      SANE_SET,          TAB0,   TABDLY)
-#else
-# if OXTABS
-	MI_ENTRY("tab3",     output,      SANE_UNSET,        OXTABS,     0 )
+	MI_నమోదు("tab0",     output,      SANE_సమితి,          TAB0,   TABDLY)
+#లేకపోతే
+# ఒకవేళ OXTABS
+	MI_నమోదు("tab3",     output,      SANE_UNSET,        OXTABS,     0 )
 # endif
-#endif
+#అయితే_ముగింపు
 
-#if BSDLY
-	MI_ENTRY("bs1",      output,      SANE_UNSET,        BS1,     BSDLY)
-	MI_ENTRY("bs0",      output,      SANE_SET,          BS0,     BSDLY)
-#endif
-#if VTDLY
-	MI_ENTRY("vt1",      output,      SANE_UNSET,        VT1,     VTDLY)
-	MI_ENTRY("vt0",      output,      SANE_SET,          VT0,     VTDLY)
-#endif
-#if FFDLY
-	MI_ENTRY("ff1",      output,      SANE_UNSET,        FF1,     FFDLY)
-	MI_ENTRY("ff0",      output,      SANE_SET,          FF0,     FFDLY)
-#endif
-	MI_ENTRY("isig",     local,       SANE_SET   | REV,  ISIG,       0 )
-	MI_ENTRY("icanon",   local,       SANE_SET   | REV,  ICANON,     0 )
-#if IEXTEN
-	MI_ENTRY("iexten",   local,       SANE_SET   | REV,  IEXTEN,     0 )
-#endif
-	MI_ENTRY("echo",     local,       SANE_SET   | REV,  ECHO,       0 )
-	MI_ENTRY("echoe",    local,       SANE_SET   | REV,  ECHOE,      0 )
-	MI_ENTRY("crterase", local,       OMIT       | REV,  ECHOE,      0 )
-	MI_ENTRY("echok",    local,       SANE_SET   | REV,  ECHOK,      0 )
-	MI_ENTRY("echonl",   local,       SANE_UNSET | REV,  ECHONL,     0 )
-	MI_ENTRY("noflsh",   local,       SANE_UNSET | REV,  NOFLSH,     0 )
-#if XCASE
-	MI_ENTRY("xcase",    local,       SANE_UNSET | REV,  XCASE,      0 )
-#endif
-#if TOSTOP
-	MI_ENTRY("tostop",   local,       SANE_UNSET | REV,  TOSTOP,     0 )
-#endif
-#if ECHOPRT
-	MI_ENTRY("echoprt",  local,       SANE_UNSET | REV,  ECHOPRT,    0 )
-	MI_ENTRY("prterase", local,       OMIT       | REV,  ECHOPRT,    0 )
-#endif
-#if ECHOCTL
-	MI_ENTRY("echoctl",  local,       SANE_SET   | REV,  ECHOCTL,    0 )
-	MI_ENTRY("ctlecho",  local,       OMIT       | REV,  ECHOCTL,    0 )
-#endif
-#if ECHOKE
-	MI_ENTRY("echoke",   local,       SANE_SET   | REV,  ECHOKE,     0 )
-	MI_ENTRY("crtkill",  local,       OMIT       | REV,  ECHOKE,     0 )
-#endif
-	MI_ENTRY("flusho",   local,       SANE_UNSET | REV,  FLUSHO,     0 )
-#ifdef EXTPROC
-	MI_ENTRY("extproc",  local,       SANE_UNSET | REV,  EXTPROC,    0 )
-#endif
+#ఒకవేళ BSDLY
+	MI_నమోదు("bs1",      output,      SANE_UNSET,        BS1,     BSDLY)
+	MI_నమోదు("bs0",      output,      SANE_సమితి,          BS0,     BSDLY)
+#అయితే_ముగింపు
+#ఒకవేళ VTDLY
+	MI_నమోదు("vt1",      output,      SANE_UNSET,        VT1,     VTDLY)
+	MI_నమోదు("vt0",      output,      SANE_సమితి,          VT0,     VTDLY)
+#అయితే_ముగింపు
+#ఒకవేళ FFDLY
+	MI_నమోదు("ff1",      output,      SANE_UNSET,        FF1,     FFDLY)
+	MI_నమోదు("ff0",      output,      SANE_సమితి,          FF0,     FFDLY)
+#అయితే_ముగింపు
+	MI_నమోదు("isig",     local,       SANE_సమితి   | REV,  ISIG,       0 )
+	MI_నమోదు("icanon",   local,       SANE_సమితి   | REV,  ICANON,     0 )
+#ఒకవేళ IEXTEN
+	MI_నమోదు("iexten",   local,       SANE_సమితి   | REV,  IEXTEN,     0 )
+#అయితే_ముగింపు
+	MI_నమోదు("echo",     local,       SANE_సమితి   | REV,  ECHO,       0 )
+	MI_నమోదు("echoe",    local,       SANE_సమితి   | REV,  ECHOE,      0 )
+	MI_నమోదు("crterase", local,       OMIT       | REV,  ECHOE,      0 )
+	MI_నమోదు("echok",    local,       SANE_సమితి   | REV,  ECHOK,      0 )
+	MI_నమోదు("echonl",   local,       SANE_UNSET | REV,  ECHONL,     0 )
+	MI_నమోదు("noflsh",   local,       SANE_UNSET | REV,  NOFLSH,     0 )
+#ఒకవేళ XCASE
+	MI_నమోదు("xcase",    local,       SANE_UNSET | REV,  XCASE,      0 )
+#అయితే_ముగింపు
+#ఒకవేళ TOSTOP
+	MI_నమోదు("tostop",   local,       SANE_UNSET | REV,  TOSTOP,     0 )
+#అయితే_ముగింపు
+#ఒకవేళ ECHOPRT
+	MI_నమోదు("echoprt",  local,       SANE_UNSET | REV,  ECHOPRT,    0 )
+	MI_నమోదు("prterase", local,       OMIT       | REV,  ECHOPRT,    0 )
+#అయితే_ముగింపు
+#ఒకవేళ ECHOCTL
+	MI_నమోదు("echoctl",  local,       SANE_సమితి   | REV,  ECHOCTL,    0 )
+	MI_నమోదు("ctlecho",  local,       OMIT       | REV,  ECHOCTL,    0 )
+#అయితే_ముగింపు
+#ఒకవేళ ECHOKE
+	MI_నమోదు("echoke",   local,       SANE_సమితి   | REV,  ECHOKE,     0 )
+	MI_నమోదు("crtkill",  local,       OMIT       | REV,  ECHOKE,     0 )
+#అయితే_ముగింపు
+	MI_నమోదు("flusho",   local,       SANE_UNSET | REV,  FLUSHO,     0 )
+#నిర్వచితమైతే EXTPROC
+	MI_నమోదు("extproc",  local,       SANE_UNSET | REV,  EXTPROC,    0 )
+#అయితే_ముగింపు
 	;
 
-#undef MI_ENTRY
-#define MI_ENTRY(N,T,F,B,M) { T, F, M, B },
+#నిర్వచనం_రద్దు MI_నమోదు
+#నిర్వచించు MI_నమోదు(N,T,F,B,M) { T, F, M, B },
 
-static const struct mode_info mode_info[] ALIGN4 = {
+స్థిర స్థిరరాశి నిర్మాణం బహుళకం_info బహుళకం_info[] ALIGN4 = {
 	/* This should be verbatim cut-n-paste copy of the above MI_ENTRYs */
-	MI_ENTRY("evenp",    combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("parity",   combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("oddp",     combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("nl",       combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("ek",       combination, OMIT,              0,          0 )
-	MI_ENTRY("sane",     combination, OMIT,              0,          0 )
-	MI_ENTRY("cooked",   combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("raw",      combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("pass8",    combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("litout",   combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("cbreak",   combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("crt",      combination, OMIT,              0,          0 )
-	MI_ENTRY("dec",      combination, OMIT,              0,          0 )
-#if IXANY
-	MI_ENTRY("decctlq",  combination, REV        | OMIT, 0,          0 )
-#endif
-#if TABDLY || OXTABS
-	MI_ENTRY("tabs",     combination, REV        | OMIT, 0,          0 )
-#endif
-#if XCASE && IUCLC && OLCUC
-	MI_ENTRY("lcase",    combination, REV        | OMIT, 0,          0 )
-	MI_ENTRY("LCASE",    combination, REV        | OMIT, 0,          0 )
-#endif
-	MI_ENTRY("parenb",   control,     REV,               PARENB,     0 )
-	MI_ENTRY("parodd",   control,     REV,               PARODD,     0 )
-#if CMSPAR
-	MI_ENTRY("cmspar",   control,     REV,               CMSPAR,     0 )
-#endif
-	MI_ENTRY("cs5",      control,     0,                 CS5,     CSIZE)
-	MI_ENTRY("cs6",      control,     0,                 CS6,     CSIZE)
-	MI_ENTRY("cs7",      control,     0,                 CS7,     CSIZE)
-	MI_ENTRY("cs8",      control,     0,                 CS8,     CSIZE)
-	MI_ENTRY("hupcl",    control,     REV,               HUPCL,      0 )
-	MI_ENTRY("hup",      control,     REV        | OMIT, HUPCL,      0 )
-	MI_ENTRY("cstopb",   control,     REV,               CSTOPB,     0 )
-	MI_ENTRY("cread",    control,     SANE_SET   | REV,  CREAD,      0 )
-	MI_ENTRY("clocal",   control,     REV,               CLOCAL,     0 )
-#if CRTSCTS
-	MI_ENTRY("crtscts",  control,     REV,               CRTSCTS,    0 )
-#endif
-	MI_ENTRY("ignbrk",   input,       SANE_UNSET | REV,  IGNBRK,     0 )
-	MI_ENTRY("brkint",   input,       SANE_SET   | REV,  BRKINT,     0 )
-	MI_ENTRY("ignpar",   input,       REV,               IGNPAR,     0 )
-	MI_ENTRY("parmrk",   input,       REV,               PARMRK,     0 )
-	MI_ENTRY("inpck",    input,       REV,               INPCK,      0 )
-	MI_ENTRY("istrip",   input,       REV,               ISTRIP,     0 )
-	MI_ENTRY("inlcr",    input,       SANE_UNSET | REV,  INLCR,      0 )
-	MI_ENTRY("igncr",    input,       SANE_UNSET | REV,  IGNCR,      0 )
-	MI_ENTRY("icrnl",    input,       SANE_SET   | REV,  ICRNL,      0 )
-	MI_ENTRY("ixon",     input,       REV,               IXON,       0 )
-	MI_ENTRY("ixoff",    input,       SANE_UNSET | REV,  IXOFF,      0 )
-	MI_ENTRY("tandem",   input,       OMIT       | REV,  IXOFF,      0 )
-#if IUCLC
-	MI_ENTRY("iuclc",    input,       SANE_UNSET | REV,  IUCLC,      0 )
-#endif
-#if IXANY
-	MI_ENTRY("ixany",    input,       SANE_UNSET | REV,  IXANY,      0 )
-#endif
-#if IMAXBEL
-	MI_ENTRY("imaxbel",  input,       SANE_SET   | REV,  IMAXBEL,    0 )
-#endif
-#if IUTF8
-	MI_ENTRY("iutf8",    input,       SANE_UNSET | REV,  IUTF8,      0 )
-#endif
-	MI_ENTRY("opost",    output,      SANE_SET   | REV,  OPOST,      0 )
-#if OLCUC
-	MI_ENTRY("olcuc",    output,      SANE_UNSET | REV,  OLCUC,      0 )
-#endif
-#if OCRNL
-	MI_ENTRY("ocrnl",    output,      SANE_UNSET | REV,  OCRNL,      0 )
-#endif
-#if ONLCR
-	MI_ENTRY("onlcr",    output,      SANE_SET   | REV,  ONLCR,      0 )
-#endif
-#if ONOCR
-	MI_ENTRY("onocr",    output,      SANE_UNSET | REV,  ONOCR,      0 )
-#endif
-#if ONLRET
-	MI_ENTRY("onlret",   output,      SANE_UNSET | REV,  ONLRET,     0 )
-#endif
-#if OFILL
-	MI_ENTRY("ofill",    output,      SANE_UNSET | REV,  OFILL,      0 )
-#endif
-#if OFDEL
-	MI_ENTRY("ofdel",    output,      SANE_UNSET | REV,  OFDEL,      0 )
-#endif
-#if NLDLY
-	MI_ENTRY("nl1",      output,      SANE_UNSET,        NL1,     NLDLY)
-	MI_ENTRY("nl0",      output,      SANE_SET,          NL0,     NLDLY)
-#endif
-#if CRDLY
-	MI_ENTRY("cr3",      output,      SANE_UNSET,        CR3,     CRDLY)
-	MI_ENTRY("cr2",      output,      SANE_UNSET,        CR2,     CRDLY)
-	MI_ENTRY("cr1",      output,      SANE_UNSET,        CR1,     CRDLY)
-	MI_ENTRY("cr0",      output,      SANE_SET,          CR0,     CRDLY)
-#endif
+	MI_నమోదు("evenp",    combination, REV        | OMIT, 0,          0 )
+	MI_నమోదు("parity",   combination, REV        | OMIT, 0,          0 )
+	MI_నమోదు("oddp",     combination, REV        | OMIT, 0,          0 )
+	MI_నమోదు("nl",       combination, REV        | OMIT, 0,          0 )
+	MI_నమోదు("ek",       combination, OMIT,              0,          0 )
+	MI_నమోదు("sane",     combination, OMIT,              0,          0 )
+	MI_నమోదు("cooked",   combination, REV        | OMIT, 0,          0 )
+	MI_నమోదు("raw",      combination, REV        | OMIT, 0,          0 )
+	MI_నమోదు("pass8",    combination, REV        | OMIT, 0,          0 )
+	MI_నమోదు("litout",   combination, REV        | OMIT, 0,          0 )
+	MI_నమోదు("cbreak",   combination, REV        | OMIT, 0,          0 )
+	MI_నమోదు("crt",      combination, OMIT,              0,          0 )
+	MI_నమోదు("dec",      combination, OMIT,              0,          0 )
+#ఒకవేళ IXANY
+	MI_నమోదు("decctlq",  combination, REV        | OMIT, 0,          0 )
+#అయితే_ముగింపు
+#ఒకవేళ TABDLY || OXTABS
+	MI_నమోదు("tabs",     combination, REV        | OMIT, 0,          0 )
+#అయితే_ముగింపు
+#ఒకవేళ XCASE && IUCLC && OLCUC
+	MI_నమోదు("lcase",    combination, REV        | OMIT, 0,          0 )
+	MI_నమోదు("LCASE",    combination, REV        | OMIT, 0,          0 )
+#అయితే_ముగింపు
+	MI_నమోదు("parenb",   control,     REV,               PARENB,     0 )
+	MI_నమోదు("parodd",   control,     REV,               PARODD,     0 )
+#ఒకవేళ CMSPAR
+	MI_నమోదు("cmspar",   control,     REV,               CMSPAR,     0 )
+#అయితే_ముగింపు
+	MI_నమోదు("cs5",      control,     0,                 CS5,     CSIZE)
+	MI_నమోదు("cs6",      control,     0,                 CS6,     CSIZE)
+	MI_నమోదు("cs7",      control,     0,                 CS7,     CSIZE)
+	MI_నమోదు("cs8",      control,     0,                 CS8,     CSIZE)
+	MI_నమోదు("hupcl",    control,     REV,               HUPCL,      0 )
+	MI_నమోదు("hup",      control,     REV        | OMIT, HUPCL,      0 )
+	MI_నమోదు("cstopb",   control,     REV,               CSTOPB,     0 )
+	MI_నమోదు("cread",    control,     SANE_సమితి   | REV,  CREAD,      0 )
+	MI_నమోదు("clocal",   control,     REV,               CLOCAL,     0 )
+#ఒకవేళ CRTSCTS
+	MI_నమోదు("crtscts",  control,     REV,               CRTSCTS,    0 )
+#అయితే_ముగింపు
+	MI_నమోదు("ignbrk",   ఆదానం,       SANE_UNSET | REV,  IGNBRK,     0 )
+	MI_నమోదు("brkint",   ఆదానం,       SANE_సమితి   | REV,  BRKINT,     0 )
+	MI_నమోదు("ignpar",   ఆదానం,       REV,               IGNPAR,     0 )
+	MI_నమోదు("parmrk",   ఆదానం,       REV,               PARMRK,     0 )
+	MI_నమోదు("inpck",    ఆదానం,       REV,               INPCK,      0 )
+	MI_నమోదు("istrip",   ఆదానం,       REV,               ISTRIP,     0 )
+	MI_నమోదు("inlcr",    ఆదానం,       SANE_UNSET | REV,  INLCR,      0 )
+	MI_నమోదు("igncr",    ఆదానం,       SANE_UNSET | REV,  IGNCR,      0 )
+	MI_నమోదు("icrnl",    ఆదానం,       SANE_సమితి   | REV,  ICRNL,      0 )
+	MI_నమోదు("ixon",     ఆదానం,       REV,               IXON,       0 )
+	MI_నమోదు("ixoff",    ఆదానం,       SANE_UNSET | REV,  IXOFF,      0 )
+	MI_నమోదు("tandem",   ఆదానం,       OMIT       | REV,  IXOFF,      0 )
+#ఒకవేళ IUCLC
+	MI_నమోదు("iuclc",    ఆదానం,       SANE_UNSET | REV,  IUCLC,      0 )
+#అయితే_ముగింపు
+#ఒకవేళ IXANY
+	MI_నమోదు("ixany",    ఆదానం,       SANE_UNSET | REV,  IXANY,      0 )
+#అయితే_ముగింపు
+#ఒకవేళ IMAXBEL
+	MI_నమోదు("imaxbel",  ఆదానం,       SANE_సమితి   | REV,  IMAXBEL,    0 )
+#అయితే_ముగింపు
+#ఒకవేళ IUTF8
+	MI_నమోదు("iutf8",    ఆదానం,       SANE_UNSET | REV,  IUTF8,      0 )
+#అయితే_ముగింపు
+	MI_నమోదు("opost",    output,      SANE_సమితి   | REV,  OPOST,      0 )
+#ఒకవేళ OLCUC
+	MI_నమోదు("olcuc",    output,      SANE_UNSET | REV,  OLCUC,      0 )
+#అయితే_ముగింపు
+#ఒకవేళ OCRNL
+	MI_నమోదు("ocrnl",    output,      SANE_UNSET | REV,  OCRNL,      0 )
+#అయితే_ముగింపు
+#ఒకవేళ ONLCR
+	MI_నమోదు("onlcr",    output,      SANE_సమితి   | REV,  ONLCR,      0 )
+#అయితే_ముగింపు
+#ఒకవేళ ONOCR
+	MI_నమోదు("onocr",    output,      SANE_UNSET | REV,  ONOCR,      0 )
+#అయితే_ముగింపు
+#ఒకవేళ ONLRET
+	MI_నమోదు("onlret",   output,      SANE_UNSET | REV,  ONLRET,     0 )
+#అయితే_ముగింపు
+#ఒకవేళ OFILL
+	MI_నమోదు("ofill",    output,      SANE_UNSET | REV,  OFILL,      0 )
+#అయితే_ముగింపు
+#ఒకవేళ OFDEL
+	MI_నమోదు("ofdel",    output,      SANE_UNSET | REV,  OFDEL,      0 )
+#అయితే_ముగింపు
+#ఒకవేళ NLDLY
+	MI_నమోదు("nl1",      output,      SANE_UNSET,        NL1,     NLDLY)
+	MI_నమోదు("nl0",      output,      SANE_సమితి,          NL0,     NLDLY)
+#అయితే_ముగింపు
+#ఒకవేళ CRDLY
+	MI_నమోదు("cr3",      output,      SANE_UNSET,        CR3,     CRDLY)
+	MI_నమోదు("cr2",      output,      SANE_UNSET,        CR2,     CRDLY)
+	MI_నమోదు("cr1",      output,      SANE_UNSET,        CR1,     CRDLY)
+	MI_నమోదు("cr0",      output,      SANE_సమితి,          CR0,     CRDLY)
+#అయితే_ముగింపు
 
-#if TABDLY
-	MI_ENTRY("tab3",     output,      SANE_UNSET,        TAB3,   TABDLY)
-# if TAB2
-	MI_ENTRY("tab2",     output,      SANE_UNSET,        TAB2,   TABDLY)
+#ఒకవేళ TABDLY
+	MI_నమోదు("tab3",     output,      SANE_UNSET,        TAB3,   TABDLY)
+# ఒకవేళ TAB2
+	MI_నమోదు("tab2",     output,      SANE_UNSET,        TAB2,   TABDLY)
 # endif
-# if TAB1
-	MI_ENTRY("tab1",     output,      SANE_UNSET,        TAB1,   TABDLY)
+# ఒకవేళ TAB1
+	MI_నమోదు("tab1",     output,      SANE_UNSET,        TAB1,   TABDLY)
 # endif
-	MI_ENTRY("tab0",     output,      SANE_SET,          TAB0,   TABDLY)
-#else
-# if OXTABS
-	MI_ENTRY("tab3",     output,      SANE_UNSET,        OXTABS,     0 )
+	MI_నమోదు("tab0",     output,      SANE_సమితి,          TAB0,   TABDLY)
+#లేకపోతే
+# ఒకవేళ OXTABS
+	MI_నమోదు("tab3",     output,      SANE_UNSET,        OXTABS,     0 )
 # endif
-#endif
+#అయితే_ముగింపు
 
-#if BSDLY
-	MI_ENTRY("bs1",      output,      SANE_UNSET,        BS1,     BSDLY)
-	MI_ENTRY("bs0",      output,      SANE_SET,          BS0,     BSDLY)
-#endif
-#if VTDLY
-	MI_ENTRY("vt1",      output,      SANE_UNSET,        VT1,     VTDLY)
-	MI_ENTRY("vt0",      output,      SANE_SET,          VT0,     VTDLY)
-#endif
-#if FFDLY
-	MI_ENTRY("ff1",      output,      SANE_UNSET,        FF1,     FFDLY)
-	MI_ENTRY("ff0",      output,      SANE_SET,          FF0,     FFDLY)
-#endif
-	MI_ENTRY("isig",     local,       SANE_SET   | REV,  ISIG,       0 )
-	MI_ENTRY("icanon",   local,       SANE_SET   | REV,  ICANON,     0 )
-#if IEXTEN
-	MI_ENTRY("iexten",   local,       SANE_SET   | REV,  IEXTEN,     0 )
-#endif
-	MI_ENTRY("echo",     local,       SANE_SET   | REV,  ECHO,       0 )
-	MI_ENTRY("echoe",    local,       SANE_SET   | REV,  ECHOE,      0 )
-	MI_ENTRY("crterase", local,       OMIT       | REV,  ECHOE,      0 )
-	MI_ENTRY("echok",    local,       SANE_SET   | REV,  ECHOK,      0 )
-	MI_ENTRY("echonl",   local,       SANE_UNSET | REV,  ECHONL,     0 )
-	MI_ENTRY("noflsh",   local,       SANE_UNSET | REV,  NOFLSH,     0 )
-#if XCASE
-	MI_ENTRY("xcase",    local,       SANE_UNSET | REV,  XCASE,      0 )
-#endif
-#if TOSTOP
-	MI_ENTRY("tostop",   local,       SANE_UNSET | REV,  TOSTOP,     0 )
-#endif
-#if ECHOPRT
-	MI_ENTRY("echoprt",  local,       SANE_UNSET | REV,  ECHOPRT,    0 )
-	MI_ENTRY("prterase", local,       OMIT       | REV,  ECHOPRT,    0 )
-#endif
-#if ECHOCTL
-	MI_ENTRY("echoctl",  local,       SANE_SET   | REV,  ECHOCTL,    0 )
-	MI_ENTRY("ctlecho",  local,       OMIT       | REV,  ECHOCTL,    0 )
-#endif
-#if ECHOKE
-	MI_ENTRY("echoke",   local,       SANE_SET   | REV,  ECHOKE,     0 )
-	MI_ENTRY("crtkill",  local,       OMIT       | REV,  ECHOKE,     0 )
-#endif
-	MI_ENTRY("flusho",   local,       SANE_UNSET | REV,  FLUSHO,     0 )
-#ifdef EXTPROC
-	MI_ENTRY("extproc",  local,       SANE_UNSET | REV,  EXTPROC,    0 )
-#endif
+#ఒకవేళ BSDLY
+	MI_నమోదు("bs1",      output,      SANE_UNSET,        BS1,     BSDLY)
+	MI_నమోదు("bs0",      output,      SANE_సమితి,          BS0,     BSDLY)
+#అయితే_ముగింపు
+#ఒకవేళ VTDLY
+	MI_నమోదు("vt1",      output,      SANE_UNSET,        VT1,     VTDLY)
+	MI_నమోదు("vt0",      output,      SANE_సమితి,          VT0,     VTDLY)
+#అయితే_ముగింపు
+#ఒకవేళ FFDLY
+	MI_నమోదు("ff1",      output,      SANE_UNSET,        FF1,     FFDLY)
+	MI_నమోదు("ff0",      output,      SANE_సమితి,          FF0,     FFDLY)
+#అయితే_ముగింపు
+	MI_నమోదు("isig",     local,       SANE_సమితి   | REV,  ISIG,       0 )
+	MI_నమోదు("icanon",   local,       SANE_సమితి   | REV,  ICANON,     0 )
+#ఒకవేళ IEXTEN
+	MI_నమోదు("iexten",   local,       SANE_సమితి   | REV,  IEXTEN,     0 )
+#అయితే_ముగింపు
+	MI_నమోదు("echo",     local,       SANE_సమితి   | REV,  ECHO,       0 )
+	MI_నమోదు("echoe",    local,       SANE_సమితి   | REV,  ECHOE,      0 )
+	MI_నమోదు("crterase", local,       OMIT       | REV,  ECHOE,      0 )
+	MI_నమోదు("echok",    local,       SANE_సమితి   | REV,  ECHOK,      0 )
+	MI_నమోదు("echonl",   local,       SANE_UNSET | REV,  ECHONL,     0 )
+	MI_నమోదు("noflsh",   local,       SANE_UNSET | REV,  NOFLSH,     0 )
+#ఒకవేళ XCASE
+	MI_నమోదు("xcase",    local,       SANE_UNSET | REV,  XCASE,      0 )
+#అయితే_ముగింపు
+#ఒకవేళ TOSTOP
+	MI_నమోదు("tostop",   local,       SANE_UNSET | REV,  TOSTOP,     0 )
+#అయితే_ముగింపు
+#ఒకవేళ ECHOPRT
+	MI_నమోదు("echoprt",  local,       SANE_UNSET | REV,  ECHOPRT,    0 )
+	MI_నమోదు("prterase", local,       OMIT       | REV,  ECHOPRT,    0 )
+#అయితే_ముగింపు
+#ఒకవేళ ECHOCTL
+	MI_నమోదు("echoctl",  local,       SANE_సమితి   | REV,  ECHOCTL,    0 )
+	MI_నమోదు("ctlecho",  local,       OMIT       | REV,  ECHOCTL,    0 )
+#అయితే_ముగింపు
+#ఒకవేళ ECHOKE
+	MI_నమోదు("echoke",   local,       SANE_సమితి   | REV,  ECHOKE,     0 )
+	MI_నమోదు("crtkill",  local,       OMIT       | REV,  ECHOKE,     0 )
+#అయితే_ముగింపు
+	MI_నమోదు("flusho",   local,       SANE_UNSET | REV,  FLUSHO,     0 )
+#నిర్వచితమైతే EXTPROC
+	MI_నమోదు("extproc",  local,       SANE_UNSET | REV,  EXTPROC,    0 )
+#అయితే_ముగింపు
 };
 
-enum {
-	NUM_mode_info = ARRAY_SIZE(mode_info)
+గణన {
+	అంకె_బహుళకం_info = ARRAY_కొలత(బహుళకం_info)
 };
 
 
 /* Control characters */
-struct control_info {
-	const uint8_t saneval;  /* Value to set for 'stty sane' */
-	const uint8_t offset;   /* Offset in c_cc */
+నిర్మాణం control_info {
+	స్థిరరాశి uint8_t saneval;  /* Value to set for 'stty sane' */
+	స్థిరరాశి uint8_t స్థానభ్రంశం;   /* Offset in c_cc */
 };
 
-enum {
+గణన {
 	/* Must match control_name[] and control_info[] order! */
 	CIDX_intr = 0,
 	CIDX_quit,
@@ -667,278 +667,278 @@ enum {
 	CIDX_kill,
 	CIDX_eof,
 	CIDX_eol,
-#if VEOL2
+#ఒకవేళ VEOL2
 	CIDX_eol2,
-#endif
-#if VSWTCH
+#అయితే_ముగింపు
+#ఒకవేళ VSWTCH
 	CIDX_swtch,
-#endif
-	CIDX_start,
+#అయితే_ముగింపు
+	CIDX_ప్రారంభం,
 	CIDX_stop,
 	CIDX_susp,
-#if VDSUSP
+#ఒకవేళ VDSUSP
 	CIDX_dsusp,
-#endif
-#if VREPRINT
+#అయితే_ముగింపు
+#ఒకవేళ VREPRINT
 	CIDX_rprnt,
-#endif
-#if VWERASE
+#అయితే_ముగింపు
+#ఒకవేళ VWERASE
 	CIDX_werase,
-#endif
-#if VLNEXT
+#అయితే_ముగింపు
+#ఒకవేళ VLNEXT
 	CIDX_lnext,
-#endif
-#if VFLUSHO
+#అయితే_ముగింపు
+#ఒకవేళ VFLUSHO
 	CIDX_flush,
-#endif
-#if VSTATUS
-	CIDX_status,
-#endif
+#అయితే_ముగింపు
+#ఒకవేళ VSTATUS
+	CIDX_స్థితి,
+#అయితే_ముగింపు
 	CIDX_min,
-	CIDX_time,
+	CIDX_సమయం,
 };
 
-#define CI_ENTRY(n,s,o) n "\0"
+#నిర్వచించు CI_నమోదు(n,s,o) n "\0"
 
 /* Name given on command line */
-static const char control_name[] ALIGN1 =
-	CI_ENTRY("intr",     CINTR,   VINTR   )
-	CI_ENTRY("quit",     CQUIT,   VQUIT   )
-	CI_ENTRY("erase",    CERASE,  VERASE  )
-	CI_ENTRY("kill",     CKILL,   VKILL   )
-	CI_ENTRY("eof",      CEOF,    VEOF    )
-	CI_ENTRY("eol",      CEOL,    VEOL    )
-#if VEOL2
-	CI_ENTRY("eol2",     CEOL2,   VEOL2   )
-#endif
-#if VSWTCH
-	CI_ENTRY("swtch",    CSWTCH,  VSWTCH  )
-#endif
-	CI_ENTRY("start",    CSTART,  VSTART  )
-	CI_ENTRY("stop",     CSTOP,   VSTOP   )
-	CI_ENTRY("susp",     CSUSP,   VSUSP   )
-#if VDSUSP
-	CI_ENTRY("dsusp",    CDSUSP,  VDSUSP  )
-#endif
-#if VREPRINT
-	CI_ENTRY("rprnt",    CRPRNT,  VREPRINT)
-#endif
-#if VWERASE
-	CI_ENTRY("werase",   CWERASE, VWERASE )
-#endif
-#if VLNEXT
-	CI_ENTRY("lnext",    CLNEXT,  VLNEXT  )
-#endif
-#if VFLUSHO
-	CI_ENTRY("flush",    CFLUSHO, VFLUSHO )
-#endif
-#if VSTATUS
-	CI_ENTRY("status",   CSTATUS, VSTATUS )
-#endif
+స్థిర స్థిరరాశి అక్షరం control_name[] ALIGN1 =
+	CI_నమోదు("intr",     CINTR,   VINTR   )
+	CI_నమోదు("quit",     CQUIT,   VQUIT   )
+	CI_నమోదు("erase",    CERASE,  VERASE  )
+	CI_నమోదు("kill",     CKILL,   VKILL   )
+	CI_నమోదు("eof",      CEOF,    VEOF    )
+	CI_నమోదు("eol",      CEOL,    VEOL    )
+#ఒకవేళ VEOL2
+	CI_నమోదు("eol2",     CEOL2,   VEOL2   )
+#అయితే_ముగింపు
+#ఒకవేళ VSWTCH
+	CI_నమోదు("swtch",    CSWTCH,  VSWTCH  )
+#అయితే_ముగింపు
+	CI_నమోదు("start",    CSTART,  VSTART  )
+	CI_నమోదు("stop",     CSTOP,   VSTOP   )
+	CI_నమోదు("susp",     CSUSP,   VSUSP   )
+#ఒకవేళ VDSUSP
+	CI_నమోదు("dsusp",    CDSUSP,  VDSUSP  )
+#అయితే_ముగింపు
+#ఒకవేళ VREPRINT
+	CI_నమోదు("rprnt",    CRPRNT,  VREPRINT)
+#అయితే_ముగింపు
+#ఒకవేళ VWERASE
+	CI_నమోదు("werase",   CWERASE, VWERASE )
+#అయితే_ముగింపు
+#ఒకవేళ VLNEXT
+	CI_నమోదు("lnext",    CLNEXT,  VLNEXT  )
+#అయితే_ముగింపు
+#ఒకవేళ VFLUSHO
+	CI_నమోదు("flush",    CFLUSHO, VFLUSHO )
+#అయితే_ముగింపు
+#ఒకవేళ VSTATUS
+	CI_నమోదు("status",   CSTATUS, VSTATUS )
+#అయితే_ముగింపు
 	/* These must be last because of the display routines */
-	CI_ENTRY("min",      1,       VMIN    )
-	CI_ENTRY("time",     0,       VTIME   )
+	CI_నమోదు("min",      1,       VMIN    )
+	CI_నమోదు("time",     0,       VTIME   )
 	;
 
-#undef CI_ENTRY
-#define CI_ENTRY(n,s,o) { s, o },
+#నిర్వచనం_రద్దు CI_నమోదు
+#నిర్వచించు CI_నమోదు(n,s,o) { s, o },
 
-static const struct control_info control_info[] ALIGN2 = {
+స్థిర స్థిరరాశి నిర్మాణం control_info control_info[] ALIGN2 = {
 	/* This should be verbatim cut-n-paste copy of the above CI_ENTRYs */
-	CI_ENTRY("intr",     CINTR,   VINTR   )
-	CI_ENTRY("quit",     CQUIT,   VQUIT   )
-	CI_ENTRY("erase",    CERASE,  VERASE  )
-	CI_ENTRY("kill",     CKILL,   VKILL   )
-	CI_ENTRY("eof",      CEOF,    VEOF    )
-	CI_ENTRY("eol",      CEOL,    VEOL    )
-#if VEOL2
-	CI_ENTRY("eol2",     CEOL2,   VEOL2   )
-#endif
-#if VSWTCH
-	CI_ENTRY("swtch",    CSWTCH,  VSWTCH  )
-#endif
-	CI_ENTRY("start",    CSTART,  VSTART  )
-	CI_ENTRY("stop",     CSTOP,   VSTOP   )
-	CI_ENTRY("susp",     CSUSP,   VSUSP   )
-#if VDSUSP
-	CI_ENTRY("dsusp",    CDSUSP,  VDSUSP  )
-#endif
-#if VREPRINT
-	CI_ENTRY("rprnt",    CRPRNT,  VREPRINT)
-#endif
-#if VWERASE
-	CI_ENTRY("werase",   CWERASE, VWERASE )
-#endif
-#if VLNEXT
-	CI_ENTRY("lnext",    CLNEXT,  VLNEXT  )
-#endif
-#if VFLUSHO
-	CI_ENTRY("flush",    CFLUSHO, VFLUSHO )
-#endif
-#if VSTATUS
-	CI_ENTRY("status",   CSTATUS, VSTATUS )
-#endif
+	CI_నమోదు("intr",     CINTR,   VINTR   )
+	CI_నమోదు("quit",     CQUIT,   VQUIT   )
+	CI_నమోదు("erase",    CERASE,  VERASE  )
+	CI_నమోదు("kill",     CKILL,   VKILL   )
+	CI_నమోదు("eof",      CEOF,    VEOF    )
+	CI_నమోదు("eol",      CEOL,    VEOL    )
+#ఒకవేళ VEOL2
+	CI_నమోదు("eol2",     CEOL2,   VEOL2   )
+#అయితే_ముగింపు
+#ఒకవేళ VSWTCH
+	CI_నమోదు("swtch",    CSWTCH,  VSWTCH  )
+#అయితే_ముగింపు
+	CI_నమోదు("start",    CSTART,  VSTART  )
+	CI_నమోదు("stop",     CSTOP,   VSTOP   )
+	CI_నమోదు("susp",     CSUSP,   VSUSP   )
+#ఒకవేళ VDSUSP
+	CI_నమోదు("dsusp",    CDSUSP,  VDSUSP  )
+#అయితే_ముగింపు
+#ఒకవేళ VREPRINT
+	CI_నమోదు("rprnt",    CRPRNT,  VREPRINT)
+#అయితే_ముగింపు
+#ఒకవేళ VWERASE
+	CI_నమోదు("werase",   CWERASE, VWERASE )
+#అయితే_ముగింపు
+#ఒకవేళ VLNEXT
+	CI_నమోదు("lnext",    CLNEXT,  VLNEXT  )
+#అయితే_ముగింపు
+#ఒకవేళ VFLUSHO
+	CI_నమోదు("flush",    CFLUSHO, VFLUSHO )
+#అయితే_ముగింపు
+#ఒకవేళ VSTATUS
+	CI_నమోదు("status",   CSTATUS, VSTATUS )
+#అయితే_ముగింపు
 	/* These must be last because of the display routines */
-	CI_ENTRY("min",      1,       VMIN    )
-	CI_ENTRY("time",     0,       VTIME   )
+	CI_నమోదు("min",      1,       VMIN    )
+	CI_నమోదు("time",     0,       VTIME   )
 };
 
-enum {
-	NUM_control_info = ARRAY_SIZE(control_info)
+గణన {
+	అంకె_control_info = ARRAY_కొలత(control_info)
 };
 
 
-struct globals {
-	const char *device_name;
+నిర్మాణం globals {
+	స్థిరరాశి అక్షరం *device_name;
 	/* The width of the screen, for output wrapping */
-	unsigned max_col;
+	గుర్తులేని max_నిలువు;
 	/* Current position, to know when to wrap */
-	unsigned current_col;
+	గుర్తులేని current_నిలువు;
 } FIX_ALIASING;
-#define G (*(struct globals*)bb_common_bufsiz1)
-#define INIT_G() do { \
-	setup_common_bufsiz(); \
-	G.device_name = bb_msg_standard_input; \
-	G.max_col = 80; \
-	G.current_col = 0; /* we are noexec, must clear */ \
-} while (0)
+#నిర్వచించు G (*(నిర్మాణం globals*)bb_common_bufsiz1)
+#నిర్వచించు INIT_G() చేయి { \
+	అమరిక_common_bufsiz(); \
+	G.device_name = bb_సందేశం_standard_ఆదానం; \
+	G.max_నిలువు = 80; \
+	G.current_నిలువు = 0; /* we are noexec, must clear */ \
+} అయితే (0)
 
-static void set_speed_or_die(enum speed_setting type, const char *arg,
-					struct termios *mode)
+స్థిర శూన్య సమితి_వేగం_or_die(గణన వేగం_setting type, స్థిరరాశి అక్షరం *arg,
+					నిర్మాణం termios *బహుళకం)
 {
-	speed_t baud;
+	వేగం_t baud;
 
-	baud = tty_value_to_baud(xatou(arg));
+	baud = tty_విలువ_గమ్యం_baud(xatou(arg));
 
-	if (type != output_speed) {     /* either input or both */
-		cfsetispeed(mode, baud);
+	ఒకవేళ (type != output_వేగం) {     /* either input or both */
+		cfsetispeed(బహుళకం, baud);
 	}
-	if (type != input_speed) {      /* either output or both */
-		cfsetospeed(mode, baud);
+	ఒకవేళ (type != ఆదానం_వేగం) {      /* either output or both */
+		cfsetospeed(బహుళకం, baud);
 	}
 }
 
-static NORETURN void perror_on_device_and_die(const char *fmt)
+స్థిర NORETURN శూన్య perror_on_device_and_die(స్థిరరాశి అక్షరం *fmt)
 {
-	bb_perror_msg_and_die(fmt, G.device_name);
+	bb_perror_సందేశం_and_die(fmt, G.device_name);
 }
 
-static void perror_on_device(const char *fmt)
+స్థిర శూన్య perror_on_device(స్థిరరాశి అక్షరం *fmt)
 {
-	bb_perror_msg(fmt, G.device_name);
+	bb_perror_సందేశం(fmt, G.device_name);
 }
 
 /* Print format string MESSAGE and optional args.
    Wrap to next line first if it won't fit.
    Print a space first unless MESSAGE will start a new line */
-static void wrapf(const char *message, ...)
+స్థిర శూన్య wrapf(స్థిరరాశి అక్షరం *సందేశం_2, ...)
 {
-	char buf[128];
-	va_list args;
-	unsigned buflen;
+	అక్షరం buf[128];
+	va_list వాదనలు;
+	గుర్తులేని buflen;
 
-	va_start(args, message);
-	buflen = vsnprintf(buf, sizeof(buf), message, args);
-	va_end(args);
+	va_ప్రారంభం(వాదనలు, సందేశం_2);
+	buflen = vsnprintf(buf, పరిమాణం(buf), సందేశం_2, వాదనలు);
+	va_చివర(వాదనలు);
 	/* We seem to be called only with suitable lengths, but check if
 	   somebody failed to adhere to this assumption just to be sure.  */
-	if (!buflen || buflen >= sizeof(buf)) return;
+	ఒకవేళ (!buflen || buflen >= పరిమాణం(buf)) తిరిగి;
 
-	if (G.current_col > 0) {
-		G.current_col++;
-		if (buf[0] != '\n') {
-			if (G.current_col + buflen >= G.max_col) {
-				G.current_col = 0;
+	ఒకవేళ (G.current_నిలువు > 0) {
+		G.current_నిలువు++;
+		ఒకవేళ (buf[0] != '\n') {
+			ఒకవేళ (G.current_నిలువు + buflen >= G.max_నిలువు) {
+				G.current_నిలువు = 0;
 				bb_putchar('\n');
-			} else {
+			} లేకపోతే {
 				bb_putchar(' ');
 			}
 		}
 	}
 	fputs_stdout(buf);
-	G.current_col += buflen;
-	if (buf[buflen-1] == '\n')
-		G.current_col = 0;
+	G.current_నిలువు += buflen;
+	ఒకవేళ (buf[buflen-1] == '\n')
+		G.current_నిలువు = 0;
 }
 
-static void newline(void)
+స్థిర శూన్య newline(శూన్య)
 {
-	if (G.current_col != 0)
+	ఒకవేళ (G.current_నిలువు != 0)
 		wrapf("\n");
 }
 
-#ifdef TIOCGWINSZ
-static void set_window_size(int rows, int cols)
+#నిర్వచితమైతే TIOCGWINSZ
+స్థిర శూన్య సమితి_కిటికీ_కొలత(పూర్ణాంకం అడ్డువరుసలు, పూర్ణాంకం నిలువుల_సంఖ్య)
 {
-	struct winsize win = { 0, 0, 0, 0 };
+	నిర్మాణం winsize win = { 0, 0, 0, 0 };
 
-	if (ioctl(STDIN_FILENO, TIOCGWINSZ, &win)) {
-		if (errno != EINVAL) {
-			goto bail;
+	ఒకవేళ (ioctl(STDIN_FILENO, TIOCGWINSZ, &win)) {
+		ఒకవేళ (errno != EINVAL) {
+			వెళ్ళు bail;
 		}
-		memset(&win, 0, sizeof(win));
+		memset(&win, 0, పరిమాణం(win));
 	}
 
-	if (rows >= 0)
-		win.ws_row = rows;
-	if (cols >= 0)
-		win.ws_col = cols;
+	ఒకవేళ (అడ్డువరుసలు >= 0)
+		win.ws_అడ్డువరుస = అడ్డువరుసలు;
+	ఒకవేళ (నిలువుల_సంఖ్య >= 0)
+		win.ws_నిలువు = నిలువుల_సంఖ్య;
 
-	if (ioctl(STDIN_FILENO, TIOCSWINSZ, (char *) &win))
+	ఒకవేళ (ioctl(STDIN_FILENO, TIOCSWINSZ, (అక్షరం *) &win))
 bail:
 		perror_on_device("%s");
 }
-#endif
+#అయితే_ముగింపు
 
-static void display_window_size(int fancy)
+స్థిర శూన్య display_కిటికీ_కొలత(పూర్ణాంకం fancy)
 {
-	const char *fmt_str = "%s\0%s: no size information for this device";
-	unsigned width, height;
+	స్థిరరాశి అక్షరం *fmt_str = "%s\0%s: no size information for this device";
+	గుర్తులేని వెడల్పు, ఎత్తు;
 
-	if (get_terminal_width_height(STDIN_FILENO, &width, &height)) {
-		if ((errno != EINVAL) || ((fmt_str += 2), !fancy)) {
+	ఒకవేళ (get_terminal_వెడల్పు_ఎత్తు(STDIN_FILENO, &వెడల్పు, &ఎత్తు)) {
+		ఒకవేళ ((errno != EINVAL) || ((fmt_str += 2), !fancy)) {
 			perror_on_device(fmt_str);
 		}
-	} else {
+	} లేకపోతే {
 		wrapf(fancy ? "rows %u; columns %u;" : "%u %u\n",
-				height, width);
+				ఎత్తు, వెడల్పు);
 	}
 }
 
-static const struct suffix_mult stty_suffixes[] ALIGN_SUFFIX = {
+స్థిర స్థిరరాశి నిర్మాణం suffix_mult stty_suffixes[] ALIGN_SUFFIX = {
 	{ "b",  512 },
 	{ "k", 1024 },
 	{ "B", 1024 },
 	{ "", 0 }
 };
 
-static const struct mode_info *find_mode(const char *name)
+స్థిర స్థిరరాశి నిర్మాణం బహుళకం_info *కనుగొను_బహుళకం(స్థిరరాశి అక్షరం *name)
 {
-	int i = index_in_strings(mode_name, name);
-	return i >= 0 ? &mode_info[i] : NULL;
+	పూర్ణాంకం i = సూచీ_లోపల_అక్షరశ్రేణులు(బహుళకం_name, name);
+	తిరిగి i >= 0 ? &బహుళకం_info[i] : ఖాళీ;
 }
 
-static const struct control_info *find_control(const char *name)
+స్థిర స్థిరరాశి నిర్మాణం control_info *కనుగొను_control(స్థిరరాశి అక్షరం *name)
 {
-	int i = index_in_strings(control_name, name);
-	return i >= 0 ? &control_info[i] : NULL;
+	పూర్ణాంకం i = సూచీ_లోపల_అక్షరశ్రేణులు(control_name, name);
+	తిరిగి i >= 0 ? &control_info[i] : ఖాళీ;
 }
 
-enum {
+గణన {
 	param_need_arg = 0x80,
-	param_line    = 1 | 0x80,
-	param_rows    = 2 | 0x80,
-	param_cols    = 3 | 0x80,
+	param_పంక్తి    = 1 | 0x80,
+	param_అడ్డువరుసలు    = 2 | 0x80,
+	param_నిలువుల_సంఖ్య    = 3 | 0x80,
 	param_columns = 4 | 0x80,
-	param_size    = 5,
-	param_speed   = 6,
+	param_కొలత    = 5,
+	param_వేగం   = 6,
 	param_ispeed  = 7 | 0x80,
 	param_ospeed  = 8 | 0x80,
 };
 
-static int find_param(const char *name)
+స్థిర పూర్ణాంకం కనుగొను_param(స్థిరరాశి అక్షరం *name)
 {
-	static const char params[] ALIGN1 =
+	స్థిర స్థిరరాశి అక్షరం params[] ALIGN1 =
 		"line\0"    /* 1 */
 		"rows\0"    /* 2 */
 		"cols\0"    /* 3 */
@@ -947,340 +947,340 @@ static int find_param(const char *name)
 		"speed\0"   /* 6 */
 		"ispeed\0"
 		"ospeed\0";
-	int i = index_in_strings(params, name) + 1;
-	if (i == 0)
-		return 0;
-	if (i != 5 && i != 6)
+	పూర్ణాంకం i = సూచీ_లోపల_అక్షరశ్రేణులు(params, name) + 1;
+	ఒకవేళ (i == 0)
+		తిరిగి 0;
+	ఒకవేళ (i != 5 && i != 6)
 		i |= 0x80;
-	return i;
+	తిరిగి i;
 }
 
-static int recover_mode(const char *arg, struct termios *mode)
+స్థిర పూర్ణాంకం recover_బహుళకం(స్థిరరాశి అక్షరం *arg, నిర్మాణం termios *బహుళకం)
 {
-	int i, n;
-	unsigned chr;
-	unsigned long iflag, oflag, cflag, lflag;
+	పూర్ణాంకం i, n;
+	గుర్తులేని chr;
+	గుర్తులేని దీర్ఘ iflag, oflag, cflag, lflag;
 
 	/* Scan into temporaries since it is too much trouble to figure out
 	   the right format for 'tcflag_t' */
-	if (sscanf(arg, "%lx:%lx:%lx:%lx%n",
+	ఒకవేళ (అక్షరశ్రేణి_చదువు(arg, "%lx:%lx:%lx:%lx%n",
 			   &iflag, &oflag, &cflag, &lflag, &n) != 4)
-		return 0;
-	mode->c_iflag = iflag;
-	mode->c_oflag = oflag;
-	mode->c_cflag = cflag;
-	mode->c_lflag = lflag;
+		తిరిగి 0;
+	బహుళకం->c_iflag = iflag;
+	బహుళకం->c_oflag = oflag;
+	బహుళకం->c_cflag = cflag;
+	బహుళకం->c_lflag = lflag;
 	arg += n;
-	for (i = 0; i < NCCS; ++i) {
-		if (sscanf(arg, ":%x%n", &chr, &n) != 1)
-			return 0;
-		mode->c_cc[i] = chr;
+	కొరకు (i = 0; i < NCCS; ++i) {
+		ఒకవేళ (అక్షరశ్రేణి_చదువు(arg, ":%x%n", &chr, &n) != 1)
+			తిరిగి 0;
+		బహుళకం->c_cc[i] = chr;
 		arg += n;
 	}
 
 	/* Fail if there are too many fields */
-	if (*arg != '\0')
-		return 0;
+	ఒకవేళ (*arg != '\0')
+		తిరిగి 0;
 
-	return 1;
+	తిరిగి 1;
 }
 
-static void display_recoverable(const struct termios *mode,
-				int UNUSED_PARAM dummy)
+స్థిర శూన్య display_recoverable(స్థిరరాశి నిర్మాణం termios *బహుళకం,
+				పూర్ణాంకం వాడని_PARAM dummy)
 {
-	int i;
-	printf("%lx:%lx:%lx:%lx",
-		   (unsigned long) mode->c_iflag, (unsigned long) mode->c_oflag,
-		   (unsigned long) mode->c_cflag, (unsigned long) mode->c_lflag);
-	for (i = 0; i < NCCS; ++i)
-		printf(":%x", (unsigned int) mode->c_cc[i]);
+	పూర్ణాంకం i;
+	రాయి("%lx:%lx:%lx:%lx",
+		   (గుర్తులేని దీర్ఘ) బహుళకం->c_iflag, (గుర్తులేని దీర్ఘ) బహుళకం->c_oflag,
+		   (గుర్తులేని దీర్ఘ) బహుళకం->c_cflag, (గుర్తులేని దీర్ఘ) బహుళకం->c_lflag);
+	కొరకు (i = 0; i < NCCS; ++i)
+		రాయి(":%x", (గుర్తులేని పూర్ణాంకం) బహుళకం->c_cc[i]);
 	bb_putchar('\n');
 }
 
-static void display_speed(const struct termios *mode, int fancy)
+స్థిర శూన్య display_వేగం(స్థిరరాశి నిర్మాణం termios *బహుళకం, పూర్ణాంకం fancy)
 {
 	//____________________ 01234567 8 9
-	const char *fmt_str = "%lu %lu\n\0ispeed %lu baud; ospeed %lu baud;";
-	unsigned long ispeed, ospeed;
+	స్థిరరాశి అక్షరం *fmt_str = "%lu %lu\n\0ispeed %lu baud; ospeed %lu baud;";
+	గుర్తులేని దీర్ఘ ispeed, ospeed;
 
-	ispeed = cfgetispeed(mode);
-	ospeed = cfgetospeed(mode);
-	if (ispeed == 0 || ispeed == ospeed) {
+	ispeed = cfgetispeed(బహుళకం);
+	ospeed = cfgetospeed(బహుళకం);
+	ఒకవేళ (ispeed == 0 || ispeed == ospeed) {
 		ispeed = ospeed;                /* in case ispeed was 0 */
 		//________ 0123 4 5 6 7 8 9
 		fmt_str = "%lu\n\0\0\0\0\0speed %lu baud;";
 	}
-	if (fancy) fmt_str += 9;
-	wrapf(fmt_str, tty_baud_to_value(ispeed), tty_baud_to_value(ospeed));
+	ఒకవేళ (fancy) fmt_str += 9;
+	wrapf(fmt_str, tty_baud_గమ్యం_విలువ(ispeed), tty_baud_గమ్యం_విలువ(ospeed));
 }
 
-static void do_display(const struct termios *mode, int all)
+స్థిర శూన్య do_display(స్థిరరాశి నిర్మాణం termios *బహుళకం, పూర్ణాంకం all)
 {
-	int i;
+	పూర్ణాంకం i;
 	tcflag_t *bitsp;
-	unsigned long mask;
-	int prev_type = control;
+	గుర్తులేని దీర్ఘ ముసుగు;
+	పూర్ణాంకం prev_type = control;
 
-	display_speed(mode, 1);
-	if (all)
-		display_window_size(1);
-#ifdef __linux__
-	wrapf("line = %u;\n", mode->c_line);
-#else
+	display_వేగం(బహుళకం, 1);
+	ఒకవేళ (all)
+		display_కిటికీ_కొలత(1);
+#నిర్వచితమైతే __linux__
+	wrapf("line = %u;\n", బహుళకం->c_పంక్తి);
+#లేకపోతే
 	newline();
-#endif
+#అయితే_ముగింపు
 
-	for (i = 0; i != CIDX_min; ++i) {
-		char ch;
-		char buf10[10];
+	కొరకు (i = 0; i != CIDX_min; ++i) {
+		అక్షరం ch;
+		అక్షరం buf10[10];
 
 		/* If swtch is the same as susp, don't print both */
-#if VSWTCH == VSUSP
-		if (i == CIDX_swtch)
-			continue;
-#endif
+#ఒకవేళ VSWTCH == VSUSP
+		ఒకవేళ (i == CIDX_swtch)
+			కొనసాగు;
+#అయితే_ముగింపు
 		/* If eof uses the same slot as min, only print whichever applies */
-#if VEOF == VMIN
-		if (!(mode->c_lflag & ICANON)
+#ఒకవేళ VEOF == VMIN
+		ఒకవేళ (!(బహుళకం->c_lflag & ICANON)
 		 && (i == CIDX_eof || i == CIDX_eol)
 		) {
-			continue;
+			కొనసాగు;
 		}
-#endif
-		ch = mode->c_cc[control_info[i].offset];
-		if (ch == _POSIX_VDISABLE)
+#అయితే_ముగింపు
+		ch = బహుళకం->c_cc[control_info[i].స్థానభ్రంశం];
+		ఒకవేళ (ch == _POSIX_VDISABLE)
 			strcpy(buf10, "<undef>");
-		else
+		లేకపోతే
 			visible(ch, buf10, 0);
 		wrapf("%s = %s;", nth_string(control_name, i), buf10);
 	}
-#if VEOF == VMIN
-	if ((mode->c_lflag & ICANON) == 0)
-#endif
-		wrapf("min = %u; time = %u;", mode->c_cc[VMIN], mode->c_cc[VTIME]);
+#ఒకవేళ VEOF == VMIN
+	ఒకవేళ ((బహుళకం->c_lflag & ICANON) == 0)
+#అయితే_ముగింపు
+		wrapf("min = %u; time = %u;", బహుళకం->c_cc[VMIN], బహుళకం->c_cc[VTIME]);
 	newline();
 
-	for (i = 0; i < NUM_mode_info; ++i) {
-		if (mode_info[i].flags & OMIT)
-			continue;
-		if (mode_info[i].type != prev_type) {
+	కొరకు (i = 0; i < అంకె_బహుళకం_info; ++i) {
+		ఒకవేళ (బహుళకం_info[i].flags & OMIT)
+			కొనసాగు;
+		ఒకవేళ (బహుళకం_info[i].type != prev_type) {
 			newline();
-			prev_type = mode_info[i].type;
+			prev_type = బహుళకం_info[i].type;
 		}
 
-		bitsp = get_ptr_to_tcflag(mode_info[i].type, mode);
-		mask = mode_info[i].mask ? mode_info[i].mask : mode_info[i].bits;
-		if ((*bitsp & mask) == mode_info[i].bits) {
-			if (all || (mode_info[i].flags & SANE_UNSET))
-				wrapf("-%s"+1, nth_string(mode_name, i));
-		} else {
-			if ((all && mode_info[i].flags & REV)
-			 || (!all && (mode_info[i].flags & (SANE_SET | REV)) == (SANE_SET | REV))
+		bitsp = get_ptr_గమ్యం_tcflag(బహుళకం_info[i].type, బహుళకం);
+		ముసుగు = బహుళకం_info[i].ముసుగు ? బహుళకం_info[i].ముసుగు : బహుళకం_info[i].బిట్లు;
+		ఒకవేళ ((*bitsp & ముసుగు) == బహుళకం_info[i].బిట్లు) {
+			ఒకవేళ (all || (బహుళకం_info[i].flags & SANE_UNSET))
+				wrapf("-%s"+1, nth_string(బహుళకం_name, i));
+		} లేకపోతే {
+			ఒకవేళ ((all && బహుళకం_info[i].flags & REV)
+			 || (!all && (బహుళకం_info[i].flags & (SANE_సమితి | REV)) == (SANE_సమితి | REV))
 			) {
-				wrapf("-%s", nth_string(mode_name, i));
+				wrapf("-%s", nth_string(బహుళకం_name, i));
 			}
 		}
 	}
 	newline();
 }
 
-static void sane_mode(struct termios *mode)
+స్థిర శూన్య sane_బహుళకం(నిర్మాణం termios *బహుళకం)
 {
-	int i;
+	పూర్ణాంకం i;
 
-	for (i = 0; i < NUM_control_info; ++i) {
-#if VMIN == VEOF
-		if (i == CIDX_min)
-			break;
-#endif
-		mode->c_cc[control_info[i].offset] = control_info[i].saneval;
+	కొరకు (i = 0; i < అంకె_control_info; ++i) {
+#ఒకవేళ VMIN == VEOF
+		ఒకవేళ (i == CIDX_min)
+			ఆపు;
+#అయితే_ముగింపు
+		బహుళకం->c_cc[control_info[i].స్థానభ్రంశం] = control_info[i].saneval;
 	}
 
-	for (i = 0; i < NUM_mode_info; ++i) {
+	కొరకు (i = 0; i < అంకె_బహుళకం_info; ++i) {
 		tcflag_t val;
-		tcflag_t *bitsp = get_ptr_to_tcflag(mode_info[i].type, mode);
+		tcflag_t *bitsp = get_ptr_గమ్యం_tcflag(బహుళకం_info[i].type, బహుళకం);
 
-		if (!bitsp)
-			continue;
-		val = *bitsp & ~((unsigned long)mode_info[i].mask);
-		if (mode_info[i].flags & SANE_SET) {
-			*bitsp = val | mode_info[i].bits;
-		} else
-		if (mode_info[i].flags & SANE_UNSET) {
-			*bitsp = val & ~mode_info[i].bits;
+		ఒకవేళ (!bitsp)
+			కొనసాగు;
+		val = *bitsp & ~((గుర్తులేని దీర్ఘ)బహుళకం_info[i].ముసుగు);
+		ఒకవేళ (బహుళకం_info[i].flags & SANE_సమితి) {
+			*bitsp = val | బహుళకం_info[i].బిట్లు;
+		} లేకపోతే
+		ఒకవేళ (బహుళకం_info[i].flags & SANE_UNSET) {
+			*bitsp = val & ~బహుళకం_info[i].బిట్లు;
 		}
 	}
 }
 
-static void set_mode(const struct mode_info *info, int reversed,
-					struct termios *mode)
+స్థిర శూన్య సమితి_బహుళకం(స్థిరరాశి నిర్మాణం బహుళకం_info *info, పూర్ణాంకం reversed,
+					నిర్మాణం termios *బహుళకం)
 {
 	tcflag_t *bitsp;
 
-	bitsp = get_ptr_to_tcflag(info->type, mode);
+	bitsp = get_ptr_గమ్యం_tcflag(info->type, బహుళకం);
 
-	if (bitsp) {
-		tcflag_t val = *bitsp & ~info->mask;
-		if (reversed)
-			*bitsp = val & ~info->bits;
-		else
-			*bitsp = val | info->bits;
-		return;
+	ఒకవేళ (bitsp) {
+		tcflag_t val = *bitsp & ~info->ముసుగు;
+		ఒకవేళ (reversed)
+			*bitsp = val & ~info->బిట్లు;
+		లేకపోతే
+			*bitsp = val | info->బిట్లు;
+		తిరిగి;
 	}
 
 	/* !bitsp - it's a "combination" mode */
-	if (info == &mode_info[IDX_evenp] || info == &mode_info[IDX_parity]) {
-		if (reversed)
-			mode->c_cflag = (mode->c_cflag & ~PARENB & ~CSIZE) | CS8;
-		else
-			mode->c_cflag = (mode->c_cflag & ~PARODD & ~CSIZE) | PARENB | CS7;
-	} else if (info == &mode_info[IDX_oddp]) {
-		if (reversed)
-			mode->c_cflag = (mode->c_cflag & ~PARENB & ~CSIZE) | CS8;
-		else
-			mode->c_cflag = (mode->c_cflag & ~CSIZE) | CS7 | PARODD | PARENB;
-	} else if (info == &mode_info[IDX_nl]) {
-		if (reversed) {
-			mode->c_iflag = (mode->c_iflag | ICRNL) & ~INLCR & ~IGNCR;
-			mode->c_oflag = (mode->c_oflag | ONLCR) & ~OCRNL & ~ONLRET;
-		} else {
-			mode->c_iflag = mode->c_iflag & ~ICRNL;
-			if (ONLCR) mode->c_oflag = mode->c_oflag & ~ONLCR;
+	ఒకవేళ (info == &బహుళకం_info[IDX_evenp] || info == &బహుళకం_info[IDX_parity]) {
+		ఒకవేళ (reversed)
+			బహుళకం->c_cflag = (బహుళకం->c_cflag & ~PARENB & ~CSIZE) | CS8;
+		లేకపోతే
+			బహుళకం->c_cflag = (బహుళకం->c_cflag & ~PARODD & ~CSIZE) | PARENB | CS7;
+	} లేకపోతే ఒకవేళ (info == &బహుళకం_info[IDX_oddp]) {
+		ఒకవేళ (reversed)
+			బహుళకం->c_cflag = (బహుళకం->c_cflag & ~PARENB & ~CSIZE) | CS8;
+		లేకపోతే
+			బహుళకం->c_cflag = (బహుళకం->c_cflag & ~CSIZE) | CS7 | PARODD | PARENB;
+	} లేకపోతే ఒకవేళ (info == &బహుళకం_info[IDX_nl]) {
+		ఒకవేళ (reversed) {
+			బహుళకం->c_iflag = (బహుళకం->c_iflag | ICRNL) & ~INLCR & ~IGNCR;
+			బహుళకం->c_oflag = (బహుళకం->c_oflag | ONLCR) & ~OCRNL & ~ONLRET;
+		} లేకపోతే {
+			బహుళకం->c_iflag = బహుళకం->c_iflag & ~ICRNL;
+			ఒకవేళ (ONLCR) బహుళకం->c_oflag = బహుళకం->c_oflag & ~ONLCR;
 		}
-	} else if (info == &mode_info[IDX_ek]) {
-		mode->c_cc[VERASE] = CERASE;
-		mode->c_cc[VKILL] = CKILL;
-	} else if (info == &mode_info[IDX_sane]) {
-		sane_mode(mode);
-	} else if (info == &mode_info[IDX_cbreak]) {
-		if (reversed)
-			mode->c_lflag |= ICANON;
-		else
-			mode->c_lflag &= ~ICANON;
-	} else if (info == &mode_info[IDX_pass8]) {
-		if (reversed) {
-			mode->c_cflag = (mode->c_cflag & ~CSIZE) | CS7 | PARENB;
-			mode->c_iflag |= ISTRIP;
-		} else {
-			mode->c_cflag = (mode->c_cflag & ~PARENB & ~CSIZE) | CS8;
-			mode->c_iflag &= ~ISTRIP;
+	} లేకపోతే ఒకవేళ (info == &బహుళకం_info[IDX_ek]) {
+		బహుళకం->c_cc[VERASE] = CERASE;
+		బహుళకం->c_cc[VKILL] = CKILL;
+	} లేకపోతే ఒకవేళ (info == &బహుళకం_info[IDX_sane]) {
+		sane_బహుళకం(బహుళకం);
+	} లేకపోతే ఒకవేళ (info == &బహుళకం_info[IDX_cbreak]) {
+		ఒకవేళ (reversed)
+			బహుళకం->c_lflag |= ICANON;
+		లేకపోతే
+			బహుళకం->c_lflag &= ~ICANON;
+	} లేకపోతే ఒకవేళ (info == &బహుళకం_info[IDX_pass8]) {
+		ఒకవేళ (reversed) {
+			బహుళకం->c_cflag = (బహుళకం->c_cflag & ~CSIZE) | CS7 | PARENB;
+			బహుళకం->c_iflag |= ISTRIP;
+		} లేకపోతే {
+			బహుళకం->c_cflag = (బహుళకం->c_cflag & ~PARENB & ~CSIZE) | CS8;
+			బహుళకం->c_iflag &= ~ISTRIP;
 		}
-	} else if (info == &mode_info[IDX_litout]) {
-		if (reversed) {
-			mode->c_cflag = (mode->c_cflag & ~CSIZE) | CS7 | PARENB;
-			mode->c_iflag |= ISTRIP;
-			mode->c_oflag |= OPOST;
-		} else {
-			mode->c_cflag = (mode->c_cflag & ~PARENB & ~CSIZE) | CS8;
-			mode->c_iflag &= ~ISTRIP;
-			mode->c_oflag &= ~OPOST;
+	} లేకపోతే ఒకవేళ (info == &బహుళకం_info[IDX_litout]) {
+		ఒకవేళ (reversed) {
+			బహుళకం->c_cflag = (బహుళకం->c_cflag & ~CSIZE) | CS7 | PARENB;
+			బహుళకం->c_iflag |= ISTRIP;
+			బహుళకం->c_oflag |= OPOST;
+		} లేకపోతే {
+			బహుళకం->c_cflag = (బహుళకం->c_cflag & ~PARENB & ~CSIZE) | CS8;
+			బహుళకం->c_iflag &= ~ISTRIP;
+			బహుళకం->c_oflag &= ~OPOST;
 		}
-	} else if (info == &mode_info[IDX_raw] || info == &mode_info[IDX_cooked]) {
-		if ((info == &mode_info[IDX_raw] && reversed)
-		 || (info == &mode_info[IDX_cooked] && !reversed)
+	} లేకపోతే ఒకవేళ (info == &బహుళకం_info[IDX_raw] || info == &బహుళకం_info[IDX_cooked]) {
+		ఒకవేళ ((info == &బహుళకం_info[IDX_raw] && reversed)
+		 || (info == &బహుళకం_info[IDX_cooked] && !reversed)
 		) {
 			/* Cooked mode */
-			mode->c_iflag |= BRKINT | IGNPAR | ISTRIP | ICRNL | IXON;
-			mode->c_oflag |= OPOST;
-			mode->c_lflag |= ISIG | ICANON;
-#if VMIN == VEOF
-			mode->c_cc[VEOF] = CEOF;
-#endif
-#if VTIME == VEOL
-			mode->c_cc[VEOL] = CEOL;
-#endif
-		} else {
+			బహుళకం->c_iflag |= BRKINT | IGNPAR | ISTRIP | ICRNL | IXON;
+			బహుళకం->c_oflag |= OPOST;
+			బహుళకం->c_lflag |= ISIG | ICANON;
+#ఒకవేళ VMIN == VEOF
+			బహుళకం->c_cc[VEOF] = CEOF;
+#అయితే_ముగింపు
+#ఒకవేళ VTIME == VEOL
+			బహుళకం->c_cc[VEOL] = CEOL;
+#అయితే_ముగింపు
+		} లేకపోతే {
 			/* Raw mode */
-			mode->c_iflag = 0;
-			mode->c_oflag &= ~OPOST;
-			mode->c_lflag &= ~(ISIG | ICANON | XCASE);
-			mode->c_cc[VMIN] = 1;
-			mode->c_cc[VTIME] = 0;
+			బహుళకం->c_iflag = 0;
+			బహుళకం->c_oflag &= ~OPOST;
+			బహుళకం->c_lflag &= ~(ISIG | ICANON | XCASE);
+			బహుళకం->c_cc[VMIN] = 1;
+			బహుళకం->c_cc[VTIME] = 0;
 		}
 	}
-#if IXANY
-	else if (info == &mode_info[IDX_decctlq]) {
-		if (reversed)
-			mode->c_iflag |= IXANY;
-		else
-			mode->c_iflag &= ~IXANY;
+#ఒకవేళ IXANY
+	లేకపోతే ఒకవేళ (info == &బహుళకం_info[IDX_decctlq]) {
+		ఒకవేళ (reversed)
+			బహుళకం->c_iflag |= IXANY;
+		లేకపోతే
+			బహుళకం->c_iflag &= ~IXANY;
 	}
-#endif
-#if TABDLY
-	else if (info == &mode_info[IDX_tabs]) {
-		if (reversed)
-			mode->c_oflag = (mode->c_oflag & ~TABDLY) | TAB3;
-		else
-			mode->c_oflag = (mode->c_oflag & ~TABDLY) | TAB0;
+#అయితే_ముగింపు
+#ఒకవేళ TABDLY
+	లేకపోతే ఒకవేళ (info == &బహుళకం_info[IDX_tabs]) {
+		ఒకవేళ (reversed)
+			బహుళకం->c_oflag = (బహుళకం->c_oflag & ~TABDLY) | TAB3;
+		లేకపోతే
+			బహుళకం->c_oflag = (బహుళకం->c_oflag & ~TABDLY) | TAB0;
 	}
-#endif
-#if OXTABS
-	else if (info == &mode_info[IDX_tabs]) {
-		if (reversed)
-			mode->c_oflag |= OXTABS;
-		else
-			mode->c_oflag &= ~OXTABS;
+#అయితే_ముగింపు
+#ఒకవేళ OXTABS
+	లేకపోతే ఒకవేళ (info == &బహుళకం_info[IDX_tabs]) {
+		ఒకవేళ (reversed)
+			బహుళకం->c_oflag |= OXTABS;
+		లేకపోతే
+			బహుళకం->c_oflag &= ~OXTABS;
 	}
-#endif
-#if XCASE && IUCLC && OLCUC
-	else if (info==&mode_info[IDX_lcase] || info==&mode_info[IDX_LCASE]) {
-		if (reversed) {
-			mode->c_lflag &= ~XCASE;
-			mode->c_iflag &= ~IUCLC;
-			mode->c_oflag &= ~OLCUC;
-		} else {
-			mode->c_lflag |= XCASE;
-			mode->c_iflag |= IUCLC;
-			mode->c_oflag |= OLCUC;
+#అయితే_ముగింపు
+#ఒకవేళ XCASE && IUCLC && OLCUC
+	లేకపోతే ఒకవేళ (info==&బహుళకం_info[IDX_lcase] || info==&బహుళకం_info[IDX_LCASE]) {
+		ఒకవేళ (reversed) {
+			బహుళకం->c_lflag &= ~XCASE;
+			బహుళకం->c_iflag &= ~IUCLC;
+			బహుళకం->c_oflag &= ~OLCUC;
+		} లేకపోతే {
+			బహుళకం->c_lflag |= XCASE;
+			బహుళకం->c_iflag |= IUCLC;
+			బహుళకం->c_oflag |= OLCUC;
 		}
 	}
-#endif
-	else if (info == &mode_info[IDX_crt]) {
-		mode->c_lflag |= ECHOE | ECHOCTL | ECHOKE;
-	} else if (info == &mode_info[IDX_dec]) {
-		mode->c_cc[VINTR] = 3; /* ^C */
-		mode->c_cc[VERASE] = 127; /* DEL */
-		mode->c_cc[VKILL] = 21; /* ^U */
-		mode->c_lflag |= ECHOE | ECHOCTL | ECHOKE;
-		if (IXANY) mode->c_iflag &= ~IXANY;
+#అయితే_ముగింపు
+	లేకపోతే ఒకవేళ (info == &బహుళకం_info[IDX_crt]) {
+		బహుళకం->c_lflag |= ECHOE | ECHOCTL | ECHOKE;
+	} లేకపోతే ఒకవేళ (info == &బహుళకం_info[IDX_dec]) {
+		బహుళకం->c_cc[VINTR] = 3; /* ^C */
+		బహుళకం->c_cc[VERASE] = 127; /* DEL */
+		బహుళకం->c_cc[VKILL] = 21; /* ^U */
+		బహుళకం->c_lflag |= ECHOE | ECHOCTL | ECHOKE;
+		ఒకవేళ (IXANY) బహుళకం->c_iflag &= ~IXANY;
 	}
 }
 
-static void set_control_char_or_die(const struct control_info *info,
-			const char *arg, struct termios *mode)
+స్థిర శూన్య సమితి_control_char_or_die(స్థిరరాశి నిర్మాణం control_info *info,
+			స్థిరరాశి అక్షరం *arg, నిర్మాణం termios *బహుళకం)
 {
-	unsigned char value;
+	గుర్తులేని అక్షరం విలువ_2;
 
-	if (info == &control_info[CIDX_min] || info == &control_info[CIDX_time])
-		value = xatoul_range_sfx(arg, 0, 0xff, stty_suffixes);
-	else if (arg[0] == '\0' || arg[1] == '\0')
-		value = arg[0];
-	else if (strcmp(arg, "^-") == 0 || strcmp(arg, "undef") == 0)
-		value = _POSIX_VDISABLE;
-	else if (arg[0] == '^') { /* Ignore any trailing junk (^Cjunk) */
-		value = arg[1] & 0x1f; /* Non-letters get weird results */
-		if (arg[1] == '?')
-			value = 127;
-	} else
-		value = xatoul_range_sfx(arg, 0, 0xff, stty_suffixes);
-	mode->c_cc[info->offset] = value;
+	ఒకవేళ (info == &control_info[CIDX_min] || info == &control_info[CIDX_సమయం])
+		విలువ_2 = xatoul_range_sfx(arg, 0, 0xff, stty_suffixes);
+	లేకపోతే ఒకవేళ (arg[0] == '\0' || arg[1] == '\0')
+		విలువ_2 = arg[0];
+	లేకపోతే ఒకవేళ (strcmp(arg, "^-") == 0 || strcmp(arg, "undef") == 0)
+		విలువ_2 = _POSIX_VDISABLE;
+	లేకపోతే ఒకవేళ (arg[0] == '^') { /* Ignore any trailing junk (^Cjunk) */
+		విలువ_2 = arg[1] & 0x1f; /* Non-letters get weird results */
+		ఒకవేళ (arg[1] == '?')
+			విలువ_2 = 127;
+	} లేకపోతే
+		విలువ_2 = xatoul_range_sfx(arg, 0, 0xff, stty_suffixes);
+	బహుళకం->c_cc[info->స్థానభ్రంశం] = విలువ_2;
 }
 
-#define STTY_require_set_attr   (1 << 0)
-#define STTY_speed_was_set      (1 << 1)
-#define STTY_verbose_output     (1 << 2)
-#define STTY_recoverable_output (1 << 3)
-#define STTY_noargs             (1 << 4)
+#నిర్వచించు STTY_require_సమితి_attr   (1 << 0)
+#నిర్వచించు STTY_వేగం_was_సమితి      (1 << 1)
+#నిర్వచించు STTY_verbose_output     (1 << 2)
+#నిర్వచించు STTY_recoverable_output (1 << 3)
+#నిర్వచించు STTY_noargs             (1 << 4)
 
-int stty_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int stty_main(int argc UNUSED_PARAM, char **argv)
+పూర్ణాంకం stty_main(పూర్ణాంకం argc, అక్షరం **argv) MAIN_EXTERNALLY_VISIBLE;
+పూర్ణాంకం stty_main(పూర్ణాంకం argc వాడని_PARAM, అక్షరం **argv)
 {
-	struct termios mode;
-	void (*output_func)(const struct termios *, int);
-	const char *file_name = NULL;
-	int display_all = 0;
-	int stty_state;
-	int k;
+	నిర్మాణం termios బహుళకం;
+	శూన్య (*output_func)(స్థిరరాశి నిర్మాణం termios *, పూర్ణాంకం);
+	స్థిరరాశి అక్షరం *file_name = ఖాళీ;
+	పూర్ణాంకం display_all = 0;
+	పూర్ణాంకం stty_state;
+	పూర్ణాంకం k;
 
 	INIT_G();
 
@@ -1289,133 +1289,133 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 
 	/* First pass: only parse/verify command line params */
 	k = 0;
-	while (argv[++k]) {
-		const struct mode_info *mp;
-		const struct control_info *cp;
-		const char *arg = argv[k];
-		const char *argnext = argv[k+1];
-		int param;
+	అయితే (argv[++k]) {
+		స్థిరరాశి నిర్మాణం బహుళకం_info *mp;
+		స్థిరరాశి నిర్మాణం control_info *cp;
+		స్థిరరాశి అక్షరం *arg = argv[k];
+		స్థిరరాశి అక్షరం *argnext = argv[k+1];
+		పూర్ణాంకం param;
 
-		if (arg[0] == '-') {
-			int i;
-			mp = find_mode(arg+1);
-			if (mp) {
-				if (!(mp->flags & REV))
-					goto invalid_argument;
+		ఒకవేళ (arg[0] == '-') {
+			పూర్ణాంకం i;
+			mp = కనుగొను_బహుళకం(arg+1);
+			ఒకవేళ (mp) {
+				ఒకవేళ (!(mp->flags & REV))
+					వెళ్ళు invalid_వాదం;
 				stty_state &= ~STTY_noargs;
-				continue;
+				కొనసాగు;
 			}
 			/* It is an option - parse it */
 			i = 0;
-			while (arg[++i]) {
-				switch (arg[i]) {
-				case 'a':
+			అయితే (arg[++i]) {
+				ఎంపిక (arg[i]) {
+				స్థితి 'a':
 					stty_state |= STTY_verbose_output;
 					output_func = do_display;
 					display_all = 1;
-					break;
-				case 'g':
+					ఆపు;
+				స్థితి 'g':
 					stty_state |= STTY_recoverable_output;
 					output_func = display_recoverable;
-					break;
-				case 'F':
-					if (file_name)
-						bb_simple_error_msg_and_die("only one device may be specified");
+					ఆపు;
+				స్థితి 'F':
+					ఒకవేళ (file_name)
+						bb_simple_error_సందేశం_and_die("only one device may be specified");
 					file_name = &arg[i+1]; /* "-Fdevice" ? */
-					if (!file_name[0]) { /* nope, "-F device" */
-						int p = k+1; /* argv[p] is argnext */
+					ఒకవేళ (!file_name[0]) { /* nope, "-F device" */
+						పూర్ణాంకం p = k+1; /* argv[p] is argnext */
 						file_name = argnext;
-						if (!file_name)
-							bb_error_msg_and_die(bb_msg_requires_arg, "-F");
+						ఒకవేళ (!file_name)
+							bb_error_సందేశం_and_die(bb_సందేశం_requires_arg, "-F");
 						/* remove -F param from arg[vc] */
-						while (argv[p]) {
+						అయితే (argv[p]) {
 							argv[p] = argv[p+1];
 							++p;
 						}
 					}
-					goto end_option;
-				default:
-					goto invalid_argument;
+					వెళ్ళు చివర_option;
+				అప్రమేయ:
+					వెళ్ళు invalid_వాదం;
 				}
 			}
- end_option:
-			continue;
+ చివర_option:
+			కొనసాగు;
 		}
 
-		mp = find_mode(arg);
-		if (mp) {
+		mp = కనుగొను_బహుళకం(arg);
+		ఒకవేళ (mp) {
 			stty_state &= ~STTY_noargs;
-			continue;
+			కొనసాగు;
 		}
 
-		cp = find_control(arg);
-		if (cp) {
-			if (!argnext)
-				bb_error_msg_and_die(bb_msg_requires_arg, arg);
+		cp = కనుగొను_control(arg);
+		ఒకవేళ (cp) {
+			ఒకవేళ (!argnext)
+				bb_error_సందేశం_and_die(bb_సందేశం_requires_arg, arg);
 			/* called for the side effect of xfunc death only */
-			set_control_char_or_die(cp, argnext, &mode);
+			సమితి_control_char_or_die(cp, argnext, &బహుళకం);
 			stty_state &= ~STTY_noargs;
 			++k;
-			continue;
+			కొనసాగు;
 		}
 
-		param = find_param(arg);
-		if (param & param_need_arg) {
-			if (!argnext)
-				bb_error_msg_and_die(bb_msg_requires_arg, arg);
+		param = కనుగొను_param(arg);
+		ఒకవేళ (param & param_need_arg) {
+			ఒకవేళ (!argnext)
+				bb_error_సందేశం_and_die(bb_సందేశం_requires_arg, arg);
 			++k;
 		}
 
-		switch (param) {
-#ifdef __linux__
-		case param_line:
+		ఎంపిక (param) {
+#నిర్వచితమైతే __linux__
+		స్థితి param_పంక్తి:
 # ifndef TIOCGWINSZ
-			xatoul_range_sfx(argnext, 1, INT_MAX, stty_suffixes);
-			break;
+			xatoul_range_sfx(argnext, 1, గరిష్ఠ_పూర్ణాంకం, stty_suffixes);
+			ఆపు;
 # endif /* else fall-through */
-#endif
-#ifdef TIOCGWINSZ
-		case param_rows:
-		case param_cols:
-		case param_columns:
-			xatoul_range_sfx(argnext, 1, INT_MAX, stty_suffixes);
-			break;
-		case param_size:
-#endif
-		case param_speed:
-			break;
-		case param_ispeed:
+#అయితే_ముగింపు
+#నిర్వచితమైతే TIOCGWINSZ
+		స్థితి param_అడ్డువరుసలు:
+		స్థితి param_నిలువుల_సంఖ్య:
+		స్థితి param_columns:
+			xatoul_range_sfx(argnext, 1, గరిష్ఠ_పూర్ణాంకం, stty_suffixes);
+			ఆపు;
+		స్థితి param_కొలత:
+#అయితే_ముగింపు
+		స్థితి param_వేగం:
+			ఆపు;
+		స్థితి param_ispeed:
 			/* called for the side effect of xfunc death only */
-			set_speed_or_die(input_speed, argnext, &mode);
-			break;
-		case param_ospeed:
+			సమితి_వేగం_or_die(ఆదానం_వేగం, argnext, &బహుళకం);
+			ఆపు;
+		స్థితి param_ospeed:
 			/* called for the side effect of xfunc death only */
-			set_speed_or_die(output_speed, argnext, &mode);
-			break;
-		default:
-			if (recover_mode(arg, &mode) == 1) break;
-			if (tty_value_to_baud(xatou(arg)) != (speed_t) -1) break;
- invalid_argument:
-			bb_error_msg_and_die("invalid argument '%s'", arg);
+			సమితి_వేగం_or_die(output_వేగం, argnext, &బహుళకం);
+			ఆపు;
+		అప్రమేయ:
+			ఒకవేళ (recover_బహుళకం(arg, &బహుళకం) == 1) ఆపు;
+			ఒకవేళ (tty_విలువ_గమ్యం_baud(xatou(arg)) != (వేగం_t) -1) ఆపు;
+ invalid_వాదం:
+			bb_error_సందేశం_and_die("invalid argument '%s'", arg);
 		}
 		stty_state &= ~STTY_noargs;
 	}
 
 	/* Specifying both -a and -g is an error */
-	if ((stty_state & (STTY_verbose_output | STTY_recoverable_output)) ==
+	ఒకవేళ ((stty_state & (STTY_verbose_output | STTY_recoverable_output)) ==
 		(STTY_verbose_output | STTY_recoverable_output)
 	) {
-		bb_simple_error_msg_and_die("-a and -g are mutually exclusive");
+		bb_simple_error_సందేశం_and_die("-a and -g are mutually exclusive");
 	}
 	/* Specifying -a or -g with non-options is an error */
-	if ((stty_state & (STTY_verbose_output | STTY_recoverable_output))
+	ఒకవేళ ((stty_state & (STTY_verbose_output | STTY_recoverable_output))
 	 && !(stty_state & STTY_noargs)
 	) {
-		bb_simple_error_msg_and_die("modes may not be set when -a or -g is used");
+		bb_simple_error_సందేశం_and_die("modes may not be set when -a or -g is used");
 	}
 
 	/* Now it is safe to start doing things */
-	if (file_name) {
+	ఒకవేళ (file_name) {
 		G.device_name = file_name;
 		xmove_fd(xopen_nonblocking(G.device_name), STDIN_FILENO);
 		ndelay_off(STDIN_FILENO);
@@ -1423,100 +1423,100 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 
 	/* Initialize to all zeroes so there is no risk memcmp will report a
 	   spurious difference in an uninitialized portion of the structure */
-	memset(&mode, 0, sizeof(mode));
-	if (tcgetattr(STDIN_FILENO, &mode))
+	memset(&బహుళకం, 0, పరిమాణం(బహుళకం));
+	ఒకవేళ (tcgetattr(STDIN_FILENO, &బహుళకం))
 		perror_on_device_and_die("%s");
 
-	if (stty_state & (STTY_verbose_output | STTY_recoverable_output | STTY_noargs)) {
-		G.max_col = get_terminal_width(STDOUT_FILENO);
-		output_func(&mode, display_all);
-		return EXIT_SUCCESS;
+	ఒకవేళ (stty_state & (STTY_verbose_output | STTY_recoverable_output | STTY_noargs)) {
+		G.max_నిలువు = get_terminal_వెడల్పు(STDOUT_FILENO);
+		output_func(&బహుళకం, display_all);
+		తిరిగి EXIT_SUCCESS;
 	}
 
 	/* Second pass: perform actions */
 	k = 0;
-	while (argv[++k]) {
-		const struct mode_info *mp;
-		const struct control_info *cp;
-		const char *arg = argv[k];
-		const char *argnext = argv[k+1];
-		int param;
+	అయితే (argv[++k]) {
+		స్థిరరాశి నిర్మాణం బహుళకం_info *mp;
+		స్థిరరాశి నిర్మాణం control_info *cp;
+		స్థిరరాశి అక్షరం *arg = argv[k];
+		స్థిరరాశి అక్షరం *argnext = argv[k+1];
+		పూర్ణాంకం param;
 
-		if (arg[0] == '-') {
-			mp = find_mode(arg+1);
-			if (mp) {
-				set_mode(mp, 1 /* reversed */, &mode);
-				stty_state |= STTY_require_set_attr;
+		ఒకవేళ (arg[0] == '-') {
+			mp = కనుగొను_బహుళకం(arg+1);
+			ఒకవేళ (mp) {
+				సమితి_బహుళకం(mp, 1 /* reversed */, &బహుళకం);
+				stty_state |= STTY_require_సమితి_attr;
 			}
 			/* It is an option - already parsed. Skip it */
-			continue;
+			కొనసాగు;
 		}
 
-		mp = find_mode(arg);
-		if (mp) {
-			set_mode(mp, 0 /* non-reversed */, &mode);
-			stty_state |= STTY_require_set_attr;
-			continue;
+		mp = కనుగొను_బహుళకం(arg);
+		ఒకవేళ (mp) {
+			సమితి_బహుళకం(mp, 0 /* non-reversed */, &బహుళకం);
+			stty_state |= STTY_require_సమితి_attr;
+			కొనసాగు;
 		}
 
-		cp = find_control(arg);
-		if (cp) {
+		cp = కనుగొను_control(arg);
+		ఒకవేళ (cp) {
 			++k;
-			set_control_char_or_die(cp, argnext, &mode);
-			stty_state |= STTY_require_set_attr;
-			continue;
+			సమితి_control_char_or_die(cp, argnext, &బహుళకం);
+			stty_state |= STTY_require_సమితి_attr;
+			కొనసాగు;
 		}
 
-		param = find_param(arg);
-		if (param & param_need_arg) {
+		param = కనుగొను_param(arg);
+		ఒకవేళ (param & param_need_arg) {
 			++k;
 		}
 
-		switch (param) {
-#ifdef __linux__
-		case param_line:
-			mode.c_line = xatoul_sfx(argnext, stty_suffixes);
-			stty_state |= STTY_require_set_attr;
-			break;
-#endif
-#ifdef TIOCGWINSZ
-		case param_cols:
-		case param_columns:
-			set_window_size(-1, xatoul_sfx(argnext, stty_suffixes));
-			break;
-		case param_size:
-			display_window_size(0);
-			break;
-		case param_rows:
-			set_window_size(xatoul_sfx(argnext, stty_suffixes), -1);
-			break;
-#endif
-		case param_speed:
-			display_speed(&mode, 0);
-			break;
-		case param_ispeed:
-			set_speed_or_die(input_speed, argnext, &mode);
-			stty_state |= (STTY_require_set_attr | STTY_speed_was_set);
-			break;
-		case param_ospeed:
-			set_speed_or_die(output_speed, argnext, &mode);
-			stty_state |= (STTY_require_set_attr | STTY_speed_was_set);
-			break;
-		default:
-			if (recover_mode(arg, &mode) == 1)
-				stty_state |= STTY_require_set_attr;
-			else /* true: if (tty_value_to_baud(xatou(arg)) != (speed_t) -1) */{
-				set_speed_or_die(both_speeds, arg, &mode);
-				stty_state |= (STTY_require_set_attr | STTY_speed_was_set);
+		ఎంపిక (param) {
+#నిర్వచితమైతే __linux__
+		స్థితి param_పంక్తి:
+			బహుళకం.c_పంక్తి = xatoul_sfx(argnext, stty_suffixes);
+			stty_state |= STTY_require_సమితి_attr;
+			ఆపు;
+#అయితే_ముగింపు
+#నిర్వచితమైతే TIOCGWINSZ
+		స్థితి param_నిలువుల_సంఖ్య:
+		స్థితి param_columns:
+			సమితి_కిటికీ_కొలత(-1, xatoul_sfx(argnext, stty_suffixes));
+			ఆపు;
+		స్థితి param_కొలత:
+			display_కిటికీ_కొలత(0);
+			ఆపు;
+		స్థితి param_అడ్డువరుసలు:
+			సమితి_కిటికీ_కొలత(xatoul_sfx(argnext, stty_suffixes), -1);
+			ఆపు;
+#అయితే_ముగింపు
+		స్థితి param_వేగం:
+			display_వేగం(&బహుళకం, 0);
+			ఆపు;
+		స్థితి param_ispeed:
+			సమితి_వేగం_or_die(ఆదానం_వేగం, argnext, &బహుళకం);
+			stty_state |= (STTY_require_సమితి_attr | STTY_వేగం_was_సమితి);
+			ఆపు;
+		స్థితి param_ospeed:
+			సమితి_వేగం_or_die(output_వేగం, argnext, &బహుళకం);
+			stty_state |= (STTY_require_సమితి_attr | STTY_వేగం_was_సమితి);
+			ఆపు;
+		అప్రమేయ:
+			ఒకవేళ (recover_బహుళకం(arg, &బహుళకం) == 1)
+				stty_state |= STTY_require_సమితి_attr;
+			లేకపోతే /* true: if (tty_value_to_baud(xatou(arg)) != (speed_t) -1) */{
+				సమితి_వేగం_or_die(both_speeds, arg, &బహుళకం);
+				stty_state |= (STTY_require_సమితి_attr | STTY_వేగం_was_సమితి);
 			} /* else - impossible (caught in the first pass):
 				bb_error_msg_and_die("invalid argument '%s'", arg); */
 		}
 	}
 
-	if (stty_state & STTY_require_set_attr) {
-		struct termios new_mode;
+	ఒకవేళ (stty_state & STTY_require_సమితి_attr) {
+		నిర్మాణం termios new_బహుళకం;
 
-		if (tcsetattr(STDIN_FILENO, TCSADRAIN, &mode))
+		ఒకవేళ (tcsetattr(STDIN_FILENO, TCSADRAIN, &బహుళకం))
 			perror_on_device_and_die("%s");
 
 		/* POSIX (according to Zlotnick's book) tcsetattr returns zero if
@@ -1528,17 +1528,17 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 
 		/* Initialize to all zeroes so there is no risk memcmp will report a
 		   spurious difference in an uninitialized portion of the structure */
-		memset(&new_mode, 0, sizeof(new_mode));
-		if (tcgetattr(STDIN_FILENO, &new_mode))
+		memset(&new_బహుళకం, 0, పరిమాణం(new_బహుళకం));
+		ఒకవేళ (tcgetattr(STDIN_FILENO, &new_బహుళకం))
 			perror_on_device_and_die("%s");
 
-		if (memcmp(&mode, &new_mode, sizeof(mode)) != 0) {
+		ఒకవేళ (memcmp(&బహుళకం, &new_బహుళకం, పరిమాణం(బహుళకం)) != 0) {
 /*
  * I think the below chunk is not necessary on Linux.
  * If you are deleting it, also delete STTY_speed_was_set bit -
  * it is only ever checked here.
  */
-#if 0 /* was "if CIBAUD" */
+#ఒకవేళ 0 /* was "if CIBAUD" */
 			/* SunOS 4.1.3 (at least) has the problem that after this sequence,
 			   tcgetattr (&m1); tcsetattr (&m1); tcgetattr (&m2);
 			   sometimes (m1 != m2).  The only difference is in the four bits
@@ -1548,13 +1548,13 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 			   set the baud rate explicitly -- otherwise we'd never give an
 			   error for a true failure to set the baud rate */
 
-			new_mode.c_cflag &= (~CIBAUD);
-			if ((stty_state & STTY_speed_was_set)
-			 || memcmp(&mode, &new_mode, sizeof(mode)) != 0)
-#endif
+			new_బహుళకం.c_cflag &= (~CIBAUD);
+			ఒకవేళ ((stty_state & STTY_వేగం_was_సమితి)
+			 || memcmp(&బహుళకం, &new_బహుళకం, పరిమాణం(బహుళకం)) != 0)
+#అయితే_ముగింపు
 				perror_on_device_and_die("%s: cannot perform all requested operations");
 		}
 	}
 
-	return EXIT_SUCCESS;
+	తిరిగి EXIT_SUCCESS;
 }

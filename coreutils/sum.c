@@ -29,90 +29,90 @@
 //usage:     "\n	-r	Use BSD sum algorithm (1K blocks)"
 //usage:     "\n	-s	Use System V sum algorithm (512byte blocks)"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#అన్తర్భావ "libbb.h"
+#అన్తర్భావ "common_bufsiz.h"
 
-enum { SUM_BSD, PRINT_NAME, SUM_SYSV };
+గణన { కూడిక_BSD, PRINT_NAME, కూడిక_SYSV };
 
 /* BSD: calculate and print the rotated checksum and the size in 1K blocks
    The checksum varies depending on sizeof (int). */
 /* SYSV: calculate and print the checksum and the size in 512-byte blocks */
 /* Return 1 if successful.  */
-static unsigned sum_file(const char *file, unsigned type)
+స్థిర గుర్తులేని కూడిక_file(స్థిరరాశి అక్షరం *file, గుర్తులేని type)
 {
-	unsigned long long total_bytes = 0;
-	int fd, r;
+	గుర్తులేని దీర్ఘ దీర్ఘ మొత్తం_బైట్లు = 0;
+	పూర్ణాంకం fd, r;
 	/* The sum of all the input bytes, modulo (UINT_MAX + 1).  */
-	unsigned s = 0;
+	గుర్తులేని s = 0;
 
-#define buf bb_common_bufsiz1
-	setup_common_bufsiz();
+#నిర్వచించు buf bb_common_bufsiz1
+	అమరిక_common_bufsiz();
 
 	fd = open_or_warn_stdin(file);
-	if (fd == -1)
-		return 0;
+	ఒకవేళ (fd == -1)
+		తిరిగి 0;
 
-	while (1) {
-		size_t bytes_read = safe_read(fd, buf, COMMON_BUFSIZE);
+	అయితే (1) {
+		కొలత_t బైట్లు_read = సురక్షిత_read(fd, buf, COMMON_BUFSIZE);
 
-		if ((ssize_t)bytes_read <= 0) {
+		ఒకవేళ ((ssize_t)బైట్లు_read <= 0) {
 			r = (fd && close(fd) != 0);
-			if (!bytes_read && !r)
+			ఒకవేళ (!బైట్లు_read && !r)
 				/* no error */
-				break;
-			bb_simple_perror_msg(file);
-			return 0;
+				ఆపు;
+			bb_simple_perror_సందేశం(file);
+			తిరిగి 0;
 		}
 
-		total_bytes += bytes_read;
-		if (type >= SUM_SYSV) {
-			do s += buf[--bytes_read]; while (bytes_read);
-		} else {
+		మొత్తం_బైట్లు += బైట్లు_read;
+		ఒకవేళ (type >= కూడిక_SYSV) {
+			చేయి s += buf[--బైట్లు_read]; అయితే (బైట్లు_read);
+		} లేకపోతే {
 			r = 0;
-			do {
+			చేయి {
 				s = (s >> 1) + ((s & 1) << 15);
 				s += buf[r++];
 				s &= 0xffff; /* Keep it within bounds. */
-			} while (--bytes_read);
+			} అయితే (--బైట్లు_read);
 		}
 	}
 
-	if (type < PRINT_NAME)
+	ఒకవేళ (type < PRINT_NAME)
 		file = "";
-	if (type >= SUM_SYSV) {
+	ఒకవేళ (type >= కూడిక_SYSV) {
 		r = (s & 0xffff) + ((s & 0xffffffff) >> 16);
 		s = (r & 0xffff) + (r >> 16);
-		printf("%u %llu %s\n", s, (total_bytes + 511) / 512, file);
-	} else
-		printf("%05u %5llu %s\n", s, (total_bytes + 1023) / 1024, file);
-	return 1;
-#undef buf
+		రాయి("%u %llu %s\n", s, (మొత్తం_బైట్లు + 511) / 512, file);
+	} లేకపోతే
+		రాయి("%05u %5llu %s\n", s, (మొత్తం_బైట్లు + 1023) / 1024, file);
+	తిరిగి 1;
+#నిర్వచనం_రద్దు buf
 }
 
-int sum_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int sum_main(int argc UNUSED_PARAM, char **argv)
+పూర్ణాంకం కూడిక_main(పూర్ణాంకం argc, అక్షరం **argv) MAIN_EXTERNALLY_VISIBLE;
+పూర్ణాంకం కూడిక_main(పూర్ణాంకం argc వాడని_PARAM, అక్షరం **argv)
 {
-	unsigned n;
-	unsigned type = SUM_BSD;
+	గుర్తులేని n;
+	గుర్తులేని type = కూడిక_BSD;
 
 	n = getopt32(argv, "sr");
 	argv += optind;
-	if (n & 1) type = SUM_SYSV;
+	ఒకవేళ (n & 1) type = కూడిక_SYSV;
 	/* give the bsd priority over sysv func */
-	if (n & 2) type = SUM_BSD;
+	ఒకవేళ (n & 2) type = కూడిక_BSD;
 
-	if (!argv[0]) {
+	ఒకవేళ (!argv[0]) {
 		/* Do not print the name */
-		n = sum_file("-", type);
-	} else {
+		n = కూడిక_file("-", type);
+	} లేకపోతే {
 		/* Need to print the name if either
 		 * - more than one file given
 		 * - doing sysv */
-		type += (argv[1] || type == SUM_SYSV);
+		type += (argv[1] || type == కూడిక_SYSV);
 		n = 1;
-		do {
-			n &= sum_file(*argv, type);
-		} while (*++argv);
+		చేయి {
+			n &= కూడిక_file(*argv, type);
+		} అయితే (*++argv);
 	}
-	return !n;
+	తిరిగి !n;
 }

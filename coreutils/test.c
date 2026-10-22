@@ -75,9 +75,9 @@
 //usage:       "$ echo $?\n"
 //usage:       "1\n"
 
-#include "libbb.h"
-#include <regex.h>
-#include <fnmatch.h>
+#అన్తర్భావ "libbb.h"
+#అన్తర్భావ <regex.h>
+#అన్తర్భావ <fnmatch.h>
 
 /* This is a NOFORK applet. Be very careful! */
 
@@ -146,17 +146,17 @@
  * Apart from the above, [[ expr ]] should work as [ expr ]
  */
 
-#define TEST_DEBUG 0
+#నిర్వచించు TEST_DEBUG 0
 
-#if ENABLE_TEST2 \
+#ఒకవేళ ENABLE_TEST2 \
  || (ENABLE_ASH_BASH_COMPAT && ENABLE_ASH_TEST) \
  || (ENABLE_HUSH_BASH_COMPAT && ENABLE_HUSH_TEST)
 # define BASH_TEST2 1
-#else
+#లేకపోతే
 # define BASH_TEST2 0
-#endif
+#అయితే_ముగింపు
 
-enum token {
+గణన token {
 	EOI,
 
 	FILRD, /* file access */
@@ -194,9 +194,9 @@ enum token {
 	STRLT,
 	STRGT,
 
-#if BASH_TEST2
+#ఒకవేళ BASH_TEST2
 	REGEX,
-#endif
+#అయితే_ముగింపు
 
 	INTEQ, /* int ops */
 	INTNE,
@@ -210,39 +210,39 @@ enum token {
 	BOR,
 	LPAREN,
 	RPAREN,
-	OPERAND
+	నిర్వాహ్యం
 };
-#define is_int_op(a)      (((unsigned char)((a) - INTEQ)) <= 5)
-#define is_str_op(a)      (((unsigned char)((a) - STREZ)) <= 5)
-#define is_file_op(a)     (((unsigned char)((a) - FILNT)) <= 2)
-#define is_file_access(a) (((unsigned char)((a) - FILRD)) <= 2)
-#define is_file_type(a)   (((unsigned char)((a) - FILREG)) <= 5)
-#define is_file_bit(a)    (((unsigned char)((a) - FILSUID)) <= 2)
+#నిర్వచించు is_int_op(a)      (((గుర్తులేని అక్షరం)((a) - INTEQ)) <= 5)
+#నిర్వచించు is_str_op(a)      (((గుర్తులేని అక్షరం)((a) - STREZ)) <= 5)
+#నిర్వచించు is_file_op(a)     (((గుర్తులేని అక్షరం)((a) - FILNT)) <= 2)
+#నిర్వచించు is_file_access(a) (((గుర్తులేని అక్షరం)((a) - FILRD)) <= 2)
+#నిర్వచించు is_file_type(a)   (((గుర్తులేని అక్షరం)((a) - FILREG)) <= 5)
+#నిర్వచించు is_file_బిట్టు(a)    (((గుర్తులేని అక్షరం)((a) - FILSUID)) <= 2)
 
-#if TEST_DEBUG
-int depth;
-#define nest_msg(...) do { \
-	depth++; \
-	fprintf(stderr, "%*s", depth*2, ""); \
+#ఒకవేళ TEST_DEBUG
+పూర్ణాంకం లోతు;
+#నిర్వచించు nest_సందేశం(...) చేయి { \
+	లోతు++; \
+	fprintf(stderr, "%*s", లోతు*2, ""); \
 	fprintf(stderr, __VA_ARGS__); \
-} while (0)
-#define unnest_msg(...) do { \
-	fprintf(stderr, "%*s", depth*2, ""); \
+} అయితే (0)
+#నిర్వచించు unnest_సందేశం(...) చేయి { \
+	fprintf(stderr, "%*s", లోతు*2, ""); \
 	fprintf(stderr, __VA_ARGS__); \
-	depth--; \
-} while (0)
-#define dbg_msg(...) do { \
-	fprintf(stderr, "%*s", depth*2, ""); \
+	లోతు--; \
+} అయితే (0)
+#నిర్వచించు dbg_సందేశం(...) చేయి { \
+	fprintf(stderr, "%*s", లోతు*2, ""); \
 	fprintf(stderr, __VA_ARGS__); \
-} while (0)
-#define unnest_msg_and_return(expr, ...) do { \
-	number_t __res = (expr); \
-	fprintf(stderr, "%*s", depth*2, ""); \
+} అయితే (0)
+#నిర్వచించు unnest_సందేశం_and_return(సమాసం, ...) చేయి { \
+	సంఖ్య_t __res = (సమాసం); \
+	fprintf(stderr, "%*s", లోతు*2, ""); \
 	fprintf(stderr, __VA_ARGS__, res); \
-	depth--; \
-	return __res; \
-} while (0)
-static const char *const TOKSTR[] ALIGN_PTR = {
+	లోతు--; \
+	తిరిగి __res; \
+} అయితే (0)
+స్థిర స్థిరరాశి అక్షరం *స్థిరరాశి TOKSTR[] ALIGN_PTR = {
 	"EOI",
 	"FILRD",
 	"FILWR",
@@ -271,9 +271,9 @@ static const char *const TOKSTR[] ALIGN_PTR = {
 	"STRNE",
 	"STRLT",
 	"STRGT",
-#if BASH_TEST2
+#ఒకవేళ BASH_TEST2
 	"REGEX",
-#endif
+#అయితే_ముగింపు
 	"INTEQ",
 	"INTNE",
 	"INTGE",
@@ -287,14 +287,14 @@ static const char *const TOKSTR[] ALIGN_PTR = {
 	"RPAREN",
 	"OPERAND"
 };
-#else
-#define nest_msg(...)   ((void)0)
-#define unnest_msg(...) ((void)0)
-#define dbg_msg(...)    ((void)0)
-#define unnest_msg_and_return(expr, ...) return expr
-#endif
+#లేకపోతే
+#నిర్వచించు nest_సందేశం(...)   ((శూన్య)0)
+#నిర్వచించు unnest_సందేశం(...) ((శూన్య)0)
+#నిర్వచించు dbg_సందేశం(...)    ((శూన్య)0)
+#నిర్వచించు unnest_సందేశం_and_return(సమాసం, ...) తిరిగి సమాసం
+#అయితే_ముగింపు
 
-enum {
+గణన {
 	UNOP,
 	BINOP,
 	BUNOP,
@@ -302,11 +302,11 @@ enum {
 	PAREN
 };
 
-struct operator_t {
-	unsigned char op_num, op_type;
+నిర్మాణం operator_t {
+	గుర్తులేని అక్షరం op_అంకె, op_type;
 };
 
-static const struct operator_t ops_table[] ALIGN2 = {
+స్థిర స్థిరరాశి నిర్మాణం operator_t ops_పట్టిక[] ALIGN2 = {
 	{ /* "-r" */ FILRD   , UNOP   },
 	{ /* "-w" */ FILWR   , UNOP   },
 	{ /* "-x" */ FILEX   , UNOP   },
@@ -337,9 +337,9 @@ static const struct operator_t ops_table[] ALIGN2 = {
 	{ /* "!=" */ STRNE   , BINOP  },
 	{ /* "<"  */ STRLT   , BINOP  },
 	{ /* ">"  */ STRGT   , BINOP  },
-#if BASH_TEST2
+#ఒకవేళ BASH_TEST2
 	{ /* "=~" */ REGEX   , BINOP  },
-#endif
+#అయితే_ముగింపు
 	{ /* "-eq"*/ INTEQ   , BINOP  },
 	{ /* "-ne"*/ INTNE   , BINOP  },
 	{ /* "-ge"*/ INTGE   , BINOP  },
@@ -352,15 +352,15 @@ static const struct operator_t ops_table[] ALIGN2 = {
 	{ /* "!"  */ UNOT    , BUNOP  },
 	{ /* "-a" */ BAND    , BBINOP },
 	{ /* "-o" */ BOR     , BBINOP },
-#if BASH_TEST2
+#ఒకవేళ BASH_TEST2
 	{ /* "&&" */ BAND    , BBINOP },
 	{ /* "||" */ BOR     , BBINOP },
-#endif
+#అయితే_ముగింపు
 	{ /* "("  */ LPAREN  , PAREN  },
 	{ /* ")"  */ RPAREN  , PAREN  },
 };
 /* Please keep these two tables in sync */
-static const char ops_texts[] ALIGN1 =
+స్థిర స్థిరరాశి అక్షరం ops_texts[] ALIGN1 =
 	"-r"  "\0"
 	"-w"  "\0"
 	"-x"  "\0"
@@ -389,9 +389,9 @@ static const char ops_texts[] ALIGN1 =
 	"!="  "\0"
 	"<"   "\0"
 	">"   "\0"
-#if BASH_TEST2
+#ఒకవేళ BASH_TEST2
 	"=~"  "\0"
-#endif
+#అయితే_ముగింపు
 	"-eq" "\0"
 	"-ne" "\0"
 	"-ge" "\0"
@@ -404,96 +404,96 @@ static const char ops_texts[] ALIGN1 =
 	"!"   "\0"
 	"-a"  "\0"
 	"-o"  "\0"
-#if BASH_TEST2
+#ఒకవేళ BASH_TEST2
 	"&&"  "\0"
 	"||"  "\0"
-#endif
+#అయితే_ముగింపు
 	"("   "\0"
 	")"   "\0"
 ;
 
 
-#if ENABLE_FEATURE_TEST_64
-typedef int64_t number_t;
-#else
-typedef int number_t;
-#endif
+#ఒకవేళ ENABLE_FEATURE_TEST_64
+రకనిర్వచనం int64_t సంఖ్య_t;
+#లేకపోతే
+రకనిర్వచనం పూర్ణాంకం సంఖ్య_t;
+#అయితే_ముగింపు
 
 
 /* We try to minimize both static and stack usage. */
-struct test_statics {
-	char **args;
+నిర్మాణం test_statics {
+	అక్షరం **వాదనలు;
 	/* set only by check_operator(), either to bogus struct
 	 * or points to matching operator_t struct. Never NULL. */
-	const struct operator_t *last_operator;
-	gid_t *group_array;
-	int ngroups;
-#if BASH_TEST2
+	స్థిరరాశి నిర్మాణం operator_t *చివరి_operator;
+	gid_t *సమూహం_array;
+	పూర్ణాంకం ngroups;
+#ఒకవేళ BASH_TEST2
 	bool bash_test2;
-#endif
+#అయితే_ముగింపు
 	jmp_buf leaving;
 };
 
 /* See test_ptr_hack.c */
-extern struct test_statics *BB_GLOBAL_CONST test_ptr_to_statics;
+బాహ్య నిర్మాణం test_statics *BB_GLOBAL_CONST test_ptr_గమ్యం_statics;
 
-#define S (*test_ptr_to_statics)
-#define args            (S.args         )
-#define last_operator   (S.last_operator)
-#define group_array     (S.group_array  )
-#define ngroups         (S.ngroups      )
-#define bash_test2      (S.bash_test2   )
-#define leaving         (S.leaving      )
+#నిర్వచించు S (*test_ptr_గమ్యం_statics)
+#నిర్వచించు వాదనలు            (S.వాదనలు         )
+#నిర్వచించు చివరి_operator   (S.చివరి_operator)
+#నిర్వచించు సమూహం_array     (S.సమూహం_array  )
+#నిర్వచించు ngroups         (S.ngroups      )
+#నిర్వచించు bash_test2      (S.bash_test2   )
+#నిర్వచించు leaving         (S.leaving      )
 
-#define INIT_S() do { \
-	XZALLOC_CONST_PTR(&test_ptr_to_statics, sizeof(S)); \
-} while (0)
-#define DEINIT_S() do { \
-	free(group_array); \
-	free(test_ptr_to_statics); \
-} while (0)
+#నిర్వచించు INIT_S() చేయి { \
+	XZALLOC_CONST_PTR(&test_ptr_గమ్యం_statics, పరిమాణం(S)); \
+} అయితే (0)
+#నిర్వచించు DEINIT_S() చేయి { \
+	విడుదల(సమూహం_array); \
+	విడుదల(test_ptr_గమ్యం_statics); \
+} అయితే (0)
 
-static number_t primary(enum token n);
+స్థిర సంఖ్య_t primary(గణన token n);
 
-static void syntax(const char *op, const char *msg) NORETURN;
-static void syntax(const char *op, const char *msg)
+స్థిర శూన్య syntax(స్థిరరాశి అక్షరం *op, స్థిరరాశి అక్షరం *సందేశం) NORETURN;
+స్థిర శూన్య syntax(స్థిరరాశి అక్షరం *op, స్థిరరాశి అక్షరం *సందేశం)
 {
-	if (op && *op) {
-		bb_error_msg("%s: %s", op, msg);
-	} else {
-		bb_error_msg("%s: %s"+4, msg);
+	ఒకవేళ (op && *op) {
+		bb_error_సందేశం("%s: %s", op, సందేశం);
+	} లేకపోతే {
+		bb_error_సందేశం("%s: %s"+4, సందేశం);
 	}
 	longjmp(leaving, 2);
 }
 
 /* atoi with error detection */
 //XXX: FIXME: duplicate of existing libbb function?
-static number_t getn(const char *s)
+స్థిర సంఖ్య_t getn(స్థిరరాశి అక్షరం *s)
 {
-	char *p;
-#if ENABLE_FEATURE_TEST_64
-	long long r;
-#else
-	long r;
-#endif
+	అక్షరం *p;
+#ఒకవేళ ENABLE_FEATURE_TEST_64
+	దీర్ఘ దీర్ఘ r;
+#లేకపోతే
+	దీర్ఘ r;
+#అయితే_ముగింపు
 
 	errno = 0;
-#if ENABLE_FEATURE_TEST_64
+#ఒకవేళ ENABLE_FEATURE_TEST_64
 	r = strtoll(s, &p, 10);
-#else
+#లేకపోతే
 	r = strtol(s, &p, 10);
-#endif
+#అయితే_ముగింపు
 
-	if (errno != 0)
+	ఒకవేళ (errno != 0)
 		syntax(s, "out of range");
 
-	if (p == s || *(skip_whitespace(p)) != '\0')
+	ఒకవేళ (p == s || *(skip_whitespace(p)) != '\0')
 		syntax(s, "bad number");
 
-	return r;
+	తిరిగి r;
 }
 
-/* UNUSED
+/*వాడని
 static int newerf(const char *f1, const char *f2)
 {
 	struct stat b1, b2;
@@ -521,417 +521,417 @@ static int equalf(const char *f1, const char *f2)
 */
 
 
-static enum token check_operator(const char *s)
+స్థిర గణన token check_operator(స్థిరరాశి అక్షరం *s)
 {
-	static const struct operator_t no_op = {
-		.op_num = -1,
+	స్థిర స్థిరరాశి నిర్మాణం operator_t no_op = {
+		.op_అంకె = -1,
 		.op_type = -1
 	};
-	int n;
+	పూర్ణాంకం n;
 
-	last_operator = &no_op;
-	if (s == NULL)
-		return EOI;
-	n = index_in_strings(ops_texts, s);
-	if (n < 0)
-		return OPERAND;
+	చివరి_operator = &no_op;
+	ఒకవేళ (s == ఖాళీ)
+		తిరిగి EOI;
+	n = సూచీ_లోపల_అక్షరశ్రేణులు(ops_texts, s);
+	ఒకవేళ (n < 0)
+		తిరిగి నిర్వాహ్యం;
 
-#if BASH_TEST2
-	if (ops_table[n].op_num == REGEX && !bash_test2) {
+#ఒకవేళ BASH_TEST2
+	ఒకవేళ (ops_పట్టిక[n].op_అంకె == REGEX && !bash_test2) {
 		/* =~ is only for [[ ]] */
-		return OPERAND;
+		తిరిగి నిర్వాహ్యం;
 	}
-	if (ops_table[n].op_num == BAND || ops_table[n].op_num == BOR) {
+	ఒకవేళ (ops_పట్టిక[n].op_అంకె == BAND || ops_పట్టిక[n].op_అంకె == BOR) {
 		/* [ ]   accepts -a and -o but not && and || */
 		/* [[ ]] accepts && and || but not -a and -o */
-		if (bash_test2 == (s[0] == '-'))
-			return OPERAND;
+		ఒకవేళ (bash_test2 == (s[0] == '-'))
+			తిరిగి నిర్వాహ్యం;
 	}
-#endif
+#అయితే_ముగింపు
 
-	last_operator = &ops_table[n];
-	return ops_table[n].op_num;
+	చివరి_operator = &ops_పట్టిక[n];
+	తిరిగి ops_పట్టిక[n].op_అంకె;
 }
 
 
-static int binop(void)
+స్థిర పూర్ణాంకం binop(శూన్య)
 {
-	const char *opnd1, *opnd2;
-	const struct operator_t *op;
-	number_t val1, val2;
+	స్థిరరాశి అక్షరం *opnd1, *opnd2;
+	స్థిరరాశి నిర్మాణం operator_t *op;
+	సంఖ్య_t val1, val2;
 
-	opnd1 = *args;
-	check_operator(*++args);
-	op = last_operator;
+	opnd1 = *వాదనలు;
+	check_operator(*++వాదనలు);
+	op = చివరి_operator;
 
-	opnd2 = *++args;
-	if (opnd2 == NULL)
-		syntax(args[-1], "argument expected");
+	opnd2 = *++వాదనలు;
+	ఒకవేళ (opnd2 == ఖాళీ)
+		syntax(వాదనలు[-1], "argument expected");
 
-	if (is_int_op(op->op_num)) {
+	ఒకవేళ (is_int_op(op->op_అంకె)) {
 		val1 = getn(opnd1);
 		val2 = getn(opnd2);
-		if (op->op_num == INTEQ)
-			return val1 == val2;
-		if (op->op_num == INTNE)
-			return val1 != val2;
-		if (op->op_num == INTGE)
-			return val1 >= val2;
-		if (op->op_num == INTGT)
-			return val1 >  val2;
-		if (op->op_num == INTLE)
-			return val1 <= val2;
+		ఒకవేళ (op->op_అంకె == INTEQ)
+			తిరిగి val1 == val2;
+		ఒకవేళ (op->op_అంకె == INTNE)
+			తిరిగి val1 != val2;
+		ఒకవేళ (op->op_అంకె == INTGE)
+			తిరిగి val1 >= val2;
+		ఒకవేళ (op->op_అంకె == INTGT)
+			తిరిగి val1 >  val2;
+		ఒకవేళ (op->op_అంకె == INTLE)
+			తిరిగి val1 <= val2;
 		/*if (op->op_num == INTLT)*/
-		return val1 <  val2;
+		తిరిగి val1 <  val2;
 	}
-#if BASH_TEST2
-	if (bash_test2) {
-		if (op->op_num == STREQ) {
+#ఒకవేళ BASH_TEST2
+	ఒకవేళ (bash_test2) {
+		ఒకవేళ (op->op_అంకె == STREQ) {
 			val1 = fnmatch(opnd2, opnd1, 0);
-			return val1 == 0;
+			తిరిగి val1 == 0;
 		}
-		if (op->op_num == STRNE) {
+		ఒకవేళ (op->op_అంకె == STRNE) {
 			val1 = fnmatch(opnd2, opnd1, 0);
-			return val1 != 0;
+			తిరిగి val1 != 0;
 		}
-		if (op->op_num == REGEX) {
-			regex_t re_buffer;
-			memset(&re_buffer, 0, sizeof(re_buffer));
-			if (regcomp(&re_buffer, opnd2, REG_EXTENDED)) { // REG_NEWLINE?
+		ఒకవేళ (op->op_అంకె == REGEX) {
+			regex_t re_బఫరు;
+			memset(&re_బఫరు, 0, పరిమాణం(re_బఫరు));
+			ఒకవేళ (regcomp(&re_బఫరు, opnd2, REG_EXTENDED)) { // REG_NEWLINE?
 				/* Bad regex */
 				longjmp(leaving, 2); /* [[ a =~ * ]]; echo $? - prints 2 (silently, no error msg) */
 			}
-			val1 = regexec(&re_buffer, opnd1, 0, NULL, 0);
-			regfree(&re_buffer);
-			return val1 == 0;
+			val1 = regexec(&re_బఫరు, opnd1, 0, ఖాళీ, 0);
+			regfree(&re_బఫరు);
+			తిరిగి val1 == 0;
 		}
 	}
-#endif
-	if (is_str_op(op->op_num)) {
+#అయితే_ముగింపు
+	ఒకవేళ (is_str_op(op->op_అంకె)) {
 		val1 = strcmp(opnd1, opnd2);
-		if (op->op_num == STREQ)
-			return val1 == 0;
-		if (op->op_num == STRNE)
-			return val1 != 0;
-		if (op->op_num == STRLT)
-			return val1 < 0;
+		ఒకవేళ (op->op_అంకె == STREQ)
+			తిరిగి val1 == 0;
+		ఒకవేళ (op->op_అంకె == STRNE)
+			తిరిగి val1 != 0;
+		ఒకవేళ (op->op_అంకె == STRLT)
+			తిరిగి val1 < 0;
 		/*if (op->op_num == STRGT)*/
-		return val1 > 0;
+		తిరిగి val1 > 0;
 	}
 	/* We are sure that these three are by now the only binops we didn't check
 	 * yet, so we do not check if the class is correct:
 	 */
 /*	if (is_file_op(op->op_num)) */
 	{
-		struct stat b1, b2;
+		నిర్మాణం stat b1, b2;
 
-		if (stat(opnd1, &b1) || stat(opnd2, &b2))
-			return 0; /* false, since at least one stat failed */
-		if (op->op_num == FILNT)
-			return b1.st_mtime > b2.st_mtime;
-		if (op->op_num == FILOT)
-			return b1.st_mtime < b2.st_mtime;
+		ఒకవేళ (stat(opnd1, &b1) || stat(opnd2, &b2))
+			తిరిగి 0; /* false, since at least one stat failed */
+		ఒకవేళ (op->op_అంకె == FILNT)
+			తిరిగి b1.st_mtime > b2.st_mtime;
+		ఒకవేళ (op->op_అంకె == FILOT)
+			తిరిగి b1.st_mtime < b2.st_mtime;
 		/*if (op->op_num == FILEQ)*/
-		return b1.st_dev == b2.st_dev && b1.st_ino == b2.st_ino;
+		తిరిగి b1.st_dev == b2.st_dev && b1.st_ino == b2.st_ino;
 	}
 	/*return 1; - NOTREACHED */
 }
 
-static void initialize_group_array(void)
+స్థిర శూన్య initialize_సమూహం_array(శూన్య)
 {
-	group_array = bb_getgroups(&ngroups, NULL);
+	సమూహం_array = bb_getgroups(&ngroups, ఖాళీ);
 }
 
 /* Return non-zero if GID is one that we have in our groups list. */
 //XXX: FIXME: duplicate of existing libbb function?
 // see toplevel TODO file:
 // possible code duplication ingroup() and is_a_group_member()
-static int is_a_group_member(gid_t gid)
+స్థిర పూర్ణాంకం is_a_సమూహం_member(gid_t gid)
 {
-	int i;
+	పూర్ణాంకం i;
 
 	/* Short-circuit if possible, maybe saving a call to getgroups(). */
-	if (gid == getgid() || gid == getegid())
-		return 1;
+	ఒకవేళ (gid == getgid() || gid == getegid())
+		తిరిగి 1;
 
-	if (ngroups == 0)
-		initialize_group_array();
+	ఒకవేళ (ngroups == 0)
+		initialize_సమూహం_array();
 
 	/* Search through the list looking for GID. */
-	for (i = 0; i < ngroups; i++)
-		if (gid == group_array[i])
-			return 1;
+	కొరకు (i = 0; i < ngroups; i++)
+		ఒకవేళ (gid == సమూహం_array[i])
+			తిరిగి 1;
 
-	return 0;
+	తిరిగి 0;
 }
 
 
 /* Do the same thing access(2) does, but use the effective uid and gid,
    and don't make the mistake of telling root that any file is
    executable. */
-static int test_eaccess(struct stat *st, int mode)
+స్థిర పూర్ణాంకం test_eaccess(నిర్మాణం stat *st, పూర్ణాంకం బహుళకం)
 {
-	unsigned int euid = geteuid();
+	గుర్తులేని పూర్ణాంకం euid = geteuid();
 
-	if (euid == 0) {
+	ఒకవేళ (euid == 0) {
 		/* Root can read or write any file. */
-		if (mode != X_OK)
-			return 0;
+		ఒకవేళ (బహుళకం != X_OK)
+			తిరిగి 0;
 
 		/* Root can execute any file that has any one of the execute
 		 * bits set. */
-		if (st->st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))
-			return 0;
+		ఒకవేళ (st->st_బహుళకం & (S_IXUSR | S_IXGRP | S_IXOTH))
+			తిరిగి 0;
 	}
 
-	if (st->st_uid == euid)  /* owner */
-		mode <<= 6;
-	else if (is_a_group_member(st->st_gid))
-		mode <<= 3;
+	ఒకవేళ (st->st_uid == euid)  /* owner */
+		బహుళకం <<= 6;
+	లేకపోతే ఒకవేళ (is_a_సమూహం_member(st->st_gid))
+		బహుళకం <<= 3;
 
-	if (st->st_mode & mode)
-		return 0;
+	ఒకవేళ (st->st_బహుళకం & బహుళకం)
+		తిరిగి 0;
 
-	return -1;
+	తిరిగి -1;
 }
 
 
-static int filstat(char *nm, enum token mode)
+స్థిర పూర్ణాంకం filstat(అక్షరం *nm, గణన token బహుళకం)
 {
-	struct stat s;
-	unsigned i = i; /* gcc 3.x thinks it can be used uninitialized */
+	నిర్మాణం stat s;
+	గుర్తులేని i = i; /* gcc 3.x thinks it can be used uninitialized */
 
-	if (mode == FILSYM) {
-#ifdef S_IFLNK
-		if (lstat(nm, &s) == 0) {
+	ఒకవేళ (బహుళకం == FILSYM) {
+#నిర్వచితమైతే S_IFLNK
+		ఒకవేళ (lstat(nm, &s) == 0) {
 			i = S_IFLNK;
-			goto filetype;
+			వెళ్ళు filetype;
 		}
-#endif
-		return 0;
+#అయితే_ముగింపు
+		తిరిగి 0;
 	}
 
-	if (stat(nm, &s) != 0)
-		return 0;
-	if (mode == FILEXIST)
-		return 1;
-	if (is_file_access(mode)) {
-		if (mode == FILRD)
+	ఒకవేళ (stat(nm, &s) != 0)
+		తిరిగి 0;
+	ఒకవేళ (బహుళకం == FILEXIST)
+		తిరిగి 1;
+	ఒకవేళ (is_file_access(బహుళకం)) {
+		ఒకవేళ (బహుళకం == FILRD)
 			i = R_OK;
-		if (mode == FILWR)
+		ఒకవేళ (బహుళకం == FILWR)
 			i = W_OK;
-		if (mode == FILEX)
+		ఒకవేళ (బహుళకం == FILEX)
 			i = X_OK;
-		return test_eaccess(&s, i) == 0;
+		తిరిగి test_eaccess(&s, i) == 0;
 	}
-	if (is_file_type(mode)) {
-		if (mode == FILREG)
+	ఒకవేళ (is_file_type(బహుళకం)) {
+		ఒకవేళ (బహుళకం == FILREG)
 			i = S_IFREG;
-		if (mode == FILDIR)
+		ఒకవేళ (బహుళకం == FILDIR)
 			i = S_IFDIR;
-		if (mode == FILCDEV)
+		ఒకవేళ (బహుళకం == FILCDEV)
 			i = S_IFCHR;
-		if (mode == FILBDEV)
+		ఒకవేళ (బహుళకం == FILBDEV)
 			i = S_IFBLK;
-		if (mode == FILFIFO) {
-#ifdef S_IFIFO
+		ఒకవేళ (బహుళకం == FILFIFO) {
+#నిర్వచితమైతే S_IFIFO
 			i = S_IFIFO;
-#else
-			return 0;
-#endif
+#లేకపోతే
+			తిరిగి 0;
+#అయితే_ముగింపు
 		}
-		if (mode == FILSOCK) {
-#ifdef S_IFSOCK
+		ఒకవేళ (బహుళకం == FILSOCK) {
+#నిర్వచితమైతే S_IFSOCK
 			i = S_IFSOCK;
-#else
-			return 0;
-#endif
+#లేకపోతే
+			తిరిగి 0;
+#అయితే_ముగింపు
 		}
  filetype:
-		return ((s.st_mode & S_IFMT) == i);
+		తిరిగి ((s.st_బహుళకం & S_IFMT) == i);
 	}
-	if (is_file_bit(mode)) {
-		if (mode == FILSUID)
+	ఒకవేళ (is_file_బిట్టు(బహుళకం)) {
+		ఒకవేళ (బహుళకం == FILSUID)
 			i = S_ISUID;
-		if (mode == FILSGID)
+		ఒకవేళ (బహుళకం == FILSGID)
 			i = S_ISGID;
-		if (mode == FILSTCK)
+		ఒకవేళ (బహుళకం == FILSTCK)
 			i = S_ISVTX;
-		return ((s.st_mode & i) != 0);
+		తిరిగి ((s.st_బహుళకం & i) != 0);
 	}
-	if (mode == FILGZ)
-		return s.st_size > 0L;
-	if (mode == FILUID)
-		return s.st_uid == geteuid();
-	if (mode == FILGID)
-		return s.st_gid == getegid();
-	return 1; /* NOTREACHED */
+	ఒకవేళ (బహుళకం == FILGZ)
+		తిరిగి s.st_కొలత > 0L;
+	ఒకవేళ (బహుళకం == FILUID)
+		తిరిగి s.st_uid == geteuid();
+	ఒకవేళ (బహుళకం == FILGID)
+		తిరిగి s.st_gid == getegid();
+	తిరిగి 1; /* NOTREACHED */
 }
 
 
-static number_t nexpr(enum token n)
+స్థిర సంఖ్య_t nexpr(గణన token n)
 {
-	number_t res;
+	సంఖ్య_t res;
 
-	nest_msg(">nexpr(%s)\n", TOKSTR[n]);
-	if (n == UNOT) {
-		n = check_operator(*++args);
-		if (n == EOI) {
+	nest_సందేశం(">nexpr(%s)\n", TOKSTR[n]);
+	ఒకవేళ (n == UNOT) {
+		n = check_operator(*++వాదనలు);
+		ఒకవేళ (n == EOI) {
 			/* special case: [ ! ], [ a -a ! ] are valid */
 			/* IOW, "! ARG" may miss ARG */
-			args--;
-			unnest_msg("<nexpr:1 (!EOI), args:%s(%p)\n", args[0], &args[0]);
-			return 1;
+			వాదనలు--;
+			unnest_సందేశం("<nexpr:1 (!EOI), args:%s(%p)\n", వాదనలు[0], &వాదనలు[0]);
+			తిరిగి 1;
 		}
 		res = !nexpr(n);
-		unnest_msg("<nexpr:%lld\n", res);
-		return res;
+		unnest_సందేశం("<nexpr:%lld\n", res);
+		తిరిగి res;
 	}
 	res = primary(n);
-	unnest_msg("<nexpr:%lld\n", res);
-	return res;
+	unnest_సందేశం("<nexpr:%lld\n", res);
+	తిరిగి res;
 }
 
 
-static number_t aexpr(enum token n)
+స్థిర సంఖ్య_t aexpr(గణన token n)
 {
-	number_t res;
+	సంఖ్య_t res;
 
-	nest_msg(">aexpr(%s)\n", TOKSTR[n]);
+	nest_సందేశం(">aexpr(%s)\n", TOKSTR[n]);
 	res = nexpr(n);
-	dbg_msg("aexpr: nexpr:%lld, next args:%s(%p)\n", res, args[1], &args[1]);
-	if (check_operator(*++args) == BAND) {
-		dbg_msg("aexpr: arg is AND, next args:%s(%p)\n", args[1], &args[1]);
-		res = aexpr(check_operator(*++args)) && res;
-		unnest_msg("<aexpr:%lld\n", res);
-		return res;
+	dbg_సందేశం("aexpr: nexpr:%lld, next args:%s(%p)\n", res, వాదనలు[1], &వాదనలు[1]);
+	ఒకవేళ (check_operator(*++వాదనలు) == BAND) {
+		dbg_సందేశం("aexpr: arg is AND, next args:%s(%p)\n", వాదనలు[1], &వాదనలు[1]);
+		res = aexpr(check_operator(*++వాదనలు)) && res;
+		unnest_సందేశం("<aexpr:%lld\n", res);
+		తిరిగి res;
 	}
-	args--;
-	unnest_msg("<aexpr:%lld, args:%s(%p)\n", res, args[0], &args[0]);
-	return res;
+	వాదనలు--;
+	unnest_సందేశం("<aexpr:%lld, args:%s(%p)\n", res, వాదనలు[0], &వాదనలు[0]);
+	తిరిగి res;
 }
 
 
-static number_t oexpr(enum token n)
+స్థిర సంఖ్య_t oexpr(గణన token n)
 {
-	number_t res;
+	సంఖ్య_t res;
 
-	nest_msg(">oexpr(%s)\n", TOKSTR[n]);
+	nest_సందేశం(">oexpr(%s)\n", TOKSTR[n]);
 	res = aexpr(n);
-	dbg_msg("oexpr: aexpr:%lld, next args:%s(%p)\n", res, args[1], &args[1]);
-	if (check_operator(*++args) == BOR) {
-		dbg_msg("oexpr: next arg is OR, next args:%s(%p)\n", args[1], &args[1]);
-		res = oexpr(check_operator(*++args)) || res;
-		unnest_msg("<oexpr:%lld\n", res);
-		return res;
+	dbg_సందేశం("oexpr: aexpr:%lld, next args:%s(%p)\n", res, వాదనలు[1], &వాదనలు[1]);
+	ఒకవేళ (check_operator(*++వాదనలు) == BOR) {
+		dbg_సందేశం("oexpr: next arg is OR, next args:%s(%p)\n", వాదనలు[1], &వాదనలు[1]);
+		res = oexpr(check_operator(*++వాదనలు)) || res;
+		unnest_సందేశం("<oexpr:%lld\n", res);
+		తిరిగి res;
 	}
-	args--;
-	unnest_msg("<oexpr:%lld, args:%s(%p)\n", res, args[0], &args[0]);
-	return res;
+	వాదనలు--;
+	unnest_సందేశం("<oexpr:%lld, args:%s(%p)\n", res, వాదనలు[0], &వాదనలు[0]);
+	తిరిగి res;
 }
 
 
-static number_t primary(enum token n)
+స్థిర సంఖ్య_t primary(గణన token n)
 {
-#if TEST_DEBUG
-	number_t res = res; /* for compiler */
-#else
-	number_t res;
-#endif
-	const struct operator_t *args0_op;
+#ఒకవేళ TEST_DEBUG
+	సంఖ్య_t res = res; /* for compiler */
+#లేకపోతే
+	సంఖ్య_t res;
+#అయితే_ముగింపు
+	స్థిరరాశి నిర్మాణం operator_t *args0_op;
 
-	nest_msg(">primary(%s)\n", TOKSTR[n]);
-	if (n == EOI) {
-		syntax(NULL, "argument expected");
+	nest_సందేశం(">primary(%s)\n", TOKSTR[n]);
+	ఒకవేళ (n == EOI) {
+		syntax(ఖాళీ, "argument expected");
 	}
-	if (n == LPAREN) {
-		res = oexpr(check_operator(*++args));
-		if (check_operator(*++args) != RPAREN)
-			syntax(NULL, "closing paren expected");
-		unnest_msg("<primary:%lld\n", res);
-		return res;
+	ఒకవేళ (n == LPAREN) {
+		res = oexpr(check_operator(*++వాదనలు));
+		ఒకవేళ (check_operator(*++వాదనలు) != RPAREN)
+			syntax(ఖాళీ, "closing paren expected");
+		unnest_సందేశం("<primary:%lld\n", res);
+		తిరిగి res;
 	}
 
 	/* coreutils 6.9 checks "is args[1] binop and args[2] exist?" first,
 	 * do the same */
-	args0_op = last_operator;
+	args0_op = చివరి_operator;
 	/* last_operator = operator at args[1] */
-	if (check_operator(args[1]) != EOI) { /* if args[1] != NULL */
-		if (args[2]) {
+	ఒకవేళ (check_operator(వాదనలు[1]) != EOI) { /* if args[1] != NULL */
+		ఒకవేళ (వాదనలు[2]) {
 			// coreutils also does this:
 			// if (args[3] && args[0] = "-l" && args[2] is BINOP)
 			//	return binop(1 /* prepended by -l */);
-			if (last_operator->op_type == BINOP)
-				unnest_msg_and_return(binop(), "<primary: binop:%lld\n");
+			ఒకవేళ (చివరి_operator->op_type == BINOP)
+				unnest_సందేశం_and_return(binop(), "<primary: binop:%lld\n");
 		}
 	}
 	/* check "is args[0] unop?" second */
-	if (args0_op->op_type == UNOP) {
+	ఒకవేళ (args0_op->op_type == UNOP) {
 		/* unary expression */
-		if (args[1] == NULL)
+		ఒకవేళ (వాదనలు[1] == ఖాళీ)
 //			syntax(args0_op->op_text, "argument expected");
-			goto check_emptiness;
-		args++;
-		if (n == STREZ)
-			unnest_msg_and_return(args[0][0] == '\0', "<primary:%lld\n");
-		if (n == STRNZ)
-			unnest_msg_and_return(args[0][0] != '\0', "<primary:%lld\n");
-		if (n == FILTT)
-			unnest_msg_and_return(isatty(getn(*args)), "<primary: isatty(%s)%lld\n", *args);
-		unnest_msg_and_return(filstat(*args, n), "<primary: filstat(%s):%lld\n", *args);
+			వెళ్ళు check_emptiness;
+		వాదనలు++;
+		ఒకవేళ (n == STREZ)
+			unnest_సందేశం_and_return(వాదనలు[0][0] == '\0', "<primary:%lld\n");
+		ఒకవేళ (n == STRNZ)
+			unnest_సందేశం_and_return(వాదనలు[0][0] != '\0', "<primary:%lld\n");
+		ఒకవేళ (n == FILTT)
+			unnest_సందేశం_and_return(isatty(getn(*వాదనలు)), "<primary: isatty(%s)%lld\n", *వాదనలు);
+		unnest_సందేశం_and_return(filstat(*వాదనలు, n), "<primary: filstat(%s):%lld\n", *వాదనలు);
 	}
 
 	/*check_operator(args[1]); - already done */
-	if (last_operator->op_type == BINOP) {
+	ఒకవేళ (చివరి_operator->op_type == BINOP) {
 		/* args[2] is known to be NULL, isn't it bound to fail? */
-		unnest_msg_and_return(binop(), "<primary:%lld\n");
+		unnest_సందేశం_and_return(binop(), "<primary:%lld\n");
 	}
  check_emptiness:
-	unnest_msg_and_return(args[0][0] != '\0', "<primary:%lld\n");
+	unnest_సందేశం_and_return(వాదనలు[0][0] != '\0', "<primary:%lld\n");
 }
 
 
-int test_main(int argc, char **argv)
+పూర్ణాంకం test_main(పూర్ణాంకం argc, అక్షరం **argv)
 {
-	int res;
-	const char *arg0;
-#if BASH_TEST2
+	పూర్ణాంకం res;
+	స్థిరరాశి అక్షరం *arg0;
+#ఒకవేళ BASH_TEST2
 	bool bt2 = 0;
-#endif
+#అయితే_ముగింపు
 
 	arg0 = bb_basename(argv[0]);
-	if ((ENABLE_TEST1 || ENABLE_TEST2 || ENABLE_ASH_TEST || ENABLE_HUSH_TEST)
+	ఒకవేళ ((ENABLE_TEST1 || ENABLE_TEST2 || ENABLE_ASH_TEST || ENABLE_HUSH_TEST)
 	 && (arg0[0] == '[')
 	) {
 		--argc;
-		if (!arg0[1]) { /* "[" ? */
-			if (NOT_LONE_CHAR(argv[argc], ']')) {
-				bb_simple_error_msg("missing ]");
-				return 2;
+		ఒకవేళ (!arg0[1]) { /* "[" ? */
+			ఒకవేళ (NOT_LONE_CHAR(argv[argc], ']')) {
+				bb_simple_error_సందేశం("missing ]");
+				తిరిగి 2;
 			}
-		} else { /* assuming "[[" */
-			if (strcmp(argv[argc], "]]") != 0) {
-				bb_simple_error_msg("missing ]]");
-				return 2;
+		} లేకపోతే { /* assuming "[[" */
+			ఒకవేళ (strcmp(argv[argc], "]]") != 0) {
+				bb_simple_error_సందేశం("missing ]]");
+				తిరిగి 2;
 			}
-#if BASH_TEST2
+#ఒకవేళ BASH_TEST2
 			bt2 = 1;
-#endif
+#అయితే_ముగింపు
 		}
-		argv[argc] = NULL;
+		argv[argc] = ఖాళీ;
 	}
 	/* argc is unused after this point */
 
 	/* We must do DEINIT_S() prior to returning */
 	INIT_S();
 
-#if BASH_TEST2
+#ఒకవేళ BASH_TEST2
 	bash_test2 = bt2;
-#endif
+#అయితే_ముగింపు
 
 	res = setjmp(leaving);
-	if (res)
-		goto ret;
+	ఒకవేళ (res)
+		వెళ్ళు ret;
 
 	/* resetting ngroups is probably unnecessary.  it will
 	 * force a new call to getgroups(), which prevents using
@@ -944,27 +944,27 @@ int test_main(int argc, char **argv)
 	/*ngroups = 0; - done by INIT_S() */
 
 	argv++;
-	args = argv;
+	వాదనలు = argv;
 
 	/* Implement special cases from POSIX.2, section 4.62.4.
 	 * Testcase: "test '(' = '('"
 	 * The general parser would misinterpret '(' as group start.
 	 */
-	if (1) {
-		int negate = 0;
+	ఒకవేళ (1) {
+		పూర్ణాంకం negate = 0;
  again:
-		if (!argv[0]) {
+		ఒకవేళ (!argv[0]) {
 			/* "test" */
 			res = 1;
-			goto ret_special;
+			వెళ్ళు ret_special;
 		}
-		if (!argv[1]) {
+		ఒకవేళ (!argv[1]) {
 			/* "test [!] arg" */
 			res = (argv[0][0] == '\0');
-			goto ret_special;
+			వెళ్ళు ret_special;
 		}
-		if (argv[2]) {
-			if (!argv[3]) {
+		ఒకవేళ (argv[2]) {
+			ఒకవేళ (!argv[3]) {
 				/*
 				 * http://pubs.opengroup.org/onlinepubs/009695399/utilities/test.html
 				 * """ 3 arguments:
@@ -972,22 +972,22 @@ int test_main(int argc, char **argv)
 				 * """
 				 */
 				check_operator(argv[1]);
-				if (last_operator->op_type == BINOP) {
+				ఒకవేళ (చివరి_operator->op_type == BINOP) {
 					/* "test [!] arg1 <binary_op> arg2" */
-					args = argv;
+					వాదనలు = argv;
 					res = (binop() == 0);
  ret_special:
 					/* If there was leading "!" op... */
 					res ^= negate;
-					goto ret;
+					వెళ్ళు ret;
 				}
 				/* """If $1 is '(' and $3 is ')', perform the unary test of $2."""
 				 * Looks like this works without additional coding.
 				 */
-				goto check_negate;
+				వెళ్ళు check_negate;
 			}
 			/* argv[3] exists (at least 4 args), is it exactly 4 args? */
-			if (!argv[4]) {
+			ఒకవేళ (!argv[4]) {
 				/*
 				 * """ 4 arguments:
 				 * If $1 is '!', negate the three-argument test of $2, $3, and $4.
@@ -995,34 +995,34 @@ int test_main(int argc, char **argv)
 				 * """
 				 * Example why code below is necessary: test '(' ! -e ')'
 				 */
-				if (LONE_CHAR(argv[0], '(')
+				ఒకవేళ (LONE_CHAR(argv[0], '(')
 				 && LONE_CHAR(argv[3], ')')
 				) {
 					/* "test [!] ( x y )" */
-					argv[3] = NULL;
+					argv[3] = ఖాళీ;
 					argv++;
 				}
 			}
 		}
  check_negate:
-		if (LONE_CHAR(argv[0], '!')) {
+		ఒకవేళ (LONE_CHAR(argv[0], '!')) {
 			argv++;
 			negate ^= 1;
-			goto again;
+			వెళ్ళు again;
 		}
 	}
 
-	res = !oexpr(check_operator(*args));
+	res = !oexpr(check_operator(*వాదనలు));
 
-	if (*args != NULL && *++args != NULL) {
+	ఒకవేళ (*వాదనలు != ఖాళీ && *++వాదనలు != ఖాళీ) {
 		/* Examples:
 		 * test 3 -lt 5 6
 		 * test -t 1 2
 		 */
-		bb_error_msg("%s: unknown operand", *args);
+		bb_error_సందేశం("%s: unknown operand", *వాదనలు);
 		res = 2;
 	}
  ret:
 	DEINIT_S();
-	return res;
+	తిరిగి res;
 }

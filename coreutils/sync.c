@@ -39,71 +39,71 @@
 //usage:     "\n	-f	Sync filesystems underlying FILEs"
 //usage:    )
 
-#include "libbb.h"
+#అన్తర్భావ "libbb.h"
 
 /* This is a NOFORK applet. Be very careful! */
 
-#if ENABLE_FEATURE_SYNC_FANCY || ENABLE_FSYNC
-static int sync_common(int opts, char **argv)
+#ఒకవేళ ENABLE_FEATURE_SYNC_FANCY || ENABLE_FSYNC
+స్థిర పూర్ణాంకం sync_common(పూర్ణాంకం opts, అక్షరం **argv)
 {
-	int ret;
-	enum {
+	పూర్ణాంకం ret;
+	గణన {
 		OPT_DATASYNC = (1 << 0),
 		OPT_SYNCFS   = (1 << 1),
 	};
 
 	ret = EXIT_SUCCESS;
-	do {
+	చేయి {
 		/* GNU "sync FILE" uses O_NONBLOCK open */
-		int fd = open_or_warn(*argv, /*O_NOATIME |*/ O_NOCTTY | O_RDONLY | O_NONBLOCK);
+		పూర్ణాంకం fd = open_or_warn(*argv, /*O_NOATIME |*/ O_NOCTTY | O_RDONLY | O_NONBLOCK);
 		/* open(NOATIME) can only be used by owner or root, don't use NOATIME here */
 
-		if (fd < 0) {
+		ఒకవేళ (fd < 0) {
 			ret = EXIT_FAILURE;
-			goto next;
+			వెళ్ళు తదుపరి;
 		}
-# if ENABLE_FEATURE_SYNC_FANCY
-		if (opts & OPT_SYNCFS) {
+# ఒకవేళ ENABLE_FEATURE_SYNC_FANCY
+		ఒకవేళ (opts & OPT_SYNCFS) {
 			/*
 			 * syncfs is documented to only fail with EBADF,
 			 * which can't happen here. So, no error checks.
 			 */
 			syncfs(fd);
-		} else
+		} లేకపోతే
 # endif
-		if (((opts & OPT_DATASYNC) ? fdatasync(fd) : fsync(fd)) != 0) {
-			bb_simple_perror_msg(*argv);
+		ఒకవేళ (((opts & OPT_DATASYNC) ? fdatasync(fd) : fsync(fd)) != 0) {
+			bb_simple_perror_సందేశం(*argv);
 			ret = EXIT_FAILURE;
 		}
 		close(fd);
- next:
+ తదుపరి:
 		argv++;
-	} while (*argv);
+	} అయితే (*argv);
 
-	return ret;
+	తిరిగి ret;
 }
-#endif
+#అయితే_ముగింపు
 
-#if ENABLE_SYNC
-int sync_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int sync_main(int argc UNUSED_PARAM, char **argv IF_NOT_DESKTOP(UNUSED_PARAM))
+#ఒకవేళ ENABLE_SYNC
+పూర్ణాంకం sync_main(పూర్ణాంకం argc, అక్షరం **argv) MAIN_EXTERNALLY_VISIBLE;
+పూర్ణాంకం sync_main(పూర్ణాంకం argc వాడని_PARAM, అక్షరం **argv IF_NOT_DESKTOP(వాడని_PARAM))
 {
-# if !ENABLE_FEATURE_SYNC_FANCY
+# ఒకవేళ !ENABLE_FEATURE_SYNC_FANCY
 	/* coreutils-6.9 compat */
-	bb_warn_ignoring_args(argv[1]);
+	bb_warn_ignoring_వాదనలు(argv[1]);
 	sync();
-	return EXIT_SUCCESS;
-# else
-	unsigned opts = getopt32(argv, "^" "df" "\0" "d--f:f--d");
+	తిరిగి EXIT_SUCCESS;
+# లేకపోతే
+	గుర్తులేని opts = getopt32(argv, "^" "df" "\0" "d--f:f--d");
 	argv += optind;
-	if (!argv[0]) {
+	ఒకవేళ (!argv[0]) {
 		sync();
-		return EXIT_SUCCESS;
+		తిరిగి EXIT_SUCCESS;
 	}
-	return sync_common(opts, argv);
+	తిరిగి sync_common(opts, argv);
 # endif
 }
-#endif
+#అయితే_ముగింపు
 
 /*
  * Mini fsync implementation for busybox
@@ -129,12 +129,12 @@ int sync_main(int argc UNUSED_PARAM, char **argv IF_NOT_DESKTOP(UNUSED_PARAM))
 //usage:       "Write all buffered blocks in FILEs to disk\n"
 //usage:     "\n	-d	Avoid syncing metadata"
 
-#if ENABLE_FSYNC
-int fsync_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int fsync_main(int argc UNUSED_PARAM, char **argv)
+#ఒకవేళ ENABLE_FSYNC
+పూర్ణాంకం fsync_main(పూర్ణాంకం argc, అక్షరం **argv) MAIN_EXTERNALLY_VISIBLE;
+పూర్ణాంకం fsync_main(పూర్ణాంకం argc వాడని_PARAM, అక్షరం **argv)
 {
-	int opts = getopt32(argv, "^" "d" "\0" "-1"/*min 1 arg*/);
+	పూర్ణాంకం opts = getopt32(argv, "^" "d" "\0" "-1"/*min 1 arg*/);
 	argv += optind;
-	return sync_common(opts, argv);
+	తిరిగి sync_common(opts, argv);
 }
-#endif
+#అయితే_ముగింపు

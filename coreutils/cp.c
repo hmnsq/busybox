@@ -105,30 +105,30 @@
 //usage:     "\n	-t DIR	Copy all SOURCEs into DIR"
 //usage:     "\n	-u	Copy only newer files"
 
-#include "libbb.h"
-#include "libcoreutils/coreutils.h"
+#అన్తర్భావ "libbb.h"
+#అన్తర్భావ "libcoreutils/coreutils.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-int cp_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int cp_main(int argc, char **argv)
+పూర్ణాంకం cp_main(పూర్ణాంకం argc, అక్షరం **argv) MAIN_EXTERNALLY_VISIBLE;
+పూర్ణాంకం cp_main(పూర్ణాంకం argc, అక్షరం **argv)
 {
-	struct stat source_stat;
-	struct stat dest_stat;
-	const char *last;
-	const char *dest;
-	int s_flags;
-	int d_flags;
-	int flags;
-	int status;
-#if ENABLE_FEATURE_CP_LONG_OPTIONS
-	enum {
+	నిర్మాణం stat ఆధారం_stat;
+	నిర్మాణం stat dest_stat;
+	స్థిరరాశి అక్షరం *చివరి;
+	స్థిరరాశి అక్షరం *dest;
+	పూర్ణాంకం s_flags;
+	పూర్ణాంకం d_flags;
+	పూర్ణాంకం flags;
+	పూర్ణాంకం స్థితి_2;
+#ఒకవేళ ENABLE_FEATURE_CP_LONG_OPTIONS
+	గణన {
 		/*OPT_rmdest  = FILEUTILS_RMDEST = 1 << FILEUTILS_CP_OPTBITS */
 		OPT_parents = 1 << (FILEUTILS_CP_OPTBITS+1),
 		OPT_reflink = 1 << (FILEUTILS_CP_OPTBITS+2),
 	};
-# if ENABLE_FEATURE_CP_REFLINK
-	char *reflink = NULL;
+# ఒకవేళ ENABLE_FEATURE_CP_REFLINK
+	అక్షరం *reflink = ఖాళీ;
 # endif
 	flags = getopt32long(argv, "^"
 		FILEUTILS_CP_OPTSTR
@@ -141,48 +141,48 @@ int cp_main(int argc, char **argv)
 		// -a = -pdR
 		// -i overrides -n and vice versa (last wins)
 		"-1:l--s:s--l:Pd:rRd:Rd:apdR:i-n:n-i",
-		"archive\0"        No_argument "a"
-		"force\0"          No_argument "f"
-		"interactive\0"    No_argument "i"
-		"no-clobber\0"     No_argument "n"
-		"link\0"           No_argument "l"
-		"dereference\0"    No_argument "L"
-		"no-dereference\0" No_argument "P"
-		"recursive\0"      No_argument "R"
-		"symbolic-link\0"  No_argument "s"
-		"no-target-directory\0" No_argument "T"
-		"target-directory\0" Required_argument "t"
-		"verbose\0"        No_argument "v"
-		"update\0"         No_argument "u"
-		"remove-destination\0" No_argument "\xff"
-		"parents\0"        No_argument "\xfe"
-# if ENABLE_FEATURE_CP_REFLINK
-		"reflink\0"        Optional_argument "\xfd"
+		"archive\0"        No_వాదం "a"
+		"force\0"          No_వాదం "f"
+		"interactive\0"    No_వాదం "i"
+		"no-clobber\0"     No_వాదం "n"
+		"link\0"           No_వాదం "l"
+		"dereference\0"    No_వాదం "L"
+		"no-dereference\0" No_వాదం "P"
+		"recursive\0"      No_వాదం "R"
+		"symbolic-link\0"  No_వాదం "s"
+		"no-target-directory\0" No_వాదం "T"
+		"target-directory\0" Required_వాదం "t"
+		"verbose\0"        No_వాదం "v"
+		"update\0"         No_వాదం "u"
+		"remove-destination\0" No_వాదం "\xff"
+		"parents\0"        No_వాదం "\xfe"
+# ఒకవేళ ENABLE_FEATURE_CP_REFLINK
+		"reflink\0"        Optional_వాదం "\xfd"
 # endif
-		, &last
-# if ENABLE_FEATURE_CP_REFLINK
+		, &చివరి
+# ఒకవేళ ENABLE_FEATURE_CP_REFLINK
 		, &reflink
 # endif
 	);
-# if ENABLE_FEATURE_CP_REFLINK
-	BUILD_BUG_ON((int)OPT_reflink != (int)FILEUTILS_REFLINK);
-	if (flags & FILEUTILS_REFLINK) {
-		if (!reflink)
+# ఒకవేళ ENABLE_FEATURE_CP_REFLINK
+	BUILD_BUG_ON((పూర్ణాంకం)OPT_reflink != (పూర్ణాంకం)FILEUTILS_REFLINK);
+	ఒకవేళ (flags & FILEUTILS_REFLINK) {
+		ఒకవేళ (!reflink)
 			flags |= FILEUTILS_REFLINK_ALWAYS;
-		else if (strcmp(reflink, "always") == 0)
+		లేకపోతే ఒకవేళ (strcmp(reflink, "always") == 0)
 			flags |= FILEUTILS_REFLINK_ALWAYS;
-		else if (strcmp(reflink, "auto") != 0)
+		లేకపోతే ఒకవేళ (strcmp(reflink, "auto") != 0)
 			bb_show_usage();
 	}
 # endif
-#else
+#లేకపోతే
 	flags = getopt32(argv, "^"
 		FILEUTILS_CP_OPTSTR
 		"\0"
 		"-1:l--s:s--l:Pd:rRd:Rd:apdR"
-		, &last
+		, &చివరి
 	);
-#endif
+#అయితే_ముగింపు
 	argc -= optind;
 	argv += optind;
 	/* Reverse this bit. If there is -d, bit is not set: */
@@ -191,95 +191,95 @@ int cp_main(int argc, char **argv)
 	 * by default, "cp" derefs symlinks (creates regular dest files),
 	 * but "cp -R" does not. We switch off deref if -r or -R (see above).
 	 * However, "cp -RL" must still deref symlinks: */
-	if (flags & FILEUTILS_DEREF_SOFTLINK) /* -L */
+	ఒకవేళ (flags & FILEUTILS_DEREF_SOFTLINK) /* -L */
 		flags |= FILEUTILS_DEREFERENCE;
 
-#if ENABLE_SELINUX
-	if (flags & FILEUTILS_PRESERVE_SECURITY_CONTEXT) {
+#ఒకవేళ ENABLE_SELINUX
+	ఒకవేళ (flags & FILEUTILS_PRESERVE_SECURITY_CONTEXT) {
 		selinux_or_die();
 	}
-#endif
+#అయితే_ముగింపు
 
-	status = EXIT_SUCCESS;
-	if (!(flags & FILEUTILS_TARGET_DIR)) {
-		last = argv[argc - 1];
-		if (argc < 2)
+	స్థితి_2 = EXIT_SUCCESS;
+	ఒకవేళ (!(flags & FILEUTILS_లక్ష్యం_DIR)) {
+		చివరి = argv[argc - 1];
+		ఒకవేళ (argc < 2)
 			bb_show_usage();
-		if (argc != 2) {
-			if (flags & FILEUTILS_NO_TARGET_DIR)
+		ఒకవేళ (argc != 2) {
+			ఒకవేళ (flags & FILEUTILS_NO_లక్ష్యం_DIR)
 				bb_show_usage();
 			/* "cp A B C... DIR" - target must be dir */
-		} else /* argc == 2 */ {
+		} లేకపోతే /* argc == 2 */ {
 			/* "cp A B" - only case where target can be not a dir */
-			s_flags = cp_mv_stat2(*argv, &source_stat,
+			s_flags = cp_mv_stat2(*argv, &ఆధారం_stat,
 					(flags & FILEUTILS_DEREFERENCE) ? stat : lstat);
-			if (s_flags < 0) /* error other than ENOENT */
-				return EXIT_FAILURE;
-			d_flags = cp_mv_stat(last, &dest_stat);
-			if (d_flags < 0) /* error other than ENOENT */
-				return EXIT_FAILURE;
+			ఒకవేళ (s_flags < 0) /* error other than ENOENT */
+				తిరిగి EXIT_FAILURE;
+			d_flags = cp_mv_stat(చివరి, &dest_stat);
+			ఒకవేళ (d_flags < 0) /* error other than ENOENT */
+				తిరిగి EXIT_FAILURE;
 
-			if (flags & FILEUTILS_NO_TARGET_DIR) { /* -T */
-				if (!(s_flags & 2) && (d_flags & 2))
+			ఒకవేళ (flags & FILEUTILS_NO_లక్ష్యం_DIR) { /* -T */
+				ఒకవేళ (!(s_flags & 2) && (d_flags & 2))
 					/* cp -T NOTDIR DIR */
-					bb_error_msg_and_die("'%s' is a directory", last);
+					bb_error_సందేశం_and_die("'%s' is a directory", చివరి);
 			}
 
-#if ENABLE_FEATURE_CP_LONG_OPTIONS
+#ఒకవేళ ENABLE_FEATURE_CP_LONG_OPTIONS
 			//bb_error_msg("flags:%x FILEUTILS_RMDEST:%x OPT_parents:%x",
 			//	flags, FILEUTILS_RMDEST, OPT_parents);
-			if (flags & OPT_parents) {
-				if (!(d_flags & 2)) {
-					bb_simple_error_msg_and_die("with --parents, the destination must be a directory");
+			ఒకవేళ (flags & OPT_parents) {
+				ఒకవేళ (!(d_flags & 2)) {
+					bb_simple_error_సందేశం_and_die("with --parents, the destination must be a directory");
 				}
 			}
-			if (flags & FILEUTILS_RMDEST) {
+			ఒకవేళ (flags & FILEUTILS_RMDEST) {
 				flags |= FILEUTILS_FORCE;
 			}
-#endif
+#అయితే_ముగింపు
 
 			/* ...if neither is a directory...  */
-			if (!((s_flags | d_flags) & 2)
+			ఒకవేళ (!((s_flags | d_flags) & 2)
 			    /* ...or: recursing, the 1st is a directory, and the 2nd doesn't exist... */
 			 || ((flags & FILEUTILS_RECUR) && (s_flags & 2) && !d_flags)
-			 || (flags & FILEUTILS_NO_TARGET_DIR)
+			 || (flags & FILEUTILS_NO_లక్ష్యం_DIR)
 			) {
 				/* Do a simple copy */
-				dest = last;
-				goto DO_COPY; /* NB: argc==2 -> *++argv==last */
+				dest = చివరి;
+				వెళ్ళు DO_COPY; /* NB: argc==2 -> *++argv==last */
 			}
 		}
 	}
 	/* else: last is DIR from "-t DIR" */
 
-	while (1) {
-#if ENABLE_FEATURE_CP_LONG_OPTIONS
-		if (flags & OPT_parents) {
-			char *dest_dup;
-			char *dest_dir;
-			dest = concat_path_file(last, *argv);
+	అయితే (1) {
+#ఒకవేళ ENABLE_FEATURE_CP_LONG_OPTIONS
+		ఒకవేళ (flags & OPT_parents) {
+			అక్షరం *dest_dup;
+			అక్షరం *dest_dir;
+			dest = concat_మార్గం_file(చివరి, *argv);
 			dest_dup = xstrdup(dest);
 			dest_dir = dirname(dest_dup);
-			if (bb_make_directory(dest_dir, -1, FILEUTILS_RECUR)) {
-				return EXIT_FAILURE;
+			ఒకవేళ (bb_make_directory(dest_dir, -1, FILEUTILS_RECUR)) {
+				తిరిగి EXIT_FAILURE;
 			}
-			free(dest_dup);
-			goto DO_COPY;
+			విడుదల(dest_dup);
+			వెళ్ళు DO_COPY;
 		}
-#endif
-		dest = concat_path_file(last, bb_get_last_path_component_strip(*argv));
+#అయితే_ముగింపు
+		dest = concat_మార్గం_file(చివరి, bb_get_చివరి_మార్గం_component_strip(*argv));
  DO_COPY:
-		if (copy_file(*argv, dest, flags) < 0) {
-			status = EXIT_FAILURE;
+		ఒకవేళ (copy_file(*argv, dest, flags) < 0) {
+			స్థితి_2 = EXIT_FAILURE;
 		}
-		if (!*++argv || *argv == last) {
+		ఒకవేళ (!*++argv || *argv == చివరి) {
 			/* possibly leaking dest... */
-			break;
+			ఆపు;
 		}
 		/* don't move up: dest may be == last and not malloced! */
-		free((void*)dest);
+		విడుదల((శూన్య*)dest);
 	}
 
 	/* Exit. We are NOEXEC, not NOFORK. We do exit at the end of main() */
-	return status;
+	తిరిగి స్థితి_2;
 }

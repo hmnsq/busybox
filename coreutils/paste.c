@@ -30,110 +30,110 @@
 //usage:       "# combine pairs of lines from a file into single lines\n"
 //usage:       "$ paste -s -d '\\t\\n' file\n"
 
-#include "libbb.h"
+#అన్తర్భావ "libbb.h"
 
-static void paste_files(FILE** files, int file_cnt, char* delims, int del_cnt)
+స్థిర శూన్య paste_files(FILE** files, పూర్ణాంకం file_cnt, అక్షరం* delims, పూర్ణాంకం del_cnt)
 {
-	char *line;
-	char delim;
-	int active_files = file_cnt;
-	int i;
+	అక్షరం *పంక్తి;
+	అక్షరం delim;
+	పూర్ణాంకం చురుకైన_files = file_cnt;
+	పూర్ణాంకం i;
 
-	while (active_files > 0) {
-		int del_idx = 0;
+	అయితే (చురుకైన_files > 0) {
+		పూర్ణాంకం del_idx = 0;
 
-		for (i = 0; i < file_cnt; ++i) {
-			if (files[i] == NULL)
-				continue;
+		కొరకు (i = 0; i < file_cnt; ++i) {
+			ఒకవేళ (files[i] == ఖాళీ)
+				కొనసాగు;
 
-			line = xmalloc_fgetline(files[i]);
-			if (!line) {
+			పంక్తి = xmalloc_fgetline(files[i]);
+			ఒకవేళ (!పంక్తి) {
 				fclose_if_not_stdin(files[i]);
-				files[i] = NULL;
-				--active_files;
-				continue;
+				files[i] = ఖాళీ;
+				--చురుకైన_files;
+				కొనసాగు;
 			}
-			fputs_stdout(line);
-			free(line);
+			fputs_stdout(పంక్తి);
+			విడుదల(పంక్తి);
 			delim = '\n';
-			if (i != file_cnt - 1) {
+			ఒకవేళ (i != file_cnt - 1) {
 				delim = delims[del_idx++];
-				if (del_idx == del_cnt)
+				ఒకవేళ (del_idx == del_cnt)
 					del_idx = 0;
 			}
-			if (delim != '\0')
+			ఒకవేళ (delim != '\0')
 				fputc(delim, stdout);
 		}
 	}
 }
 
-static void paste_files_separate(FILE** files, char* delims, int del_cnt)
+స్థిర శూన్య paste_files_separate(FILE** files, అక్షరం* delims, పూర్ణాంకం del_cnt)
 {
-	char *line, *next_line;
-	char delim;
-	int i;
+	అక్షరం *పంక్తి, *తదుపరి_పంక్తి;
+	అక్షరం delim;
+	పూర్ణాంకం i;
 
-	for (i = 0; files[i]; ++i) {
-		int del_idx = 0;
+	కొరకు (i = 0; files[i]; ++i) {
+		పూర్ణాంకం del_idx = 0;
 
-		line = NULL;
-		while ((next_line = xmalloc_fgetline(files[i])) != NULL) {
-			if (line) {
-				fputs_stdout(line);
-				free(line);
+		పంక్తి = ఖాళీ;
+		అయితే ((తదుపరి_పంక్తి = xmalloc_fgetline(files[i])) != ఖాళీ) {
+			ఒకవేళ (పంక్తి) {
+				fputs_stdout(పంక్తి);
+				విడుదల(పంక్తి);
 				delim = delims[del_idx++];
-				if (del_idx == del_cnt)
+				ఒకవేళ (del_idx == del_cnt)
 					del_idx = 0;
-				if (delim != '\0')
+				ఒకవేళ (delim != '\0')
 					fputc(delim, stdout);
 			}
-			line = next_line;
+			పంక్తి = తదుపరి_పంక్తి;
 		}
-		if (line) {
+		ఒకవేళ (పంక్తి) {
 			/* coreutils adds \n even if this is a final line
 			 * of the last file and it was not \n-terminated.
 			 */
-			printf("%s\n", line);
-			free(line);
+			రాయి("%s\n", పంక్తి);
+			విడుదల(పంక్తి);
 		}
 		fclose_if_not_stdin(files[i]);
 	}
 }
 
-#define PASTE_OPT_DELIMITERS (1 << 0)
-#define PASTE_OPT_SEPARATE   (1 << 1)
+#నిర్వచించు PASTE_OPT_DELIMITERS (1 << 0)
+#నిర్వచించు PASTE_OPT_SEPARATE   (1 << 1)
 
-int paste_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int paste_main(int argc UNUSED_PARAM, char **argv)
+పూర్ణాంకం paste_main(పూర్ణాంకం argc, అక్షరం **argv) MAIN_EXTERNALLY_VISIBLE;
+పూర్ణాంకం paste_main(పూర్ణాంకం argc వాడని_PARAM, అక్షరం **argv)
 {
-	char *delims = (char*)"\t";
-	int del_cnt = 1;
-	unsigned opt;
-	int i;
+	అక్షరం *delims = (అక్షరం*)"\t";
+	పూర్ణాంకం del_cnt = 1;
+	గుర్తులేని opt;
+	పూర్ణాంకం i;
 
 	opt = getopt32(argv, "d:s", &delims);
 	argv += optind;
 
-	if (opt & PASTE_OPT_DELIMITERS) {
-		if (!delims[0])
-			bb_simple_error_msg_and_die("-d '' is not supported");
+	ఒకవేళ (opt & PASTE_OPT_DELIMITERS) {
+		ఒకవేళ (!delims[0])
+			bb_simple_error_సందేశం_and_die("-d '' is not supported");
 		/* unknown mappings are not changed: "\z" -> '\\' 'z' */
 		/* trailing backslash, if any, is preserved */
 		del_cnt = strcpy_and_process_escape_sequences(delims, delims) - delims;
 		/* note: handle NUL properly (do not stop at it!): try -d'\t\0\t' */
 	}
 
-	if (!argv[0])
-		(--argv)[0] = (char*) "-";
-	for (i = 0; argv[i]; ++i) {
-		argv[i] = (void*) fopen_or_warn_stdin(argv[i]);
-		if (!argv[i])
+	ఒకవేళ (!argv[0])
+		(--argv)[0] = (అక్షరం*) "-";
+	కొరకు (i = 0; argv[i]; ++i) {
+		argv[i] = (శూన్య*) fopen_or_warn_stdin(argv[i]);
+		ఒకవేళ (!argv[i])
 			xfunc_die();
 	}
 
-	if (opt & PASTE_OPT_SEPARATE)
+	ఒకవేళ (opt & PASTE_OPT_SEPARATE)
 		paste_files_separate((FILE**)argv, delims, del_cnt);
-	else
+	లేకపోతే
 		paste_files((FILE**)argv, i, delims, del_cnt);
 
 	fflush_stdout_and_exit(0);

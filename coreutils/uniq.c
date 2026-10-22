@@ -38,19 +38,19 @@
 //usage:       "b\n"
 //usage:       "c\n"
 
-#include "libbb.h"
+#అన్తర్భావ "libbb.h"
 
-int uniq_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int uniq_main(int argc UNUSED_PARAM, char **argv)
+పూర్ణాంకం uniq_main(పూర్ణాంకం argc, అక్షరం **argv) MAIN_EXTERNALLY_VISIBLE;
+పూర్ణాంకం uniq_main(పూర్ణాంకం argc వాడని_PARAM, అక్షరం **argv)
 {
-	const char *input_filename;
-	unsigned skip_fields, skip_chars, max_chars;
-	unsigned opt;
-	char eol;
-	char *cur_line;
-	const char *cur_compare;
+	స్థిరరాశి అక్షరం *ఆదానం_filename;
+	గుర్తులేని skip_fields, skip_chars, max_chars;
+	గుర్తులేని opt;
+	అక్షరం eol;
+	అక్షరం *cur_పంక్తి;
+	స్థిరరాశి అక్షరం *cur_compare;
 
-	enum {
+	గణన {
 		OPT_c = 1 << 0,
 		OPT_d = 1 << 1, /* print only dups */
 		OPT_u = 1 << 2, /* print only uniq */
@@ -62,24 +62,24 @@ int uniq_main(int argc UNUSED_PARAM, char **argv)
 	};
 
 	skip_fields = skip_chars = 0;
-	max_chars = INT_MAX;
+	max_chars = గరిష్ఠ_పూర్ణాంకం;
 
 	opt = getopt32(argv, "cduf:+s:+w:+iz", &skip_fields, &skip_chars, &max_chars);
 	argv += optind;
 
-	input_filename = argv[0];
-	if (input_filename) {
-		const char *output;
+	ఆదానం_filename = argv[0];
+	ఒకవేళ (ఆదానం_filename) {
+		స్థిరరాశి అక్షరం *output;
 
-		if (input_filename[0] != '-' || input_filename[1]) {
+		ఒకవేళ (ఆదానం_filename[0] != '-' || ఆదానం_filename[1]) {
 			close(STDIN_FILENO); /* == 0 */
-			xopen(input_filename, O_RDONLY); /* fd will be 0 */
+			xopen(ఆదానం_filename, O_RDONLY); /* fd will be 0 */
 		}
 		output = argv[1];
-		if (output) {
-			if (argv[2])
+		ఒకవేళ (output) {
+			ఒకవేళ (argv[2])
 				bb_show_usage();
-			if (output[0] != '-' || output[1]) {
+			ఒకవేళ (output[0] != '-' || output[1]) {
 				// Won't work with "uniq - FILE" and closed stdin:
 				//close(STDOUT_FILENO);
 				//xopen(output, O_WRONLY | O_CREAT | O_TRUNC);
@@ -88,56 +88,56 @@ int uniq_main(int argc UNUSED_PARAM, char **argv)
 		}
 	}
 
-	cur_compare = cur_line = NULL; /* prime the pump */
+	cur_compare = cur_పంక్తి = ఖాళీ; /* prime the pump */
 	eol = (opt & OPT_z) ? 0 : '\n';
 
-	do {
-		unsigned i;
-		unsigned long dups;
-		char *old_line;
-		const char *old_compare;
+	చేయి {
+		గుర్తులేని i;
+		గుర్తులేని దీర్ఘ dups;
+		అక్షరం *old_పంక్తి;
+		స్థిరరాశి అక్షరం *old_compare;
 
-		old_line = cur_line;
+		old_పంక్తి = cur_పంక్తి;
 		old_compare = cur_compare;
 		dups = 0;
 
 		/* gnu uniq ignores newlines */
-		while ((cur_line = xmalloc_fgetline(stdin)) != NULL) {
-			cur_compare = cur_line;
-			for (i = skip_fields; i; i--) {
+		అయితే ((cur_పంక్తి = xmalloc_fgetline(stdin)) != ఖాళీ) {
+			cur_compare = cur_పంక్తి;
+			కొరకు (i = skip_fields; i; i--) {
 				cur_compare = skip_whitespace(cur_compare);
 				cur_compare = skip_non_whitespace(cur_compare);
 			}
-			for (i = skip_chars; *cur_compare && i; i--) {
+			కొరకు (i = skip_chars; *cur_compare && i; i--) {
 				++cur_compare;
 			}
 
-			if (!old_line)
-				break;
-			if ((opt & OPT_i)
+			ఒకవేళ (!old_పంక్తి)
+				ఆపు;
+			ఒకవేళ ((opt & OPT_i)
 				? strncasecmp(old_compare, cur_compare, max_chars)
-				: strncmp(old_compare, cur_compare, max_chars)
+				: అక్షరశ్రేణి_పోలిక(old_compare, cur_compare, max_chars)
 			) {
-				break;
+				ఆపు;
 			}
 
-			free(cur_line);
+			విడుదల(cur_పంక్తి);
 			++dups;  /* testing for overflow seems excessive */
 		}
 
-		if (old_line) {
-			if (!(opt & (OPT_d << !!dups))) { /* (if dups, opt & OPT_u) */
-				if (opt & OPT_c) {
+		ఒకవేళ (old_పంక్తి) {
+			ఒకవేళ (!(opt & (OPT_d << !!dups))) { /* (if dups, opt & OPT_u) */
+				ఒకవేళ (opt & OPT_c) {
 					/* %7lu matches GNU coreutils 6.9 */
-					printf("%7lu ", dups + 1);
+					రాయి("%7lu ", dups + 1);
 				}
-				printf("%s%c", old_line, eol);
+				రాయి("%s%c", old_పంక్తి, eol);
 			}
-			free(old_line);
+			విడుదల(old_పంక్తి);
 		}
-	} while (cur_line);
+	} అయితే (cur_పంక్తి);
 
-	die_if_ferror(stdin, input_filename);
+	die_if_ferror(stdin, ఆదానం_filename);
 
 	fflush_stdout_and_exit_SUCCESS();
 }

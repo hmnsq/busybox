@@ -124,15 +124,15 @@
 //usage:       "$ date\n"
 //usage:       "Wed Apr 12 18:52:41 MDT 2000\n"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
-#if ENABLE_FEATURE_DATE_NANO
+#అన్తర్భావ "libbb.h"
+#అన్తర్భావ "common_bufsiz.h"
+#ఒకవేళ ENABLE_FEATURE_DATE_NANO
 # include <sys/syscall.h>
-#endif
+#అయితే_ముగింపు
 
-enum {
+గణన {
 	OPT_RFC2822   = (1 << 0), /* R */
-	OPT_SET       = (1 << 1), /* s */
+	OPT_సమితి       = (1 << 1), /* s */
 	OPT_UTC       = (1 << 2), /* u */
 	OPT_DATE      = (1 << 3), /* d */
 	OPT_REFERENCE = (1 << 4), /* r */
@@ -140,17 +140,17 @@ enum {
 	OPT_STR2DT    = (1 << 6) * ENABLE_FEATURE_DATE_ISOFMT, /* D */
 };
 
-#if ENABLE_LONG_OPTS
-static const char date_longopts[] ALIGN1 =
-		"rfc-822\0"   No_argument       "R"
-		"rfc-2822\0"  No_argument       "R"
-		"set\0"       Required_argument "s"
-		"utc\0"       No_argument       "u"
+#ఒకవేళ ENABLE_LONG_OPTS
+స్థిర స్థిరరాశి అక్షరం date_longopts[] ALIGN1 =
+		"rfc-822\0"   No_వాదం       "R"
+		"rfc-2822\0"  No_వాదం       "R"
+		"set\0"       Required_వాదం "s"
+		"utc\0"       No_వాదం       "u"
 	/*	"universal\0" No_argument       "u" */
-		"date\0"      Required_argument "d"
-		"reference\0" Required_argument "r"
+		"date\0"      Required_వాదం "d"
+		"reference\0" Required_వాదం "r"
 		;
-#endif
+#అయితే_ముగింపు
 
 /* We are a NOEXEC applet.
  * Obstacles to NOFORK:
@@ -159,19 +159,19 @@ static const char date_longopts[] ALIGN1 =
  * - after xasprintf we use other xfuncs
  */
 
-int date_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int date_main(int argc UNUSED_PARAM, char **argv)
+పూర్ణాంకం date_main(పూర్ణాంకం argc, అక్షరం **argv) MAIN_EXTERNALLY_VISIBLE;
+పూర్ణాంకం date_main(పూర్ణాంకం argc వాడని_PARAM, అక్షరం **argv)
 {
-	struct timespec ts;
-	struct tm tm_time;
-	char buf_fmt_dt2str[64];
-	unsigned opt;
-	int isofmt = -1;
-	char *date_str;
-	char *fmt_dt2str;
-	char *fmt_str2dt;
-	char *filename;
-	char *isofmt_arg = NULL;
+	నిర్మాణం timespec ts;
+	నిర్మాణం tm tm_సమయం;
+	అక్షరం buf_fmt_dt2str[64];
+	గుర్తులేని opt;
+	పూర్ణాంకం isofmt = -1;
+	అక్షరం *date_str;
+	అక్షరం *fmt_dt2str;
+	అక్షరం *fmt_str2dt;
+	అక్షరం *filename;
+	అక్షరం *isofmt_arg = ఖాళీ;
 
 	opt = getopt32long(argv, "^"
 			"Rs:ud:r:"
@@ -185,35 +185,35 @@ int date_main(int argc UNUSED_PARAM, char **argv)
 	);
 	argv += optind;
 
-	if (opt & OPT_UTC)
-		putenv((char*)"TZ=UTC0");
+	ఒకవేళ (opt & OPT_UTC)
+		putenv((అక్షరం*)"TZ=UTC0");
 
-	if (ENABLE_FEATURE_DATE_ISOFMT && (opt & OPT_ISO8601)) {
+	ఒకవేళ (ENABLE_FEATURE_DATE_ISOFMT && (opt & OPT_ISO8601)) {
 		isofmt = 0; /* default is date */
-		if (isofmt_arg) {
-			static const char isoformats[] ALIGN1 =
+		ఒకవేళ (isofmt_arg) {
+			స్థిర స్థిరరాశి అక్షరం isoformats[] ALIGN1 =
 				"date\0""hours\0""minutes\0""seconds\0ns\0";
-			isofmt = index_in_substrings(isoformats, isofmt_arg);
-			if (isofmt < 0)
+			isofmt = సూచీ_లోపల_substrings(isoformats, isofmt_arg);
+			ఒకవేళ (isofmt < 0)
 				bb_show_usage();
 		}
 	}
 
-	fmt_dt2str = NULL;
-	if (argv[0] && argv[0][0] == '+') {
+	fmt_dt2str = ఖాళీ;
+	ఒకవేళ (argv[0] && argv[0][0] == '+') {
 		fmt_dt2str = &argv[0][1]; /* skip over the '+' */
 		argv++;
 	}
-	if (!(opt & (OPT_SET | OPT_DATE))) { /* neither -s TIME nor -d TIME? */
-		opt |= OPT_SET;
+	ఒకవేళ (!(opt & (OPT_సమితి | OPT_DATE))) { /* neither -s TIME nor -d TIME? */
+		opt |= OPT_సమితి;
 		date_str = argv[0]; /* can be NULL */
-		if (date_str) {
-#if ENABLE_FEATURE_DATE_COMPAT
-			int len = strspn(date_str, "0123456789");
-			if (date_str[len] == '\0'
+		ఒకవేళ (date_str) {
+#ఒకవేళ ENABLE_FEATURE_DATE_COMPAT
+			పూర్ణాంకం len = strspn(date_str, "0123456789");
+			ఒకవేళ (date_str[len] == '\0'
 			 || (date_str[len] == '.'
-			    && isdigit(date_str[len+1])
-			    && isdigit(date_str[len+2])
+			    && అంకెనా(date_str[len+1])
+			    && అంకెనా(date_str[len+2])
 			    && date_str[len+3] == '\0'
 			    )
 			) {
@@ -222,98 +222,98 @@ int date_main(int argc UNUSED_PARAM, char **argv)
 				 * Some users actually do use it.
 				 */
 				len -= 8;
-				if (len < 0 || len > 4 || (len & 1))
-					bb_error_msg_and_die(bb_msg_invalid_date, date_str);
-				if (len != 0) { /* move YY or CCYY to front */
-					char buf[4];
-					memcpy(buf, date_str + 8, len);
+				ఒకవేళ (len < 0 || len > 4 || (len & 1))
+					bb_error_సందేశం_and_die(bb_సందేశం_invalid_date, date_str);
+				ఒకవేళ (len != 0) { /* move YY or CCYY to front */
+					అక్షరం buf[4];
+					జ్ఞాపకం_నకలు(buf, date_str + 8, len);
 					memmove(date_str + len, date_str, 8);
-					memcpy(date_str, buf, len);
+					జ్ఞాపకం_నకలు(date_str, buf, len);
 				}
 			}
-#endif
+#అయితే_ముగింపు
 			argv++;
 		}
 	}
-	if (*argv)
+	ఒకవేళ (*argv)
 		bb_show_usage();
 
 	/* Now we have parsed all the information except the date format
 	 * which depends on whether the clock is being set or read */
 
-	if (opt & OPT_REFERENCE) {
-		struct stat statbuf;
+	ఒకవేళ (opt & OPT_REFERENCE) {
+		నిర్మాణం stat statbuf;
 		xstat(filename, &statbuf);
 		ts.tv_sec = statbuf.st_mtime;
-#if ENABLE_FEATURE_DATE_NANO
+#ఒకవేళ ENABLE_FEATURE_DATE_NANO
 		ts.tv_nsec = statbuf.st_mtim.tv_nsec;
 		/* Some toolchains use .st_mtimensec instead of st_mtim.tv_nsec.
 		 * If you need #define _SVID_SOURCE 1 to enable st_mtim.tv_nsec,
 		 * drop a mail to project mailing list please
 		 */
-#endif
-	} else {
-#if ENABLE_FEATURE_DATE_NANO
+#అయితే_ముగింపు
+	} లేకపోతే {
+#ఒకవేళ ENABLE_FEATURE_DATE_NANO
 		clock_gettime(CLOCK_REALTIME, &ts);
-#else
-		time(&ts.tv_sec);
-#endif
+#లేకపోతే
+		సమయం(&ts.tv_sec);
+#అయితే_ముగింపు
 	}
-#if !ENABLE_FEATURE_DATE_NANO
+#ఒకవేళ !ENABLE_FEATURE_DATE_NANO
 	ts.tv_nsec = 0;
-#endif
-	localtime_r(&ts.tv_sec, &tm_time);
+#అయితే_ముగింపు
+	localtime_r(&ts.tv_sec, &tm_సమయం);
 
 	/* If date string is given, update tm_time, and maybe set date */
-	if (date_str != NULL) {
-		int check_dst = 1;
+	ఒకవేళ (date_str != ఖాళీ) {
+		పూర్ణాంకం check_dst = 1;
 		/* Zero out fields - take her back to midnight! */
-		tm_time.tm_sec = 0;
-		tm_time.tm_min = 0;
-		tm_time.tm_hour = 0;
+		tm_సమయం.tm_sec = 0;
+		tm_సమయం.tm_min = 0;
+		tm_సమయం.tm_hour = 0;
 
 		/* Process any date input to UNIX time since 1 Jan 1970 */
-		if (ENABLE_FEATURE_DATE_ISOFMT && (opt & OPT_STR2DT)) {
-			if (strptime(date_str, fmt_str2dt, &tm_time) == NULL)
-				bb_error_msg_and_die(bb_msg_invalid_date, date_str);
-		} else {
-			check_dst = parse_datestr(date_str, &tm_time);
+		ఒకవేళ (ENABLE_FEATURE_DATE_ISOFMT && (opt & OPT_STR2DT)) {
+			ఒకవేళ (strptime(date_str, fmt_str2dt, &tm_సమయం) == ఖాళీ)
+				bb_error_సందేశం_and_die(bb_సందేశం_invalid_date, date_str);
+		} లేకపోతే {
+			check_dst = parse_datestr(date_str, &tm_సమయం);
 		}
 
 		/* Correct any day of week and day of year etc. fields */
 		/* Be sure to recheck dst (but not if date is UTC) */
-		if (check_dst)
-			tm_time.tm_isdst = -1;
-		ts.tv_sec = validate_tm_time(date_str, &tm_time);
+		ఒకవేళ (check_dst)
+			tm_సమయం.tm_isdst = -1;
+		ts.tv_sec = validate_tm_సమయం(date_str, &tm_సమయం);
 		ts.tv_nsec = 0;
 
 		/* if setting time, set it */
-		if ((opt & OPT_SET) && clock_settime(CLOCK_REALTIME, &ts) < 0) {
-			bb_simple_perror_msg("can't set date");
+		ఒకవేళ ((opt & OPT_సమితి) && clock_settime(CLOCK_REALTIME, &ts) < 0) {
+			bb_simple_perror_సందేశం("can't set date");
 		}
 	}
 
 	/* Display output */
 
 	/* Deal with format string */
-	if (fmt_dt2str == NULL) {
-		int i;
+	ఒకవేళ (fmt_dt2str == ఖాళీ) {
+		పూర్ణాంకం i;
 		fmt_dt2str = buf_fmt_dt2str;
-		if (ENABLE_FEATURE_DATE_ISOFMT && isofmt >= 0) {
+		ఒకవేళ (ENABLE_FEATURE_DATE_ISOFMT && isofmt >= 0) {
 			/* -I[SPEC]: 0:date 1:hours 2:minutes 3:seconds 4:ns*/
 			strcpy(fmt_dt2str, "%Y-%m-%dT%H:%M:%S");
 			i = 8 + 3 * isofmt;
-			if (isofmt != 0) {
-				int n;
-				if (isofmt == 4) {
+			ఒకవేళ (isofmt != 0) {
+				పూర్ణాంకం n;
+				ఒకవేళ (isofmt == 4) {
 					i -= 3;
-					i += sprintf(&fmt_dt2str[i], ",%09u", (unsigned)ts.tv_nsec);
+					i += sprintf(&fmt_dt2str[i], ",%09u", (గుర్తులేని)ts.tv_nsec);
 				}
 				/* %z prints "+hhmm" timezone, but coreutils-8.30 prints "+hh:mm"! */
 				/* ...therefore this atrocity: */
-				n = strftime(&fmt_dt2str[i], 8, "%z", &tm_time);
+				n = strftime(&fmt_dt2str[i], 8, "%z", &tm_సమయం);
 				i += n;
-				if (n == 5 && (fmt_dt2str[i-5] == '+' || fmt_dt2str[i-5] == '-')) {
+				ఒకవేళ (n == 5 && (fmt_dt2str[i-5] == '+' || fmt_dt2str[i-5] == '-')) {
 					/* "mm" -> ":mm" */
 					fmt_dt2str[i    ] = fmt_dt2str[i - 1];
 					fmt_dt2str[i - 1] = fmt_dt2str[i - 2];
@@ -322,66 +322,66 @@ int date_main(int argc UNUSED_PARAM, char **argv)
 				}
 			}
 			fmt_dt2str[i] = '\0';
-		} else if (opt & OPT_RFC2822) {
+		} లేకపోతే ఒకవేళ (opt & OPT_RFC2822) {
 			/* -R. undo busybox.c setlocale */
-			if (ENABLE_LOCALE_SUPPORT)
-				setlocale(LC_TIME, "C");
-			fmt_dt2str = (char*)"%a, %d %b %Y %H:%M:%S %z";
-		} else { /* default case */
-			fmt_dt2str = (char*)"%a %b %e %H:%M:%S %Z %Y";
+			ఒకవేళ (ENABLE_LOCALE_SUPPORT)
+				setlocale(LC_సమయం, "C");
+			fmt_dt2str = (అక్షరం*)"%a, %d %b %Y %H:%M:%S %z";
+		} లేకపోతే { /* default case */
+			fmt_dt2str = (అక్షరం*)"%a %b %e %H:%M:%S %Z %Y";
 		}
 	}
-#if ENABLE_FEATURE_DATE_NANO
-	else {
+#ఒకవేళ ENABLE_FEATURE_DATE_NANO
+	లేకపోతే {
 		/* User-specified fmt_dt2str */
 		/* Search for and process "%N" */
-		char *p = fmt_dt2str;
-		while ((p = strchr(p, '%')) != NULL) {
-			int n, m;
-			unsigned pres, scale;
+		అక్షరం *p = fmt_dt2str;
+		అయితే ((p = strchr(p, '%')) != ఖాళీ) {
+			పూర్ణాంకం n, m;
+			గుర్తులేని pres, scale;
 
 			p++;
-			if (*p == '%') {
+			ఒకవేళ (*p == '%') {
 				p++;
-				continue;
+				కొనసాగు;
 			}
 			n = strspn(p, "0123456789");
-			if (p[n] != 'N') {
+			ఒకవేళ (p[n] != 'N') {
 				p += n;
-				continue;
+				కొనసాగు;
 			}
 			/* We have "%[nnn]N" */
 			p[-1] = '\0';
 			p[n] = '\0';
 			scale = 1;
 			pres = 9;
-			if (n) {
-				pres = xatoi_positive(p);
-				if (pres == 0)
+			ఒకవేళ (n) {
+				pres = xatoi_ధనాత్మక(p);
+				ఒకవేళ (pres == 0)
 					pres = 9;
 				m = 9 - pres;
-				while (--m >= 0)
+				అయితే (--m >= 0)
 					scale *= 10;
 			}
 
 			m = p - fmt_dt2str;
 			p += n + 1;
-			fmt_dt2str = xasprintf("%s%0*u%s", fmt_dt2str, pres, (unsigned)ts.tv_nsec / scale, p);
+			fmt_dt2str = xasprintf("%s%0*u%s", fmt_dt2str, pres, (గుర్తులేని)ts.tv_nsec / scale, p);
 			p = fmt_dt2str + m;
 		}
 	}
-#endif
+#అయితే_ముగింపు
 
-#define date_buf bb_common_bufsiz1
-	setup_common_bufsiz();
-	if (*fmt_dt2str == '\0') {
+#నిర్వచించు date_buf bb_common_bufsiz1
+	అమరిక_common_bufsiz();
+	ఒకవేళ (*fmt_dt2str == '\0') {
 		/* With no format string, just print a blank line */
 		date_buf[0] = '\0';
-	} else {
+	} లేకపోతే {
 		/* Generate output string */
-		strftime(date_buf, COMMON_BUFSIZE, fmt_dt2str, &tm_time);
+		strftime(date_buf, COMMON_BUFSIZE, fmt_dt2str, &tm_సమయం);
 	}
 	puts(date_buf);
 
-	return EXIT_SUCCESS;
+	తిరిగి EXIT_SUCCESS;
 }

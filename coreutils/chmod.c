@@ -46,16 +46,16 @@
 //usage:       "$ ls -l /tmp/foo\n"
 //usage:       "-r--r--r--    1 root     root            0 Apr 12 18:25 /tmp/foo\n"
 
-#include "libbb.h"
+#అన్తర్భావ "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
 
-#define OPT_RECURSE (option_mask32 & 1)
-#define OPT_VERBOSE (IF_DESKTOP(option_mask32 & 2) IF_NOT_DESKTOP(0))
-#define OPT_CHANGED (IF_DESKTOP(option_mask32 & 4) IF_NOT_DESKTOP(0))
-#define OPT_QUIET   (IF_DESKTOP(option_mask32 & 8) IF_NOT_DESKTOP(0))
-#define OPT_STR     "R" IF_DESKTOP("vcf")
+#నిర్వచించు OPT_RECURSE (option_mask32 & 1)
+#నిర్వచించు OPT_VERBOSE (IF_DESKTOP(option_mask32 & 2) IF_NOT_DESKTOP(0))
+#నిర్వచించు OPT_మారింది (IF_DESKTOP(option_mask32 & 4) IF_NOT_DESKTOP(0))
+#నిర్వచించు OPT_QUIET   (IF_DESKTOP(option_mask32 & 8) IF_NOT_DESKTOP(0))
+#నిర్వచించు OPT_STR     "R" IF_DESKTOP("vcf")
 
 /* coreutils:
  * chmod never changes the permissions of symbolic links; the chmod
@@ -66,64 +66,64 @@
  * symbolic links encountered during recursive directory traversals.
  */
 
-static int FAST_FUNC fileAction(struct recursive_state *state,
-		const char *fileName,
-		struct stat *statbuf)
+స్థిర పూర్ణాంకం FAST_FUNC fileAction(నిర్మాణం recursive_state *state,
+		స్థిరరాశి అక్షరం *fileName,
+		నిర్మాణం stat *statbuf)
 {
-	mode_t newmode;
+	బహుళకం_t newmode;
 
 	/* match coreutils behavior */
-	if (state->depth == 0) {
+	ఒకవేళ (state->లోతు == 0) {
 		/* statbuf holds lstat result, but we need stat (follow link) */
-		if (stat(fileName, statbuf))
-			goto err;
-	} else { /* depth > 0: skip links */
-		if (S_ISLNK(statbuf->st_mode))
-			return TRUE;
+		ఒకవేళ (stat(fileName, statbuf))
+			వెళ్ళు err;
+	} లేకపోతే { /* depth > 0: skip links */
+		ఒకవేళ (S_ISLNK(statbuf->st_బహుళకం))
+			తిరిగి TRUE;
 	}
 
-	newmode = bb_parse_mode((char *)state->userData, statbuf->st_mode);
-	if (newmode == (mode_t)-1)
-		bb_error_msg_and_die("invalid mode '%s'", (char *)state->userData);
+	newmode = bb_parse_బహుళకం((అక్షరం *)state->user_దత్తాంశం, statbuf->st_బహుళకం);
+	ఒకవేళ (newmode == (బహుళకం_t)-1)
+		bb_error_సందేశం_and_die("invalid mode '%s'", (అక్షరం *)state->user_దత్తాంశం);
 
-	if (chmod(fileName, newmode) == 0) {
-		if (OPT_VERBOSE
-		 || (OPT_CHANGED
-		     && (statbuf->st_mode & 07777) != (newmode & 07777))
+	ఒకవేళ (chmod(fileName, newmode) == 0) {
+		ఒకవేళ (OPT_VERBOSE
+		 || (OPT_మారింది
+		     && (statbuf->st_బహుళకం & 07777) != (newmode & 07777))
 		) {
-			char modestr[12];
-			printf("mode of '%s' changed to %04o (%s)\n", fileName,
-				newmode & 07777, bb_mode_string(modestr, newmode)+1);
+			అక్షరం modestr[12];
+			రాయి("mode of '%s' changed to %04o (%s)\n", fileName,
+				newmode & 07777, bb_బహుళకం_string(modestr, newmode)+1);
 		}
-		return TRUE;
+		తిరిగి TRUE;
 	}
  err:
-	if (!OPT_QUIET)
-		bb_simple_perror_msg(fileName);
-	return FALSE;
+	ఒకవేళ (!OPT_QUIET)
+		bb_simple_perror_సందేశం(fileName);
+	తిరిగి FALSE;
 }
 
-int chmod_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int chmod_main(int argc UNUSED_PARAM, char **argv)
+పూర్ణాంకం chmod_main(పూర్ణాంకం argc, అక్షరం **argv) MAIN_EXTERNALLY_VISIBLE;
+పూర్ణాంకం chmod_main(పూర్ణాంకం argc వాడని_PARAM, అక్షరం **argv)
 {
-	int retval = EXIT_SUCCESS;
-	char *arg, **argp;
-	char *smode;
+	పూర్ణాంకం retval = EXIT_SUCCESS;
+	అక్షరం *arg, **argp;
+	అక్షరం *smode;
 
 	/* Convert first encountered -r into ar, -w into aw etc
 	 * so that getopt would not eat it */
 	argp = argv;
-	while ((arg = *++argp)) {
+	అయితే ((arg = *++argp)) {
 		/* Mode spec must be the first arg (sans -R etc) */
 		/* (protect against mishandling e.g. "chmod 644 -r") */
-		if (arg[0] != '-') {
-			arg = NULL;
-			break;
+		ఒకవేళ (arg[0] != '-') {
+			arg = ఖాళీ;
+			ఆపు;
 		}
 		/* An option. Not a -- or valid option? */
-		if (arg[1] && !strchr("-"OPT_STR, arg[1])) {
+		ఒకవేళ (arg[1] && !strchr("-"OPT_STR, arg[1])) {
 			arg[0] = 'a';
-			break;
+			ఆపు;
 		}
 	}
 
@@ -132,12 +132,12 @@ int chmod_main(int argc UNUSED_PARAM, char **argv)
 	argv += optind;
 
 	/* Restore option-like mode if needed */
-	if (arg) arg[0] = '-';
+	ఒకవేళ (arg) arg[0] = '-';
 
 	/* Ok, ready to do the deed now */
 	smode = *argv++;
-	do {
-		if (!recursive_action(*argv,
+	చేయి {
+		ఒకవేళ (!recursive_action(*argv,
 			OPT_RECURSE,    // recurse
 			fileAction,     // file action
 			fileAction,     // dir action
@@ -145,9 +145,9 @@ int chmod_main(int argc UNUSED_PARAM, char **argv)
 		) {
 			retval = EXIT_FAILURE;
 		}
-	} while (*++argv);
+	} అయితే (*++argv);
 
-	return retval;
+	తిరిగి retval;
 }
 
 /*

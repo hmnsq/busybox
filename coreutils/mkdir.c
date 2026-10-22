@@ -44,60 +44,60 @@
 //usage:       "/tmp/foo/bar/baz: No such file or directory\n"
 //usage:       "$ mkdir -p /tmp/foo/bar/baz\n"
 
-#include "libbb.h"
+#అన్తర్భావ "libbb.h"
 
 /* This is a NOFORK applet. Be very careful! */
 
-int mkdir_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int mkdir_main(int argc UNUSED_PARAM, char **argv)
+పూర్ణాంకం mkdir_main(పూర్ణాంకం argc, అక్షరం **argv) MAIN_EXTERNALLY_VISIBLE;
+పూర్ణాంకం mkdir_main(పూర్ణాంకం argc వాడని_PARAM, అక్షరం **argv)
 {
-	long mode = -1;
-	int status = EXIT_SUCCESS;
-	int flags = 0;
-	unsigned opt;
-	char *smode;
-#if ENABLE_SELINUX
+	దీర్ఘ బహుళకం = -1;
+	పూర్ణాంకం స్థితి_2 = EXIT_SUCCESS;
+	పూర్ణాంకం flags = 0;
+	గుర్తులేని opt;
+	అక్షరం *smode;
+#ఒకవేళ ENABLE_SELINUX
 	security_context_t scontext;
-#endif
+#అయితే_ముగింపు
 
 	opt = getopt32long(argv, "m:pv" IF_SELINUX("Z:"),
-			"mode\0"    Required_argument "m"
-			"parents\0" No_argument       "p"
-# if ENABLE_SELINUX
-			"context\0" Required_argument "Z"
+			"mode\0"    Required_వాదం "m"
+			"parents\0" No_వాదం       "p"
+# ఒకవేళ ENABLE_SELINUX
+			"context\0" Required_వాదం "Z"
 # endif
-# if ENABLE_FEATURE_VERBOSE
-			"verbose\0" No_argument       "v"
+# ఒకవేళ ENABLE_FEATURE_VERBOSE
+			"verbose\0" No_వాదం       "v"
 # endif
 			, &smode IF_SELINUX(,&scontext)
 	);
-	if (opt & 1) {
-		mode_t mmode = bb_parse_mode(smode, 0777);
-		if (mmode == (mode_t)-1) {
-			bb_error_msg_and_die("invalid mode '%s'", smode);
+	ఒకవేళ (opt & 1) {
+		బహుళకం_t mmode = bb_parse_బహుళకం(smode, 0777);
+		ఒకవేళ (mmode == (బహుళకం_t)-1) {
+			bb_error_సందేశం_and_die("invalid mode '%s'", smode);
 		}
-		mode = mmode;
+		బహుళకం = mmode;
 	}
-	if (opt & 2)
+	ఒకవేళ (opt & 2)
 		flags |= FILEUTILS_RECUR;
-	if ((opt & 4) && FILEUTILS_VERBOSE)
+	ఒకవేళ ((opt & 4) && FILEUTILS_VERBOSE)
 		flags |= FILEUTILS_VERBOSE;
-#if ENABLE_SELINUX
-	if (opt & 8) {
+#ఒకవేళ ENABLE_SELINUX
+	ఒకవేళ (opt & 8) {
 		selinux_or_die();
 		setfscreatecon_or_die(scontext);
 	}
-#endif
+#అయితే_ముగింపు
 
 	argv += optind;
-	if (!argv[0])
+	ఒకవేళ (!argv[0])
 		bb_show_usage();
 
-	do {
-		if (bb_make_directory(*argv, mode, flags)) {
-			status = EXIT_FAILURE;
+	చేయి {
+		ఒకవేళ (bb_make_directory(*argv, బహుళకం, flags)) {
+			స్థితి_2 = EXIT_FAILURE;
 		}
-	} while (*++argv);
+	} అయితే (*++argv);
 
-	return status;
+	తిరిగి స్థితి_2;
 }

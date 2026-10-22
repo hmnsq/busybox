@@ -27,14 +27,14 @@
 //usage:       "$ usleep 1000000\n"
 //usage:       "[pauses for 1 second]\n"
 
-#include "libbb.h"
+#అన్తర్భావ "libbb.h"
 
 /* This is a NOFORK applet. Be very careful! */
 
-int usleep_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int usleep_main(int argc UNUSED_PARAM, char **argv)
+పూర్ణాంకం usleep_main(పూర్ణాంకం argc, అక్షరం **argv) MAIN_EXTERNALLY_VISIBLE;
+పూర్ణాంకం usleep_main(పూర్ణాంకం argc వాడని_PARAM, అక్షరం **argv)
 {
-	if (!argv[1]) {
+	ఒకవేళ (!argv[1]) {
 		bb_show_usage();
 	}
 
@@ -47,5 +47,5 @@ int usleep_main(int argc UNUSED_PARAM, char **argv)
 	 */
 	usleep(xatou(argv[1]));
 
-	return EXIT_SUCCESS;
+	తిరిగి EXIT_SUCCESS;
 }

@@ -60,7 +60,7 @@
 //usage:       "$ echo \"Erik\\nis\\ncool\"\n"
 //usage:       "Erik\\nis\\ncool\n")
 
-#include "libbb.h"
+#అన్తర్భావ "libbb.h"
 
 /* This is a NOFORK applet. Be very careful! */
 
@@ -80,30 +80,30 @@
  * But this function is not standard.
  */
 
-int echo_main(int argc UNUSED_PARAM, char **argv)
+పూర్ణాంకం echo_main(పూర్ణాంకం argc వాడని_PARAM, అక్షరం **argv)
 {
-	char **pp;
-	const char *arg;
-	char *out;
-	char *buffer;
-	unsigned buflen;
-	int err;
-#if !ENABLE_FEATURE_FANCY_ECHO
-	enum {
+	అక్షరం **pp;
+	స్థిరరాశి అక్షరం *arg;
+	అక్షరం *బహిర్గతం;
+	అక్షరం *బఫరు;
+	గుర్తులేని buflen;
+	పూర్ణాంకం err;
+#ఒకవేళ !ENABLE_FEATURE_FANCY_ECHO
+	గణన {
 		eflag = 0,  /* 0 -- disable escape sequences */
 		nflag = 1,  /* 1 -- print '\n' */
 	};
 
 	argv++;
-#else
-	char nflag = 1;
-	char eflag = 0;
+#లేకపోతే
+	అక్షరం nflag = 1;
+	అక్షరం eflag = 0;
 
-	while ((arg = *++argv) != NULL) {
-		char n, e;
+	అయితే ((arg = *++argv) != ఖాళీ) {
+		అక్షరం n, e;
 
-		if (arg[0] != '-')
-			break; /* not an option arg, echo it */
+		ఒకవేళ (arg[0] != '-')
+			ఆపు; /* not an option arg, echo it */
 
 		/* If it appears that we are handling options, then make sure
 		 * that all of the options specified are actually valid.
@@ -112,51 +112,51 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
 		arg++;
 		n = nflag;
 		e = eflag;
-		do {
-			if (*arg == 'n')
+		చేయి {
+			ఒకవేళ (*arg == 'n')
 				n = 0;
-			else if (*arg == 'e')
+			లేకపోతే ఒకవేళ (*arg == 'e')
 				e = '\\';
-			else if (*arg != 'E') {
+			లేకపోతే ఒకవేళ (*arg != 'E') {
 				/* "-ccc" arg with one of c's invalid, echo it */
 				/* arg consisting from just "-" also handled here */
-				goto just_echo;
+				వెళ్ళు just_echo;
 			}
-		} while (*++arg);
+		} అయితే (*++arg);
 		nflag = n;
 		eflag = e;
 	}
  just_echo:
-#endif
+#అయితే_ముగింపు
 
 	buflen = 0;
 	pp = argv;
-	while ((arg = *pp) != NULL) {
-		buflen += strlen(arg) + 1;
+	అయితే ((arg = *pp) != ఖాళీ) {
+		buflen += అక్షరశ్రేణి_పొడవు(arg) + 1;
 		pp++;
 	}
-	out = buffer = xmalloc(buflen + 1); /* +1 is needed for "no args" case */
+	బహిర్గతం = బఫరు = xmalloc(buflen + 1); /* +1 is needed for "no args" case */
 
-	while ((arg = *argv) != NULL) {
-		int c;
+	అయితే ((arg = *argv) != ఖాళీ) {
+		పూర్ణాంకం c;
 
-		if (!eflag) {
+		ఒకవేళ (!eflag) {
 			/* optimization for very common case */
-			out = stpcpy(out, arg);
-		} else
-		while ((c = *arg++) != '\0') {
-			if (c == eflag) {
+			బహిర్గతం = stpcpy(బహిర్గతం, arg);
+		} లేకపోతే
+		అయితే ((c = *arg++) != '\0') {
+			ఒకవేళ (c == eflag) {
 				/* This is an "\x" sequence */
 
-				if (*arg == 'c') {
+				ఒకవేళ (*arg == 'c') {
 					/* "\c" means cancel newline and
 					 * ignore all subsequent chars. */
-					goto do_write;
+					వెళ్ళు do_write;
 				}
 				/* Since SUSv3 mandates a first digit of 0, 4-digit octals
 				* of the form \0### are accepted. */
-				if (*arg == '0') {
-					if ((unsigned char)(arg[1] - '0') < 8) {
+				ఒకవేళ (*arg == '0') {
+					ఒకవేళ ((గుర్తులేని అక్షరం)(arg[1] - '0') < 8) {
 						/* 2nd char is 0..7: skip leading '0' */
 						arg++;
 					}
@@ -166,32 +166,32 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
 				{
 					/* optimization: don't force arg to be on-stack,
 					 * use another variable for that. ~30 bytes win */
-					const char *z = arg;
+					స్థిరరాశి అక్షరం *z = arg;
 					c = bb_process_escape_sequence(&z);
 					arg = z;
 				}
 			}
-			*out++ = c;
+			*బహిర్గతం++ = c;
 		}
 
-		if (!*++argv)
-			break;
-		*out++ = ' ';
+		ఒకవేళ (!*++argv)
+			ఆపు;
+		*బహిర్గతం++ = ' ';
 	}
 
-	if (nflag) {
-		*out++ = '\n';
+	ఒకవేళ (nflag) {
+		*బహిర్గతం++ = '\n';
 	}
 
  do_write:
 	/* Careful to error out on partial writes too (think ENOSPC!) */
 	errno = 0;
-	err = full_write(STDOUT_FILENO, buffer, out - buffer) != out - buffer;
-	if (err) {
-		bb_simple_perror_msg(bb_msg_write_error);
+	err = నిండిన_write(STDOUT_FILENO, బఫరు, బహిర్గతం - బఫరు) != బహిర్గతం - బఫరు;
+	ఒకవేళ (err) {
+		bb_simple_perror_సందేశం(bb_సందేశం_write_error);
 	}
-	free(buffer);
-	return err;
+	విడుదల(బఫరు);
+	తిరిగి err;
 }
 
 /*
@@ -233,7 +233,7 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
  *	@(#)echo.c	8.1 (Berkeley) 5/31/93
  */
 
-#ifdef VERSION_WITH_WRITEV
+#నిర్వచితమైతే సంస్కరణ_WITH_WRITEV
 /* We can't use stdio.
  * The reason for this is highly non-obvious.
  * echo_main is used from shell. Shell must correctly handle "echo foo"
@@ -246,106 +246,106 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
  * Using writev instead, with 'direct' conversion of argv vector.
  */
 
-int echo_main(int argc, char **argv)
+పూర్ణాంకం echo_main(పూర్ణాంకం argc, అక్షరం **argv)
 {
-	struct iovec io[argc];
-	struct iovec *cur_io = io;
-	char *arg;
-	char *p;
-#if !ENABLE_FEATURE_FANCY_ECHO
-	enum {
+	నిర్మాణం iovec io[argc];
+	నిర్మాణం iovec *cur_io = io;
+	అక్షరం *arg;
+	అక్షరం *p;
+#ఒకవేళ !ENABLE_FEATURE_FANCY_ECHO
+	గణన {
 		eflag = '\\',
 		nflag = 1,  /* 1 -- print '\n' */
 	};
 	arg = *++argv;
-	if (!arg)
-		goto newline_ret;
-#else
-	char nflag = 1;
-	char eflag = 0;
+	ఒకవేళ (!arg)
+		వెళ్ళు newline_ret;
+#లేకపోతే
+	అక్షరం nflag = 1;
+	అక్షరం eflag = 0;
 
-	while (1) {
+	అయితే (1) {
 		arg = *++argv;
-		if (!arg)
-			goto newline_ret;
-		if (*arg != '-')
-			break;
+		ఒకవేళ (!arg)
+			వెళ్ళు newline_ret;
+		ఒకవేళ (*arg != '-')
+			ఆపు;
 
 		/* If it appears that we are handling options, then make sure
 		 * that all of the options specified are actually valid.
 		 * Otherwise, the string should just be echoed.
 		 */
 		p = arg + 1;
-		if (!*p)	/* A single '-', so echo it. */
-			goto just_echo;
+		ఒకవేళ (!*p)	/* A single '-', so echo it. */
+			వెళ్ళు just_echo;
 
-		do {
-			if (!strchr("neE", *p))
-				goto just_echo;
-		} while (*++p);
+		చేయి {
+			ఒకవేళ (!strchr("neE", *p))
+				వెళ్ళు just_echo;
+		} అయితే (*++p);
 
 		/* All of the options in this arg are valid, so handle them. */
 		p = arg + 1;
-		do {
-			if (*p == 'n')
+		చేయి {
+			ఒకవేళ (*p == 'n')
 				nflag = 0;
-			if (*p == 'e')
+			ఒకవేళ (*p == 'e')
 				eflag = '\\';
-		} while (*++p);
+		} అయితే (*++p);
 	}
  just_echo:
-#endif
+#అయితే_ముగింపు
 
-	while (1) {
+	అయితే (1) {
 		/* arg is already == *argv and isn't NULL */
-		int c;
+		పూర్ణాంకం c;
 
-		cur_io->iov_base = p = arg;
+		cur_io->iov_పునాది = p = arg;
 
-		if (!eflag) {
+		ఒకవేళ (!eflag) {
 			/* optimization for very common case */
-			p += strlen(arg);
-		} else while ((c = *arg++)) {
-			if (c == eflag) {
+			p += అక్షరశ్రేణి_పొడవు(arg);
+		} లేకపోతే అయితే ((c = *arg++)) {
+			ఒకవేళ (c == eflag) {
 				/* This is an "\x" sequence */
 
-				if (*arg == 'c') {
+				ఒకవేళ (*arg == 'c') {
 					/* "\c" means cancel newline and
 					 * ignore all subsequent chars. */
-					cur_io->iov_len = p - (char*)cur_io->iov_base;
+					cur_io->iov_len = p - (అక్షరం*)cur_io->iov_పునాది;
 					cur_io++;
-					goto ret;
+					వెళ్ళు ret;
 				}
 				/* Since SUSv3 mandates a first digit of 0, 4-digit octals
 				* of the form \0### are accepted. */
-				if (*arg == '0' && (unsigned char)(arg[1] - '0') < 8) {
+				ఒకవేళ (*arg == '0' && (గుర్తులేని అక్షరం)(arg[1] - '0') < 8) {
 					arg++;
 				}
 //FIXME? we also accept non-0 starting sequences (see echo-prints-slash_41 test)
 // echo -ne '-\41-' prints "-!-". bash 5.0.17 does not (prints "-\41-").
 				/* bb_process_escape_sequence can handle nul correctly */
-				c = bb_process_escape_sequence( (void*) &arg);
+				c = bb_process_escape_sequence( (శూన్య*) &arg);
 			}
 			*p++ = c;
 		}
 
 		arg = *++argv;
-		if (arg)
+		ఒకవేళ (arg)
 			*p++ = ' ';
-		cur_io->iov_len = p - (char*)cur_io->iov_base;
+		cur_io->iov_len = p - (అక్షరం*)cur_io->iov_పునాది;
 		cur_io++;
-		if (!arg)
-			break;
+		ఒకవేళ (!arg)
+			ఆపు;
 	}
 
  newline_ret:
-	if (nflag) {
-		cur_io->iov_base = (char*)"\n";
+	ఒకవేళ (nflag) {
+		cur_io->iov_పునాది = (అక్షరం*)"\n";
 		cur_io->iov_len = 1;
 		cur_io++;
 	}
  ret:
 	/* TODO: implement and use full_writev? */
-	return writev(1, io, (cur_io - io)) >= 0;
+	తిరిగి writev(1, io, (cur_io - io)) >= 0;
 }
-#endif
+#అయితే_ముగింపు
