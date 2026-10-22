@@ -28,7 +28,7 @@
 //usage:#define nohup_example_usage
 //usage:       "$ nohup make &"
 
-#include "libbb.h"
+#ضمن "libbb.h"
 
 /* Compat info: nohup (GNU coreutils 6.8) does this:
 # nohup true
@@ -49,20 +49,20 @@ nohup: redirecting stderr to stdout
 #
 */
 
-int nohup_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int nohup_main(int argc UNUSED_PARAM, char **argv)
+صحيح nohup_main(صحيح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحيح nohup_main(صحيح argc UNUSED_PARAM, حرف **argv)
 {
-	const char *nohupout;
-	char *home;
+	ثابت حرف *nohupout;
+	حرف *home;
 
 	xfunc_error_retval = 127;
 
-	if (!argv[1]) {
+	إذا (!argv[1]) {
 		bb_show_usage();
 	}
 
 	/* If stdin is a tty, detach from it. */
-	if (isatty(STDIN_FILENO)) {
+	إذا (isatty(STDIN_FILENO)) {
 		/* bb_error_msg("ignoring input"); */
 		close(STDIN_FILENO);
 		xopen(bb_dev_null, O_RDONLY); /* will be fd 0 (STDIN_FILENO) */
@@ -70,28 +70,28 @@ int nohup_main(int argc UNUSED_PARAM, char **argv)
 
 	nohupout = "nohup.out";
 	/* Redirect stdout to nohup.out, either in "." or in "$HOME". */
-	if (isatty(STDOUT_FILENO)) {
+	إذا (isatty(STDOUT_FILENO)) {
 		close(STDOUT_FILENO);
-		if (open(nohupout, O_CREAT|O_WRONLY|O_APPEND, S_IRUSR|S_IWUSR) < 0) {
+		إذا (open(nohupout, O_CREAT|O_WRONLY|O_APPEND, S_IRUSR|S_IWUSR) < 0) {
 			home = getenv("HOME");
-			if (home) {
+			إذا (home) {
 				nohupout = concat_path_file(home, nohupout);
 				xopen3(nohupout, O_CREAT|O_WRONLY|O_APPEND, S_IRUSR|S_IWUSR);
-			} else {
+			} وإلا {
 				xopen(bb_dev_null, O_RDONLY); /* will be fd 1 */
 			}
 		}
-		bb_error_msg("appending output to %s", nohupout);
+		bb_error_پەیام("appending output to %s", nohupout);
 	}
 
 	/* If we have a tty on stderr, redirect to stdout. */
-	if (isatty(STDERR_FILENO)) {
+	إذا (isatty(STDERR_FILENO)) {
 		/* if (stdout_wasnt_a_tty)
 			bb_error_msg("redirecting stderr to stdout"); */
 		dup2(STDOUT_FILENO, STDERR_FILENO);
 	}
 
-	signal(SIGHUP, SIG_IGN);
+	إشارة(SIGHUP, SIG_IGN);
 
 	argv++;
 	BB_EXECVP_or_die(argv);

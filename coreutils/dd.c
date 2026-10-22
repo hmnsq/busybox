@@ -101,33 +101,33 @@
 //usage:       "4+0 records in\n"
 //usage:       "4+0 records out\n"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#ضمن "libbb.h"
+#ضمن "common_bufsiz.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
 
-enum {
+تعداد {
 	ifd = STDIN_FILENO,
 	ofd = STDOUT_FILENO,
 };
 
-struct globals {
+بنية globals {
 	off_t out_full, out_part, in_full, in_part;
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
+#إذا ENABLE_FEATURE_DD_THIRD_STATUS_هێڵ
 	unsigned long long total_bytes;
 	unsigned long long begin_time_us;
 #endif
-	int flags;
+	صحيح flags;
 } FIX_ALIASING;
-#define G (*(struct globals*)bb_common_bufsiz1)
-#define INIT_G() do { \
+#define G (*(بنية globals*)bb_common_bufsiz1)
+#define INIT_G() افعل { \
 	setup_common_bufsiz(); \
 	/* we have to zero it out because of NOEXEC */ \
-	memset(&G, 0, sizeof(G)); \
-} while (0)
+	memset(&G, 0, حجم(G)); \
+} طالما (0)
 
-enum {
+تعداد {
 	/* Must be in the same order as OP_conv_XXX! */
 	/* (see "flags |= (1 << what)" below) */
 	FLAG_NOTRUNC = (1 << 0) * ENABLE_FEATURE_DD_IBS_OBS,
@@ -139,7 +139,7 @@ enum {
 	/* start of input flags */
 	FLAG_IFLAG_SHIFT   = 5,
 	FLAG_SKIP_BYTES    = (1 << 5) * ENABLE_FEATURE_DD_IBS_OBS,
-	FLAG_COUNT_BYTES   = (1 << 6) * ENABLE_FEATURE_DD_IBS_OBS,
+	FLAG_ژماردن_BYTES   = (1 << 6) * ENABLE_FEATURE_DD_IBS_OBS,
 	FLAG_FULLBLOCK     = (1 << 7) * ENABLE_FEATURE_DD_IBS_OBS,
 	FLAG_IDIRECT       = (1 << 8) * ENABLE_FEATURE_DD_IBS_OBS,
 	/* end of input flags */
@@ -150,15 +150,15 @@ enum {
 	FLAG_ODIRECT       = (1 << 11) * ENABLE_FEATURE_DD_IBS_OBS,
 	/* end of output flags */
 	FLAG_TWOBUFS       = (1 << 12) * ENABLE_FEATURE_DD_IBS_OBS,
-	FLAG_COUNT         = 1 << 13,
+	FLAG_ژماردن         = 1 << 13,
 	FLAG_STATUS_NONE   = 1 << 14,
 	FLAG_STATUS_NOXFER = 1 << 15,
 };
 
-static void dd_output_status(int UNUSED_PARAM cur_signal)
+ساكن فراغ dd_output_status(صحيح UNUSED_PARAM cur_signal)
 {
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
-	double seconds;
+#إذا ENABLE_FEATURE_DD_THIRD_STATUS_هێڵ
+	مزدوج seconds;
 	unsigned long long bytes_sec;
 	unsigned long long now_us = monotonic_us(); /* before fprintf */
 #endif
@@ -169,10 +169,10 @@ static void dd_output_status(int UNUSED_PARAM cur_signal)
 			G.in_full, G.in_part,
 			G.out_full, G.out_part);
 
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
-# if ENABLE_FEATURE_DD_STATUS
-	if (G.flags & FLAG_STATUS_NOXFER) /* status=noxfer active? */
-		return;
+#إذا ENABLE_FEATURE_DD_THIRD_STATUS_هێڵ
+# إذا ENABLE_FEATURE_DD_STATUS
+	إذا (G.flags & FLAG_STATUS_NOXFER) /* status=noxfer active? */
+		أرجع;
 	//TODO: should status=none make dd stop reacting to USR1 entirely?
 	//So far we react to it (we print the stats),
 	//status=none only suppresses final, non-USR1 generated status message.
@@ -199,67 +199,67 @@ static void dd_output_status(int UNUSED_PARAM cur_signal)
 #endif
 }
 
-#if ENABLE_FEATURE_DD_IBS_OBS
+#إذا ENABLE_FEATURE_DD_IBS_OBS
 # ifdef O_DIRECT
-static int clear_O_DIRECT(int fd)
+ساكن صحيح clear_O_DIRECT(صحيح fd)
 {
-	if (errno == EINVAL) {
-		int fl = fcntl(fd, F_GETFL);
-		if (fl & O_DIRECT) {
+	إذا (errno == EINVAL) {
+		صحيح fl = fcntl(fd, F_GETFL);
+		إذا (fl & O_DIRECT) {
 			fcntl(fd, F_SETFL, fl & ~O_DIRECT);
-			return 1;
+			أرجع 1;
 		}
 	}
-	return 0;
+	أرجع 0;
 }
 # endif
 #endif
 
-static ssize_t dd_read(void *ibuf, size_t ibs)
+ساكن ssize_t dd_read(فراغ *ibuf, size_t ibs)
 {
 	ssize_t n;
 
-#if ENABLE_FEATURE_DD_IBS_OBS
+#إذا ENABLE_FEATURE_DD_IBS_OBS
  read_again:
-	if (G.flags & FLAG_FULLBLOCK)
+	إذا (G.flags & FLAG_FULLBLOCK)
 		n = full_read(ifd, ibuf, ibs);
-	else
+	وإلا
 #endif
 		n = safe_read(ifd, ibuf, ibs);
-#if ENABLE_FEATURE_DD_IBS_OBS
+#إذا ENABLE_FEATURE_DD_IBS_OBS
 # ifdef O_DIRECT
-	if (n < 0 && (G.flags & FLAG_IDIRECT) && clear_O_DIRECT(ifd))
-		goto read_again;
+	إذا (n < 0 && (G.flags & FLAG_IDIRECT) && clear_O_DIRECT(ifd))
+		اذهب read_again;
 # endif
 #endif
-	return n;
+	أرجع n;
 }
 
-static bool write_and_stats(const void *buf, size_t len, size_t obs,
-	const char *filename)
+ساكن bool write_and_stats(ثابت فراغ *buf, size_t len, size_t obs,
+	ثابت حرف *filename)
 {
 	ssize_t n;
 
  IF_FEATURE_DD_IBS_OBS(write_again:)
 	n = full_write(ofd, buf, len);
-#if ENABLE_FEATURE_DD_IBS_OBS
+#إذا ENABLE_FEATURE_DD_IBS_OBS
 # ifdef O_DIRECT
-	if (n < 0 && (G.flags & FLAG_ODIRECT) && clear_O_DIRECT(ofd))
-		goto write_again;
+	إذا (n < 0 && (G.flags & FLAG_ODIRECT) && clear_O_DIRECT(ofd))
+		اذهب write_again;
 # endif
 #endif
 
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
-	if (n > 0)
+#إذا ENABLE_FEATURE_DD_THIRD_STATUS_هێڵ
+	إذا (n > 0)
 		G.total_bytes += n;
 #endif
-	if ((size_t)n == obs) {
+	إذا ((size_t)n == obs) {
 		G.out_full++;
-		return 0;
+		أرجع 0;
 	}
-	if ((size_t)n == len) {
+	إذا ((size_t)n == len) {
 		G.out_part++;
-		return 0;
+		أرجع 0;
 	}
 	/* n is < len (and possibly is -1).
 	 * Even if n >= 0, errno is usually set correctly.
@@ -268,81 +268,81 @@ static bool write_and_stats(const void *buf, size_t len, size_t obs,
 	 * the remainder and gets errno set to ENOSPC.
 	 * It returns n > 0 (the amount which it did write).
 	 */
-	bb_perror_msg("error writing '%s'", filename);
-	return 1;
+	bb_perror_پەیام("error writing '%s'", filename);
+	أرجع 1;
 }
 
-#if ENABLE_LFS
+#إذا ENABLE_LFS
 # define XATOU_SFX xatoull_sfx
-#else
+#وإلا
 # define XATOU_SFX xatoul_sfx
 #endif
 
-#if ENABLE_FEATURE_DD_IBS_OBS
-static int parse_comma_flags(char *val, const char *words, const char *error_in)
+#إذا ENABLE_FEATURE_DD_IBS_OBS
+ساكن صحيح parse_comma_flags(حرف *val, ثابت حرف *وشەکان, ثابت حرف *error_in)
 {
-	int flags = 0;
-	while (1) {
-		int n;
-		char *arg;
+	صحيح flags = 0;
+	طالما (1) {
+		صحيح n;
+		حرف *arg;
 		/* find ',', replace them with NUL so we can use val for
 		 * index_in_strings() without copying.
 		 * We rely on val being non-null, else strchr would fault.
 		 */
 		arg = strchr(val, ',');
-		if (arg)
+		إذا (arg)
 			*arg = '\0';
-		n = index_in_strings(words, val);
-		if (n < 0)
-			bb_error_msg_and_die(bb_msg_invalid_arg_to, val, error_in);
+		n = index_in_strings(وشەکان, val);
+		إذا (n < 0)
+			bb_error_پەیام_and_die(bb_پەیام_invalid_arg_to, val, error_in);
 		flags |= (1 << n);
-		if (!arg) /* no ',' left, so this was the last specifier */
-			break;
+		إذا (!arg) /* no ',' left, so this was the last specifier */
+			اكسر;
 		*arg = ','; /* to preserve ps listing */
 		val = arg + 1; /* skip this keyword and ',' */
 	}
-	return flags;
+	أرجع flags;
 }
 #endif
 
-static void *alloc_buf(size_t size)
+ساكن فراغ *alloc_buf(size_t size)
 {
 	/* Important for "{i,o}flag=direct" - buffers must be page aligned */
-	if (size >= bb_getpagesize())
-		return xmmap_anon(size);
-	return xmalloc(size);
+	إذا (size >= bb_getpagesize())
+		أرجع xmmap_anon(size);
+	أرجع xmalloc(size);
 }
 
-int dd_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int dd_main(int argc UNUSED_PARAM, char **argv)
+صحيح dd_main(صحيح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحيح dd_main(صحيح argc UNUSED_PARAM, حرف **argv)
 {
-	static const char keywords[] ALIGN1 =
+	ساكن ثابت حرف keywords[] ALIGN1 =
 		"bs\0""count\0""seek\0""skip\0""if\0""of\0"IF_FEATURE_DD_STATUS("status\0")
-#if ENABLE_FEATURE_DD_IBS_OBS
+#إذا ENABLE_FEATURE_DD_IBS_OBS
 		"ibs\0""obs\0""conv\0""iflag\0""oflag\0"
 #endif
 		;
-#if ENABLE_FEATURE_DD_IBS_OBS
-	static const char conv_words[] ALIGN1 =
+#إذا ENABLE_FEATURE_DD_IBS_OBS
+	ساكن ثابت حرف conv_وشەکان[] ALIGN1 =
 		"notrunc\0""sync\0""noerror\0""fsync\0""swab\0";
-	static const char iflag_words[] ALIGN1 =
+	ساكن ثابت حرف iflag_وشەکان[] ALIGN1 =
 		"skip_bytes\0""count_bytes\0""fullblock\0""direct\0";
-	static const char oflag_words[] ALIGN1 =
+	ساكن ثابت حرف oflag_وشەکان[] ALIGN1 =
 		"seek_bytes\0append\0""direct\0";
 #endif
-#if ENABLE_FEATURE_DD_STATUS
-	static const char status_words[] ALIGN1 =
+#إذا ENABLE_FEATURE_DD_STATUS
+	ساكن ثابت حرف status_وشەکان[] ALIGN1 =
 		"none\0""noxfer\0";
 #endif
-	enum {
+	تعداد {
 		OP_bs = 0,
-		OP_count,
+		OP_ژماردن,
 		OP_seek,
 		OP_skip,
 		OP_if,
 		OP_of,
 		IF_FEATURE_DD_STATUS(OP_status,)
-#if ENABLE_FEATURE_DD_IBS_OBS
+#إذا ENABLE_FEATURE_DD_IBS_OBS
 		OP_ibs,
 		OP_obs,
 		OP_conv,
@@ -368,7 +368,7 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 	/* Partially implemented: */
 	//swab          swap every pair of input bytes: will abort on non-even reads
 		OP_iflag_skip_bytes,
-		OP_iflag_count_bytes,
+		OP_iflag_ژماردن_bytes,
 		OP_iflag_fullblock,
 		OP_iflag_direct,
 		OP_oflag_seek_bytes,
@@ -376,112 +376,112 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 #endif
 	};
 	exitcode_t exitcode = EXIT_FAILURE;
-	int i;
+	صحيح i;
 	size_t ibs = 512;
-	char *ibuf;
-#if ENABLE_FEATURE_DD_IBS_OBS
+	حرف *ibuf;
+#إذا ENABLE_FEATURE_DD_IBS_OBS
 	size_t obs = 512;
-	char *obuf;
-#else
+	حرف *obuf;
+#وإلا
 # define obs  ibs
 # define obuf ibuf
 #endif
 	/* These are all zeroed at once! */
-	struct {
+	بنية {
 		IF_FEATURE_DD_IBS_OBS(size_t ocount;)
 		ssize_t prev_read_size; /* for detecting swab failure */
-		off_t count;
+		off_t ژماردن;
 		off_t seek, skip;
-		const char *infile, *outfile;
+		ثابت حرف *infile, *outfile;
 	} Z;
 #define ocount  (Z.ocount )
 #define prev_read_size (Z.prev_read_size)
-#define count   (Z.count  )
+#define ژماردن   (Z.ژماردن  )
 #define seek    (Z.seek   )
 #define skip    (Z.skip   )
 #define infile  (Z.infile )
 #define outfile (Z.outfile)
 
-	memset(&Z, 0, sizeof(Z));
+	memset(&Z, 0, حجم(Z));
 	INIT_G();
 	//fflush_all(); - is this needed because of NOEXEC?
 
-	for (i = 1; argv[i]; i++) {
-		int what;
-		char *val;
-		char *arg = argv[i];
+	لكل (i = 1; argv[i]; i++) {
+		صحيح what;
+		حرف *val;
+		حرف *arg = argv[i];
 
-#if ENABLE_DESKTOP
+#إذا ENABLE_DESKTOP
 		/* "dd --". NB: coreutils 6.9 will complain if they see
 		 * more than one of them. We wouldn't. */
-		if (arg[0] == '-' && arg[1] == '-' && arg[2] == '\0')
-			continue;
+		إذا (arg[0] == '-' && arg[1] == '-' && arg[2] == '\0')
+			استمر;
 #endif
 		val = strchr(arg, '=');
-		if (val == NULL)
+		إذا (val == عدم)
 			bb_show_usage();
 		*val = '\0';
 		what = index_in_strings(keywords, arg);
-		if (what < 0)
+		إذا (what < 0)
 			bb_show_usage();
 		/* *val = '='; - to preserve ps listing? */
 		val++;
-#if ENABLE_FEATURE_DD_IBS_OBS
-		if (what == OP_ibs) {
+#إذا ENABLE_FEATURE_DD_IBS_OBS
+		إذا (what == OP_ibs) {
 			/* Must fit into positive ssize_t */
 			ibs = xatoul_range_sfx(val, 1, ((size_t)-1L)/2, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_obs) {
+		إذا (what == OP_obs) {
 			obs = xatoul_range_sfx(val, 1, ((size_t)-1L)/2, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_conv) {
-			G.flags |= parse_comma_flags(val, conv_words, "conv");
+		إذا (what == OP_conv) {
+			G.flags |= parse_comma_flags(val, conv_وشەکان, "conv");
 			/*continue;*/
 		}
-		if (what == OP_iflag) {
-			G.flags |= parse_comma_flags(val, iflag_words, "iflag") << FLAG_IFLAG_SHIFT;
+		إذا (what == OP_iflag) {
+			G.flags |= parse_comma_flags(val, iflag_وشەکان, "iflag") << FLAG_IFLAG_SHIFT;
 			/*continue;*/
 		}
-		if (what == OP_oflag) {
-			G.flags |= parse_comma_flags(val, oflag_words, "oflag") << FLAG_OFLAG_SHIFT;
+		إذا (what == OP_oflag) {
+			G.flags |= parse_comma_flags(val, oflag_وشەکان, "oflag") << FLAG_OFLAG_SHIFT;
 			/*continue;*/
 		}
 #endif
-		if (what == OP_bs) {
+		إذا (what == OP_bs) {
 			ibs = xatoul_range_sfx(val, 1, ((size_t)-1L)/2, cwbkMG_suffixes);
 			obs = ibs;
 			/*continue;*/
 		}
 		/* These can be large: */
-		if (what == OP_count) {
-			G.flags |= FLAG_COUNT;
-			count = XATOU_SFX(val, cwbkMG_suffixes);
+		إذا (what == OP_ژماردن) {
+			G.flags |= FLAG_ژماردن;
+			ژماردن = XATOU_SFX(val, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_seek) {
+		إذا (what == OP_seek) {
 			seek = XATOU_SFX(val, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_skip) {
+		إذا (what == OP_skip) {
 			skip = XATOU_SFX(val, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_if) {
+		إذا (what == OP_if) {
 			infile = val;
 			/*continue;*/
 		}
-		if (what == OP_of) {
+		إذا (what == OP_of) {
 			outfile = val;
 			/*continue;*/
 		}
-#if ENABLE_FEATURE_DD_STATUS
-		if (what == OP_status) {
-			int n;
-			n = index_in_strings(status_words, val);
-			if (n < 0)
-				bb_error_msg_and_die(bb_msg_invalid_arg_to, val, "status");
+#إذا ENABLE_FEATURE_DD_STATUS
+		إذا (what == OP_status) {
+			صحيح n;
+			n = index_in_strings(status_وشەکان, val);
+			إذا (n < 0)
+				bb_error_پەیام_and_die(bb_پەیام_invalid_arg_to, val, "status");
 			G.flags |= FLAG_STATUS_NONE << n;
 			/*continue;*/
 		}
@@ -490,118 +490,118 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 
 	ibuf = alloc_buf(ibs);
 	obuf = ibuf;
-#if ENABLE_FEATURE_DD_IBS_OBS
-	if (ibs != obs) {
+#إذا ENABLE_FEATURE_DD_IBS_OBS
+	إذا (ibs != obs) {
 		G.flags |= FLAG_TWOBUFS;
 		obuf = alloc_buf(obs);
 	}
 #endif
 
-#if ENABLE_FEATURE_DD_SIGNAL_HANDLING
+#إذا ENABLE_FEATURE_DD_SIGNAL_HANDLING
 	signal_SA_RESTART_empty_mask(SIGUSR1, dd_output_status);
 #endif
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
+#إذا ENABLE_FEATURE_DD_THIRD_STATUS_هێڵ
 	G.begin_time_us = monotonic_us();
 #endif
 
-	if (infile) {
-		int iflag = O_RDONLY;
-#if ENABLE_FEATURE_DD_IBS_OBS
-		if (G.flags & FLAG_IDIRECT) {
+	إذا (infile) {
+		صحيح iflag = O_RDONLY;
+#إذا ENABLE_FEATURE_DD_IBS_OBS
+		إذا (G.flags & FLAG_IDIRECT) {
 # ifdef O_DIRECT
 			iflag |= O_DIRECT;
-# else
-			bb_error_msg_and_die("O_DIRECT not supported on this platform");
+# وإلا
+			bb_error_پەیام_and_die("O_DIRECT not supported on this platform");
 # endif
 		}
 #endif
 		xmove_fd(xopen(infile, iflag), ifd);
-	} else {
-		infile = bb_msg_standard_input;
+	} وإلا {
+		infile = bb_پەیام_standard_تێخستن;
 	}
-	if (outfile) {
-		int oflag = O_WRONLY | O_CREAT;
+	إذا (outfile) {
+		صحيح oflag = O_WRONLY | O_CREAT;
 
-		if (!seek && !(G.flags & FLAG_NOTRUNC))
+		إذا (!seek && !(G.flags & FLAG_NOTRUNC))
 			oflag |= O_TRUNC;
-		if (G.flags & FLAG_APPEND)
+		إذا (G.flags & FLAG_APPEND)
 			oflag |= O_APPEND;
-#if ENABLE_FEATURE_DD_IBS_OBS
-		if (G.flags & FLAG_ODIRECT) {
+#إذا ENABLE_FEATURE_DD_IBS_OBS
+		إذا (G.flags & FLAG_ODIRECT) {
 # ifdef O_DIRECT
 			oflag |= O_DIRECT;
-# else
-			bb_error_msg_and_die("O_DIRECT not supported on this platform");
+# وإلا
+			bb_error_پەیام_and_die("O_DIRECT not supported on this platform");
 # endif
 		}
 #endif
 		xmove_fd(xopen(outfile, oflag), ofd);
 
-		if (seek && !(G.flags & FLAG_NOTRUNC)) {
+		إذا (seek && !(G.flags & FLAG_NOTRUNC)) {
 			size_t blocksz = (G.flags & FLAG_SEEK_BYTES) ? 1 : obs;
-			if (ftruncate(ofd, seek * blocksz) < 0) {
-				struct stat st;
+			إذا (ftruncate(ofd, seek * blocksz) < 0) {
+				بنية stat st;
 
-				if (fstat(ofd, &st) < 0
+				إذا (fstat(ofd, &st) < 0
 				 || S_ISREG(st.st_mode)
 				 || S_ISDIR(st.st_mode)
 				) {
-					goto die_outfile;
+					اذهب die_outfile;
 				}
 			}
 		}
-	} else {
-		outfile = bb_msg_standard_output;
+	} وإلا {
+		outfile = bb_پەیام_standard_output;
 	}
-	if (skip) {
+	إذا (skip) {
 		size_t blocksz = (G.flags & FLAG_SKIP_BYTES) ? 1 : ibs;
-		if (lseek(ifd, skip * blocksz, SEEK_CUR) < 0) {
-			do {
+		إذا (lseek(ifd, skip * blocksz, SEEK_CUR) < 0) {
+			افعل {
 				ssize_t n = dd_read(ibuf, blocksz);
-				if (n < 0)
-					goto die_infile;
-				if (n == 0)
-					break;
-			} while (--skip != 0);
+				إذا (n < 0)
+					اذهب die_infile;
+				إذا (n == 0)
+					اكسر;
+			} طالما (--skip != 0);
 		}
 	}
-	if (seek) {
+	إذا (seek) {
 		size_t blocksz = (G.flags & FLAG_SEEK_BYTES) ? 1 : obs;
-		if (lseek(ofd, seek * blocksz, SEEK_CUR) < 0)
-			goto die_outfile;
+		إذا (lseek(ofd, seek * blocksz, SEEK_CUR) < 0)
+			اذهب die_outfile;
 	}
 
-	while (1) {
+	طالما (1) {
 		ssize_t n = ibs;
 
-		if (G.flags & FLAG_COUNT) {
-			if (count == 0)
-				break;
-			if ((G.flags & FLAG_COUNT_BYTES) && count < ibs)
-				n = count;
+		إذا (G.flags & FLAG_ژماردن) {
+			إذا (ژماردن == 0)
+				اكسر;
+			إذا ((G.flags & FLAG_ژماردن_BYTES) && ژماردن < ibs)
+				n = ژماردن;
 		}
 
 		n = dd_read(ibuf, n);
-		if (n == 0)
-			break;
-		if (n < 0) {
+		إذا (n == 0)
+			اكسر;
+		إذا (n < 0) {
 			/* "Bad block" */
-			if (!(G.flags & FLAG_NOERROR))
-				goto die_infile;
-			bb_simple_perror_msg(infile);
+			إذا (!(G.flags & FLAG_NOERROR))
+				اذهب die_infile;
+			bb_simple_perror_پەیام(infile);
 			/* GNU dd with conv=noerror skips over bad blocks */
 			xlseek(ifd, ibs, SEEK_CUR);
 			/* conv=noerror,sync writes NULs,
 			 * conv=noerror just ignores input bad blocks */
 			n = 0;
 		}
-		if (G.flags & FLAG_SWAB) {
+		إذا (G.flags & FLAG_SWAB) {
 			uint16_t *p16;
 			ssize_t n2;
 
 			/* Our code allows only last read to be odd-sized */
-			if (prev_read_size & 1)
-				bb_error_msg_and_die("can't swab %lu byte buffer",
+			إذا (prev_read_size & 1)
+				bb_error_پەیام_and_die("can't swab %lu byte buffer",
 						(unsigned long)prev_read_size);
 			prev_read_size = n;
 
@@ -609,81 +609,81 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 			 *  echo -n "qwe" | dd conv=swab
 			 * prints "wqe".
 			 */
-			p16 = (void*) ibuf;
+			p16 = (فراغ*) ibuf;
 			n2 = (n >> 1);
-			while (--n2 >= 0) {
+			طالما (--n2 >= 0) {
 				*p16 = bswap_16(*p16);
 				p16++;
 			}
 		}
-		count -= (G.flags & FLAG_COUNT_BYTES) ? n : 1;
-		if ((size_t)n == ibs)
+		ژماردن -= (G.flags & FLAG_ژماردن_BYTES) ? n : 1;
+		إذا ((size_t)n == ibs)
 			G.in_full++;
-		else {
+		وإلا {
 			G.in_part++;
-			if (G.flags & FLAG_SYNC) {
+			إذا (G.flags & FLAG_SYNC) {
 				memset(ibuf + n, 0, ibs - n);
 				n = ibs;
 			}
 		}
-#if ENABLE_FEATURE_DD_IBS_OBS
-		if (G.flags & FLAG_TWOBUFS) {
-			char *tmp = ibuf;
-			while (n) {
+#إذا ENABLE_FEATURE_DD_IBS_OBS
+		إذا (G.flags & FLAG_TWOBUFS) {
+			حرف *tmp = ibuf;
+			طالما (n) {
 				size_t d = obs - ocount;
-				if (d > (size_t)n)
+				إذا (d > (size_t)n)
 					d = n;
 				memcpy(obuf + ocount, tmp, d);
 				n -= d;
 				tmp += d;
 				ocount += d;
-				if (ocount == obs) {
-					if (write_and_stats(obuf, obs, obs, outfile))
-						goto out_status;
+				إذا (ocount == obs) {
+					إذا (write_and_stats(obuf, obs, obs, outfile))
+						اذهب out_status;
 					ocount = 0;
 				}
 			}
-		} else
+		} وإلا
 #endif
 		{
-			if (write_and_stats(ibuf, n, obs, outfile))
-				goto out_status;
+			إذا (write_and_stats(ibuf, n, obs, outfile))
+				اذهب out_status;
 		}
 	}
 
-	if (G.flags & FLAG_FSYNC) {
-		if (fsync(ofd) < 0)
-			goto die_outfile;
+	إذا (G.flags & FLAG_FSYNC) {
+		إذا (fsync(ofd) < 0)
+			اذهب die_outfile;
 	}
 
-#if ENABLE_FEATURE_DD_IBS_OBS
-	if (ocount != 0) {
-		if (write_and_stats(obuf, ocount, obs, outfile))
-			goto out_status;
+#إذا ENABLE_FEATURE_DD_IBS_OBS
+	إذا (ocount != 0) {
+		إذا (write_and_stats(obuf, ocount, obs, outfile))
+			اذهب out_status;
 	}
 #endif
-	if (close(ifd) < 0) {
+	إذا (close(ifd) < 0) {
  die_infile:
-		bb_simple_perror_msg_and_die(infile);
+		bb_simple_perror_پەیام_and_die(infile);
 	}
 
-	if (close(ofd) < 0) {
+	إذا (close(ofd) < 0) {
  die_outfile:
-		bb_simple_perror_msg_and_die(outfile);
+		bb_simple_perror_پەیام_and_die(outfile);
 	}
 
 	exitcode = EXIT_SUCCESS;
  out_status:
-	if (!ENABLE_FEATURE_DD_STATUS || !(G.flags & FLAG_STATUS_NONE))
+	إذا (!ENABLE_FEATURE_DD_STATUS || !(G.flags & FLAG_STATUS_NONE))
 		dd_output_status(0);
 
-#if 0 /* can't just free(), they can be mmap()ed */
-	if (ENABLE_FEATURE_CLEAN_UP) {
-		free(obuf);
-		if (G.flags & FLAG_TWOBUFS)
-			free(ibuf);
+#إذا 0 /* can't just free(), they can be mmap()ed */
+	إذا (ENABLE_FEATURE_CLEAN_UP) {
+		حرر(obuf);
+		إذا (G.flags & FLAG_TWOBUFS)
+			حرر(ibuf);
 	}
 #endif
 
-	return exitcode;
+	أرجع exitcode;
 }
