@@ -97,28 +97,28 @@
 //usage:       "Filesystem          512-blocks      Used Available Capacity Mounted on\n"
 //usage:       "/dev/sda3             17381728  17107080    274648      98% /\n"
 
-#include <mntent.h>
-#include <sys/statvfs.h>
-#include "libbb.h"
-#include "unicode.h"
+#ضمن <mntent.h>
+#ضمن <sys/statvfs.h>
+#ضمن "libbb.h"
+#ضمن "unicode.h"
 
-#if !ENABLE_FEATURE_HUMAN_READABLE
-static unsigned long kscale(unsigned long b, unsigned long bs)
+#إذا !ENABLE_FEATURE_HUMAN_READABLE
+ساكن بنانشانی لما kscale(بنانشانی لما b, بنانشانی لما bs)
 {
-	return (b * (unsigned long long) bs + 1024/2) / 1024;
+	أرجع (b * (بنانشانی لما لما) bs + 1024/2) / 1024;
 }
-#endif
+#جے_انت
 
-int df_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int df_main(int argc UNUSED_PARAM, char **argv)
+صحيح df_main(صحيح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحيح df_main(صحيح argc بن_ورتیا_PARAM, حرف **argv)
 {
-	unsigned long df_disp_hr = 1024;
-	exitcode_t status = EXIT_SUCCESS;
-	unsigned opt;
-	FILE *mount_table;
-	struct mntent *mount_entry;
-	struct statvfs s;
-	enum {
+	بنانشانی لما df_disp_hr = 1024;
+	exitcode_t حالت = EXIT_SUCCESS;
+	بنانشانی opt;
+	FILE *mount_جدول;
+	بنية mntent *mount_اندراج;
+	بنية statvfs s;
+	تعداد {
 		OPT_KILO     = (1 << 0),
 		OPT_POSIX    = (1 << 1),
 		OPT_FSTYPE   = (1 << 2),
@@ -130,8 +130,8 @@ int df_main(int argc UNUSED_PARAM, char **argv)
 		OPT_HUMANDEC = (1 << (5 + 3*ENABLE_FEATURE_DF_FANCY)) * ENABLE_FEATURE_HUMAN_READABLE,
 		OPT_MEGA     = (1 << (6 + 3*ENABLE_FEATURE_DF_FANCY)) * ENABLE_FEATURE_HUMAN_READABLE,
 	};
-	const char *disp_units_hdr = NULL;
-	char *chp, *opt_t;
+	ثابت حرف *disp_units_hdr = عدم;
+	حرف *chp, *opt_t;
 
 	init_unicode();
 
@@ -139,7 +139,7 @@ int df_main(int argc UNUSED_PARAM, char **argv)
 	 * Disk space is shown in 1K blocks by default, unless the environment
 	 * variable POSIXLY_CORRECT is set, in which case 512-byte blocks are used.
 	 */
-	if (getenv("POSIXLY_CORRECT")) /* TODO - a new libbb function? */
+	إذا (getenv("POSIXLY_CORRECT")) /* TODO - a new libbb function? */
 		df_disp_hr = 512;
 
 	opt = getopt32(argv, "^"
@@ -147,24 +147,24 @@ int df_main(int argc UNUSED_PARAM, char **argv)
 			IF_FEATURE_DF_FANCY("aiB:")
 			IF_FEATURE_HUMAN_READABLE("hHm")
 			"\0"
-#if ENABLE_FEATURE_HUMAN_READABLE && ENABLE_FEATURE_DF_FANCY
+#إذا ENABLE_FEATURE_HUMAN_READABLE && ENABLE_FEATURE_DF_FANCY
 			"k-mB:m-Bk:B-km"
-#elif ENABLE_FEATURE_HUMAN_READABLE
+#وإلاإذا ENABLE_FEATURE_HUMAN_READABLE
 			"k-m:m-k"
-#endif
+#جے_انت
 			, &opt_t
 			IF_FEATURE_DF_FANCY(, &chp)
 	);
-	if (opt & OPT_MEGA)
+	إذا (opt & OPT_MEGA)
 		df_disp_hr = 1024*1024;
 
-	if (opt & OPT_BSIZE) {
+	إذا (opt & OPT_BSIZE) {
 		/* GNU coreutils 8.25 accepts "-BMiB" form too */
-		int i;
-		for (i = 0; kmg_i_suffixes[i].suffix[0]; i++) {
-			if (strcmp(kmg_i_suffixes[i].suffix, chp) == 0) {
+		صحيح i;
+		لكل (i = 0; kmg_i_suffixes[i].suffix[0]; i++) {
+			إذا (strcmp(kmg_i_suffixes[i].suffix, chp) == 0) {
 				df_disp_hr = kmg_i_suffixes[i].mult;
-				goto got_it;
+				اذهب got_it;
 			}
 		}
 		/* Range used to disallow 0 */
@@ -172,180 +172,180 @@ int df_main(int argc UNUSED_PARAM, char **argv)
  got_it: ;
 	}
 
-	if (opt & (OPT_HUMAN|OPT_HUMANDEC)) {
+	إذا (opt & (OPT_HUMAN|OPT_HUMANDEC)) {
 		df_disp_hr = 0;
 //TODO: need to add support in make_human_readable_str() for "decimal human readable"
 		//if (opt & OPT_HUMANDEC)
 		//	df_disp_hr--;
 		disp_units_hdr = "     Size";
 	}
-	if (opt & OPT_INODE)
+	إذا (opt & OPT_INODE)
 		disp_units_hdr = "   Inodes";
 
-	if (disp_units_hdr == NULL) {
-#if ENABLE_FEATURE_HUMAN_READABLE
+	إذا (disp_units_hdr == عدم) {
+#إذا ENABLE_FEATURE_HUMAN_READABLE
 		disp_units_hdr = xasprintf("%s-blocks",
 			/* print df_disp_hr, show no fractionals,
 			 * use suffixes if OPT_POSIX is set in opt */
 			make_human_readable_str(df_disp_hr, 0, !!(opt & OPT_POSIX))
 		);
-#else
+#وإلا
 		disp_units_hdr = xasprintf("%lu-blocks", df_disp_hr);
-#endif
+#جے_انت
 	}
 
-	printf("Filesystem           %s%-15sUsed Available %s Mounted on\n",
+	لکھو("Filesystem           %s%-15sUsed Available %s Mounted on\n",
 			(opt & OPT_FSTYPE) ? "Type       " : "",
 			disp_units_hdr,
 			(opt & OPT_POSIX) ? "Capacity" : "Use%");
 
-	mount_table = NULL;
+	mount_جدول = عدم;
 	argv += optind;
-	if (!argv[0]) {
-		mount_table = setmntent(bb_path_mtab_file, "r");
-		if (!mount_table)
-			bb_simple_perror_msg_and_die(bb_path_mtab_file);
+	إذا (!argv[0]) {
+		mount_جدول = setmntent(bb_رستہ_mtab_file, "r");
+		إذا (!mount_جدول)
+			bb_simple_perror_پیغام_and_die(bb_رستہ_mtab_file);
 	}
 
-	while (1) {
-		const char *device;
-		const char *mount_point;
-		const char *fs_type;
+	طالما (1) {
+		ثابت حرف *device;
+		ثابت حرف *mount_نقطہ;
+		ثابت حرف *fs_type;
 
-		if (mount_table) {
-			mount_entry = getmntent(mount_table);
-			if (!mount_entry) {
-				endmntent(mount_table);
-				break;
+		إذا (mount_جدول) {
+			mount_اندراج = getmntent(mount_جدول);
+			إذا (!mount_اندراج) {
+				endmntent(mount_جدول);
+				اكسر;
 			}
-		} else {
-			mount_point = *argv++;
-			if (!mount_point)
-				break;
-			mount_entry = find_mount_point(mount_point, 1);
-			if (!mount_entry) {
-				bb_error_msg("%s: can't find mount point", mount_point);
- set_error:
-				status = EXIT_FAILURE;
-				continue;
+		} وإلا {
+			mount_نقطہ = *argv++;
+			إذا (!mount_نقطہ)
+				اكسر;
+			mount_اندراج = لبھو_mount_نقطہ(mount_نقطہ, 1);
+			إذا (!mount_اندراج) {
+				bb_error_پیغام("%s: can't find mount point", mount_نقطہ);
+ سیٹ_error:
+				حالت = EXIT_FAILURE;
+				استمر;
 			}
 		}
 
-		device = mount_entry->mnt_fsname;
+		device = mount_اندراج->mnt_fsname;
 
 		/* GNU coreutils 6.10 skips certain mounts, try to be compatible */
-		if (ENABLE_FEATURE_SKIP_ROOTFS && strcmp(device, "rootfs") == 0)
-			continue;
+		إذا (ENABLE_FEATURE_SKIP_ROOTFS && strcmp(device, "rootfs") == 0)
+			استمر;
 
-		mount_point = mount_entry->mnt_dir;
-		fs_type = mount_entry->mnt_type;
+		mount_نقطہ = mount_اندراج->mnt_dir;
+		fs_type = mount_اندراج->mnt_type;
 
-		if (opt & OPT_t) {
-			if (strcmp(fs_type, opt_t) != 0)
-				continue;
+		إذا (opt & OPT_t) {
+			إذا (strcmp(fs_type, opt_t) != 0)
+				استمر;
 		}
 
-		if (statvfs(mount_point, &s) != 0) {
-			bb_simple_perror_msg(mount_point);
-			goto set_error;
+		إذا (statvfs(mount_نقطہ, &s) != 0) {
+			bb_simple_perror_پیغام(mount_نقطہ);
+			اذهب سیٹ_error;
 		}
 		/* Some uclibc versions were seen to lose f_frsize
 		 * (kernel does return it, but then uclibc does not copy it)
 		 */
-		if (s.f_frsize == 0)
+		إذا (s.f_frsize == 0)
 			s.f_frsize = s.f_bsize;
 
-		if ((s.f_blocks > 0) || !mount_table || (opt & OPT_ALL)) {
-			unsigned long long blocks_used;
-			unsigned long long blocks_total;
-			unsigned blocks_percent_used;
+		إذا ((s.f_blocks > 0) || !mount_جدول || (opt & OPT_ALL)) {
+			بنانشانی لما لما بلاکاں_ورتیا;
+			بنانشانی لما لما بلاکاں_کل;
+			بنانشانی بلاکاں_percent_ورتیا;
 
-			if (opt & OPT_INODE) {
+			إذا (opt & OPT_INODE) {
 				s.f_blocks = s.f_files;
 				s.f_bavail = s.f_bfree = s.f_ffree;
 				s.f_frsize = 1;
-				if (df_disp_hr)
+				إذا (df_disp_hr)
 					df_disp_hr = 1;
 			}
-			blocks_used = s.f_blocks - s.f_bfree;
-			blocks_total = blocks_used + s.f_bavail;
-			blocks_percent_used = blocks_total; /* 0% if blocks_total == 0, else... */
-			if (blocks_total != 0) {
+			بلاکاں_ورتیا = s.f_blocks - s.f_bfree;
+			بلاکاں_کل = بلاکاں_ورتیا + s.f_bavail;
+			بلاکاں_percent_ورتیا = بلاکاں_کل; /* 0% if blocks_total == 0, else... */
+			إذا (بلاکاں_کل != 0) {
 				/* Downscale sizes for narrower division */
-				unsigned u;
-				while (blocks_total >= INT_MAX / 101) {
-					blocks_total >>= 1;
-					blocks_used >>= 1;
+				بنانشانی u;
+				طالما (بلاکاں_کل >= ودھ_توں_ودھ_عدد / 101) {
+					بلاکاں_کل >>= 1;
+					بلاکاں_ورتیا >>= 1;
 				}
-				u = (unsigned)blocks_used * 100u + (unsigned)blocks_total / 2;
-				blocks_percent_used = u / (unsigned)blocks_total;
+				u = (بنانشانی)بلاکاں_ورتیا * 100u + (بنانشانی)بلاکاں_کل / 2;
+				بلاکاں_percent_ورتیا = u / (بنانشانی)بلاکاں_کل;
 			}
 
-#ifdef WHY_WE_DO_IT_FOR_DEV_ROOT_ONLY
-			if (strcmp(device, "/dev/root") == 0) {
+#جے_تعریف_شدہ WHY_WE_DO_IT_FOR_DEV_جڑ_ONLY
+			إذا (strcmp(device, "/dev/root") == 0) {
 				/* Adjusts device to be the real root device,
 				 * or leaves device alone if it can't find it */
-				device = find_block_device("/");
-				if (!device) {
-					goto set_error;
+				device = لبھو_بلاک_device("/");
+				إذا (!device) {
+					اذهب سیٹ_error;
 				}
 			}
-#endif
+#جے_انت
 
-#if ENABLE_UNICODE_SUPPORT
+#إذا ENABLE_UNICODE_SUPPORT
 			{
 				uni_stat_t uni_stat;
-				char *uni_dev = unicode_conv_to_printable(&uni_stat, device);
-				if (uni_stat.unicode_width > 20 && !(opt & OPT_POSIX)) {
-					printf("%s\n%20s", uni_dev, "");
-				} else {
-					printf("%s%*s", uni_dev, 20 - (int)uni_stat.unicode_width, "");
+				حرف *uni_dev = unicode_conv_منزل_printable(&uni_stat, device);
+				إذا (uni_stat.unicode_چوڑائی > 20 && !(opt & OPT_POSIX)) {
+					لکھو("%s\n%20s", uni_dev, "");
+				} وإلا {
+					لکھو("%s%*s", uni_dev, 20 - (صحيح)uni_stat.unicode_چوڑائی, "");
 				}
-				free(uni_dev);
-				if (opt & OPT_FSTYPE) {
-					char *uni_type = unicode_conv_to_printable(&uni_stat, fs_type);
-					if (uni_stat.unicode_width > 10 && !(opt & OPT_POSIX))
-						printf(" %s\n%31s", uni_type, "");
-					else
-						printf(" %s%*s", uni_type, 10 - (int)uni_stat.unicode_width, "");
-					free(uni_type);
+				حرر(uni_dev);
+				إذا (opt & OPT_FSTYPE) {
+					حرف *uni_type = unicode_conv_منزل_printable(&uni_stat, fs_type);
+					إذا (uni_stat.unicode_چوڑائی > 10 && !(opt & OPT_POSIX))
+						لکھو(" %s\n%31s", uni_type, "");
+					وإلا
+						لکھو(" %s%*s", uni_type, 10 - (صحيح)uni_stat.unicode_چوڑائی, "");
+					حرر(uni_type);
 				}
 			}
-#else
-			if (printf("\n%-20s" + 1, device) > 20 && !(opt & OPT_POSIX))
-				printf("\n%-20s", "");
-			if (opt & OPT_FSTYPE) {
-				if (printf(" %-10s", fs_type) > 11 && !(opt & OPT_POSIX))
-					printf("\n%-30s", "");
+#وإلا
+			إذا (لکھو("\n%-20s" + 1, device) > 20 && !(opt & OPT_POSIX))
+				لکھو("\n%-20s", "");
+			إذا (opt & OPT_FSTYPE) {
+				إذا (لکھو(" %-10s", fs_type) > 11 && !(opt & OPT_POSIX))
+					لکھو("\n%-30s", "");
 			}
-#endif
+#جے_انت
 
-#if ENABLE_FEATURE_HUMAN_READABLE
-			printf(" %9s ",
+#إذا ENABLE_FEATURE_HUMAN_READABLE
+			لکھو(" %9s ",
 				/* f_blocks x f_frsize / df_disp_hr, show one fractional,
 				 * use suffixes if df_disp_hr == 0 */
 				make_human_readable_str(s.f_blocks, s.f_frsize, df_disp_hr));
 
-			printf(" %9s " + 1,
+			لکھو(" %9s " + 1,
 				/* EXPR x f_frsize / df_disp_hr, show one fractional,
 				 * use suffixes if df_disp_hr == 0 */
 				make_human_readable_str((s.f_blocks - s.f_bfree),
 						s.f_frsize, df_disp_hr));
 
-			printf("%9s %3u%% %s\n",
+			لکھو("%9s %3u%% %s\n",
 				/* f_bavail x f_frsize / df_disp_hr, show one fractional,
 				 * use suffixes if df_disp_hr == 0 */
 				make_human_readable_str(s.f_bavail, s.f_frsize, df_disp_hr),
-				blocks_percent_used, mount_point);
-#else
-			printf(" %9lu %9lu %9lu %3u%% %s\n",
+				بلاکاں_percent_ورتیا, mount_نقطہ);
+#وإلا
+			لکھو(" %9lu %9lu %9lu %3u%% %s\n",
 				kscale(s.f_blocks, s.f_frsize),
 				kscale(s.f_blocks - s.f_bfree, s.f_frsize),
 				kscale(s.f_bavail, s.f_frsize),
-				blocks_percent_used, mount_point);
-#endif
+				بلاکاں_percent_ورتیا, mount_نقطہ);
+#جے_انت
 		}
 	}
 
-	return status;
+	أرجع حالت;
 }

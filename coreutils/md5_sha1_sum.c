@@ -124,11 +124,11 @@
 // --quiet   don't print OK for each successfully verified file
 // --status  don't output anything, status code shows success
 
-#include "libbb.h"
+#ضمن "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-enum {
+تعداد {
 	/* 4th letter of applet_name is... */
 	HASH_MD5 = 's', /* "md5>s<um" */
 	HASH_SHA1 = '1',
@@ -137,225 +137,225 @@ enum {
 	HASH_SHA512 = '5',
 };
 
-#define FLAG_SILENT  1
-#define FLAG_CHECK   2
-#define FLAG_WARN    4
+#تعریف_کرو FLAG_SILENT  1
+#تعریف_کرو FLAG_CHECK   2
+#تعریف_کرو FLAG_WARN    4
 
 /* This might be useful elsewhere */
-static unsigned char *hash_bin_to_hex(unsigned char *hash_value,
-				unsigned hash_length)
+ساكن بنانشانی حرف *hash_bin_منزل_hex(بنانشانی حرف *hash_قدر,
+				بنانشانی hash_لمائی)
 {
 	/* xzalloc zero-terminates */
-	char *hex_value = xzalloc((hash_length * 2) + 1);
-	bin2hex(hex_value, (char*)hash_value, hash_length);
-	return (unsigned char *)hex_value;
+	حرف *hex_قدر = xzalloc((hash_لمائی * 2) + 1);
+	bin2hex(hex_قدر, (حرف*)hash_قدر, hash_لمائی);
+	أرجع (بنانشانی حرف *)hex_قدر;
 }
 
-#define BUFSZ (CONFIG_FEATURE_COPYBUF_KB < 4 ? 4096 : CONFIG_FEATURE_COPYBUF_KB * 1024)
+#تعریف_کرو BUFSZ (CONFIG_FEATURE_COPYBUF_KB < 4 ? 4096 : CONFIG_FEATURE_COPYBUF_KB * 1024)
 
-#if !ENABLE_SHA3SUM
+#إذا !ENABLE_SHA3_جوڑ
 # define hash_file(b,f,w) hash_file(b,f)
-#endif
-static uint8_t *hash_file(unsigned char *in_buf, const char *filename, unsigned sha3_width)
+#جے_انت
+ساكن uint8_t *hash_file(بنانشانی حرف *وچ_buf, ثابت حرف *filename, بنانشانی sha3_چوڑائی)
 {
-	int src_fd, hash_len, count;
-	union _ctx_ {
+	صحيح src_fd, hash_len, گنتی;
+	اتحاد _ctx_ {
 		sha3_ctx_t sha3;
 		sha512_ctx_t sha512;
 		sha256_ctx_t sha256;
 		sha1_ctx_t sha1;
 		md5_ctx_t md5;
 	} context;
-	uint8_t *hash_value;
-	void FAST_FUNC (*update)(void*, const void*, size_t);
-	unsigned FAST_FUNC (*final)(void*, void*);
-	char hash_algo;
+	uint8_t *hash_قدر;
+	فراغ FAST_FUNC (*update)(فراغ*, ثابت فراغ*, ناپ_t);
+	بنانشانی FAST_FUNC (*final)(فراغ*, فراغ*);
+	حرف hash_algo;
 
 	src_fd = open_or_warn_stdin(filename);
-	if (src_fd < 0) {
-		return NULL;
+	إذا (src_fd < 0) {
+		أرجع عدم;
 	}
 
 	hash_algo = applet_name[3];
 
 	/* figure specific hash algorithms */
-	if (ENABLE_MD5SUM && hash_algo == HASH_MD5) {
+	إذا (ENABLE_MD5_جوڑ && hash_algo == HASH_MD5) {
 		md5_begin(&context.md5);
-		update = (void*)md5_hash;
-		final = (void*)md5_end;
+		update = (فراغ*)md5_hash;
+		final = (فراغ*)md5_سرا;
 		hash_len = 16;
 	}
-	else if (ENABLE_SHA1SUM && hash_algo == HASH_SHA1) {
+	وإلا إذا (ENABLE_SHA1_جوڑ && hash_algo == HASH_SHA1) {
 		sha1_begin(&context.sha1);
-		update = (void*)sha1_hash;
-		final = (void*)sha1_end;
+		update = (فراغ*)sha1_hash;
+		final = (فراغ*)sha1_سرا;
 		hash_len = 20;
 	}
-	else if (ENABLE_SHA256SUM && hash_algo == HASH_SHA256) {
+	وإلا إذا (ENABLE_SHA256_جوڑ && hash_algo == HASH_SHA256) {
 		sha256_begin(&context.sha256);
-		update = (void*)sha256_hash;
-		final = (void*)sha256_end;
+		update = (فراغ*)sha256_hash;
+		final = (فراغ*)sha256_سرا;
 		hash_len = 32;
 	}
-	else if (ENABLE_SHA512SUM && hash_algo == HASH_SHA512) {
+	وإلا إذا (ENABLE_SHA512_جوڑ && hash_algo == HASH_SHA512) {
 		sha512_begin(&context.sha512);
-		update = (void*)sha512_hash;
-		final = (void*)sha512_end;
+		update = (فراغ*)sha512_hash;
+		final = (فراغ*)sha512_سرا;
 		hash_len = 64;
 	}
-#if ENABLE_SHA3SUM
-	else if (ENABLE_SHA3SUM && hash_algo == HASH_SHA3) {
+#إذا ENABLE_SHA3_جوڑ
+	وإلا إذا (ENABLE_SHA3_جوڑ && hash_algo == HASH_SHA3) {
 		sha3_begin(&context.sha3);
-		update = (void*)sha3_hash;
-		final = (void*)sha3_end;
+		update = (فراغ*)sha3_hash;
+		final = (فراغ*)sha3_سرا;
 		/*
 		 * Should support 224, 256, 384, 512.
 		 * We allow any value which does not blow the algorithm up.
 		 */
-		if (sha3_width >= 1600/2 /* input block can't be <= 0 */
-		 || sha3_width == 0      /* hash len can't be 0 */
-		 || (sha3_width & 0x1f)  /* should be multiple of 32 */
+		إذا (sha3_چوڑائی >= 1600/2 /* input block can't be <= 0 */
+		 || sha3_چوڑائی == 0      /* hash len can't be 0 */
+		 || (sha3_چوڑائی & 0x1f)  /* should be multiple of 32 */
 		/* (because input uses up to 8 byte wide word XORs. 32/4=8) */
 		) {
-			bb_error_msg_and_die("bad -a%u", sha3_width);
+			bb_error_پیغام_and_die("bad -a%u", sha3_چوڑائی);
 		}
-		sha3_width /= 4;
-		context.sha3.input_block_bytes = 1600/8 - sha3_width;
-		hash_len = sha3_width/2;
+		sha3_چوڑائی /= 4;
+		context.sha3.داخلہ_بلاک_بائٹاں = 1600/8 - sha3_چوڑائی;
+		hash_len = sha3_چوڑائی/2;
 	}
-#endif
-	else {
+#جے_انت
+	وإلا {
 		xfunc_die(); /* can't reach this */
 	}
 
 	{
-		while ((count = safe_read(src_fd, in_buf, BUFSZ)) > 0) {
-			update(&context, in_buf, count);
+		طالما ((گنتی = محفوظ_read(src_fd, وچ_buf, BUFSZ)) > 0) {
+			update(&context, وچ_buf, گنتی);
 		}
-		hash_value = NULL;
-		if (count < 0)
-			bb_perror_msg("can't read '%s'", filename);
-		else /* count == 0 */ {
-			final(&context, in_buf);
-			hash_value = hash_bin_to_hex(in_buf, hash_len);
+		hash_قدر = عدم;
+		إذا (گنتی < 0)
+			bb_perror_پیغام("can't read '%s'", filename);
+		وإلا /* count == 0 */ {
+			final(&context, وچ_buf);
+			hash_قدر = hash_bin_منزل_hex(وچ_buf, hash_len);
 		}
 	}
 
-	if (src_fd != STDIN_FILENO) {
+	إذا (src_fd != STDIN_FILENO) {
 		close(src_fd);
 	}
 
-	return hash_value;
+	أرجع hash_قدر;
 }
 
-int md5_sha1_sum_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int md5_sha1_sum_main(int argc UNUSED_PARAM, char **argv)
+صحيح md5_sha1_جوڑ_main(صحيح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحيح md5_sha1_جوڑ_main(صحيح argc بن_ورتیا_PARAM, حرف **argv)
 {
-	unsigned char *in_buf;
-	int return_value = EXIT_SUCCESS;
-	unsigned flags;
-#if ENABLE_SHA3SUM
-	unsigned sha3_width = 224;
-#endif
+	بنانشانی حرف *وچ_buf;
+	صحيح return_قدر = EXIT_SUCCESS;
+	بنانشانی flags;
+#إذا ENABLE_SHA3_جوڑ
+	بنانشانی sha3_چوڑائی = 224;
+#جے_انت
 
-	if (ENABLE_FEATURE_MD5_SHA1_SUM_CHECK) {
+	إذا (ENABLE_FEATURE_MD5_SHA1_جوڑ_CHECK) {
 		/* -b "binary", -t "text" are ignored (shaNNNsum compat) */
 		/* -s and -w require -c */
-#if ENABLE_SHA3SUM
-		if (applet_name[3] == HASH_SHA3)
-			flags = getopt32(argv, "^" "scwbta:+" "\0" "s?c:w?c", &sha3_width);
-		else
-#endif
+#إذا ENABLE_SHA3_جوڑ
+		إذا (applet_name[3] == HASH_SHA3)
+			flags = getopt32(argv, "^" "scwbta:+" "\0" "s?c:w?c", &sha3_چوڑائی);
+		وإلا
+#جے_انت
 			flags = getopt32(argv, "^" "scwbt" "\0" "s?c:w?c");
-	} else {
-#if ENABLE_SHA3SUM
-		if (applet_name[3] == HASH_SHA3)
-			getopt32(argv, "a:+", &sha3_width);
-		else
-#endif
+	} وإلا {
+#إذا ENABLE_SHA3_جوڑ
+		إذا (applet_name[3] == HASH_SHA3)
+			getopt32(argv, "a:+", &sha3_چوڑائی);
+		وإلا
+#جے_انت
 			getopt32(argv, "");
 	}
 	argv += optind;
 	//argc -= optind;
-	if (!*argv)
-		*--argv = (char*)"-";
+	إذا (!*argv)
+		*--argv = (حرف*)"-";
 
 	/* The buffer is not alloc/freed for each input file:
 	 * for big values of COPYBUF_KB, this helps to keep its pages
 	 * pre-faulted and possibly even fully cached on local CPU.
 	 */
-	in_buf = xmalloc(BUFSZ);
+	وچ_buf = xmalloc(BUFSZ);
 
-	do {
-		if (ENABLE_FEATURE_MD5_SHA1_SUM_CHECK && (flags & FLAG_CHECK)) {
-			FILE *pre_computed_stream;
-			char *line;
-			int count_total = 0;
-			int count_failed = 0;
+	افعل {
+		إذا (ENABLE_FEATURE_MD5_SHA1_جوڑ_CHECK && (flags & FLAG_CHECK)) {
+			FILE *pre_computed_دھارا;
+			حرف *سطر;
+			صحيح گنتی_کل = 0;
+			صحيح گنتی_failed = 0;
 
-			pre_computed_stream = xfopen_stdin(*argv);
+			pre_computed_دھارا = xfopen_stdin(*argv);
 
-			while ((line = xmalloc_fgetline(pre_computed_stream)) != NULL) {
-				uint8_t *hash_value;
-				char *filename_ptr;
+			طالما ((سطر = xmalloc_fgetline(pre_computed_دھارا)) != عدم) {
+				uint8_t *hash_قدر;
+				حرف *filename_ptr;
 
-				count_total++;
-				filename_ptr = strchr(line, ' ');
-				if (!filename_ptr) {
-					if (flags & FLAG_WARN) {
-						bb_simple_error_msg("invalid format");
+				گنتی_کل++;
+				filename_ptr = strchr(سطر, ' ');
+				إذا (!filename_ptr) {
+					إذا (flags & FLAG_WARN) {
+						bb_simple_error_پیغام("invalid format");
 					}
-					count_failed++;
-					return_value = EXIT_FAILURE;
-					free(line);
-					continue;
+					گنتی_failed++;
+					return_قدر = EXIT_FAILURE;
+					حرر(سطر);
+					استمر;
 				}
 				*filename_ptr++ = '\0';
 				/* coreutils 9.1 allows "HASH FILENAME" format,
 				 * with only one space. Skip the 'correct'
 				 * "  " or " *" delimiter if it is there:
 				 */
-				if (*filename_ptr == ' ' || *filename_ptr == '*')
+				إذا (*filename_ptr == ' ' || *filename_ptr == '*')
 					filename_ptr++;
 
-				hash_value = hash_file(in_buf, filename_ptr, sha3_width);
+				hash_قدر = hash_file(وچ_buf, filename_ptr, sha3_چوڑائی);
 
-				if (hash_value && (strcasecmp((char*)hash_value, line) == 0)) {
-					if (!(flags & FLAG_SILENT))
-						printf("%s: OK\n", filename_ptr);
-				} else {
-					if (!(flags & FLAG_SILENT))
-						printf("%s: FAILED\n", filename_ptr);
-					count_failed++;
-					return_value = EXIT_FAILURE;
+				إذا (hash_قدر && (strcasecmp((حرف*)hash_قدر, سطر) == 0)) {
+					إذا (!(flags & FLAG_SILENT))
+						لکھو("%s: OK\n", filename_ptr);
+				} وإلا {
+					إذا (!(flags & FLAG_SILENT))
+						لکھو("%s: FAILED\n", filename_ptr);
+					گنتی_failed++;
+					return_قدر = EXIT_FAILURE;
 				}
 				/* possible free(NULL) */
-				free(hash_value);
-				free(line);
+				حرر(hash_قدر);
+				حرر(سطر);
 			}
-			if (count_failed && !(flags & FLAG_SILENT)) {
-				bb_error_msg("WARNING: %d of %d computed checksums did NOT match",
-						count_failed, count_total);
+			إذا (گنتی_failed && !(flags & FLAG_SILENT)) {
+				bb_error_پیغام("WARNING: %d of %d computed checksums did NOT match",
+						گنتی_failed, گنتی_کل);
 			}
-			if (count_total == 0) {
-				return_value = EXIT_FAILURE;
+			إذا (گنتی_کل == 0) {
+				return_قدر = EXIT_FAILURE;
 				/*
 				 * md5sum from GNU coreutils 8.25 says:
 				 * md5sum: <FILE>: no properly formatted MD5 checksum lines found
 				 */
-				bb_error_msg("%s: no checksum lines found", *argv);
+				bb_error_پیغام("%s: no checksum lines found", *argv);
 			}
-			fclose_if_not_stdin(pre_computed_stream);
-		} else {
-			uint8_t *hash_value = hash_file(in_buf, *argv, sha3_width);
-			if (hash_value == NULL) {
-				return_value = EXIT_FAILURE;
-			} else {
-				printf("%s  %s\n", hash_value, *argv);
-				free(hash_value);
+			fclose_if_not_stdin(pre_computed_دھارا);
+		} وإلا {
+			uint8_t *hash_قدر = hash_file(وچ_buf, *argv, sha3_چوڑائی);
+			إذا (hash_قدر == عدم) {
+				return_قدر = EXIT_FAILURE;
+			} وإلا {
+				لکھو("%s  %s\n", hash_قدر, *argv);
+				حرر(hash_قدر);
 			}
 		}
-	} while (*++argv);
+	} طالما (*++argv);
 
-	return return_value;
+	أرجع return_قدر;
 }

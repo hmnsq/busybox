@@ -2,18 +2,18 @@
 /*
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
-#ifndef COREUTILS_H
-#define COREUTILS_H 1
+#جے_بنا_تعریف COREUTILS_H
+#تعریف_کرو COREUTILS_H 1
 
-PUSH_AND_SET_FUNCTION_VISIBILITY_TO_HIDDEN
+ڈالو_AND_سیٹ_FUNCTION_VISIBILITY_منزل_HIDDEN
 
-typedef int (*stat_func)(const char *fn, struct stat *ps);
+تعريفنوع صحيح (*stat_func)(ثابت حرف *fn, بنية stat *ps);
 
-int cp_mv_stat2(const char *fn, struct stat *fn_stat, stat_func sf) FAST_FUNC;
-int cp_mv_stat(const char *fn, struct stat *fn_stat) FAST_FUNC;
+صحيح cp_mv_stat2(ثابت حرف *fn, بنية stat *fn_stat, stat_func sf) FAST_FUNC;
+صحيح cp_mv_stat(ثابت حرف *fn, بنية stat *fn_stat) FAST_FUNC;
 
-mode_t getopt_mk_fifo_nod(char **argv) FAST_FUNC;
+منوال_t getopt_mk_fifo_nod(حرف **argv) FAST_FUNC;
 
-POP_SAVED_FUNCTION_VISIBILITY
+نکالو_SAVED_FUNCTION_VISIBILITY
 
-#endif
+#جے_انت

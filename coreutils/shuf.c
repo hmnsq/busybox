@@ -26,31 +26,31 @@
 //usage:     "\n	-e	Treat ARGs as lines"
 //usage:     "\n	-i L-H	Treat numbers L-H as lines"
 
-#include "libbb.h"
+#ضمن "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-#define OPT_e		(1 << 0)
-#define OPT_i		(1 << 1)
-#define OPT_n		(1 << 2)
-#define OPT_o		(1 << 3)
-#define OPT_z		(1 << 4)
-#define OPT_STR		"ei:n:o:z"
+#تعریف_کرو OPT_e		(1 << 0)
+#تعریف_کرو OPT_i		(1 << 1)
+#تعریف_کرو OPT_n		(1 << 2)
+#تعریف_کرو OPT_o		(1 << 3)
+#تعریف_کرو OPT_z		(1 << 4)
+#تعریف_کرو OPT_STR		"ei:n:o:z"
 
 /*
  * Use the Fisher-Yates shuffle algorithm on an array of lines.
  * If the required number of output lines is less than the total
  * we can stop shuffling early.
  */
-static void shuffle_lines(char **lines, unsigned numlines, unsigned outlines)
+ساكن فراغ shuffle_سطریں(حرف **سطریں, بنانشانی numlines, بنانشانی outlines)
 {
 	srand(monotonic_us());
 
-	while (outlines != 0) {
-		char *tmp;
-		unsigned r = rand();
+	طالما (outlines != 0) {
+		حرف *tmp;
+		بنانشانی r = rand();
 		/* RAND_MAX can be as small as 32767 */
-		if (numlines > RAND_MAX)
+		إذا (numlines > RAND_MAX)
 			r ^= rand() << 15;
 		r %= numlines;
 //TODO: the above method is seriously non-uniform when numlines is very large.
@@ -59,9 +59,9 @@ static void shuffle_lines(char **lines, unsigned numlines, unsigned outlines)
 //are more likely: e.g. r=1 and r=0xf0000001 both map to 1,
 //whereas only one value, r=0xefffffff, maps to 0xefffffff.
 		numlines--;
-		tmp = lines[numlines];
-		lines[numlines] = lines[r];
-		lines[r] = tmp;
+		tmp = سطریں[numlines];
+		سطریں[numlines] = سطریں[r];
+		سطریں[r] = tmp;
 		outlines--;
 	}
 }
@@ -70,23 +70,23 @@ static void shuffle_lines(char **lines, unsigned numlines, unsigned outlines)
  * shuf -i 333333333333333333333333333333001-333333333333333333333333333333019
  * but do we want to have +200 bytes of code (~40% code growth)?
  */
-#define COMMON_PREFIX_HACK 0
+#تعریف_کرو COMMON_اگیتر_HACK 0
 
-int shuf_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int shuf_main(int argc, char **argv)
+صحيح shuf_main(صحيح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحيح shuf_main(صحيح argc, حرف **argv)
 {
-	unsigned opts;
-	char *opt_i_str, *opt_n_str, *opt_o_str;
-	char **lines;
-	unsigned long long lo = lo;
-	unsigned numlines, outlines;
-	unsigned i;
-	char eol;
-#if COMMON_PREFIX_HACK
-	unsigned pfx_len = 0;
-	unsigned padding_width = padding_width;
-	const char *pfx = pfx;
-#endif
+	بنانشانی opts;
+	حرف *opt_i_str, *opt_n_str, *opt_o_str;
+	حرف **سطریں;
+	بنانشانی لما لما lo = lo;
+	بنانشانی numlines, outlines;
+	بنانشانی i;
+	حرف eol;
+#إذا COMMON_اگیتر_HACK
+	بنانشانی pfx_len = 0;
+	بنانشانی padding_چوڑائی = padding_چوڑائی;
+	ثابت حرف *pfx = pfx;
+#جے_انت
 
 	opts = getopt32(argv, "^"
 			OPT_STR
@@ -98,45 +98,45 @@ int shuf_main(int argc, char **argv)
 	argv += optind;
 
 	/* Prepare lines for shuffling - either: */
-	if (opts & OPT_e) {
+	إذا (opts & OPT_e) {
 		/* make lines from command-line arguments */
 		numlines = argc;
-		lines = argv;
-	} else
-	if (opts & OPT_i) {
+		سطریں = argv;
+	} وإلا
+	إذا (opts & OPT_i) {
 		/* create a range of numbers */
-		unsigned long long hi;
-		char *dash;
+		بنانشانی لما لما hi;
+		حرف *dash;
 
-		if (argv[0])
+		إذا (argv[0])
 			bb_show_usage();
 
 		dash = strchr(opt_i_str, '-');
-		if (!dash) {
-			bb_error_msg_and_die("bad range '%s'", opt_i_str);
+		إذا (!dash) {
+			bb_error_پیغام_and_die("bad range '%s'", opt_i_str);
 		}
 		*dash++ = '\0';
-#if COMMON_PREFIX_HACK
+#إذا COMMON_اگیتر_HACK
 		{
-			const char *a = opt_i_str;
-			const char *b = dash;
+			ثابت حرف *a = opt_i_str;
+			ثابت حرف *b = dash;
 			/* Skip leading zeros (they may mask that common prefix does exist) */
-			while (*a == '0') a++;
-			while (*b == '0') b++;
+			طالما (*a == '0') a++;
+			طالما (*b == '0') b++;
 			/* Do we have a common prefix (long enough to bother)? */
-			padding_width = strlen(a);
-			if (padding_width > 5 && padding_width == strlen(b)) {
+			padding_چوڑائی = لڑی_لمبائی(a);
+			إذا (padding_چوڑائی > 5 && padding_چوڑائی == لڑی_لمبائی(b)) {
 				/* How long is it? */
 				pfx = a;
-				while (isdigit(*a) && *a == *b
+				طالما (ہندسہ_اے(*a) && *a == *b
 				 && a[1] /* "111111-111111" case: avoid xatoull("") */
 				) {
 					a++;
 					b++;
 				}
 				pfx_len = a - pfx; /* can end up being 0 */
-				padding_width -= pfx_len;
-			} else {
+				padding_چوڑائی -= pfx_len;
+			} وإلا {
 				/* Undo leading zero 'eating' (think "0-9") */
 				a = opt_i_str;
 				b = dash;
@@ -144,77 +144,77 @@ int shuf_main(int argc, char **argv)
 			lo = xatoull(a);
 			hi = xatoull(b);
 		}
-#else
+#وإلا
 		lo = xatoull(opt_i_str);
 		hi = xatoull(dash);
-#endif
+#جے_انت
 		dash[-1] = '-';
-		if (hi < lo)
-			bb_error_msg_and_die("bad range '%s'", opt_i_str);
+		إذا (hi < lo)
+			bb_error_پیغام_and_die("bad range '%s'", opt_i_str);
 		hi -= lo;
-		if (sizeof(size_t) > sizeof(numlines)) {
-			if (hi >= UINT_MAX)
-				bb_error_msg_and_die("bad range '%s'", opt_i_str);
-		} else {
-			if (hi >= UINT_MAX / sizeof(lines[0]))
-				bb_error_msg_and_die("bad range '%s'", opt_i_str);
+		إذا (حجم(ناپ_t) > حجم(numlines)) {
+			إذا (hi >= UINT_MAX)
+				bb_error_پیغام_and_die("bad range '%s'", opt_i_str);
+		} وإلا {
+			إذا (hi >= UINT_MAX / حجم(سطریں[0]))
+				bb_error_پیغام_and_die("bad range '%s'", opt_i_str);
 		}
 
 		numlines = hi + 1;
-		lines = xmalloc((size_t)numlines * sizeof(lines[0]));
-		for (i = 0; i < numlines; i++) {
-			lines[i] = (char*)(uintptr_t)i;
+		سطریں = xmalloc((ناپ_t)numlines * حجم(سطریں[0]));
+		لكل (i = 0; i < numlines; i++) {
+			سطریں[i] = (حرف*)(uintptr_t)i;
 		}
-	} else {
+	} وإلا {
 		/* default - read lines from stdin or the input file */
 		FILE *fp;
-		const char *fname = "-";
+		ثابت حرف *fname = "-";
 
-		if (argv[0]) {
-			if (argv[1])
+		إذا (argv[0]) {
+			إذا (argv[1])
 				bb_show_usage();
 			fname = argv[0];
 		}
 
 		fp = xfopen_stdin(fname);
-		lines = NULL;
+		سطریں = عدم;
 		numlines = 0;
-		for (;;) {
-			char *line = xmalloc_fgetline(fp);
-			if (!line)
-				break;
-			lines = xrealloc_vector(lines, 6, numlines);
-			lines[numlines++] = line;
+		لكل (;;) {
+			حرف *سطر = xmalloc_fgetline(fp);
+			إذا (!سطر)
+				اكسر;
+			سطریں = xrealloc_سمتیہ(سطریں, 6, numlines);
+			سطریں[numlines++] = سطر;
 		}
 		fclose_if_not_stdin(fp);
 	}
 
 	outlines = numlines;
-	if (opts & OPT_n) {
+	إذا (opts & OPT_n) {
 		outlines = xatou(opt_n_str);
-		if (outlines > numlines)
+		إذا (outlines > numlines)
 			outlines = numlines;
 	}
 
-	shuffle_lines(lines, numlines, outlines);
+	shuffle_سطریں(سطریں, numlines, outlines);
 
-	if (opts & OPT_o)
+	إذا (opts & OPT_o)
 		xmove_fd(xopen(opt_o_str, O_WRONLY|O_CREAT|O_TRUNC), STDOUT_FILENO);
 
 	eol = '\n';
-	if (opts & OPT_z)
+	إذا (opts & OPT_z)
 		eol = '\0';
 
-	for (i = numlines - outlines; i < numlines; i++) {
-		if (opts & OPT_i) {
-#if COMMON_PREFIX_HACK
-			if (pfx_len != 0)
-				printf("%.*s%0*llu%c", pfx_len, pfx, padding_width, lo + (uintptr_t)lines[i], eol);
-			else
-#endif
-				printf("%llu%c", lo + (uintptr_t)lines[i], eol);
-		} else
-			printf("%s%c", lines[i], eol);
+	لكل (i = numlines - outlines; i < numlines; i++) {
+		إذا (opts & OPT_i) {
+#إذا COMMON_اگیتر_HACK
+			إذا (pfx_len != 0)
+				لکھو("%.*s%0*llu%c", pfx_len, pfx, padding_چوڑائی, lo + (uintptr_t)سطریں[i], eol);
+			وإلا
+#جے_انت
+				لکھو("%llu%c", lo + (uintptr_t)سطریں[i], eol);
+		} وإلا
+			لکھو("%s%c", سطریں[i], eol);
 	}
 
 	fflush_stdout_and_exit_SUCCESS();
