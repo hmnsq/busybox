@@ -129,19 +129,19 @@ static const char sort_opt_str[] ALIGN1 = "^"
 #define OPT_STR (sort_opt_str + 1)
 
 #if ENABLE_FEATURE_SORT_BIG
-static char key_separator;
+static char सुसि_separator;
 
-static struct sort_key {
-	struct sort_key *next_key;  /* linked list */
+static struct sort_सुसि {
+	struct sort_सुसि *next_सुसि;  /* linked list */
 	unsigned range[4];          /* start word, start char, end word, end char */
 	unsigned flags;
-} *key_list;
+} *सुसि_list;
 
 
 /* This is a NOEXEC applet. Be very careful! */
 
 
-static char *get_key(char *str, struct sort_key *key, int flags)
+static char *get_सुसि(char *str, struct sort_सुसि *सुसि, int flags)
 {
 	int start = start; /* for compiler */
 	int end;
@@ -149,7 +149,7 @@ static char *get_key(char *str, struct sort_key *key, int flags)
 	unsigned i;
 
 	/* Special case whole string, so we don't have to make a copy */
-	if (key->range[0] == 1 && !key->range[1] && !key->range[2] && !key->range[3]
+	if (सुसि->range[0] == 1 && !सुसि->range[1] && !सुसि->range[2] && !सुसि->range[3]
 	 && !(flags & (FLAG_b | FLAG_d | FLAG_f | FLAG_i | FLAG_bb))
 	) {
 		return str;
@@ -158,19 +158,19 @@ static char *get_key(char *str, struct sort_key *key, int flags)
 	/* Find start of key on first pass, end on second pass */
 	len = strlen(str);
 	for (j = 0; j < 2; j++) {
-		if (!key->range[2*j])
+		if (!सुसि->range[2*j])
 			end = len;
 		/* Loop through fields */
 		else {
 			unsigned char ch = 0;
 
 			end = 0;
-			for (i = 1; i < key->range[2*j] + j; i++) {
-				if (key_separator) {
+			for (i = 1; i < सुसि->range[2*j] + j; i++) {
+				if (सुसि_separator) {
 					/* Skip body of key and separator */
 					while ((ch = str[end]) != '\0') {
 							end++;
-						if (ch == key_separator)
+						if (ch == सुसि_separator)
 							break;
 					}
 				} else {
@@ -204,13 +204,13 @@ static char *get_key(char *str, struct sort_key *key, int flags)
 	if (flags & FLAG_bb)
 		while (end > start && isspace(str[end-1])) end--;
 	/* -kSTART,N.ENDCHAR: honor ENDCHAR (1-based) */
-	if (key->range[3]) {
-		end = key->range[3];
+	if (सुसि->range[3]) {
+		end = सुसि->range[3];
 		if (end > len) end = len;
 	}
 	/* -kN.STARTCHAR[,...]: honor STARTCHAR (1-based) */
-	if (key->range[1]) {
-		start += key->range[1] - 1;
+	if (सुसि->range[1]) {
+		start += सुसि->range[1] - 1;
 		if (start > len) start = len;
 	}
 	/* Make the copy */
@@ -239,20 +239,20 @@ static char *get_key(char *str, struct sort_key *key, int flags)
 	return str;
 }
 
-static struct sort_key *add_key(void)
+static struct sort_सुसि *add_सुसि(void)
 {
-	struct sort_key **pkey = &key_list;
+	struct sort_सुसि **pkey = &सुसि_list;
 	while (*pkey)
-		pkey = &((*pkey)->next_key);
-	return *pkey = xzalloc(sizeof(struct sort_key));
+		pkey = &((*pkey)->next_सुसि);
+	return *pkey = xzalloc(sizeof(struct sort_सुसि));
 }
 
-#define GET_LINE(fp) \
+#define GET_लिन्या(fp) \
 	((option_mask32 & FLAG_z) \
 	? bb_get_chunk_from_file(fp, NULL) \
 	: xmalloc_fgetline(fp))
 #else
-#define GET_LINE(fp) xmalloc_fgetline(fp)
+#define GET_लिन्या(fp) xmalloc_fgetline(fp)
 #endif
 
 #if ENABLE_FEATURE_SORT_BIG
@@ -275,19 +275,19 @@ static int scale_suffix(const char *tail)
 #endif
 
 /* Iterate through keys list and perform comparisons */
-static int compare_keys(const void *xarg, const void *yarg)
+static int compare_मगा_सुसि(const void *xarg, const void *yarg)
 {
 	int flags = option_mask32, retval = 0;
 	char *x, *y;
 
 #if ENABLE_FEATURE_SORT_BIG
-	struct sort_key *key;
+	struct sort_सुसि *सुसि;
 
-	for (key = key_list; !retval && key; key = key->next_key) {
-		flags = key->flags ? key->flags : option_mask32;
+	for (सुसि = सुसि_list; !retval && सुसि; सुसि = सुसि->next_सुसि) {
+		flags = सुसि->flags ? सुसि->flags : option_mask32;
 		/* Chop out and modify key chunks, handling -dfib */
-		x = get_key(*(char **)xarg, key, flags);
-		y = get_key(*(char **)yarg, key, flags);
+		x = get_सुसि(*(char **)xarg, सुसि, flags);
+		y = get_सुसि(*(char **)yarg, सुसि, flags);
 #else
 	/* This curly bracket serves no purpose but to match the nesting
 	 * level of the for () loop we're not using */
@@ -298,7 +298,7 @@ static int compare_keys(const void *xarg, const void *yarg)
 		/* Perform actual comparison */
 		switch (flags & (FLAG_n | FLAG_g | FLAG_h | FLAG_M | FLAG_V)) {
 		default:
-			bb_simple_error_msg_and_die("unknown sort type");
+			bb_simple_error_मेनसाहे_and_die("unknown sort type");
 			break;
 #if defined(HAVE_STRVERSCMP) && HAVE_STRVERSCMP == 1
 		case FLAG_V:
@@ -398,16 +398,16 @@ static int compare_keys(const void *xarg, const void *yarg)
 			 */
 			uint32_t *p32;
 			uint32_t x32, y32;
-			char *line;
+			char *लिन्या;
 			unsigned len;
 
-			line = *(char**)xarg;
-			len = (strlen(line) + 4) & (~3u);
-			p32 = (void*)(line + len);
+			लिन्या = *(char**)xarg;
+			len = (strlen(लिन्या) + 4) & (~3u);
+			p32 = (void*)(लिन्या + len);
 			x32 = *p32;
-			line = *(char**)yarg;
-			len = (strlen(line) + 4) & (~3u);
-			p32 = (void*)(line + len);
+			लिन्या = *(char**)yarg;
+			len = (strlen(लिन्या) + 4) & (~3u);
+			p32 = (void*)(लिन्या + len);
 			y32 = *p32;
 
 			/* If x > y, 1, else -1 */
@@ -433,10 +433,10 @@ static unsigned str2u(char **str)
 {
 	unsigned long lu;
 	if (!isdigit((*str)[0]))
-		bb_simple_error_msg_and_die("bad field specification");
+		bb_simple_error_मेनसाहे_and_die("bad field specification");
 	lu = strtoul(*str, str, 10);
 	if ((sizeof(long) > sizeof(int) && lu > INT_MAX) || !lu)
-		bb_simple_error_msg_and_die("bad field specification");
+		bb_simple_error_मेनसाहे_and_die("bad field specification");
 	return lu;
 }
 #endif
@@ -444,7 +444,7 @@ static unsigned str2u(char **str)
 int sort_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
 int sort_main(int argc UNUSED_PARAM, char **argv)
 {
-	char **lines;
+	char **मगा_लिन्या;
 	char *str_ignored, *str_o, *str_t;
 	llist_t *lst_k = NULL;
 	int i;
@@ -453,11 +453,11 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 #if ENABLE_FEATURE_SORT_OPTIMIZE_MEMORY
 	bool can_drop_dups;
 	size_t prev_len = 0;
-	char *prev_line = (char*) "";
+	char *prev_लिन्या = (char*) "";
 	/* Postpone optimizing if the input is small, < 16k lines:
 	 * even just free()ing duplicate lines takes time.
 	 */
-	size_t count_to_optimize_dups = 0x3fff;
+	size_t बिलांग_to_optimize_dups = 0x3fff;
 #endif
 
 	xfunc_error_retval = 2;
@@ -488,7 +488,7 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 	 * disable optimization to reuse strings:
 	 */
 	if (opts & FLAG_s)
-		count_to_optimize_dups = (size_t)-1L;
+		बिलांग_to_optimize_dups = (size_t)-1L;
 #endif
 	/* global b strips leading and trailing spaces */
 	if (opts & FLAG_b)
@@ -496,8 +496,8 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 #if ENABLE_FEATURE_SORT_BIG
 	if (opts & FLAG_t) {
 		if (!str_t[0] || str_t[1])
-			bb_simple_error_msg_and_die("bad -t parameter");
-		key_separator = str_t[0];
+			bb_simple_error_मेनसाहे_and_die("bad -t parameter");
+		सुसि_separator = str_t[0];
 	}
 	/* note: below this point we use option_mask32, not opts,
 	 * since that reduces register pressure and makes code smaller */
@@ -517,17 +517,17 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 				FLAG_i | /* Ignore !isprint() */
 			0
 		};
-		struct sort_key *key = add_key();
-		char *str_k = llist_pop(&lst_k);
+		struct sort_सुसि *सुसि = add_सुसि();
+		char *str_k = llist_आलिसिन(&lst_k);
 
 		i = 0; /* i==0 before comma, 1 after (-k3,6) */
 		while (*str_k) {
 			/* Start of range */
 			/* Cannot use bb_strtou - suffix can be a letter */
-			key->range[2*i] = str2u(&str_k);
+			सुसि->range[2*i] = str2u(&str_k);
 			if (*str_k == '.') {
 				str_k++;
-				key->range[2*i+1] = str2u(&str_k);
+				सुसि->range[2*i+1] = str2u(&str_k);
 			}
 			while (*str_k) {
 				int flag;
@@ -540,14 +540,14 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 					because comma isn't in OPT_STR */
 				idx = strchr(OPT_STR, *str_k);
 				if (!idx)
-					bb_simple_error_msg_and_die("unknown key option");
+					bb_simple_error_मेनसाहे_and_die("unknown key option");
 				flag = 1 << (idx - OPT_STR);
 				if (flag & ~FLAG_allowed_for_k)
-					bb_simple_error_msg_and_die("unknown sort type");
+					bb_simple_error_मेनसाहे_and_die("unknown sort type");
 				/* b after ',' means strip _trailing_ space */
 				if (i && flag == FLAG_b)
 					flag = FLAG_bb;
-				key->flags |= flag;
+				सुसि->flags |= flag;
 				str_k++;
 			}
 		}
@@ -559,40 +559,40 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 	if (!*argv)
 		*--argv = (char*)"-";
 	linecount = 0;
-	lines = NULL;
+	मगा_लिन्या = NULL;
 	do {
 		/* coreutils 6.9 compat: abort on first open error,
 		 * do not continue to next file: */
 		FILE *fp = xfopen_stdin(*argv);
 		for (;;) {
-			char *line = GET_LINE(fp);
-			if (!line)
+			char *लिन्या = GET_लिन्या(fp);
+			if (!लिन्या)
 				break;
 
 #if ENABLE_FEATURE_SORT_OPTIMIZE_MEMORY
-			if (count_to_optimize_dups != 0)
-				count_to_optimize_dups--;
-			if (count_to_optimize_dups == 0) {
+			if (बिलांग_to_optimize_dups != 0)
+				बिलांग_to_optimize_dups--;
+			if (बिलांग_to_optimize_dups == 0) {
 				size_t len;
-				char *new_line;
+				char *new_लिन्या;
 
 				/* On kernel/linux/arch/ *.[ch] files,
 				 * this reduces memory usage by 6%.
 				 *  yes | head -99999999 | sort
 				 * goes down from 1900Mb to 380 Mb.
 				 */
-				len = strlen(line);
+				len = strlen(लिन्या);
 				if (len <= prev_len) {
-					new_line = prev_line + (prev_len - len);
-					if (strcmp(line, new_line) == 0) {
+					new_लिन्या = prev_लिन्या + (prev_len - len);
+					if (strcmp(लिन्या, new_लिन्या) == 0) {
 						/* it's a tail of the prev line */
 						if (can_drop_dups && prev_len == len) {
 							/* it's identical to prev line */
-							free(line);
+							free(लिन्या);
 							continue;
 						}
-						free(line);
-						line = new_line;
+						free(लिन्या);
+						लिन्या = new_लिन्या;
 						/* continue using longer prev_line
 						 * for future tail tests.
 						 */
@@ -600,27 +600,27 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 					}
 				}
 				prev_len = len;
-				prev_line = line;
+				prev_लिन्या = लिन्या;
  skip: ;
 			}
 #else
 //TODO: lighter version which only drops total dups if can_drop_dups == true
 #endif
-			lines = xrealloc_vector(lines, 6, linecount);
-			lines[linecount++] = line;
+			मगा_लिन्या = xrealloc_vector(मगा_लिन्या, 6, linecount);
+			मगा_लिन्या[linecount++] = लिन्या;
 		}
 		fclose_if_not_stdin(fp);
 	} while (*++argv);
 
 #if ENABLE_FEATURE_SORT_BIG
 	/* If no key, perform alphabetic sort */
-	if (!key_list)
-		add_key()->range[0] = 1;
+	if (!सुसि_list)
+		add_सुसि()->range[0] = 1;
 	/* Handle -c */
 	if (option_mask32 & FLAG_c) {
 		int j = (option_mask32 & FLAG_u) ? -1 : 0;
 		for (i = 1; i < linecount; i++) {
-			if (compare_keys(&lines[i-1], &lines[i]) > j) {
+			if (compare_मगा_सुसि(&मगा_लिन्या[i-1], &मगा_लिन्या[i]) > j) {
 				fprintf(stderr, "Check line %u\n", i);
 				return EXIT_FAILURE;
 			}
@@ -633,13 +633,13 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 	if (option_mask32 & FLAG_s) {
 		for (i = 0; i < linecount; i++) {
 			uint32_t *p32;
-			char *line;
+			char *लिन्या;
 			unsigned len;
 
-			line = lines[i];
-			len = (strlen(line) + 4) & (~3u);
-			lines[i] = line = xrealloc(line, len + 4);
-			p32 = (void*)(line + len);
+			लिन्या = मगा_लिन्या[i];
+			len = (strlen(लिन्या) + 4) & (~3u);
+			मगा_लिन्या[i] = लिन्या = xrealloc(लिन्या, len + 4);
+			p32 = (void*)(लिन्या + len);
 			*p32 = i;
 		}
 		/*option_mask32 |= FLAG_no_tie_break;*/
@@ -647,7 +647,7 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 	}
 
 	/* Perform the actual sort */
-	qsort(lines, linecount, sizeof(lines[0]), compare_keys);
+	qsort(मगा_लिन्या, linecount, sizeof(मगा_लिन्या[0]), compare_मगा_सुसि);
 
 	/* Handle -u */
 	if (option_mask32 & FLAG_u) {
@@ -659,10 +659,10 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 		 */
 		option_mask32 = (option_mask32 | FLAG_no_tie_break) & (~FLAG_s);
 		for (i = 1; i < linecount; i++) {
-			if (compare_keys(&lines[j], &lines[i]) == 0)
-				free(lines[i]);
+			if (compare_मगा_सुसि(&मगा_लिन्या[j], &मगा_लिन्या[i]) == 0)
+				free(मगा_लिन्या[i]);
 			else
-				lines[++j] = lines[i];
+				मगा_लिन्या[++j] = मगा_लिन्या[i];
 		}
 		if (linecount)
 			linecount = j+1;
@@ -677,7 +677,7 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 	{
 		int ch = (option_mask32 & FLAG_z) ? '\0' : '\n';
 		for (i = 0; i < linecount; i++)
-			printf("%s%c", lines[i], ch);
+			printf("%s%c", मगा_लिन्या[i], ch);
 	}
 
 	fflush_stdout_and_exit_SUCCESS();

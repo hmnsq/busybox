@@ -32,7 +32,7 @@
 #define COMM_OPT_3 (1 << 2)
 
 /* writeline outputs the input given, appropriately aligned according to class */
-static void writeline(char *line, int class)
+static void writeline(char *लिन्या, int class)
 {
 	int flags = option_mask32;
 	if (class == 0) {
@@ -51,7 +51,7 @@ static void writeline(char *line, int class)
 		if (!(flags & COMM_OPT_2))
 			putchar('\t');
 	}
-	puts(line);
+	puts(लिन्या);
 }
 
 int comm_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;

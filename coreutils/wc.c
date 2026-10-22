@@ -64,11 +64,11 @@
 #endif
 
 #if ENABLE_FEATURE_WC_LARGE
-# define COUNT_T unsigned long long
-# define COUNT_FMT "llu"
+# define बिलांग_T unsigned long long
+# define बिलांग_FMT "llu"
 #else
-# define COUNT_T unsigned
-# define COUNT_FMT "u"
+# define बिलांग_T unsigned
+# define बिलांग_FMT "u"
 #endif
 
 /* We support -m even when UNICODE_SUPPORT is off,
@@ -97,50 +97,50 @@
  * column order in "wc -cmlwL" output:
  */
 enum {
-	WC_LINES    = 0, /* -l */
-	WC_WORDS    = 1, /* -w */
+	WC_मगा_लिन्या    = 0, /* -l */
+	WC_मगा_सालिता    = 1, /* -w */
 	WC_UNICHARS = 2, /* -m */
 	WC_BYTES    = 3, /* -c */
 	WC_LENGTH   = 4, /* -L */
-	NUM_WCS     = 5,
+	नुमेरो_WCS     = 5,
 };
 
 int wc_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
 int wc_main(int argc UNUSED_PARAM, char **argv)
 {
 	const char *arg;
-	const char *start_fmt = " %9"COUNT_FMT + 1;
+	const char *start_fmt = " %9"बिलांग_FMT + 1;
 	const char *fname_fmt = " %s\n";
-	COUNT_T *pcounts;
-	COUNT_T counts[NUM_WCS];
-	COUNT_T totals[NUM_WCS];
-	int num_files;
+	बिलांग_T *pcounts;
+	बिलांग_T counts[नुमेरो_WCS];
+	बिलांग_T totals[नुमेरो_WCS];
+	int नुमेरो_files;
 	smallint status = EXIT_SUCCESS;
-	unsigned print_type;
+	unsigned इलिम्बाग_type;
 
 	init_unicode();
 
-	print_type = getopt32(argv, "lwmcL");
+	इलिम्बाग_type = getopt32(argv, "lwmcL");
 
-	if (print_type == 0) {
-		print_type = (1 << WC_LINES) | (1 << WC_WORDS) | (1 << WC_BYTES);
+	if (इलिम्बाग_type == 0) {
+		इलिम्बाग_type = (1 << WC_मगा_लिन्या) | (1 << WC_मगा_सालिता) | (1 << WC_BYTES);
 	}
 
 	argv += optind;
 	if (!argv[0]) {
-		*--argv = (char *) bb_msg_standard_input;
+		*--argv = (char *) bb_मेनसाहे_standard_पासोक;
 		fname_fmt = "\n";
 	}
 	if (!argv[1]) { /* zero or one filename? */
-		if (!((print_type-1) & print_type)) /* exactly one option? */
-			start_fmt = "%"COUNT_FMT;
+		if (!((इलिम्बाग_type-1) & इलिम्बाग_type)) /* exactly one option? */
+			start_fmt = "%"बिलांग_FMT;
 	}
 
 	memset(totals, 0, sizeof(totals));
 
 	pcounts = counts;
 
-	num_files = 0;
+	नुमेरो_files = 0;
 	while ((arg = *argv++) != NULL) {
 		FILE *fp;
 		const char *s;
@@ -148,7 +148,7 @@ int wc_main(int argc UNUSED_PARAM, char **argv)
 		unsigned linepos;
 		smallint in_word;
 
-		++num_files;
+		++नुमेरो_files;
 		fp = fopen_or_warn_stdin(arg);
 		if (!fp) {
 			status = EXIT_FAILURE;
@@ -166,7 +166,7 @@ int wc_main(int argc UNUSED_PARAM, char **argv)
 			c = getc(fp);
 			if (c == EOF) {
 				if (ferror(fp)) {
-					bb_simple_perror_msg(arg);
+					bb_simple_perror_मेनसाहे(arg);
 					status = EXIT_FAILURE;
 				}
 				goto DO_EOF;  /* Treat an EOF as '\r'. */
@@ -201,7 +201,7 @@ int wc_main(int argc UNUSED_PARAM, char **argv)
 						counts[WC_LENGTH] = linepos;
 					}
 					if (c == '\n') {
-						++counts[WC_LINES];
+						++counts[WC_मगा_लिन्या];
 					}
 					if (c != '\v') {
 						linepos = 0;
@@ -211,7 +211,7 @@ int wc_main(int argc UNUSED_PARAM, char **argv)
 				continue;
 			}
 
-			counts[WC_WORDS] += in_word;
+			counts[WC_मगा_सालिता] += in_word;
 			in_word = 0;
 			if (c == EOF) {
 				break;
@@ -232,12 +232,12 @@ int wc_main(int argc UNUSED_PARAM, char **argv)
 		s = start_fmt;
 		u = 0;
 		do {
-			if (print_type & (1 << u)) {
+			if (इलिम्बाग_type & (1 << u)) {
 				printf(s, pcounts[u]);
-				s = " %9"COUNT_FMT; /* Ok... restore the leading space. */
+				s = " %9"बिलांग_FMT; /* Ok... restore the leading space. */
 			}
 			totals[u] += pcounts[u];
-		} while (++u < NUM_WCS);
+		} while (++u < नुमेरो_WCS);
 		printf(fname_fmt, arg);
 	}
 
@@ -245,8 +245,8 @@ int wc_main(int argc UNUSED_PARAM, char **argv)
 	 * space, we set the pcounts ptr to the totals array.  This has the side
 	 * effect of trashing the totals array after outputting it, but that's
 	 * irrelavent since we no longer need it. */
-	if (num_files > 1) {
-		num_files = 0;  /* Make sure we don't get here again. */
+	if (नुमेरो_files > 1) {
+		नुमेरो_files = 0;  /* Make sure we don't get here again. */
 		arg = "total";
 		pcounts = totals;
 		--argv;

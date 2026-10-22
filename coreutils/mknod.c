@@ -82,7 +82,7 @@ int mknod_main(int argc UNUSED_PARAM, char **argv)
 		bb_show_usage();
 
 	if (mknod(argv[0], mode, dev) != 0) {
-		bb_simple_perror_msg_and_die(argv[0]);
+		bb_simple_perror_मेनसाहे_and_die(argv[0]);
 	}
 	return EXIT_SUCCESS;
 }

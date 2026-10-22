@@ -42,7 +42,7 @@
  * If the required number of output lines is less than the total
  * we can stop shuffling early.
  */
-static void shuffle_lines(char **lines, unsigned numlines, unsigned outlines)
+static void shuffle_मगा_लिन्या(char **मगा_लिन्या, unsigned numlines, unsigned outlines)
 {
 	srand(monotonic_us());
 
@@ -59,9 +59,9 @@ static void shuffle_lines(char **lines, unsigned numlines, unsigned outlines)
 //are more likely: e.g. r=1 and r=0xf0000001 both map to 1,
 //whereas only one value, r=0xefffffff, maps to 0xefffffff.
 		numlines--;
-		tmp = lines[numlines];
-		lines[numlines] = lines[r];
-		lines[r] = tmp;
+		tmp = मगा_लिन्या[numlines];
+		मगा_लिन्या[numlines] = मगा_लिन्या[r];
+		मगा_लिन्या[r] = tmp;
 		outlines--;
 	}
 }
@@ -77,7 +77,7 @@ int shuf_main(int argc, char **argv)
 {
 	unsigned opts;
 	char *opt_i_str, *opt_n_str, *opt_o_str;
-	char **lines;
+	char **मगा_लिन्या;
 	unsigned long long lo = lo;
 	unsigned numlines, outlines;
 	unsigned i;
@@ -101,7 +101,7 @@ int shuf_main(int argc, char **argv)
 	if (opts & OPT_e) {
 		/* make lines from command-line arguments */
 		numlines = argc;
-		lines = argv;
+		मगा_लिन्या = argv;
 	} else
 	if (opts & OPT_i) {
 		/* create a range of numbers */
@@ -113,7 +113,7 @@ int shuf_main(int argc, char **argv)
 
 		dash = strchr(opt_i_str, '-');
 		if (!dash) {
-			bb_error_msg_and_die("bad range '%s'", opt_i_str);
+			bb_error_मेनसाहे_and_die("bad range '%s'", opt_i_str);
 		}
 		*dash++ = '\0';
 #if COMMON_PREFIX_HACK
@@ -150,20 +150,20 @@ int shuf_main(int argc, char **argv)
 #endif
 		dash[-1] = '-';
 		if (hi < lo)
-			bb_error_msg_and_die("bad range '%s'", opt_i_str);
+			bb_error_मेनसाहे_and_die("bad range '%s'", opt_i_str);
 		hi -= lo;
 		if (sizeof(size_t) > sizeof(numlines)) {
 			if (hi >= UINT_MAX)
-				bb_error_msg_and_die("bad range '%s'", opt_i_str);
+				bb_error_मेनसाहे_and_die("bad range '%s'", opt_i_str);
 		} else {
-			if (hi >= UINT_MAX / sizeof(lines[0]))
-				bb_error_msg_and_die("bad range '%s'", opt_i_str);
+			if (hi >= UINT_MAX / sizeof(मगा_लिन्या[0]))
+				bb_error_मेनसाहे_and_die("bad range '%s'", opt_i_str);
 		}
 
 		numlines = hi + 1;
-		lines = xmalloc((size_t)numlines * sizeof(lines[0]));
+		मगा_लिन्या = xmalloc((size_t)numlines * sizeof(मगा_लिन्या[0]));
 		for (i = 0; i < numlines; i++) {
-			lines[i] = (char*)(uintptr_t)i;
+			मगा_लिन्या[i] = (char*)(uintptr_t)i;
 		}
 	} else {
 		/* default - read lines from stdin or the input file */
@@ -177,14 +177,14 @@ int shuf_main(int argc, char **argv)
 		}
 
 		fp = xfopen_stdin(fname);
-		lines = NULL;
+		मगा_लिन्या = NULL;
 		numlines = 0;
 		for (;;) {
-			char *line = xmalloc_fgetline(fp);
-			if (!line)
+			char *लिन्या = xmalloc_fgetline(fp);
+			if (!लिन्या)
 				break;
-			lines = xrealloc_vector(lines, 6, numlines);
-			lines[numlines++] = line;
+			मगा_लिन्या = xrealloc_vector(मगा_लिन्या, 6, numlines);
+			मगा_लिन्या[numlines++] = लिन्या;
 		}
 		fclose_if_not_stdin(fp);
 	}
@@ -196,7 +196,7 @@ int shuf_main(int argc, char **argv)
 			outlines = numlines;
 	}
 
-	shuffle_lines(lines, numlines, outlines);
+	shuffle_मगा_लिन्या(मगा_लिन्या, numlines, outlines);
 
 	if (opts & OPT_o)
 		xmove_fd(xopen(opt_o_str, O_WRONLY|O_CREAT|O_TRUNC), STDOUT_FILENO);
@@ -209,12 +209,12 @@ int shuf_main(int argc, char **argv)
 		if (opts & OPT_i) {
 #if COMMON_PREFIX_HACK
 			if (pfx_len != 0)
-				printf("%.*s%0*llu%c", pfx_len, pfx, padding_width, lo + (uintptr_t)lines[i], eol);
+				printf("%.*s%0*llu%c", pfx_len, pfx, padding_width, lo + (uintptr_t)मगा_लिन्या[i], eol);
 			else
 #endif
-				printf("%llu%c", lo + (uintptr_t)lines[i], eol);
+				printf("%llu%c", lo + (uintptr_t)मगा_लिन्या[i], eol);
 		} else
-			printf("%s%c", lines[i], eol);
+			printf("%s%c", मगा_लिन्या[i], eol);
 	}
 
 	fflush_stdout_and_exit_SUCCESS();

@@ -44,7 +44,7 @@ int realpath_main(int argc UNUSED_PARAM, char **argv)
 			free(resolved_path);
 		} else {
 			retval = EXIT_FAILURE;
-			bb_simple_perror_msg(*argv);
+			bb_simple_perror_मेनसाहे(*argv);
 		}
 	} while (*++argv);
 

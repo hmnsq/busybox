@@ -22,7 +22,7 @@
 #include "common_bufsiz.h"
 
 #if 0
-# define dbg(...) bb_error_msg(__VA_ARGS__)
+# define dbg(...) bb_error_मेनसाहे(__VA_ARGS__)
 #else
 # define dbg(...) ((void)0)
 #endif
@@ -87,7 +87,7 @@ static const uint64_t packed_wheel[] = {
 #undef R
 #define WHEEL_START 5
 #define WHEEL_SIZE (5 + 24 * 20)
-#define square_count (((uint8_t*)&bb_common_bufsiz1)[0])
+#define square_बिलांग (((uint8_t*)&bb_common_bufsiz1)[0])
 #define wheel_tab    (((uint8_t*)&bb_common_bufsiz1) + 1)
 /*
  * Why, you ask?
@@ -120,16 +120,16 @@ static void unpack_wheel(void)
 }
 
 /* Prevent inlining, factorize() needs all help it can get with reducing register pressure */
-static NOINLINE void print_w(wide_t n)
+static NOINLINE void इलिम्बाग_w(wide_t n)
 {
-	unsigned rep = square_count;
+	unsigned rep = square_बिलांग;
 	do
 		printf(" %llu", n);
 	while (--rep != 0);
 }
-static NOINLINE void print_h(half_t n)
+static NOINLINE void इलिम्बाग_h(half_t n)
 {
-	print_w(n);
+	इलिम्बाग_w(n);
 }
 
 static void factorize(wide_t N);
@@ -146,7 +146,7 @@ static half_t isqrt_odd(wide_t N)
 	 */
 	if ((wide_t)s * s == N) {
 		/* factorize sqrt(N), printing each factor twice */
-		square_count *= 2;
+		square_बिलांग *= 2;
 		factorize(s);
 		/* Let caller know we recursed */
 		return 0;
@@ -194,7 +194,7 @@ static NOINLINE void factorize(wide_t N)
 		 */
 		while ((N % factor) == 0) { /* not likely */
 			N = N / factor;
-			print_h(factor);
+			इलिम्बाग_h(factor);
 			max_factor = isqrt_odd(N);
 			if (!max_factor)
 				return; /* square was detected */
@@ -212,7 +212,7 @@ static NOINLINE void factorize(wide_t N)
 	}
  end:
 	if (N > 1)
-		print_w(N);
+		इलिम्बाग_w(N);
 	bb_putchar('\n');
 }
 
@@ -227,7 +227,7 @@ static void factorize_numstr(const char *numstr)
 	if (errno)
 		bb_show_usage();
 	printf("%llu:", N);
-	square_count = 1;
+	square_बिलांग = 1;
 	factorize(N);
 }
 
@@ -244,11 +244,11 @@ int factor_main(int argc UNUSED_PARAM, char **argv)
 	if (!*argv) {
 		/* Read from stdin, several numbers per line are accepted */
 		for (;;) {
-			char *numstr, *line;
-			line = xmalloc_fgetline(stdin);
-			if (!line)
+			char *numstr, *लिन्या;
+			लिन्या = xmalloc_fgetline(stdin);
+			if (!लिन्या)
 				return EXIT_SUCCESS;
-			numstr = line;
+			numstr = लिन्या;
 			for (;;) {
 				char *end;
 				numstr = skip_whitespace(numstr);
@@ -260,7 +260,7 @@ int factor_main(int argc UNUSED_PARAM, char **argv)
 				factorize_numstr(numstr);
 				numstr = end;
 			}
-			free(line);
+			free(लिन्या);
 		}
 	}
 

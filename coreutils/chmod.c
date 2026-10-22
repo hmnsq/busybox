@@ -84,7 +84,7 @@ static int FAST_FUNC fileAction(struct recursive_state *state,
 
 	newmode = bb_parse_mode((char *)state->userData, statbuf->st_mode);
 	if (newmode == (mode_t)-1)
-		bb_error_msg_and_die("invalid mode '%s'", (char *)state->userData);
+		bb_error_मेनसाहे_and_die("invalid mode '%s'", (char *)state->userData);
 
 	if (chmod(fileName, newmode) == 0) {
 		if (OPT_VERBOSE
@@ -99,7 +99,7 @@ static int FAST_FUNC fileAction(struct recursive_state *state,
 	}
  err:
 	if (!OPT_QUIET)
-		bb_simple_perror_msg(fileName);
+		bb_simple_perror_मेनसाहे(fileName);
 	return FALSE;
 }
 

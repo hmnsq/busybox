@@ -40,7 +40,7 @@
 static void
 odoffset(dumper_t *dumper, int argc, char ***argvp)
 {
-	char *num, *p;
+	char *नुमेरो, *p;
 	int base;
 	char *end;
 
@@ -86,14 +86,14 @@ odoffset(dumper_t *dumper, int argc, char ***argvp)
 
 	/* skip over the number */
 	if (base == 16)
-		for (num = p; isxdigit(*p); ++p)
+		for (नुमेरो = p; isxdigit(*p); ++p)
 			continue;
 	else
-		for (num = p; isdigit(*p); ++p)
+		for (नुमेरो = p; isdigit(*p); ++p)
 			continue;
 
 	/* check for no number */
-	if (num == p)
+	if (नुमेरो == p)
 		return;
 
 	/* if terminates with a '.', base is decimal */
@@ -103,7 +103,7 @@ odoffset(dumper_t *dumper, int argc, char ***argvp)
 		base = 10;
 	}
 
-	dumper->dump_skip = strtol(num, &end, base ? base : 8);
+	dumper->dump_skip = strtol(नुमेरो, &end, base ? base : 8);
 
 	/* if end isn't the same as p, we got a non-octal digit */
 	if (end != p)

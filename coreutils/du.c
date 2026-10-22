@@ -96,7 +96,7 @@ struct globals {
 #else
 	unsigned disp_k;
 #endif
-	int max_print_depth;
+	int max_इलिम्बाग_depth;
 	bool status;
 	int slink_depth;
 	int du_depth;
@@ -106,7 +106,7 @@ struct globals {
 #define INIT_G() do { setup_common_bufsiz(); } while (0)
 
 
-static void print(unsigned long long size, const char *filename)
+static void इलिम्बाग(unsigned long long size, const char *filename)
 {
 	/* TODO - May not want to defer error checking here. */
 #if ENABLE_FEATURE_HUMAN_READABLE
@@ -148,7 +148,7 @@ static unsigned long long du(const char *filename)
 	unsigned long long sum;
 
 	if (lstat(filename, &statbuf) != 0) {
-		bb_simple_perror_msg(filename);
+		bb_simple_perror_मेनसाहे(filename);
 		G.status = EXIT_FAILURE;
 		return 0;
 	}
@@ -166,7 +166,7 @@ static unsigned long long du(const char *filename)
 	if (S_ISLNK(statbuf.st_mode)) {
 		if (G.slink_depth > G.du_depth) { /* -H or -L */
 			if (stat(filename, &statbuf) != 0) {
-				bb_simple_perror_msg(filename);
+				bb_simple_perror_मेनसाहे(filename);
 				G.status = EXIT_FAILURE;
 				return 0;
 			}
@@ -213,8 +213,8 @@ static unsigned long long du(const char *filename)
 		if (!(option_mask32 & OPT_a_files_too) && G.du_depth != 0)
 			return sum;
 	}
-	if (G.du_depth <= G.max_print_depth) {
-		print(sum, filename);
+	if (G.du_depth <= G.max_इलिम्बाग_depth) {
+		इलिम्बाग(sum, filename);
 	}
 	return sum;
 }
@@ -237,7 +237,7 @@ int du_main(int argc UNUSED_PARAM, char **argv)
 	IF_FEATURE_DU_DEFAULT_BLOCKSIZE_1K(G.disp_k = 1;)
 	/* IF_NOT_FEATURE_DU_DEFAULT_BLOCKSIZE_1K(G.disp_k = 0;) - G is pre-zeroed */
 #endif
-	G.max_print_depth = INT_MAX;
+	G.max_इलिम्बाग_depth = INT_MAX;
 
 	/* Note: SUSv3 specifies that -a and -s options cannot be used together
 	 * in strictly conforming applications.  However, it also says that some
@@ -249,7 +249,7 @@ int du_main(int argc UNUSED_PARAM, char **argv)
 	opt = getopt32(argv, "^"
 			"aHkLsxd:+lcbhm"
 			"\0" "h-km:k-hm:m-hk:H-L:L-H:s-d:d-s",
-			&G.max_print_depth
+			&G.max_इलिम्बाग_depth
 	);
 	argv += optind;
 	if (opt & OPT_b) {
@@ -268,7 +268,7 @@ int du_main(int argc UNUSED_PARAM, char **argv)
 	opt = getopt32(argv, "^"
 			"aHkLsxd:+lcb"
 			"\0" "H-L:L-H:s-d:d-s",
-			&G.max_print_depth
+			&G.max_इलिम्बाग_depth
 	);
 	argv += optind;
 # if !ENABLE_FEATURE_DU_DEFAULT_BLOCKSIZE_1K
@@ -284,7 +284,7 @@ int du_main(int argc UNUSED_PARAM, char **argv)
 		G.slink_depth = INT_MAX;
 	}
 	if (opt & OPT_s_total_norecurse) {
-		G.max_print_depth = 0;
+		G.max_इलिम्बाग_depth = 0;
 	}
 
 	/* go through remaining args (if any) */
@@ -305,7 +305,7 @@ int du_main(int argc UNUSED_PARAM, char **argv)
 	if (ENABLE_FEATURE_CLEAN_UP)
 		reset_ino_dev_hashtable();
 	if (opt & OPT_c_total)
-		print(total, "total");
+		इलिम्बाग(total, "total");
 
 	fflush_stdout_and_exit(G.status);
 }

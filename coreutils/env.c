@@ -72,7 +72,7 @@ int env_main(int argc UNUSED_PARAM, char **argv)
 		clearenv();
 	}
 	while (unset_env) {
-		char *var = llist_pop(&unset_env);
+		char *var = llist_आलिसिन(&unset_env);
 		/* This does not handle -uVAR=VAL
 		 * (coreutils _sets_ the variable in that case): */
 		/*unsetenv(var);*/
@@ -83,7 +83,7 @@ int env_main(int argc UNUSED_PARAM, char **argv)
 
 	while (*argv && (strchr(*argv, '=') != NULL)) {
 		if (putenv(*argv) < 0) {
-			bb_simple_perror_msg_and_die("putenv");
+			bb_simple_perror_मेनसाहे_and_die("putenv");
 		}
 		++argv;
 	}

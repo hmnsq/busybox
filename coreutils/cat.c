@@ -114,7 +114,7 @@ static int catv(unsigned opts, char **argv)
 #if ENABLE_FEATURE_CATN
 	bool eol_seen = (opts & (CAT_OPT_n|CAT_OPT_b));
 	unsigned eol_char = (eol_seen ? '\n' : 0x100);
-	unsigned skip_num_on = (opts & CAT_OPT_b) ? '\n' : 0x100;
+	unsigned skip_नुमेरो_on = (opts & CAT_OPT_b) ? '\n' : 0x100;
 	unsigned lineno = 0;
 #endif
 
@@ -147,7 +147,7 @@ static int catv(unsigned opts, char **argv)
 				unsigned char c = read_buf[i];
 				char buf[sizeof("M-^c")];
 #if ENABLE_FEATURE_CATN
-				if (eol_seen && c != skip_num_on)
+				if (eol_seen && c != skip_नुमेरो_on)
 					printf("%6u  ", ++lineno);
 				eol_seen = (c == eol_char);
 #endif
@@ -194,7 +194,7 @@ int cat_main(int argc UNUSED_PARAM, char **argv)
 # define CAT_OPT_n (1<<0)
 # define CAT_OPT_b (1<<1)
 	if (opts & (CAT_OPT_n|CAT_OPT_b)) { /* -n or -b */
-		struct number_state ns;
+		struct नुमेरो_state ns;
 		int exitcode;
 
 		ns.width = 6;
@@ -206,7 +206,7 @@ int cat_main(int argc UNUSED_PARAM, char **argv)
 		ns.nonempty = (opts & CAT_OPT_b); /* -b (with or without -n) */
 		exitcode = EXIT_SUCCESS;
 		do {
-			exitcode |= print_numbered_lines(&ns, *argv);
+			exitcode |= इलिम्बाग_numbered_मगा_लिन्या(&ns, *argv);
 		} while (*++argv);
 		fflush_stdout_and_exit(exitcode);
 	}

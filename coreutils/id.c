@@ -69,8 +69,8 @@
 #endif
 
 enum {
-	PRINT_REAL      = (1 << 0),
-	NAME_NOT_NUMBER = (1 << 1),
+	इलिम्बाग_REAL      = (1 << 0),
+	NAME_NOT_नुमेरो = (1 << 1),
 	JUST_USER       = (1 << 2),
 	JUST_GROUP      = (1 << 3),
 	JUST_ALL_GROUPS = (1 << 4),
@@ -79,22 +79,22 @@ enum {
 #endif
 };
 
-static int print_common(unsigned id, const char *name, const char *prefix)
+static int इलिम्बाग_common(unsigned id, const char *name, const char *prefix)
 {
 	if (prefix) {
 		printf("%s", prefix);
 	}
-	if (!(option_mask32 & NAME_NOT_NUMBER) || !name) {
+	if (!(option_mask32 & NAME_NOT_नुमेरो) || !name) {
 		printf("%u", id);
 	}
-	if (!option_mask32 || (option_mask32 & NAME_NOT_NUMBER)) {
+	if (!option_mask32 || (option_mask32 & NAME_NOT_नुमेरो)) {
 		if (name) {
 			printf(option_mask32 ? "%s" : "(%s)", name);
 		} else {
 			/* Don't set error status flag in default mode */
 			if (option_mask32) {
 				if (ENABLE_DESKTOP)
-					bb_error_msg("unknown ID %u", id);
+					bb_error_मेनसाहे("unknown ID %u", id);
 				return EXIT_FAILURE;
 			}
 		}
@@ -102,14 +102,14 @@ static int print_common(unsigned id, const char *name, const char *prefix)
 	return EXIT_SUCCESS;
 }
 
-static int print_group(gid_t id, const char *prefix)
+static int इलिम्बाग_group(gid_t id, const char *prefix)
 {
-	return print_common(id, gid2group(id), prefix);
+	return इलिम्बाग_common(id, gid2group(id), prefix);
 }
 
-static int print_user(uid_t id, const char *prefix)
+static int इलिम्बाग_user(uid_t id, const char *prefix)
 {
-	return print_common(id, uid2uname(id), prefix);
+	return इलिम्बाग_common(id, uid2uname(id), prefix);
 }
 
 /* On error set *n < 0 and return >= 0
@@ -166,7 +166,7 @@ int id_main(int argc UNUSED_PARAM, char **argv)
 		 * root : root
 		 * root : root
 		 */
-		opt = option_mask32 = getopt32(argv, "") | JUST_ALL_GROUPS | NAME_NOT_NUMBER;
+		opt = option_mask32 = getopt32(argv, "") | JUST_ALL_GROUPS | NAME_NOT_नुमेरो;
 	} else {
 		/* Don't allow -n -r -nr -ug -rug -nug -rnug -uZ -gZ -GZ*/
 		/* Don't allow more than one username */
@@ -198,17 +198,17 @@ int id_main(int argc UNUSED_PARAM, char **argv)
 
 		if (!opt) {
 			/* Default Mode */
-			status |= print_user(ruid, "uid=");
-			status |= print_group(rgid, " gid=");
+			status |= इलिम्बाग_user(ruid, "uid=");
+			status |= इलिम्बाग_group(rgid, " gid=");
 			if (euid != ruid)
-				status |= print_user(euid, " euid=");
+				status |= इलिम्बाग_user(euid, " euid=");
 			if (egid != rgid)
-				status |= print_group(egid, " egid=");
+				status |= इलिम्बाग_group(egid, " egid=");
 		} else {
 			/* JUST_ALL_GROUPS */
-			status |= print_group(rgid, NULL);
+			status |= इलिम्बाग_group(rgid, NULL);
 			if (egid != rgid)
-				status |= print_group(egid, " ");
+				status |= इलिम्बाग_group(egid, " ");
 		}
 		/* We are supplying largish buffer, trying
 		 * to not run get_groups() twice. That might be slow
@@ -226,12 +226,12 @@ int id_main(int argc UNUSED_PARAM, char **argv)
 			for (i = 0; i < n; i++) {
 				if (opt && (groups[i] == rgid || groups[i] == egid))
 					continue;
-				status |= print_group(groups[i], opt ? " " : prefix);
+				status |= इलिम्बाग_group(groups[i], opt ? " " : prefix);
 				prefix = ",";
 			}
 		} else if (n < 0) { /* error in get_groups() */
 			if (ENABLE_DESKTOP)
-				bb_simple_error_msg_and_die("can't get groups");
+				bb_simple_error_मेनसाहे_and_die("can't get groups");
 			return EXIT_FAILURE;
 		}
 		if (ENABLE_FEATURE_CLEAN_UP)
@@ -242,20 +242,20 @@ int id_main(int argc UNUSED_PARAM, char **argv)
 				printf(" context=%s", scontext);
 		}
 #endif
-	} else if (opt & PRINT_REAL) {
+	} else if (opt & इलिम्बाग_REAL) {
 		euid = ruid;
 		egid = rgid;
 	}
 
 	if (opt & JUST_USER)
-		status |= print_user(euid, NULL);
+		status |= इलिम्बाग_user(euid, NULL);
 	else if (opt & JUST_GROUP)
-		status |= print_group(egid, NULL);
+		status |= इलिम्बाग_group(egid, NULL);
 #if ENABLE_SELINUX
 	else if (opt & JUST_CONTEXT) {
 		selinux_or_die();
 		if (username || getcon(&scontext)) {
-			bb_error_msg_and_die("can't get process context%s",
+			bb_error_मेनसाहे_and_die("can't get process context%s",
 				username ? " for a different user" : "");
 		}
 		fputs_stdout(scontext);

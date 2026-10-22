@@ -77,7 +77,7 @@ int sleep_main(int argc UNUSED_PARAM, char **argv)
 		/* Without this, bare "sleep" in ash shows _ash_ --help */
 		/* (ash can be the "sh" applet as well, so check 2nd char) */
 		if (ENABLE_ASH_SLEEP && applet_name[1] != 'l') {
-			bb_simple_error_msg("sleep: missing operand");
+			bb_simple_error_मेनसाहे("sleep: missing operand");
 			return EXIT_FAILURE;
 		}
 		bb_show_usage();

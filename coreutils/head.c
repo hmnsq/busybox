@@ -52,29 +52,29 @@
 /* This is a NOEXEC applet. Be very careful! */
 
 #if !ENABLE_FEATURE_FANCY_HEAD
-# define print_first_N(fp,count,bytes) print_first_N(fp,count)
+# define इलिम्बाग_first_N(fp,बिलांग,bytes) इलिम्बाग_first_N(fp,बिलांग)
 #endif
 static void
-print_first_N(FILE *fp, unsigned long count, bool count_bytes)
+इलिम्बाग_first_N(FILE *fp, unsigned long बिलांग, bool बिलांग_bytes)
 {
 #if !ENABLE_FEATURE_FANCY_HEAD
-	const int count_bytes = 0;
+	const int बिलांग_bytes = 0;
 #endif
-	while (count) {
+	while (बिलांग) {
 		int c = getc(fp);
 		if (c == EOF)
 			break;
-		if (count_bytes || (c == '\n'))
-			--count;
+		if (बिलांग_bytes || (c == '\n'))
+			--बिलांग;
 		putchar(c);
 	}
 }
 
 #if ENABLE_FEATURE_FANCY_HEAD
 static void
-print_except_N_last_bytes(FILE *fp, unsigned count)
+इलिम्बाग_except_N_last_bytes(FILE *fp, unsigned बिलांग)
 {
-	unsigned char *circle = xmalloc(++count);
+	unsigned char *circle = xmalloc(++बिलांग);
 	unsigned head = 0;
 	for (;;) {
 		int c;
@@ -82,12 +82,12 @@ print_except_N_last_bytes(FILE *fp, unsigned count)
 		if (c == EOF)
 			goto ret;
 		circle[head++] = c;
-		if (head == count)
+		if (head == बिलांग)
 			break;
 	}
 	for (;;) {
 		int c;
-		if (head == count)
+		if (head == बिलांग)
 			head = 0;
 		putchar(circle[head]);
 		c = getc(fp);
@@ -101,9 +101,9 @@ print_except_N_last_bytes(FILE *fp, unsigned count)
 }
 
 static void
-print_except_N_last_lines(FILE *fp, unsigned count)
+इलिम्बाग_except_N_last_मगा_लिन्या(FILE *fp, unsigned बिलांग)
 {
-	char **circle = xzalloc((++count) * sizeof(circle[0]));
+	char **circle = xzalloc((++बिलांग) * sizeof(circle[0]));
 	unsigned head = 0;
 	for (;;) {
 		char *c;
@@ -111,12 +111,12 @@ print_except_N_last_lines(FILE *fp, unsigned count)
 		if (!c)
 			goto ret;
 		circle[head++] = c;
-		if (head == count)
+		if (head == बिलांग)
 			break;
 	}
 	for (;;) {
 		char *c;
-		if (head == count)
+		if (head == बिलांग)
 			head = 0;
 		fputs_stdout(circle[head]);
 		c = xmalloc_fgets(fp);
@@ -129,22 +129,22 @@ print_except_N_last_lines(FILE *fp, unsigned count)
 	head = 0;
 	for (;;) {
 		free(circle[head++]);
-		if (head == count)
+		if (head == बिलांग)
 			break;
 	}
 	free(circle);
 }
 #else
 /* Must never be called */
-void print_except_N_last_bytes(FILE *fp, unsigned count);
-void print_except_N_last_lines(FILE *fp, unsigned count);
+void इलिम्बाग_except_N_last_bytes(FILE *fp, unsigned बिलांग);
+void इलिम्बाग_except_N_last_मगा_लिन्या(FILE *fp, unsigned बिलांग);
 #endif
 
 #if !ENABLE_FEATURE_FANCY_HEAD
-# define eat_num(negative_N,p) eat_num(p)
+# define eat_नुमेरो(negative_N,p) eat_नुमेरो(p)
 #endif
 static unsigned long
-eat_num(bool *negative_N, const char *p)
+eat_नुमेरो(bool *negative_N, const char *p)
 {
 #if ENABLE_FEATURE_FANCY_HEAD
 	if (*p == '-') {
@@ -167,14 +167,14 @@ static const char head_opts[] ALIGN1 =
 int head_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
 int head_main(int argc, char **argv)
 {
-	unsigned long count = 10;
+	unsigned long बिलांग = 10;
 #if ENABLE_FEATURE_FANCY_HEAD
 	int header_threshhold = 1;
-	bool count_bytes = 0;
+	bool बिलांग_bytes = 0;
 	bool negative_N = 0;
 #else
 # define header_threshhold 1
-# define count_bytes       0
+# define बिलांग_bytes       0
 # define negative_N        0
 #endif
 	FILE *fp;
@@ -191,7 +191,7 @@ int head_main(int argc, char **argv)
 		--argc;
 		++argv;
 		p = argv[0] + 1;
-		goto GET_COUNT;
+		goto GET_बिलांग;
 	}
 #endif
 
@@ -206,15 +206,15 @@ int head_main(int argc, char **argv)
 			header_threshhold = -1;
 			break;
 		case 'c':
-			count_bytes = 1;
+			बिलांग_bytes = 1;
 			/* fall through */
 #endif
 		case 'n':
 			p = optarg;
 #if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
- GET_COUNT:
+ GET_बिलांग:
 #endif
-			count = eat_num(&negative_N, p);
+			बिलांग = eat_नुमेरो(&negative_N, p);
 			break;
 		default:
 			bb_show_usage();
@@ -235,31 +235,31 @@ int head_main(int argc, char **argv)
 #endif
 	}
 	if (negative_N) {
-		if (count >= INT_MAX / sizeof(char*))
-			bb_error_msg("count is too big: %lu", count);
+		if (बिलांग >= INT_MAX / sizeof(char*))
+			bb_error_मेनसाहे("count is too big: %lu", बिलांग);
 	}
 
 	do {
 		fp = fopen_or_warn_stdin(*argv);
 		if (fp) {
 			if (fp == stdin) {
-				*argv = (char *) bb_msg_standard_input;
+				*argv = (char *) bb_मेनसाहे_standard_पासोक;
 			}
 			if (header_threshhold) {
 				printf(fmt, *argv);
 			}
 			if (negative_N) {
-				if (count_bytes) {
-					print_except_N_last_bytes(fp, count);
+				if (बिलांग_bytes) {
+					इलिम्बाग_except_N_last_bytes(fp, बिलांग);
 				} else {
-					print_except_N_last_lines(fp, count);
+					इलिम्बाग_except_N_last_मगा_लिन्या(fp, बिलांग);
 				}
 			} else {
-				print_first_N(fp, count, count_bytes);
+				इलिम्बाग_first_N(fp, बिलांग, बिलांग_bytes);
 			}
 			die_if_ferror_stdout();
 			if (fclose_if_not_stdin(fp)) {
-				bb_simple_perror_msg(*argv);
+				bb_simple_perror_मेनसाहे(*argv);
 				retval = EXIT_FAILURE;
 			}
 		} else {

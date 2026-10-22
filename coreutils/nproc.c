@@ -28,7 +28,7 @@
 int nproc_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
 int nproc_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
 {
-	int count = 0;
+	int बिलांग = 0;
 #if ENABLE_LONG_OPTS
 	int ignore = 0;
 	int opts = getopt32long(argv, "\xfe:+",
@@ -44,7 +44,7 @@ int nproc_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
 			while (NULL != (de = readdir(cpusd))) {
 				char *cpuid = strstr(de->d_name, "cpu");
 				if (cpuid && isdigit(cpuid[strlen(cpuid) - 1]))
-					count++;
+					बिलांग++;
 			}
 			IF_FEATURE_CLEAN_UP(closedir(cpusd);)
 		}
@@ -57,16 +57,16 @@ int nproc_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
 		sz /= sizeof(long);
 		for (i = 0; i < sz; i++) {
 			if (mask[i] != 0) /* most mask[i] are usually 0 */
-				count += bb_popcnt_long(mask[i]);
+				बिलांग += bb_popcnt_long(mask[i]);
 		}
 		IF_FEATURE_CLEAN_UP(free(mask);)
 	}
 
-	IF_LONG_OPTS(count -= ignore;)
-	if (count <= 0)
-		count = 1;
+	IF_LONG_OPTS(बिलांग -= ignore;)
+	if (बिलांग <= 0)
+		बिलांग = 1;
 
-	printf("%u\n", count);
+	printf("%u\n", बिलांग);
 
 	return 0;
 }

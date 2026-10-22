@@ -83,7 +83,7 @@ int ln_main(int argc, char **argv)
 	argc -= optind;
 
 	if ((opts & LN_LINKFILE) && argc > 2) {
-		bb_simple_error_msg_and_die("-T accepts 2 args max");
+		bb_simple_error_मेनसाहे_and_die("-T accepts 2 args max");
 	}
 
 	if (!argv[1]) {
@@ -107,7 +107,7 @@ int ln_main(int argc, char **argv)
 				)
 		) {
 			if (opts & LN_LINKFILE) {
-				bb_error_msg_and_die("'%s' is a directory", src);
+				bb_error_मेनसाहे_and_die("'%s' is a directory", src);
 			}
 			src_name = xstrdup(*argv);
 			src = concat_path_file(src, bb_get_last_path_component_strip(src_name));
@@ -117,7 +117,7 @@ int ln_main(int argc, char **argv)
 		if (!(opts & LN_SYMLINK) && stat(*argv, &statbuf)) {
 			// coreutils: "ln dangling_symlink new_hardlink" works
 			if (lstat(*argv, &statbuf) || !S_ISLNK(statbuf.st_mode)) {
-				bb_simple_perror_msg(*argv);
+				bb_simple_perror_मेनसाहे(*argv);
 				status = EXIT_FAILURE;
 				free(src_name);
 				continue;
@@ -128,7 +128,7 @@ int ln_main(int argc, char **argv)
 			char *backup;
 			backup = xasprintf("%s%s", src, suffix);
 			if (rename(src, backup) < 0 && errno != ENOENT) {
-				bb_simple_perror_msg(src);
+				bb_simple_perror_मेनसाहे(src);
 				status = EXIT_FAILURE;
 				free(backup);
 				continue;
@@ -154,7 +154,7 @@ int ln_main(int argc, char **argv)
 		}
 
 		if (link_func(*argv, src) != 0) {
-			bb_simple_perror_msg(src);
+			bb_simple_perror_मेनसाहे(src);
 			status = EXIT_FAILURE;
 		}
 

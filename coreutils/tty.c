@@ -48,7 +48,7 @@ int tty_main(int argc UNUSED_PARAM, char **argv)
 	IF_NOT_INCLUDE_SUSv2(argv += 1;)
 
 	/* gnu tty outputs a warning that it is ignoring all args. */
-	bb_warn_ignoring_args(argv[0]);
+	bb_warn_ignoring_मगा_कातविरान(argv[0]);
 
 	retval = EXIT_SUCCESS;
 

@@ -52,7 +52,7 @@ int cksum_main(int argc UNUSED_PARAM, char **argv)
 	do {
 		uint32_t crc;
 		IF_CKSUM(off_t filesize;)
-		const char *fname = *argv ? *argv : bb_msg_standard_input;
+		const char *fname = *argv ? *argv : bb_मेनसाहे_standard_पासोक;
 		int fd = open_or_warn_stdin(fname);
 
 		if (fd < 0) {
@@ -66,7 +66,7 @@ int cksum_main(int argc UNUSED_PARAM, char **argv)
 		for (;;) {
 			int bytes_read = safe_read(fd, read_buf, COMMON_BUFSIZE);
 			if (bytes_read < 0)
-				bb_simple_perror_msg_and_die(fname);
+				bb_simple_perror_मेनसाहे_and_die(fname);
 			if (bytes_read > 0) {
 				IF_CKSUM(filesize += bytes_read;)
 			} else {

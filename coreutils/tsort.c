@@ -30,15 +30,15 @@
 #include "libbb.h"
 #include "common_bufsiz.h"
 
-struct node {
-	unsigned in_count;
-	unsigned out_count;
-	struct node **out;
+struct बुहोल {
+	unsigned in_बिलांग;
+	unsigned out_बिलांग;
+	struct बुहोल **out;
 	char name[1];
 };
 
 struct globals {
-	struct node **nodes;
+	struct बुहोल **nodes;
 	unsigned nodes_len;
 };
 #define G (*(struct globals*)bb_common_bufsiz1)
@@ -49,10 +49,10 @@ struct globals {
 	G.nodes_len = 0; \
 } while (0)
 
-static struct node *
-get_node(const char *name)
+static struct बुहोल *
+get_बुहोल(const char *name)
 {
-	struct node *n;
+	struct बुहोल *n;
 	unsigned a = 0;
 	unsigned b = G.nodes_len;
 
@@ -86,20 +86,20 @@ get_node(const char *name)
 }
 
 static void
-add_edge(struct node *a, struct node *b)
+add_edge(struct बुहोल *a, struct बुहोल *b)
 {
-	a->out = xrealloc_vector(a->out, 6, a->out_count);
-	a->out[a->out_count++] = b;
-	b->in_count++;
+	a->out = xrealloc_vector(a->out, 6, a->out_बिलांग);
+	a->out[a->out_बिलांग++] = b;
+	b->in_बिलांग++;
 }
 
 int tsort_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
 int tsort_main(int argc UNUSED_PARAM, char **argv)
 {
-	char *line;
+	char *लिन्या;
 	size_t linesz;
 	ssize_t len;
-	struct node *a;
+	struct बुहोल *a;
 	int cycles;
 	unsigned i;
 #if ENABLE_FEATURE_CLEAN_UP
@@ -119,12 +119,12 @@ int tsort_main(int argc UNUSED_PARAM, char **argv)
 
 	/* Read in words separated by <blank>s */
 	a = NULL;
-	line = NULL;
+	लिन्या = NULL;
 	linesz = 0;
-	while ((len = getline(&line, &linesz, stdin)) != -1) {
-		char *s = line;
+	while ((len = getline(&लिन्या, &linesz, stdin)) != -1) {
+		char *s = लिन्या;
 		while (*(s = skip_whitespace(s)) != '\0') {
-			struct node *b;
+			struct बुहोल *b;
 			char *word;
 
 			word = s;
@@ -133,7 +133,7 @@ int tsort_main(int argc UNUSED_PARAM, char **argv)
 				*s++ = '\0';
 
 			/* Create nodes and edges for each word pair */
-			b = get_node(word);
+			b = get_बुहोल(word);
 			if (!a) {
 				a = b;
 			} else {
@@ -146,8 +146,8 @@ int tsort_main(int argc UNUSED_PARAM, char **argv)
 // Most other tools do not check for input read error (treat them as EOF)
 //	die_if_ferror(in, input_filename);
 	if (a)
-		bb_simple_error_msg_and_die("odd input");
-	free(line);
+		bb_simple_error_मेनसाहे_and_die("odd input");
+	free(लिन्या);
 
 	/*
 	 * Kahn's algorithm:
@@ -160,11 +160,11 @@ int tsort_main(int argc UNUSED_PARAM, char **argv)
 	max_len = G.nodes_len;
 #endif
 	while (G.nodes_len) {
-		struct node *n;
+		struct बुहोल *n;
 
 		/* Search for first node with no incoming edges */
 		for (i = 0; i < G.nodes_len; i++) {
-			if (!G.nodes[i]->in_count)
+			if (!G.nodes[i]->in_बिलांग)
 				break;
 		}
 		if (i == G.nodes_len) {
@@ -172,7 +172,7 @@ int tsort_main(int argc UNUSED_PARAM, char **argv)
 			cycles++;
 			i = 0;
 #ifndef TINY
-			bb_error_msg("cycle at %s", G.nodes[i]->name);
+			bb_error_मेनसाहे("cycle at %s", G.nodes[i]->name);
 #endif
 		}
 
@@ -185,8 +185,8 @@ int tsort_main(int argc UNUSED_PARAM, char **argv)
 #endif
 
 		/* And remove its outgoing edges */
-		for (i = 0; i < n->out_count; i++)
-			n->out[i]->in_count--;
+		for (i = 0; i < n->out_बिलांग; i++)
+			n->out[i]->in_बिलांग--;
 
 		puts(n->name);
 	}

@@ -90,7 +90,7 @@ int split_main(int argc UNUSED_PARAM, char **argv)
 {
 	unsigned suffix_len = 2;
 	char *pfx;
-	char *count_p;
+	char *बिलांग_p;
 	const char *sfx;
 	off_t cnt = 1000;
 	off_t remaining = 0;
@@ -103,13 +103,13 @@ int split_main(int argc UNUSED_PARAM, char **argv)
 	opt = getopt32(argv, "^"
 			"l:b:a:+" /* -a N */
 			"\0" "?2"/*max 2 args*/,
-			&count_p, &count_p, &suffix_len
+			&बिलांग_p, &बिलांग_p, &suffix_len
 	);
 
 	if (opt & SPLIT_OPT_l)
-		cnt = XATOOFF(count_p);
+		cnt = XATOOFF(बिलांग_p);
 	if (opt & SPLIT_OPT_b) // FIXME: also needs XATOOFF
-		cnt = xatoull_sfx(count_p,
+		cnt = xatoull_sfx(बिलांग_p,
 				IF_FEATURE_SPLIT_FANCY(split_suffixes)
 				IF_NOT_FEATURE_SPLIT_FANCY(km_suffixes)
 		);
@@ -123,11 +123,11 @@ int split_main(int argc UNUSED_PARAM, char **argv)
 		fd = xopen_stdin(argv[0]);
 		xmove_fd(fd, STDIN_FILENO);
 	} else {
-		argv[0] = (char *) bb_msg_standard_input;
+		argv[0] = (char *) bb_मेनसाहे_standard_पासोक;
 	}
 
 	if (NAME_MAX < strlen(sfx) + suffix_len)
-		bb_simple_error_msg_and_die("suffix too long");
+		bb_simple_error_मेनसाहे_and_die("suffix too long");
 
 	{
 		char *char_p = xzalloc(suffix_len + 1);
@@ -142,12 +142,12 @@ int split_main(int argc UNUSED_PARAM, char **argv)
 		if (!bytes_read)
 			break;
 		if (bytes_read < 0)
-			bb_simple_perror_msg_and_die(argv[0]);
+			bb_simple_perror_मेनसाहे_and_die(argv[0]);
 		src = read_buffer;
 		do {
 			if (!remaining) {
 				if (!pfx)
-					bb_simple_error_msg_and_die("suffixes exhausted");
+					bb_simple_error_मेनसाहे_and_die("suffixes exhausted");
 				xmove_fd(xopen(pfx, O_WRONLY | O_CREAT | O_TRUNC), 1);
 				pfx = next_file(pfx, suffix_len);
 				remaining = cnt;

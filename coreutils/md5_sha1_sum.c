@@ -142,13 +142,13 @@ enum {
 #define FLAG_WARN    4
 
 /* This might be useful elsewhere */
-static unsigned char *hash_bin_to_hex(unsigned char *hash_value,
+static unsigned char *hash_bin_to_hex(unsigned char *hash_हालागा,
 				unsigned hash_length)
 {
 	/* xzalloc zero-terminates */
-	char *hex_value = xzalloc((hash_length * 2) + 1);
-	bin2hex(hex_value, (char*)hash_value, hash_length);
-	return (unsigned char *)hex_value;
+	char *hex_हालागा = xzalloc((hash_length * 2) + 1);
+	bin2hex(hex_हालागा, (char*)hash_हालागा, hash_length);
+	return (unsigned char *)hex_हालागा;
 }
 
 #define BUFSZ (CONFIG_FEATURE_COPYBUF_KB < 4 ? 4096 : CONFIG_FEATURE_COPYBUF_KB * 1024)
@@ -158,7 +158,7 @@ static unsigned char *hash_bin_to_hex(unsigned char *hash_value,
 #endif
 static uint8_t *hash_file(unsigned char *in_buf, const char *filename, unsigned sha3_width)
 {
-	int src_fd, hash_len, count;
+	int src_fd, hash_len, बिलांग;
 	union _ctx_ {
 		sha3_ctx_t sha3;
 		sha512_ctx_t sha512;
@@ -166,7 +166,7 @@ static uint8_t *hash_file(unsigned char *in_buf, const char *filename, unsigned 
 		sha1_ctx_t sha1;
 		md5_ctx_t md5;
 	} context;
-	uint8_t *hash_value;
+	uint8_t *hash_हालागा;
 	void FAST_FUNC (*update)(void*, const void*, size_t);
 	unsigned FAST_FUNC (*final)(void*, void*);
 	char hash_algo;
@@ -217,10 +217,10 @@ static uint8_t *hash_file(unsigned char *in_buf, const char *filename, unsigned 
 		 || (sha3_width & 0x1f)  /* should be multiple of 32 */
 		/* (because input uses up to 8 byte wide word XORs. 32/4=8) */
 		) {
-			bb_error_msg_and_die("bad -a%u", sha3_width);
+			bb_error_मेनसाहे_and_die("bad -a%u", sha3_width);
 		}
 		sha3_width /= 4;
-		context.sha3.input_block_bytes = 1600/8 - sha3_width;
+		context.sha3.पासोक_block_bytes = 1600/8 - sha3_width;
 		hash_len = sha3_width/2;
 	}
 #endif
@@ -229,15 +229,15 @@ static uint8_t *hash_file(unsigned char *in_buf, const char *filename, unsigned 
 	}
 
 	{
-		while ((count = safe_read(src_fd, in_buf, BUFSZ)) > 0) {
-			update(&context, in_buf, count);
+		while ((बिलांग = safe_read(src_fd, in_buf, BUFSZ)) > 0) {
+			update(&context, in_buf, बिलांग);
 		}
-		hash_value = NULL;
-		if (count < 0)
-			bb_perror_msg("can't read '%s'", filename);
+		hash_हालागा = NULL;
+		if (बिलांग < 0)
+			bb_perror_मेनसाहे("can't read '%s'", filename);
 		else /* count == 0 */ {
 			final(&context, in_buf);
-			hash_value = hash_bin_to_hex(in_buf, hash_len);
+			hash_हालागा = hash_bin_to_hex(in_buf, hash_len);
 		}
 	}
 
@@ -245,14 +245,14 @@ static uint8_t *hash_file(unsigned char *in_buf, const char *filename, unsigned 
 		close(src_fd);
 	}
 
-	return hash_value;
+	return hash_हालागा;
 }
 
 int md5_sha1_sum_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
 int md5_sha1_sum_main(int argc UNUSED_PARAM, char **argv)
 {
 	unsigned char *in_buf;
-	int return_value = EXIT_SUCCESS;
+	int return_हालागा = EXIT_SUCCESS;
 	unsigned flags;
 #if ENABLE_SHA3SUM
 	unsigned sha3_width = 224;
@@ -289,25 +289,25 @@ int md5_sha1_sum_main(int argc UNUSED_PARAM, char **argv)
 	do {
 		if (ENABLE_FEATURE_MD5_SHA1_SUM_CHECK && (flags & FLAG_CHECK)) {
 			FILE *pre_computed_stream;
-			char *line;
-			int count_total = 0;
-			int count_failed = 0;
+			char *लिन्या;
+			int बिलांग_total = 0;
+			int बिलांग_failed = 0;
 
 			pre_computed_stream = xfopen_stdin(*argv);
 
-			while ((line = xmalloc_fgetline(pre_computed_stream)) != NULL) {
-				uint8_t *hash_value;
+			while ((लिन्या = xmalloc_fgetline(pre_computed_stream)) != NULL) {
+				uint8_t *hash_हालागा;
 				char *filename_ptr;
 
-				count_total++;
-				filename_ptr = strchr(line, ' ');
+				बिलांग_total++;
+				filename_ptr = strchr(लिन्या, ' ');
 				if (!filename_ptr) {
 					if (flags & FLAG_WARN) {
-						bb_simple_error_msg("invalid format");
+						bb_simple_error_मेनसाहे("invalid format");
 					}
-					count_failed++;
-					return_value = EXIT_FAILURE;
-					free(line);
+					बिलांग_failed++;
+					return_हालागा = EXIT_FAILURE;
+					free(लिन्या);
 					continue;
 				}
 				*filename_ptr++ = '\0';
@@ -318,44 +318,44 @@ int md5_sha1_sum_main(int argc UNUSED_PARAM, char **argv)
 				if (*filename_ptr == ' ' || *filename_ptr == '*')
 					filename_ptr++;
 
-				hash_value = hash_file(in_buf, filename_ptr, sha3_width);
+				hash_हालागा = hash_file(in_buf, filename_ptr, sha3_width);
 
-				if (hash_value && (strcasecmp((char*)hash_value, line) == 0)) {
+				if (hash_हालागा && (strcasecmp((char*)hash_हालागा, लिन्या) == 0)) {
 					if (!(flags & FLAG_SILENT))
 						printf("%s: OK\n", filename_ptr);
 				} else {
 					if (!(flags & FLAG_SILENT))
 						printf("%s: FAILED\n", filename_ptr);
-					count_failed++;
-					return_value = EXIT_FAILURE;
+					बिलांग_failed++;
+					return_हालागा = EXIT_FAILURE;
 				}
 				/* possible free(NULL) */
-				free(hash_value);
-				free(line);
+				free(hash_हालागा);
+				free(लिन्या);
 			}
-			if (count_failed && !(flags & FLAG_SILENT)) {
-				bb_error_msg("WARNING: %d of %d computed checksums did NOT match",
-						count_failed, count_total);
+			if (बिलांग_failed && !(flags & FLAG_SILENT)) {
+				bb_error_मेनसाहे("WARNING: %d of %d computed checksums did NOT match",
+						बिलांग_failed, बिलांग_total);
 			}
-			if (count_total == 0) {
-				return_value = EXIT_FAILURE;
+			if (बिलांग_total == 0) {
+				return_हालागा = EXIT_FAILURE;
 				/*
 				 * md5sum from GNU coreutils 8.25 says:
 				 * md5sum: <FILE>: no properly formatted MD5 checksum lines found
 				 */
-				bb_error_msg("%s: no checksum lines found", *argv);
+				bb_error_मेनसाहे("%s: no checksum lines found", *argv);
 			}
 			fclose_if_not_stdin(pre_computed_stream);
 		} else {
-			uint8_t *hash_value = hash_file(in_buf, *argv, sha3_width);
-			if (hash_value == NULL) {
-				return_value = EXIT_FAILURE;
+			uint8_t *hash_हालागा = hash_file(in_buf, *argv, sha3_width);
+			if (hash_हालागा == NULL) {
+				return_हालागा = EXIT_FAILURE;
 			} else {
-				printf("%s  %s\n", hash_value, *argv);
-				free(hash_value);
+				printf("%s  %s\n", hash_हालागा, *argv);
+				free(hash_हालागा);
 			}
 		}
 	} while (*++argv);
 
-	return return_value;
+	return return_हालागा;
 }

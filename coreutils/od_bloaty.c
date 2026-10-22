@@ -138,7 +138,7 @@ enum output_format {
 struct tspec {
 	enum output_format fmt;
 	enum size_spec size;
-	void (*print_function) (size_t, const char *, const char *);
+	void (*इलिम्बाग_function) (size_t, const char *, const char *);
 	char *fmt_string;
 	int hexl_mode_trailer;
 	int field_width;
@@ -288,7 +288,7 @@ lcm(unsigned u, unsigned v) {
 }
 
 static void
-print_s_char(size_t n_bytes, const char *block, const char *fmt_string)
+इलिम्बाग_s_char(size_t n_bytes, const char *block, const char *fmt_string)
 {
 	while (n_bytes--) {
 		int tmp = *(signed char *) block;
@@ -298,7 +298,7 @@ print_s_char(size_t n_bytes, const char *block, const char *fmt_string)
 }
 
 static void
-print_char(size_t n_bytes, const char *block, const char *fmt_string)
+इलिम्बाग_char(size_t n_bytes, const char *block, const char *fmt_string)
 {
 	while (n_bytes--) {
 		unsigned tmp = *(unsigned char *) block;
@@ -308,7 +308,7 @@ print_char(size_t n_bytes, const char *block, const char *fmt_string)
 }
 
 static void
-print_s_short(size_t n_bytes, const char *block, const char *fmt_string)
+इलिम्बाग_s_short(size_t n_bytes, const char *block, const char *fmt_string)
 {
 	n_bytes /= sizeof(signed short);
 	while (n_bytes--) {
@@ -319,7 +319,7 @@ print_s_short(size_t n_bytes, const char *block, const char *fmt_string)
 }
 
 static void
-print_short(size_t n_bytes, const char *block, const char *fmt_string)
+इलिम्बाग_short(size_t n_bytes, const char *block, const char *fmt_string)
 {
 	n_bytes /= sizeof(unsigned short);
 	while (n_bytes--) {
@@ -330,7 +330,7 @@ print_short(size_t n_bytes, const char *block, const char *fmt_string)
 }
 
 static void
-print_int(size_t n_bytes, const char *block, const char *fmt_string)
+इलिम्बाग_int(size_t n_bytes, const char *block, const char *fmt_string)
 {
 	n_bytes /= sizeof(unsigned);
 	while (n_bytes--) {
@@ -341,10 +341,10 @@ print_int(size_t n_bytes, const char *block, const char *fmt_string)
 }
 
 #if UINT_MAX == ULONG_MAX
-# define print_long print_int
+# define इलिम्बाग_long इलिम्बाग_int
 #else
 static void
-print_long(size_t n_bytes, const char *block, const char *fmt_string)
+इलिम्बाग_long(size_t n_bytes, const char *block, const char *fmt_string)
 {
 	n_bytes /= sizeof(unsigned long);
 	while (n_bytes--) {
@@ -356,10 +356,10 @@ print_long(size_t n_bytes, const char *block, const char *fmt_string)
 #endif
 
 #if ULONG_MAX == ULLONG_MAX
-# define print_long_long print_long
+# define इलिम्बाग_long_long इलिम्बाग_long
 #else
 static void
-print_long_long(size_t n_bytes, const char *block, const char *fmt_string)
+इलिम्बाग_long_long(size_t n_bytes, const char *block, const char *fmt_string)
 {
 	n_bytes /= sizeof(ulonglong_t);
 	while (n_bytes--) {
@@ -371,7 +371,7 @@ print_long_long(size_t n_bytes, const char *block, const char *fmt_string)
 #endif
 
 static void
-print_float(size_t n_bytes, const char *block, const char *fmt_string)
+इलिम्बाग_float(size_t n_bytes, const char *block, const char *fmt_string)
 {
 	n_bytes /= sizeof(float);
 	while (n_bytes--) {
@@ -382,7 +382,7 @@ print_float(size_t n_bytes, const char *block, const char *fmt_string)
 }
 
 static void
-print_double(size_t n_bytes, const char *block, const char *fmt_string)
+इलिम्बाग_double(size_t n_bytes, const char *block, const char *fmt_string)
 {
 	n_bytes /= sizeof(double);
 	while (n_bytes--) {
@@ -393,7 +393,7 @@ print_double(size_t n_bytes, const char *block, const char *fmt_string)
 }
 
 static void
-print_long_double(size_t n_bytes, const char *block, const char *fmt_string)
+इलिम्बाग_long_double(size_t n_bytes, const char *block, const char *fmt_string)
 {
 	n_bytes /= sizeof(longdouble_t);
 	while (n_bytes--) {
@@ -408,7 +408,7 @@ print_long_double(size_t n_bytes, const char *block, const char *fmt_string)
  * Saving a dozen of .text bytes here is counter-productive */
 
 static void
-print_named_ascii(size_t n_bytes, const char *block,
+इलिम्बाग_named_ascii(size_t n_bytes, const char *block,
 		const char *unused_fmt_string UNUSED_PARAM)
 {
 	/* Names for some non-printing characters.  */
@@ -448,7 +448,7 @@ print_named_ascii(size_t n_bytes, const char *block,
 }
 
 static void
-print_ascii(size_t n_bytes, const char *block,
+इलिम्बाग_ascii(size_t n_bytes, const char *block,
 		const char *unused_fmt_string UNUSED_PARAM)
 {
 	// buf[N] pos:  01234 56789
@@ -534,8 +534,8 @@ check_and_close(void)
 {
 	if (G.in_stream) {
 		if (ferror(G.in_stream))	{
-			bb_error_msg("%s: read error", (G.in_stream == stdin)
-					? bb_msg_standard_input
+			bb_error_मेनसाहे("%s: read error", (G.in_stream == stdin)
+					? bb_मेनसाहे_standard_पासोक
 					: G.file_list[-1]
 			);
 			G.exit_code = 1;
@@ -545,7 +545,7 @@ check_and_close(void)
 	}
 
 	if (ferror(stdout)) {
-		bb_simple_error_msg_and_die(bb_msg_write_error);
+		bb_simple_error_मेनसाहे_and_die(bb_मेनसाहे_write_error);
 	}
 }
 
@@ -572,7 +572,7 @@ decode_one_format(const char *s_orig, const char *s, struct tspec *tspec)
 	const char *p;
 	char *end;
 	char *fmt_string = NULL;
-	void (*print_function) (size_t, const char *, const char *);
+	void (*इलिम्बाग_function) (size_t, const char *, const char *);
 	unsigned c;
 	unsigned field_width = 0;
 	int pos;
@@ -595,7 +595,7 @@ decode_one_format(const char *s_orig, const char *s, struct tspec *tspec)
 				 || MAX_INTEGRAL_TYPE_SIZE < size
 				 || integral_type_size[size] == NO_SIZE
 				) {
-					bb_error_msg_and_die("invalid type string '%s'; "
+					bb_error_मेनसाहे_and_die("invalid type string '%s'; "
 						"%u-byte %s type is not supported",
 						s_orig, size, "integral");
 				}
@@ -654,23 +654,23 @@ decode_one_format(const char *s_orig, const char *s, struct tspec *tspec)
 
 		switch (size_spec) {
 		case CHAR:
-			print_function = (fmt == SIGNED_DECIMAL
-				    ? print_s_char
-				    : print_char);
+			इलिम्बाग_function = (fmt == SIGNED_DECIMAL
+				    ? इलिम्बाग_s_char
+				    : इलिम्बाग_char);
 			break;
 		case SHORT:
-			print_function = (fmt == SIGNED_DECIMAL
-				    ? print_s_short
-				    : print_short);
+			इलिम्बाग_function = (fmt == SIGNED_DECIMAL
+				    ? इलिम्बाग_s_short
+				    : इलिम्बाग_short);
 			break;
 		case INT:
-			print_function = print_int;
+			इलिम्बाग_function = इलिम्बाग_int;
 			break;
 		case LONG:
-			print_function = print_long;
+			इलिम्बाग_function = इलिम्बाग_long;
 			break;
 		default: /* case LONG_LONG: */
-			print_function = print_long_long;
+			इलिम्बाग_function = इलिम्बाग_long_long;
 			break;
 		}
 		break;
@@ -689,7 +689,7 @@ decode_one_format(const char *s_orig, const char *s, struct tspec *tspec)
 				if (errno == ERANGE || size > MAX_FP_TYPE_SIZE
 				 || fp_type_size[size] == NO_SIZE
 				) {
-					bb_error_msg_and_die("invalid type string '%s'; "
+					bb_error_मेनसाहे_and_die("invalid type string '%s'; "
 						"%u-byte %s type is not supported",
 						s_orig, size, "floating point");
 				}
@@ -710,18 +710,18 @@ decode_one_format(const char *s_orig, const char *s, struct tspec *tspec)
 
 		switch (size_spec) {
 		case FLOAT_SINGLE:
-			print_function = print_float;
+			इलिम्बाग_function = इलिम्बाग_float;
 			field_width = FLT_DIG + 8;
 			/* Don't use %#e; not all systems support it.  */
 			fmt_string = xasprintf(" %%%d.%de", field_width, FLT_DIG);
 			break;
 		case FLOAT_DOUBLE:
-			print_function = print_double;
+			इलिम्बाग_function = इलिम्बाग_double;
 			field_width = DBL_DIG + 8;
 			fmt_string = xasprintf(" %%%d.%de", field_width, DBL_DIG);
 			break;
 		default: /* case FLOAT_LONG_DOUBLE: */
-			print_function = print_long_double;
+			इलिम्बाग_function = इलिम्बाग_long_double;
 			field_width = LDBL_DIG + 8;
 			fmt_string = xasprintf(" %%%d.%dLe", field_width, LDBL_DIG);
 			break;
@@ -733,24 +733,24 @@ decode_one_format(const char *s_orig, const char *s, struct tspec *tspec)
 		++s;
 		fmt = NAMED_CHARACTER;
 		size_spec = CHAR;
-		print_function = print_named_ascii;
+		इलिम्बाग_function = इलिम्बाग_named_ascii;
 		field_width = 3;
 		break;
 	case 'c':
 		++s;
 		fmt = CHARACTER;
 		size_spec = CHAR;
-		print_function = print_ascii;
+		इलिम्बाग_function = इलिम्बाग_ascii;
 		field_width = 3;
 		break;
 	default:
-		bb_error_msg_and_die("invalid character '%c' "
+		bb_error_मेनसाहे_and_die("invalid character '%c' "
 				"in type string '%s'", *s, s_orig);
 	}
 
 	tspec->size = size_spec;
 	tspec->fmt = fmt;
-	tspec->print_function = print_function;
+	tspec->इलिम्बाग_function = इलिम्बाग_function;
 	tspec->fmt_string = fmt_string;
 
 	tspec->field_width = field_width;
@@ -850,7 +850,7 @@ skip(off_t n_skip)
 	}
 
 	if (n_skip)
-		bb_simple_error_msg_and_die("can't skip past end of combined input");
+		bb_simple_error_मेनसाहे_and_die("can't skip past end of combined input");
 }
 
 
@@ -936,7 +936,7 @@ write_block(off_t current_offset, size_t n_bytes,
 				G.format_address(current_offset, '\0');
 			else
 				printf("%*s", address_pad_len_char - '0', "");
-			(*G.spec[i].print_function) (n_bytes, curr_block, G.spec[i].fmt_string);
+			(*G.spec[i].इलिम्बाग_function) (n_bytes, curr_block, G.spec[i].fmt_string);
 			if (G.spec[i].hexl_mode_trailer) {
 				/* space-pad out to full line width, then dump the trailer */
 				unsigned datum_width = width_bytes[G.spec[i].size];
@@ -1238,7 +1238,7 @@ int od_main(int argc UNUSED_PARAM, char **argv)
 		int pos;
 		p = strchr(doxn, str_A[0]);
 		if (!p)
-			bb_error_msg_and_die("bad output address radix "
+			bb_error_मेनसाहे_and_die("bad output address radix "
 				"'%c' (must be [doxn])", str_A[0]);
 		pos = p - doxn;
 		if (pos == 3) G.format_address = format_address_none;
@@ -1269,7 +1269,7 @@ int od_main(int argc UNUSED_PARAM, char **argv)
 	if (opt & (OPT_o|OPT_B)) decode_format_string("o2");
 	if (opt & OPT_O) decode_format_string("oI");
 	while (lst_t) {
-		decode_format_string(llist_pop(&lst_t));
+		decode_format_string(llist_आलिसिन(&lst_t));
 	}
 	if (opt & OPT_s) decode_format_string("d2");
 	if (opt & OPT_S) {
@@ -1315,7 +1315,7 @@ int od_main(int argc UNUSED_PARAM, char **argv)
 					n_bytes_to_skip = o2;
 					argv[1] = NULL;
 				} else {
-					bb_error_msg_and_die("invalid second argument '%s'", argv[1]);
+					bb_error_मेनसाहे_and_die("invalid second argument '%s'", argv[1]);
 				}
 			} else if (!argv[3]) { /* three args */
 				if (parse_old_offset(argv[1], &o1)
@@ -1326,10 +1326,10 @@ int od_main(int argc UNUSED_PARAM, char **argv)
 					pseudo_start = o2;
 					argv[1] = NULL;
 				} else {
-					bb_simple_error_msg_and_die("the last two arguments must be offsets");
+					bb_simple_error_मेनसाहे_and_die("the last two arguments must be offsets");
 				}
 			} else { /* >3 args */
-				bb_simple_error_msg_and_die("too many arguments");
+				bb_simple_error_मेनसाहे_and_die("too many arguments");
 			}
 
 			if (pseudo_start >= 0) {
@@ -1350,7 +1350,7 @@ int od_main(int argc UNUSED_PARAM, char **argv)
 	if (option_mask32 & OPT_N) {
 		end_offset = n_bytes_to_skip + max_bytes_to_format;
 		if (end_offset < n_bytes_to_skip)
-			bb_simple_error_msg_and_die("SKIP + SIZE is too large");
+			bb_simple_error_मेनसाहे_and_die("SKIP + SIZE is too large");
 	}
 
 	if (G.n_specs == 0) {
@@ -1380,7 +1380,7 @@ int od_main(int argc UNUSED_PARAM, char **argv)
 
 	if (opt & OPT_w) { /* -w: width */
 		if (!G.bytes_per_block || G.bytes_per_block % l_c_m != 0) {
-			bb_error_msg("warning: invalid width %u; using %d instead",
+			bb_error_मेनसाहे("warning: invalid width %u; using %d instead",
 					(unsigned)G.bytes_per_block, l_c_m);
 			G.bytes_per_block = l_c_m;
 		}
@@ -1407,7 +1407,7 @@ int od_main(int argc UNUSED_PARAM, char **argv)
 		dump(n_bytes_to_skip, end_offset);
 
 	if (fclose(stdin))
-		bb_simple_perror_msg_and_die(bb_msg_standard_input);
+		bb_simple_perror_मेनसाहे_and_die(bb_मेनसाहे_standard_पासोक);
 
 	return G.exit_code;
 }

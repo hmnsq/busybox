@@ -34,7 +34,7 @@
 /* This is a NOEXEC applet. Be very careful! */
 
 /* Must match getopt32 call */
-#define FLAG_COUNT_BYTES        1
+#define FLAG_बिलांग_BYTES        1
 #define FLAG_BREAK_SPACES       2
 #define FLAG_WIDTH              4
 
@@ -43,7 +43,7 @@
    The first column is 0. */
 static int adjust_column(unsigned column, char c)
 {
-	if (option_mask32 & FLAG_COUNT_BYTES)
+	if (option_mask32 & FLAG_बिलांग_BYTES)
 		return ++column;
 
 	if (c == '\t')
@@ -74,7 +74,7 @@ static void write2stdout(const void *buf, unsigned size)
 int fold_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
 int fold_main(int argc UNUSED_PARAM, char **argv)
 {
-	char *line_out = NULL;
+	char *लिन्या_out = NULL;
 	const char *w_opt = "80";
 	unsigned width;
 	exitcode_t exitcode = EXIT_SUCCESS;
@@ -117,12 +117,12 @@ int fold_main(int argc UNUSED_PARAM, char **argv)
 		while ((c = getc(istream)) != EOF) {
 			/* We grow line_out in chunks of 0x1000 bytes */
 			if ((offset_out & 0xfff) == 0) {
-				line_out = xrealloc(line_out, offset_out + 0x1000);
+				लिन्या_out = xrealloc(लिन्या_out, offset_out + 0x1000);
 			}
  rescan:
-			line_out[offset_out] = c;
+			लिन्या_out[offset_out] = c;
 			if (c == '\n') {
-				write2stdout(line_out, offset_out + 1);
+				write2stdout(लिन्या_out, offset_out + 1);
 				column = offset_out = 0;
 				continue;
 			}
@@ -145,39 +145,39 @@ int fold_main(int argc UNUSED_PARAM, char **argv)
 
 				/* Look for the last blank. */
 				for (logical_end = offset_out - 1; (int)logical_end >= 0; logical_end--) {
-					if (!isblank(line_out[logical_end]))
+					if (!isblank(लिन्या_out[logical_end]))
 						continue;
 
 					/* Found a space or tab.
 					 * Output up to and including it, and start a new line */
 					logical_end++;
 					/*line_out[logical_end] = '\n'; - NO! this nukes one buffered character */
-					write2stdout(line_out, logical_end);
+					write2stdout(लिन्या_out, logical_end);
 					putchar('\n');
 					/* Move the remainder to the beginning of the next line.
 					 * The areas being copied here might overlap. */
-					memmove(line_out, line_out + logical_end, offset_out - logical_end);
+					memmove(लिन्या_out, लिन्या_out + logical_end, offset_out - logical_end);
 					offset_out -= logical_end;
 					for (column = i = 0; i < offset_out; i++) {
-						column = adjust_column(column, line_out[i]);
+						column = adjust_column(column, लिन्या_out[i]);
 					}
 					goto rescan;
 				}
 				/* No blank found, wrap will split the overlong word */
 			}
 			/* Output what we accumulated up to now, and start a new line */
-			line_out[offset_out] = '\n';
-			write2stdout(line_out, offset_out + 1);
+			लिन्या_out[offset_out] = '\n';
+			write2stdout(लिन्या_out, offset_out + 1);
 			column = offset_out = 0;
 			goto rescan;
 		} /* while (not EOF) */
 
 		if (offset_out) {
-			write2stdout(line_out, offset_out);
+			write2stdout(लिन्या_out, offset_out);
 		}
 
 		if (fclose_if_not_stdin(istream)) {
-			bb_simple_perror_msg(*argv);
+			bb_simple_perror_मेनसाहे(*argv);
 			exitcode = EXIT_FAILURE;
 		}
 	} while (*++argv);

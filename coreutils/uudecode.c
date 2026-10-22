@@ -36,40 +36,40 @@
 #if ENABLE_UUDECODE
 static void FAST_FUNC read_stduu(FILE *src_stream, FILE *dst_stream, int flags UNUSED_PARAM)
 {
-	char *line;
+	char *लिन्या;
 
 	for (;;) {
 		int encoded_len, str_len;
-		char *line_ptr, *dst;
-		size_t line_len;
+		char *लिन्या_ptr, *dst;
+		size_t लिन्या_len;
 
-		line_len = 64 * 1024;
-		line = xmalloc_fgets_str_len(src_stream, "\n", &line_len);
-		if (!line)
+		लिन्या_len = 64 * 1024;
+		लिन्या = xmalloc_fgets_str_len(src_stream, "\n", &लिन्या_len);
+		if (!लिन्या)
 			break;
 		/* Handle both Unix and MSDOS text.
 		 * Note: space should not be trimmed, some encoders use it instead of "`"
 		 * for padding of last incomplete 4-char block.
 		 */
-		str_len = line_len;
+		str_len = लिन्या_len;
 		while (--str_len >= 0
-		 && (line[str_len] == '\n' || line[str_len] == '\r')
+		 && (लिन्या[str_len] == '\n' || लिन्या[str_len] == '\r')
 		) {
-			line[str_len] = '\0';
+			लिन्या[str_len] = '\0';
 		}
 
-		if (strcmp(line, "end") == 0) {
+		if (strcmp(लिन्या, "end") == 0) {
 			return; /* the only non-error exit */
 		}
 
-		line_ptr = line;
-		while (*line_ptr) {
-			*line_ptr = (*line_ptr - 0x20) & 0x3f;
-			line_ptr++;
+		लिन्या_ptr = लिन्या;
+		while (*लिन्या_ptr) {
+			*लिन्या_ptr = (*लिन्या_ptr - 0x20) & 0x3f;
+			लिन्या_ptr++;
 		}
-		str_len = line_ptr - line;
+		str_len = लिन्या_ptr - लिन्या;
 
-		encoded_len = line[0] * 4 / 3;
+		encoded_len = लिन्या[0] * 4 / 3;
 		/* Check that line is not too short. (we tolerate
 		 * overly _long_ line to accommodate possible extra "`").
 		 * Empty line case is also caught here. */
@@ -78,37 +78,37 @@ static void FAST_FUNC read_stduu(FILE *src_stream, FILE *dst_stream, int flags U
 		}
 		if (encoded_len <= 0) {
 			/* Ignore the "`\n" line, why is it even in the encode file ? */
-			free(line);
+			free(लिन्या);
 			continue;
 		}
 		if (encoded_len > 60) {
-			bb_simple_error_msg_and_die("line too long");
+			bb_simple_error_मेनसाहे_and_die("line too long");
 		}
 
-		dst = line;
-		line_ptr = line + 1;
+		dst = लिन्या;
+		लिन्या_ptr = लिन्या + 1;
 		do {
 			/* Merge four 6 bit chars to three 8 bit chars */
-			*dst++ = line_ptr[0] << 2 | line_ptr[1] >> 4;
+			*dst++ = लिन्या_ptr[0] << 2 | लिन्या_ptr[1] >> 4;
 			encoded_len--;
 			if (encoded_len == 0) {
 				break;
 			}
 
-			*dst++ = line_ptr[1] << 4 | line_ptr[2] >> 2;
+			*dst++ = लिन्या_ptr[1] << 4 | लिन्या_ptr[2] >> 2;
 			encoded_len--;
 			if (encoded_len == 0) {
 				break;
 			}
 
-			*dst++ = line_ptr[2] << 6 | line_ptr[3];
-			line_ptr += 4;
+			*dst++ = लिन्या_ptr[2] << 6 | लिन्या_ptr[3];
+			लिन्या_ptr += 4;
 			encoded_len -= 2;
 		} while (encoded_len > 0);
-		fwrite(line, 1, dst - line, dst_stream);
-		free(line);
+		fwrite(लिन्या, 1, dst - लिन्या, dst_stream);
+		free(लिन्या);
 	}
-	bb_simple_error_msg_and_die("short file");
+	bb_simple_error_मेनसाहे_and_die("short file");
 }
 
 int uudecode_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
@@ -116,7 +116,7 @@ int uudecode_main(int argc UNUSED_PARAM, char **argv)
 {
 	FILE *src_stream;
 	char *outname = NULL;
-	char *line;
+	char *लिन्या;
 
 	getopt32(argv, "^" "o:" "\0" "?1"/* 1 arg max*/, &outname);
 	argv += optind;
@@ -126,27 +126,27 @@ int uudecode_main(int argc UNUSED_PARAM, char **argv)
 	src_stream = xfopen_stdin(argv[0]);
 
 	/* Search for the start of the encoding */
-	while ((line = xmalloc_fgetline(src_stream)) != NULL) {
+	while ((लिन्या = xmalloc_fgetline(src_stream)) != NULL) {
 		void FAST_FUNC (*decode_fn_ptr)(FILE *src, FILE *dst, int flags);
-		char *line_ptr;
+		char *लिन्या_ptr;
 		FILE *dst_stream;
 		int mode;
 
-		if (is_prefixed_with(line, "begin-base64 ")) {
-			line_ptr = line + 13;
+		if (is_prefixed_with(लिन्या, "begin-base64 ")) {
+			लिन्या_ptr = लिन्या + 13;
 			decode_fn_ptr = read_base64;
-		} else if (is_prefixed_with(line, "begin ")) {
-			line_ptr = line + 6;
+		} else if (is_prefixed_with(लिन्या, "begin ")) {
+			लिन्या_ptr = लिन्या + 6;
 			decode_fn_ptr = read_stduu;
 		} else {
-			free(line);
+			free(लिन्या);
 			continue;
 		}
 
 		/* begin line found. decode and exit */
-		mode = bb_strtou(line_ptr, NULL, 8);
+		mode = bb_strtou(लिन्या_ptr, NULL, 8);
 		if (outname == NULL) {
-			outname = strchr(line_ptr, ' ');
+			outname = strchr(लिन्या_ptr, ' ');
 			if (!outname)
 				break;
 			outname++;
@@ -168,12 +168,12 @@ int uudecode_main(int argc UNUSED_PARAM, char **argv)
 			dst_stream = xfopen_for_write(outname);
 			fchmod(fileno(dst_stream), mode & (S_IRWXU | S_IRWXG | S_IRWXO));
 		}
-		free(line);
+		free(लिन्या);
 		decode_fn_ptr(src_stream, dst_stream, /*flags:*/ BASE64_FLAG_UU_STOP + BASE64_FLAG_NO_STOP_CHAR);
 		/* fclose_if_not_stdin(src_stream); - redundant */
 		return EXIT_SUCCESS;
 	}
-	bb_simple_error_msg_and_die("no 'begin' line");
+	bb_simple_error_मेनसाहे_and_die("no 'begin' line");
 }
 #endif
 
@@ -276,8 +276,8 @@ static void bb_b32encode(char *p, const void *src, int length)
 void bb_b32encode(char *p, const void *src, int length); /* undefined */
 # endif
 
-int baseNUM_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int baseNUM_main(int argc UNUSED_PARAM, char **argv)
+int base_नुमेरो_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+int base_नुमेरो_main(int argc UNUSED_PARAM, char **argv)
 {
 	FILE *src_stream;
 	unsigned opts;
@@ -314,7 +314,7 @@ int baseNUM_main(int argc UNUSED_PARAM, char **argv)
 		while (1) {
 			size_t size = full_read(src_fd, src_buf, SRC_BUF_SIZE);
 			if ((ssize_t)size < 0)
-				bb_simple_perror_msg_and_die(bb_msg_read_error);
+				bb_simple_perror_मेनसाहे_and_die(bb_मेनसाहे_read_error);
 			if (size == 0) {
 				if (rem != 0) bb_putchar('\n');
 				break;

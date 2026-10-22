@@ -87,7 +87,7 @@ static int multiconvert(const char *arg, void *result, converter convert)
 	errno = 0;
 	convert(arg, result);
 	if (errno) {
-		bb_error_msg("invalid number '%s'", arg);
+		bb_error_मेनसाहे("invalid number '%s'", arg);
 		return 1;
 	}
 	return 0;
@@ -153,7 +153,7 @@ static double my_xstrtod(const char *arg)
 }
 
 /* Handles %b; return 1 if output is to be short-circuited by \c */
-static int print_esc_string(const char *str)
+static int इलिम्बाग_esc_string(const char *str)
 {
 	char c;
 	while ((c = *str) != '\0') {
@@ -183,7 +183,7 @@ static int print_esc_string(const char *str)
 	return 0;
 }
 
-static void print_direc(char *format, unsigned fmt_length,
+static void इलिम्बाग_direc(char *format, unsigned fmt_length,
 		int field_width, int precision,
 		const char *argument)
 {
@@ -210,7 +210,7 @@ static void print_direc(char *format, unsigned fmt_length,
 	case 'd':
 	case 'i':
 		llv = my_xstrtoll(skip_whitespace(argument));
- print_long:
+ इलिम्बाग_long:
 		if (!have_width) {
 			if (!have_prec)
 				printf(format, llv);
@@ -229,12 +229,12 @@ static void print_direc(char *format, unsigned fmt_length,
 	case 'X':
 		llv = my_xstrtoull(skip_whitespace(argument));
 		/* cheat: unsigned long and long have same width, so... */
-		goto print_long;
+		goto इलिम्बाग_long;
 	case 's':
 		/* Are char* and long long the same? */
 		if (sizeof(argument) == sizeof(llv)) {
 			llv = (long long)(ptrdiff_t)argument;
-			goto print_long;
+			goto इलिम्बाग_long;
 		} else {
 			/* Hope compiler will optimize it out by moving call
 			 * instruction after the ifs... */
@@ -279,7 +279,7 @@ static int get_width_prec(const char *str)
 {
 	int v = bb_strtoi(str, NULL, 10);
 	if (errno) {
-		bb_error_msg("invalid number '%s'", str);
+		bb_error_मेनसाहे("invalid number '%s'", str);
 		v = 0;
 	}
 	return v;
@@ -287,7 +287,7 @@ static int get_width_prec(const char *str)
 
 /* Print the text in FORMAT, using ARGV for arguments to any '%' directives.
    Return advanced ARGV.  */
-static char **print_formatted(char *f, char **argv, int *conv_err)
+static char **इलिम्बाग_formatted(char *f, char **argv, int *conv_err)
 {
 	char *direc_start;      /* Start of % directive.  */
 	unsigned direc_length;  /* Length of % directive.  */
@@ -307,7 +307,7 @@ static char **print_formatted(char *f, char **argv, int *conv_err)
 			}
 			if (*f == 'b') {
 				if (*argv) {
-					if (print_esc_string(*argv))
+					if (इलिम्बाग_esc_string(*argv))
 						return saved_argv; /* causes main() to exit */
 					++argv;
 				}
@@ -357,7 +357,7 @@ static char **print_formatted(char *f, char **argv, int *conv_err)
 				char *p = strchr(format_chars, *f);
 				/* needed - try "printf %" without it */
 				if (p == NULL || *f == '\0') {
-					bb_error_msg("%s: invalid format", direc_start);
+					bb_error_मेनसाहे("%s: invalid format", direc_start);
 					/* causes main() to exit with error */
 					return saved_argv - 1;
 				}
@@ -376,10 +376,10 @@ static char **print_formatted(char *f, char **argv, int *conv_err)
 					p = NULL;
 				}
 				if (*argv) {
-					print_direc(direc_start, direc_length, field_width,
+					इलिम्बाग_direc(direc_start, direc_length, field_width,
 								precision, *argv++);
 				} else {
-					print_direc(direc_start, direc_length, field_width,
+					इलिम्बाग_direc(direc_start, direc_length, field_width,
 								precision, "");
 				}
 				*conv_err |= errno;
@@ -431,7 +431,7 @@ int printf_main(int argc UNUSED_PARAM, char **argv)
 		if ((ENABLE_ASH_PRINTF || ENABLE_HUSH_PRINTF)
 		 && applet_name[0] != 'p'
 		) {
-			bb_simple_error_msg("usage: printf FORMAT [ARGUMENT...]");
+			bb_simple_error_मेनसाहे("usage: printf FORMAT [ARGUMENT...]");
 			return 2; /* bash compat */
 		}
 		bb_show_usage();
@@ -443,7 +443,7 @@ int printf_main(int argc UNUSED_PARAM, char **argv)
 	conv_err = 0;
 	do {
 		argv = argv2;
-		argv2 = print_formatted(format, argv, &conv_err);
+		argv2 = इलिम्बाग_formatted(format, argv, &conv_err);
 	} while (argv2 > argv && *argv2);
 
 	/* coreutils compat (bash doesn't do this):

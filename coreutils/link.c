@@ -31,7 +31,7 @@ int link_main(int argc UNUSED_PARAM, char **argv)
 	argv += optind;
 	if (link(argv[0], argv[1]) != 0) {
 		/* shared message */
-		bb_perror_msg_and_die("can't create %slink '%s' to '%s'",
+		bb_perror_मेनसाहे_and_die("can't create %slink '%s' to '%s'",
 			"hard",	argv[1], argv[0]
 		);
 	}

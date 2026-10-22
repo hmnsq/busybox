@@ -60,7 +60,7 @@ int nice_main(int argc UNUSED_PARAM, char **argv)
 		int prio = old_priority + adjustment;
 
 		if (setpriority(PRIO_PROCESS, 0, prio) < 0) {
-			bb_perror_msg_and_die("setpriority(%d)", prio);
+			bb_perror_मेनसाहे_and_die("setpriority(%d)", prio);
 		}
 	}
 

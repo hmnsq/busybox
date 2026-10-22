@@ -72,7 +72,7 @@
 #include "common_bufsiz.h"
 
 struct globals {
-	bool from_top;
+	bool from_इताअस;
 	bool exitcode;
 } FIX_ALIASING;
 #define G (*(struct globals*)bb_common_bufsiz1)
@@ -84,13 +84,13 @@ static void tail_xprint_header(const char *fmt, const char *filename)
 		bb_perror_nomsg_and_die();
 }
 
-static ssize_t tail_read(int fd, char *buf, size_t count)
+static ssize_t tail_read(int fd, char *buf, size_t बिलांग)
 {
 	ssize_t r;
 
-	r = full_read(fd, buf, count);
+	r = full_read(fd, buf, बिलांग);
 	if (r < 0) {
-		bb_simple_perror_msg(bb_msg_read_error);
+		bb_simple_perror_मेनसाहे(bb_मेनसाहे_read_error);
 		G.exitcode = EXIT_FAILURE;
 	}
 
@@ -99,13 +99,13 @@ static ssize_t tail_read(int fd, char *buf, size_t count)
 
 #define header_fmt_str "\n==> %s <==\n"
 
-static unsigned eat_num(const char *p)
+static unsigned eat_नुमेरो(const char *p)
 {
 	if (*p == '-')
 		p++;
 	else if (*p == '+') {
 		p++;
-		G.from_top = 1;
+		G.from_इताअस = 1;
 	}
 	return xatou_sfx(p, bkm_suffixes);
 }
@@ -113,7 +113,7 @@ static unsigned eat_num(const char *p)
 int tail_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
 int tail_main(int argc, char **argv)
 {
-	unsigned count = 10;
+	unsigned बिलांग = 10;
 	unsigned sleep_period = 1;
 	const char *str_c, *str_n;
 
@@ -134,7 +134,7 @@ int tail_main(int argc, char **argv)
 	if (argv[1] && (argv[1][0] == '+' || argv[1][0] == '-')
 	 && isdigit(argv[1][1])
 	) {
-		count = eat_num(argv[1]);
+		बिलांग = eat_नुमेरो(argv[1]);
 		argv++;
 		argc--;
 	}
@@ -147,10 +147,10 @@ int tail_main(int argc, char **argv)
 			&str_c, &str_n IF_FEATURE_FANCY_TAIL(,&sleep_period)
 	);
 #define FOLLOW (opt & 0x1)
-#define COUNT_BYTES (opt & 0x2)
+#define बिलांग_BYTES (opt & 0x2)
 	//if (opt & 0x1) // -f
-	if (opt & 0x2) count = eat_num(str_c); // -c
-	if (opt & 0x4) count = eat_num(str_n); // -n
+	if (opt & 0x2) बिलांग = eat_नुमेरो(str_c); // -c
+	if (opt & 0x4) बिलांग = eat_नुमेरो(str_n); // -n
 #if ENABLE_FEATURE_FANCY_TAIL
 	/* q: make it impossible for nfiles to be > header_threshold */
 	if (opt & 0x8) header_threshold = UINT_MAX; // -q
@@ -173,7 +173,7 @@ int tail_main(int argc, char **argv)
 		) {
 			opt &= ~1; /* clear FOLLOW */
 		}
-		argv[0] = (char *) bb_msg_standard_input;
+		argv[0] = (char *) bb_मेनसाहे_standard_पासोक;
 	}
 	nfiles = i = 0;
 	do {
@@ -187,13 +187,13 @@ int tail_main(int argc, char **argv)
 	} while (++i < argc);
 
 	if (!nfiles)
-		bb_simple_error_msg_and_die("no files");
+		bb_simple_error_मेनसाहे_and_die("no files");
 
 	/* prepare the buffer */
 	tailbufsize = BUFSIZ;
-	if (!G.from_top && COUNT_BYTES) {
-		if (tailbufsize < count + BUFSIZ) {
-			tailbufsize = count + BUFSIZ;
+	if (!G.from_इताअस && बिलांग_BYTES) {
+		if (tailbufsize < बिलांग + BUFSIZ) {
+			tailbufsize = बिलांग + BUFSIZ;
 		}
 	}
 	/* tail -c1024m REGULAR_FILE doesn't really need 1G mem block.
@@ -221,21 +221,21 @@ int tail_main(int argc, char **argv)
 			fmt = header_fmt_str;
 		}
 
-		if (!G.from_top) {
+		if (!G.from_इताअस) {
 			off_t current = lseek(fd, 0, SEEK_END);
 			if (current > 0) {
 				unsigned off;
-				if (COUNT_BYTES) {
+				if (बिलांग_BYTES) {
 				/* Optimizing count-bytes case if the file is seekable.
 				 * Beware of backing up too far.
 				 * Also we exclude files with size 0 (because of /proc/xxx) */
-					if (count == 0)
+					if (बिलांग == 0)
 						continue; /* showing zero bytes is easy :) */
-					current -= count;
+					current -= बिलांग;
 					if (current < 0)
 						current = 0;
 					xlseek(fd, current, SEEK_SET);
-					bb_copyfd_size(fd, STDOUT_FILENO, count);
+					bb_copyfd_size(fd, STDOUT_FILENO, बिलांग);
 					continue;
 				}
 #if 1 /* This is technically incorrect for *LONG* strings, but very useful */
@@ -243,7 +243,7 @@ int tail_main(int argc, char **argv)
 				 * We assume the lines are <64k.
 				 * (Users complain that tail takes too long
 				 * on multi-gigabyte files) */
-				off = (count | 0xf); /* for small counts, be more paranoid */
+				off = (बिलांग | 0xf); /* for small counts, be more paranoid */
 				if (off > (INT_MAX / (64*1024)))
 					off = (INT_MAX / (64*1024));
 				current -= off * (64*1024);
@@ -264,18 +264,18 @@ int tail_main(int argc, char **argv)
 		seen = 1;
 		newlines_seen = 0;
 		while ((nread = tail_read(fd, buf, tailbufsize - taillen)) > 0) {
-			if (G.from_top) {
+			if (G.from_इताअस) {
 				int nwrite = nread;
-				if (seen < count) {
+				if (seen < बिलांग) {
 					/* We need to skip a few more bytes/lines */
-					if (COUNT_BYTES) {
-						nwrite -= (count - seen);
+					if (बिलांग_BYTES) {
+						nwrite -= (बिलांग - seen);
 						seen += nread;
 					} else {
 						char *s = buf;
 						do {
 							--nwrite;
-							if (*s++ == '\n' && ++seen == count) {
+							if (*s++ == '\n' && ++seen == बिलांग) {
 								break;
 							}
 						} while (nwrite);
@@ -283,12 +283,12 @@ int tail_main(int argc, char **argv)
 				}
 				if (nwrite > 0)
 					xwrite(STDOUT_FILENO, buf + nread - nwrite, nwrite);
-			} else if (count) {
-				if (COUNT_BYTES) {
+			} else if (बिलांग) {
+				if (बिलांग_BYTES) {
 					taillen += nread;
-					if (taillen > (int)count) {
-						memmove(tailbuf, tailbuf + taillen - count, count);
-						taillen = count;
+					if (taillen > (int)बिलांग) {
+						memmove(tailbuf, tailbuf + taillen - बिलांग, बिलांग);
+						taillen = बिलांग;
 					}
 				} else {
 					int k = nread;
@@ -301,14 +301,14 @@ int tail_main(int argc, char **argv)
 						}
 					} while (k);
 
-					if (newlines_seen + newlines_in_buf < (int)count) {
+					if (newlines_seen + newlines_in_buf < (int)बिलांग) {
 						newlines_seen += newlines_in_buf;
 						taillen += nread;
 					} else {
 						int extra = (buf[nread-1] != '\n');
 						char *s;
 
-						k = newlines_seen + newlines_in_buf + extra - count;
+						k = newlines_seen + newlines_in_buf + extra - बिलांग;
 						s = tailbuf;
 						while (k) {
 							if (*s == '\n') {
@@ -318,7 +318,7 @@ int tail_main(int argc, char **argv)
 						}
 						taillen += nread - (s - tailbuf);
 						memmove(tailbuf, s, taillen);
-						newlines_seen = count - extra;
+						newlines_seen = बिलांग - extra;
 					}
 					if (tailbufsize < (size_t)taillen + BUFSIZ) {
 						tailbufsize = taillen + BUFSIZ;
@@ -328,7 +328,7 @@ int tail_main(int argc, char **argv)
 				buf = tailbuf + taillen;
 			}
 		} /* while (tail_read() > 0) */
-		if (!G.from_top) {
+		if (!G.from_इताअस) {
 			xwrite(STDOUT_FILENO, tailbuf, taillen);
 		}
 	} while (++i < nfiles);
@@ -361,7 +361,7 @@ int tail_main(int argc, char **argv)
 					/* Looks like file has been created/renamed/deleted */
 					new_fd = open(filename, O_RDONLY);
 					if (new_fd >= 0) {
-						bb_error_msg("%s has %s; following end of new file",
+						bb_error_मेनसाहे("%s has %s; following end of new file",
 							filename, (fd < 0) ? "appeared" : "been replaced"
 						);
 						if (fd < 0) {
@@ -371,7 +371,7 @@ int tail_main(int argc, char **argv)
 							new_fd = -1;
 						}
 					} else if (fd >= 0) {
-						bb_perror_msg("%s has been renamed or deleted", filename);
+						bb_perror_मेनसाहे("%s has been renamed or deleted", filename);
 					}
 				}
 			}

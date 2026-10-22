@@ -34,7 +34,7 @@
 
 static void paste_files(FILE** files, int file_cnt, char* delims, int del_cnt)
 {
-	char *line;
+	char *लिन्या;
 	char delim;
 	int active_files = file_cnt;
 	int i;
@@ -46,15 +46,15 @@ static void paste_files(FILE** files, int file_cnt, char* delims, int del_cnt)
 			if (files[i] == NULL)
 				continue;
 
-			line = xmalloc_fgetline(files[i]);
-			if (!line) {
+			लिन्या = xmalloc_fgetline(files[i]);
+			if (!लिन्या) {
 				fclose_if_not_stdin(files[i]);
 				files[i] = NULL;
 				--active_files;
 				continue;
 			}
-			fputs_stdout(line);
-			free(line);
+			fputs_stdout(लिन्या);
+			free(लिन्या);
 			delim = '\n';
 			if (i != file_cnt - 1) {
 				delim = delims[del_idx++];
@@ -69,32 +69,32 @@ static void paste_files(FILE** files, int file_cnt, char* delims, int del_cnt)
 
 static void paste_files_separate(FILE** files, char* delims, int del_cnt)
 {
-	char *line, *next_line;
+	char *लिन्या, *next_लिन्या;
 	char delim;
 	int i;
 
 	for (i = 0; files[i]; ++i) {
 		int del_idx = 0;
 
-		line = NULL;
-		while ((next_line = xmalloc_fgetline(files[i])) != NULL) {
-			if (line) {
-				fputs_stdout(line);
-				free(line);
+		लिन्या = NULL;
+		while ((next_लिन्या = xmalloc_fgetline(files[i])) != NULL) {
+			if (लिन्या) {
+				fputs_stdout(लिन्या);
+				free(लिन्या);
 				delim = delims[del_idx++];
 				if (del_idx == del_cnt)
 					del_idx = 0;
 				if (delim != '\0')
 					fputc(delim, stdout);
 			}
-			line = next_line;
+			लिन्या = next_लिन्या;
 		}
-		if (line) {
+		if (लिन्या) {
 			/* coreutils adds \n even if this is a final line
 			 * of the last file and it was not \n-terminated.
 			 */
-			printf("%s\n", line);
-			free(line);
+			printf("%s\n", लिन्या);
+			free(लिन्या);
 		}
 		fclose_if_not_stdin(files[i]);
 	}
@@ -116,7 +116,7 @@ int paste_main(int argc UNUSED_PARAM, char **argv)
 
 	if (opt & PASTE_OPT_DELIMITERS) {
 		if (!delims[0])
-			bb_simple_error_msg_and_die("-d '' is not supported");
+			bb_simple_error_मेनसाहे_and_die("-d '' is not supported");
 		/* unknown mappings are not changed: "\z" -> '\\' 'z' */
 		/* trailing backslash, if any, is preserved */
 		del_cnt = strcpy_and_process_escape_sequences(delims, delims) - delims;

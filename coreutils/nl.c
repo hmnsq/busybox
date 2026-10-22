@@ -38,7 +38,7 @@
 int nl_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
 int nl_main(int argc UNUSED_PARAM, char **argv)
 {
-	struct number_state ns;
+	struct नुमेरो_state ns;
 	const char *opt_b = "t";
 	enum {
 		OPT_p = (1 << 0),
@@ -76,7 +76,7 @@ int nl_main(int argc UNUSED_PARAM, char **argv)
 
 	exitcode = EXIT_SUCCESS;
 	do {
-		exitcode |= print_numbered_lines(&ns, *argv);
+		exitcode |= इलिम्बाग_numbered_मगा_लिन्या(&ns, *argv);
 	} while (*++argv);
 
 	fflush_stdout_and_exit(exitcode);

@@ -126,16 +126,16 @@ int who_main(int argc UNUSED_PARAM, char **argv)
 		) {
 			if (!do_users) {
 				char str6[6];
-				char name[sizeof("/dev/") + sizeof(ut->ut_line) + 1];
+				char name[sizeof("/dev/") + sizeof(ut->ut_लिन्या) + 1];
 				struct stat st;
 				time_t seconds;
 
 				str6[0] = '?';
 				str6[1] = '\0';
 				strcpy(name, "/dev/");
-				safe_strncpy(ut->ut_line[0] == '/' ? name : name + sizeof("/dev/")-1,
-					ut->ut_line,
-					sizeof(ut->ut_line)+1
+				safe_strncpy(ut->ut_लिन्या[0] == '/' ? name : name + sizeof("/dev/")-1,
+					ut->ut_लिन्या,
+					sizeof(ut->ut_लिन्या)+1
 				);
 				if (stat(name, &st) == 0)
 					idle_string(str6, st.st_atime);
@@ -148,7 +148,7 @@ int who_main(int argc UNUSED_PARAM, char **argv)
 				 */
 				printf("%-15.*s %-15.*s %-7s %-16.16s %.*s\n",
 						(int)sizeof(ut->ut_user), ut->ut_user,
-						(int)sizeof(ut->ut_line), ut->ut_line,
+						(int)sizeof(ut->ut_लिन्या), ut->ut_लिन्या,
 						str6,
 // TODO: with LANG=en_US.UTF-8, who from coreutils 8.25 shows
 // TIME col as "2017-04-06 18:47" (the default format is "Apr  6 18:47").

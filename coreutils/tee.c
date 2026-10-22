@@ -141,7 +141,7 @@ int tee_main(int argc, char **argv)
 	 * is unnecessary here. */
 	np = names;
 	fp = files;
-	names[0] = (char *) bb_msg_standard_input;
+	names[0] = (char *) bb_मेनसाहे_standard_पासोक;
 	files[0] = stdin;
 	do {	/* Now check for input and output errors. */
 		/* Checking ferror should be sufficient, but we may want to fclose.

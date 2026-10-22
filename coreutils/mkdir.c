@@ -74,7 +74,7 @@ int mkdir_main(int argc UNUSED_PARAM, char **argv)
 	if (opt & 1) {
 		mode_t mmode = bb_parse_mode(smode, 0777);
 		if (mmode == (mode_t)-1) {
-			bb_error_msg_and_die("invalid mode '%s'", smode);
+			bb_error_मेनसाहे_and_die("invalid mode '%s'", smode);
 		}
 		mode = mmode;
 	}

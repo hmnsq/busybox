@@ -223,7 +223,7 @@ int date_main(int argc UNUSED_PARAM, char **argv)
 				 */
 				len -= 8;
 				if (len < 0 || len > 4 || (len & 1))
-					bb_error_msg_and_die(bb_msg_invalid_date, date_str);
+					bb_error_मेनसाहे_and_die(bb_मेनसाहे_invalid_date, date_str);
 				if (len != 0) { /* move YY or CCYY to front */
 					char buf[4];
 					memcpy(buf, date_str + 8, len);
@@ -275,7 +275,7 @@ int date_main(int argc UNUSED_PARAM, char **argv)
 		/* Process any date input to UNIX time since 1 Jan 1970 */
 		if (ENABLE_FEATURE_DATE_ISOFMT && (opt & OPT_STR2DT)) {
 			if (strptime(date_str, fmt_str2dt, &tm_time) == NULL)
-				bb_error_msg_and_die(bb_msg_invalid_date, date_str);
+				bb_error_मेनसाहे_and_die(bb_मेनसाहे_invalid_date, date_str);
 		} else {
 			check_dst = parse_datestr(date_str, &tm_time);
 		}
@@ -289,7 +289,7 @@ int date_main(int argc UNUSED_PARAM, char **argv)
 
 		/* if setting time, set it */
 		if ((opt & OPT_SET) && clock_settime(CLOCK_REALTIME, &ts) < 0) {
-			bb_simple_perror_msg("can't set date");
+			bb_simple_perror_मेनसाहे("can't set date");
 		}
 	}
 

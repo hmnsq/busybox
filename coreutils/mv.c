@@ -100,7 +100,7 @@ int mv_main(int argc, char **argv)
 			/* last is a directory */
 			if (flags & OPT_DESTNOTDIR) {
 				if (stat(argv[0], &statbuf) == 0 && !S_ISDIR(statbuf.st_mode))
-					bb_error_msg_and_die("'%s' is a directory", last);
+					bb_error_मेनसाहे_and_die("'%s' is a directory", last);
 				/* "mv -T DIR1 DIR2" is allowed (renames a dir) */
 				dest = last;
 				goto DO_MOVE;
@@ -140,7 +140,7 @@ int mv_main(int argc, char **argv)
 			if (errno != EXDEV
 			 || (source_exists = cp_mv_stat2(*argv, &statbuf, lstat)) < 1
 			) {
-				bb_perror_msg("can't rename '%s'", *argv);
+				bb_perror_मेनसाहे("can't rename '%s'", *argv);
 			} else {
 				static const char fmt[] ALIGN1 =
 					"can't overwrite %sdirectory with %sdirectory";
@@ -148,17 +148,17 @@ int mv_main(int argc, char **argv)
 				if (dest_exists) {
 					if (dest_exists == 3) {
 						if (source_exists != 3) {
-							bb_error_msg(fmt, "", "non-");
+							bb_error_मेनसाहे(fmt, "", "non-");
 							goto RET_1;
 						}
 					} else {
 						if (source_exists == 3) {
-							bb_error_msg(fmt, "non-", "");
+							bb_error_मेनसाहे(fmt, "non-", "");
 							goto RET_1;
 						}
 					}
 					if (unlink(dest) < 0) {
-						bb_perror_msg("can't remove '%s'", dest);
+						bb_perror_मेनसाहे("can't remove '%s'", dest);
 						goto RET_1;
 					}
 				}

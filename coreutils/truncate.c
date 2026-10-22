@@ -66,7 +66,7 @@ int truncate_main(int argc UNUSED_PARAM, char **argv)
 		int fd = open(*argv, flags, 0666);
 		if (fd < 0) {
 			if (errno != ENOENT || !(opts & OPT_NOCREATE)) {
-				bb_perror_msg("%s: open", *argv);
+				bb_perror_मेनसाहे("%s: open", *argv);
 				ret = EXIT_FAILURE;
 			}
 			/* else: ENOENT && OPT_NOCREATE:
@@ -74,7 +74,7 @@ int truncate_main(int argc UNUSED_PARAM, char **argv)
 			 */
 		} else {
 			if (ftruncate(fd, size) == -1) {
-				bb_perror_msg("%s: truncate", *argv);
+				bb_perror_मेनसाहे("%s: truncate", *argv);
 				ret = EXIT_FAILURE;
 			}
 			xclose(fd);

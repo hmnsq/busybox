@@ -72,14 +72,14 @@ static void convert(char *fn, int conv_type)
 
 		resolved_fn = xmalloc_follow_symlinks(fn);
 		if (resolved_fn == NULL)
-			bb_simple_perror_msg_and_die(fn);
+			bb_simple_perror_मेनसाहे_and_die(fn);
 		in = xfopen_for_read(resolved_fn);
 		xfstat(fileno(in), &st, resolved_fn);
 
 		temp_fn = xasprintf("%sXXXXXX", resolved_fn);
 		fd = xmkstemp(temp_fn);
 		if (fchmod(fd, st.st_mode) == -1)
-			bb_simple_perror_msg_and_die(temp_fn);
+			bb_simple_perror_मेनसाहे_and_die(temp_fn);
 		fchown(fd, st.st_uid, st.st_gid);
 
 		out = xfdopen_for_write(fd);

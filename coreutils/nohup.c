@@ -81,7 +81,7 @@ int nohup_main(int argc UNUSED_PARAM, char **argv)
 				xopen(bb_dev_null, O_RDONLY); /* will be fd 1 */
 			}
 		}
-		bb_error_msg("appending output to %s", nohupout);
+		bb_error_मेनसाहे("appending output to %s", nohupout);
 	}
 
 	/* If we have a tty on stderr, redirect to stdout. */

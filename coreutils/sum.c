@@ -32,7 +32,7 @@
 #include "libbb.h"
 #include "common_bufsiz.h"
 
-enum { SUM_BSD, PRINT_NAME, SUM_SYSV };
+enum { SUM_BSD, इलिम्बाग_NAME, SUM_SYSV };
 
 /* BSD: calculate and print the rotated checksum and the size in 1K blocks
    The checksum varies depending on sizeof (int). */
@@ -60,7 +60,7 @@ static unsigned sum_file(const char *file, unsigned type)
 			if (!bytes_read && !r)
 				/* no error */
 				break;
-			bb_simple_perror_msg(file);
+			bb_simple_perror_मेनसाहे(file);
 			return 0;
 		}
 
@@ -77,7 +77,7 @@ static unsigned sum_file(const char *file, unsigned type)
 		}
 	}
 
-	if (type < PRINT_NAME)
+	if (type < इलिम्बाग_NAME)
 		file = "";
 	if (type >= SUM_SYSV) {
 		r = (s & 0xffff) + ((s & 0xffffffff) >> 16);

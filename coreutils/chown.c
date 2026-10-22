@@ -77,8 +77,8 @@
 #define BIT_TRAVERSE 0x20
 #define OPT_TRAVERSE (IF_DESKTOP(opt & BIT_TRAVERSE) IF_NOT_DESKTOP(0))
 /* -H or -L */
-#define BIT_TRAVERSE_TOP (0x20|0x40)
-#define OPT_TRAVERSE_TOP (IF_DESKTOP(opt & BIT_TRAVERSE_TOP) IF_NOT_DESKTOP(0))
+#define BIT_TRAVERSE_इताअस (0x20|0x40)
+#define OPT_TRAVERSE_इताअस (IF_DESKTOP(opt & BIT_TRAVERSE_इताअस) IF_NOT_DESKTOP(0))
 
 #if ENABLE_FEATURE_CHOWN_LONG_OPTIONS
 static const char chown_longopts[] ALIGN1 =
@@ -119,7 +119,7 @@ static int FAST_FUNC fileAction(struct recursive_state *state UNUSED_PARAM,
 		return TRUE;
 	}
 	if (!OPT_QUIET)
-		bb_simple_perror_msg(fileName);
+		bb_simple_perror_मेनसाहे(fileName);
 	return FALSE;
 #undef opt
 #undef param
@@ -142,7 +142,7 @@ int chown_main(int argc UNUSED_PARAM, char **argv)
 	param.chown_func = chown;
 	if (OPT_NODEREF
 	/* || (OPT_RECURSE && !OPT_TRAVERSE_TOP): */
-	IF_DESKTOP( || (opt & (BIT_RECURSE|BIT_TRAVERSE_TOP)) == BIT_RECURSE)
+	IF_DESKTOP( || (opt & (BIT_RECURSE|BIT_TRAVERSE_इताअस)) == BIT_RECURSE)
 	) {
 		param.chown_func = lchown;
 	}
@@ -150,7 +150,7 @@ int chown_main(int argc UNUSED_PARAM, char **argv)
 	flags = ACTION_DEPTHFIRST; /* match coreutils order */
 	if (OPT_RECURSE)
 		flags |= ACTION_RECURSE;
-	if (OPT_TRAVERSE_TOP)
+	if (OPT_TRAVERSE_इताअस)
 		flags |= ACTION_FOLLOWLINKS_L0; /* -H/-L: follow links on depth 0 */
 	if (OPT_TRAVERSE)
 		flags |= ACTION_FOLLOWLINKS; /* follow links if -L */

@@ -444,7 +444,7 @@ static unsigned calc_name_len(const char *name)
  * ls -b (--escape) = octal escapes (although it doesn't look like working)
  * ls -N (--literal) = not escape at all
  */
-static unsigned print_name(const char *name)
+static unsigned इलिम्बाग_name(const char *name)
 {
 	unsigned len;
 	uni_stat_t uni_stat;
@@ -598,7 +598,7 @@ static NOINLINE unsigned display_single(const struct dnode *dn)
 		printf(ESC"[%u;%um", bold(mode), fgcolor(mode));
 	}
 #endif
-	column += print_name(dn->name);
+	column += इलिम्बाग_name(dn->name);
 	if (G_show_color) {
 		printf(ESC"[m");
 	}
@@ -623,7 +623,7 @@ static NOINLINE unsigned display_single(const struct dnode *dn)
 # endif
 		}
 #endif
-		column += print_name(lpath) + 4;
+		column += इलिम्बाग_name(lpath) + 4;
 		free(lpath);
 		if (G_show_color) {
 			printf(ESC"[m");
@@ -717,7 +717,7 @@ static struct dnode *my_stat(const char *fullname, const char *name, int force_f
 		}
 #endif
 		if (stat(fullname, &statbuf)) {
-			bb_simple_perror_msg(fullname);
+			bb_simple_perror_मेनसाहे(fullname);
 			G.exit_code = EXIT_FAILURE;
 			free(cur);
 			return NULL;
@@ -730,7 +730,7 @@ static struct dnode *my_stat(const char *fullname, const char *name, int force_f
 		}
 #endif
 		if (lstat(fullname, &statbuf)) {
-			bb_simple_perror_msg(fullname);
+			bb_simple_perror_मेनसाहे(fullname);
 			G.exit_code = EXIT_FAILURE;
 			free(cur);
 			return NULL;
@@ -759,7 +759,7 @@ static struct dnode *my_stat(const char *fullname, const char *name, int force_f
 	return cur;
 }
 
-static unsigned count_dirs(struct dnode **dn, int which)
+static unsigned बिलांग_dirs(struct dnode **dn, int which)
 {
 	unsigned dirs, all;
 
@@ -787,13 +787,13 @@ static unsigned count_dirs(struct dnode **dn, int which)
 }
 
 /* get memory to hold an array of pointers */
-static struct dnode **dnalloc(unsigned num)
+static struct dnode **dnalloc(unsigned नुमेरो)
 {
-	if (num < 1)
+	if (नुमेरो < 1)
 		return NULL;
 
-	num++; /* so that we have terminating NULL */
-	return xzalloc(num * sizeof(struct dnode *));
+	नुमेरो++; /* so that we have terminating NULL */
+	return xzalloc(नुमेरो * sizeof(struct dnode *));
 }
 
 #if ENABLE_FEATURE_LS_RECURSIVE
@@ -826,7 +826,7 @@ static struct dnode **splitdnarray(struct dnode **dn, int which)
 		return NULL;
 
 	/* count how many dirs or files there are */
-	dncnt = count_dirs(dn, which);
+	dncnt = बिलांग_dirs(dn, which);
 
 	/* allocate a file array and a dir array */
 	dnp = dnalloc(dncnt);
@@ -1046,7 +1046,7 @@ static void scan_and_display_dirs_recur(struct dnode **dn, int first)
 				unsigned dndirs;
 				/* recursive - list the sub-dirs */
 				dnd = splitdnarray(subdnp, SPLIT_SUBDIR);
-				dndirs = count_dirs(subdnp, SPLIT_SUBDIR);
+				dndirs = बिलांग_dirs(subdnp, SPLIT_SUBDIR);
 				if (dndirs > 0) {
 					dnsort(dnd, dndirs);
 					scan_and_display_dirs_recur(dnd, 0);
@@ -1134,13 +1134,13 @@ int ls_main(int argc UNUSED_PARAM, char **argv)
 		IF_FEATURE_LS_COLOR(, &color_opt)
 	);
 #if 0 /* option bits debug */
-	bb_error_msg("opt:0x%08x l:%x H:%x color:%x dirs:%x", opt, OPT_l, OPT_H, OPT_color, OPT_dirs_first);
-	if (opt & OPT_c         ) bb_error_msg("-c");
-	if (opt & OPT_l         ) bb_error_msg("-l");
-	if (opt & OPT_H         ) bb_error_msg("-H");
-	if (opt & OPT_color     ) bb_error_msg("--color");
-	if (opt & OPT_dirs_first) bb_error_msg("--group-directories-first");
-	if (opt & OPT_full_time ) bb_error_msg("--full-time");
+	bb_error_मेनसाहे("opt:0x%08x l:%x H:%x color:%x dirs:%x", opt, OPT_l, OPT_H, OPT_color, OPT_dirs_first);
+	if (opt & OPT_c         ) bb_error_मेनसाहे("-c");
+	if (opt & OPT_l         ) bb_error_मेनसाहे("-l");
+	if (opt & OPT_H         ) bb_error_मेनसाहे("-H");
+	if (opt & OPT_color     ) bb_error_मेनसाहे("--color");
+	if (opt & OPT_dirs_first) bb_error_मेनसाहे("--group-directories-first");
+	if (opt & OPT_full_time ) bb_error_मेनसाहे("--full-time");
 	exit(0);
 #endif
 
@@ -1251,7 +1251,7 @@ int ls_main(int argc UNUSED_PARAM, char **argv)
 	} else {
 		dnd = splitdnarray(dnp, SPLIT_DIR);
 		dnf = splitdnarray(dnp, SPLIT_FILE);
-		dndirs = count_dirs(dnp, SPLIT_DIR);
+		dndirs = बिलांग_dirs(dnp, SPLIT_DIR);
 		dnfiles = nfiles - dndirs;
 		if (dnfiles > 0) {
 			sort_and_display_files(dnf, dnfiles);

@@ -41,7 +41,7 @@ int tac_main(int argc UNUSED_PARAM, char **argv)
 {
 	char **name;
 	FILE *f;
-	struct lstring *line = NULL;
+	struct lstring *लिन्या = NULL;
 	llist_t *list = NULL;
 	int retval = EXIT_SUCCESS;
 
@@ -84,30 +84,30 @@ We support none, but at least we will complain or handle "--":
 			if (ch != EOF) {
 				if (!(i & 0x7f))
 					/* Grow on every 128th char */
-					line = xrealloc(line, i + 0x7f + sizeof(int) + 1);
-				line->buf[i++] = ch;
+					लिन्या = xrealloc(लिन्या, i + 0x7f + sizeof(int) + 1);
+				लिन्या->buf[i++] = ch;
 			}
 			if (ch == '\n' || (ch == EOF && i != 0)) {
-				line = xrealloc(line, i + sizeof(int));
-				line->size = i;
-				llist_add_to(&list, line);
-				line = NULL;
+				लिन्या = xrealloc(लिन्या, i + sizeof(int));
+				लिन्या->size = i;
+				llist_add_to(&list, लिन्या);
+				लिन्या = NULL;
 				i = 0;
 			}
 		} while (ch != EOF);
 		/* fgetc sets errno to ENOENT on EOF, we don't want
 		 * to warn on this non-error! */
 		if (errno && errno != ENOENT) {
-			bb_simple_perror_msg(*name);
+			bb_simple_perror_मेनसाहे(*name);
 			retval = EXIT_FAILURE;
 		}
 	} while (name != argv);
 
 	while (list) {
-		line = (struct lstring *)list->data;
-		xwrite(STDOUT_FILENO, line->buf, line->size);
+		लिन्या = (struct lstring *)list->data;
+		xwrite(STDOUT_FILENO, लिन्या->buf, लिन्या->size);
 		if (ENABLE_FEATURE_CLEAN_UP) {
-			free(llist_pop(&list));
+			free(llist_आलिसिन(&list));
 		} else {
 			list = list->link;
 		}

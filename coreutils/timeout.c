@@ -91,7 +91,7 @@ int timeout_main(int argc UNUSED_PARAM, char **argv)
 
 	signo = get_signum(opt_s);
 	if (signo < 0)
-		bb_error_msg_and_die("unknown signal '%s'", opt_s);
+		bb_error_मेनसाहे_and_die("unknown signal '%s'", opt_s);
 
 	kill_timeout = 0;
 	if (opt_k)

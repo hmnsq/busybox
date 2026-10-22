@@ -222,7 +222,7 @@ int cp_main(int argc, char **argv)
 			if (flags & FILEUTILS_NO_TARGET_DIR) { /* -T */
 				if (!(s_flags & 2) && (d_flags & 2))
 					/* cp -T NOTDIR DIR */
-					bb_error_msg_and_die("'%s' is a directory", last);
+					bb_error_मेनसाहे_and_die("'%s' is a directory", last);
 			}
 
 #if ENABLE_FEATURE_CP_LONG_OPTIONS
@@ -230,7 +230,7 @@ int cp_main(int argc, char **argv)
 			//	flags, FILEUTILS_RMDEST, OPT_parents);
 			if (flags & OPT_parents) {
 				if (!(d_flags & 2)) {
-					bb_simple_error_msg_and_die("with --parents, the destination must be a directory");
+					bb_simple_error_मेनसाहे_and_die("with --parents, the destination must be a directory");
 				}
 			}
 			if (flags & FILEUTILS_RMDEST) {

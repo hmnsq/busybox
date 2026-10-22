@@ -114,7 +114,7 @@ enum {
 
 struct globals {
 	off_t out_full, out_part, in_full, in_part;
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
+#if ENABLE_FEATURE_DD_THIRD_STATUS_लिन्या
 	unsigned long long total_bytes;
 	unsigned long long begin_time_us;
 #endif
@@ -139,7 +139,7 @@ enum {
 	/* start of input flags */
 	FLAG_IFLAG_SHIFT   = 5,
 	FLAG_SKIP_BYTES    = (1 << 5) * ENABLE_FEATURE_DD_IBS_OBS,
-	FLAG_COUNT_BYTES   = (1 << 6) * ENABLE_FEATURE_DD_IBS_OBS,
+	FLAG_बिलांग_BYTES   = (1 << 6) * ENABLE_FEATURE_DD_IBS_OBS,
 	FLAG_FULLBLOCK     = (1 << 7) * ENABLE_FEATURE_DD_IBS_OBS,
 	FLAG_IDIRECT       = (1 << 8) * ENABLE_FEATURE_DD_IBS_OBS,
 	/* end of input flags */
@@ -150,14 +150,14 @@ enum {
 	FLAG_ODIRECT       = (1 << 11) * ENABLE_FEATURE_DD_IBS_OBS,
 	/* end of output flags */
 	FLAG_TWOBUFS       = (1 << 12) * ENABLE_FEATURE_DD_IBS_OBS,
-	FLAG_COUNT         = 1 << 13,
+	FLAG_बिलांग         = 1 << 13,
 	FLAG_STATUS_NONE   = 1 << 14,
 	FLAG_STATUS_NOXFER = 1 << 15,
 };
 
 static void dd_output_status(int UNUSED_PARAM cur_signal)
 {
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
+#if ENABLE_FEATURE_DD_THIRD_STATUS_लिन्या
 	double seconds;
 	unsigned long long bytes_sec;
 	unsigned long long now_us = monotonic_us(); /* before fprintf */
@@ -169,7 +169,7 @@ static void dd_output_status(int UNUSED_PARAM cur_signal)
 			G.in_full, G.in_part,
 			G.out_full, G.out_part);
 
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
+#if ENABLE_FEATURE_DD_THIRD_STATUS_लिन्या
 # if ENABLE_FEATURE_DD_STATUS
 	if (G.flags & FLAG_STATUS_NOXFER) /* status=noxfer active? */
 		return;
@@ -249,7 +249,7 @@ static bool write_and_stats(const void *buf, size_t len, size_t obs,
 # endif
 #endif
 
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
+#if ENABLE_FEATURE_DD_THIRD_STATUS_लिन्या
 	if (n > 0)
 		G.total_bytes += n;
 #endif
@@ -268,7 +268,7 @@ static bool write_and_stats(const void *buf, size_t len, size_t obs,
 	 * the remainder and gets errno set to ENOSPC.
 	 * It returns n > 0 (the amount which it did write).
 	 */
-	bb_perror_msg("error writing '%s'", filename);
+	bb_perror_मेनसाहे("error writing '%s'", filename);
 	return 1;
 }
 
@@ -279,7 +279,7 @@ static bool write_and_stats(const void *buf, size_t len, size_t obs,
 #endif
 
 #if ENABLE_FEATURE_DD_IBS_OBS
-static int parse_comma_flags(char *val, const char *words, const char *error_in)
+static int parse_comma_flags(char *val, const char *मगा_सालिता, const char *error_in)
 {
 	int flags = 0;
 	while (1) {
@@ -292,9 +292,9 @@ static int parse_comma_flags(char *val, const char *words, const char *error_in)
 		arg = strchr(val, ',');
 		if (arg)
 			*arg = '\0';
-		n = index_in_strings(words, val);
+		n = index_in_strings(मगा_सालिता, val);
 		if (n < 0)
-			bb_error_msg_and_die(bb_msg_invalid_arg_to, val, error_in);
+			bb_error_मेनसाहे_and_die(bb_मेनसाहे_invalid_arg_to, val, error_in);
 		flags |= (1 << n);
 		if (!arg) /* no ',' left, so this was the last specifier */
 			break;
@@ -323,20 +323,20 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 #endif
 		;
 #if ENABLE_FEATURE_DD_IBS_OBS
-	static const char conv_words[] ALIGN1 =
+	static const char conv_मगा_सालिता[] ALIGN1 =
 		"notrunc\0""sync\0""noerror\0""fsync\0""swab\0";
-	static const char iflag_words[] ALIGN1 =
+	static const char iflag_मगा_सालिता[] ALIGN1 =
 		"skip_bytes\0""count_bytes\0""fullblock\0""direct\0";
-	static const char oflag_words[] ALIGN1 =
+	static const char oflag_मगा_सालिता[] ALIGN1 =
 		"seek_bytes\0append\0""direct\0";
 #endif
 #if ENABLE_FEATURE_DD_STATUS
-	static const char status_words[] ALIGN1 =
+	static const char status_मगा_सालिता[] ALIGN1 =
 		"none\0""noxfer\0";
 #endif
 	enum {
 		OP_bs = 0,
-		OP_count,
+		OP_बिलांग,
 		OP_seek,
 		OP_skip,
 		OP_if,
@@ -368,7 +368,7 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 	/* Partially implemented: */
 	//swab          swap every pair of input bytes: will abort on non-even reads
 		OP_iflag_skip_bytes,
-		OP_iflag_count_bytes,
+		OP_iflag_बिलांग_bytes,
 		OP_iflag_fullblock,
 		OP_iflag_direct,
 		OP_oflag_seek_bytes,
@@ -390,13 +390,13 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 	struct {
 		IF_FEATURE_DD_IBS_OBS(size_t ocount;)
 		ssize_t prev_read_size; /* for detecting swab failure */
-		off_t count;
+		off_t बिलांग;
 		off_t seek, skip;
 		const char *infile, *outfile;
 	} Z;
 #define ocount  (Z.ocount )
 #define prev_read_size (Z.prev_read_size)
-#define count   (Z.count  )
+#define बिलांग   (Z.बिलांग  )
 #define seek    (Z.seek   )
 #define skip    (Z.skip   )
 #define infile  (Z.infile )
@@ -437,15 +437,15 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 			/*continue;*/
 		}
 		if (what == OP_conv) {
-			G.flags |= parse_comma_flags(val, conv_words, "conv");
+			G.flags |= parse_comma_flags(val, conv_मगा_सालिता, "conv");
 			/*continue;*/
 		}
 		if (what == OP_iflag) {
-			G.flags |= parse_comma_flags(val, iflag_words, "iflag") << FLAG_IFLAG_SHIFT;
+			G.flags |= parse_comma_flags(val, iflag_मगा_सालिता, "iflag") << FLAG_IFLAG_SHIFT;
 			/*continue;*/
 		}
 		if (what == OP_oflag) {
-			G.flags |= parse_comma_flags(val, oflag_words, "oflag") << FLAG_OFLAG_SHIFT;
+			G.flags |= parse_comma_flags(val, oflag_मगा_सालिता, "oflag") << FLAG_OFLAG_SHIFT;
 			/*continue;*/
 		}
 #endif
@@ -455,9 +455,9 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 			/*continue;*/
 		}
 		/* These can be large: */
-		if (what == OP_count) {
-			G.flags |= FLAG_COUNT;
-			count = XATOU_SFX(val, cwbkMG_suffixes);
+		if (what == OP_बिलांग) {
+			G.flags |= FLAG_बिलांग;
+			बिलांग = XATOU_SFX(val, cwbkMG_suffixes);
 			/*continue;*/
 		}
 		if (what == OP_seek) {
@@ -479,9 +479,9 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 #if ENABLE_FEATURE_DD_STATUS
 		if (what == OP_status) {
 			int n;
-			n = index_in_strings(status_words, val);
+			n = index_in_strings(status_मगा_सालिता, val);
 			if (n < 0)
-				bb_error_msg_and_die(bb_msg_invalid_arg_to, val, "status");
+				bb_error_मेनसाहे_and_die(bb_मेनसाहे_invalid_arg_to, val, "status");
 			G.flags |= FLAG_STATUS_NONE << n;
 			/*continue;*/
 		}
@@ -500,7 +500,7 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 #if ENABLE_FEATURE_DD_SIGNAL_HANDLING
 	signal_SA_RESTART_empty_mask(SIGUSR1, dd_output_status);
 #endif
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
+#if ENABLE_FEATURE_DD_THIRD_STATUS_लिन्या
 	G.begin_time_us = monotonic_us();
 #endif
 
@@ -511,13 +511,13 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 # ifdef O_DIRECT
 			iflag |= O_DIRECT;
 # else
-			bb_error_msg_and_die("O_DIRECT not supported on this platform");
+			bb_error_मेनसाहे_and_die("O_DIRECT not supported on this platform");
 # endif
 		}
 #endif
 		xmove_fd(xopen(infile, iflag), ifd);
 	} else {
-		infile = bb_msg_standard_input;
+		infile = bb_मेनसाहे_standard_पासोक;
 	}
 	if (outfile) {
 		int oflag = O_WRONLY | O_CREAT;
@@ -531,7 +531,7 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 # ifdef O_DIRECT
 			oflag |= O_DIRECT;
 # else
-			bb_error_msg_and_die("O_DIRECT not supported on this platform");
+			bb_error_मेनसाहे_and_die("O_DIRECT not supported on this platform");
 # endif
 		}
 #endif
@@ -551,7 +551,7 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 			}
 		}
 	} else {
-		outfile = bb_msg_standard_output;
+		outfile = bb_मेनसाहे_standard_output;
 	}
 	if (skip) {
 		size_t blocksz = (G.flags & FLAG_SKIP_BYTES) ? 1 : ibs;
@@ -574,11 +574,11 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 	while (1) {
 		ssize_t n = ibs;
 
-		if (G.flags & FLAG_COUNT) {
-			if (count == 0)
+		if (G.flags & FLAG_बिलांग) {
+			if (बिलांग == 0)
 				break;
-			if ((G.flags & FLAG_COUNT_BYTES) && count < ibs)
-				n = count;
+			if ((G.flags & FLAG_बिलांग_BYTES) && बिलांग < ibs)
+				n = बिलांग;
 		}
 
 		n = dd_read(ibuf, n);
@@ -588,7 +588,7 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 			/* "Bad block" */
 			if (!(G.flags & FLAG_NOERROR))
 				goto die_infile;
-			bb_simple_perror_msg(infile);
+			bb_simple_perror_मेनसाहे(infile);
 			/* GNU dd with conv=noerror skips over bad blocks */
 			xlseek(ifd, ibs, SEEK_CUR);
 			/* conv=noerror,sync writes NULs,
@@ -601,7 +601,7 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 
 			/* Our code allows only last read to be odd-sized */
 			if (prev_read_size & 1)
-				bb_error_msg_and_die("can't swab %lu byte buffer",
+				bb_error_मेनसाहे_and_die("can't swab %lu byte buffer",
 						(unsigned long)prev_read_size);
 			prev_read_size = n;
 
@@ -616,7 +616,7 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 				p16++;
 			}
 		}
-		count -= (G.flags & FLAG_COUNT_BYTES) ? n : 1;
+		बिलांग -= (G.flags & FLAG_बिलांग_BYTES) ? n : 1;
 		if ((size_t)n == ibs)
 			G.in_full++;
 		else {
@@ -664,12 +664,12 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 #endif
 	if (close(ifd) < 0) {
  die_infile:
-		bb_simple_perror_msg_and_die(infile);
+		bb_simple_perror_मेनसाहे_and_die(infile);
 	}
 
 	if (close(ofd) < 0) {
  die_outfile:
-		bb_simple_perror_msg_and_die(outfile);
+		bb_simple_perror_मेनसाहे_and_die(outfile);
 	}
 
 	exitcode = EXIT_SUCCESS;

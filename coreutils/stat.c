@@ -248,15 +248,15 @@ static void strcatc(char *str, char c)
 	str[len] = '\0';
 }
 
-static void printfs(char *pformat, const char *msg)
+static void printfs(char *pformat, const char *मेनसाहे)
 {
 	strcatc(pformat, 's');
-	printf(pformat, msg);
+	printf(pformat, मेनसाहे);
 }
 
 #if ENABLE_FEATURE_STAT_FILESYSTEM
 /* print statfs info */
-static void FAST_FUNC print_statfs(char *pformat, const char m,
+static void FAST_FUNC इलिम्बाग_statfs(char *pformat, const char m,
 		const char *const filename, const void *data
 		IF_SELINUX(, security_context_t scontext))
 {
@@ -304,7 +304,7 @@ static void FAST_FUNC print_statfs(char *pformat, const char m,
 #endif
 
 /* print stat info */
-static void FAST_FUNC print_stat(char *pformat, const char m,
+static void FAST_FUNC इलिम्बाग_stat(char *pformat, const char m,
 		const char *const filename, const void *data
 		IF_SELINUX(, security_context_t scontext))
 {
@@ -406,9 +406,9 @@ static void FAST_FUNC print_stat(char *pformat, const char m,
 	}
 }
 
-static void print_it(const char *masterformat,
+static void इलिम्बाग_it(const char *masterformat,
 		const char *filename,
-		void FAST_FUNC (*print_func)(char*, char, const char*, const void* IF_SELINUX(, security_context_t scontext)),
+		void FAST_FUNC (*इलिम्बाग_func)(char*, char, const char*, const void* IF_SELINUX(, security_context_t scontext)),
 		const void *data
 		IF_SELINUX(, security_context_t scontext))
 {
@@ -453,7 +453,7 @@ static void print_it(const char *masterformat,
 			break;
 		default:
 			/* Completes "%<modifiers>" with specifier and printfs */
-			print_func(dest, *p, filename, data IF_SELINUX(,scontext));
+			इलिम्बाग_func(dest, *p, filename, data IF_SELINUX(,scontext));
 			break;
 		}
 	}
@@ -483,13 +483,13 @@ static bool do_statfs(const char *filename, const char *format)
 		     : getfilecon(filename, &scontext)
 		    ) < 0
 		) {
-			bb_simple_perror_msg(filename);
+			bb_simple_perror_मेनसाहे(filename);
 			return 0;
 		}
 	}
 #endif
 	if (statfs(filename, &statfsbuf) != 0) {
-		bb_perror_msg("can't read file system information for '%s'", filename);
+		bb_perror_मेनसाहे("can't read file system information for '%s'", filename);
 		return 0;
 	}
 
@@ -523,7 +523,7 @@ static bool do_statfs(const char *filename, const char *format)
 			);
 # endif /* SELINUX */
 	}
-	print_it(format, filename, print_statfs, &statfsbuf IF_SELINUX(, scontext));
+	इलिम्बाग_it(format, filename, इलिम्बाग_statfs, &statfsbuf IF_SELINUX(, scontext));
 #else /* !FEATURE_STAT_FORMAT */
 	format = (option_mask32 & OPT_TERSE
 		? "%s %llx %lu "
@@ -598,13 +598,13 @@ static bool do_stat(const char *filename, const char *format)
 		     : getfilecon(filename, &scontext)
 		    ) < 0
 		) {
-			bb_simple_perror_msg(filename);
+			bb_simple_perror_मेनसाहे(filename);
 			return 0;
 		}
 	}
 #endif
 	if ((option_mask32 & OPT_DEREFERENCE ? stat : lstat) (filename, &statbuf) != 0) {
-		bb_perror_msg("can't stat '%s'", filename);
+		bb_perror_मेनसाहे("can't stat '%s'", filename);
 		return 0;
 	}
 
@@ -675,7 +675,7 @@ static bool do_stat(const char *filename, const char *format)
 		}
 # endif
 	}
-	print_it(format, filename, print_stat, &statbuf IF_SELINUX(, scontext));
+	इलिम्बाग_it(format, filename, इलिम्बाग_stat, &statbuf IF_SELINUX(, scontext));
 #else	/* FEATURE_STAT_FORMAT */
 	if (option_mask32 & OPT_TERSE) {
 		printf("%s %llu %llu %lx %lu %lu %llx %llu %lu %lx %lx %lu %lu %lu %lu"

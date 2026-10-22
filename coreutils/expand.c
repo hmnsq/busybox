@@ -72,7 +72,7 @@ static void expand(FILE *file, unsigned tab_size, unsigned opt)
 {
 
 	for (;;) {
-		char *line;
+		char *लिन्या;
 		char *ptr;
 		char *ptr_strbeg;
 //commented-out code handles NULs, +90 bytes of code, not tested much
@@ -81,10 +81,10 @@ static void expand(FILE *file, unsigned tab_size, unsigned opt)
 
 //		linelen = 1024 * 1024;
 //		line = xmalloc_fgets_str_len(file, "\n", &linelen);
-		line = xmalloc_fgets(file); //
-		if (!line)
+		लिन्या = xmalloc_fgets(file); //
+		if (!लिन्या)
 			break;
-		ptr = ptr_strbeg = line;
+		ptr = ptr_strbeg = लिन्या;
 		for (;;) {
 			unsigned char c = *ptr;
 			if (c == '\0') {
@@ -124,7 +124,7 @@ static void expand(FILE *file, unsigned tab_size, unsigned opt)
 			ptr++;
 		}
 		fputs_stdout(ptr_strbeg);
-		free(line);
+		free(लिन्या);
 	}
 }
 #endif
@@ -132,10 +132,10 @@ static void expand(FILE *file, unsigned tab_size, unsigned opt)
 #if ENABLE_UNEXPAND
 static void unexpand(FILE *file, unsigned tab_size, unsigned opt)
 {
-	char *line;
+	char *लिन्या;
 
-	while ((line = xmalloc_fgets(file)) != NULL) {
-		char *ptr = line;
+	while ((लिन्या = xmalloc_fgets(file)) != NULL) {
+		char *ptr = लिन्या;
 		unsigned column = 0;
 
 		while (*ptr) {
@@ -160,7 +160,7 @@ static void unexpand(FILE *file, unsigned tab_size, unsigned opt)
 					putchar('\t');
 			}
 
-			if (!(opt & OPT_ALL) && ptr != line) {
+			if (!(opt & OPT_ALL) && ptr != लिन्या) {
 				printf("%*s%s", len, "", ptr);
 				break;
 			}
@@ -179,7 +179,7 @@ static void unexpand(FILE *file, unsigned tab_size, unsigned opt)
 			ptr += n;
 			column = (column + len) % tab_size;
 		}
-		free(line);
+		free(लिन्या);
 	}
 }
 #endif
@@ -220,7 +220,7 @@ int expand_main(int argc UNUSED_PARAM, char **argv)
 	argv += optind;
 
 	if (!*argv) {
-		*--argv = (char*)bb_msg_standard_input;
+		*--argv = (char*)bb_मेनसाहे_standard_पासोक;
 	}
 	do {
 		file = fopen_or_warn_stdin(*argv);
@@ -236,7 +236,7 @@ int expand_main(int argc UNUSED_PARAM, char **argv)
 
 		/* Check and close the file */
 		if (fclose_if_not_stdin(file)) {
-			bb_simple_perror_msg(*argv);
+			bb_simple_perror_मेनसाहे(*argv);
 			exit_status = EXIT_FAILURE;
 		}
 		/* If stdin also clear EOF */
@@ -247,7 +247,7 @@ int expand_main(int argc UNUSED_PARAM, char **argv)
 	/* Now close stdin also */
 	/* (if we didn't read from it, it's a no-op) */
 	if (fclose(stdin))
-		bb_simple_perror_msg_and_die(bb_msg_standard_input);
+		bb_simple_perror_मेनसाहे_and_die(bb_मेनसाहे_standard_पासोक);
 
 	fflush_stdout_and_exit(exit_status);
 }

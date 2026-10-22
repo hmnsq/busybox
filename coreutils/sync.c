@@ -72,7 +72,7 @@ static int sync_common(int opts, char **argv)
 		} else
 # endif
 		if (((opts & OPT_DATASYNC) ? fdatasync(fd) : fsync(fd)) != 0) {
-			bb_simple_perror_msg(*argv);
+			bb_simple_perror_मेनसाहे(*argv);
 			ret = EXIT_FAILURE;
 		}
 		close(fd);
@@ -90,7 +90,7 @@ int sync_main(int argc UNUSED_PARAM, char **argv IF_NOT_DESKTOP(UNUSED_PARAM))
 {
 # if !ENABLE_FEATURE_SYNC_FANCY
 	/* coreutils-6.9 compat */
-	bb_warn_ignoring_args(argv[1]);
+	bb_warn_ignoring_मगा_कातविरान(argv[1]);
 	sync();
 	return EXIT_SUCCESS;
 # else

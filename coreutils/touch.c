@@ -185,7 +185,7 @@ int touch_main(int argc UNUSED_PARAM, char **argv)
 				}
 			}
 			status = EXIT_FAILURE;
-			bb_simple_perror_msg(*argv);
+			bb_simple_perror_मेनसाहे(*argv);
 		}
 	} while (*++argv);
 

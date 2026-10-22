@@ -204,7 +204,7 @@ int df_main(int argc UNUSED_PARAM, char **argv)
 	if (!argv[0]) {
 		mount_table = setmntent(bb_path_mtab_file, "r");
 		if (!mount_table)
-			bb_simple_perror_msg_and_die(bb_path_mtab_file);
+			bb_simple_perror_मेनसाहे_and_die(bb_path_mtab_file);
 	}
 
 	while (1) {
@@ -224,7 +224,7 @@ int df_main(int argc UNUSED_PARAM, char **argv)
 				break;
 			mount_entry = find_mount_point(mount_point, 1);
 			if (!mount_entry) {
-				bb_error_msg("%s: can't find mount point", mount_point);
+				bb_error_मेनसाहे("%s: can't find mount point", mount_point);
  set_error:
 				status = EXIT_FAILURE;
 				continue;
@@ -246,7 +246,7 @@ int df_main(int argc UNUSED_PARAM, char **argv)
 		}
 
 		if (statvfs(mount_point, &s) != 0) {
-			bb_simple_perror_msg(mount_point);
+			bb_simple_perror_मेनसाहे(mount_point);
 			goto set_error;
 		}
 		/* Some uclibc versions were seen to lose f_frsize
@@ -281,7 +281,7 @@ int df_main(int argc UNUSED_PARAM, char **argv)
 				blocks_percent_used = u / (unsigned)blocks_total;
 			}
 
-#ifdef WHY_WE_DO_IT_FOR_DEV_ROOT_ONLY
+#ifdef WHY_WE_DO_IT_FOR_DEV_उगात_ONLY
 			if (strcmp(device, "/dev/root") == 0) {
 				/* Adjusts device to be the real root device,
 				 * or leaves device alone if it can't find it */

@@ -91,7 +91,7 @@ static void setdefaultfilecon(const char *path)
 
 	if (lsetfilecon(path, scontext) < 0) {
 		if (errno != ENOTSUP) {
-			bb_perror_msg("warning: can't change context"
+			bb_perror_मेनसाहे("warning: can't change context"
 					" of %s to %s", path, scontext);
 		}
 	}
@@ -232,13 +232,13 @@ int install_main(int argc, char **argv)
 				goto next;
 			}
 			if (opts & OPT_STRIP) {
-				char *args[4];
-				args[0] = (char*)"strip";
-				args[1] = (char*)"-p"; /* -p --preserve-dates */
-				args[2] = dest;
-				args[3] = NULL;
-				if (spawn_and_wait(args)) {
-					bb_simple_perror_msg("strip");
+				char *मगा_कातविरान[4];
+				मगा_कातविरान[0] = (char*)"strip";
+				मगा_कातविरान[1] = (char*)"-p"; /* -p --preserve-dates */
+				मगा_कातविरान[2] = dest;
+				मगा_कातविरान[3] = NULL;
+				if (spawn_and_wait(मगा_कातविरान)) {
+					bb_simple_perror_मेनसाहे("strip");
 					ret = EXIT_FAILURE;
 				}
 			}
@@ -249,14 +249,14 @@ int install_main(int argc, char **argv)
 		if ((opts & (OPT_OWNER|OPT_GROUP))
 		 && lchown(dest, uid, gid) == -1
 		) {
-			bb_perror_msg("can't change %s of %s", "ownership", dest);
+			bb_perror_मेनसाहे("can't change %s of %s", "ownership", dest);
 			ret = EXIT_FAILURE;
 		}
 
 		/* Set the file mode (always, not only with -m).
 		 * GNU coreutils 6.10 is not affected by umask. */
 		if (chmod(dest, mode) == -1) {
-			bb_perror_msg("can't change %s of %s", "permissions", dest);
+			bb_perror_मेनसाहे("can't change %s of %s", "permissions", dest);
 			ret = EXIT_FAILURE;
 		}
 #if ENABLE_SELINUX

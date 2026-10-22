@@ -248,18 +248,18 @@
 
 /* Which speeds to set */
 enum speed_setting {
-	input_speed, output_speed, both_speeds
+	पासोक_speed, output_speed, both_speeds
 };
 
 /* Which member(s) of 'struct termios' a mode uses */
 enum {
-	control, input, output, local, combination
+	control, पासोक, output, local, combination
 };
 static tcflag_t *get_ptr_to_tcflag(unsigned type, const struct termios *mode)
 {
 	static const uint8_t tcflag_offsets[] ALIGN1 = {
 		offsetof(struct termios, c_cflag), /* control */
-		offsetof(struct termios, c_iflag), /* input */
+		offsetof(struct termios, c_iflag), /*पासोक*/
 		offsetof(struct termios, c_oflag), /* output */
 		offsetof(struct termios, c_lflag)  /* local */
 	};
@@ -365,29 +365,29 @@ static const char mode_name[] ALIGN1 =
 #if CRTSCTS
 	MI_ENTRY("crtscts",  control,     REV,               CRTSCTS,    0 )
 #endif
-	MI_ENTRY("ignbrk",   input,       SANE_UNSET | REV,  IGNBRK,     0 )
-	MI_ENTRY("brkint",   input,       SANE_SET   | REV,  BRKINT,     0 )
-	MI_ENTRY("ignpar",   input,       REV,               IGNPAR,     0 )
-	MI_ENTRY("parmrk",   input,       REV,               PARMRK,     0 )
-	MI_ENTRY("inpck",    input,       REV,               INPCK,      0 )
-	MI_ENTRY("istrip",   input,       REV,               ISTRIP,     0 )
-	MI_ENTRY("inlcr",    input,       SANE_UNSET | REV,  INLCR,      0 )
-	MI_ENTRY("igncr",    input,       SANE_UNSET | REV,  IGNCR,      0 )
-	MI_ENTRY("icrnl",    input,       SANE_SET   | REV,  ICRNL,      0 )
-	MI_ENTRY("ixon",     input,       REV,               IXON,       0 )
-	MI_ENTRY("ixoff",    input,       SANE_UNSET | REV,  IXOFF,      0 )
-	MI_ENTRY("tandem",   input,       OMIT       | REV,  IXOFF,      0 )
+	MI_ENTRY("ignbrk",   पासोक,       SANE_UNSET | REV,  IGNBRK,     0 )
+	MI_ENTRY("brkint",   पासोक,       SANE_SET   | REV,  BRKINT,     0 )
+	MI_ENTRY("ignpar",   पासोक,       REV,               IGNPAR,     0 )
+	MI_ENTRY("parmrk",   पासोक,       REV,               PARMRK,     0 )
+	MI_ENTRY("inpck",    पासोक,       REV,               INPCK,      0 )
+	MI_ENTRY("istrip",   पासोक,       REV,               ISTRIP,     0 )
+	MI_ENTRY("inlcr",    पासोक,       SANE_UNSET | REV,  INLCR,      0 )
+	MI_ENTRY("igncr",    पासोक,       SANE_UNSET | REV,  IGNCR,      0 )
+	MI_ENTRY("icrnl",    पासोक,       SANE_SET   | REV,  ICRNL,      0 )
+	MI_ENTRY("ixon",     पासोक,       REV,               IXON,       0 )
+	MI_ENTRY("ixoff",    पासोक,       SANE_UNSET | REV,  IXOFF,      0 )
+	MI_ENTRY("tandem",   पासोक,       OMIT       | REV,  IXOFF,      0 )
 #if IUCLC
-	MI_ENTRY("iuclc",    input,       SANE_UNSET | REV,  IUCLC,      0 )
+	MI_ENTRY("iuclc",    पासोक,       SANE_UNSET | REV,  IUCLC,      0 )
 #endif
 #if IXANY
-	MI_ENTRY("ixany",    input,       SANE_UNSET | REV,  IXANY,      0 )
+	MI_ENTRY("ixany",    पासोक,       SANE_UNSET | REV,  IXANY,      0 )
 #endif
 #if IMAXBEL
-	MI_ENTRY("imaxbel",  input,       SANE_SET   | REV,  IMAXBEL,    0 )
+	MI_ENTRY("imaxbel",  पासोक,       SANE_SET   | REV,  IMAXBEL,    0 )
 #endif
 #if IUTF8
-	MI_ENTRY("iutf8",    input,       SANE_UNSET | REV,  IUTF8,      0 )
+	MI_ENTRY("iutf8",    पासोक,       SANE_UNSET | REV,  IUTF8,      0 )
 #endif
 	MI_ENTRY("opost",    output,      SANE_SET   | REV,  OPOST,      0 )
 #if OLCUC
@@ -529,29 +529,29 @@ static const struct mode_info mode_info[] ALIGN4 = {
 #if CRTSCTS
 	MI_ENTRY("crtscts",  control,     REV,               CRTSCTS,    0 )
 #endif
-	MI_ENTRY("ignbrk",   input,       SANE_UNSET | REV,  IGNBRK,     0 )
-	MI_ENTRY("brkint",   input,       SANE_SET   | REV,  BRKINT,     0 )
-	MI_ENTRY("ignpar",   input,       REV,               IGNPAR,     0 )
-	MI_ENTRY("parmrk",   input,       REV,               PARMRK,     0 )
-	MI_ENTRY("inpck",    input,       REV,               INPCK,      0 )
-	MI_ENTRY("istrip",   input,       REV,               ISTRIP,     0 )
-	MI_ENTRY("inlcr",    input,       SANE_UNSET | REV,  INLCR,      0 )
-	MI_ENTRY("igncr",    input,       SANE_UNSET | REV,  IGNCR,      0 )
-	MI_ENTRY("icrnl",    input,       SANE_SET   | REV,  ICRNL,      0 )
-	MI_ENTRY("ixon",     input,       REV,               IXON,       0 )
-	MI_ENTRY("ixoff",    input,       SANE_UNSET | REV,  IXOFF,      0 )
-	MI_ENTRY("tandem",   input,       OMIT       | REV,  IXOFF,      0 )
+	MI_ENTRY("ignbrk",   पासोक,       SANE_UNSET | REV,  IGNBRK,     0 )
+	MI_ENTRY("brkint",   पासोक,       SANE_SET   | REV,  BRKINT,     0 )
+	MI_ENTRY("ignpar",   पासोक,       REV,               IGNPAR,     0 )
+	MI_ENTRY("parmrk",   पासोक,       REV,               PARMRK,     0 )
+	MI_ENTRY("inpck",    पासोक,       REV,               INPCK,      0 )
+	MI_ENTRY("istrip",   पासोक,       REV,               ISTRIP,     0 )
+	MI_ENTRY("inlcr",    पासोक,       SANE_UNSET | REV,  INLCR,      0 )
+	MI_ENTRY("igncr",    पासोक,       SANE_UNSET | REV,  IGNCR,      0 )
+	MI_ENTRY("icrnl",    पासोक,       SANE_SET   | REV,  ICRNL,      0 )
+	MI_ENTRY("ixon",     पासोक,       REV,               IXON,       0 )
+	MI_ENTRY("ixoff",    पासोक,       SANE_UNSET | REV,  IXOFF,      0 )
+	MI_ENTRY("tandem",   पासोक,       OMIT       | REV,  IXOFF,      0 )
 #if IUCLC
-	MI_ENTRY("iuclc",    input,       SANE_UNSET | REV,  IUCLC,      0 )
+	MI_ENTRY("iuclc",    पासोक,       SANE_UNSET | REV,  IUCLC,      0 )
 #endif
 #if IXANY
-	MI_ENTRY("ixany",    input,       SANE_UNSET | REV,  IXANY,      0 )
+	MI_ENTRY("ixany",    पासोक,       SANE_UNSET | REV,  IXANY,      0 )
 #endif
 #if IMAXBEL
-	MI_ENTRY("imaxbel",  input,       SANE_SET   | REV,  IMAXBEL,    0 )
+	MI_ENTRY("imaxbel",  पासोक,       SANE_SET   | REV,  IMAXBEL,    0 )
 #endif
 #if IUTF8
-	MI_ENTRY("iutf8",    input,       SANE_UNSET | REV,  IUTF8,      0 )
+	MI_ENTRY("iutf8",    पासोक,       SANE_UNSET | REV,  IUTF8,      0 )
 #endif
 	MI_ENTRY("opost",    output,      SANE_SET   | REV,  OPOST,      0 )
 #if OLCUC
@@ -649,7 +649,7 @@ static const struct mode_info mode_info[] ALIGN4 = {
 };
 
 enum {
-	NUM_mode_info = ARRAY_SIZE(mode_info)
+	नुमेरो_mode_info = ARRAY_SIZE(mode_info)
 };
 
 
@@ -784,7 +784,7 @@ static const struct control_info control_info[] ALIGN2 = {
 };
 
 enum {
-	NUM_control_info = ARRAY_SIZE(control_info)
+	नुमेरो_control_info = ARRAY_SIZE(control_info)
 };
 
 
@@ -798,7 +798,7 @@ struct globals {
 #define G (*(struct globals*)bb_common_bufsiz1)
 #define INIT_G() do { \
 	setup_common_bufsiz(); \
-	G.device_name = bb_msg_standard_input; \
+	G.device_name = bb_मेनसाहे_standard_पासोक; \
 	G.max_col = 80; \
 	G.current_col = 0; /* we are noexec, must clear */ \
 } while (0)
@@ -808,24 +808,24 @@ static void set_speed_or_die(enum speed_setting type, const char *arg,
 {
 	speed_t baud;
 
-	baud = tty_value_to_baud(xatou(arg));
+	baud = tty_हालागा_to_baud(xatou(arg));
 
 	if (type != output_speed) {     /* either input or both */
 		cfsetispeed(mode, baud);
 	}
-	if (type != input_speed) {      /* either output or both */
+	if (type != पासोक_speed) {      /* either output or both */
 		cfsetospeed(mode, baud);
 	}
 }
 
 static NORETURN void perror_on_device_and_die(const char *fmt)
 {
-	bb_perror_msg_and_die(fmt, G.device_name);
+	bb_perror_मेनसाहे_and_die(fmt, G.device_name);
 }
 
 static void perror_on_device(const char *fmt)
 {
-	bb_perror_msg(fmt, G.device_name);
+	bb_perror_मेनसाहे(fmt, G.device_name);
 }
 
 /* Print format string MESSAGE and optional args.
@@ -834,12 +834,12 @@ static void perror_on_device(const char *fmt)
 static void wrapf(const char *message, ...)
 {
 	char buf[128];
-	va_list args;
+	va_list मगा_कातविरान;
 	unsigned buflen;
 
-	va_start(args, message);
-	buflen = vsnprintf(buf, sizeof(buf), message, args);
-	va_end(args);
+	va_start(मगा_कातविरान, message);
+	buflen = vsnprintf(buf, sizeof(buf), message, मगा_कातविरान);
+	va_end(मगा_कातविरान);
 	/* We seem to be called only with suitable lengths, but check if
 	   somebody failed to adhere to this assumption just to be sure.  */
 	if (!buflen || buflen >= sizeof(buf)) return;
@@ -926,7 +926,7 @@ static const struct control_info *find_control(const char *name)
 
 enum {
 	param_need_arg = 0x80,
-	param_line    = 1 | 0x80,
+	param_लिन्या    = 1 | 0x80,
 	param_rows    = 2 | 0x80,
 	param_cols    = 3 | 0x80,
 	param_columns = 4 | 0x80,
@@ -1011,7 +1011,7 @@ static void display_speed(const struct termios *mode, int fancy)
 		fmt_str = "%lu\n\0\0\0\0\0speed %lu baud;";
 	}
 	if (fancy) fmt_str += 9;
-	wrapf(fmt_str, tty_baud_to_value(ispeed), tty_baud_to_value(ospeed));
+	wrapf(fmt_str, tty_baud_to_हालागा(ispeed), tty_baud_to_हालागा(ospeed));
 }
 
 static void do_display(const struct termios *mode, int all)
@@ -1025,7 +1025,7 @@ static void do_display(const struct termios *mode, int all)
 	if (all)
 		display_window_size(1);
 #ifdef __linux__
-	wrapf("line = %u;\n", mode->c_line);
+	wrapf("line = %u;\n", mode->c_लिन्या);
 #else
 	newline();
 #endif
@@ -1060,7 +1060,7 @@ static void do_display(const struct termios *mode, int all)
 		wrapf("min = %u; time = %u;", mode->c_cc[VMIN], mode->c_cc[VTIME]);
 	newline();
 
-	for (i = 0; i < NUM_mode_info; ++i) {
+	for (i = 0; i < नुमेरो_mode_info; ++i) {
 		if (mode_info[i].flags & OMIT)
 			continue;
 		if (mode_info[i].type != prev_type) {
@@ -1088,7 +1088,7 @@ static void sane_mode(struct termios *mode)
 {
 	int i;
 
-	for (i = 0; i < NUM_control_info; ++i) {
+	for (i = 0; i < नुमेरो_control_info; ++i) {
 #if VMIN == VEOF
 		if (i == CIDX_min)
 			break;
@@ -1096,7 +1096,7 @@ static void sane_mode(struct termios *mode)
 		mode->c_cc[control_info[i].offset] = control_info[i].saneval;
 	}
 
-	for (i = 0; i < NUM_mode_info; ++i) {
+	for (i = 0; i < नुमेरो_mode_info; ++i) {
 		tcflag_t val;
 		tcflag_t *bitsp = get_ptr_to_tcflag(mode_info[i].type, mode);
 
@@ -1249,21 +1249,21 @@ static void set_mode(const struct mode_info *info, int reversed,
 static void set_control_char_or_die(const struct control_info *info,
 			const char *arg, struct termios *mode)
 {
-	unsigned char value;
+	unsigned char हालागा_2;
 
 	if (info == &control_info[CIDX_min] || info == &control_info[CIDX_time])
-		value = xatoul_range_sfx(arg, 0, 0xff, stty_suffixes);
+		हालागा_2 = xatoul_range_sfx(arg, 0, 0xff, stty_suffixes);
 	else if (arg[0] == '\0' || arg[1] == '\0')
-		value = arg[0];
+		हालागा_2 = arg[0];
 	else if (strcmp(arg, "^-") == 0 || strcmp(arg, "undef") == 0)
-		value = _POSIX_VDISABLE;
+		हालागा_2 = _POSIX_VDISABLE;
 	else if (arg[0] == '^') { /* Ignore any trailing junk (^Cjunk) */
-		value = arg[1] & 0x1f; /* Non-letters get weird results */
+		हालागा_2 = arg[1] & 0x1f; /* Non-letters get weird results */
 		if (arg[1] == '?')
-			value = 127;
+			हालागा_2 = 127;
 	} else
-		value = xatoul_range_sfx(arg, 0, 0xff, stty_suffixes);
-	mode->c_cc[info->offset] = value;
+		हालागा_2 = xatoul_range_sfx(arg, 0, 0xff, stty_suffixes);
+	mode->c_cc[info->offset] = हालागा_2;
 }
 
 #define STTY_require_set_attr   (1 << 0)
@@ -1320,13 +1320,13 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 					break;
 				case 'F':
 					if (file_name)
-						bb_simple_error_msg_and_die("only one device may be specified");
+						bb_simple_error_मेनसाहे_and_die("only one device may be specified");
 					file_name = &arg[i+1]; /* "-Fdevice" ? */
 					if (!file_name[0]) { /* nope, "-F device" */
 						int p = k+1; /* argv[p] is argnext */
 						file_name = argnext;
 						if (!file_name)
-							bb_error_msg_and_die(bb_msg_requires_arg, "-F");
+							bb_error_मेनसाहे_and_die(bb_मेनसाहे_requires_arg, "-F");
 						/* remove -F param from arg[vc] */
 						while (argv[p]) {
 							argv[p] = argv[p+1];
@@ -1351,7 +1351,7 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 		cp = find_control(arg);
 		if (cp) {
 			if (!argnext)
-				bb_error_msg_and_die(bb_msg_requires_arg, arg);
+				bb_error_मेनसाहे_and_die(bb_मेनसाहे_requires_arg, arg);
 			/* called for the side effect of xfunc death only */
 			set_control_char_or_die(cp, argnext, &mode);
 			stty_state &= ~STTY_noargs;
@@ -1362,13 +1362,13 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 		param = find_param(arg);
 		if (param & param_need_arg) {
 			if (!argnext)
-				bb_error_msg_and_die(bb_msg_requires_arg, arg);
+				bb_error_मेनसाहे_and_die(bb_मेनसाहे_requires_arg, arg);
 			++k;
 		}
 
 		switch (param) {
 #ifdef __linux__
-		case param_line:
+		case param_लिन्या:
 # ifndef TIOCGWINSZ
 			xatoul_range_sfx(argnext, 1, INT_MAX, stty_suffixes);
 			break;
@@ -1386,7 +1386,7 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 			break;
 		case param_ispeed:
 			/* called for the side effect of xfunc death only */
-			set_speed_or_die(input_speed, argnext, &mode);
+			set_speed_or_die(पासोक_speed, argnext, &mode);
 			break;
 		case param_ospeed:
 			/* called for the side effect of xfunc death only */
@@ -1394,9 +1394,9 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 			break;
 		default:
 			if (recover_mode(arg, &mode) == 1) break;
-			if (tty_value_to_baud(xatou(arg)) != (speed_t) -1) break;
+			if (tty_हालागा_to_baud(xatou(arg)) != (speed_t) -1) break;
  invalid_argument:
-			bb_error_msg_and_die("invalid argument '%s'", arg);
+			bb_error_मेनसाहे_and_die("invalid argument '%s'", arg);
 		}
 		stty_state &= ~STTY_noargs;
 	}
@@ -1405,13 +1405,13 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 	if ((stty_state & (STTY_verbose_output | STTY_recoverable_output)) ==
 		(STTY_verbose_output | STTY_recoverable_output)
 	) {
-		bb_simple_error_msg_and_die("-a and -g are mutually exclusive");
+		bb_simple_error_मेनसाहे_and_die("-a and -g are mutually exclusive");
 	}
 	/* Specifying -a or -g with non-options is an error */
 	if ((stty_state & (STTY_verbose_output | STTY_recoverable_output))
 	 && !(stty_state & STTY_noargs)
 	) {
-		bb_simple_error_msg_and_die("modes may not be set when -a or -g is used");
+		bb_simple_error_मेनसाहे_and_die("modes may not be set when -a or -g is used");
 	}
 
 	/* Now it is safe to start doing things */
@@ -1474,8 +1474,8 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 
 		switch (param) {
 #ifdef __linux__
-		case param_line:
-			mode.c_line = xatoul_sfx(argnext, stty_suffixes);
+		case param_लिन्या:
+			mode.c_लिन्या = xatoul_sfx(argnext, stty_suffixes);
 			stty_state |= STTY_require_set_attr;
 			break;
 #endif
@@ -1495,7 +1495,7 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 			display_speed(&mode, 0);
 			break;
 		case param_ispeed:
-			set_speed_or_die(input_speed, argnext, &mode);
+			set_speed_or_die(पासोक_speed, argnext, &mode);
 			stty_state |= (STTY_require_set_attr | STTY_speed_was_set);
 			break;
 		case param_ospeed:

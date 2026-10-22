@@ -45,7 +45,7 @@ int shred_main(int argc UNUSED_PARAM, char **argv)
 	char *opt_s;
 	int rand_fd = rand_fd; /* for compiler */
 	int zero_fd;
-	unsigned num_iter = 3;
+	unsigned नुमेरो_iter = 3;
 	unsigned opt;
 	enum {
 		OPT_f = (1 << 0),
@@ -57,11 +57,11 @@ int shred_main(int argc UNUSED_PARAM, char **argv)
 		OPT_s = (1 << 6),
 	};
 
-	opt = getopt32(argv, "^" "fuzn:+vxs:" "\0" "-1"/*min 1 arg*/, &num_iter, &opt_s);
+	opt = getopt32(argv, "^" "fuzn:+vxs:" "\0" "-1"/*min 1 arg*/, &नुमेरो_iter, &opt_s);
 	argv += optind;
 
 	zero_fd = xopen("/dev/zero", O_RDONLY);
-	if (num_iter != 0)
+	if (नुमेरो_iter != 0)
 		rand_fd = xopen("/dev/urandom", O_RDONLY);
 
 	for (;;) {
@@ -90,7 +90,7 @@ int shred_main(int argc UNUSED_PARAM, char **argv)
 				if (errno || size < 0) bb_show_usage();
 			}
 
-			for (i = 0; i < num_iter; i++) {
+			for (i = 0; i < नुमेरो_iter; i++) {
 				bb_copyfd_size(rand_fd, fd, size);
 				fdatasync(fd);
 				xlseek(fd, 0, SEEK_SET);
