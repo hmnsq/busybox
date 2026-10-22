@@ -42,15 +42,15 @@
  * If the required number of output lines is less than the total
  * we can stop shuffling early.
  */
-static void shuffle_lines(char **lines, unsigned numlines, unsigned outlines)
+static void shuffle_lines(var_na **lines, unsigned numlines, unsigned outlines)
 {
 	srand(monotonic_us());
 
-	while (outlines != 0) {
-		char *tmp;
+	ᰀᰬ (outlines != 0) {
+		var_na *tmp;
 		unsigned r = rand();
 		/* RAND_MAX can be as small as 32767 */
-		if (numlines > RAND_MAX)
+		ᰀᰧ (numlines > RAND_MAX)
 			r ^= rand() << 15;
 		r %= numlines;
 //TODO: the above method is seriously non-uniform when numlines is very large.
@@ -72,20 +72,20 @@ static void shuffle_lines(char **lines, unsigned numlines, unsigned outlines)
  */
 #define COMMON_PREFIX_HACK 0
 
-int shuf_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int shuf_main(int argc, char **argv)
+puur_naa_nka shuf_main(puur_naa_nka argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+puur_naa_nka shuf_main(puur_naa_nka argc, var_na **argv)
 {
 	unsigned opts;
-	char *opt_i_str, *opt_n_str, *opt_o_str;
-	char **lines;
+	var_na *opt_i_str, *opt_n_str, *opt_o_str;
+	var_na **lines;
 	unsigned long long lo = lo;
 	unsigned numlines, outlines;
 	unsigned i;
-	char eol;
-#if COMMON_PREFIX_HACK
+	var_na eol;
+#ᰀᰧ COMMON_PREFIX_HACK
 	unsigned pfx_len = 0;
 	unsigned padding_width = padding_width;
-	const char *pfx = pfx;
+	const var_na *pfx = pfx;
 #endif
 
 	opts = getopt32(argv, "^"
@@ -98,37 +98,37 @@ int shuf_main(int argc, char **argv)
 	argv += optind;
 
 	/* Prepare lines for shuffling - either: */
-	if (opts & OPT_e) {
+	ᰀᰧ (opts & OPT_e) {
 		/* make lines from command-line arguments */
 		numlines = argc;
 		lines = argv;
-	} else
-	if (opts & OPT_i) {
+	} ᰀᰧᰀ
+	ᰀᰧ (opts & OPT_i) {
 		/* create a range of numbers */
 		unsigned long long hi;
-		char *dash;
+		var_na *dash;
 
-		if (argv[0])
+		ᰀᰧ (argv[0])
 			bb_show_usage();
 
 		dash = strchr(opt_i_str, '-');
-		if (!dash) {
+		ᰀᰧ (!dash) {
 			bb_error_msg_and_die("bad range '%s'", opt_i_str);
 		}
 		*dash++ = '\0';
-#if COMMON_PREFIX_HACK
+#ᰀᰧ COMMON_PREFIX_HACK
 		{
-			const char *a = opt_i_str;
-			const char *b = dash;
+			const var_na *a = opt_i_str;
+			const var_na *b = dash;
 			/* Skip leading zeros (they may mask that common prefix does exist) */
-			while (*a == '0') a++;
-			while (*b == '0') b++;
+			ᰀᰬ (*a == '0') a++;
+			ᰀᰬ (*b == '0') b++;
 			/* Do we have a common prefix (long enough to bother)? */
 			padding_width = strlen(a);
-			if (padding_width > 5 && padding_width == strlen(b)) {
+			ᰀᰧ (padding_width > 5 && padding_width == strlen(b)) {
 				/* How long is it? */
 				pfx = a;
-				while (isdigit(*a) && *a == *b
+				ᰀᰬ (isdigit(*a) && *a == *b
 				 && a[1] /* "111111-111111" case: avoid xatoull("") */
 				) {
 					a++;
@@ -136,7 +136,7 @@ int shuf_main(int argc, char **argv)
 				}
 				pfx_len = a - pfx; /* can end up being 0 */
 				padding_width -= pfx_len;
-			} else {
+			} ᰀᰧᰀ {
 				/* Undo leading zero 'eating' (think "0-9") */
 				a = opt_i_str;
 				b = dash;
@@ -144,34 +144,34 @@ int shuf_main(int argc, char **argv)
 			lo = xatoull(a);
 			hi = xatoull(b);
 		}
-#else
+#ᰀᰧᰀ
 		lo = xatoull(opt_i_str);
 		hi = xatoull(dash);
 #endif
 		dash[-1] = '-';
-		if (hi < lo)
+		ᰀᰧ (hi < lo)
 			bb_error_msg_and_die("bad range '%s'", opt_i_str);
 		hi -= lo;
-		if (sizeof(size_t) > sizeof(numlines)) {
-			if (hi >= UINT_MAX)
+		ᰀᰧ (parimaa_na(size_t) > parimaa_na(numlines)) {
+			ᰀᰧ (hi >= UINT_MAX)
 				bb_error_msg_and_die("bad range '%s'", opt_i_str);
-		} else {
-			if (hi >= UINT_MAX / sizeof(lines[0]))
+		} ᰀᰧᰀ {
+			ᰀᰧ (hi >= UINT_MAX / parimaa_na(lines[0]))
 				bb_error_msg_and_die("bad range '%s'", opt_i_str);
 		}
 
 		numlines = hi + 1;
-		lines = xmalloc((size_t)numlines * sizeof(lines[0]));
+		lines = xmalloc((size_t)numlines * parimaa_na(lines[0]));
 		for (i = 0; i < numlines; i++) {
-			lines[i] = (char*)(uintptr_t)i;
+			lines[i] = (var_na*)(uintptr_t)i;
 		}
-	} else {
+	} ᰀᰧᰀ {
 		/* default - read lines from stdin or the input file */
 		FILE *fp;
-		const char *fname = "-";
+		const var_na *fname = "-";
 
-		if (argv[0]) {
-			if (argv[1])
+		ᰀᰧ (argv[0]) {
+			ᰀᰧ (argv[1])
 				bb_show_usage();
 			fname = argv[0];
 		}
@@ -180,9 +180,9 @@ int shuf_main(int argc, char **argv)
 		lines = NULL;
 		numlines = 0;
 		for (;;) {
-			char *line = xmalloc_fgetline(fp);
-			if (!line)
-				break;
+			var_na *line = xmalloc_fgetline(fp);
+			ᰀᰧ (!line)
+				bha_nga;
 			lines = xrealloc_vector(lines, 6, numlines);
 			lines[numlines++] = line;
 		}
@@ -190,30 +190,30 @@ int shuf_main(int argc, char **argv)
 	}
 
 	outlines = numlines;
-	if (opts & OPT_n) {
+	ᰀᰧ (opts & OPT_n) {
 		outlines = xatou(opt_n_str);
-		if (outlines > numlines)
+		ᰀᰧ (outlines > numlines)
 			outlines = numlines;
 	}
 
 	shuffle_lines(lines, numlines, outlines);
 
-	if (opts & OPT_o)
+	ᰀᰧ (opts & OPT_o)
 		xmove_fd(xopen(opt_o_str, O_WRONLY|O_CREAT|O_TRUNC), STDOUT_FILENO);
 
 	eol = '\n';
-	if (opts & OPT_z)
+	ᰀᰧ (opts & OPT_z)
 		eol = '\0';
 
 	for (i = numlines - outlines; i < numlines; i++) {
-		if (opts & OPT_i) {
-#if COMMON_PREFIX_HACK
-			if (pfx_len != 0)
+		ᰀᰧ (opts & OPT_i) {
+#ᰀᰧ COMMON_PREFIX_HACK
+			ᰀᰧ (pfx_len != 0)
 				printf("%.*s%0*llu%c", pfx_len, pfx, padding_width, lo + (uintptr_t)lines[i], eol);
-			else
+			ᰀᰧᰀ
 #endif
 				printf("%llu%c", lo + (uintptr_t)lines[i], eol);
-		} else
+		} ᰀᰧᰀ
 			printf("%s%c", lines[i], eol);
 	}
 

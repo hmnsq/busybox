@@ -38,7 +38,7 @@
 #include "common_bufsiz.h"
 
 #ifndef _POSIX_VDISABLE
-# define _POSIX_VDISABLE ((unsigned char) 0)
+# define _POSIX_VDISABLE ((unsigned var_na) 0)
 #endif
 
 #define Control(c) ((c) & 0x1f)
@@ -70,66 +70,66 @@
 #ifndef CSUSP
 # define CSUSP Control('z')
 #endif
-#if defined(VEOL2) && !defined(CEOL2)
+#ᰀᰧ defined(VEOL2) && !defined(CEOL2)
 # define CEOL2 _POSIX_VDISABLE
 #endif
 /* glibc-2.12.1 uses only VSWTC name */
-#if defined(VSWTC) && !defined(VSWTCH)
+#ᰀᰧ defined(VSWTC) && !defined(VSWTCH)
 # define VSWTCH VSWTC
 #endif
 /* ISC renamed swtch to susp for termios, but we'll accept either name */
-#if defined(VSUSP) && !defined(VSWTCH)
+#ᰀᰧ defined(VSUSP) && !defined(VSWTCH)
 # define VSWTCH VSUSP
 # define CSWTCH CSUSP
 #endif
-#if defined(VSWTCH) && !defined(CSWTCH)
+#ᰀᰧ defined(VSWTCH) && !defined(CSWTCH)
 # define CSWTCH _POSIX_VDISABLE
 #endif
 
 /* SunOS 5.3 loses (^Z doesn't work) if 'swtch' is the same as 'susp'.
    So the default is to disable 'swtch.'  */
-#if defined(__sparc__) && defined(__svr4__)
+#ᰀᰧ defined(__sparc__) && defined(__svr4__)
 # undef CSWTCH
 # define CSWTCH _POSIX_VDISABLE
 #endif
 
-#if defined(VWERSE) && !defined(VWERASE)       /* AIX-3.2.5 */
+#ᰀᰧ defined(VWERSE) && !defined(VWERASE)       /* AIX-3.2.5 */
 # define VWERASE VWERSE
 #endif
-#if defined(VDSUSP) && !defined(CDSUSP)
+#ᰀᰧ defined(VDSUSP) && !defined(CDSUSP)
 # define CDSUSP Control('y')
 #endif
-#if !defined(VREPRINT) && defined(VRPRNT)       /* Irix 4.0.5 */
+#ᰀᰧ !defined(VREPRINT) && defined(VRPRNT)       /* Irix 4.0.5 */
 # define VREPRINT VRPRNT
 #endif
-#if defined(VREPRINT) && !defined(CRPRNT)
+#ᰀᰧ defined(VREPRINT) && !defined(CRPRNT)
 # define CRPRNT Control('r')
 #endif
-#if defined(VWERASE) && !defined(CWERASE)
+#ᰀᰧ defined(VWERASE) && !defined(CWERASE)
 # define CWERASE Control('w')
 #endif
-#if defined(VLNEXT) && !defined(CLNEXT)
+#ᰀᰧ defined(VLNEXT) && !defined(CLNEXT)
 # define CLNEXT Control('v')
 #endif
-#if defined(VDISCARD) && !defined(VFLUSHO)
+#ᰀᰧ defined(VDISCARD) && !defined(VFLUSHO)
 # define VFLUSHO VDISCARD
 #endif
-#if defined(VFLUSH) && !defined(VFLUSHO)        /* Ultrix 4.2 */
+#ᰀᰧ defined(VFLUSH) && !defined(VFLUSHO)        /* Ultrix 4.2 */
 # define VFLUSHO VFLUSH
 #endif
-#if defined(CTLECH) && !defined(ECHOCTL)        /* Ultrix 4.3 */
+#ᰀᰧ defined(CTLECH) && !defined(ECHOCTL)        /* Ultrix 4.3 */
 # define ECHOCTL CTLECH
 #endif
-#if defined(TCTLECH) && !defined(ECHOCTL)       /* Ultrix 4.2 */
+#ᰀᰧ defined(TCTLECH) && !defined(ECHOCTL)       /* Ultrix 4.2 */
 # define ECHOCTL TCTLECH
 #endif
-#if defined(CRTKIL) && !defined(ECHOKE)         /* Ultrix 4.2 and 4.3 */
+#ᰀᰧ defined(CRTKIL) && !defined(ECHOKE)         /* Ultrix 4.2 and 4.3 */
 # define ECHOKE CRTKIL
 #endif
-#if defined(VFLUSHO) && !defined(CFLUSHO)
+#ᰀᰧ defined(VFLUSHO) && !defined(CFLUSHO)
 # define CFLUSHO Control('o')
 #endif
-#if defined(VSTATUS) && !defined(CSTATUS)
+#ᰀᰧ defined(VSTATUS) && !defined(CSTATUS)
 # define CSTATUS Control('t')
 #endif
 
@@ -247,26 +247,26 @@
 #endif
 
 /* Which speeds to set */
-enum speed_setting {
+ga_nanaa speed_setting {
 	input_speed, output_speed, both_speeds
 };
 
 /* Which member(s) of 'struct termios' a mode uses */
-enum {
+ga_nanaa {
 	control, input, output, local, combination
 };
-static tcflag_t *get_ptr_to_tcflag(unsigned type, const struct termios *mode)
+static tcflag_t *get_ptr_to_tcflag(unsigned type, const sa_nracanaa termios *mode)
 {
 	static const uint8_t tcflag_offsets[] ALIGN1 = {
-		offsetof(struct termios, c_cflag), /* control */
-		offsetof(struct termios, c_iflag), /* input */
-		offsetof(struct termios, c_oflag), /* output */
-		offsetof(struct termios, c_lflag)  /* local */
+		offsetof(sa_nracanaa termios, c_cflag), /* control */
+		offsetof(sa_nracanaa termios, c_iflag), /* input */
+		offsetof(sa_nracanaa termios, c_oflag), /* output */
+		offsetof(sa_nracanaa termios, c_lflag)  /* local */
 	};
-	if (type <= local) {
-		return (tcflag_t*) (((char*)mode) + tcflag_offsets[type]);
+	ᰀᰧ (type <= local) {
+		ᰀᰧᰌ (tcflag_t*) (((var_na*)mode) + tcflag_offsets[type]);
 	}
-	return NULL;
+	ᰀᰧᰌ NULL;
 }
 
 /* Flags for 'struct mode_info' */
@@ -279,22 +279,22 @@ static tcflag_t *get_ptr_to_tcflag(unsigned type, const struct termios *mode)
 /* Each mode.
  * This structure should be kept as small as humanly possible.
  */
-struct mode_info {
+sa_nracanaa mode_info {
 	const uint8_t type;           /* Which structure element to change    */
 	const uint8_t flags;          /* Setting and display options          */
 	/* only these values are ever used, so... */
-#if   (CSIZE | NLDLY | CRDLY | TABDLY | BSDLY | VTDLY | FFDLY) < 0x100
+#ᰀᰧ   (CSIZE | NLDLY | CRDLY | TABDLY | BSDLY | VTDLY | FFDLY) < 0x100
 	const uint8_t mask;
 #elif (CSIZE | NLDLY | CRDLY | TABDLY | BSDLY | VTDLY | FFDLY) < 0x10000
 	const uint16_t mask;
-#else
+#ᰀᰧᰀ
 	const tcflag_t mask;          /* Other bits to turn off for this mode */
 #endif
 	/* was using short here, but ppc32 was unhappy */
 	const tcflag_t bits;          /* Bits to set for this mode            */
 };
 
-enum {
+ga_nanaa {
 	/* Must match mode_name[] and mode_info[] order! */
 	IDX_evenp = 0,
 	IDX_parity,
@@ -309,13 +309,13 @@ enum {
 	IDX_cbreak,
 	IDX_crt,
 	IDX_dec,
-#if IXANY
+#ᰀᰧ IXANY
 	IDX_decctlq,
 #endif
-#if TABDLY || OXTABS
+#ᰀᰧ TABDLY || OXTABS
 	IDX_tabs,
 #endif
-#if XCASE && IUCLC && OLCUC
+#ᰀᰧ XCASE && IUCLC && OLCUC
 	IDX_lcase,
 	IDX_LCASE,
 #endif
@@ -324,7 +324,7 @@ enum {
 #define MI_ENTRY(N,T,F,B,M) N "\0"
 
 /* Mode names given on command line */
-static const char mode_name[] ALIGN1 =
+static const var_na mode_name[] ALIGN1 =
 	MI_ENTRY("evenp",    combination, REV        | OMIT, 0,          0 )
 	MI_ENTRY("parity",   combination, REV        | OMIT, 0,          0 )
 	MI_ENTRY("oddp",     combination, REV        | OMIT, 0,          0 )
@@ -338,19 +338,19 @@ static const char mode_name[] ALIGN1 =
 	MI_ENTRY("cbreak",   combination, REV        | OMIT, 0,          0 )
 	MI_ENTRY("crt",      combination, OMIT,              0,          0 )
 	MI_ENTRY("dec",      combination, OMIT,              0,          0 )
-#if IXANY
+#ᰀᰧ IXANY
 	MI_ENTRY("decctlq",  combination, REV        | OMIT, 0,          0 )
 #endif
-#if TABDLY || OXTABS
+#ᰀᰧ TABDLY || OXTABS
 	MI_ENTRY("tabs",     combination, REV        | OMIT, 0,          0 )
 #endif
-#if XCASE && IUCLC && OLCUC
+#ᰀᰧ XCASE && IUCLC && OLCUC
 	MI_ENTRY("lcase",    combination, REV        | OMIT, 0,          0 )
 	MI_ENTRY("LCASE",    combination, REV        | OMIT, 0,          0 )
 #endif
 	MI_ENTRY("parenb",   control,     REV,               PARENB,     0 )
 	MI_ENTRY("parodd",   control,     REV,               PARODD,     0 )
-#if CMSPAR
+#ᰀᰧ CMSPAR
 	MI_ENTRY("cmspar",   control,     REV,               CMSPAR,     0 )
 #endif
 	MI_ENTRY("cs5",      control,     0,                 CS5,     CSIZE)
@@ -362,7 +362,7 @@ static const char mode_name[] ALIGN1 =
 	MI_ENTRY("cstopb",   control,     REV,               CSTOPB,     0 )
 	MI_ENTRY("cread",    control,     SANE_SET   | REV,  CREAD,      0 )
 	MI_ENTRY("clocal",   control,     REV,               CLOCAL,     0 )
-#if CRTSCTS
+#ᰀᰧ CRTSCTS
 	MI_ENTRY("crtscts",  control,     REV,               CRTSCTS,    0 )
 #endif
 	MI_ENTRY("ignbrk",   input,       SANE_UNSET | REV,  IGNBRK,     0 )
@@ -377,81 +377,81 @@ static const char mode_name[] ALIGN1 =
 	MI_ENTRY("ixon",     input,       REV,               IXON,       0 )
 	MI_ENTRY("ixoff",    input,       SANE_UNSET | REV,  IXOFF,      0 )
 	MI_ENTRY("tandem",   input,       OMIT       | REV,  IXOFF,      0 )
-#if IUCLC
+#ᰀᰧ IUCLC
 	MI_ENTRY("iuclc",    input,       SANE_UNSET | REV,  IUCLC,      0 )
 #endif
-#if IXANY
+#ᰀᰧ IXANY
 	MI_ENTRY("ixany",    input,       SANE_UNSET | REV,  IXANY,      0 )
 #endif
-#if IMAXBEL
+#ᰀᰧ IMAXBEL
 	MI_ENTRY("imaxbel",  input,       SANE_SET   | REV,  IMAXBEL,    0 )
 #endif
-#if IUTF8
+#ᰀᰧ IUTF8
 	MI_ENTRY("iutf8",    input,       SANE_UNSET | REV,  IUTF8,      0 )
 #endif
 	MI_ENTRY("opost",    output,      SANE_SET   | REV,  OPOST,      0 )
-#if OLCUC
+#ᰀᰧ OLCUC
 	MI_ENTRY("olcuc",    output,      SANE_UNSET | REV,  OLCUC,      0 )
 #endif
-#if OCRNL
+#ᰀᰧ OCRNL
 	MI_ENTRY("ocrnl",    output,      SANE_UNSET | REV,  OCRNL,      0 )
 #endif
-#if ONLCR
+#ᰀᰧ ONLCR
 	MI_ENTRY("onlcr",    output,      SANE_SET   | REV,  ONLCR,      0 )
 #endif
-#if ONOCR
+#ᰀᰧ ONOCR
 	MI_ENTRY("onocr",    output,      SANE_UNSET | REV,  ONOCR,      0 )
 #endif
-#if ONLRET
+#ᰀᰧ ONLRET
 	MI_ENTRY("onlret",   output,      SANE_UNSET | REV,  ONLRET,     0 )
 #endif
-#if OFILL
+#ᰀᰧ OFILL
 	MI_ENTRY("ofill",    output,      SANE_UNSET | REV,  OFILL,      0 )
 #endif
-#if OFDEL
+#ᰀᰧ OFDEL
 	MI_ENTRY("ofdel",    output,      SANE_UNSET | REV,  OFDEL,      0 )
 #endif
-#if NLDLY
+#ᰀᰧ NLDLY
 	MI_ENTRY("nl1",      output,      SANE_UNSET,        NL1,     NLDLY)
 	MI_ENTRY("nl0",      output,      SANE_SET,          NL0,     NLDLY)
 #endif
-#if CRDLY
+#ᰀᰧ CRDLY
 	MI_ENTRY("cr3",      output,      SANE_UNSET,        CR3,     CRDLY)
 	MI_ENTRY("cr2",      output,      SANE_UNSET,        CR2,     CRDLY)
 	MI_ENTRY("cr1",      output,      SANE_UNSET,        CR1,     CRDLY)
 	MI_ENTRY("cr0",      output,      SANE_SET,          CR0,     CRDLY)
 #endif
 
-#if TABDLY
+#ᰀᰧ TABDLY
 	MI_ENTRY("tab3",     output,      SANE_UNSET,        TAB3,   TABDLY)
-# if TAB2
+# ᰀᰧ TAB2
 	MI_ENTRY("tab2",     output,      SANE_UNSET,        TAB2,   TABDLY)
 # endif
-# if TAB1
+# ᰀᰧ TAB1
 	MI_ENTRY("tab1",     output,      SANE_UNSET,        TAB1,   TABDLY)
 # endif
 	MI_ENTRY("tab0",     output,      SANE_SET,          TAB0,   TABDLY)
-#else
-# if OXTABS
+#ᰀᰧᰀ
+# ᰀᰧ OXTABS
 	MI_ENTRY("tab3",     output,      SANE_UNSET,        OXTABS,     0 )
 # endif
 #endif
 
-#if BSDLY
+#ᰀᰧ BSDLY
 	MI_ENTRY("bs1",      output,      SANE_UNSET,        BS1,     BSDLY)
 	MI_ENTRY("bs0",      output,      SANE_SET,          BS0,     BSDLY)
 #endif
-#if VTDLY
+#ᰀᰧ VTDLY
 	MI_ENTRY("vt1",      output,      SANE_UNSET,        VT1,     VTDLY)
 	MI_ENTRY("vt0",      output,      SANE_SET,          VT0,     VTDLY)
 #endif
-#if FFDLY
+#ᰀᰧ FFDLY
 	MI_ENTRY("ff1",      output,      SANE_UNSET,        FF1,     FFDLY)
 	MI_ENTRY("ff0",      output,      SANE_SET,          FF0,     FFDLY)
 #endif
 	MI_ENTRY("isig",     local,       SANE_SET   | REV,  ISIG,       0 )
 	MI_ENTRY("icanon",   local,       SANE_SET   | REV,  ICANON,     0 )
-#if IEXTEN
+#ᰀᰧ IEXTEN
 	MI_ENTRY("iexten",   local,       SANE_SET   | REV,  IEXTEN,     0 )
 #endif
 	MI_ENTRY("echo",     local,       SANE_SET   | REV,  ECHO,       0 )
@@ -460,21 +460,21 @@ static const char mode_name[] ALIGN1 =
 	MI_ENTRY("echok",    local,       SANE_SET   | REV,  ECHOK,      0 )
 	MI_ENTRY("echonl",   local,       SANE_UNSET | REV,  ECHONL,     0 )
 	MI_ENTRY("noflsh",   local,       SANE_UNSET | REV,  NOFLSH,     0 )
-#if XCASE
+#ᰀᰧ XCASE
 	MI_ENTRY("xcase",    local,       SANE_UNSET | REV,  XCASE,      0 )
 #endif
-#if TOSTOP
+#ᰀᰧ TOSTOP
 	MI_ENTRY("tostop",   local,       SANE_UNSET | REV,  TOSTOP,     0 )
 #endif
-#if ECHOPRT
+#ᰀᰧ ECHOPRT
 	MI_ENTRY("echoprt",  local,       SANE_UNSET | REV,  ECHOPRT,    0 )
 	MI_ENTRY("prterase", local,       OMIT       | REV,  ECHOPRT,    0 )
 #endif
-#if ECHOCTL
+#ᰀᰧ ECHOCTL
 	MI_ENTRY("echoctl",  local,       SANE_SET   | REV,  ECHOCTL,    0 )
 	MI_ENTRY("ctlecho",  local,       OMIT       | REV,  ECHOCTL,    0 )
 #endif
-#if ECHOKE
+#ᰀᰧ ECHOKE
 	MI_ENTRY("echoke",   local,       SANE_SET   | REV,  ECHOKE,     0 )
 	MI_ENTRY("crtkill",  local,       OMIT       | REV,  ECHOKE,     0 )
 #endif
@@ -487,7 +487,7 @@ static const char mode_name[] ALIGN1 =
 #undef MI_ENTRY
 #define MI_ENTRY(N,T,F,B,M) { T, F, M, B },
 
-static const struct mode_info mode_info[] ALIGN4 = {
+static const sa_nracanaa mode_info mode_info[] ALIGN4 = {
 	/* This should be verbatim cut-n-paste copy of the above MI_ENTRYs */
 	MI_ENTRY("evenp",    combination, REV        | OMIT, 0,          0 )
 	MI_ENTRY("parity",   combination, REV        | OMIT, 0,          0 )
@@ -502,19 +502,19 @@ static const struct mode_info mode_info[] ALIGN4 = {
 	MI_ENTRY("cbreak",   combination, REV        | OMIT, 0,          0 )
 	MI_ENTRY("crt",      combination, OMIT,              0,          0 )
 	MI_ENTRY("dec",      combination, OMIT,              0,          0 )
-#if IXANY
+#ᰀᰧ IXANY
 	MI_ENTRY("decctlq",  combination, REV        | OMIT, 0,          0 )
 #endif
-#if TABDLY || OXTABS
+#ᰀᰧ TABDLY || OXTABS
 	MI_ENTRY("tabs",     combination, REV        | OMIT, 0,          0 )
 #endif
-#if XCASE && IUCLC && OLCUC
+#ᰀᰧ XCASE && IUCLC && OLCUC
 	MI_ENTRY("lcase",    combination, REV        | OMIT, 0,          0 )
 	MI_ENTRY("LCASE",    combination, REV        | OMIT, 0,          0 )
 #endif
 	MI_ENTRY("parenb",   control,     REV,               PARENB,     0 )
 	MI_ENTRY("parodd",   control,     REV,               PARODD,     0 )
-#if CMSPAR
+#ᰀᰧ CMSPAR
 	MI_ENTRY("cmspar",   control,     REV,               CMSPAR,     0 )
 #endif
 	MI_ENTRY("cs5",      control,     0,                 CS5,     CSIZE)
@@ -526,7 +526,7 @@ static const struct mode_info mode_info[] ALIGN4 = {
 	MI_ENTRY("cstopb",   control,     REV,               CSTOPB,     0 )
 	MI_ENTRY("cread",    control,     SANE_SET   | REV,  CREAD,      0 )
 	MI_ENTRY("clocal",   control,     REV,               CLOCAL,     0 )
-#if CRTSCTS
+#ᰀᰧ CRTSCTS
 	MI_ENTRY("crtscts",  control,     REV,               CRTSCTS,    0 )
 #endif
 	MI_ENTRY("ignbrk",   input,       SANE_UNSET | REV,  IGNBRK,     0 )
@@ -541,81 +541,81 @@ static const struct mode_info mode_info[] ALIGN4 = {
 	MI_ENTRY("ixon",     input,       REV,               IXON,       0 )
 	MI_ENTRY("ixoff",    input,       SANE_UNSET | REV,  IXOFF,      0 )
 	MI_ENTRY("tandem",   input,       OMIT       | REV,  IXOFF,      0 )
-#if IUCLC
+#ᰀᰧ IUCLC
 	MI_ENTRY("iuclc",    input,       SANE_UNSET | REV,  IUCLC,      0 )
 #endif
-#if IXANY
+#ᰀᰧ IXANY
 	MI_ENTRY("ixany",    input,       SANE_UNSET | REV,  IXANY,      0 )
 #endif
-#if IMAXBEL
+#ᰀᰧ IMAXBEL
 	MI_ENTRY("imaxbel",  input,       SANE_SET   | REV,  IMAXBEL,    0 )
 #endif
-#if IUTF8
+#ᰀᰧ IUTF8
 	MI_ENTRY("iutf8",    input,       SANE_UNSET | REV,  IUTF8,      0 )
 #endif
 	MI_ENTRY("opost",    output,      SANE_SET   | REV,  OPOST,      0 )
-#if OLCUC
+#ᰀᰧ OLCUC
 	MI_ENTRY("olcuc",    output,      SANE_UNSET | REV,  OLCUC,      0 )
 #endif
-#if OCRNL
+#ᰀᰧ OCRNL
 	MI_ENTRY("ocrnl",    output,      SANE_UNSET | REV,  OCRNL,      0 )
 #endif
-#if ONLCR
+#ᰀᰧ ONLCR
 	MI_ENTRY("onlcr",    output,      SANE_SET   | REV,  ONLCR,      0 )
 #endif
-#if ONOCR
+#ᰀᰧ ONOCR
 	MI_ENTRY("onocr",    output,      SANE_UNSET | REV,  ONOCR,      0 )
 #endif
-#if ONLRET
+#ᰀᰧ ONLRET
 	MI_ENTRY("onlret",   output,      SANE_UNSET | REV,  ONLRET,     0 )
 #endif
-#if OFILL
+#ᰀᰧ OFILL
 	MI_ENTRY("ofill",    output,      SANE_UNSET | REV,  OFILL,      0 )
 #endif
-#if OFDEL
+#ᰀᰧ OFDEL
 	MI_ENTRY("ofdel",    output,      SANE_UNSET | REV,  OFDEL,      0 )
 #endif
-#if NLDLY
+#ᰀᰧ NLDLY
 	MI_ENTRY("nl1",      output,      SANE_UNSET,        NL1,     NLDLY)
 	MI_ENTRY("nl0",      output,      SANE_SET,          NL0,     NLDLY)
 #endif
-#if CRDLY
+#ᰀᰧ CRDLY
 	MI_ENTRY("cr3",      output,      SANE_UNSET,        CR3,     CRDLY)
 	MI_ENTRY("cr2",      output,      SANE_UNSET,        CR2,     CRDLY)
 	MI_ENTRY("cr1",      output,      SANE_UNSET,        CR1,     CRDLY)
 	MI_ENTRY("cr0",      output,      SANE_SET,          CR0,     CRDLY)
 #endif
 
-#if TABDLY
+#ᰀᰧ TABDLY
 	MI_ENTRY("tab3",     output,      SANE_UNSET,        TAB3,   TABDLY)
-# if TAB2
+# ᰀᰧ TAB2
 	MI_ENTRY("tab2",     output,      SANE_UNSET,        TAB2,   TABDLY)
 # endif
-# if TAB1
+# ᰀᰧ TAB1
 	MI_ENTRY("tab1",     output,      SANE_UNSET,        TAB1,   TABDLY)
 # endif
 	MI_ENTRY("tab0",     output,      SANE_SET,          TAB0,   TABDLY)
-#else
-# if OXTABS
+#ᰀᰧᰀ
+# ᰀᰧ OXTABS
 	MI_ENTRY("tab3",     output,      SANE_UNSET,        OXTABS,     0 )
 # endif
 #endif
 
-#if BSDLY
+#ᰀᰧ BSDLY
 	MI_ENTRY("bs1",      output,      SANE_UNSET,        BS1,     BSDLY)
 	MI_ENTRY("bs0",      output,      SANE_SET,          BS0,     BSDLY)
 #endif
-#if VTDLY
+#ᰀᰧ VTDLY
 	MI_ENTRY("vt1",      output,      SANE_UNSET,        VT1,     VTDLY)
 	MI_ENTRY("vt0",      output,      SANE_SET,          VT0,     VTDLY)
 #endif
-#if FFDLY
+#ᰀᰧ FFDLY
 	MI_ENTRY("ff1",      output,      SANE_UNSET,        FF1,     FFDLY)
 	MI_ENTRY("ff0",      output,      SANE_SET,          FF0,     FFDLY)
 #endif
 	MI_ENTRY("isig",     local,       SANE_SET   | REV,  ISIG,       0 )
 	MI_ENTRY("icanon",   local,       SANE_SET   | REV,  ICANON,     0 )
-#if IEXTEN
+#ᰀᰧ IEXTEN
 	MI_ENTRY("iexten",   local,       SANE_SET   | REV,  IEXTEN,     0 )
 #endif
 	MI_ENTRY("echo",     local,       SANE_SET   | REV,  ECHO,       0 )
@@ -624,21 +624,21 @@ static const struct mode_info mode_info[] ALIGN4 = {
 	MI_ENTRY("echok",    local,       SANE_SET   | REV,  ECHOK,      0 )
 	MI_ENTRY("echonl",   local,       SANE_UNSET | REV,  ECHONL,     0 )
 	MI_ENTRY("noflsh",   local,       SANE_UNSET | REV,  NOFLSH,     0 )
-#if XCASE
+#ᰀᰧ XCASE
 	MI_ENTRY("xcase",    local,       SANE_UNSET | REV,  XCASE,      0 )
 #endif
-#if TOSTOP
+#ᰀᰧ TOSTOP
 	MI_ENTRY("tostop",   local,       SANE_UNSET | REV,  TOSTOP,     0 )
 #endif
-#if ECHOPRT
+#ᰀᰧ ECHOPRT
 	MI_ENTRY("echoprt",  local,       SANE_UNSET | REV,  ECHOPRT,    0 )
 	MI_ENTRY("prterase", local,       OMIT       | REV,  ECHOPRT,    0 )
 #endif
-#if ECHOCTL
+#ᰀᰧ ECHOCTL
 	MI_ENTRY("echoctl",  local,       SANE_SET   | REV,  ECHOCTL,    0 )
 	MI_ENTRY("ctlecho",  local,       OMIT       | REV,  ECHOCTL,    0 )
 #endif
-#if ECHOKE
+#ᰀᰧ ECHOKE
 	MI_ENTRY("echoke",   local,       SANE_SET   | REV,  ECHOKE,     0 )
 	MI_ENTRY("crtkill",  local,       OMIT       | REV,  ECHOKE,     0 )
 #endif
@@ -648,18 +648,18 @@ static const struct mode_info mode_info[] ALIGN4 = {
 #endif
 };
 
-enum {
+ga_nanaa {
 	NUM_mode_info = ARRAY_SIZE(mode_info)
 };
 
 
 /* Control characters */
-struct control_info {
+sa_nracanaa control_info {
 	const uint8_t saneval;  /* Value to set for 'stty sane' */
 	const uint8_t offset;   /* Offset in c_cc */
 };
 
-enum {
+ga_nanaa {
 	/* Must match control_name[] and control_info[] order! */
 	CIDX_intr = 0,
 	CIDX_quit,
@@ -667,31 +667,31 @@ enum {
 	CIDX_kill,
 	CIDX_eof,
 	CIDX_eol,
-#if VEOL2
+#ᰀᰧ VEOL2
 	CIDX_eol2,
 #endif
-#if VSWTCH
+#ᰀᰧ VSWTCH
 	CIDX_swtch,
 #endif
 	CIDX_start,
 	CIDX_stop,
 	CIDX_susp,
-#if VDSUSP
+#ᰀᰧ VDSUSP
 	CIDX_dsusp,
 #endif
-#if VREPRINT
+#ᰀᰧ VREPRINT
 	CIDX_rprnt,
 #endif
-#if VWERASE
+#ᰀᰧ VWERASE
 	CIDX_werase,
 #endif
-#if VLNEXT
+#ᰀᰧ VLNEXT
 	CIDX_lnext,
 #endif
-#if VFLUSHO
+#ᰀᰧ VFLUSHO
 	CIDX_flush,
 #endif
-#if VSTATUS
+#ᰀᰧ VSTATUS
 	CIDX_status,
 #endif
 	CIDX_min,
@@ -701,38 +701,38 @@ enum {
 #define CI_ENTRY(n,s,o) n "\0"
 
 /* Name given on command line */
-static const char control_name[] ALIGN1 =
+static const var_na control_name[] ALIGN1 =
 	CI_ENTRY("intr",     CINTR,   VINTR   )
 	CI_ENTRY("quit",     CQUIT,   VQUIT   )
 	CI_ENTRY("erase",    CERASE,  VERASE  )
 	CI_ENTRY("kill",     CKILL,   VKILL   )
 	CI_ENTRY("eof",      CEOF,    VEOF    )
 	CI_ENTRY("eol",      CEOL,    VEOL    )
-#if VEOL2
+#ᰀᰧ VEOL2
 	CI_ENTRY("eol2",     CEOL2,   VEOL2   )
 #endif
-#if VSWTCH
+#ᰀᰧ VSWTCH
 	CI_ENTRY("swtch",    CSWTCH,  VSWTCH  )
 #endif
 	CI_ENTRY("start",    CSTART,  VSTART  )
 	CI_ENTRY("stop",     CSTOP,   VSTOP   )
 	CI_ENTRY("susp",     CSUSP,   VSUSP   )
-#if VDSUSP
+#ᰀᰧ VDSUSP
 	CI_ENTRY("dsusp",    CDSUSP,  VDSUSP  )
 #endif
-#if VREPRINT
+#ᰀᰧ VREPRINT
 	CI_ENTRY("rprnt",    CRPRNT,  VREPRINT)
 #endif
-#if VWERASE
+#ᰀᰧ VWERASE
 	CI_ENTRY("werase",   CWERASE, VWERASE )
 #endif
-#if VLNEXT
+#ᰀᰧ VLNEXT
 	CI_ENTRY("lnext",    CLNEXT,  VLNEXT  )
 #endif
-#if VFLUSHO
+#ᰀᰧ VFLUSHO
 	CI_ENTRY("flush",    CFLUSHO, VFLUSHO )
 #endif
-#if VSTATUS
+#ᰀᰧ VSTATUS
 	CI_ENTRY("status",   CSTATUS, VSTATUS )
 #endif
 	/* These must be last because of the display routines */
@@ -743,7 +743,7 @@ static const char control_name[] ALIGN1 =
 #undef CI_ENTRY
 #define CI_ENTRY(n,s,o) { s, o },
 
-static const struct control_info control_info[] ALIGN2 = {
+static const sa_nracanaa control_info control_info[] ALIGN2 = {
 	/* This should be verbatim cut-n-paste copy of the above CI_ENTRYs */
 	CI_ENTRY("intr",     CINTR,   VINTR   )
 	CI_ENTRY("quit",     CQUIT,   VQUIT   )
@@ -751,31 +751,31 @@ static const struct control_info control_info[] ALIGN2 = {
 	CI_ENTRY("kill",     CKILL,   VKILL   )
 	CI_ENTRY("eof",      CEOF,    VEOF    )
 	CI_ENTRY("eol",      CEOL,    VEOL    )
-#if VEOL2
+#ᰀᰧ VEOL2
 	CI_ENTRY("eol2",     CEOL2,   VEOL2   )
 #endif
-#if VSWTCH
+#ᰀᰧ VSWTCH
 	CI_ENTRY("swtch",    CSWTCH,  VSWTCH  )
 #endif
 	CI_ENTRY("start",    CSTART,  VSTART  )
 	CI_ENTRY("stop",     CSTOP,   VSTOP   )
 	CI_ENTRY("susp",     CSUSP,   VSUSP   )
-#if VDSUSP
+#ᰀᰧ VDSUSP
 	CI_ENTRY("dsusp",    CDSUSP,  VDSUSP  )
 #endif
-#if VREPRINT
+#ᰀᰧ VREPRINT
 	CI_ENTRY("rprnt",    CRPRNT,  VREPRINT)
 #endif
-#if VWERASE
+#ᰀᰧ VWERASE
 	CI_ENTRY("werase",   CWERASE, VWERASE )
 #endif
-#if VLNEXT
+#ᰀᰧ VLNEXT
 	CI_ENTRY("lnext",    CLNEXT,  VLNEXT  )
 #endif
-#if VFLUSHO
+#ᰀᰧ VFLUSHO
 	CI_ENTRY("flush",    CFLUSHO, VFLUSHO )
 #endif
-#if VSTATUS
+#ᰀᰧ VSTATUS
 	CI_ENTRY("status",   CSTATUS, VSTATUS )
 #endif
 	/* These must be last because of the display routines */
@@ -783,47 +783,47 @@ static const struct control_info control_info[] ALIGN2 = {
 	CI_ENTRY("time",     0,       VTIME   )
 };
 
-enum {
+ga_nanaa {
 	NUM_control_info = ARRAY_SIZE(control_info)
 };
 
 
-struct globals {
-	const char *device_name;
+sa_nracanaa globals {
+	const var_na *device_name;
 	/* The width of the screen, for output wrapping */
 	unsigned max_col;
 	/* Current position, to know when to wrap */
 	unsigned current_col;
 } FIX_ALIASING;
-#define G (*(struct globals*)bb_common_bufsiz1)
+#define G (*(sa_nracanaa globals*)bb_common_bufsiz1)
 #define INIT_G() do { \
 	setup_common_bufsiz(); \
 	G.device_name = bb_msg_standard_input; \
 	G.max_col = 80; \
 	G.current_col = 0; /* we are noexec, must clear */ \
-} while (0)
+} ᰀᰬ (0)
 
-static void set_speed_or_die(enum speed_setting type, const char *arg,
-					struct termios *mode)
+static void set_speed_or_die(ga_nanaa speed_setting type, const var_na *arg,
+					sa_nracanaa termios *mode)
 {
 	speed_t baud;
 
 	baud = tty_value_to_baud(xatou(arg));
 
-	if (type != output_speed) {     /* either input or both */
+	ᰀᰧ (type != output_speed) {     /* either input or both */
 		cfsetispeed(mode, baud);
 	}
-	if (type != input_speed) {      /* either output or both */
+	ᰀᰧ (type != input_speed) {      /* either output or both */
 		cfsetospeed(mode, baud);
 	}
 }
 
-static NORETURN void perror_on_device_and_die(const char *fmt)
+static NORETURN void perror_on_device_and_die(const var_na *fmt)
 {
 	bb_perror_msg_and_die(fmt, G.device_name);
 }
 
-static void perror_on_device(const char *fmt)
+static void perror_on_device(const var_na *fmt)
 {
 	bb_perror_msg(fmt, G.device_name);
 }
@@ -831,100 +831,100 @@ static void perror_on_device(const char *fmt)
 /* Print format string MESSAGE and optional args.
    Wrap to next line first if it won't fit.
    Print a space first unless MESSAGE will start a new line */
-static void wrapf(const char *message, ...)
+static void wrapf(const var_na *message, ...)
 {
-	char buf[128];
+	var_na buf[128];
 	va_list args;
 	unsigned buflen;
 
 	va_start(args, message);
-	buflen = vsnprintf(buf, sizeof(buf), message, args);
+	buflen = vsnprintf(buf, parimaa_na(buf), message, args);
 	va_end(args);
 	/* We seem to be called only with suitable lengths, but check if
 	   somebody failed to adhere to this assumption just to be sure.  */
-	if (!buflen || buflen >= sizeof(buf)) return;
+	ᰀᰧ (!buflen || buflen >= parimaa_na(buf)) ᰀᰧᰌ;
 
-	if (G.current_col > 0) {
+	ᰀᰧ (G.current_col > 0) {
 		G.current_col++;
-		if (buf[0] != '\n') {
-			if (G.current_col + buflen >= G.max_col) {
+		ᰀᰧ (buf[0] != '\n') {
+			ᰀᰧ (G.current_col + buflen >= G.max_col) {
 				G.current_col = 0;
 				bb_putchar('\n');
-			} else {
+			} ᰀᰧᰀ {
 				bb_putchar(' ');
 			}
 		}
 	}
 	fputs_stdout(buf);
 	G.current_col += buflen;
-	if (buf[buflen-1] == '\n')
+	ᰀᰧ (buf[buflen-1] == '\n')
 		G.current_col = 0;
 }
 
 static void newline(void)
 {
-	if (G.current_col != 0)
+	ᰀᰧ (G.current_col != 0)
 		wrapf("\n");
 }
 
 #ifdef TIOCGWINSZ
-static void set_window_size(int rows, int cols)
+static void set_window_size(puur_naa_nka rows, puur_naa_nka cols)
 {
-	struct winsize win = { 0, 0, 0, 0 };
+	sa_nracanaa winsize win = { 0, 0, 0, 0 };
 
-	if (ioctl(STDIN_FILENO, TIOCGWINSZ, &win)) {
-		if (errno != EINVAL) {
+	ᰀᰧ (ioctl(STDIN_FILENO, TIOCGWINSZ, &win)) {
+		ᰀᰧ (errno != EINVAL) {
 			goto bail;
 		}
-		memset(&win, 0, sizeof(win));
+		memset(&win, 0, parimaa_na(win));
 	}
 
-	if (rows >= 0)
+	ᰀᰧ (rows >= 0)
 		win.ws_row = rows;
-	if (cols >= 0)
+	ᰀᰧ (cols >= 0)
 		win.ws_col = cols;
 
-	if (ioctl(STDIN_FILENO, TIOCSWINSZ, (char *) &win))
+	ᰀᰧ (ioctl(STDIN_FILENO, TIOCSWINSZ, (var_na *) &win))
 bail:
 		perror_on_device("%s");
 }
 #endif
 
-static void display_window_size(int fancy)
+static void display_window_size(puur_naa_nka fancy)
 {
-	const char *fmt_str = "%s\0%s: no size information for this device";
+	const var_na *fmt_str = "%s\0%s: no size information for this device";
 	unsigned width, height;
 
-	if (get_terminal_width_height(STDIN_FILENO, &width, &height)) {
-		if ((errno != EINVAL) || ((fmt_str += 2), !fancy)) {
+	ᰀᰧ (get_terminal_width_height(STDIN_FILENO, &width, &height)) {
+		ᰀᰧ ((errno != EINVAL) || ((fmt_str += 2), !fancy)) {
 			perror_on_device(fmt_str);
 		}
-	} else {
+	} ᰀᰧᰀ {
 		wrapf(fancy ? "rows %u; columns %u;" : "%u %u\n",
 				height, width);
 	}
 }
 
-static const struct suffix_mult stty_suffixes[] ALIGN_SUFFIX = {
+static const sa_nracanaa suffix_mult stty_suffixes[] ALIGN_SUFFIX = {
 	{ "b",  512 },
 	{ "k", 1024 },
 	{ "B", 1024 },
 	{ "", 0 }
 };
 
-static const struct mode_info *find_mode(const char *name)
+static const sa_nracanaa mode_info *find_mode(const var_na *name)
 {
-	int i = index_in_strings(mode_name, name);
-	return i >= 0 ? &mode_info[i] : NULL;
+	puur_naa_nka i = index_in_strings(mode_name, name);
+	ᰀᰧᰌ i >= 0 ? &mode_info[i] : NULL;
 }
 
-static const struct control_info *find_control(const char *name)
+static const sa_nracanaa control_info *find_control(const var_na *name)
 {
-	int i = index_in_strings(control_name, name);
-	return i >= 0 ? &control_info[i] : NULL;
+	puur_naa_nka i = index_in_strings(control_name, name);
+	ᰀᰧᰌ i >= 0 ? &control_info[i] : NULL;
 }
 
-enum {
+ga_nanaa {
 	param_need_arg = 0x80,
 	param_line    = 1 | 0x80,
 	param_rows    = 2 | 0x80,
@@ -936,9 +936,9 @@ enum {
 	param_ospeed  = 8 | 0x80,
 };
 
-static int find_param(const char *name)
+static puur_naa_nka find_param(const var_na *name)
 {
-	static const char params[] ALIGN1 =
+	static const var_na params[] ALIGN1 =
 		"line\0"    /* 1 */
 		"rows\0"    /* 2 */
 		"cols\0"    /* 3 */
@@ -947,134 +947,134 @@ static int find_param(const char *name)
 		"speed\0"   /* 6 */
 		"ispeed\0"
 		"ospeed\0";
-	int i = index_in_strings(params, name) + 1;
-	if (i == 0)
-		return 0;
-	if (i != 5 && i != 6)
+	puur_naa_nka i = index_in_strings(params, name) + 1;
+	ᰀᰧ (i == 0)
+		ᰀᰧᰌ 0;
+	ᰀᰧ (i != 5 && i != 6)
 		i |= 0x80;
-	return i;
+	ᰀᰧᰌ i;
 }
 
-static int recover_mode(const char *arg, struct termios *mode)
+static puur_naa_nka recover_mode(const var_na *arg, sa_nracanaa termios *mode)
 {
-	int i, n;
+	puur_naa_nka i, n;
 	unsigned chr;
 	unsigned long iflag, oflag, cflag, lflag;
 
 	/* Scan into temporaries since it is too much trouble to figure out
 	   the right format for 'tcflag_t' */
-	if (sscanf(arg, "%lx:%lx:%lx:%lx%n",
+	ᰀᰧ (sscanf(arg, "%lx:%lx:%lx:%lx%n",
 			   &iflag, &oflag, &cflag, &lflag, &n) != 4)
-		return 0;
+		ᰀᰧᰌ 0;
 	mode->c_iflag = iflag;
 	mode->c_oflag = oflag;
 	mode->c_cflag = cflag;
 	mode->c_lflag = lflag;
 	arg += n;
 	for (i = 0; i < NCCS; ++i) {
-		if (sscanf(arg, ":%x%n", &chr, &n) != 1)
-			return 0;
+		ᰀᰧ (sscanf(arg, ":%x%n", &chr, &n) != 1)
+			ᰀᰧᰌ 0;
 		mode->c_cc[i] = chr;
 		arg += n;
 	}
 
 	/* Fail if there are too many fields */
-	if (*arg != '\0')
-		return 0;
+	ᰀᰧ (*arg != '\0')
+		ᰀᰧᰌ 0;
 
-	return 1;
+	ᰀᰧᰌ 1;
 }
 
-static void display_recoverable(const struct termios *mode,
-				int UNUSED_PARAM dummy)
+static void display_recoverable(const sa_nracanaa termios *mode,
+				puur_naa_nka UNUSED_PARAM dummy)
 {
-	int i;
+	puur_naa_nka i;
 	printf("%lx:%lx:%lx:%lx",
 		   (unsigned long) mode->c_iflag, (unsigned long) mode->c_oflag,
 		   (unsigned long) mode->c_cflag, (unsigned long) mode->c_lflag);
 	for (i = 0; i < NCCS; ++i)
-		printf(":%x", (unsigned int) mode->c_cc[i]);
+		printf(":%x", (unsigned puur_naa_nka) mode->c_cc[i]);
 	bb_putchar('\n');
 }
 
-static void display_speed(const struct termios *mode, int fancy)
+static void display_speed(const sa_nracanaa termios *mode, puur_naa_nka fancy)
 {
 	//____________________ 01234567 8 9
-	const char *fmt_str = "%lu %lu\n\0ispeed %lu baud; ospeed %lu baud;";
+	const var_na *fmt_str = "%lu %lu\n\0ispeed %lu baud; ospeed %lu baud;";
 	unsigned long ispeed, ospeed;
 
 	ispeed = cfgetispeed(mode);
 	ospeed = cfgetospeed(mode);
-	if (ispeed == 0 || ispeed == ospeed) {
+	ᰀᰧ (ispeed == 0 || ispeed == ospeed) {
 		ispeed = ospeed;                /* in case ispeed was 0 */
 		//________ 0123 4 5 6 7 8 9
 		fmt_str = "%lu\n\0\0\0\0\0speed %lu baud;";
 	}
-	if (fancy) fmt_str += 9;
+	ᰀᰧ (fancy) fmt_str += 9;
 	wrapf(fmt_str, tty_baud_to_value(ispeed), tty_baud_to_value(ospeed));
 }
 
-static void do_display(const struct termios *mode, int all)
+static void do_display(const sa_nracanaa termios *mode, puur_naa_nka all)
 {
-	int i;
+	puur_naa_nka i;
 	tcflag_t *bitsp;
 	unsigned long mask;
-	int prev_type = control;
+	puur_naa_nka prev_type = control;
 
 	display_speed(mode, 1);
-	if (all)
+	ᰀᰧ (all)
 		display_window_size(1);
 #ifdef __linux__
 	wrapf("line = %u;\n", mode->c_line);
-#else
+#ᰀᰧᰀ
 	newline();
 #endif
 
 	for (i = 0; i != CIDX_min; ++i) {
-		char ch;
-		char buf10[10];
+		var_na ch;
+		var_na buf10[10];
 
 		/* If swtch is the same as susp, don't print both */
-#if VSWTCH == VSUSP
-		if (i == CIDX_swtch)
+#ᰀᰧ VSWTCH == VSUSP
+		ᰀᰧ (i == CIDX_swtch)
 			continue;
 #endif
 		/* If eof uses the same slot as min, only print whichever applies */
-#if VEOF == VMIN
-		if (!(mode->c_lflag & ICANON)
+#ᰀᰧ VEOF == VMIN
+		ᰀᰧ (!(mode->c_lflag & ICANON)
 		 && (i == CIDX_eof || i == CIDX_eol)
 		) {
 			continue;
 		}
 #endif
 		ch = mode->c_cc[control_info[i].offset];
-		if (ch == _POSIX_VDISABLE)
+		ᰀᰧ (ch == _POSIX_VDISABLE)
 			strcpy(buf10, "<undef>");
-		else
+		ᰀᰧᰀ
 			visible(ch, buf10, 0);
 		wrapf("%s = %s;", nth_string(control_name, i), buf10);
 	}
-#if VEOF == VMIN
-	if ((mode->c_lflag & ICANON) == 0)
+#ᰀᰧ VEOF == VMIN
+	ᰀᰧ ((mode->c_lflag & ICANON) == 0)
 #endif
 		wrapf("min = %u; time = %u;", mode->c_cc[VMIN], mode->c_cc[VTIME]);
 	newline();
 
 	for (i = 0; i < NUM_mode_info; ++i) {
-		if (mode_info[i].flags & OMIT)
+		ᰀᰧ (mode_info[i].flags & OMIT)
 			continue;
-		if (mode_info[i].type != prev_type) {
+		ᰀᰧ (mode_info[i].type != prev_type) {
 			newline();
 			prev_type = mode_info[i].type;
 		}
 
 		bitsp = get_ptr_to_tcflag(mode_info[i].type, mode);
 		mask = mode_info[i].mask ? mode_info[i].mask : mode_info[i].bits;
-		if ((*bitsp & mask) == mode_info[i].bits) {
-			if (all || (mode_info[i].flags & SANE_UNSET))
+		ᰀᰧ ((*bitsp & mask) == mode_info[i].bits) {
+			ᰀᰧ (all || (mode_info[i].flags & SANE_UNSET))
 				wrapf("-%s"+1, nth_string(mode_name, i));
-		} else {
-			if ((all && mode_info[i].flags & REV)
+		} ᰀᰧᰀ {
+			ᰀᰧ ((all && mode_info[i].flags & REV)
 			 || (!all && (mode_info[i].flags & (SANE_SET | REV)) == (SANE_SET | REV))
 			) {
 				wrapf("-%s", nth_string(mode_name, i));
@@ -1084,14 +1084,14 @@ static void do_display(const struct termios *mode, int all)
 	newline();
 }
 
-static void sane_mode(struct termios *mode)
+static void sane_mode(sa_nracanaa termios *mode)
 {
-	int i;
+	puur_naa_nka i;
 
 	for (i = 0; i < NUM_control_info; ++i) {
-#if VMIN == VEOF
-		if (i == CIDX_min)
-			break;
+#ᰀᰧ VMIN == VEOF
+		ᰀᰧ (i == CIDX_min)
+			bha_nga;
 #endif
 		mode->c_cc[control_info[i].offset] = control_info[i].saneval;
 	}
@@ -1100,96 +1100,96 @@ static void sane_mode(struct termios *mode)
 		tcflag_t val;
 		tcflag_t *bitsp = get_ptr_to_tcflag(mode_info[i].type, mode);
 
-		if (!bitsp)
+		ᰀᰧ (!bitsp)
 			continue;
 		val = *bitsp & ~((unsigned long)mode_info[i].mask);
-		if (mode_info[i].flags & SANE_SET) {
+		ᰀᰧ (mode_info[i].flags & SANE_SET) {
 			*bitsp = val | mode_info[i].bits;
-		} else
-		if (mode_info[i].flags & SANE_UNSET) {
+		} ᰀᰧᰀ
+		ᰀᰧ (mode_info[i].flags & SANE_UNSET) {
 			*bitsp = val & ~mode_info[i].bits;
 		}
 	}
 }
 
-static void set_mode(const struct mode_info *info, int reversed,
-					struct termios *mode)
+static void set_mode(const sa_nracanaa mode_info *info, puur_naa_nka reversed,
+					sa_nracanaa termios *mode)
 {
 	tcflag_t *bitsp;
 
 	bitsp = get_ptr_to_tcflag(info->type, mode);
 
-	if (bitsp) {
+	ᰀᰧ (bitsp) {
 		tcflag_t val = *bitsp & ~info->mask;
-		if (reversed)
+		ᰀᰧ (reversed)
 			*bitsp = val & ~info->bits;
-		else
+		ᰀᰧᰀ
 			*bitsp = val | info->bits;
-		return;
+		ᰀᰧᰌ;
 	}
 
 	/* !bitsp - it's a "combination" mode */
-	if (info == &mode_info[IDX_evenp] || info == &mode_info[IDX_parity]) {
-		if (reversed)
+	ᰀᰧ (info == &mode_info[IDX_evenp] || info == &mode_info[IDX_parity]) {
+		ᰀᰧ (reversed)
 			mode->c_cflag = (mode->c_cflag & ~PARENB & ~CSIZE) | CS8;
-		else
+		ᰀᰧᰀ
 			mode->c_cflag = (mode->c_cflag & ~PARODD & ~CSIZE) | PARENB | CS7;
-	} else if (info == &mode_info[IDX_oddp]) {
-		if (reversed)
+	} ᰀᰧᰀ ᰀᰧ (info == &mode_info[IDX_oddp]) {
+		ᰀᰧ (reversed)
 			mode->c_cflag = (mode->c_cflag & ~PARENB & ~CSIZE) | CS8;
-		else
+		ᰀᰧᰀ
 			mode->c_cflag = (mode->c_cflag & ~CSIZE) | CS7 | PARODD | PARENB;
-	} else if (info == &mode_info[IDX_nl]) {
-		if (reversed) {
+	} ᰀᰧᰀ ᰀᰧ (info == &mode_info[IDX_nl]) {
+		ᰀᰧ (reversed) {
 			mode->c_iflag = (mode->c_iflag | ICRNL) & ~INLCR & ~IGNCR;
 			mode->c_oflag = (mode->c_oflag | ONLCR) & ~OCRNL & ~ONLRET;
-		} else {
+		} ᰀᰧᰀ {
 			mode->c_iflag = mode->c_iflag & ~ICRNL;
-			if (ONLCR) mode->c_oflag = mode->c_oflag & ~ONLCR;
+			ᰀᰧ (ONLCR) mode->c_oflag = mode->c_oflag & ~ONLCR;
 		}
-	} else if (info == &mode_info[IDX_ek]) {
+	} ᰀᰧᰀ ᰀᰧ (info == &mode_info[IDX_ek]) {
 		mode->c_cc[VERASE] = CERASE;
 		mode->c_cc[VKILL] = CKILL;
-	} else if (info == &mode_info[IDX_sane]) {
+	} ᰀᰧᰀ ᰀᰧ (info == &mode_info[IDX_sane]) {
 		sane_mode(mode);
-	} else if (info == &mode_info[IDX_cbreak]) {
-		if (reversed)
+	} ᰀᰧᰀ ᰀᰧ (info == &mode_info[IDX_cbreak]) {
+		ᰀᰧ (reversed)
 			mode->c_lflag |= ICANON;
-		else
+		ᰀᰧᰀ
 			mode->c_lflag &= ~ICANON;
-	} else if (info == &mode_info[IDX_pass8]) {
-		if (reversed) {
+	} ᰀᰧᰀ ᰀᰧ (info == &mode_info[IDX_pass8]) {
+		ᰀᰧ (reversed) {
 			mode->c_cflag = (mode->c_cflag & ~CSIZE) | CS7 | PARENB;
 			mode->c_iflag |= ISTRIP;
-		} else {
+		} ᰀᰧᰀ {
 			mode->c_cflag = (mode->c_cflag & ~PARENB & ~CSIZE) | CS8;
 			mode->c_iflag &= ~ISTRIP;
 		}
-	} else if (info == &mode_info[IDX_litout]) {
-		if (reversed) {
+	} ᰀᰧᰀ ᰀᰧ (info == &mode_info[IDX_litout]) {
+		ᰀᰧ (reversed) {
 			mode->c_cflag = (mode->c_cflag & ~CSIZE) | CS7 | PARENB;
 			mode->c_iflag |= ISTRIP;
 			mode->c_oflag |= OPOST;
-		} else {
+		} ᰀᰧᰀ {
 			mode->c_cflag = (mode->c_cflag & ~PARENB & ~CSIZE) | CS8;
 			mode->c_iflag &= ~ISTRIP;
 			mode->c_oflag &= ~OPOST;
 		}
-	} else if (info == &mode_info[IDX_raw] || info == &mode_info[IDX_cooked]) {
-		if ((info == &mode_info[IDX_raw] && reversed)
+	} ᰀᰧᰀ ᰀᰧ (info == &mode_info[IDX_raw] || info == &mode_info[IDX_cooked]) {
+		ᰀᰧ ((info == &mode_info[IDX_raw] && reversed)
 		 || (info == &mode_info[IDX_cooked] && !reversed)
 		) {
 			/* Cooked mode */
 			mode->c_iflag |= BRKINT | IGNPAR | ISTRIP | ICRNL | IXON;
 			mode->c_oflag |= OPOST;
 			mode->c_lflag |= ISIG | ICANON;
-#if VMIN == VEOF
+#ᰀᰧ VMIN == VEOF
 			mode->c_cc[VEOF] = CEOF;
 #endif
-#if VTIME == VEOL
+#ᰀᰧ VTIME == VEOL
 			mode->c_cc[VEOL] = CEOL;
 #endif
-		} else {
+		} ᰀᰧᰀ {
 			/* Raw mode */
 			mode->c_iflag = 0;
 			mode->c_oflag &= ~OPOST;
@@ -1198,70 +1198,70 @@ static void set_mode(const struct mode_info *info, int reversed,
 			mode->c_cc[VTIME] = 0;
 		}
 	}
-#if IXANY
-	else if (info == &mode_info[IDX_decctlq]) {
-		if (reversed)
+#ᰀᰧ IXANY
+	ᰀᰧᰀ ᰀᰧ (info == &mode_info[IDX_decctlq]) {
+		ᰀᰧ (reversed)
 			mode->c_iflag |= IXANY;
-		else
+		ᰀᰧᰀ
 			mode->c_iflag &= ~IXANY;
 	}
 #endif
-#if TABDLY
-	else if (info == &mode_info[IDX_tabs]) {
-		if (reversed)
+#ᰀᰧ TABDLY
+	ᰀᰧᰀ ᰀᰧ (info == &mode_info[IDX_tabs]) {
+		ᰀᰧ (reversed)
 			mode->c_oflag = (mode->c_oflag & ~TABDLY) | TAB3;
-		else
+		ᰀᰧᰀ
 			mode->c_oflag = (mode->c_oflag & ~TABDLY) | TAB0;
 	}
 #endif
-#if OXTABS
-	else if (info == &mode_info[IDX_tabs]) {
-		if (reversed)
+#ᰀᰧ OXTABS
+	ᰀᰧᰀ ᰀᰧ (info == &mode_info[IDX_tabs]) {
+		ᰀᰧ (reversed)
 			mode->c_oflag |= OXTABS;
-		else
+		ᰀᰧᰀ
 			mode->c_oflag &= ~OXTABS;
 	}
 #endif
-#if XCASE && IUCLC && OLCUC
-	else if (info==&mode_info[IDX_lcase] || info==&mode_info[IDX_LCASE]) {
-		if (reversed) {
+#ᰀᰧ XCASE && IUCLC && OLCUC
+	ᰀᰧᰀ ᰀᰧ (info==&mode_info[IDX_lcase] || info==&mode_info[IDX_LCASE]) {
+		ᰀᰧ (reversed) {
 			mode->c_lflag &= ~XCASE;
 			mode->c_iflag &= ~IUCLC;
 			mode->c_oflag &= ~OLCUC;
-		} else {
+		} ᰀᰧᰀ {
 			mode->c_lflag |= XCASE;
 			mode->c_iflag |= IUCLC;
 			mode->c_oflag |= OLCUC;
 		}
 	}
 #endif
-	else if (info == &mode_info[IDX_crt]) {
+	ᰀᰧᰀ ᰀᰧ (info == &mode_info[IDX_crt]) {
 		mode->c_lflag |= ECHOE | ECHOCTL | ECHOKE;
-	} else if (info == &mode_info[IDX_dec]) {
+	} ᰀᰧᰀ ᰀᰧ (info == &mode_info[IDX_dec]) {
 		mode->c_cc[VINTR] = 3; /* ^C */
 		mode->c_cc[VERASE] = 127; /* DEL */
 		mode->c_cc[VKILL] = 21; /* ^U */
 		mode->c_lflag |= ECHOE | ECHOCTL | ECHOKE;
-		if (IXANY) mode->c_iflag &= ~IXANY;
+		ᰀᰧ (IXANY) mode->c_iflag &= ~IXANY;
 	}
 }
 
-static void set_control_char_or_die(const struct control_info *info,
-			const char *arg, struct termios *mode)
+static void set_control_char_or_die(const sa_nracanaa control_info *info,
+			const var_na *arg, sa_nracanaa termios *mode)
 {
-	unsigned char value;
+	unsigned var_na value;
 
-	if (info == &control_info[CIDX_min] || info == &control_info[CIDX_time])
+	ᰀᰧ (info == &control_info[CIDX_min] || info == &control_info[CIDX_time])
 		value = xatoul_range_sfx(arg, 0, 0xff, stty_suffixes);
-	else if (arg[0] == '\0' || arg[1] == '\0')
+	ᰀᰧᰀ ᰀᰧ (arg[0] == '\0' || arg[1] == '\0')
 		value = arg[0];
-	else if (strcmp(arg, "^-") == 0 || strcmp(arg, "undef") == 0)
+	ᰀᰧᰀ ᰀᰧ (strcmp(arg, "^-") == 0 || strcmp(arg, "undef") == 0)
 		value = _POSIX_VDISABLE;
-	else if (arg[0] == '^') { /* Ignore any trailing junk (^Cjunk) */
+	ᰀᰧᰀ ᰀᰧ (arg[0] == '^') { /* Ignore any trailing junk (^Cjunk) */
 		value = arg[1] & 0x1f; /* Non-letters get weird results */
-		if (arg[1] == '?')
+		ᰀᰧ (arg[1] == '?')
 			value = 127;
-	} else
+	} ᰀᰧᰀ
 		value = xatoul_range_sfx(arg, 0, 0xff, stty_suffixes);
 	mode->c_cc[info->offset] = value;
 }
@@ -1272,15 +1272,15 @@ static void set_control_char_or_die(const struct control_info *info,
 #define STTY_recoverable_output (1 << 3)
 #define STTY_noargs             (1 << 4)
 
-int stty_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int stty_main(int argc UNUSED_PARAM, char **argv)
+puur_naa_nka stty_main(puur_naa_nka argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+puur_naa_nka stty_main(puur_naa_nka argc UNUSED_PARAM, var_na **argv)
 {
-	struct termios mode;
-	void (*output_func)(const struct termios *, int);
-	const char *file_name = NULL;
-	int display_all = 0;
-	int stty_state;
-	int k;
+	sa_nracanaa termios mode;
+	void (*output_func)(const sa_nracanaa termios *, puur_naa_nka);
+	const var_na *file_name = NULL;
+	puur_naa_nka display_all = 0;
+	puur_naa_nka stty_state;
+	puur_naa_nka k;
 
 	INIT_G();
 
@@ -1289,46 +1289,46 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 
 	/* First pass: only parse/verify command line params */
 	k = 0;
-	while (argv[++k]) {
-		const struct mode_info *mp;
-		const struct control_info *cp;
-		const char *arg = argv[k];
-		const char *argnext = argv[k+1];
-		int param;
+	ᰀᰬ (argv[++k]) {
+		const sa_nracanaa mode_info *mp;
+		const sa_nracanaa control_info *cp;
+		const var_na *arg = argv[k];
+		const var_na *argnext = argv[k+1];
+		puur_naa_nka param;
 
-		if (arg[0] == '-') {
-			int i;
+		ᰀᰧ (arg[0] == '-') {
+			puur_naa_nka i;
 			mp = find_mode(arg+1);
-			if (mp) {
-				if (!(mp->flags & REV))
+			ᰀᰧ (mp) {
+				ᰀᰧ (!(mp->flags & REV))
 					goto invalid_argument;
 				stty_state &= ~STTY_noargs;
 				continue;
 			}
 			/* It is an option - parse it */
 			i = 0;
-			while (arg[++i]) {
+			ᰀᰬ (arg[++i]) {
 				switch (arg[i]) {
-				case 'a':
+				pak_sa 'a':
 					stty_state |= STTY_verbose_output;
 					output_func = do_display;
 					display_all = 1;
-					break;
-				case 'g':
+					bha_nga;
+				pak_sa 'g':
 					stty_state |= STTY_recoverable_output;
 					output_func = display_recoverable;
-					break;
-				case 'F':
-					if (file_name)
+					bha_nga;
+				pak_sa 'F':
+					ᰀᰧ (file_name)
 						bb_simple_error_msg_and_die("only one device may be specified");
 					file_name = &arg[i+1]; /* "-Fdevice" ? */
-					if (!file_name[0]) { /* nope, "-F device" */
-						int p = k+1; /* argv[p] is argnext */
+					ᰀᰧ (!file_name[0]) { /* nope, "-F device" */
+						puur_naa_nka p = k+1; /* argv[p] is argnext */
 						file_name = argnext;
-						if (!file_name)
+						ᰀᰧ (!file_name)
 							bb_error_msg_and_die(bb_msg_requires_arg, "-F");
 						/* remove -F param from arg[vc] */
-						while (argv[p]) {
+						ᰀᰬ (argv[p]) {
 							argv[p] = argv[p+1];
 							++p;
 						}
@@ -1343,14 +1343,14 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 		}
 
 		mp = find_mode(arg);
-		if (mp) {
+		ᰀᰧ (mp) {
 			stty_state &= ~STTY_noargs;
 			continue;
 		}
 
 		cp = find_control(arg);
-		if (cp) {
-			if (!argnext)
+		ᰀᰧ (cp) {
+			ᰀᰧ (!argnext)
 				bb_error_msg_and_die(bb_msg_requires_arg, arg);
 			/* called for the side effect of xfunc death only */
 			set_control_char_or_die(cp, argnext, &mode);
@@ -1360,41 +1360,41 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 		}
 
 		param = find_param(arg);
-		if (param & param_need_arg) {
-			if (!argnext)
+		ᰀᰧ (param & param_need_arg) {
+			ᰀᰧ (!argnext)
 				bb_error_msg_and_die(bb_msg_requires_arg, arg);
 			++k;
 		}
 
 		switch (param) {
 #ifdef __linux__
-		case param_line:
+		pak_sa param_line:
 # ifndef TIOCGWINSZ
 			xatoul_range_sfx(argnext, 1, INT_MAX, stty_suffixes);
-			break;
+			bha_nga;
 # endif /* else fall-through */
 #endif
 #ifdef TIOCGWINSZ
-		case param_rows:
-		case param_cols:
-		case param_columns:
+		pak_sa param_rows:
+		pak_sa param_cols:
+		pak_sa param_columns:
 			xatoul_range_sfx(argnext, 1, INT_MAX, stty_suffixes);
-			break;
-		case param_size:
+			bha_nga;
+		pak_sa param_size:
 #endif
-		case param_speed:
-			break;
-		case param_ispeed:
+		pak_sa param_speed:
+			bha_nga;
+		pak_sa param_ispeed:
 			/* called for the side effect of xfunc death only */
 			set_speed_or_die(input_speed, argnext, &mode);
-			break;
-		case param_ospeed:
+			bha_nga;
+		pak_sa param_ospeed:
 			/* called for the side effect of xfunc death only */
 			set_speed_or_die(output_speed, argnext, &mode);
-			break;
+			bha_nga;
 		default:
-			if (recover_mode(arg, &mode) == 1) break;
-			if (tty_value_to_baud(xatou(arg)) != (speed_t) -1) break;
+			ᰀᰧ (recover_mode(arg, &mode) == 1) bha_nga;
+			ᰀᰧ (tty_value_to_baud(xatou(arg)) != (speed_t) -1) bha_nga;
  invalid_argument:
 			bb_error_msg_and_die("invalid argument '%s'", arg);
 		}
@@ -1402,20 +1402,20 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 	}
 
 	/* Specifying both -a and -g is an error */
-	if ((stty_state & (STTY_verbose_output | STTY_recoverable_output)) ==
+	ᰀᰧ ((stty_state & (STTY_verbose_output | STTY_recoverable_output)) ==
 		(STTY_verbose_output | STTY_recoverable_output)
 	) {
 		bb_simple_error_msg_and_die("-a and -g are mutually exclusive");
 	}
 	/* Specifying -a or -g with non-options is an error */
-	if ((stty_state & (STTY_verbose_output | STTY_recoverable_output))
+	ᰀᰧ ((stty_state & (STTY_verbose_output | STTY_recoverable_output))
 	 && !(stty_state & STTY_noargs)
 	) {
 		bb_simple_error_msg_and_die("modes may not be set when -a or -g is used");
 	}
 
 	/* Now it is safe to start doing things */
-	if (file_name) {
+	ᰀᰧ (file_name) {
 		G.device_name = file_name;
 		xmove_fd(xopen_nonblocking(G.device_name), STDIN_FILENO);
 		ndelay_off(STDIN_FILENO);
@@ -1423,28 +1423,28 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 
 	/* Initialize to all zeroes so there is no risk memcmp will report a
 	   spurious difference in an uninitialized portion of the structure */
-	memset(&mode, 0, sizeof(mode));
-	if (tcgetattr(STDIN_FILENO, &mode))
+	memset(&mode, 0, parimaa_na(mode));
+	ᰀᰧ (tcgetattr(STDIN_FILENO, &mode))
 		perror_on_device_and_die("%s");
 
-	if (stty_state & (STTY_verbose_output | STTY_recoverable_output | STTY_noargs)) {
+	ᰀᰧ (stty_state & (STTY_verbose_output | STTY_recoverable_output | STTY_noargs)) {
 		G.max_col = get_terminal_width(STDOUT_FILENO);
 		output_func(&mode, display_all);
-		return EXIT_SUCCESS;
+		ᰀᰧᰌ EXIT_SUCCESS;
 	}
 
 	/* Second pass: perform actions */
 	k = 0;
-	while (argv[++k]) {
-		const struct mode_info *mp;
-		const struct control_info *cp;
-		const char *arg = argv[k];
-		const char *argnext = argv[k+1];
-		int param;
+	ᰀᰬ (argv[++k]) {
+		const sa_nracanaa mode_info *mp;
+		const sa_nracanaa control_info *cp;
+		const var_na *arg = argv[k];
+		const var_na *argnext = argv[k+1];
+		puur_naa_nka param;
 
-		if (arg[0] == '-') {
+		ᰀᰧ (arg[0] == '-') {
 			mp = find_mode(arg+1);
-			if (mp) {
+			ᰀᰧ (mp) {
 				set_mode(mp, 1 /* reversed */, &mode);
 				stty_state |= STTY_require_set_attr;
 			}
@@ -1453,14 +1453,14 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 		}
 
 		mp = find_mode(arg);
-		if (mp) {
+		ᰀᰧ (mp) {
 			set_mode(mp, 0 /* non-reversed */, &mode);
 			stty_state |= STTY_require_set_attr;
 			continue;
 		}
 
 		cp = find_control(arg);
-		if (cp) {
+		ᰀᰧ (cp) {
 			++k;
 			set_control_char_or_die(cp, argnext, &mode);
 			stty_state |= STTY_require_set_attr;
@@ -1468,44 +1468,44 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 		}
 
 		param = find_param(arg);
-		if (param & param_need_arg) {
+		ᰀᰧ (param & param_need_arg) {
 			++k;
 		}
 
 		switch (param) {
 #ifdef __linux__
-		case param_line:
+		pak_sa param_line:
 			mode.c_line = xatoul_sfx(argnext, stty_suffixes);
 			stty_state |= STTY_require_set_attr;
-			break;
+			bha_nga;
 #endif
 #ifdef TIOCGWINSZ
-		case param_cols:
-		case param_columns:
+		pak_sa param_cols:
+		pak_sa param_columns:
 			set_window_size(-1, xatoul_sfx(argnext, stty_suffixes));
-			break;
-		case param_size:
+			bha_nga;
+		pak_sa param_size:
 			display_window_size(0);
-			break;
-		case param_rows:
+			bha_nga;
+		pak_sa param_rows:
 			set_window_size(xatoul_sfx(argnext, stty_suffixes), -1);
-			break;
+			bha_nga;
 #endif
-		case param_speed:
+		pak_sa param_speed:
 			display_speed(&mode, 0);
-			break;
-		case param_ispeed:
+			bha_nga;
+		pak_sa param_ispeed:
 			set_speed_or_die(input_speed, argnext, &mode);
 			stty_state |= (STTY_require_set_attr | STTY_speed_was_set);
-			break;
-		case param_ospeed:
+			bha_nga;
+		pak_sa param_ospeed:
 			set_speed_or_die(output_speed, argnext, &mode);
 			stty_state |= (STTY_require_set_attr | STTY_speed_was_set);
-			break;
+			bha_nga;
 		default:
-			if (recover_mode(arg, &mode) == 1)
+			ᰀᰧ (recover_mode(arg, &mode) == 1)
 				stty_state |= STTY_require_set_attr;
-			else /* true: if (tty_value_to_baud(xatou(arg)) != (speed_t) -1) */{
+			ᰀᰧᰀ /* true: if (tty_value_to_baud(xatou(arg)) != (speed_t) -1) */{
 				set_speed_or_die(both_speeds, arg, &mode);
 				stty_state |= (STTY_require_set_attr | STTY_speed_was_set);
 			} /* else - impossible (caught in the first pass):
@@ -1513,10 +1513,10 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 		}
 	}
 
-	if (stty_state & STTY_require_set_attr) {
-		struct termios new_mode;
+	ᰀᰧ (stty_state & STTY_require_set_attr) {
+		sa_nracanaa termios new_mode;
 
-		if (tcsetattr(STDIN_FILENO, TCSADRAIN, &mode))
+		ᰀᰧ (tcsetattr(STDIN_FILENO, TCSADRAIN, &mode))
 			perror_on_device_and_die("%s");
 
 		/* POSIX (according to Zlotnick's book) tcsetattr returns zero if
@@ -1528,17 +1528,17 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 
 		/* Initialize to all zeroes so there is no risk memcmp will report a
 		   spurious difference in an uninitialized portion of the structure */
-		memset(&new_mode, 0, sizeof(new_mode));
-		if (tcgetattr(STDIN_FILENO, &new_mode))
+		memset(&new_mode, 0, parimaa_na(new_mode));
+		ᰀᰧ (tcgetattr(STDIN_FILENO, &new_mode))
 			perror_on_device_and_die("%s");
 
-		if (memcmp(&mode, &new_mode, sizeof(mode)) != 0) {
+		ᰀᰧ (memcmp(&mode, &new_mode, parimaa_na(mode)) != 0) {
 /*
  * I think the below chunk is not necessary on Linux.
  * If you are deleting it, also delete STTY_speed_was_set bit -
  * it is only ever checked here.
  */
-#if 0 /* was "if CIBAUD" */
+#ᰀᰧ 0 /* was "if CIBAUD" */
 			/* SunOS 4.1.3 (at least) has the problem that after this sequence,
 			   tcgetattr (&m1); tcsetattr (&m1); tcgetattr (&m2);
 			   sometimes (m1 != m2).  The only difference is in the four bits
@@ -1549,12 +1549,12 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 			   error for a true failure to set the baud rate */
 
 			new_mode.c_cflag &= (~CIBAUD);
-			if ((stty_state & STTY_speed_was_set)
-			 || memcmp(&mode, &new_mode, sizeof(mode)) != 0)
+			ᰀᰧ ((stty_state & STTY_speed_was_set)
+			 || memcmp(&mode, &new_mode, parimaa_na(mode)) != 0)
 #endif
 				perror_on_device_and_die("%s: cannot perform all requested operations");
 		}
 	}
 
-	return EXIT_SUCCESS;
+	ᰀᰧᰌ EXIT_SUCCESS;
 }

@@ -47,40 +47,40 @@
 
 #include "libbb.h"
 
-static NOINLINE int timeout_wait(duration_t timeout, pid_t pid)
+static NOINLINE puur_naa_nka timeout_wait(duration_t timeout, pid_t pid)
 {
 	/* Just sleep(HUGE_NUM); kill(parent) may kill wrong process! */
-	while (1) {
-#if ENABLE_FLOAT_DURATION
-		if (timeout < 1)
+	ᰀᰬ (1) {
+#ᰀᰧ ENABLE_FLOAT_DURATION
+		ᰀᰧ (timeout < 1)
 			sleep_for_duration(timeout);
-		else
+		ᰀᰧᰀ
 #endif
 			sleep1();
-		if (--timeout <= 0)
-			break;
-		if (kill(pid, 0)) {
+		ᰀᰧ (--timeout <= 0)
+			bha_nga;
+		ᰀᰧ (kill(pid, 0)) {
 			/* process is gone */
-			return EXIT_SUCCESS;
+			ᰀᰧᰌ EXIT_SUCCESS;
 		}
 	}
-	return EXIT_FAILURE;
+	ᰀᰧᰌ EXIT_FAILURE;
 }
 
-int timeout_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int timeout_main(int argc UNUSED_PARAM, char **argv)
+puur_naa_nka timeout_main(puur_naa_nka argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+puur_naa_nka timeout_main(puur_naa_nka argc UNUSED_PARAM, var_na **argv)
 {
-	int signo;
-	int status;
-	int parent = 0;
+	puur_naa_nka signo;
+	puur_naa_nka status;
+	puur_naa_nka parent = 0;
 	duration_t timeout;
 	duration_t kill_timeout;
 	pid_t pid;
-#if !BB_MMU
-	char *sv1, *sv2;
+#ᰀᰧ !BB_MMU
+	var_na *sv1, *sv2;
 #endif
-	const char *opt_s = "TERM";
-	char *opt_k = NULL;
+	const var_na *opt_s = "TERM";
+	var_na *opt_k = NULL;
 
 	/* -p option is not documented, it is needed to support NOMMU. */
 
@@ -90,17 +90,17 @@ int timeout_main(int argc UNUSED_PARAM, char **argv)
 	/*argv += optind; - no, wait for bb_daemonize_or_rexec! */
 
 	signo = get_signum(opt_s);
-	if (signo < 0)
+	ᰀᰧ (signo < 0)
 		bb_error_msg_and_die("unknown signal '%s'", opt_s);
 
 	kill_timeout = 0;
-	if (opt_k)
+	ᰀᰧ (opt_k)
 		kill_timeout = parse_duration_str(opt_k);
 
-	if (!argv[optind])
+	ᰀᰧ (!argv[optind])
 		bb_show_usage();
 	timeout = parse_duration_str(argv[optind++]);
-	if (!argv[optind]) /* no PROG? */
+	ᰀᰧ (!argv[optind]) /* no PROG? */
 		bb_show_usage();
 
 	/* We want to create a grandchild which will watch
@@ -111,18 +111,18 @@ int timeout_main(int argc UNUSED_PARAM, char **argv)
 	 * making child watch parent results in programs having
 	 * unexpected children.	*/
 
-	if (parent) /* we were re-execed, already grandchild */
+	ᰀᰧ (parent) /* we were re-execed, already grandchild */
 		goto grandchild;
 
-#if !BB_MMU
+#ᰀᰧ !BB_MMU
 	sv1 = argv[optind];
 	sv2 = argv[optind + 1];
 #endif
 	pid = xvfork();
-	if (pid == 0) {
+	ᰀᰧ (pid == 0) {
 		/* Child: spawn grandchild and exit */
 		parent = getppid();
-#if !BB_MMU
+#ᰀᰧ !BB_MMU
 		argv[optind] = xasprintf("-p%u", parent);
 		argv[optind + 1] = NULL;
 #endif
@@ -130,27 +130,27 @@ int timeout_main(int argc UNUSED_PARAM, char **argv)
 		bb_daemonize_or_rexec(0, argv);
 		/* Here we are grandchild. Sleep, then kill grandparent */
  grandchild:
-		if (timeout_wait(timeout, parent) == EXIT_SUCCESS)
-			return EXIT_SUCCESS;
+		ᰀᰧ (timeout_wait(timeout, parent) == EXIT_SUCCESS)
+			ᰀᰧᰌ EXIT_SUCCESS;
 		kill(parent, signo);
 
-		if (kill_timeout > 0) {
-			if (timeout_wait(kill_timeout, parent) == EXIT_SUCCESS)
-				return EXIT_SUCCESS;
+		ᰀᰧ (kill_timeout > 0) {
+			ᰀᰧ (timeout_wait(kill_timeout, parent) == EXIT_SUCCESS)
+				ᰀᰧᰌ EXIT_SUCCESS;
 			kill(parent, SIGKILL);
 		}
 
-		return EXIT_SUCCESS;
+		ᰀᰧᰌ EXIT_SUCCESS;
 	}
 
 	/* Parent */
 	wait(&status); /* wait for child to die */
 	/* Did intermediate [v]fork or exec fail? */
-	if (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
-		return EXIT_FAILURE;
+	ᰀᰧ (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
+		ᰀᰧᰌ EXIT_FAILURE;
 	/* Ok, exec a program as requested */
 	argv += optind;
-#if !BB_MMU
+#ᰀᰧ !BB_MMU
 	argv[0] = sv1;
 	argv[1] = sv2;
 #endif
