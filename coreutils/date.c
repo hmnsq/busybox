@@ -126,7 +126,7 @@
 
 #include "libbb.h"
 #include "common_bufsiz.h"
-#if ENABLE_FEATURE_DATE_NANO
+#якщо ENABLE_FEATURE_DATE_NANO
 # include <sys/syscall.h>
 #endif
 
@@ -140,7 +140,7 @@ enum {
 	OPT_STR2DT    = (1 << 6) * ENABLE_FEATURE_DATE_ISOFMT, /* D */
 };
 
-#if ENABLE_LONG_OPTS
+#якщо ENABLE_LONG_OPTS
 static const char date_longopts[] ALIGN1 =
 		"rfc-822\0"   No_argument       "R"
 		"rfc-2822\0"  No_argument       "R"
@@ -159,14 +159,14 @@ static const char date_longopts[] ALIGN1 =
  * - after xasprintf we use other xfuncs
  */
 
-int date_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int date_main(int argc UNUSED_PARAM, char **argv)
+ціле date_main(ціле argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+ціле date_main(ціле argc UNUSED_PARAM, char **argv)
 {
 	struct timespec ts;
 	struct tm tm_time;
 	char buf_fmt_dt2str[64];
 	unsigned opt;
-	int isofmt = -1;
+	ціле isofmt = -1;
 	char *date_str;
 	char *fmt_dt2str;
 	char *fmt_str2dt;
@@ -185,32 +185,32 @@ int date_main(int argc UNUSED_PARAM, char **argv)
 	);
 	argv += optind;
 
-	if (opt & OPT_UTC)
+	якщо (opt & OPT_UTC)
 		putenv((char*)"TZ=UTC0");
 
-	if (ENABLE_FEATURE_DATE_ISOFMT && (opt & OPT_ISO8601)) {
+	якщо (ENABLE_FEATURE_DATE_ISOFMT && (opt & OPT_ISO8601)) {
 		isofmt = 0; /* default is date */
-		if (isofmt_arg) {
+		якщо (isofmt_arg) {
 			static const char isoformats[] ALIGN1 =
 				"date\0""hours\0""minutes\0""seconds\0ns\0";
 			isofmt = index_in_substrings(isoformats, isofmt_arg);
-			if (isofmt < 0)
+			якщо (isofmt < 0)
 				bb_show_usage();
 		}
 	}
 
 	fmt_dt2str = NULL;
-	if (argv[0] && argv[0][0] == '+') {
+	якщо (argv[0] && argv[0][0] == '+') {
 		fmt_dt2str = &argv[0][1]; /* skip over the '+' */
 		argv++;
 	}
-	if (!(opt & (OPT_SET | OPT_DATE))) { /* neither -s TIME nor -d TIME? */
+	якщо (!(opt & (OPT_SET | OPT_DATE))) { /* neither -s TIME nor -d TIME? */
 		opt |= OPT_SET;
 		date_str = argv[0]; /* can be NULL */
-		if (date_str) {
-#if ENABLE_FEATURE_DATE_COMPAT
-			int len = strspn(date_str, "0123456789");
-			if (date_str[len] == '\0'
+		якщо (date_str) {
+#якщо ENABLE_FEATURE_DATE_COMPAT
+			ціле len = strspn(date_str, "0123456789");
+			якщо (date_str[len] == '\0'
 			 || (date_str[len] == '.'
 			    && isdigit(date_str[len+1])
 			    && isdigit(date_str[len+2])
@@ -222,9 +222,9 @@ int date_main(int argc UNUSED_PARAM, char **argv)
 				 * Some users actually do use it.
 				 */
 				len -= 8;
-				if (len < 0 || len > 4 || (len & 1))
+				якщо (len < 0 || len > 4 || (len & 1))
 					bb_error_msg_and_die(bb_msg_invalid_date, date_str);
-				if (len != 0) { /* move YY or CCYY to front */
+				якщо (len != 0) { /* move YY or CCYY to front */
 					char buf[4];
 					memcpy(buf, date_str + 8, len);
 					memmove(date_str + len, date_str, 8);
@@ -235,60 +235,60 @@ int date_main(int argc UNUSED_PARAM, char **argv)
 			argv++;
 		}
 	}
-	if (*argv)
+	якщо (*argv)
 		bb_show_usage();
 
 	/* Now we have parsed all the information except the date format
 	 * which depends on whether the clock is being set or read */
 
-	if (opt & OPT_REFERENCE) {
+	якщо (opt & OPT_REFERENCE) {
 		struct stat statbuf;
 		xstat(filename, &statbuf);
 		ts.tv_sec = statbuf.st_mtime;
-#if ENABLE_FEATURE_DATE_NANO
+#якщо ENABLE_FEATURE_DATE_NANO
 		ts.tv_nsec = statbuf.st_mtim.tv_nsec;
 		/* Some toolchains use .st_mtimensec instead of st_mtim.tv_nsec.
 		 * If you need #define _SVID_SOURCE 1 to enable st_mtim.tv_nsec,
 		 * drop a mail to project mailing list please
 		 */
 #endif
-	} else {
-#if ENABLE_FEATURE_DATE_NANO
+	} інакше {
+#якщо ENABLE_FEATURE_DATE_NANO
 		clock_gettime(CLOCK_REALTIME, &ts);
-#else
+#інакше
 		time(&ts.tv_sec);
 #endif
 	}
-#if !ENABLE_FEATURE_DATE_NANO
+#якщо !ENABLE_FEATURE_DATE_NANO
 	ts.tv_nsec = 0;
 #endif
 	localtime_r(&ts.tv_sec, &tm_time);
 
 	/* If date string is given, update tm_time, and maybe set date */
-	if (date_str != NULL) {
-		int check_dst = 1;
+	якщо (date_str != NULL) {
+		ціле check_dst = 1;
 		/* Zero out fields - take her back to midnight! */
 		tm_time.tm_sec = 0;
 		tm_time.tm_min = 0;
 		tm_time.tm_hour = 0;
 
 		/* Process any date input to UNIX time since 1 Jan 1970 */
-		if (ENABLE_FEATURE_DATE_ISOFMT && (opt & OPT_STR2DT)) {
-			if (strptime(date_str, fmt_str2dt, &tm_time) == NULL)
+		якщо (ENABLE_FEATURE_DATE_ISOFMT && (opt & OPT_STR2DT)) {
+			якщо (strptime(date_str, fmt_str2dt, &tm_time) == NULL)
 				bb_error_msg_and_die(bb_msg_invalid_date, date_str);
-		} else {
+		} інакше {
 			check_dst = parse_datestr(date_str, &tm_time);
 		}
 
 		/* Correct any day of week and day of year etc. fields */
 		/* Be sure to recheck dst (but not if date is UTC) */
-		if (check_dst)
+		якщо (check_dst)
 			tm_time.tm_isdst = -1;
 		ts.tv_sec = validate_tm_time(date_str, &tm_time);
 		ts.tv_nsec = 0;
 
 		/* if setting time, set it */
-		if ((opt & OPT_SET) && clock_settime(CLOCK_REALTIME, &ts) < 0) {
+		якщо ((opt & OPT_SET) && clock_settime(CLOCK_REALTIME, &ts) < 0) {
 			bb_simple_perror_msg("can't set date");
 		}
 	}
@@ -296,16 +296,16 @@ int date_main(int argc UNUSED_PARAM, char **argv)
 	/* Display output */
 
 	/* Deal with format string */
-	if (fmt_dt2str == NULL) {
-		int i;
+	якщо (fmt_dt2str == NULL) {
+		ціле i;
 		fmt_dt2str = buf_fmt_dt2str;
-		if (ENABLE_FEATURE_DATE_ISOFMT && isofmt >= 0) {
+		якщо (ENABLE_FEATURE_DATE_ISOFMT && isofmt >= 0) {
 			/* -I[SPEC]: 0:date 1:hours 2:minutes 3:seconds 4:ns*/
 			strcpy(fmt_dt2str, "%Y-%m-%dT%H:%M:%S");
 			i = 8 + 3 * isofmt;
-			if (isofmt != 0) {
-				int n;
-				if (isofmt == 4) {
+			якщо (isofmt != 0) {
+				ціле n;
+				якщо (isofmt == 4) {
 					i -= 3;
 					i += sprintf(&fmt_dt2str[i], ",%09u", (unsigned)ts.tv_nsec);
 				}
@@ -313,7 +313,7 @@ int date_main(int argc UNUSED_PARAM, char **argv)
 				/* ...therefore this atrocity: */
 				n = strftime(&fmt_dt2str[i], 8, "%z", &tm_time);
 				i += n;
-				if (n == 5 && (fmt_dt2str[i-5] == '+' || fmt_dt2str[i-5] == '-')) {
+				якщо (n == 5 && (fmt_dt2str[i-5] == '+' || fmt_dt2str[i-5] == '-')) {
 					/* "mm" -> ":mm" */
 					fmt_dt2str[i    ] = fmt_dt2str[i - 1];
 					fmt_dt2str[i - 1] = fmt_dt2str[i - 2];
@@ -322,31 +322,31 @@ int date_main(int argc UNUSED_PARAM, char **argv)
 				}
 			}
 			fmt_dt2str[i] = '\0';
-		} else if (opt & OPT_RFC2822) {
+		} інакше якщо (opt & OPT_RFC2822) {
 			/* -R. undo busybox.c setlocale */
-			if (ENABLE_LOCALE_SUPPORT)
+			якщо (ENABLE_LOCALE_SUPPORT)
 				setlocale(LC_TIME, "C");
 			fmt_dt2str = (char*)"%a, %d %b %Y %H:%M:%S %z";
-		} else { /* default case */
+		} інакше { /* default case */
 			fmt_dt2str = (char*)"%a %b %e %H:%M:%S %Z %Y";
 		}
 	}
-#if ENABLE_FEATURE_DATE_NANO
-	else {
+#якщо ENABLE_FEATURE_DATE_NANO
+	інакше {
 		/* User-specified fmt_dt2str */
 		/* Search for and process "%N" */
 		char *p = fmt_dt2str;
-		while ((p = strchr(p, '%')) != NULL) {
-			int n, m;
+		поки ((p = strchr(p, '%')) != NULL) {
+			ціле n, m;
 			unsigned pres, scale;
 
 			p++;
-			if (*p == '%') {
+			якщо (*p == '%') {
 				p++;
 				continue;
 			}
 			n = strspn(p, "0123456789");
-			if (p[n] != 'N') {
+			якщо (p[n] != 'N') {
 				p += n;
 				continue;
 			}
@@ -355,12 +355,12 @@ int date_main(int argc UNUSED_PARAM, char **argv)
 			p[n] = '\0';
 			scale = 1;
 			pres = 9;
-			if (n) {
+			якщо (n) {
 				pres = xatoi_positive(p);
-				if (pres == 0)
+				якщо (pres == 0)
 					pres = 9;
 				m = 9 - pres;
-				while (--m >= 0)
+				поки (--m >= 0)
 					scale *= 10;
 			}
 
@@ -374,14 +374,14 @@ int date_main(int argc UNUSED_PARAM, char **argv)
 
 #define date_buf bb_common_bufsiz1
 	setup_common_bufsiz();
-	if (*fmt_dt2str == '\0') {
+	якщо (*fmt_dt2str == '\0') {
 		/* With no format string, just print a blank line */
 		date_buf[0] = '\0';
-	} else {
+	} інакше {
 		/* Generate output string */
 		strftime(date_buf, COMMON_BUFSIZE, fmt_dt2str, &tm_time);
 	}
 	puts(date_buf);
 
-	return EXIT_SUCCESS;
+	повернути EXIT_SUCCESS;
 }

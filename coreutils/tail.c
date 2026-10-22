@@ -76,42 +76,42 @@ struct globals {
 	bool exitcode;
 } FIX_ALIASING;
 #define G (*(struct globals*)bb_common_bufsiz1)
-#define INIT_G() do { setup_common_bufsiz(); } while (0)
+#define INIT_G() do { setup_common_bufsiz(); } поки (0)
 
 static void tail_xprint_header(const char *fmt, const char *filename)
 {
-	if (fdprintf(STDOUT_FILENO, fmt, filename) < 0)
+	якщо (fdprintf(STDOUT_FILENO, fmt, filename) < 0)
 		bb_perror_nomsg_and_die();
 }
 
-static ssize_t tail_read(int fd, char *buf, size_t count)
+static ssize_t tail_read(ціле fd, char *buf, size_t count)
 {
 	ssize_t r;
 
 	r = full_read(fd, buf, count);
-	if (r < 0) {
+	якщо (r < 0) {
 		bb_simple_perror_msg(bb_msg_read_error);
 		G.exitcode = EXIT_FAILURE;
 	}
 
-	return r;
+	повернути r;
 }
 
 #define header_fmt_str "\n==> %s <==\n"
 
 static unsigned eat_num(const char *p)
 {
-	if (*p == '-')
+	якщо (*p == '-')
 		p++;
-	else if (*p == '+') {
+	інакше якщо (*p == '+') {
 		p++;
 		G.from_top = 1;
 	}
-	return xatou_sfx(p, bkm_suffixes);
+	повернути xatou_sfx(p, bkm_suffixes);
 }
 
-int tail_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int tail_main(int argc, char **argv)
+ціле tail_main(ціле argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+ціле tail_main(ціле argc, char **argv)
 {
 	unsigned count = 10;
 	unsigned sleep_period = 1;
@@ -121,17 +121,17 @@ int tail_main(int argc, char **argv)
 	size_t tailbufsize;
 	unsigned header_threshold = 1;
 	unsigned nfiles;
-	int i, opt;
+	ціле i, opt;
 
-	int *fds;
+	ціле *fds;
 	const char *fmt;
-	int prev_fd;
+	ціле prev_fd;
 
 	INIT_G();
 
-#if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_TAIL
+#якщо ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_TAIL
 	/* Allow legacy syntax of an initial numeric option without -n. */
-	if (argv[1] && (argv[1][0] == '+' || argv[1][0] == '-')
+	якщо (argv[1] && (argv[1][0] == '+' || argv[1][0] == '-')
 	 && isdigit(argv[1][1])
 	) {
 		count = eat_num(argv[1]);
@@ -149,15 +149,15 @@ int tail_main(int argc, char **argv)
 #define FOLLOW (opt & 0x1)
 #define COUNT_BYTES (opt & 0x2)
 	//if (opt & 0x1) // -f
-	if (opt & 0x2) count = eat_num(str_c); // -c
-	if (opt & 0x4) count = eat_num(str_n); // -n
-#if ENABLE_FEATURE_FANCY_TAIL
+	якщо (opt & 0x2) count = eat_num(str_c); // -c
+	якщо (opt & 0x4) count = eat_num(str_n); // -n
+#якщо ENABLE_FEATURE_FANCY_TAIL
 	/* q: make it impossible for nfiles to be > header_threshold */
-	if (opt & 0x8) header_threshold = UINT_MAX; // -q
+	якщо (opt & 0x8) header_threshold = UINT_MAX; // -q
 	//if (opt & 0x10) // -s
-	if (opt & 0x20) header_threshold = 0; // -v
+	якщо (opt & 0x20) header_threshold = 0; // -v
 # define FOLLOW_RETRY (opt & 0x40)
-#else
+#інакше
 # define FOLLOW_RETRY 0
 #endif
 	argc -= optind;
@@ -165,10 +165,10 @@ int tail_main(int argc, char **argv)
 
 	/* open all the files */
 	fds = xmalloc(sizeof(fds[0]) * (argc + 1));
-	if (!argv[0]) {
+	якщо (!argv[0]) {
 		struct stat statbuf;
 
-		if (fstat(STDIN_FILENO, &statbuf) == 0
+		якщо (fstat(STDIN_FILENO, &statbuf) == 0
 		 && S_ISFIFO(statbuf.st_mode)
 		) {
 			opt &= ~1; /* clear FOLLOW */
@@ -177,22 +177,22 @@ int tail_main(int argc, char **argv)
 	}
 	nfiles = i = 0;
 	do {
-		int fd = open_or_warn_stdin(argv[i]);
-		if (fd < 0 && !FOLLOW_RETRY) {
+		ціле fd = open_or_warn_stdin(argv[i]);
+		якщо (fd < 0 && !FOLLOW_RETRY) {
 			G.exitcode = EXIT_FAILURE;
 			continue;
 		}
 		fds[nfiles] = fd;
 		argv[nfiles++] = argv[i];
-	} while (++i < argc);
+	} поки (++i < argc);
 
-	if (!nfiles)
+	якщо (!nfiles)
 		bb_simple_error_msg_and_die("no files");
 
 	/* prepare the buffer */
 	tailbufsize = BUFSIZ;
-	if (!G.from_top && COUNT_BYTES) {
-		if (tailbufsize < count + BUFSIZ) {
+	якщо (!G.from_top && COUNT_BYTES) {
+		якщо (tailbufsize < count + BUFSIZ) {
 			tailbufsize = count + BUFSIZ;
 		}
 	}
@@ -207,54 +207,54 @@ int tail_main(int argc, char **argv)
 	i = 0;
 	do {
 		char *buf;
-		int taillen;
-		int newlines_seen;
+		ціле taillen;
+		ціле newlines_seen;
 		unsigned seen;
-		int nread;
-		int fd = fds[i];
+		ціле nread;
+		ціле fd = fds[i];
 
-		if (ENABLE_FEATURE_FANCY_TAIL && fd < 0)
+		якщо (ENABLE_FEATURE_FANCY_TAIL && fd < 0)
 			continue; /* may happen with -F */
 
-		if (nfiles > header_threshold) {
+		якщо (nfiles > header_threshold) {
 			tail_xprint_header(fmt, argv[i]);
 			fmt = header_fmt_str;
 		}
 
-		if (!G.from_top) {
+		якщо (!G.from_top) {
 			off_t current = lseek(fd, 0, SEEK_END);
-			if (current > 0) {
+			якщо (current > 0) {
 				unsigned off;
-				if (COUNT_BYTES) {
+				якщо (COUNT_BYTES) {
 				/* Optimizing count-bytes case if the file is seekable.
 				 * Beware of backing up too far.
 				 * Also we exclude files with size 0 (because of /proc/xxx) */
-					if (count == 0)
+					якщо (count == 0)
 						continue; /* showing zero bytes is easy :) */
 					current -= count;
-					if (current < 0)
+					якщо (current < 0)
 						current = 0;
 					xlseek(fd, current, SEEK_SET);
 					bb_copyfd_size(fd, STDOUT_FILENO, count);
 					continue;
 				}
-#if 1 /* This is technically incorrect for *LONG* strings, but very useful */
+#якщо 1 /* This is technically incorrect for *LONG* strings, but very useful */
 				/* Optimizing count-lines case if the file is seekable.
 				 * We assume the lines are <64k.
 				 * (Users complain that tail takes too long
 				 * on multi-gigabyte files) */
 				off = (count | 0xf); /* for small counts, be more paranoid */
-				if (off > (INT_MAX / (64*1024)))
+				якщо (off > (INT_MAX / (64*1024)))
 					off = (INT_MAX / (64*1024));
 				current -= off * (64*1024);
-				if (current < 0)
+				якщо (current < 0)
 					current = 0;
 				xlseek(fd, current, SEEK_SET);
 #endif
 			}
 		}
 
-		if (!tailbuf)
+		якщо (!tailbuf)
 			tailbuf = xmalloc(tailbufsize);
 
 		buf = tailbuf;
@@ -263,55 +263,55 @@ int tail_main(int argc, char **argv)
 		 * Used only by +N code ("start from Nth", 1-based): */
 		seen = 1;
 		newlines_seen = 0;
-		while ((nread = tail_read(fd, buf, tailbufsize - taillen)) > 0) {
-			if (G.from_top) {
-				int nwrite = nread;
-				if (seen < count) {
+		поки ((nread = tail_read(fd, buf, tailbufsize - taillen)) > 0) {
+			якщо (G.from_top) {
+				ціле nwrite = nread;
+				якщо (seen < count) {
 					/* We need to skip a few more bytes/lines */
-					if (COUNT_BYTES) {
+					якщо (COUNT_BYTES) {
 						nwrite -= (count - seen);
 						seen += nread;
-					} else {
+					} інакше {
 						char *s = buf;
 						do {
 							--nwrite;
-							if (*s++ == '\n' && ++seen == count) {
+							якщо (*s++ == '\n' && ++seen == count) {
 								break;
 							}
-						} while (nwrite);
+						} поки (nwrite);
 					}
 				}
-				if (nwrite > 0)
+				якщо (nwrite > 0)
 					xwrite(STDOUT_FILENO, buf + nread - nwrite, nwrite);
-			} else if (count) {
-				if (COUNT_BYTES) {
+			} інакше якщо (count) {
+				якщо (COUNT_BYTES) {
 					taillen += nread;
-					if (taillen > (int)count) {
+					якщо (taillen > (ціле)count) {
 						memmove(tailbuf, tailbuf + taillen - count, count);
 						taillen = count;
 					}
-				} else {
-					int k = nread;
-					int newlines_in_buf = 0;
+				} інакше {
+					ціле k = nread;
+					ціле newlines_in_buf = 0;
 
 					do { /* count '\n' in last read */
 						k--;
-						if (buf[k] == '\n') {
+						якщо (buf[k] == '\n') {
 							newlines_in_buf++;
 						}
-					} while (k);
+					} поки (k);
 
-					if (newlines_seen + newlines_in_buf < (int)count) {
+					якщо (newlines_seen + newlines_in_buf < (ціле)count) {
 						newlines_seen += newlines_in_buf;
 						taillen += nread;
-					} else {
-						int extra = (buf[nread-1] != '\n');
+					} інакше {
+						ціле extra = (buf[nread-1] != '\n');
 						char *s;
 
 						k = newlines_seen + newlines_in_buf + extra - count;
 						s = tailbuf;
-						while (k) {
-							if (*s == '\n') {
+						поки (k) {
+							якщо (*s == '\n') {
 								k--;
 							}
 							s++;
@@ -320,7 +320,7 @@ int tail_main(int argc, char **argv)
 						memmove(tailbuf, s, taillen);
 						newlines_seen = count - extra;
 					}
-					if (tailbufsize < (size_t)taillen + BUFSIZ) {
+					якщо (tailbufsize < (size_t)taillen + BUFSIZ) {
 						tailbufsize = taillen + BUFSIZ;
 						tailbuf = xrealloc(tailbuf, tailbufsize);
 					}
@@ -328,31 +328,31 @@ int tail_main(int argc, char **argv)
 				buf = tailbuf + taillen;
 			}
 		} /* while (tail_read() > 0) */
-		if (!G.from_top) {
+		якщо (!G.from_top) {
 			xwrite(STDOUT_FILENO, tailbuf, taillen);
 		}
-	} while (++i < nfiles);
+	} поки (++i < nfiles);
 	prev_fd = fds[i-1];
 
 	tailbuf = xrealloc(tailbuf, BUFSIZ);
 
 	fmt = NULL;
 
-	if (FOLLOW) while (1) {
+	якщо (FOLLOW) поки (1) {
 		sleep(sleep_period);
 
 		i = 0;
 		do {
-			int nread;
+			ціле nread;
 			const char *filename = argv[i];
-			int fd = fds[i];
-			int new_fd = -1;
+			ціле fd = fds[i];
+			ціле new_fd = -1;
 			struct stat sbuf;
 
-			if (FOLLOW_RETRY) {
+			якщо (FOLLOW_RETRY) {
 				struct stat fsbuf;
 
-				if (fd < 0
+				якщо (fd < 0
 				 || fstat(fd, &fsbuf) < 0
 				 || stat(filename, &sbuf) < 0
 				 || fsbuf.st_dev != sbuf.st_dev
@@ -360,62 +360,62 @@ int tail_main(int argc, char **argv)
 				) {
 					/* Looks like file has been created/renamed/deleted */
 					new_fd = open(filename, O_RDONLY);
-					if (new_fd >= 0) {
+					якщо (new_fd >= 0) {
 						bb_error_msg("%s has %s; following end of new file",
 							filename, (fd < 0) ? "appeared" : "been replaced"
 						);
-						if (fd < 0) {
+						якщо (fd < 0) {
 							/* No previously open fd for this file,
 							 * start using new_fd immediately. */
 							fds[i] = fd = new_fd;
 							new_fd = -1;
 						}
-					} else if (fd >= 0) {
+					} інакше якщо (fd >= 0) {
 						bb_perror_msg("%s has been renamed or deleted", filename);
 					}
 				}
 			}
-			if (ENABLE_FEATURE_FANCY_TAIL && fd < 0)
+			якщо (ENABLE_FEATURE_FANCY_TAIL && fd < 0)
 				continue;
-			if (nfiles > header_threshold) {
+			якщо (nfiles > header_threshold) {
 				fmt = header_fmt_str;
 			}
-			for (;;) {
+			для (;;) {
 				/* tail -f keeps following files even if they are truncated */
 				/* /proc files report zero st_size, don't lseek them */
-				if (fstat(fd, &sbuf) == 0
+				якщо (fstat(fd, &sbuf) == 0
 				 /* && S_ISREG(sbuf.st_mode) TODO? */
 				 && sbuf.st_size > 0
 				) {
 					off_t current = lseek(fd, 0, SEEK_CUR);
-					if (sbuf.st_size < current) {
+					якщо (sbuf.st_size < current) {
 						//bb_perror_msg("%s: file truncated", filename); - says coreutils 8.32
 						xlseek(fd, 0, SEEK_SET);
 					}
 				}
 
 				nread = tail_read(fd, tailbuf, BUFSIZ);
-				if (nread <= 0) {
-					if (new_fd < 0)
+				якщо (nread <= 0) {
+					якщо (new_fd < 0)
 						break;
 					/* Switch to "tail -F"ing the new file */
 					xmove_fd(new_fd, fd);
 					new_fd = -1;
 					continue;
 				}
-				if (fmt && (fd != prev_fd)) {
+				якщо (fmt && (fd != prev_fd)) {
 					tail_xprint_header(fmt, filename);
 					fmt = NULL;
 					prev_fd = fd;
 				}
 				xwrite(STDOUT_FILENO, tailbuf, nread);
 			}
-		} while (++i < nfiles);
+		} поки (++i < nfiles);
 	} /* while (1) */
 
-	if (ENABLE_FEATURE_CLEAN_UP) {
+	якщо (ENABLE_FEATURE_CLEAN_UP) {
 		free(fds);
 		free(tailbuf);
 	}
-	return G.exitcode;
+	повернути G.exitcode;
 }

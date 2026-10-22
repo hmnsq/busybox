@@ -26,14 +26,14 @@
 
 #include "libbb.h"
 
-int whoami_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int whoami_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+ціле whoami_main(ціле argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+ціле whoami_main(ціле argc UNUSED_PARAM, char **argv UNUSED_PARAM)
 {
-	if (argv[1])
+	якщо (argv[1])
 		bb_show_usage();
 
 	/* Will complain and die if username not found */
 	puts(xuid2uname(geteuid()));
 
-	return fflush_all();
+	повернути fflush_all();
 }

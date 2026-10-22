@@ -31,8 +31,8 @@
 
 /* This is a NOFORK applet. Be very careful! */
 
-int true_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int true_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+ціле true_main(ціле argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+ціле true_main(ціле argc UNUSED_PARAM, char **argv UNUSED_PARAM)
 {
-	return EXIT_SUCCESS;
+	повернути EXIT_SUCCESS;
 }

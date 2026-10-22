@@ -95,36 +95,36 @@ static void idle_string(char *str6, time_t t)
 		str6[1] = '\0';
 		return;
 	}*/
-	if (t >= 0 && t < (24 * 60 * 60)) {
+	якщо (t >= 0 && t < (24 * 60 * 60)) {
 		sprintf(str6, "%02d:%02d",
-				(int) (t / (60 * 60)),
-				(int) ((t % (60 * 60)) / 60));
-		return;
+				(ціле) (t / (60 * 60)),
+				(ціле) ((t % (60 * 60)) / 60));
+		повернути;
 	}
 	strcpy(str6, "old");
 }
 
-int who_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int who_main(int argc UNUSED_PARAM, char **argv)
+ціле who_main(ціле argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+ціле who_main(ціле argc UNUSED_PARAM, char **argv)
 {
 #define CNT_APPLET (ENABLE_USERS + ENABLE_W + ENABLE_WHO)
-	int do_users = (ENABLE_USERS && (CNT_APPLET == 1 || applet_name[0] == 'u'));
-	int do_w     = (ENABLE_W     && (CNT_APPLET == 1 || applet_name[1] == '\0'));
-	int do_who   = (ENABLE_WHO   && (CNT_APPLET == 1 || applet_name[1] == 'h'));
+	ціле do_users = (ENABLE_USERS && (CNT_APPLET == 1 || applet_name[0] == 'u'));
+	ціле do_w     = (ENABLE_W     && (CNT_APPLET == 1 || applet_name[1] == '\0'));
+	ціле do_who   = (ENABLE_WHO   && (CNT_APPLET == 1 || applet_name[1] == 'h'));
 	struct utmpx *ut;
 	unsigned opt;
 	const char *fmt = "%s";
 
 	opt = getopt32(argv, do_who ? "^" "aH" "\0" "=0": "^" "" "\0" "=0");
-	if ((opt & 2) || do_w) /* -H or we are w */
+	якщо ((opt & 2) || do_w) /* -H or we are w */
 		puts("USER\t\tTTY\t\tIDLE\tTIME\t\t HOST");
 
 	setutxent();
-	while ((ut = getutxent()) != NULL) {
-		if (ut->ut_user[0]
+	поки ((ut = getutxent()) != NULL) {
+		якщо (ut->ut_user[0]
 		 && ((opt & 1) || ut->ut_type == USER_PROCESS)
 		) {
-			if (!do_users) {
+			якщо (!do_users) {
 				char str6[6];
 				char name[sizeof("/dev/") + sizeof(ut->ut_line) + 1];
 				struct stat st;
@@ -137,7 +137,7 @@ int who_main(int argc UNUSED_PARAM, char **argv)
 					ut->ut_line,
 					sizeof(ut->ut_line)+1
 				);
-				if (stat(name, &st) == 0)
+				якщо (stat(name, &st) == 0)
 					idle_string(str6, st.st_atime);
 				/* manpages say ut_tv.tv_sec *is* time_t,
 				 * but some systems have it wrong */
@@ -147,24 +147,24 @@ int who_main(int argc UNUSED_PARAM, char **argv)
 				 * "2010-11-10 19:33": 16 chars
 				 */
 				printf("%-15.*s %-15.*s %-7s %-16.16s %.*s\n",
-						(int)sizeof(ut->ut_user), ut->ut_user,
-						(int)sizeof(ut->ut_line), ut->ut_line,
+						(ціле)sizeof(ut->ut_user), ut->ut_user,
+						(ціле)sizeof(ut->ut_line), ut->ut_line,
 						str6,
 // TODO: with LANG=en_US.UTF-8, who from coreutils 8.25 shows
 // TIME col as "2017-04-06 18:47" (the default format is "Apr  6 18:47").
 // The former format looks saner to me. Switch to it unconditionally?
 						ctime(&seconds) + 4,
-						(int)sizeof(ut->ut_host), ut->ut_host
+						(ціле)sizeof(ut->ut_host), ut->ut_host
 				);
-			} else {
+			} інакше {
 				printf(fmt, ut->ut_user);
 				fmt = " %s";
 			}
 		}
 	}
-	if (do_users)
+	якщо (do_users)
 		bb_putchar('\n');
-	if (ENABLE_FEATURE_CLEAN_UP)
+	якщо (ENABLE_FEATURE_CLEAN_UP)
 		endutxent();
-	return EXIT_SUCCESS;
+	повернути EXIT_SUCCESS;
 }

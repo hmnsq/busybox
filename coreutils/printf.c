@@ -79,18 +79,18 @@
 
 typedef void FAST_FUNC (*converter)(const char *arg, void *result);
 
-static int multiconvert(const char *arg, void *result, converter convert)
+static ціле multiconvert(const char *arg, void *result, converter convert)
 {
-	if (*arg == '"' || *arg == '\'') {
+	якщо (*arg == '"' || *arg == '\'') {
 		arg = utoa((unsigned char)arg[1]);
 	}
 	errno = 0;
 	convert(arg, result);
-	if (errno) {
+	якщо (errno) {
 		bb_error_msg("invalid number '%s'", arg);
-		return 1;
+		повернути 1;
 	}
-	return 0;
+	повернути 0;
 }
 
 static void FAST_FUNC conv_strtoull(const char *arg, void *result)
@@ -99,7 +99,7 @@ static void FAST_FUNC conv_strtoull(const char *arg, void *result)
 	 * and probably shouldn't (other callers might require purely numeric
 	 * inputs to be allowed.
 	 */
-	if (arg[0] == '+')
+	якщо (arg[0] == '+')
 		arg++;
 	*(unsigned long long*)result = bb_strtoull(arg, NULL, 0);
 	/* both coreutils 6.10 and bash 3.2:
@@ -107,13 +107,13 @@ static void FAST_FUNC conv_strtoull(const char *arg, void *result)
 	 * fffffffffffffffe
 	 * Mimic that:
 	 */
-	if (errno) {
+	якщо (errno) {
 		*(unsigned long long*)result = bb_strtoll(arg, NULL, 0);
 	}
 }
 static void FAST_FUNC conv_strtoll(const char *arg, void *result)
 {
-	if (arg[0] == '+')
+	якщо (arg[0] == '+')
 		arg++;
 	*(long long*)result = bb_strtoll(arg, NULL, 0);
 }
@@ -124,7 +124,7 @@ static void FAST_FUNC conv_strtod(const char *arg, void *result)
 	/* What I like much less is that "-" accepted too! :( */
 //TODO: needs setlocale(LC_NUMERIC, "C")?
 	*(double*)result = strtod(arg, &end);
-	if (end[0]) {
+	якщо (end[0]) {
 		errno = ERANGE;
 		*(double*)result = 0;
 	}
@@ -134,40 +134,40 @@ static void FAST_FUNC conv_strtod(const char *arg, void *result)
 static unsigned long long my_xstrtoull(const char *arg)
 {
 	unsigned long long result;
-	if (multiconvert(arg, &result, conv_strtoull))
+	якщо (multiconvert(arg, &result, conv_strtoull))
 		result = 0;
-	return result;
+	повернути result;
 }
 static long long my_xstrtoll(const char *arg)
 {
 	long long result;
-	if (multiconvert(arg, &result, conv_strtoll))
+	якщо (multiconvert(arg, &result, conv_strtoll))
 		result = 0;
-	return result;
+	повернути result;
 }
 static double my_xstrtod(const char *arg)
 {
 	double result;
 	multiconvert(arg, &result, conv_strtod);
-	return result;
+	повернути result;
 }
 
 /* Handles %b; return 1 if output is to be short-circuited by \c */
-static int print_esc_string(const char *str)
+static ціле print_esc_string(const char *str)
 {
 	char c;
-	while ((c = *str) != '\0') {
+	поки ((c = *str) != '\0') {
 		str++;
-		if (c == '\\') {
+		якщо (c == '\\') {
 			/* %b also accepts 4-digit octals of the form \0### */
-			if (*str == '0') {
-				if ((unsigned char)(str[1] - '0') < 8) {
+			якщо (*str == '0') {
+				якщо ((unsigned char)(str[1] - '0') < 8) {
 					/* 2nd char is 0..7: skip leading '0' */
 					str++;
 				}
 			}
-			else if (*str == 'c') {
-				return 1;
+			інакше якщо (*str == 'c') {
+				повернути 1;
 			}
 			{
 				/* optimization: don't force arg to be on-stack,
@@ -180,11 +180,11 @@ static int print_esc_string(const char *str)
 		putchar(c);
 	}
 
-	return 0;
+	повернути 0;
 }
 
 static void print_direc(char *format, unsigned fmt_length,
-		int field_width, int precision,
+		ціле field_width, ціле precision,
 		const char *argument)
 {
 	long long llv;
@@ -197,7 +197,7 @@ static void print_direc(char *format, unsigned fmt_length,
 
 	have_prec = strstr(format, ".*");
 	have_width = strchr(format, '*');
-	if (have_width - 1 == have_prec)
+	якщо (have_width - 1 == have_prec)
 		have_width = NULL;
 
 	/* multiconvert sets errno = 0, but %s needs it cleared */
@@ -211,15 +211,15 @@ static void print_direc(char *format, unsigned fmt_length,
 	case 'i':
 		llv = my_xstrtoll(skip_whitespace(argument));
  print_long:
-		if (!have_width) {
-			if (!have_prec)
+		якщо (!have_width) {
+			якщо (!have_prec)
 				printf(format, llv);
-			else
+			інакше
 				printf(format, precision, llv);
-		} else {
-			if (!have_prec)
+		} інакше {
+			якщо (!have_prec)
 				printf(format, field_width, llv);
-			else
+			інакше
 				printf(format, field_width, precision, llv);
 		}
 		break;
@@ -232,21 +232,21 @@ static void print_direc(char *format, unsigned fmt_length,
 		goto print_long;
 	case 's':
 		/* Are char* and long long the same? */
-		if (sizeof(argument) == sizeof(llv)) {
+		якщо (sizeof(argument) == sizeof(llv)) {
 			llv = (long long)(ptrdiff_t)argument;
 			goto print_long;
-		} else {
+		} інакше {
 			/* Hope compiler will optimize it out by moving call
 			 * instruction after the ifs... */
-			if (!have_width) {
-				if (!have_prec)
+			якщо (!have_width) {
+				якщо (!have_prec)
 					printf(format, argument, /*unused:*/ argument, argument);
-				else
+				інакше
 					printf(format, precision, argument, /*unused:*/ argument);
-			} else {
-				if (!have_prec)
+			} інакше {
+				якщо (!have_prec)
 					printf(format, field_width, argument, /*unused:*/ argument);
-				else
+				інакше
 					printf(format, field_width, precision, argument);
 			}
 			break;
@@ -257,15 +257,15 @@ static void print_direc(char *format, unsigned fmt_length,
 	case 'g':
 	case 'G':
 		dv = my_xstrtod(argument);
-		if (!have_width) {
-			if (!have_prec)
+		якщо (!have_width) {
+			якщо (!have_prec)
 				printf(format, dv);
-			else
+			інакше
 				printf(format, precision, dv);
-		} else {
-			if (!have_prec)
+		} інакше {
+			якщо (!have_prec)
 				printf(format, field_width, dv);
-			else
+			інакше
 				printf(format, field_width, precision, dv);
 		}
 		break;
@@ -275,69 +275,69 @@ static void print_direc(char *format, unsigned fmt_length,
 }
 
 /* Handle params for "%*.*f". Negative numbers are ok (compat). */
-static int get_width_prec(const char *str)
+static ціле get_width_prec(const char *str)
 {
-	int v = bb_strtoi(str, NULL, 10);
-	if (errno) {
+	ціле v = bb_strtoi(str, NULL, 10);
+	якщо (errno) {
 		bb_error_msg("invalid number '%s'", str);
 		v = 0;
 	}
-	return v;
+	повернути v;
 }
 
 /* Print the text in FORMAT, using ARGV for arguments to any '%' directives.
    Return advanced ARGV.  */
-static char **print_formatted(char *f, char **argv, int *conv_err)
+static char **print_formatted(char *f, char **argv, ціле *conv_err)
 {
 	char *direc_start;      /* Start of % directive.  */
 	unsigned direc_length;  /* Length of % directive.  */
-	int field_width;        /* Arg to first '*' */
-	int precision;          /* Arg to second '*' */
+	ціле field_width;        /* Arg to first '*' */
+	ціле precision;          /* Arg to second '*' */
 	char **saved_argv = argv;
 
-	for (; *f; ++f) {
+	для (; *f; ++f) {
 		switch (*f) {
 		case '%':
 			direc_start = f++;
 			direc_length = 1;
 			field_width = precision = 0;
-			if (*f == '%') {
+			якщо (*f == '%') {
 				bb_putchar('%');
 				break;
 			}
-			if (*f == 'b') {
-				if (*argv) {
-					if (print_esc_string(*argv))
-						return saved_argv; /* causes main() to exit */
+			якщо (*f == 'b') {
+				якщо (*argv) {
+					якщо (print_esc_string(*argv))
+						повернути saved_argv; /* causes main() to exit */
 					++argv;
 				}
 				break;
 			}
-			while (*f && strchr("-+ #0", *f)) {
+			поки (*f && strchr("-+ #0", *f)) {
 				++f;
 				++direc_length;
 			}
-			if (*f == '*') {
+			якщо (*f == '*') {
 				++f;
 				++direc_length;
-				if (*argv)
+				якщо (*argv)
 					field_width = get_width_prec(*argv++);
-			} else {
-				while (isdigit(*f)) {
+			} інакше {
+				поки (isdigit(*f)) {
 					++f;
 					++direc_length;
 				}
 			}
-			if (*f == '.') {
+			якщо (*f == '.') {
 				++f;
 				++direc_length;
-				if (*f == '*') {
+				якщо (*f == '*') {
 					++f;
 					++direc_length;
-					if (*argv)
+					якщо (*argv)
 						precision = get_width_prec(*argv++);
-				} else {
-					while (isdigit(*f)) {
+				} інакше {
+					поки (isdigit(*f)) {
 						++f;
 						++direc_length;
 					}
@@ -348,7 +348,7 @@ static char **print_formatted(char *f, char **argv, int *conv_err)
 			 * bash does not like "%lld", but coreutils
 			 * happily takes even "%Llllhhzhhzd"!
 			 * We are permissive like coreutils */
-			while ((*f | 0x20) == 'l' || *f == 'h' || *f == 'z') {
+			поки ((*f | 0x20) == 'l' || *f == 'h' || *f == 'z') {
 				overlapping_strcpy(f, f + 1);
 			}
 			/* Add "ll" if integer modifier, then print */
@@ -356,13 +356,13 @@ static char **print_formatted(char *f, char **argv, int *conv_err)
 				static const char format_chars[] ALIGN1 = "diouxXfeEgGcs";
 				char *p = strchr(format_chars, *f);
 				/* needed - try "printf %" without it */
-				if (p == NULL || *f == '\0') {
+				якщо (p == NULL || *f == '\0') {
 					bb_error_msg("%s: invalid format", direc_start);
 					/* causes main() to exit with error */
-					return saved_argv - 1;
+					повернути saved_argv - 1;
 				}
 				++direc_length;
-				if (p - format_chars <= 5) {
+				якщо (p - format_chars <= 5) {
 					/* it is one of "diouxX" */
 					p = xmalloc(direc_length + 3);
 					memcpy(p, direc_start, direc_length);
@@ -372,13 +372,13 @@ static char **print_formatted(char *f, char **argv, int *conv_err)
 					//bb_error_msg("<%s>", p);
 					direc_length += 2;
 					direc_start = p;
-				} else {
+				} інакше {
 					p = NULL;
 				}
-				if (*argv) {
+				якщо (*argv) {
 					print_direc(direc_start, direc_length, field_width,
 								precision, *argv++);
-				} else {
+				} інакше {
 					print_direc(direc_start, direc_length, field_width,
 								precision, "");
 				}
@@ -387,8 +387,8 @@ static char **print_formatted(char *f, char **argv, int *conv_err)
 			}
 			break;
 		case '\\':
-			if (*++f == 'c') {
-				return saved_argv; /* causes main() to exit */
+			якщо (*++f == 'c') {
+				повернути saved_argv; /* causes main() to exit */
 			}
 			bb_putchar(bb_process_escape_sequence((const char **)&f));
 			f--;
@@ -398,12 +398,12 @@ static char **print_formatted(char *f, char **argv, int *conv_err)
 		}
 	}
 
-	return argv;
+	повернути argv;
 }
 
-int printf_main(int argc UNUSED_PARAM, char **argv)
+ціле printf_main(ціле argc UNUSED_PARAM, char **argv)
 {
-	int conv_err;
+	ціле conv_err;
 	char *format;
 	char **argv2;
 
@@ -417,8 +417,8 @@ int printf_main(int argc UNUSED_PARAM, char **argv)
 	 * to output data no matter what. So it will try later,
 	 * and possibly will clobber future output. Not good. */
 // TODO: check fcntl() & O_ACCMODE == O_WRONLY or O_RDWR?
-	if (fcntl(1, F_GETFL) == -1)
-		return 1; /* match coreutils 6.10 (sans error msg to stderr) */
+	якщо (fcntl(1, F_GETFL) == -1)
+		повернути 1; /* match coreutils 6.10 (sans error msg to stderr) */
 	//if (dup2(1, 1) != 1) - old way
 	//	return 1;
 
@@ -427,12 +427,12 @@ int printf_main(int argc UNUSED_PARAM, char **argv)
 	 * We will mimic coreutils. */
 	argv = skip_dash_dash(argv);
 
-	if (!argv[0]) {
-		if ((ENABLE_ASH_PRINTF || ENABLE_HUSH_PRINTF)
+	якщо (!argv[0]) {
+		якщо ((ENABLE_ASH_PRINTF || ENABLE_HUSH_PRINTF)
 		 && applet_name[0] != 'p'
 		) {
 			bb_simple_error_msg("usage: printf FORMAT [ARGUMENT...]");
-			return 2; /* bash compat */
+			повернути 2; /* bash compat */
 		}
 		bb_show_usage();
 	}
@@ -444,13 +444,13 @@ int printf_main(int argc UNUSED_PARAM, char **argv)
 	do {
 		argv = argv2;
 		argv2 = print_formatted(format, argv, &conv_err);
-	} while (argv2 > argv && *argv2);
+	} поки (argv2 > argv && *argv2);
 
 	/* coreutils compat (bash doesn't do this):
 	if (*argv)
 		fprintf(stderr, "excess args ignored");
 	*/
 
-	return (argv2 < argv) /* if true, print_formatted errored out */
+	повернути (argv2 < argv) /* if true, print_formatted errored out */
 		|| conv_err; /* print_formatted saw invalid number */
 }

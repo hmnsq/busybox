@@ -61,8 +61,8 @@
 
 #include "libbb.h"
 
-int sleep_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int sleep_main(int argc UNUSED_PARAM, char **argv)
+ціле sleep_main(ціле argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+ціле sleep_main(ціле argc UNUSED_PARAM, char **argv)
 {
 	duration_t duration;
 
@@ -73,31 +73,31 @@ int sleep_main(int argc UNUSED_PARAM, char **argv)
 	 * + applet_name can be the name of the shell
 	 */
 	argv = skip_dash_dash(argv);
-	if (!argv[0]) {
+	якщо (!argv[0]) {
 		/* Without this, bare "sleep" in ash shows _ash_ --help */
 		/* (ash can be the "sh" applet as well, so check 2nd char) */
-		if (ENABLE_ASH_SLEEP && applet_name[1] != 'l') {
+		якщо (ENABLE_ASH_SLEEP && applet_name[1] != 'l') {
 			bb_simple_error_msg("sleep: missing operand");
-			return EXIT_FAILURE;
+			повернути EXIT_FAILURE;
 		}
 		bb_show_usage();
 	}
 
 	/* GNU sleep accepts "inf", "INF", "infinity" and "INFINITY" */
-	if (strncasecmp(argv[0], "inf", 3) == 0)
-		for (;;)
+	якщо (strncasecmp(argv[0], "inf", 3) == 0)
+		для (;;)
 			sleep(INT_MAX);
 
 //FIXME: in ash, "sleep 123qwerty" as a builtin aborts the shell
-#if ENABLE_FEATURE_FANCY_SLEEP
+#якщо ENABLE_FEATURE_FANCY_SLEEP
 	duration = 0;
 	do {
 		duration += parse_duration_str(*argv);
-	} while (*++argv);
+	} поки (*++argv);
 	sleep_for_duration(duration);
-#else /* simple */
+#інакше /* simple */
 	duration = xatou(*argv);
 	sleep(duration);
 #endif
-	return EXIT_SUCCESS;
+	повернути EXIT_SUCCESS;
 }

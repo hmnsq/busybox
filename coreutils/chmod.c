@@ -66,28 +66,28 @@
  * symbolic links encountered during recursive directory traversals.
  */
 
-static int FAST_FUNC fileAction(struct recursive_state *state,
+static ціле FAST_FUNC fileAction(struct recursive_state *state,
 		const char *fileName,
 		struct stat *statbuf)
 {
 	mode_t newmode;
 
 	/* match coreutils behavior */
-	if (state->depth == 0) {
+	якщо (state->depth == 0) {
 		/* statbuf holds lstat result, but we need stat (follow link) */
-		if (stat(fileName, statbuf))
+		якщо (stat(fileName, statbuf))
 			goto err;
-	} else { /* depth > 0: skip links */
-		if (S_ISLNK(statbuf->st_mode))
-			return TRUE;
+	} інакше { /* depth > 0: skip links */
+		якщо (S_ISLNK(statbuf->st_mode))
+			повернути TRUE;
 	}
 
 	newmode = bb_parse_mode((char *)state->userData, statbuf->st_mode);
-	if (newmode == (mode_t)-1)
+	якщо (newmode == (mode_t)-1)
 		bb_error_msg_and_die("invalid mode '%s'", (char *)state->userData);
 
-	if (chmod(fileName, newmode) == 0) {
-		if (OPT_VERBOSE
+	якщо (chmod(fileName, newmode) == 0) {
+		якщо (OPT_VERBOSE
 		 || (OPT_CHANGED
 		     && (statbuf->st_mode & 07777) != (newmode & 07777))
 		) {
@@ -95,33 +95,33 @@ static int FAST_FUNC fileAction(struct recursive_state *state,
 			printf("mode of '%s' changed to %04o (%s)\n", fileName,
 				newmode & 07777, bb_mode_string(modestr, newmode)+1);
 		}
-		return TRUE;
+		повернути TRUE;
 	}
  err:
-	if (!OPT_QUIET)
+	якщо (!OPT_QUIET)
 		bb_simple_perror_msg(fileName);
-	return FALSE;
+	повернути FALSE;
 }
 
-int chmod_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int chmod_main(int argc UNUSED_PARAM, char **argv)
+ціле chmod_main(ціле argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+ціле chmod_main(ціле argc UNUSED_PARAM, char **argv)
 {
-	int retval = EXIT_SUCCESS;
+	ціле retval = EXIT_SUCCESS;
 	char *arg, **argp;
 	char *smode;
 
 	/* Convert first encountered -r into ar, -w into aw etc
 	 * so that getopt would not eat it */
 	argp = argv;
-	while ((arg = *++argp)) {
+	поки ((arg = *++argp)) {
 		/* Mode spec must be the first arg (sans -R etc) */
 		/* (protect against mishandling e.g. "chmod 644 -r") */
-		if (arg[0] != '-') {
+		якщо (arg[0] != '-') {
 			arg = NULL;
 			break;
 		}
 		/* An option. Not a -- or valid option? */
-		if (arg[1] && !strchr("-"OPT_STR, arg[1])) {
+		якщо (arg[1] && !strchr("-"OPT_STR, arg[1])) {
 			arg[0] = 'a';
 			break;
 		}
@@ -132,12 +132,12 @@ int chmod_main(int argc UNUSED_PARAM, char **argv)
 	argv += optind;
 
 	/* Restore option-like mode if needed */
-	if (arg) arg[0] = '-';
+	якщо (arg) arg[0] = '-';
 
 	/* Ok, ready to do the deed now */
 	smode = *argv++;
 	do {
-		if (!recursive_action(*argv,
+		якщо (!recursive_action(*argv,
 			OPT_RECURSE,    // recurse
 			fileAction,     // file action
 			fileAction,     // dir action
@@ -145,9 +145,9 @@ int chmod_main(int argc UNUSED_PARAM, char **argv)
 		) {
 			retval = EXIT_FAILURE;
 		}
-	} while (*++argv);
+	} поки (*++argv);
 
-	return retval;
+	повернути retval;
 }
 
 /*

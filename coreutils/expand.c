@@ -67,11 +67,11 @@ enum {
 //coreutils 8.30 preserves NULs but treats them as chars of width zero:
 //AB<nul><tab>C will expand <tab> to 6 spaces, not 5.
 
-#if ENABLE_EXPAND
+#якщо ENABLE_EXPAND
 static void expand(FILE *file, unsigned tab_size, unsigned opt)
 {
 
-	for (;;) {
+	для (;;) {
 		char *line;
 		char *ptr;
 		char *ptr_strbeg;
@@ -82,12 +82,12 @@ static void expand(FILE *file, unsigned tab_size, unsigned opt)
 //		linelen = 1024 * 1024;
 //		line = xmalloc_fgets_str_len(file, "\n", &linelen);
 		line = xmalloc_fgets(file); //
-		if (!line)
+		якщо (!line)
 			break;
 		ptr = ptr_strbeg = line;
-		for (;;) {
+		для (;;) {
 			unsigned char c = *ptr;
-			if (c == '\0') {
+			якщо (c == '\0') {
 //				size_t rem = line + linelen - ptr;
 //				if (rem > 0) {
 //# if ENABLE_UNICODE_SUPPORT
@@ -103,16 +103,16 @@ static void expand(FILE *file, unsigned tab_size, unsigned opt)
 //				}
 				break;
 			}
-			if ((opt & OPT_INITIAL) && !isblank(c)) {
+			якщо ((opt & OPT_INITIAL) && !isblank(c)) {
 				/* not space or tab */
 				break;
 			}
-			if (c == '\t') {
+			якщо (c == '\t') {
 				unsigned len = 0; //
 				*ptr = '\0';
-# if ENABLE_UNICODE_SUPPORT
+# якщо ENABLE_UNICODE_SUPPORT
 				len += unicode_strwidth(ptr_strbeg);
-# else
+# інакше
 				len += ptr - ptr_strbeg;
 # endif
 				len = tab_size - (len % tab_size);
@@ -129,51 +129,51 @@ static void expand(FILE *file, unsigned tab_size, unsigned opt)
 }
 #endif
 
-#if ENABLE_UNEXPAND
+#якщо ENABLE_UNEXPAND
 static void unexpand(FILE *file, unsigned tab_size, unsigned opt)
 {
 	char *line;
 
-	while ((line = xmalloc_fgets(file)) != NULL) {
+	поки ((line = xmalloc_fgets(file)) != NULL) {
 		char *ptr = line;
 		unsigned column = 0;
 
-		while (*ptr) {
+		поки (*ptr) {
 			unsigned n;
 			unsigned len = 0;
 
-			while (*ptr == ' ') {
+			поки (*ptr == ' ') {
 				ptr++;
 				len++;
 			}
 			column += len;
-			if (*ptr == '\t') {
+			якщо (*ptr == '\t') {
 				column += tab_size - (column % tab_size);
 				ptr++;
 				continue;
 			}
 
 			n = column / tab_size;
-			if (n) {
+			якщо (n) {
 				len = column = column % tab_size;
-				while (n--)
+				поки (n--)
 					putchar('\t');
 			}
 
-			if (!(opt & OPT_ALL) && ptr != line) {
+			якщо (!(opt & OPT_ALL) && ptr != line) {
 				printf("%*s%s", len, "", ptr);
 				break;
 			}
 			n = strcspn(ptr, "\t ");
 			printf("%*s%.*s", len, "", n, ptr);
-# if ENABLE_UNICODE_SUPPORT
+# якщо ENABLE_UNICODE_SUPPORT
 			{
 				char c = ptr[n];
 				ptr[n] = '\0';
 				len = unicode_strwidth(ptr);
 				ptr[n] = c;
 			}
-# else
+# інакше
 			len = n;
 # endif
 			ptr += n;
@@ -184,8 +184,8 @@ static void unexpand(FILE *file, unsigned tab_size, unsigned opt)
 }
 #endif
 
-int expand_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int expand_main(int argc UNUSED_PARAM, char **argv)
+ціле expand_main(ціле argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+ціле expand_main(ціле argc UNUSED_PARAM, char **argv)
 {
 	/* Default 8 spaces for 1 tab */
 	const char *opt_t = "8";
@@ -196,13 +196,13 @@ int expand_main(int argc UNUSED_PARAM, char **argv)
 
 	init_unicode();
 
-	if (ENABLE_EXPAND && (!ENABLE_UNEXPAND || applet_name[0] == 'e')) {
+	якщо (ENABLE_EXPAND && (!ENABLE_UNEXPAND || applet_name[0] == 'e')) {
 		opt = getopt32long(argv, "it:",
 				"initial\0"          No_argument       "i"
 				"tabs\0"             Required_argument "t"
 				, &opt_t
 		);
-	} else {
+	} інакше {
 		opt = getopt32long(argv, "^"
 				"ft:a"
 				"\0"
@@ -213,40 +213,40 @@ int expand_main(int argc UNUSED_PARAM, char **argv)
 				, &opt_t
 		);
 		/* -t implies -a, but an explicit -f overrides */
-		if (opt & OPT_INITIAL) opt &= ~OPT_ALL;
+		якщо (opt & OPT_INITIAL) opt &= ~OPT_ALL;
 	}
 	tab_size = xatou_range(opt_t, 1, UINT_MAX);
 
 	argv += optind;
 
-	if (!*argv) {
+	якщо (!*argv) {
 		*--argv = (char*)bb_msg_standard_input;
 	}
 	do {
 		file = fopen_or_warn_stdin(*argv);
-		if (!file) {
+		якщо (!file) {
 			exit_status = EXIT_FAILURE;
 			continue;
 		}
 
-		if (ENABLE_EXPAND && (!ENABLE_UNEXPAND || applet_name[0] == 'e'))
+		якщо (ENABLE_EXPAND && (!ENABLE_UNEXPAND || applet_name[0] == 'e'))
 			IF_EXPAND(expand(file, tab_size, opt));
-		else
+		інакше
 			IF_UNEXPAND(unexpand(file, tab_size, opt));
 
 		/* Check and close the file */
-		if (fclose_if_not_stdin(file)) {
+		якщо (fclose_if_not_stdin(file)) {
 			bb_simple_perror_msg(*argv);
 			exit_status = EXIT_FAILURE;
 		}
 		/* If stdin also clear EOF */
-		if (file == stdin)
+		якщо (file == stdin)
 			clearerr(file);
-	} while (*++argv);
+	} поки (*++argv);
 
 	/* Now close stdin also */
 	/* (if we didn't read from it, it's a no-op) */
-	if (fclose(stdin))
+	якщо (fclose(stdin))
 		bb_simple_perror_msg_and_die(bb_msg_standard_input);
 
 	fflush_stdout_and_exit(exit_status);
