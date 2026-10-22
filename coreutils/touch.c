@@ -70,26 +70,26 @@
  *      change the specified time: WORD is access, atime, or use
  */
 
-#include "libbb.h"
+#شامل "libbb.h"
 
-int touch_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int touch_main(int argc UNUSED_PARAM, char **argv)
+صحیح touch_main(صحیح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحیح touch_main(صحیح argc غیر_مستعمل_PARAM, حرف **argv)
 {
-	int fd;
-	int opts;
-	exitcode_t status = EXIT_SUCCESS;
-#if ENABLE_FEATURE_TOUCH_SUSV3
-	char *reference_file;
-	char *date_str;
+	صحیح fd;
+	صحیح opts;
+	exitcode_t حالت_2 = EXIT_SUCCESS;
+#اگر ENABLE_FEATURE_TOUCH_SUSV3
+	حرف *reference_file;
+	حرف *date_str;
 	/* timebuf[0] is atime, timebuf[1] is mtime */
-	struct timespec timebuf[2];
-#else
-# define reference_file NULL
-# define date_str       NULL
-# define timebuf        ((struct timespec*)NULL)
-#endif
+	ساخت timespec timebuf[2];
+#ورنہ
+# define reference_file تہی
+# define date_str       تہی
+# define timebuf        ((ساخت timespec*)تہی)
+#اگر_ختم
 
-	enum {
+	شمار {
 		OPT_c = (1 << 0),
 		OPT_h = (1 << 1),
 		OPT_r = (1 << 2) * ENABLE_FEATURE_TOUCH_SUSV3,
@@ -98,15 +98,15 @@ int touch_main(int argc UNUSED_PARAM, char **argv)
 		OPT_a = (1 << 5) * ENABLE_FEATURE_TOUCH_SUSV3,
 		OPT_m = (1 << 6) * ENABLE_FEATURE_TOUCH_SUSV3,
 	};
-#if ENABLE_LONG_OPTS
-	static const char touch_longopts[] ALIGN1 =
+#اگر ENABLE_LONG_OPTS
+	ساکن ثابت حرف touch_longopts[] ALIGN1 =
 		/* name, has_arg, val */
-		"no-create\0"        No_argument       "c"
-		"no-dereference\0"   No_argument       "h"
-		IF_FEATURE_TOUCH_SUSV3("reference\0"        Required_argument "r")
-		IF_FEATURE_TOUCH_SUSV3("date\0"             Required_argument "d")
+		"no-create\0"        No_دلیل       "c"
+		"no-dereference\0"   No_دلیل       "h"
+		IF_FEATURE_TOUCH_SUSV3("reference\0"        Required_دلیل "r")
+		IF_FEATURE_TOUCH_SUSV3("date\0"             Required_دلیل "d")
 	;
-#endif
+#اگر_ختم
 	/* -d and -t both set time. In coreutils,
 	 * accepted data format differs a bit between -d and -t.
 	 * We accept the same formats for both
@@ -120,38 +120,38 @@ int touch_main(int argc UNUSED_PARAM, char **argv)
 		/* coreutils forbids -r and -t at once: */ IF_FEATURE_TOUCH_SUSV3(":r--t:t--r")
 		/* but allows these combinations: "r--d:d--r:t--d:d--t" */
 		, touch_longopts
-#if ENABLE_FEATURE_TOUCH_SUSV3
+#اگر ENABLE_FEATURE_TOUCH_SUSV3
 		, &reference_file
 		, &date_str
 		, &date_str
-#endif
+#اگر_ختم
 	);
 
-#if ENABLE_FEATURE_TOUCH_SUSV3
+#اگر ENABLE_FEATURE_TOUCH_SUSV3
 	timebuf[0].tv_nsec = timebuf[1].tv_nsec = UTIME_NOW;
-	if (opts & OPT_r) {
-		struct stat stbuf;
+	اگر (opts & OPT_r) {
+		ساخت stat stbuf;
 		xstat(reference_file, &stbuf);
 		timebuf[0].tv_sec = stbuf.st_atime;
 		timebuf[1].tv_sec = stbuf.st_mtime;
 		timebuf[0].tv_nsec = stbuf.st_atim.tv_nsec;
 		timebuf[1].tv_nsec = stbuf.st_mtim.tv_nsec;
 	}
-	if (opts & (OPT_d|OPT_t)) {
-		struct tm tm_time;
-		time_t t;
-		int check_dst;
+	اگر (opts & (OPT_d|OPT_t)) {
+		ساخت tm tm_وقت;
+		وقت_t t;
+		صحیح check_dst;
 
 		//memset(&tm_time, 0, sizeof(tm_time));
 		/* Better than memset: makes "HH:MM" dates meaningful */
-		time(&t);
-		localtime_r(&t, &tm_time);
-		check_dst = parse_datestr(date_str, &tm_time);
+		وقت(&t);
+		localtime_r(&t, &tm_وقت);
+		check_dst = parse_datestr(date_str, &tm_وقت);
 
 		/* Correct any day of week and day of year etc. fields */
-		if (check_dst)
-			tm_time.tm_isdst = -1;  /* recheck dst unless date is UTC */
-		t = validate_tm_time(date_str, &tm_time);
+		اگر (check_dst)
+			tm_وقت.tm_isdst = -1;  /* recheck dst unless date is UTC */
+		t = validate_tm_وقت(date_str, &tm_وقت);
 
 		timebuf[1].tv_sec = timebuf[0].tv_sec = t;
 		timebuf[1].tv_nsec = timebuf[0].tv_nsec = 0;
@@ -159,35 +159,35 @@ int touch_main(int argc UNUSED_PARAM, char **argv)
 	/* If both -a and -m specified, both times should be set.
 	 * IOW: set OMIT only if one, not both, of them is given!
 	 */
-	if ((opts & (OPT_a|OPT_m)) == OPT_a)
+	اگر ((opts & (OPT_a|OPT_m)) == OPT_a)
 		timebuf[1].tv_nsec = UTIME_OMIT;
-	if ((opts & (OPT_a|OPT_m)) == OPT_m)
+	اگر ((opts & (OPT_a|OPT_m)) == OPT_m)
 		timebuf[0].tv_nsec = UTIME_OMIT;
-#endif
+#اگر_ختم
 
 	argv += optind;
-	do {
-		int result = utimensat(AT_FDCWD, *argv, timebuf,
+	کرو {
+		صحیح نتیجہ = utimensat(AT_FDCWD, *argv, timebuf,
 				(opts & OPT_h) ? AT_SYMLINK_NOFOLLOW : 0);
-		if (result != 0) {
-			if (errno == ENOENT) { /* no such file? */
-				if (opts & OPT_c) {
+		اگر (نتیجہ != 0) {
+			اگر (errno == ENOENT) { /* no such file? */
+				اگر (opts & OPT_c) {
 					/* Creation is disabled, so ignore */
-					continue;
+					جاری;
 				}
 				/* Try to create the file */
 				fd = open(*argv, O_RDWR | O_CREAT, 0666);
-				if (fd >= 0) {
-					if (opts & (OPT_r|OPT_d|OPT_t))
+				اگر (fd >= 0) {
+					اگر (opts & (OPT_r|OPT_d|OPT_t))
 						futimens(fd, timebuf);
 					xclose(fd);
-					continue;
+					جاری;
 				}
 			}
-			status = EXIT_FAILURE;
-			bb_simple_perror_msg(*argv);
+			حالت_2 = EXIT_FAILURE;
+			bb_simple_perror_پیغام(*argv);
 		}
-	} while (*++argv);
+	} جب (*++argv);
 
-	return status;
+	واپس حالت_2;
 }

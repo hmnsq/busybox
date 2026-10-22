@@ -59,7 +59,7 @@
 //usage:       "$ printf \"Val=%d\\n\" 5\n"
 //usage:       "Val=5\n"
 
-#include "libbb.h"
+#شامل "libbb.h"
 
 /* A note on bad input: neither bash 3.2 nor coreutils 6.10 stop on it.
  * They report it:
@@ -77,269 +77,269 @@
  * We try to be compatible.
  */
 
-typedef void FAST_FUNC (*converter)(const char *arg, void *result);
+قسمتعریف خالی FAST_FUNC (*converter)(ثابت حرف *arg, خالی *نتیجہ);
 
-static int multiconvert(const char *arg, void *result, converter convert)
+ساکن صحیح multiconvert(ثابت حرف *arg, خالی *نتیجہ, converter convert)
 {
-	if (*arg == '"' || *arg == '\'') {
-		arg = utoa((unsigned char)arg[1]);
+	اگر (*arg == '"' || *arg == '\'') {
+		arg = utoa((غیرعلامتی حرف)arg[1]);
 	}
 	errno = 0;
-	convert(arg, result);
-	if (errno) {
-		bb_error_msg("invalid number '%s'", arg);
-		return 1;
+	convert(arg, نتیجہ);
+	اگر (errno) {
+		bb_error_پیغام("invalid number '%s'", arg);
+		واپس 1;
 	}
-	return 0;
+	واپس 0;
 }
 
-static void FAST_FUNC conv_strtoull(const char *arg, void *result)
+ساکن خالی FAST_FUNC conv_strtoull(ثابت حرف *arg, خالی *نتیجہ)
 {
 	/* Allow leading '+' - bb_strtoull() by itself does not allow it,
 	 * and probably shouldn't (other callers might require purely numeric
 	 * inputs to be allowed.
 	 */
-	if (arg[0] == '+')
+	اگر (arg[0] == '+')
 		arg++;
-	*(unsigned long long*)result = bb_strtoull(arg, NULL, 0);
+	*(غیرعلامتی طویل طویل*)نتیجہ = bb_strtoull(arg, تہی, 0);
 	/* both coreutils 6.10 and bash 3.2:
 	 * $ printf '%x\n' -2
 	 * fffffffffffffffe
 	 * Mimic that:
 	 */
-	if (errno) {
-		*(unsigned long long*)result = bb_strtoll(arg, NULL, 0);
+	اگر (errno) {
+		*(غیرعلامتی طویل طویل*)نتیجہ = bb_strtoll(arg, تہی, 0);
 	}
 }
-static void FAST_FUNC conv_strtoll(const char *arg, void *result)
+ساکن خالی FAST_FUNC conv_strtoll(ثابت حرف *arg, خالی *نتیجہ)
 {
-	if (arg[0] == '+')
+	اگر (arg[0] == '+')
 		arg++;
-	*(long long*)result = bb_strtoll(arg, NULL, 0);
+	*(طویل طویل*)نتیجہ = bb_strtoll(arg, تہی, 0);
 }
-static void FAST_FUNC conv_strtod(const char *arg, void *result)
+ساکن خالی FAST_FUNC conv_strtod(ثابت حرف *arg, خالی *نتیجہ)
 {
-	char *end;
+	حرف *انتہا;
 	/* Well, this one allows leading whitespace... so what? */
 	/* What I like much less is that "-" accepted too! :( */
 //TODO: needs setlocale(LC_NUMERIC, "C")?
-	*(double*)result = strtod(arg, &end);
-	if (end[0]) {
+	*(دوہرا*)نتیجہ = strtod(arg, &انتہا);
+	اگر (انتہا[0]) {
 		errno = ERANGE;
-		*(double*)result = 0;
+		*(دوہرا*)نتیجہ = 0;
 	}
 }
 
 /* Callers should check errno to detect errors */
-static unsigned long long my_xstrtoull(const char *arg)
+ساکن غیرعلامتی طویل طویل my_xstrtoull(ثابت حرف *arg)
 {
-	unsigned long long result;
-	if (multiconvert(arg, &result, conv_strtoull))
-		result = 0;
-	return result;
+	غیرعلامتی طویل طویل نتیجہ;
+	اگر (multiconvert(arg, &نتیجہ, conv_strtoull))
+		نتیجہ = 0;
+	واپس نتیجہ;
 }
-static long long my_xstrtoll(const char *arg)
+ساکن طویل طویل my_xstrtoll(ثابت حرف *arg)
 {
-	long long result;
-	if (multiconvert(arg, &result, conv_strtoll))
-		result = 0;
-	return result;
+	طویل طویل نتیجہ;
+	اگر (multiconvert(arg, &نتیجہ, conv_strtoll))
+		نتیجہ = 0;
+	واپس نتیجہ;
 }
-static double my_xstrtod(const char *arg)
+ساکن دوہرا my_xstrtod(ثابت حرف *arg)
 {
-	double result;
-	multiconvert(arg, &result, conv_strtod);
-	return result;
+	دوہرا نتیجہ;
+	multiconvert(arg, &نتیجہ, conv_strtod);
+	واپس نتیجہ;
 }
 
 /* Handles %b; return 1 if output is to be short-circuited by \c */
-static int print_esc_string(const char *str)
+ساکن صحیح print_esc_string(ثابت حرف *str)
 {
-	char c;
-	while ((c = *str) != '\0') {
+	حرف c;
+	جب ((c = *str) != '\0') {
 		str++;
-		if (c == '\\') {
+		اگر (c == '\\') {
 			/* %b also accepts 4-digit octals of the form \0### */
-			if (*str == '0') {
-				if ((unsigned char)(str[1] - '0') < 8) {
+			اگر (*str == '0') {
+				اگر ((غیرعلامتی حرف)(str[1] - '0') < 8) {
 					/* 2nd char is 0..7: skip leading '0' */
 					str++;
 				}
 			}
-			else if (*str == 'c') {
-				return 1;
+			ورنہ اگر (*str == 'c') {
+				واپس 1;
 			}
 			{
 				/* optimization: don't force arg to be on-stack,
 				 * use another variable for that. */
-				const char *z = str;
+				ثابت حرف *z = str;
 				c = bb_process_escape_sequence(&z);
 				str = z;
 			}
 		}
-		putchar(c);
+		حرف_لکھو(c);
 	}
 
-	return 0;
+	واپس 0;
 }
 
-static void print_direc(char *format, unsigned fmt_length,
-		int field_width, int precision,
-		const char *argument)
+ساکن خالی print_direc(حرف *format, غیرعلامتی fmt_لمبائی,
+		صحیح میدان_چوڑائی, صحیح precision,
+		ثابت حرف *دلیل)
 {
-	long long llv;
-	double dv;
-	char saved;
-	char *have_prec, *have_width;
+	طویل طویل llv;
+	دوہرا dv;
+	حرف saved;
+	حرف *have_prec, *have_چوڑائی;
 
-	saved = format[fmt_length];
-	format[fmt_length] = '\0';
+	saved = format[fmt_لمبائی];
+	format[fmt_لمبائی] = '\0';
 
-	have_prec = strstr(format, ".*");
-	have_width = strchr(format, '*');
-	if (have_width - 1 == have_prec)
-		have_width = NULL;
+	have_prec = لڑی_تلاش(format, ".*");
+	have_چوڑائی = strchr(format, '*');
+	اگر (have_چوڑائی - 1 == have_prec)
+		have_چوڑائی = تہی;
 
 	/* multiconvert sets errno = 0, but %s needs it cleared */
 	errno = 0;
 
-	switch (format[fmt_length - 1]) {
-	case 'c':
-		printf(format, *argument);
-		break;
-	case 'd':
-	case 'i':
-		llv = my_xstrtoll(skip_whitespace(argument));
+	انتخاب (format[fmt_لمبائی - 1]) {
+	حالت 'c':
+		لکھو(format, *دلیل);
+		توڑو;
+	حالت 'd':
+	حالت 'i':
+		llv = my_xstrtoll(skip_whitespace(دلیل));
  print_long:
-		if (!have_width) {
-			if (!have_prec)
-				printf(format, llv);
-			else
-				printf(format, precision, llv);
-		} else {
-			if (!have_prec)
-				printf(format, field_width, llv);
-			else
-				printf(format, field_width, precision, llv);
+		اگر (!have_چوڑائی) {
+			اگر (!have_prec)
+				لکھو(format, llv);
+			ورنہ
+				لکھو(format, precision, llv);
+		} ورنہ {
+			اگر (!have_prec)
+				لکھو(format, میدان_چوڑائی, llv);
+			ورنہ
+				لکھو(format, میدان_چوڑائی, precision, llv);
 		}
-		break;
-	case 'o':
-	case 'u':
-	case 'x':
-	case 'X':
-		llv = my_xstrtoull(skip_whitespace(argument));
+		توڑو;
+	حالت 'o':
+	حالت 'u':
+	حالت 'x':
+	حالت 'X':
+		llv = my_xstrtoull(skip_whitespace(دلیل));
 		/* cheat: unsigned long and long have same width, so... */
-		goto print_long;
-	case 's':
+		جاؤ print_long;
+	حالت 's':
 		/* Are char* and long long the same? */
-		if (sizeof(argument) == sizeof(llv)) {
-			llv = (long long)(ptrdiff_t)argument;
-			goto print_long;
-		} else {
+		اگر (حجم(دلیل) == حجم(llv)) {
+			llv = (طویل طویل)(ptrdiff_t)دلیل;
+			جاؤ print_long;
+		} ورنہ {
 			/* Hope compiler will optimize it out by moving call
 			 * instruction after the ifs... */
-			if (!have_width) {
-				if (!have_prec)
-					printf(format, argument, /*unused:*/ argument, argument);
-				else
-					printf(format, precision, argument, /*unused:*/ argument);
-			} else {
-				if (!have_prec)
-					printf(format, field_width, argument, /*unused:*/ argument);
-				else
-					printf(format, field_width, precision, argument);
+			اگر (!have_چوڑائی) {
+				اگر (!have_prec)
+					لکھو(format, دلیل, /*unused:*/ دلیل, دلیل);
+				ورنہ
+					لکھو(format, precision, دلیل, /*unused:*/ دلیل);
+			} ورنہ {
+				اگر (!have_prec)
+					لکھو(format, میدان_چوڑائی, دلیل, /*unused:*/ دلیل);
+				ورنہ
+					لکھو(format, میدان_چوڑائی, precision, دلیل);
 			}
-			break;
+			توڑو;
 		}
-	case 'f':
-	case 'e':
-	case 'E':
-	case 'g':
-	case 'G':
-		dv = my_xstrtod(argument);
-		if (!have_width) {
-			if (!have_prec)
-				printf(format, dv);
-			else
-				printf(format, precision, dv);
-		} else {
-			if (!have_prec)
-				printf(format, field_width, dv);
-			else
-				printf(format, field_width, precision, dv);
+	حالت 'f':
+	حالت 'e':
+	حالت 'E':
+	حالت 'g':
+	حالت 'G':
+		dv = my_xstrtod(دلیل);
+		اگر (!have_چوڑائی) {
+			اگر (!have_prec)
+				لکھو(format, dv);
+			ورنہ
+				لکھو(format, precision, dv);
+		} ورنہ {
+			اگر (!have_prec)
+				لکھو(format, میدان_چوڑائی, dv);
+			ورنہ
+				لکھو(format, میدان_چوڑائی, precision, dv);
 		}
-		break;
+		توڑو;
 	} /* switch */
 
-	format[fmt_length] = saved;
+	format[fmt_لمبائی] = saved;
 }
 
 /* Handle params for "%*.*f". Negative numbers are ok (compat). */
-static int get_width_prec(const char *str)
+ساکن صحیح get_چوڑائی_prec(ثابت حرف *str)
 {
-	int v = bb_strtoi(str, NULL, 10);
-	if (errno) {
-		bb_error_msg("invalid number '%s'", str);
+	صحیح v = bb_strtoi(str, تہی, 10);
+	اگر (errno) {
+		bb_error_پیغام("invalid number '%s'", str);
 		v = 0;
 	}
-	return v;
+	واپس v;
 }
 
 /* Print the text in FORMAT, using ARGV for arguments to any '%' directives.
    Return advanced ARGV.  */
-static char **print_formatted(char *f, char **argv, int *conv_err)
+ساکن حرف **print_formatted(حرف *f, حرف **argv, صحیح *conv_err)
 {
-	char *direc_start;      /* Start of % directive.  */
-	unsigned direc_length;  /* Length of % directive.  */
-	int field_width;        /* Arg to first '*' */
-	int precision;          /* Arg to second '*' */
-	char **saved_argv = argv;
+	حرف *direc_آغاز;      /* Start of % directive.  */
+	غیرعلامتی direc_لمبائی;  /* Length of % directive.  */
+	صحیح میدان_چوڑائی;        /* Arg to first '*' */
+	صحیح precision;          /* Arg to second '*' */
+	حرف **saved_argv = argv;
 
-	for (; *f; ++f) {
-		switch (*f) {
-		case '%':
-			direc_start = f++;
-			direc_length = 1;
-			field_width = precision = 0;
-			if (*f == '%') {
+	برائے (; *f; ++f) {
+		انتخاب (*f) {
+		حالت '%':
+			direc_آغاز = f++;
+			direc_لمبائی = 1;
+			میدان_چوڑائی = precision = 0;
+			اگر (*f == '%') {
 				bb_putchar('%');
-				break;
+				توڑو;
 			}
-			if (*f == 'b') {
-				if (*argv) {
-					if (print_esc_string(*argv))
-						return saved_argv; /* causes main() to exit */
+			اگر (*f == 'b') {
+				اگر (*argv) {
+					اگر (print_esc_string(*argv))
+						واپس saved_argv; /* causes main() to exit */
 					++argv;
 				}
-				break;
+				توڑو;
 			}
-			while (*f && strchr("-+ #0", *f)) {
+			جب (*f && strchr("-+ #0", *f)) {
 				++f;
-				++direc_length;
+				++direc_لمبائی;
 			}
-			if (*f == '*') {
+			اگر (*f == '*') {
 				++f;
-				++direc_length;
-				if (*argv)
-					field_width = get_width_prec(*argv++);
-			} else {
-				while (isdigit(*f)) {
+				++direc_لمبائی;
+				اگر (*argv)
+					میدان_چوڑائی = get_چوڑائی_prec(*argv++);
+			} ورنہ {
+				جب (ہندسہ_ہے(*f)) {
 					++f;
-					++direc_length;
+					++direc_لمبائی;
 				}
 			}
-			if (*f == '.') {
+			اگر (*f == '.') {
 				++f;
-				++direc_length;
-				if (*f == '*') {
+				++direc_لمبائی;
+				اگر (*f == '*') {
 					++f;
-					++direc_length;
-					if (*argv)
-						precision = get_width_prec(*argv++);
-				} else {
-					while (isdigit(*f)) {
+					++direc_لمبائی;
+					اگر (*argv)
+						precision = get_چوڑائی_prec(*argv++);
+				} ورنہ {
+					جب (ہندسہ_ہے(*f)) {
 						++f;
-						++direc_length;
+						++direc_لمبائی;
 					}
 				}
 			}
@@ -348,64 +348,64 @@ static char **print_formatted(char *f, char **argv, int *conv_err)
 			 * bash does not like "%lld", but coreutils
 			 * happily takes even "%Llllhhzhhzd"!
 			 * We are permissive like coreutils */
-			while ((*f | 0x20) == 'l' || *f == 'h' || *f == 'z') {
+			جب ((*f | 0x20) == 'l' || *f == 'h' || *f == 'z') {
 				overlapping_strcpy(f, f + 1);
 			}
 			/* Add "ll" if integer modifier, then print */
 			{
-				static const char format_chars[] ALIGN1 = "diouxXfeEgGcs";
-				char *p = strchr(format_chars, *f);
+				ساکن ثابت حرف format_chars[] ALIGN1 = "diouxXfeEgGcs";
+				حرف *p = strchr(format_chars, *f);
 				/* needed - try "printf %" without it */
-				if (p == NULL || *f == '\0') {
-					bb_error_msg("%s: invalid format", direc_start);
+				اگر (p == تہی || *f == '\0') {
+					bb_error_پیغام("%s: invalid format", direc_آغاز);
 					/* causes main() to exit with error */
-					return saved_argv - 1;
+					واپس saved_argv - 1;
 				}
-				++direc_length;
-				if (p - format_chars <= 5) {
+				++direc_لمبائی;
+				اگر (p - format_chars <= 5) {
 					/* it is one of "diouxX" */
-					p = xmalloc(direc_length + 3);
-					memcpy(p, direc_start, direc_length);
-					p[direc_length + 1] = p[direc_length - 1];
-					p[direc_length - 1] = 'l';
-					p[direc_length] = 'l';
+					p = xmalloc(direc_لمبائی + 3);
+					حافظہ_نقل(p, direc_آغاز, direc_لمبائی);
+					p[direc_لمبائی + 1] = p[direc_لمبائی - 1];
+					p[direc_لمبائی - 1] = 'l';
+					p[direc_لمبائی] = 'l';
 					//bb_error_msg("<%s>", p);
-					direc_length += 2;
-					direc_start = p;
-				} else {
-					p = NULL;
+					direc_لمبائی += 2;
+					direc_آغاز = p;
+				} ورنہ {
+					p = تہی;
 				}
-				if (*argv) {
-					print_direc(direc_start, direc_length, field_width,
+				اگر (*argv) {
+					print_direc(direc_آغاز, direc_لمبائی, میدان_چوڑائی,
 								precision, *argv++);
-				} else {
-					print_direc(direc_start, direc_length, field_width,
+				} ورنہ {
+					print_direc(direc_آغاز, direc_لمبائی, میدان_چوڑائی,
 								precision, "");
 				}
 				*conv_err |= errno;
-				free(p);
+				آزاد(p);
 			}
-			break;
-		case '\\':
-			if (*++f == 'c') {
-				return saved_argv; /* causes main() to exit */
+			توڑو;
+		حالت '\\':
+			اگر (*++f == 'c') {
+				واپس saved_argv; /* causes main() to exit */
 			}
-			bb_putchar(bb_process_escape_sequence((const char **)&f));
+			bb_putchar(bb_process_escape_sequence((ثابت حرف **)&f));
 			f--;
-			break;
-		default:
-			putchar(*f);
+			توڑو;
+		طےشدہ:
+			حرف_لکھو(*f);
 		}
 	}
 
-	return argv;
+	واپس argv;
 }
 
-int printf_main(int argc UNUSED_PARAM, char **argv)
+صحیح printf_main(صحیح argc غیر_مستعمل_PARAM, حرف **argv)
 {
-	int conv_err;
-	char *format;
-	char **argv2;
+	صحیح conv_err;
+	حرف *format;
+	حرف **argv2;
 
 	/* We must check that stdout is not closed.
 	 * The reason for this is highly non-obvious.
@@ -417,8 +417,8 @@ int printf_main(int argc UNUSED_PARAM, char **argv)
 	 * to output data no matter what. So it will try later,
 	 * and possibly will clobber future output. Not good. */
 // TODO: check fcntl() & O_ACCMODE == O_WRONLY or O_RDWR?
-	if (fcntl(1, F_GETFL) == -1)
-		return 1; /* match coreutils 6.10 (sans error msg to stderr) */
+	اگر (fcntl(1, F_GETFL) == -1)
+		واپس 1; /* match coreutils 6.10 (sans error msg to stderr) */
 	//if (dup2(1, 1) != 1) - old way
 	//	return 1;
 
@@ -427,12 +427,12 @@ int printf_main(int argc UNUSED_PARAM, char **argv)
 	 * We will mimic coreutils. */
 	argv = skip_dash_dash(argv);
 
-	if (!argv[0]) {
-		if ((ENABLE_ASH_PRINTF || ENABLE_HUSH_PRINTF)
+	اگر (!argv[0]) {
+		اگر ((ENABLE_ASH_PRINTF || ENABLE_HUSH_PRINTF)
 		 && applet_name[0] != 'p'
 		) {
-			bb_simple_error_msg("usage: printf FORMAT [ARGUMENT...]");
-			return 2; /* bash compat */
+			bb_simple_error_پیغام("usage: printf FORMAT [ARGUMENT...]");
+			واپس 2; /* bash compat */
 		}
 		bb_show_usage();
 	}
@@ -441,16 +441,16 @@ int printf_main(int argc UNUSED_PARAM, char **argv)
 	argv2 = argv + 1;
 
 	conv_err = 0;
-	do {
+	کرو {
 		argv = argv2;
 		argv2 = print_formatted(format, argv, &conv_err);
-	} while (argv2 > argv && *argv2);
+	} جب (argv2 > argv && *argv2);
 
 	/* coreutils compat (bash doesn't do this):
 	if (*argv)
 		fprintf(stderr, "excess args ignored");
 	*/
 
-	return (argv2 < argv) /* if true, print_formatted errored out */
+	واپس (argv2 < argv) /* if true, print_formatted errored out */
 		|| conv_err; /* print_formatted saw invalid number */
 }

@@ -43,15 +43,15 @@
 //usage:       "$ basename /foo/bar.txt .txt\n"
 //usage:       "bar"
 
-#include "libbb.h"
+#شامل "libbb.h"
 
 /* This is a NOFORK applet. Be very careful! */
 
-int basename_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int basename_main(int argc UNUSED_PARAM, char **argv)
+صحیح basename_main(صحیح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحیح basename_main(صحیح argc غیر_مستعمل_PARAM, حرف **argv)
 {
-	unsigned opts;
-	const char *suffix = NULL;
+	غیرعلامتی opts;
+	ثابت حرف *suffix = تہی;
 
 	/* '+': stop at first non-option */
 	opts = getopt32(argv, "^+" "as:"
@@ -60,23 +60,23 @@ int basename_main(int argc UNUSED_PARAM, char **argv)
 	);
 	argv += optind;
 
-	do {
-		char *s;
-		size_t m;
+	کرو {
+		حرف *s;
+		سائز_t m;
 
 		/* It should strip slash: /abc/def/ -> def */
-		s = bb_get_last_path_component_strip(*argv++);
-		m = strlen(s);
-		if (!opts) {
-			if (*argv) {
+		s = bb_get_آخری_راستہ_component_strip(*argv++);
+		m = لڑی_لمبائی(s);
+		اگر (!opts) {
+			اگر (*argv) {
 				suffix = *argv;
-				if (argv[1])
+				اگر (argv[1])
 					bb_show_usage();
 			}
 		}
-		if (suffix) {
-			size_t n = strlen(suffix);
-			if ((m > n) && (strcmp(s + m - n, suffix) == 0)) {
+		اگر (suffix) {
+			سائز_t n = لڑی_لمبائی(suffix);
+			اگر ((m > n) && (strcmp(s + m - n, suffix) == 0)) {
 				m -= n;
 				/*s[m] = '\0'; - redundant */
 			}
@@ -84,9 +84,9 @@ int basename_main(int argc UNUSED_PARAM, char **argv)
 		/* puts(s) will do, but we can do without stdio this way: */
 		s[m++] = '\n';
 		/* NB: != is correct here: */
-		if (full_write(STDOUT_FILENO, s, m) != (ssize_t)m)
-			return EXIT_FAILURE;
-	} while (opts && *argv);
+		اگر (بھرا_write(STDOUT_FILENO, s, m) != (ssize_t)m)
+			واپس EXIT_FAILURE;
+	} جب (opts && *argv);
 
-	return EXIT_SUCCESS;
+	واپس EXIT_SUCCESS;
 }

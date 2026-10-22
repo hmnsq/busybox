@@ -97,95 +97,95 @@
 //usage:#define arch_full_usage "\n\n"
 //usage:       "Print system architecture"
 
-#include "libbb.h"
+#شامل "libbb.h"
 /* After libbb.h, since it needs sys/types.h on some systems */
-#include <sys/utsname.h>
+#شامل <sys/utsname.h>
 
-typedef struct {
-	struct utsname name;
-	char processor[sizeof(((struct utsname*)NULL)->machine)];
-	char platform[sizeof(((struct utsname*)NULL)->machine)];
-	char os[sizeof(CONFIG_UNAME_OSNAME)];
+قسمتعریف ساخت {
+	ساخت utsname name;
+	حرف processor[حجم(((ساخت utsname*)تہی)->machine)];
+	حرف platform[حجم(((ساخت utsname*)تہی)->machine)];
+	حرف os[حجم(CONFIG_UNAME_OSNAME)];
 } uname_info_t;
 
-#if ENABLE_UNAME
-#define options "snrvmpioa"
-static const unsigned short utsname_offset[] = {
+#اگر ENABLE_UNAME
+#تعریف_کرو options "snrvmpioa"
+ساکن ثابت غیرعلامتی مختصر utsname_انحراف[] = {
 	offsetof(uname_info_t, name.sysname), /* -s */
 	offsetof(uname_info_t, name.nodename), /* -n */
 	offsetof(uname_info_t, name.release), /* -r */
-	offsetof(uname_info_t, name.version), /* -v */
+	offsetof(uname_info_t, name.نسخہ), /* -v */
 	offsetof(uname_info_t, name.machine), /* -m */
 	offsetof(uname_info_t, processor), /* -p */
 	offsetof(uname_info_t, platform), /* -i */
 	offsetof(uname_info_t, os), /* -o */
 };
-#endif
+#اگر_ختم
 
-int uname_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int uname_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+صحیح uname_main(صحیح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحیح uname_main(صحیح argc غیر_مستعمل_PARAM, حرف **argv غیر_مستعمل_PARAM)
 {
 	uname_info_t uname_info;
-	IF_UNAME(const char *unknown_str = "unknown";)
-#if ENABLE_UNAME
-	unsigned toprint = (1 << 4); /* "arch" = "uname -m" */
+	IF_UNAME(ثابت حرف *unknown_str = "unknown";)
+#اگر ENABLE_UNAME
+	غیرعلامتی toprint = (1 << 4); /* "arch" = "uname -m" */
 
-	if (!ENABLE_BB_ARCH || applet_name[0] == 'u') {
-# if ENABLE_LONG_OPTS
-		static const char uname_longopts[] ALIGN1 =
+	اگر (!ENABLE_BB_ARCH || applet_name[0] == 'u') {
+# اگر ENABLE_LONG_OPTS
+		ساکن ثابت حرف uname_longopts[] ALIGN1 =
 			/* name, has_arg, val */
-			"all\0"               No_argument       "a"
-			"kernel-name\0"       No_argument       "s"
-			"nodename\0"          No_argument       "n"
-			"kernel-release\0"    No_argument       "r"
-			"release\0"           No_argument       "r"
-			"kernel-version\0"    No_argument       "v"
-			"machine\0"           No_argument       "m"
-			"processor\0"         No_argument       "p"
-			"hardware-platform\0" No_argument       "i"
-			"operating-system\0"  No_argument       "o"
+			"all\0"               No_دلیل       "a"
+			"kernel-name\0"       No_دلیل       "s"
+			"nodename\0"          No_دلیل       "n"
+			"kernel-release\0"    No_دلیل       "r"
+			"release\0"           No_دلیل       "r"
+			"kernel-version\0"    No_دلیل       "v"
+			"machine\0"           No_دلیل       "m"
+			"processor\0"         No_دلیل       "p"
+			"hardware-platform\0" No_دلیل       "i"
+			"operating-system\0"  No_دلیل       "o"
 		;
 # endif
 		toprint = getopt32long(argv, options, uname_longopts);
-		if (argv[optind]) { /* coreutils-6.9 compat */
+		اگر (argv[optind]) { /* coreutils-6.9 compat */
 			bb_show_usage();
 		}
-		if (toprint & (1 << 8)) { /* -a => all opts on */
+		اگر (toprint & (1 << 8)) { /* -a => all opts on */
 			toprint = (1 << 8) - 1;
 			unknown_str = ""; /* -a does not print unknown fields */
 		}
-		if (toprint == 0) { /* no opts => -s (sysname) */
+		اگر (toprint == 0) { /* no opts => -s (sysname) */
 			toprint = 1;
 		}
 	} /* if "uname" */
-#endif
+#اگر_ختم
 
 	uname(&uname_info.name); /* never fails */
 
-#if defined(__sparc__) && defined(__linux__)
+#اگر defined(__sparc__) && defined(__linux__)
 	{
-		char *fake_sparc = getenv("FAKE_SPARC");
-		if (fake_sparc && (fake_sparc[0] | 0x20) == 'y') {
+		حرف *fake_sparc = getenv("FAKE_SPARC");
+		اگر (fake_sparc && (fake_sparc[0] | 0x20) == 'y') {
 			strcpy(uname_info.name.machine, "sparc");
 		}
 	}
-#endif
-	if (ENABLE_BB_ARCH && (!ENABLE_UNAME || applet_name[0] == 'a')) {
+#اگر_ختم
+	اگر (ENABLE_BB_ARCH && (!ENABLE_UNAME || applet_name[0] == 'a')) {
 		puts(uname_info.name.machine);
-	} else {
-#if ENABLE_UNAME
+	} ورنہ {
+#اگر ENABLE_UNAME
 		/* "uname" */
-		const char *fmt;
-		const unsigned short *delta;
+		ثابت حرف *fmt;
+		ثابت غیرعلامتی مختصر *delta;
 
 		strcpy(uname_info.processor, unknown_str);
 		strcpy(uname_info.platform, unknown_str);
 		strcpy(uname_info.os, CONFIG_UNAME_OSNAME);
-# if ENABLE_FEDORA_COMPAT
+# اگر ENABLE_FEDORA_COMPAT
 		/* Fedora does something like this */
 		strcpy(uname_info.processor, uname_info.name.machine);
 		strcpy(uname_info.platform, uname_info.name.machine);
-		if (uname_info.platform[0] == 'i'
+		اگر (uname_info.platform[0] == 'i'
 		 && uname_info.platform[1]
 		 && uname_info.platform[2] == '8'
 		 && uname_info.platform[3] == '6'
@@ -193,20 +193,20 @@ int uname_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
 			uname_info.platform[1] = '3';
 		}
 # endif
-		delta = utsname_offset;
+		delta = utsname_انحراف;
 		fmt = " %s" + 1;
-		do {
-			if (toprint & 1) {
-				const char *p = (char *)(&uname_info) + *delta;
-				if (p[0]) {
-					printf(fmt, p);
+		کرو {
+			اگر (toprint & 1) {
+				ثابت حرف *p = (حرف *)(&uname_info) + *delta;
+				اگر (p[0]) {
+					لکھو(fmt, p);
 					fmt = " %s";
 				}
 			}
 			++delta;
-		} while (toprint >>= 1);
+		} جب (toprint >>= 1);
 		bb_putchar('\n');
-#endif
+#اگر_ختم
 	}
 
 	fflush_stdout_and_exit_SUCCESS(); /* coreutils-6.9 compat */

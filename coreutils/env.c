@@ -49,30 +49,30 @@
 //usage:     "\n	-0	NUL terminated output"
 //usage:     "\n	-u NAME	Remove variable from environment"
 
-#include "libbb.h"
+#شامل "libbb.h"
 
-int env_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int env_main(int argc UNUSED_PARAM, char **argv)
+صحیح env_main(صحیح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحیح env_main(صحیح argc غیر_مستعمل_PARAM, حرف **argv)
 {
-	unsigned opts;
-	llist_t *unset_env = NULL;
+	غیرعلامتی opts;
+	llist_t *unset_env = تہی;
 
 	opts = getopt32long(argv, "+i0u:*",
-			"ignore-environment\0" No_argument       "i"
-			"null\0"               No_argument       "0"
-			"unset\0"              Required_argument "u"
+			"ignore-environment\0" No_دلیل       "i"
+			"null\0"               No_دلیل       "0"
+			"unset\0"              Required_دلیل "u"
 			, &unset_env
 	);
 	argv += optind;
-	if (argv[0] && LONE_DASH(argv[0])) {
+	اگر (argv[0] && LONE_DASH(argv[0])) {
 		opts |= 1;
 		++argv;
 	}
-	if (opts & 1) {
+	اگر (opts & 1) {
 		clearenv();
 	}
-	while (unset_env) {
-		char *var = llist_pop(&unset_env);
+	جب (unset_env) {
+		حرف *var = llist_نکالو(&unset_env);
 		/* This does not handle -uVAR=VAL
 		 * (coreutils _sets_ the variable in that case): */
 		/*unsetenv(var);*/
@@ -81,22 +81,22 @@ int env_main(int argc UNUSED_PARAM, char **argv)
 		putenv(var);
 	}
 
-	while (*argv && (strchr(*argv, '=') != NULL)) {
-		if (putenv(*argv) < 0) {
-			bb_simple_perror_msg_and_die("putenv");
+	جب (*argv && (strchr(*argv, '=') != تہی)) {
+		اگر (putenv(*argv) < 0) {
+			bb_simple_perror_پیغام_and_die("putenv");
 		}
 		++argv;
 	}
 
-	if (argv[0]) {
+	اگر (argv[0]) {
 		BB_EXECVP_or_die(argv);
 	}
 
-	if (environ) { /* clearenv() may set environ == NULL! */
-		char **ep;
+	اگر (environ) { /* clearenv() may set environ == NULL! */
+		حرف **ep;
 		opts = (opts & 2) ? 0 : '\n';
-		for (ep = environ; *ep; ep++) {
-			printf("%s%c", *ep, opts);
+		برائے (ep = environ; *ep; ep++) {
+			لکھو("%s%c", *ep, opts);
 		}
 	}
 

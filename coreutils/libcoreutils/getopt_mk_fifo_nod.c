@@ -18,31 +18,31 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-#include "libbb.h"
-#include "coreutils.h"
+#شامل "libbb.h"
+#شامل "coreutils.h"
 
-mode_t FAST_FUNC getopt_mk_fifo_nod(char **argv)
+منوال_t FAST_FUNC getopt_mk_fifo_nod(حرف **argv)
 {
-	mode_t mode = 0666;
-	char *smode = NULL;
-#if ENABLE_SELINUX
+	منوال_t منوال = 0666;
+	حرف *smode = تہی;
+#اگر ENABLE_SELINUX
 	security_context_t scontext;
-#endif
-	int opt;
+#اگر_ختم
+	صحیح opt;
 	opt = getopt32(argv, "m:" IF_SELINUX("Z:"), &smode IF_SELINUX(,&scontext));
-	if (opt & 1) {
-		mode = bb_parse_mode(smode, mode);
-		if (mode != (mode_t)-1) /* if mode is valid */
+	اگر (opt & 1) {
+		منوال = bb_parse_منوال(smode, منوال);
+		اگر (منوال != (منوال_t)-1) /* if mode is valid */
 			/* make future mknod/mkfifo set mode bits exactly */
 			umask(0);
 	}
 
-#if ENABLE_SELINUX
-	if (opt & 2) {
+#اگر ENABLE_SELINUX
+	اگر (opt & 2) {
 		selinux_or_die();
 		setfscreatecon_or_die(scontext);
 	}
-#endif
+#اگر_ختم
 
-	return mode;
+	واپس منوال;
 }

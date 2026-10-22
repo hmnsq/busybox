@@ -68,259 +68,259 @@
 //usage:       "$ tail -n 1 /etc/resolv.conf\n"
 //usage:       "nameserver 10.0.0.1\n"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#شامل "libbb.h"
+#شامل "common_bufsiz.h"
 
-struct globals {
-	bool from_top;
+ساخت globals {
+	bool from_چوٹی;
 	bool exitcode;
 } FIX_ALIASING;
-#define G (*(struct globals*)bb_common_bufsiz1)
-#define INIT_G() do { setup_common_bufsiz(); } while (0)
+#تعریف_کرو G (*(ساخت globals*)bb_common_bufsiz1)
+#تعریف_کرو INIT_G() کرو { تیاری_common_bufsiz(); } جب (0)
 
-static void tail_xprint_header(const char *fmt, const char *filename)
+ساکن خالی دم_xprint_سرخی(ثابت حرف *fmt, ثابت حرف *filename)
 {
-	if (fdprintf(STDOUT_FILENO, fmt, filename) < 0)
+	اگر (fdprintf(STDOUT_FILENO, fmt, filename) < 0)
 		bb_perror_nomsg_and_die();
 }
 
-static ssize_t tail_read(int fd, char *buf, size_t count)
+ساکن ssize_t دم_read(صحیح fd, حرف *buf, سائز_t گنتی)
 {
 	ssize_t r;
 
-	r = full_read(fd, buf, count);
-	if (r < 0) {
-		bb_simple_perror_msg(bb_msg_read_error);
+	r = بھرا_read(fd, buf, گنتی);
+	اگر (r < 0) {
+		bb_simple_perror_پیغام(bb_پیغام_read_error);
 		G.exitcode = EXIT_FAILURE;
 	}
 
-	return r;
+	واپس r;
 }
 
-#define header_fmt_str "\n==> %s <==\n"
+#تعریف_کرو سرخی_fmt_str "\n==> %s <==\n"
 
-static unsigned eat_num(const char *p)
+ساکن غیرعلامتی eat_عدد(ثابت حرف *p)
 {
-	if (*p == '-')
+	اگر (*p == '-')
 		p++;
-	else if (*p == '+') {
+	ورنہ اگر (*p == '+') {
 		p++;
-		G.from_top = 1;
+		G.from_چوٹی = 1;
 	}
-	return xatou_sfx(p, bkm_suffixes);
+	واپس xatou_sfx(p, bkm_suffixes);
 }
 
-int tail_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int tail_main(int argc, char **argv)
+صحیح دم_main(صحیح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحیح دم_main(صحیح argc, حرف **argv)
 {
-	unsigned count = 10;
-	unsigned sleep_period = 1;
-	const char *str_c, *str_n;
+	غیرعلامتی گنتی = 10;
+	غیرعلامتی sleep_period = 1;
+	ثابت حرف *str_c, *str_n;
 
-	char *tailbuf;
-	size_t tailbufsize;
-	unsigned header_threshold = 1;
-	unsigned nfiles;
-	int i, opt;
+	حرف *tailbuf;
+	سائز_t tailbufsize;
+	غیرعلامتی سرخی_حد = 1;
+	غیرعلامتی nfiles;
+	صحیح i, opt;
 
-	int *fds;
-	const char *fmt;
-	int prev_fd;
+	صحیح *fds;
+	ثابت حرف *fmt;
+	صحیح پچھلا_fd;
 
 	INIT_G();
 
-#if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_TAIL
+#اگر ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_دم
 	/* Allow legacy syntax of an initial numeric option without -n. */
-	if (argv[1] && (argv[1][0] == '+' || argv[1][0] == '-')
-	 && isdigit(argv[1][1])
+	اگر (argv[1] && (argv[1][0] == '+' || argv[1][0] == '-')
+	 && ہندسہ_ہے(argv[1][1])
 	) {
-		count = eat_num(argv[1]);
+		گنتی = eat_عدد(argv[1]);
 		argv++;
 		argc--;
 	}
-#endif
+#اگر_ختم
 
 	/* -s NUM, -F imlies -f */
-	opt = getopt32(argv, IF_FEATURE_FANCY_TAIL("^")
-			"fc:n:"IF_FEATURE_FANCY_TAIL("qs:+vF")
-			IF_FEATURE_FANCY_TAIL("\0" "Ff"),
-			&str_c, &str_n IF_FEATURE_FANCY_TAIL(,&sleep_period)
+	opt = getopt32(argv, IF_FEATURE_FANCY_دم("^")
+			"fc:n:"IF_FEATURE_FANCY_دم("qs:+vF")
+			IF_FEATURE_FANCY_دم("\0" "Ff"),
+			&str_c, &str_n IF_FEATURE_FANCY_دم(,&sleep_period)
 	);
-#define FOLLOW (opt & 0x1)
-#define COUNT_BYTES (opt & 0x2)
+#تعریف_کرو FOLLOW (opt & 0x1)
+#تعریف_کرو گنتی_بائٹیں_2 (opt & 0x2)
 	//if (opt & 0x1) // -f
-	if (opt & 0x2) count = eat_num(str_c); // -c
-	if (opt & 0x4) count = eat_num(str_n); // -n
-#if ENABLE_FEATURE_FANCY_TAIL
+	اگر (opt & 0x2) گنتی = eat_عدد(str_c); // -c
+	اگر (opt & 0x4) گنتی = eat_عدد(str_n); // -n
+#اگر ENABLE_FEATURE_FANCY_دم
 	/* q: make it impossible for nfiles to be > header_threshold */
-	if (opt & 0x8) header_threshold = UINT_MAX; // -q
+	اگر (opt & 0x8) سرخی_حد = UINT_MAX; // -q
 	//if (opt & 0x10) // -s
-	if (opt & 0x20) header_threshold = 0; // -v
+	اگر (opt & 0x20) سرخی_حد = 0; // -v
 # define FOLLOW_RETRY (opt & 0x40)
-#else
+#ورنہ
 # define FOLLOW_RETRY 0
-#endif
+#اگر_ختم
 	argc -= optind;
 	argv += optind;
 
 	/* open all the files */
-	fds = xmalloc(sizeof(fds[0]) * (argc + 1));
-	if (!argv[0]) {
-		struct stat statbuf;
+	fds = xmalloc(حجم(fds[0]) * (argc + 1));
+	اگر (!argv[0]) {
+		ساخت stat statbuf;
 
-		if (fstat(STDIN_FILENO, &statbuf) == 0
-		 && S_ISFIFO(statbuf.st_mode)
+		اگر (fstat(STDIN_FILENO, &statbuf) == 0
+		 && S_ISFIFO(statbuf.st_منوال)
 		) {
 			opt &= ~1; /* clear FOLLOW */
 		}
-		argv[0] = (char *) bb_msg_standard_input;
+		argv[0] = (حرف *) bb_پیغام_standard_داخلہ;
 	}
 	nfiles = i = 0;
-	do {
-		int fd = open_or_warn_stdin(argv[i]);
-		if (fd < 0 && !FOLLOW_RETRY) {
+	کرو {
+		صحیح fd = open_or_warn_stdin(argv[i]);
+		اگر (fd < 0 && !FOLLOW_RETRY) {
 			G.exitcode = EXIT_FAILURE;
-			continue;
+			جاری;
 		}
 		fds[nfiles] = fd;
 		argv[nfiles++] = argv[i];
-	} while (++i < argc);
+	} جب (++i < argc);
 
-	if (!nfiles)
-		bb_simple_error_msg_and_die("no files");
+	اگر (!nfiles)
+		bb_simple_error_پیغام_and_die("no files");
 
 	/* prepare the buffer */
 	tailbufsize = BUFSIZ;
-	if (!G.from_top && COUNT_BYTES) {
-		if (tailbufsize < count + BUFSIZ) {
-			tailbufsize = count + BUFSIZ;
+	اگر (!G.from_چوٹی && گنتی_بائٹیں_2) {
+		اگر (tailbufsize < گنتی + BUFSIZ) {
+			tailbufsize = گنتی + BUFSIZ;
 		}
 	}
 	/* tail -c1024m REGULAR_FILE doesn't really need 1G mem block.
 	 * (In fact, it doesn't need ANY memory). So delay allocation.
 	 */
-	tailbuf = NULL;
+	tailbuf = تہی;
 
 	/* tail the files */
 
-	fmt = header_fmt_str + 1; /* skip leading newline in the header on the first output */
+	fmt = سرخی_fmt_str + 1; /* skip leading newline in the header on the first output */
 	i = 0;
-	do {
-		char *buf;
-		int taillen;
-		int newlines_seen;
-		unsigned seen;
-		int nread;
-		int fd = fds[i];
+	کرو {
+		حرف *buf;
+		صحیح taillen;
+		صحیح newlines_نظر_آیا;
+		غیرعلامتی نظر_آیا;
+		صحیح nread;
+		صحیح fd = fds[i];
 
-		if (ENABLE_FEATURE_FANCY_TAIL && fd < 0)
-			continue; /* may happen with -F */
+		اگر (ENABLE_FEATURE_FANCY_دم && fd < 0)
+			جاری; /* may happen with -F */
 
-		if (nfiles > header_threshold) {
-			tail_xprint_header(fmt, argv[i]);
-			fmt = header_fmt_str;
+		اگر (nfiles > سرخی_حد) {
+			دم_xprint_سرخی(fmt, argv[i]);
+			fmt = سرخی_fmt_str;
 		}
 
-		if (!G.from_top) {
-			off_t current = lseek(fd, 0, SEEK_END);
-			if (current > 0) {
-				unsigned off;
-				if (COUNT_BYTES) {
+		اگر (!G.from_چوٹی) {
+			off_t current = lseek(fd, 0, SEEK_انتہا);
+			اگر (current > 0) {
+				غیرعلامتی off;
+				اگر (گنتی_بائٹیں_2) {
 				/* Optimizing count-bytes case if the file is seekable.
 				 * Beware of backing up too far.
 				 * Also we exclude files with size 0 (because of /proc/xxx) */
-					if (count == 0)
-						continue; /* showing zero bytes is easy :) */
-					current -= count;
-					if (current < 0)
+					اگر (گنتی == 0)
+						جاری; /* showing zero bytes is easy :) */
+					current -= گنتی;
+					اگر (current < 0)
 						current = 0;
-					xlseek(fd, current, SEEK_SET);
-					bb_copyfd_size(fd, STDOUT_FILENO, count);
-					continue;
+					xlseek(fd, current, SEEK_سیٹ);
+					bb_copyfd_سائز(fd, STDOUT_FILENO, گنتی);
+					جاری;
 				}
-#if 1 /* This is technically incorrect for *LONG* strings, but very useful */
+#اگر 1 /* This is technically incorrect for *LONG* strings, but very useful */
 				/* Optimizing count-lines case if the file is seekable.
 				 * We assume the lines are <64k.
 				 * (Users complain that tail takes too long
 				 * on multi-gigabyte files) */
-				off = (count | 0xf); /* for small counts, be more paranoid */
-				if (off > (INT_MAX / (64*1024)))
-					off = (INT_MAX / (64*1024));
+				off = (گنتی | 0xf); /* for small counts, be more paranoid */
+				اگر (off > (زیادہ_سے_زیادہ_عدد / (64*1024)))
+					off = (زیادہ_سے_زیادہ_عدد / (64*1024));
 				current -= off * (64*1024);
-				if (current < 0)
+				اگر (current < 0)
 					current = 0;
-				xlseek(fd, current, SEEK_SET);
-#endif
+				xlseek(fd, current, SEEK_سیٹ);
+#اگر_ختم
 			}
 		}
 
-		if (!tailbuf)
+		اگر (!tailbuf)
 			tailbuf = xmalloc(tailbufsize);
 
 		buf = tailbuf;
 		taillen = 0;
 		/* "We saw 1st line/byte".
 		 * Used only by +N code ("start from Nth", 1-based): */
-		seen = 1;
-		newlines_seen = 0;
-		while ((nread = tail_read(fd, buf, tailbufsize - taillen)) > 0) {
-			if (G.from_top) {
-				int nwrite = nread;
-				if (seen < count) {
+		نظر_آیا = 1;
+		newlines_نظر_آیا = 0;
+		جب ((nread = دم_read(fd, buf, tailbufsize - taillen)) > 0) {
+			اگر (G.from_چوٹی) {
+				صحیح nwrite = nread;
+				اگر (نظر_آیا < گنتی) {
 					/* We need to skip a few more bytes/lines */
-					if (COUNT_BYTES) {
-						nwrite -= (count - seen);
-						seen += nread;
-					} else {
-						char *s = buf;
-						do {
+					اگر (گنتی_بائٹیں_2) {
+						nwrite -= (گنتی - نظر_آیا);
+						نظر_آیا += nread;
+					} ورنہ {
+						حرف *s = buf;
+						کرو {
 							--nwrite;
-							if (*s++ == '\n' && ++seen == count) {
-								break;
+							اگر (*s++ == '\n' && ++نظر_آیا == گنتی) {
+								توڑو;
 							}
-						} while (nwrite);
+						} جب (nwrite);
 					}
 				}
-				if (nwrite > 0)
+				اگر (nwrite > 0)
 					xwrite(STDOUT_FILENO, buf + nread - nwrite, nwrite);
-			} else if (count) {
-				if (COUNT_BYTES) {
+			} ورنہ اگر (گنتی) {
+				اگر (گنتی_بائٹیں_2) {
 					taillen += nread;
-					if (taillen > (int)count) {
-						memmove(tailbuf, tailbuf + taillen - count, count);
-						taillen = count;
+					اگر (taillen > (صحیح)گنتی) {
+						memmove(tailbuf, tailbuf + taillen - گنتی, گنتی);
+						taillen = گنتی;
 					}
-				} else {
-					int k = nread;
-					int newlines_in_buf = 0;
+				} ورنہ {
+					صحیح k = nread;
+					صحیح newlines_اندر_buf = 0;
 
-					do { /* count '\n' in last read */
+					کرو { /* count '\n' in last read */
 						k--;
-						if (buf[k] == '\n') {
-							newlines_in_buf++;
+						اگر (buf[k] == '\n') {
+							newlines_اندر_buf++;
 						}
-					} while (k);
+					} جب (k);
 
-					if (newlines_seen + newlines_in_buf < (int)count) {
-						newlines_seen += newlines_in_buf;
+					اگر (newlines_نظر_آیا + newlines_اندر_buf < (صحیح)گنتی) {
+						newlines_نظر_آیا += newlines_اندر_buf;
 						taillen += nread;
-					} else {
-						int extra = (buf[nread-1] != '\n');
-						char *s;
+					} ورنہ {
+						صحیح extra = (buf[nread-1] != '\n');
+						حرف *s;
 
-						k = newlines_seen + newlines_in_buf + extra - count;
+						k = newlines_نظر_آیا + newlines_اندر_buf + extra - گنتی;
 						s = tailbuf;
-						while (k) {
-							if (*s == '\n') {
+						جب (k) {
+							اگر (*s == '\n') {
 								k--;
 							}
 							s++;
 						}
 						taillen += nread - (s - tailbuf);
 						memmove(tailbuf, s, taillen);
-						newlines_seen = count - extra;
+						newlines_نظر_آیا = گنتی - extra;
 					}
-					if (tailbufsize < (size_t)taillen + BUFSIZ) {
+					اگر (tailbufsize < (سائز_t)taillen + BUFSIZ) {
 						tailbufsize = taillen + BUFSIZ;
 						tailbuf = xrealloc(tailbuf, tailbufsize);
 					}
@@ -328,31 +328,31 @@ int tail_main(int argc, char **argv)
 				buf = tailbuf + taillen;
 			}
 		} /* while (tail_read() > 0) */
-		if (!G.from_top) {
+		اگر (!G.from_چوٹی) {
 			xwrite(STDOUT_FILENO, tailbuf, taillen);
 		}
-	} while (++i < nfiles);
-	prev_fd = fds[i-1];
+	} جب (++i < nfiles);
+	پچھلا_fd = fds[i-1];
 
 	tailbuf = xrealloc(tailbuf, BUFSIZ);
 
-	fmt = NULL;
+	fmt = تہی;
 
-	if (FOLLOW) while (1) {
+	اگر (FOLLOW) جب (1) {
 		sleep(sleep_period);
 
 		i = 0;
-		do {
-			int nread;
-			const char *filename = argv[i];
-			int fd = fds[i];
-			int new_fd = -1;
-			struct stat sbuf;
+		کرو {
+			صحیح nread;
+			ثابت حرف *filename = argv[i];
+			صحیح fd = fds[i];
+			صحیح new_fd = -1;
+			ساخت stat sbuf;
 
-			if (FOLLOW_RETRY) {
-				struct stat fsbuf;
+			اگر (FOLLOW_RETRY) {
+				ساخت stat fsbuf;
 
-				if (fd < 0
+				اگر (fd < 0
 				 || fstat(fd, &fsbuf) < 0
 				 || stat(filename, &sbuf) < 0
 				 || fsbuf.st_dev != sbuf.st_dev
@@ -360,62 +360,62 @@ int tail_main(int argc, char **argv)
 				) {
 					/* Looks like file has been created/renamed/deleted */
 					new_fd = open(filename, O_RDONLY);
-					if (new_fd >= 0) {
-						bb_error_msg("%s has %s; following end of new file",
+					اگر (new_fd >= 0) {
+						bb_error_پیغام("%s has %s; following end of new file",
 							filename, (fd < 0) ? "appeared" : "been replaced"
 						);
-						if (fd < 0) {
+						اگر (fd < 0) {
 							/* No previously open fd for this file,
 							 * start using new_fd immediately. */
 							fds[i] = fd = new_fd;
 							new_fd = -1;
 						}
-					} else if (fd >= 0) {
-						bb_perror_msg("%s has been renamed or deleted", filename);
+					} ورنہ اگر (fd >= 0) {
+						bb_perror_پیغام("%s has been renamed or deleted", filename);
 					}
 				}
 			}
-			if (ENABLE_FEATURE_FANCY_TAIL && fd < 0)
-				continue;
-			if (nfiles > header_threshold) {
-				fmt = header_fmt_str;
+			اگر (ENABLE_FEATURE_FANCY_دم && fd < 0)
+				جاری;
+			اگر (nfiles > سرخی_حد) {
+				fmt = سرخی_fmt_str;
 			}
-			for (;;) {
+			برائے (;;) {
 				/* tail -f keeps following files even if they are truncated */
 				/* /proc files report zero st_size, don't lseek them */
-				if (fstat(fd, &sbuf) == 0
+				اگر (fstat(fd, &sbuf) == 0
 				 /* && S_ISREG(sbuf.st_mode) TODO? */
-				 && sbuf.st_size > 0
+				 && sbuf.st_سائز > 0
 				) {
 					off_t current = lseek(fd, 0, SEEK_CUR);
-					if (sbuf.st_size < current) {
+					اگر (sbuf.st_سائز < current) {
 						//bb_perror_msg("%s: file truncated", filename); - says coreutils 8.32
-						xlseek(fd, 0, SEEK_SET);
+						xlseek(fd, 0, SEEK_سیٹ);
 					}
 				}
 
-				nread = tail_read(fd, tailbuf, BUFSIZ);
-				if (nread <= 0) {
-					if (new_fd < 0)
-						break;
+				nread = دم_read(fd, tailbuf, BUFSIZ);
+				اگر (nread <= 0) {
+					اگر (new_fd < 0)
+						توڑو;
 					/* Switch to "tail -F"ing the new file */
 					xmove_fd(new_fd, fd);
 					new_fd = -1;
-					continue;
+					جاری;
 				}
-				if (fmt && (fd != prev_fd)) {
-					tail_xprint_header(fmt, filename);
-					fmt = NULL;
-					prev_fd = fd;
+				اگر (fmt && (fd != پچھلا_fd)) {
+					دم_xprint_سرخی(fmt, filename);
+					fmt = تہی;
+					پچھلا_fd = fd;
 				}
 				xwrite(STDOUT_FILENO, tailbuf, nread);
 			}
-		} while (++i < nfiles);
+		} جب (++i < nfiles);
 	} /* while (1) */
 
-	if (ENABLE_FEATURE_CLEAN_UP) {
-		free(fds);
-		free(tailbuf);
+	اگر (ENABLE_FEATURE_CLEAN_اوپر) {
+		آزاد(fds);
+		آزاد(tailbuf);
 	}
-	return G.exitcode;
+	واپس G.exitcode;
 }

@@ -101,33 +101,33 @@
 //usage:       "4+0 records in\n"
 //usage:       "4+0 records out\n"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#شامل "libbb.h"
+#شامل "common_bufsiz.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
 
-enum {
+شمار {
 	ifd = STDIN_FILENO,
 	ofd = STDOUT_FILENO,
 };
 
-struct globals {
-	off_t out_full, out_part, in_full, in_part;
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
-	unsigned long long total_bytes;
-	unsigned long long begin_time_us;
-#endif
-	int flags;
+ساخت globals {
+	off_t برآمد_بھرا, برآمد_part, اندر_بھرا, اندر_part;
+#اگر ENABLE_FEATURE_DD_تیسرا_حالت_سطر
+	غیرعلامتی طویل طویل کل_بائٹیں;
+	غیرعلامتی طویل طویل begin_وقت_us;
+#اگر_ختم
+	صحیح flags;
 } FIX_ALIASING;
-#define G (*(struct globals*)bb_common_bufsiz1)
-#define INIT_G() do { \
-	setup_common_bufsiz(); \
+#تعریف_کرو G (*(ساخت globals*)bb_common_bufsiz1)
+#تعریف_کرو INIT_G() کرو { \
+	تیاری_common_bufsiz(); \
 	/* we have to zero it out because of NOEXEC */ \
-	memset(&G, 0, sizeof(G)); \
-} while (0)
+	memset(&G, 0, حجم(G)); \
+} جب (0)
 
-enum {
+شمار {
 	/* Must be in the same order as OP_conv_XXX! */
 	/* (see "flags |= (1 << what)" below) */
 	FLAG_NOTRUNC = (1 << 0) * ENABLE_FEATURE_DD_IBS_OBS,
@@ -137,51 +137,51 @@ enum {
 	FLAG_SWAB    = (1 << 4) * ENABLE_FEATURE_DD_IBS_OBS,
 	/* end of conv flags */
 	/* start of input flags */
-	FLAG_IFLAG_SHIFT   = 5,
-	FLAG_SKIP_BYTES    = (1 << 5) * ENABLE_FEATURE_DD_IBS_OBS,
-	FLAG_COUNT_BYTES   = (1 << 6) * ENABLE_FEATURE_DD_IBS_OBS,
+	FLAG_IFLAG_سرکاؤ   = 5,
+	FLAG_SKIP_بائٹیں    = (1 << 5) * ENABLE_FEATURE_DD_IBS_OBS,
+	FLAG_گنتی_بائٹیں   = (1 << 6) * ENABLE_FEATURE_DD_IBS_OBS,
 	FLAG_FULLBLOCK     = (1 << 7) * ENABLE_FEATURE_DD_IBS_OBS,
 	FLAG_IDIRECT       = (1 << 8) * ENABLE_FEATURE_DD_IBS_OBS,
 	/* end of input flags */
 	/* start of output flags */
-	FLAG_OFLAG_SHIFT   = 9,
-	FLAG_SEEK_BYTES    = (1 << 9) * ENABLE_FEATURE_DD_IBS_OBS,
+	FLAG_OFLAG_سرکاؤ   = 9,
+	FLAG_SEEK_بائٹیں    = (1 << 9) * ENABLE_FEATURE_DD_IBS_OBS,
 	FLAG_APPEND        = (1 << 10) * ENABLE_FEATURE_DD_IBS_OBS,
 	FLAG_ODIRECT       = (1 << 11) * ENABLE_FEATURE_DD_IBS_OBS,
 	/* end of output flags */
 	FLAG_TWOBUFS       = (1 << 12) * ENABLE_FEATURE_DD_IBS_OBS,
-	FLAG_COUNT         = 1 << 13,
-	FLAG_STATUS_NONE   = 1 << 14,
-	FLAG_STATUS_NOXFER = 1 << 15,
+	FLAG_گنتی         = 1 << 13,
+	FLAG_حالت_NONE   = 1 << 14,
+	FLAG_حالت_NOXFER = 1 << 15,
 };
 
-static void dd_output_status(int UNUSED_PARAM cur_signal)
+ساکن خالی dd_output_حالت(صحیح غیر_مستعمل_PARAM cur_signal)
 {
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
-	double seconds;
-	unsigned long long bytes_sec;
-	unsigned long long now_us = monotonic_us(); /* before fprintf */
-#endif
+#اگر ENABLE_FEATURE_DD_تیسرا_حالت_سطر
+	دوہرا seconds;
+	غیرعلامتی طویل طویل بائٹیں_sec;
+	غیرعلامتی طویل طویل now_us = monotonic_us(); /* before fprintf */
+#اگر_ختم
 
 	/* Deliberately using %u, not %d */
 	fprintf(stderr, "%"OFF_FMT"u+%"OFF_FMT"u records in\n"
 			"%"OFF_FMT"u+%"OFF_FMT"u records out\n",
-			G.in_full, G.in_part,
-			G.out_full, G.out_part);
+			G.اندر_بھرا, G.اندر_part,
+			G.برآمد_بھرا, G.برآمد_part);
 
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
-# if ENABLE_FEATURE_DD_STATUS
-	if (G.flags & FLAG_STATUS_NOXFER) /* status=noxfer active? */
-		return;
+#اگر ENABLE_FEATURE_DD_تیسرا_حالت_سطر
+# اگر ENABLE_FEATURE_DD_حالت
+	اگر (G.flags & FLAG_حالت_NOXFER) /* status=noxfer active? */
+		واپس;
 	//TODO: should status=none make dd stop reacting to USR1 entirely?
 	//So far we react to it (we print the stats),
 	//status=none only suppresses final, non-USR1 generated status message.
 # endif
 	fprintf(stderr, /*G.total_bytes < 1024
 				? "%llu bytes copied, " : */ "%llu bytes (%sB) copied, "
-			, G.total_bytes,
+			, G.کل_بائٹیں,
 			/* show fractional digit, use suffixes */
-			make_human_readable_str(G.total_bytes, 1, 0)
+			make_human_readable_str(G.کل_بائٹیں, 1, 0)
 	);
 	/* Corner cases:
 	 * ./busybox dd </dev/null >/dev/null
@@ -189,77 +189,77 @@ static void dd_output_status(int UNUSED_PARAM cur_signal)
 	 * (echo DONE) | ./busybox dd >/dev/null
 	 * (sleep 1; echo DONE) | ./busybox dd >/dev/null
 	 */
-	seconds = (now_us - G.begin_time_us) / 1000000.0;
-	bytes_sec = G.total_bytes / seconds;
+	seconds = (now_us - G.begin_وقت_us) / 1000000.0;
+	بائٹیں_sec = G.کل_بائٹیں / seconds;
 	fprintf(stderr, "%f seconds, %sB/s\n",
 			seconds,
 			/* show fractional digit, use suffixes */
-			make_human_readable_str(bytes_sec, 1, 0)
+			make_human_readable_str(بائٹیں_sec, 1, 0)
 	);
-#endif
+#اگر_ختم
 }
 
-#if ENABLE_FEATURE_DD_IBS_OBS
-# ifdef O_DIRECT
-static int clear_O_DIRECT(int fd)
+#اگر ENABLE_FEATURE_DD_IBS_OBS
+# ifdef O_براہ_راست
+ساکن صحیح clear_O_براہ_راست(صحیح fd)
 {
-	if (errno == EINVAL) {
-		int fl = fcntl(fd, F_GETFL);
-		if (fl & O_DIRECT) {
-			fcntl(fd, F_SETFL, fl & ~O_DIRECT);
-			return 1;
+	اگر (errno == EINVAL) {
+		صحیح fl = fcntl(fd, F_GETFL);
+		اگر (fl & O_براہ_راست) {
+			fcntl(fd, F_SETFL, fl & ~O_براہ_راست);
+			واپس 1;
 		}
 	}
-	return 0;
+	واپس 0;
 }
 # endif
-#endif
+#اگر_ختم
 
-static ssize_t dd_read(void *ibuf, size_t ibs)
+ساکن ssize_t dd_read(خالی *ibuf, سائز_t ibs)
 {
 	ssize_t n;
 
-#if ENABLE_FEATURE_DD_IBS_OBS
+#اگر ENABLE_FEATURE_DD_IBS_OBS
  read_again:
-	if (G.flags & FLAG_FULLBLOCK)
-		n = full_read(ifd, ibuf, ibs);
-	else
-#endif
-		n = safe_read(ifd, ibuf, ibs);
-#if ENABLE_FEATURE_DD_IBS_OBS
-# ifdef O_DIRECT
-	if (n < 0 && (G.flags & FLAG_IDIRECT) && clear_O_DIRECT(ifd))
-		goto read_again;
+	اگر (G.flags & FLAG_FULLBLOCK)
+		n = بھرا_read(ifd, ibuf, ibs);
+	ورنہ
+#اگر_ختم
+		n = محفوظ_read(ifd, ibuf, ibs);
+#اگر ENABLE_FEATURE_DD_IBS_OBS
+# ifdef O_براہ_راست
+	اگر (n < 0 && (G.flags & FLAG_IDIRECT) && clear_O_براہ_راست(ifd))
+		جاؤ read_again;
 # endif
-#endif
-	return n;
+#اگر_ختم
+	واپس n;
 }
 
-static bool write_and_stats(const void *buf, size_t len, size_t obs,
-	const char *filename)
+ساکن bool write_and_stats(ثابت خالی *buf, سائز_t len, سائز_t obs,
+	ثابت حرف *filename)
 {
 	ssize_t n;
 
  IF_FEATURE_DD_IBS_OBS(write_again:)
-	n = full_write(ofd, buf, len);
-#if ENABLE_FEATURE_DD_IBS_OBS
-# ifdef O_DIRECT
-	if (n < 0 && (G.flags & FLAG_ODIRECT) && clear_O_DIRECT(ofd))
-		goto write_again;
+	n = بھرا_write(ofd, buf, len);
+#اگر ENABLE_FEATURE_DD_IBS_OBS
+# ifdef O_براہ_راست
+	اگر (n < 0 && (G.flags & FLAG_ODIRECT) && clear_O_براہ_راست(ofd))
+		جاؤ write_again;
 # endif
-#endif
+#اگر_ختم
 
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
-	if (n > 0)
-		G.total_bytes += n;
-#endif
-	if ((size_t)n == obs) {
-		G.out_full++;
-		return 0;
+#اگر ENABLE_FEATURE_DD_تیسرا_حالت_سطر
+	اگر (n > 0)
+		G.کل_بائٹیں += n;
+#اگر_ختم
+	اگر ((سائز_t)n == obs) {
+		G.برآمد_بھرا++;
+		واپس 0;
 	}
-	if ((size_t)n == len) {
-		G.out_part++;
-		return 0;
+	اگر ((سائز_t)n == len) {
+		G.برآمد_part++;
+		واپس 0;
 	}
 	/* n is < len (and possibly is -1).
 	 * Even if n >= 0, errno is usually set correctly.
@@ -268,81 +268,81 @@ static bool write_and_stats(const void *buf, size_t len, size_t obs,
 	 * the remainder and gets errno set to ENOSPC.
 	 * It returns n > 0 (the amount which it did write).
 	 */
-	bb_perror_msg("error writing '%s'", filename);
-	return 1;
+	bb_perror_پیغام("error writing '%s'", filename);
+	واپس 1;
 }
 
-#if ENABLE_LFS
+#اگر ENABLE_LFS
 # define XATOU_SFX xatoull_sfx
-#else
+#ورنہ
 # define XATOU_SFX xatoul_sfx
-#endif
+#اگر_ختم
 
-#if ENABLE_FEATURE_DD_IBS_OBS
-static int parse_comma_flags(char *val, const char *words, const char *error_in)
+#اگر ENABLE_FEATURE_DD_IBS_OBS
+ساکن صحیح parse_comma_flags(حرف *val, ثابت حرف *الفاظ, ثابت حرف *error_اندر)
 {
-	int flags = 0;
-	while (1) {
-		int n;
-		char *arg;
+	صحیح flags = 0;
+	جب (1) {
+		صحیح n;
+		حرف *arg;
 		/* find ',', replace them with NUL so we can use val for
 		 * index_in_strings() without copying.
 		 * We rely on val being non-null, else strchr would fault.
 		 */
 		arg = strchr(val, ',');
-		if (arg)
+		اگر (arg)
 			*arg = '\0';
-		n = index_in_strings(words, val);
-		if (n < 0)
-			bb_error_msg_and_die(bb_msg_invalid_arg_to, val, error_in);
+		n = اشاریہ_اندر_لڑیاں(الفاظ, val);
+		اگر (n < 0)
+			bb_error_پیغام_and_die(bb_پیغام_invalid_arg_مقصد, val, error_اندر);
 		flags |= (1 << n);
-		if (!arg) /* no ',' left, so this was the last specifier */
-			break;
+		اگر (!arg) /* no ',' left, so this was the last specifier */
+			توڑو;
 		*arg = ','; /* to preserve ps listing */
 		val = arg + 1; /* skip this keyword and ',' */
 	}
-	return flags;
+	واپس flags;
 }
-#endif
+#اگر_ختم
 
-static void *alloc_buf(size_t size)
+ساکن خالی *alloc_buf(سائز_t سائز)
 {
 	/* Important for "{i,o}flag=direct" - buffers must be page aligned */
-	if (size >= bb_getpagesize())
-		return xmmap_anon(size);
-	return xmalloc(size);
+	اگر (سائز >= bb_getpagesize())
+		واپس xmmap_anon(سائز);
+	واپس xmalloc(سائز);
 }
 
-int dd_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int dd_main(int argc UNUSED_PARAM, char **argv)
+صحیح dd_main(صحیح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحیح dd_main(صحیح argc غیر_مستعمل_PARAM, حرف **argv)
 {
-	static const char keywords[] ALIGN1 =
-		"bs\0""count\0""seek\0""skip\0""if\0""of\0"IF_FEATURE_DD_STATUS("status\0")
-#if ENABLE_FEATURE_DD_IBS_OBS
+	ساکن ثابت حرف keywords[] ALIGN1 =
+		"bs\0""count\0""seek\0""skip\0""if\0""of\0"IF_FEATURE_DD_حالت("status\0")
+#اگر ENABLE_FEATURE_DD_IBS_OBS
 		"ibs\0""obs\0""conv\0""iflag\0""oflag\0"
-#endif
+#اگر_ختم
 		;
-#if ENABLE_FEATURE_DD_IBS_OBS
-	static const char conv_words[] ALIGN1 =
+#اگر ENABLE_FEATURE_DD_IBS_OBS
+	ساکن ثابت حرف conv_الفاظ[] ALIGN1 =
 		"notrunc\0""sync\0""noerror\0""fsync\0""swab\0";
-	static const char iflag_words[] ALIGN1 =
+	ساکن ثابت حرف iflag_الفاظ[] ALIGN1 =
 		"skip_bytes\0""count_bytes\0""fullblock\0""direct\0";
-	static const char oflag_words[] ALIGN1 =
+	ساکن ثابت حرف oflag_الفاظ[] ALIGN1 =
 		"seek_bytes\0append\0""direct\0";
-#endif
-#if ENABLE_FEATURE_DD_STATUS
-	static const char status_words[] ALIGN1 =
+#اگر_ختم
+#اگر ENABLE_FEATURE_DD_حالت
+	ساکن ثابت حرف حالت_الفاظ[] ALIGN1 =
 		"none\0""noxfer\0";
-#endif
-	enum {
+#اگر_ختم
+	شمار {
 		OP_bs = 0,
-		OP_count,
+		OP_گنتی,
 		OP_seek,
 		OP_skip,
 		OP_if,
-		OP_of,
-		IF_FEATURE_DD_STATUS(OP_status,)
-#if ENABLE_FEATURE_DD_IBS_OBS
+		OP_کا,
+		IF_FEATURE_DD_حالت(OP_حالت,)
+#اگر ENABLE_FEATURE_DD_IBS_OBS
 		OP_ibs,
 		OP_obs,
 		OP_conv,
@@ -367,323 +367,323 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 	//ibm           from ASCII to alternate EBCDIC
 	/* Partially implemented: */
 	//swab          swap every pair of input bytes: will abort on non-even reads
-		OP_iflag_skip_bytes,
-		OP_iflag_count_bytes,
+		OP_iflag_skip_بائٹیں,
+		OP_iflag_گنتی_بائٹیں,
 		OP_iflag_fullblock,
-		OP_iflag_direct,
-		OP_oflag_seek_bytes,
-		OP_oflag_direct,
-#endif
+		OP_iflag_براہ_راست,
+		OP_oflag_seek_بائٹیں,
+		OP_oflag_براہ_راست,
+#اگر_ختم
 	};
 	exitcode_t exitcode = EXIT_FAILURE;
-	int i;
-	size_t ibs = 512;
-	char *ibuf;
-#if ENABLE_FEATURE_DD_IBS_OBS
-	size_t obs = 512;
-	char *obuf;
-#else
+	صحیح i;
+	سائز_t ibs = 512;
+	حرف *ibuf;
+#اگر ENABLE_FEATURE_DD_IBS_OBS
+	سائز_t obs = 512;
+	حرف *obuf;
+#ورنہ
 # define obs  ibs
 # define obuf ibuf
-#endif
+#اگر_ختم
 	/* These are all zeroed at once! */
-	struct {
-		IF_FEATURE_DD_IBS_OBS(size_t ocount;)
-		ssize_t prev_read_size; /* for detecting swab failure */
-		off_t count;
+	ساخت {
+		IF_FEATURE_DD_IBS_OBS(سائز_t ocount;)
+		ssize_t پچھلا_read_سائز; /* for detecting swab failure */
+		off_t گنتی;
 		off_t seek, skip;
-		const char *infile, *outfile;
+		ثابت حرف *infile, *outfile;
 	} Z;
-#define ocount  (Z.ocount )
-#define prev_read_size (Z.prev_read_size)
-#define count   (Z.count  )
-#define seek    (Z.seek   )
-#define skip    (Z.skip   )
-#define infile  (Z.infile )
-#define outfile (Z.outfile)
+#تعریف_کرو ocount  (Z.ocount )
+#تعریف_کرو پچھلا_read_سائز (Z.پچھلا_read_سائز)
+#تعریف_کرو گنتی   (Z.گنتی  )
+#تعریف_کرو seek    (Z.seek   )
+#تعریف_کرو skip    (Z.skip   )
+#تعریف_کرو infile  (Z.infile )
+#تعریف_کرو outfile (Z.outfile)
 
-	memset(&Z, 0, sizeof(Z));
+	memset(&Z, 0, حجم(Z));
 	INIT_G();
 	//fflush_all(); - is this needed because of NOEXEC?
 
-	for (i = 1; argv[i]; i++) {
-		int what;
-		char *val;
-		char *arg = argv[i];
+	برائے (i = 1; argv[i]; i++) {
+		صحیح what;
+		حرف *val;
+		حرف *arg = argv[i];
 
-#if ENABLE_DESKTOP
+#اگر ENABLE_DESKTOP
 		/* "dd --". NB: coreutils 6.9 will complain if they see
 		 * more than one of them. We wouldn't. */
-		if (arg[0] == '-' && arg[1] == '-' && arg[2] == '\0')
-			continue;
-#endif
+		اگر (arg[0] == '-' && arg[1] == '-' && arg[2] == '\0')
+			جاری;
+#اگر_ختم
 		val = strchr(arg, '=');
-		if (val == NULL)
+		اگر (val == تہی)
 			bb_show_usage();
 		*val = '\0';
-		what = index_in_strings(keywords, arg);
-		if (what < 0)
+		what = اشاریہ_اندر_لڑیاں(keywords, arg);
+		اگر (what < 0)
 			bb_show_usage();
 		/* *val = '='; - to preserve ps listing? */
 		val++;
-#if ENABLE_FEATURE_DD_IBS_OBS
-		if (what == OP_ibs) {
+#اگر ENABLE_FEATURE_DD_IBS_OBS
+		اگر (what == OP_ibs) {
 			/* Must fit into positive ssize_t */
-			ibs = xatoul_range_sfx(val, 1, ((size_t)-1L)/2, cwbkMG_suffixes);
+			ibs = xatoul_range_sfx(val, 1, ((سائز_t)-1L)/2, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_obs) {
-			obs = xatoul_range_sfx(val, 1, ((size_t)-1L)/2, cwbkMG_suffixes);
+		اگر (what == OP_obs) {
+			obs = xatoul_range_sfx(val, 1, ((سائز_t)-1L)/2, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_conv) {
-			G.flags |= parse_comma_flags(val, conv_words, "conv");
+		اگر (what == OP_conv) {
+			G.flags |= parse_comma_flags(val, conv_الفاظ, "conv");
 			/*continue;*/
 		}
-		if (what == OP_iflag) {
-			G.flags |= parse_comma_flags(val, iflag_words, "iflag") << FLAG_IFLAG_SHIFT;
+		اگر (what == OP_iflag) {
+			G.flags |= parse_comma_flags(val, iflag_الفاظ, "iflag") << FLAG_IFLAG_سرکاؤ;
 			/*continue;*/
 		}
-		if (what == OP_oflag) {
-			G.flags |= parse_comma_flags(val, oflag_words, "oflag") << FLAG_OFLAG_SHIFT;
+		اگر (what == OP_oflag) {
+			G.flags |= parse_comma_flags(val, oflag_الفاظ, "oflag") << FLAG_OFLAG_سرکاؤ;
 			/*continue;*/
 		}
-#endif
-		if (what == OP_bs) {
-			ibs = xatoul_range_sfx(val, 1, ((size_t)-1L)/2, cwbkMG_suffixes);
+#اگر_ختم
+		اگر (what == OP_bs) {
+			ibs = xatoul_range_sfx(val, 1, ((سائز_t)-1L)/2, cwbkMG_suffixes);
 			obs = ibs;
 			/*continue;*/
 		}
 		/* These can be large: */
-		if (what == OP_count) {
-			G.flags |= FLAG_COUNT;
-			count = XATOU_SFX(val, cwbkMG_suffixes);
+		اگر (what == OP_گنتی) {
+			G.flags |= FLAG_گنتی;
+			گنتی = XATOU_SFX(val, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_seek) {
+		اگر (what == OP_seek) {
 			seek = XATOU_SFX(val, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_skip) {
+		اگر (what == OP_skip) {
 			skip = XATOU_SFX(val, cwbkMG_suffixes);
 			/*continue;*/
 		}
-		if (what == OP_if) {
+		اگر (what == OP_if) {
 			infile = val;
 			/*continue;*/
 		}
-		if (what == OP_of) {
+		اگر (what == OP_کا) {
 			outfile = val;
 			/*continue;*/
 		}
-#if ENABLE_FEATURE_DD_STATUS
-		if (what == OP_status) {
-			int n;
-			n = index_in_strings(status_words, val);
-			if (n < 0)
-				bb_error_msg_and_die(bb_msg_invalid_arg_to, val, "status");
-			G.flags |= FLAG_STATUS_NONE << n;
+#اگر ENABLE_FEATURE_DD_حالت
+		اگر (what == OP_حالت) {
+			صحیح n;
+			n = اشاریہ_اندر_لڑیاں(حالت_الفاظ, val);
+			اگر (n < 0)
+				bb_error_پیغام_and_die(bb_پیغام_invalid_arg_مقصد, val, "status");
+			G.flags |= FLAG_حالت_NONE << n;
 			/*continue;*/
 		}
-#endif
+#اگر_ختم
 	} /* end of "for (argv[i])" */
 
 	ibuf = alloc_buf(ibs);
 	obuf = ibuf;
-#if ENABLE_FEATURE_DD_IBS_OBS
-	if (ibs != obs) {
+#اگر ENABLE_FEATURE_DD_IBS_OBS
+	اگر (ibs != obs) {
 		G.flags |= FLAG_TWOBUFS;
 		obuf = alloc_buf(obs);
 	}
-#endif
+#اگر_ختم
 
-#if ENABLE_FEATURE_DD_SIGNAL_HANDLING
-	signal_SA_RESTART_empty_mask(SIGUSR1, dd_output_status);
-#endif
-#if ENABLE_FEATURE_DD_THIRD_STATUS_LINE
-	G.begin_time_us = monotonic_us();
-#endif
+#اگر ENABLE_FEATURE_DD_SIGNAL_HANDLING
+	signal_SA_RESTART_خالی_خانے_نقاب(SIGUSR1, dd_output_حالت);
+#اگر_ختم
+#اگر ENABLE_FEATURE_DD_تیسرا_حالت_سطر
+	G.begin_وقت_us = monotonic_us();
+#اگر_ختم
 
-	if (infile) {
-		int iflag = O_RDONLY;
-#if ENABLE_FEATURE_DD_IBS_OBS
-		if (G.flags & FLAG_IDIRECT) {
-# ifdef O_DIRECT
-			iflag |= O_DIRECT;
-# else
-			bb_error_msg_and_die("O_DIRECT not supported on this platform");
+	اگر (infile) {
+		صحیح iflag = O_RDONLY;
+#اگر ENABLE_FEATURE_DD_IBS_OBS
+		اگر (G.flags & FLAG_IDIRECT) {
+# ifdef O_براہ_راست
+			iflag |= O_براہ_راست;
+# ورنہ
+			bb_error_پیغام_and_die("O_DIRECT not supported on this platform");
 # endif
 		}
-#endif
+#اگر_ختم
 		xmove_fd(xopen(infile, iflag), ifd);
-	} else {
-		infile = bb_msg_standard_input;
+	} ورنہ {
+		infile = bb_پیغام_standard_داخلہ;
 	}
-	if (outfile) {
-		int oflag = O_WRONLY | O_CREAT;
+	اگر (outfile) {
+		صحیح oflag = O_WRONLY | O_CREAT;
 
-		if (!seek && !(G.flags & FLAG_NOTRUNC))
+		اگر (!seek && !(G.flags & FLAG_NOTRUNC))
 			oflag |= O_TRUNC;
-		if (G.flags & FLAG_APPEND)
+		اگر (G.flags & FLAG_APPEND)
 			oflag |= O_APPEND;
-#if ENABLE_FEATURE_DD_IBS_OBS
-		if (G.flags & FLAG_ODIRECT) {
-# ifdef O_DIRECT
-			oflag |= O_DIRECT;
-# else
-			bb_error_msg_and_die("O_DIRECT not supported on this platform");
+#اگر ENABLE_FEATURE_DD_IBS_OBS
+		اگر (G.flags & FLAG_ODIRECT) {
+# ifdef O_براہ_راست
+			oflag |= O_براہ_راست;
+# ورنہ
+			bb_error_پیغام_and_die("O_DIRECT not supported on this platform");
 # endif
 		}
-#endif
+#اگر_ختم
 		xmove_fd(xopen(outfile, oflag), ofd);
 
-		if (seek && !(G.flags & FLAG_NOTRUNC)) {
-			size_t blocksz = (G.flags & FLAG_SEEK_BYTES) ? 1 : obs;
-			if (ftruncate(ofd, seek * blocksz) < 0) {
-				struct stat st;
+		اگر (seek && !(G.flags & FLAG_NOTRUNC)) {
+			سائز_t blocksz = (G.flags & FLAG_SEEK_بائٹیں) ? 1 : obs;
+			اگر (ftruncate(ofd, seek * blocksz) < 0) {
+				ساخت stat st;
 
-				if (fstat(ofd, &st) < 0
-				 || S_ISREG(st.st_mode)
-				 || S_ISDIR(st.st_mode)
+				اگر (fstat(ofd, &st) < 0
+				 || S_ISREG(st.st_منوال)
+				 || S_ISDIR(st.st_منوال)
 				) {
-					goto die_outfile;
+					جاؤ die_outfile;
 				}
 			}
 		}
-	} else {
-		outfile = bb_msg_standard_output;
+	} ورنہ {
+		outfile = bb_پیغام_standard_output;
 	}
-	if (skip) {
-		size_t blocksz = (G.flags & FLAG_SKIP_BYTES) ? 1 : ibs;
-		if (lseek(ifd, skip * blocksz, SEEK_CUR) < 0) {
-			do {
+	اگر (skip) {
+		سائز_t blocksz = (G.flags & FLAG_SKIP_بائٹیں) ? 1 : ibs;
+		اگر (lseek(ifd, skip * blocksz, SEEK_CUR) < 0) {
+			کرو {
 				ssize_t n = dd_read(ibuf, blocksz);
-				if (n < 0)
-					goto die_infile;
-				if (n == 0)
-					break;
-			} while (--skip != 0);
+				اگر (n < 0)
+					جاؤ die_infile;
+				اگر (n == 0)
+					توڑو;
+			} جب (--skip != 0);
 		}
 	}
-	if (seek) {
-		size_t blocksz = (G.flags & FLAG_SEEK_BYTES) ? 1 : obs;
-		if (lseek(ofd, seek * blocksz, SEEK_CUR) < 0)
-			goto die_outfile;
+	اگر (seek) {
+		سائز_t blocksz = (G.flags & FLAG_SEEK_بائٹیں) ? 1 : obs;
+		اگر (lseek(ofd, seek * blocksz, SEEK_CUR) < 0)
+			جاؤ die_outfile;
 	}
 
-	while (1) {
+	جب (1) {
 		ssize_t n = ibs;
 
-		if (G.flags & FLAG_COUNT) {
-			if (count == 0)
-				break;
-			if ((G.flags & FLAG_COUNT_BYTES) && count < ibs)
-				n = count;
+		اگر (G.flags & FLAG_گنتی) {
+			اگر (گنتی == 0)
+				توڑو;
+			اگر ((G.flags & FLAG_گنتی_بائٹیں) && گنتی < ibs)
+				n = گنتی;
 		}
 
 		n = dd_read(ibuf, n);
-		if (n == 0)
-			break;
-		if (n < 0) {
+		اگر (n == 0)
+			توڑو;
+		اگر (n < 0) {
 			/* "Bad block" */
-			if (!(G.flags & FLAG_NOERROR))
-				goto die_infile;
-			bb_simple_perror_msg(infile);
+			اگر (!(G.flags & FLAG_NOERROR))
+				جاؤ die_infile;
+			bb_simple_perror_پیغام(infile);
 			/* GNU dd with conv=noerror skips over bad blocks */
 			xlseek(ifd, ibs, SEEK_CUR);
 			/* conv=noerror,sync writes NULs,
 			 * conv=noerror just ignores input bad blocks */
 			n = 0;
 		}
-		if (G.flags & FLAG_SWAB) {
+		اگر (G.flags & FLAG_SWAB) {
 			uint16_t *p16;
 			ssize_t n2;
 
 			/* Our code allows only last read to be odd-sized */
-			if (prev_read_size & 1)
-				bb_error_msg_and_die("can't swab %lu byte buffer",
-						(unsigned long)prev_read_size);
-			prev_read_size = n;
+			اگر (پچھلا_read_سائز & 1)
+				bb_error_پیغام_and_die("can't swab %lu byte buffer",
+						(غیرعلامتی طویل)پچھلا_read_سائز);
+			پچھلا_read_سائز = n;
 
 			/* If n is odd, last byte is not swapped:
 			 *  echo -n "qwe" | dd conv=swab
 			 * prints "wqe".
 			 */
-			p16 = (void*) ibuf;
+			p16 = (خالی*) ibuf;
 			n2 = (n >> 1);
-			while (--n2 >= 0) {
+			جب (--n2 >= 0) {
 				*p16 = bswap_16(*p16);
 				p16++;
 			}
 		}
-		count -= (G.flags & FLAG_COUNT_BYTES) ? n : 1;
-		if ((size_t)n == ibs)
-			G.in_full++;
-		else {
-			G.in_part++;
-			if (G.flags & FLAG_SYNC) {
+		گنتی -= (G.flags & FLAG_گنتی_بائٹیں) ? n : 1;
+		اگر ((سائز_t)n == ibs)
+			G.اندر_بھرا++;
+		ورنہ {
+			G.اندر_part++;
+			اگر (G.flags & FLAG_SYNC) {
 				memset(ibuf + n, 0, ibs - n);
 				n = ibs;
 			}
 		}
-#if ENABLE_FEATURE_DD_IBS_OBS
-		if (G.flags & FLAG_TWOBUFS) {
-			char *tmp = ibuf;
-			while (n) {
-				size_t d = obs - ocount;
-				if (d > (size_t)n)
+#اگر ENABLE_FEATURE_DD_IBS_OBS
+		اگر (G.flags & FLAG_TWOBUFS) {
+			حرف *tmp = ibuf;
+			جب (n) {
+				سائز_t d = obs - ocount;
+				اگر (d > (سائز_t)n)
 					d = n;
-				memcpy(obuf + ocount, tmp, d);
+				حافظہ_نقل(obuf + ocount, tmp, d);
 				n -= d;
 				tmp += d;
 				ocount += d;
-				if (ocount == obs) {
-					if (write_and_stats(obuf, obs, obs, outfile))
-						goto out_status;
+				اگر (ocount == obs) {
+					اگر (write_and_stats(obuf, obs, obs, outfile))
+						جاؤ برآمد_حالت;
 					ocount = 0;
 				}
 			}
-		} else
-#endif
+		} ورنہ
+#اگر_ختم
 		{
-			if (write_and_stats(ibuf, n, obs, outfile))
-				goto out_status;
+			اگر (write_and_stats(ibuf, n, obs, outfile))
+				جاؤ برآمد_حالت;
 		}
 	}
 
-	if (G.flags & FLAG_FSYNC) {
-		if (fsync(ofd) < 0)
-			goto die_outfile;
+	اگر (G.flags & FLAG_FSYNC) {
+		اگر (fsync(ofd) < 0)
+			جاؤ die_outfile;
 	}
 
-#if ENABLE_FEATURE_DD_IBS_OBS
-	if (ocount != 0) {
-		if (write_and_stats(obuf, ocount, obs, outfile))
-			goto out_status;
+#اگر ENABLE_FEATURE_DD_IBS_OBS
+	اگر (ocount != 0) {
+		اگر (write_and_stats(obuf, ocount, obs, outfile))
+			جاؤ برآمد_حالت;
 	}
-#endif
-	if (close(ifd) < 0) {
+#اگر_ختم
+	اگر (close(ifd) < 0) {
  die_infile:
-		bb_simple_perror_msg_and_die(infile);
+		bb_simple_perror_پیغام_and_die(infile);
 	}
 
-	if (close(ofd) < 0) {
+	اگر (close(ofd) < 0) {
  die_outfile:
-		bb_simple_perror_msg_and_die(outfile);
+		bb_simple_perror_پیغام_and_die(outfile);
 	}
 
 	exitcode = EXIT_SUCCESS;
- out_status:
-	if (!ENABLE_FEATURE_DD_STATUS || !(G.flags & FLAG_STATUS_NONE))
-		dd_output_status(0);
+ برآمد_حالت:
+	اگر (!ENABLE_FEATURE_DD_حالت || !(G.flags & FLAG_حالت_NONE))
+		dd_output_حالت(0);
 
-#if 0 /* can't just free(), they can be mmap()ed */
-	if (ENABLE_FEATURE_CLEAN_UP) {
-		free(obuf);
-		if (G.flags & FLAG_TWOBUFS)
-			free(ibuf);
+#اگر 0 /* can't just free(), they can be mmap()ed */
+	اگر (ENABLE_FEATURE_CLEAN_اوپر) {
+		آزاد(obuf);
+		اگر (G.flags & FLAG_TWOBUFS)
+			آزاد(ibuf);
 	}
-#endif
+#اگر_ختم
 
-	return exitcode;
+	واپس exitcode;
 }

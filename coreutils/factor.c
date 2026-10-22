@@ -18,46 +18,46 @@
 //usage:#define factor_full_usage "\n\n"
 //usage:       "Print prime factors"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#شامل "libbb.h"
+#شامل "common_bufsiz.h"
 
-#if 0
-# define dbg(...) bb_error_msg(__VA_ARGS__)
-#else
-# define dbg(...) ((void)0)
-#endif
+#اگر 0
+# define dbg(...) bb_error_پیغام(__VA_ARGS__)
+#ورنہ
+# define dbg(...) ((خالی)0)
+#اگر_ختم
 
-typedef unsigned long long wide_t;
+قسمتعریف غیرعلامتی طویل طویل wide_t;
 
-#if ULLONG_MAX == (UINT_MAX * UINT_MAX + 2 * UINT_MAX)
+#اگر ULLONG_MAX == (UINT_MAX * UINT_MAX + 2 * UINT_MAX)
 /* "unsigned" is half as wide as ullong */
-typedef unsigned half_t;
-#define HALF_MAX UINT_MAX
-#define HALF_FMT ""
-#elif ULLONG_MAX == (ULONG_MAX * ULONG_MAX + 2 * ULONG_MAX)
+قسمتعریف غیرعلامتی half_t;
+#تعریف_کرو HALF_MAX UINT_MAX
+#تعریف_کرو HALF_FMT ""
+#وگرنہ_اگر ULLONG_MAX == (ULONG_MAX * ULONG_MAX + 2 * ULONG_MAX)
 /* long is half as wide as ullong */
-typedef unsigned long half_t;
-#define HALF_MAX ULONG_MAX
-#define HALF_FMT "l"
-#else
-#error Cant find an integer type which is half as wide as ullong
-#endif
+قسمتعریف غیرعلامتی طویل half_t;
+#تعریف_کرو HALF_MAX ULONG_MAX
+#تعریف_کرو HALF_FMT "l"
+#ورنہ
+#غلطی Cant ڈھونڈو an integer type which is half as wide as ullong
+#اگر_ختم
 
 /* The trial divisor increment wheel.  Use it to skip over divisors that
  * are composites of 2, 3, 5, 7, or 11.
  * Larger wheels improve sieving only slightly, but quickly grow in size
  * (adding just one prime, 13, results in 5766 element sieve).
  */
-#define R(a,b,c,d,e,f,g,h,i,j,A,B,C,D,E,F,G,H,I,J,x) \
+#تعریف_کرو R(a,b,c,d,e,f,g,h,i,j,A,B,C,D,E,F,G,H,I,J,x) \
 	(((uint64_t)(a<<0) | (b<<3) | (c<<6) | (d<<9) | (e<<12) | (f<<15) | (g<<18) | (h<<21) | (i<<24) | (j<<27)) << 1)  | \
 	(((uint64_t)(A<<0) | (B<<3) | (C<<6) | (D<<9) | (E<<12) | (F<<15) | (G<<18) | (H<<21) | (I<<24) | (J<<27)) << 31) | \
 	((uint64_t)x << 61)
-#define P(a,b,c,d,e,f,g,h,i,j,A,B,C,D,E,F,G,H,I,J,x) \
+#تعریف_کرو P(a,b,c,d,e,f,g,h,i,j,A,B,C,D,E,F,G,H,I,J,x) \
 	R(	(a/2),(b/2),(c/2),(d/2),(e/2),(f/2),(g/2),(h/2),(i/2),(j/2), \
 		(A/2),(B/2),(C/2),(D/2),(E/2),(F/2),(G/2),(H/2),(I/2),(J/2), \
 		(x/2) \
 	)
-static const uint64_t packed_wheel[] = {
+ساکن ثابت uint64_t packed_wheel[] = {
 	/* 1, 2, */
 	P( 2, 4, 2, 4, 2, 4, 6, 2, 6, 4, 2, 4, 6, 6, 2, 6, 4, 2, 6, 4, 6),
 	P( 8, 4, 2, 4, 2, 4,14, 4, 6, 2,10, 2, 6, 6, 4, 2, 4, 6, 2,10, 2),
@@ -83,12 +83,12 @@ static const uint64_t packed_wheel[] = {
 	P( 2,10, 2, 6, 4, 2, 4, 6, 6, 2,10, 2, 6, 4,14, 4, 2, 4, 2, 4, 8),
 	P( 6, 4, 6, 2, 4, 6, 2, 6, 6, 4, 2, 4, 6, 2, 6, 4, 2, 4,12, 2,12),
 };
-#undef P
-#undef R
-#define WHEEL_START 5
-#define WHEEL_SIZE (5 + 24 * 20)
-#define square_count (((uint8_t*)&bb_common_bufsiz1)[0])
-#define wheel_tab    (((uint8_t*)&bb_common_bufsiz1) + 1)
+#تعریف_منسوخ P
+#تعریف_منسوخ R
+#تعریف_کرو WHEEL_آغاز 5
+#تعریف_کرو WHEEL_سائز (5 + 24 * 20)
+#تعریف_کرو مربع_گنتی (((uint8_t*)&bb_common_bufsiz1)[0])
+#تعریف_کرو wheel_tab    (((uint8_t*)&bb_common_bufsiz1) + 1)
 /*
  * Why, you ask?
  * plain byte array:
@@ -98,18 +98,18 @@ static const uint64_t packed_wheel[] = {
  *	packed_wheel              -     184    +184
  *	factor_main             108     163     +55
  */
-static void unpack_wheel(void)
+ساکن خالی unpack_wheel(خالی)
 {
-	int i;
+	صحیح i;
 	uint8_t *p;
 
-	setup_common_bufsiz();
+	تیاری_common_bufsiz();
 	wheel_tab[0] = 1;
 	wheel_tab[1] = 2;
 	p = &wheel_tab[2];
-	for (i = 0; i < ARRAY_SIZE(packed_wheel); i++) {
+	برائے (i = 0; i < ARRAY_سائز(packed_wheel); i++) {
 		uint64_t v = packed_wheel[i];
-		while ((v & 0xe) != 0) {
+		جب ((v & 0xe) != 0) {
 			*p = v & 0xe;
 			//printf("%2u,", *p);
 			p++;
@@ -120,21 +120,21 @@ static void unpack_wheel(void)
 }
 
 /* Prevent inlining, factorize() needs all help it can get with reducing register pressure */
-static NOINLINE void print_w(wide_t n)
+ساکن NOINLINE خالی print_w(wide_t n)
 {
-	unsigned rep = square_count;
-	do
-		printf(" %llu", n);
-	while (--rep != 0);
+	غیرعلامتی rep = مربع_گنتی;
+	کرو
+		لکھو(" %llu", n);
+	جب (--rep != 0);
 }
-static NOINLINE void print_h(half_t n)
+ساکن NOINLINE خالی print_h(half_t n)
 {
 	print_w(n);
 }
 
-static void factorize(wide_t N);
+ساکن خالی factorize(wide_t N);
 
-static half_t isqrt_odd(wide_t N)
+ساکن half_t isqrt_odd(wide_t N)
 {
 	half_t s = isqrt(N);
 	/* s^2 is <= N, (s+1)^2 > N */
@@ -144,28 +144,28 @@ static half_t isqrt_odd(wide_t N)
 	 * factor 18446743988964486098 = 2 * 3037000493 * 3037000493
 	 * factor 18446743902517389507 = 3 * 2479700513 * 2479700513
 	 */
-	if ((wide_t)s * s == N) {
+	اگر ((wide_t)s * s == N) {
 		/* factorize sqrt(N), printing each factor twice */
-		square_count *= 2;
+		مربع_گنتی *= 2;
 		factorize(s);
 		/* Let caller know we recursed */
-		return 0;
+		واپس 0;
 	}
 
 	/* Subtract 1 from even s, odd s won't change: */
 	/* (doesnt work for zero, but we know that s != 0 here) */
 	s = (s - 1) | 1;
-	return s;
+	واپس s;
 }
 
-static NOINLINE void factorize(wide_t N)
+ساکن NOINLINE خالی factorize(wide_t N)
 {
-	unsigned w;
-	half_t factor;
-	half_t max_factor;
+	غیرعلامتی w;
+	half_t ضربی_عدد;
+	half_t max_ضربی_عدد;
 
-	if (N < 4)
-		goto end;
+	اگر (N < 4)
+		جاؤ انتہا;
 
 	/* The code needs to be optimized for the case where
 	 * there are large prime factors. For example,
@@ -181,58 +181,58 @@ static NOINLINE void factorize(wide_t N)
 	 * The slowest case (largest prime) for N < 2^64 is
 	 * factor 18446744073709551557 (0xffffffffffffffc5).
 	 */
-	max_factor = isqrt_odd(N);
-	if (!max_factor)
-		return; /* square was detected and recursively factored */
-	factor = 2;
+	max_ضربی_عدد = isqrt_odd(N);
+	اگر (!max_ضربی_عدد)
+		واپس; /* square was detected and recursively factored */
+	ضربی_عدد = 2;
 	w = 0;
-	for (;;) {
+	برائے (;;) {
 		half_t fw;
 
 		/* The division is the most costly part of the loop.
 		 * On 64bit CPUs, takes at best 12 cycles, often ~20.
 		 */
-		while ((N % factor) == 0) { /* not likely */
-			N = N / factor;
-			print_h(factor);
-			max_factor = isqrt_odd(N);
-			if (!max_factor)
-				return; /* square was detected */
+		جب ((N % ضربی_عدد) == 0) { /* not likely */
+			N = N / ضربی_عدد;
+			print_h(ضربی_عدد);
+			max_ضربی_عدد = isqrt_odd(N);
+			اگر (!max_ضربی_عدد)
+				واپس; /* square was detected */
 		}
-		if (factor >= max_factor)
-			break;
-		fw = factor + wheel_tab[w];
-		if (fw < factor)
-			break; /* overflow */
-		factor = fw;
+		اگر (ضربی_عدد >= max_ضربی_عدد)
+			توڑو;
+		fw = ضربی_عدد + wheel_tab[w];
+		اگر (fw < ضربی_عدد)
+			توڑو; /*حد_سے_تجاوز*/
+		ضربی_عدد = fw;
 		w++;
-		if (w < WHEEL_SIZE)
-			continue;
-		w = WHEEL_START;
+		اگر (w < WHEEL_سائز)
+			جاری;
+		w = WHEEL_آغاز;
 	}
- end:
-	if (N > 1)
+ انتہا:
+	اگر (N > 1)
 		print_w(N);
 	bb_putchar('\n');
 }
 
-static void factorize_numstr(const char *numstr)
+ساکن خالی factorize_numstr(ثابت حرف *numstr)
 {
 	wide_t N;
 
 	/* Leading + is ok (coreutils compat) */
-	if (*numstr == '+')
+	اگر (*numstr == '+')
 		numstr++;
-	N = bb_strtoull(numstr, NULL, 10);
-	if (errno)
+	N = bb_strtoull(numstr, تہی, 10);
+	اگر (errno)
 		bb_show_usage();
-	printf("%llu:", N);
-	square_count = 1;
+	لکھو("%llu:", N);
+	مربع_گنتی = 1;
 	factorize(N);
 }
 
-int factor_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int factor_main(int argc UNUSED_PARAM, char **argv)
+صحیح ضربی_عدد_main(صحیح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحیح ضربی_عدد_main(صحیح argc غیر_مستعمل_PARAM, حرف **argv)
 {
 	unpack_wheel();
 
@@ -241,33 +241,33 @@ int factor_main(int argc UNUSED_PARAM, char **argv)
 	//argv += optind;
 	argv++;
 
-	if (!*argv) {
+	اگر (!*argv) {
 		/* Read from stdin, several numbers per line are accepted */
-		for (;;) {
-			char *numstr, *line;
-			line = xmalloc_fgetline(stdin);
-			if (!line)
-				return EXIT_SUCCESS;
-			numstr = line;
-			for (;;) {
-				char *end;
+		برائے (;;) {
+			حرف *numstr, *سطر;
+			سطر = xmalloc_fgetline(stdin);
+			اگر (!سطر)
+				واپس EXIT_SUCCESS;
+			numstr = سطر;
+			برائے (;;) {
+				حرف *انتہا;
 				numstr = skip_whitespace(numstr);
-				if (!numstr[0])
-					break;
-				end = skip_non_whitespace(numstr);
-				if (*end != '\0')
-					*end++ = '\0';
+				اگر (!numstr[0])
+					توڑو;
+				انتہا = skip_non_whitespace(numstr);
+				اگر (*انتہا != '\0')
+					*انتہا++ = '\0';
 				factorize_numstr(numstr);
-				numstr = end;
+				numstr = انتہا;
 			}
-			free(line);
+			آزاد(سطر);
 		}
 	}
 
-	do {
+	کرو {
 		/* Leading spaces are ok (coreutils compat) */
 		factorize_numstr(skip_whitespace(*argv));
-	} while (*++argv);
+	} جب (*++argv);
 
-	return EXIT_SUCCESS;
+	واپس EXIT_SUCCESS;
 }

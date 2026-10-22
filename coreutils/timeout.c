@@ -45,62 +45,62 @@
 //usage:       "Default SIG: TERM."
 //usage:       "If it still exists in KILL_SECS seconds, send KILL.\n"
 
-#include "libbb.h"
+#شامل "libbb.h"
 
-static NOINLINE int timeout_wait(duration_t timeout, pid_t pid)
+ساکن NOINLINE صحیح timeout_wait(duration_t timeout, pid_t pid)
 {
 	/* Just sleep(HUGE_NUM); kill(parent) may kill wrong process! */
-	while (1) {
-#if ENABLE_FLOAT_DURATION
-		if (timeout < 1)
+	جب (1) {
+#اگر ENABLE_FLOAT_DURATION
+		اگر (timeout < 1)
 			sleep_for_duration(timeout);
-		else
-#endif
+		ورنہ
+#اگر_ختم
 			sleep1();
-		if (--timeout <= 0)
-			break;
-		if (kill(pid, 0)) {
+		اگر (--timeout <= 0)
+			توڑو;
+		اگر (kill(pid, 0)) {
 			/* process is gone */
-			return EXIT_SUCCESS;
+			واپس EXIT_SUCCESS;
 		}
 	}
-	return EXIT_FAILURE;
+	واپس EXIT_FAILURE;
 }
 
-int timeout_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int timeout_main(int argc UNUSED_PARAM, char **argv)
+صحیح timeout_main(صحیح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحیح timeout_main(صحیح argc غیر_مستعمل_PARAM, حرف **argv)
 {
-	int signo;
-	int status;
-	int parent = 0;
+	صحیح signo;
+	صحیح حالت_2;
+	صحیح والد = 0;
 	duration_t timeout;
 	duration_t kill_timeout;
 	pid_t pid;
-#if !BB_MMU
-	char *sv1, *sv2;
-#endif
-	const char *opt_s = "TERM";
-	char *opt_k = NULL;
+#اگر !BB_MMU
+	حرف *sv1, *sv2;
+#اگر_ختم
+	ثابت حرف *opt_s = "TERM";
+	حرف *opt_k = تہی;
 
 	/* -p option is not documented, it is needed to support NOMMU. */
 
 	/* -t SECONDS; -p PARENT_PID */
 	/* '+': stop at first non-option */
-	getopt32(argv, "+s:k:" USE_FOR_NOMMU("p:+"), &opt_s, &opt_k, &parent);
+	getopt32(argv, "+s:k:" USE_FOR_NOMMU("p:+"), &opt_s, &opt_k, &والد);
 	/*argv += optind; - no, wait for bb_daemonize_or_rexec! */
 
 	signo = get_signum(opt_s);
-	if (signo < 0)
-		bb_error_msg_and_die("unknown signal '%s'", opt_s);
+	اگر (signo < 0)
+		bb_error_پیغام_and_die("unknown signal '%s'", opt_s);
 
 	kill_timeout = 0;
-	if (opt_k)
+	اگر (opt_k)
 		kill_timeout = parse_duration_str(opt_k);
 
-	if (!argv[optind])
+	اگر (!argv[optind])
 		bb_show_usage();
 	timeout = parse_duration_str(argv[optind++]);
-	if (!argv[optind]) /* no PROG? */
+	اگر (!argv[optind]) /* no PROG? */
 		bb_show_usage();
 
 	/* We want to create a grandchild which will watch
@@ -111,48 +111,48 @@ int timeout_main(int argc UNUSED_PARAM, char **argv)
 	 * making child watch parent results in programs having
 	 * unexpected children.	*/
 
-	if (parent) /* we were re-execed, already grandchild */
-		goto grandchild;
+	اگر (والد) /* we were re-execed, already grandchild */
+		جاؤ grandchild;
 
-#if !BB_MMU
+#اگر !BB_MMU
 	sv1 = argv[optind];
 	sv2 = argv[optind + 1];
-#endif
+#اگر_ختم
 	pid = xvfork();
-	if (pid == 0) {
+	اگر (pid == 0) {
 		/* Child: spawn grandchild and exit */
-		parent = getppid();
-#if !BB_MMU
-		argv[optind] = xasprintf("-p%u", parent);
-		argv[optind + 1] = NULL;
-#endif
+		والد = getppid();
+#اگر !BB_MMU
+		argv[optind] = xasprintf("-p%u", والد);
+		argv[optind + 1] = تہی;
+#اگر_ختم
 		/* NB: exits with nonzero on error: */
 		bb_daemonize_or_rexec(0, argv);
 		/* Here we are grandchild. Sleep, then kill grandparent */
  grandchild:
-		if (timeout_wait(timeout, parent) == EXIT_SUCCESS)
-			return EXIT_SUCCESS;
-		kill(parent, signo);
+		اگر (timeout_wait(timeout, والد) == EXIT_SUCCESS)
+			واپس EXIT_SUCCESS;
+		kill(والد, signo);
 
-		if (kill_timeout > 0) {
-			if (timeout_wait(kill_timeout, parent) == EXIT_SUCCESS)
-				return EXIT_SUCCESS;
-			kill(parent, SIGKILL);
+		اگر (kill_timeout > 0) {
+			اگر (timeout_wait(kill_timeout, والد) == EXIT_SUCCESS)
+				واپس EXIT_SUCCESS;
+			kill(والد, SIGKILL);
 		}
 
-		return EXIT_SUCCESS;
+		واپس EXIT_SUCCESS;
 	}
 
-	/* Parent */
-	wait(&status); /* wait for child to die */
+	/*والد*/
+	wait(&حالت_2); /* wait for child to die */
 	/* Did intermediate [v]fork or exec fail? */
-	if (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
-		return EXIT_FAILURE;
+	اگر (!WIFEXITED(حالت_2) || WEXITSTATUS(حالت_2) != 0)
+		واپس EXIT_FAILURE;
 	/* Ok, exec a program as requested */
 	argv += optind;
-#if !BB_MMU
+#اگر !BB_MMU
 	argv[0] = sv1;
 	argv[1] = sv2;
-#endif
+#اگر_ختم
 	BB_EXECVP_or_die(argv);
 }

@@ -23,50 +23,50 @@
 //usage:     "\n	--ignore=N	Exclude N CPUs"
 //usage:	)
 
-#include "libbb.h"
+#شامل "libbb.h"
 
-int nproc_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int nproc_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+صحیح nproc_main(صحیح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحیح nproc_main(صحیح argc غیر_مستعمل_PARAM, حرف **argv غیر_مستعمل_PARAM)
 {
-	int count = 0;
-#if ENABLE_LONG_OPTS
-	int ignore = 0;
-	int opts = getopt32long(argv, "\xfe:+",
-			"ignore\0" Required_argument "\xfe"
-			"all\0"    No_argument       "\xff"
+	صحیح گنتی = 0;
+#اگر ENABLE_LONG_OPTS
+	صحیح ignore = 0;
+	صحیح opts = getopt32long(argv, "\xfe:+",
+			"ignore\0" Required_دلیل "\xfe"
+			"all\0"    No_دلیل       "\xff"
 			, &ignore
 	);
 
-	if (opts & (1 << 1)) {
+	اگر (opts & (1 << 1)) {
 		DIR *cpusd = opendir("/sys/devices/system/cpu");
-		if (cpusd) {
-			struct dirent *de;
-			while (NULL != (de = readdir(cpusd))) {
-				char *cpuid = strstr(de->d_name, "cpu");
-				if (cpuid && isdigit(cpuid[strlen(cpuid) - 1]))
-					count++;
+		اگر (cpusd) {
+			ساخت dirent *de;
+			جب (تہی != (de = readdir(cpusd))) {
+				حرف *cpuid = لڑی_تلاش(de->d_name, "cpu");
+				اگر (cpuid && ہندسہ_ہے(cpuid[لڑی_لمبائی(cpuid) - 1]))
+					گنتی++;
 			}
-			IF_FEATURE_CLEAN_UP(closedir(cpusd);)
+			IF_FEATURE_CLEAN_اوپر(closedir(cpusd);)
 		}
-	} else
-#endif
+	} ورنہ
+#اگر_ختم
 	{
-		int i;
-		unsigned sz = 2 * 1024;
-		unsigned long *mask = get_malloc_cpu_affinity(0, &sz);
-		sz /= sizeof(long);
-		for (i = 0; i < sz; i++) {
-			if (mask[i] != 0) /* most mask[i] are usually 0 */
-				count += bb_popcnt_long(mask[i]);
+		صحیح i;
+		غیرعلامتی sz = 2 * 1024;
+		غیرعلامتی طویل *نقاب = get_malloc_cpu_affinity(0, &sz);
+		sz /= حجم(طویل);
+		برائے (i = 0; i < sz; i++) {
+			اگر (نقاب[i] != 0) /* most mask[i] are usually 0 */
+				گنتی += bb_popcnt_long(نقاب[i]);
 		}
-		IF_FEATURE_CLEAN_UP(free(mask);)
+		IF_FEATURE_CLEAN_اوپر(آزاد(نقاب);)
 	}
 
-	IF_LONG_OPTS(count -= ignore;)
-	if (count <= 0)
-		count = 1;
+	IF_LONG_OPTS(گنتی -= ignore;)
+	اگر (گنتی <= 0)
+		گنتی = 1;
 
-	printf("%u\n", count);
+	لکھو("%u\n", گنتی);
 
-	return 0;
+	واپس 0;
 }

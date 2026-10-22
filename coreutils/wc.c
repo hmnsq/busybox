@@ -53,23 +53,23 @@
 /* BB_AUDIT SUSv3 compliant. */
 /* http://www.opengroup.org/onlinepubs/007904975/utilities/wc.html */
 
-#include "libbb.h"
-#include "unicode.h"
+#شامل "libbb.h"
+#شامل "unicode.h"
 
-#if !ENABLE_LOCALE_SUPPORT
+#اگر !ENABLE_LOCALE_SUPPORT
 # undef isprint
-# undef isspace
-# define isprint(c) ((unsigned)((c) - 0x20) <= (0x7e - 0x20))
-# define isspace(c) ((c) == ' ')
-#endif
+# undef خلا_ہے
+# define isprint(c) ((غیرعلامتی)((c) - 0x20) <= (0x7e - 0x20))
+# define خلا_ہے(c) ((c) == ' ')
+#اگر_ختم
 
-#if ENABLE_FEATURE_WC_LARGE
-# define COUNT_T unsigned long long
-# define COUNT_FMT "llu"
-#else
-# define COUNT_T unsigned
-# define COUNT_FMT "u"
-#endif
+#اگر ENABLE_FEATURE_WC_LARGE
+# define گنتی_T غیرعلامتی طویل طویل
+# define گنتی_FMT "llu"
+#ورنہ
+# define گنتی_T غیرعلامتی
+# define گنتی_FMT "u"
+#اگر_ختم
 
 /* We support -m even when UNICODE_SUPPORT is off,
  * we just don't advertise it in help text,
@@ -96,162 +96,162 @@
 /* Order is important if we want to be compatible with
  * column order in "wc -cmlwL" output:
  */
-enum {
-	WC_LINES    = 0, /* -l */
-	WC_WORDS    = 1, /* -w */
+شمار {
+	WC_سطریں    = 0, /* -l */
+	WC_الفاظ    = 1, /* -w */
 	WC_UNICHARS = 2, /* -m */
-	WC_BYTES    = 3, /* -c */
-	WC_LENGTH   = 4, /* -L */
-	NUM_WCS     = 5,
+	WC_بائٹیں    = 3, /* -c */
+	WC_لمبائی   = 4, /* -L */
+	عدد_WCS     = 5,
 };
 
-int wc_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int wc_main(int argc UNUSED_PARAM, char **argv)
+صحیح wc_main(صحیح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحیح wc_main(صحیح argc غیر_مستعمل_PARAM, حرف **argv)
 {
-	const char *arg;
-	const char *start_fmt = " %9"COUNT_FMT + 1;
-	const char *fname_fmt = " %s\n";
-	COUNT_T *pcounts;
-	COUNT_T counts[NUM_WCS];
-	COUNT_T totals[NUM_WCS];
-	int num_files;
-	smallint status = EXIT_SUCCESS;
-	unsigned print_type;
+	ثابت حرف *arg;
+	ثابت حرف *آغاز_fmt = " %9"گنتی_FMT + 1;
+	ثابت حرف *fname_fmt = " %s\n";
+	گنتی_T *pcounts;
+	گنتی_T counts[عدد_WCS];
+	گنتی_T totals[عدد_WCS];
+	صحیح عدد_files;
+	smallint حالت_2 = EXIT_SUCCESS;
+	غیرعلامتی print_type;
 
 	init_unicode();
 
 	print_type = getopt32(argv, "lwmcL");
 
-	if (print_type == 0) {
-		print_type = (1 << WC_LINES) | (1 << WC_WORDS) | (1 << WC_BYTES);
+	اگر (print_type == 0) {
+		print_type = (1 << WC_سطریں) | (1 << WC_الفاظ) | (1 << WC_بائٹیں);
 	}
 
 	argv += optind;
-	if (!argv[0]) {
-		*--argv = (char *) bb_msg_standard_input;
+	اگر (!argv[0]) {
+		*--argv = (حرف *) bb_پیغام_standard_داخلہ;
 		fname_fmt = "\n";
 	}
-	if (!argv[1]) { /* zero or one filename? */
-		if (!((print_type-1) & print_type)) /* exactly one option? */
-			start_fmt = "%"COUNT_FMT;
+	اگر (!argv[1]) { /* zero or one filename? */
+		اگر (!((print_type-1) & print_type)) /* exactly one option? */
+			آغاز_fmt = "%"گنتی_FMT;
 	}
 
-	memset(totals, 0, sizeof(totals));
+	memset(totals, 0, حجم(totals));
 
 	pcounts = counts;
 
-	num_files = 0;
-	while ((arg = *argv++) != NULL) {
+	عدد_files = 0;
+	جب ((arg = *argv++) != تہی) {
 		FILE *fp;
-		const char *s;
-		unsigned u;
-		unsigned linepos;
-		smallint in_word;
+		ثابت حرف *s;
+		غیرعلامتی u;
+		غیرعلامتی linepos;
+		smallint اندر_لفظ;
 
-		++num_files;
+		++عدد_files;
 		fp = fopen_or_warn_stdin(arg);
-		if (!fp) {
-			status = EXIT_FAILURE;
-			continue;
+		اگر (!fp) {
+			حالت_2 = EXIT_FAILURE;
+			جاری;
 		}
 
-		memset(counts, 0, sizeof(counts));
+		memset(counts, 0, حجم(counts));
 		linepos = 0;
-		in_word = 0;
+		اندر_لفظ = 0;
 
-		while (1) {
-			int c;
+		جب (1) {
+			صحیح c;
 			/* Our -w doesn't match GNU wc exactly... oh well */
 
 			c = getc(fp);
-			if (c == EOF) {
-				if (ferror(fp)) {
-					bb_simple_perror_msg(arg);
-					status = EXIT_FAILURE;
+			اگر (c == EOF) {
+				اگر (ferror(fp)) {
+					bb_simple_perror_پیغام(arg);
+					حالت_2 = EXIT_FAILURE;
 				}
-				goto DO_EOF;  /* Treat an EOF as '\r'. */
+				جاؤ DO_EOF;  /* Treat an EOF as '\r'. */
 			}
 
 			/* Cater for -c and -m */
-			++counts[WC_BYTES];
-			if (unicode_status != UNICODE_ON /* every byte is a new char */
+			++counts[WC_بائٹیں];
+			اگر (unicode_حالت != UNICODE_ON /* every byte is a new char */
 			 || (c & 0xc0) != 0x80 /* it isn't a 2nd+ byte of a Unicode char */
 			) {
 				++counts[WC_UNICHARS];
 			}
 
-			if (isprint_asciionly(c)) { /* FIXME: not unicode-aware */
+			اگر (isprint_asciionly(c)) { /* FIXME: not unicode-aware */
 				++linepos;
-				if (!isspace(c)) {
-					in_word = 1;
-					continue;
+				اگر (!خلا_ہے(c)) {
+					اندر_لفظ = 1;
+					جاری;
 				}
-			} else if ((unsigned)(c - 9) <= 4) {
+			} ورنہ اگر ((غیرعلامتی)(c - 9) <= 4) {
 				/* \t  9
 				 * \n 10
 				 * \v 11
 				 * \f 12
 				 * \r 13
 				 */
-				if (c == '\t') {
+				اگر (c == '\t') {
 					linepos = (linepos | 7) + 1;
-				} else {  /* '\n', '\r', '\f', or '\v' */
+				} ورنہ {  /* '\n', '\r', '\f', or '\v' */
  DO_EOF:
-					if (linepos > counts[WC_LENGTH]) {
-						counts[WC_LENGTH] = linepos;
+					اگر (linepos > counts[WC_لمبائی]) {
+						counts[WC_لمبائی] = linepos;
 					}
-					if (c == '\n') {
-						++counts[WC_LINES];
+					اگر (c == '\n') {
+						++counts[WC_سطریں];
 					}
-					if (c != '\v') {
+					اگر (c != '\v') {
 						linepos = 0;
 					}
 				}
-			} else {
-				continue;
+			} ورنہ {
+				جاری;
 			}
 
-			counts[WC_WORDS] += in_word;
-			in_word = 0;
-			if (c == EOF) {
-				break;
+			counts[WC_الفاظ] += اندر_لفظ;
+			اندر_لفظ = 0;
+			اگر (c == EOF) {
+				توڑو;
 			}
 		}
 
 		fclose_if_not_stdin(fp);
 
-		if (totals[WC_LENGTH] < counts[WC_LENGTH]) {
-			totals[WC_LENGTH] = counts[WC_LENGTH];
+		اگر (totals[WC_لمبائی] < counts[WC_لمبائی]) {
+			totals[WC_لمبائی] = counts[WC_لمبائی];
 		}
-		totals[WC_LENGTH] -= counts[WC_LENGTH];
+		totals[WC_لمبائی] -= counts[WC_لمبائی];
 
  OUTPUT:
 		/* coreutils wc tries hard to print pretty columns
 		 * (saves results for all files, finds max col len etc...)
 		 * we won't try that hard, it will bloat us too much */
-		s = start_fmt;
+		s = آغاز_fmt;
 		u = 0;
-		do {
-			if (print_type & (1 << u)) {
-				printf(s, pcounts[u]);
-				s = " %9"COUNT_FMT; /* Ok... restore the leading space. */
+		کرو {
+			اگر (print_type & (1 << u)) {
+				لکھو(s, pcounts[u]);
+				s = " %9"گنتی_FMT; /* Ok... restore the leading space. */
 			}
 			totals[u] += pcounts[u];
-		} while (++u < NUM_WCS);
-		printf(fname_fmt, arg);
+		} جب (++u < عدد_WCS);
+		لکھو(fname_fmt, arg);
 	}
 
 	/* If more than one file was processed, we want the totals.  To save some
 	 * space, we set the pcounts ptr to the totals array.  This has the side
 	 * effect of trashing the totals array after outputting it, but that's
 	 * irrelavent since we no longer need it. */
-	if (num_files > 1) {
-		num_files = 0;  /* Make sure we don't get here again. */
+	اگر (عدد_files > 1) {
+		عدد_files = 0;  /* Make sure we don't get here again. */
 		arg = "total";
 		pcounts = totals;
 		--argv;
-		goto OUTPUT;
+		جاؤ OUTPUT;
 	}
 
-	fflush_stdout_and_exit(status);
+	fflush_stdout_and_exit(حالت_2);
 }

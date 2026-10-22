@@ -89,10 +89,10 @@
 //usage:	)
 //usage:       ""
 
-#include "libbb.h"
+#شامل "libbb.h"
 
 /* These are sort types */
-enum {
+شمار {
 	FLAG_n  = 1 << 0,       /* Numeric sort */
 	FLAG_g  = 1 << 1,       /* Sort using strtod() */
 	FLAG_h  = 1 << 2,       /* Sort using strtod(), plus KMGT suffixes */
@@ -105,7 +105,7 @@ enum {
 	FLAG_z  = 1 << 8,       /* Input and output is NUL terminated, not \n */
 /* These can be applied to search keys, the previous four can't */
 	FLAG_b  = 1 << 9,       /* Ignore leading blanks */
-	FLAG_r  = 1 << 10,      /* Reverse */
+	FLAG_r  = 1 << 10,      /*الٹ*/
 	FLAG_d  = 1 << 11,      /* Ignore !(isalnum()|isspace()) */
 	FLAG_f  = 1 << 12,      /* Force uppercase */
 	FLAG_i  = 1 << 13,      /* Ignore !isprint() */
@@ -119,355 +119,355 @@ enum {
 	FLAG_no_tie_break = 0x40000000,
 };
 
-static const char sort_opt_str[] ALIGN1 = "^"
+ساکن ثابت حرف ترتیب_دو_opt_str[] ALIGN1 = "^"
 			"nghMVucszbrdfimS:T:o:k:*t:"
 			"\0" "o--o:t--t"/*-t, -o: at most one of each*/;
 /*
  * OPT_STR must not be string literal, needs to have stable address:
  * code uses "strchr(OPT_STR,c) - OPT_STR" idiom.
  */
-#define OPT_STR (sort_opt_str + 1)
+#تعریف_کرو OPT_STR (ترتیب_دو_opt_str + 1)
 
-#if ENABLE_FEATURE_SORT_BIG
-static char key_separator;
+#اگر ENABLE_FEATURE_ترتیب_دو_BIG
+ساکن حرف کلید_separator;
 
-static struct sort_key {
-	struct sort_key *next_key;  /* linked list */
-	unsigned range[4];          /* start word, start char, end word, end char */
-	unsigned flags;
-} *key_list;
+ساکن ساخت ترتیب_دو_کلید {
+	ساخت ترتیب_دو_کلید *اگلا_کلید;  /* linked list */
+	غیرعلامتی range[4];          /* start word, start char, end word, end char */
+	غیرعلامتی flags;
+} *کلید_list;
 
 
 /* This is a NOEXEC applet. Be very careful! */
 
 
-static char *get_key(char *str, struct sort_key *key, int flags)
+ساکن حرف *get_کلید(حرف *str, ساخت ترتیب_دو_کلید *کلید, صحیح flags)
 {
-	int start = start; /* for compiler */
-	int end;
-	int len, j;
-	unsigned i;
+	صحیح آغاز = آغاز; /* for compiler */
+	صحیح انتہا;
+	صحیح len, j;
+	غیرعلامتی i;
 
 	/* Special case whole string, so we don't have to make a copy */
-	if (key->range[0] == 1 && !key->range[1] && !key->range[2] && !key->range[3]
+	اگر (کلید->range[0] == 1 && !کلید->range[1] && !کلید->range[2] && !کلید->range[3]
 	 && !(flags & (FLAG_b | FLAG_d | FLAG_f | FLAG_i | FLAG_bb))
 	) {
-		return str;
+		واپس str;
 	}
 
 	/* Find start of key on first pass, end on second pass */
-	len = strlen(str);
-	for (j = 0; j < 2; j++) {
-		if (!key->range[2*j])
-			end = len;
+	len = لڑی_لمبائی(str);
+	برائے (j = 0; j < 2; j++) {
+		اگر (!کلید->range[2*j])
+			انتہا = len;
 		/* Loop through fields */
-		else {
-			unsigned char ch = 0;
+		ورنہ {
+			غیرعلامتی حرف ch = 0;
 
-			end = 0;
-			for (i = 1; i < key->range[2*j] + j; i++) {
-				if (key_separator) {
+			انتہا = 0;
+			برائے (i = 1; i < کلید->range[2*j] + j; i++) {
+				اگر (کلید_separator) {
 					/* Skip body of key and separator */
-					while ((ch = str[end]) != '\0') {
-							end++;
-						if (ch == key_separator)
-							break;
+					جب ((ch = str[انتہا]) != '\0') {
+							انتہا++;
+						اگر (ch == کلید_separator)
+							توڑو;
 					}
-				} else {
+				} ورنہ {
 					/* Skip leading blanks */
-					while (isspace(str[end]))
-						end++;
+					جب (خلا_ہے(str[انتہا]))
+						انتہا++;
 					/* Skip body of key */
-					while (str[end] != '\0') {
-						if (isspace(str[end]))
-							break;
-						end++;
+					جب (str[انتہا] != '\0') {
+						اگر (خلا_ہے(str[انتہا]))
+							توڑو;
+						انتہا++;
 					}
 				}
 			}
 			/* Remove last delim: "abc:def:" => "abc:def" */
-			if (j && ch) {
+			اگر (j && ch) {
 				//if (str[end-1] != key_separator)
 				//  bb_error_msg(_and_die("BUG! "
 				//  "str[start:%d,end:%d]:'%.*s'",
 				//  start, end, (int)(end-start), &str[start]);
-				end--;
+				انتہا--;
 			}
 		}
-		if (!j) start = end;
+		اگر (!j) آغاز = انتہا;
 	}
 	/* Strip leading whitespace if necessary */
-	if (flags & FLAG_b)
+	اگر (flags & FLAG_b)
 		/* not using skip_whitespace() for speed */
-		while (isspace(str[start])) start++;
+		جب (خلا_ہے(str[آغاز])) آغاز++;
 	/* Strip trailing whitespace if necessary */
-	if (flags & FLAG_bb)
-		while (end > start && isspace(str[end-1])) end--;
+	اگر (flags & FLAG_bb)
+		جب (انتہا > آغاز && خلا_ہے(str[انتہا-1])) انتہا--;
 	/* -kSTART,N.ENDCHAR: honor ENDCHAR (1-based) */
-	if (key->range[3]) {
-		end = key->range[3];
-		if (end > len) end = len;
+	اگر (کلید->range[3]) {
+		انتہا = کلید->range[3];
+		اگر (انتہا > len) انتہا = len;
 	}
 	/* -kN.STARTCHAR[,...]: honor STARTCHAR (1-based) */
-	if (key->range[1]) {
-		start += key->range[1] - 1;
-		if (start > len) start = len;
+	اگر (کلید->range[1]) {
+		آغاز += کلید->range[1] - 1;
+		اگر (آغاز > len) آغاز = len;
 	}
 	/* Make the copy */
-	if (end < start)
-		end = start;
-	str = xstrndup(str+start, end-start);
+	اگر (انتہا < آغاز)
+		انتہا = آغاز;
+	str = xstrndup(str+آغاز, انتہا-آغاز);
 	/* Handle -d */
-	if (flags & FLAG_d) {
-		for (start = end = 0; str[end]; end++)
-			if (isspace(str[end]) || isalnum(str[end]))
-				str[start++] = str[end];
-		str[start] = '\0';
+	اگر (flags & FLAG_d) {
+		برائے (آغاز = انتہا = 0; str[انتہا]; انتہا++)
+			اگر (خلا_ہے(str[انتہا]) || حرف_یا_ہندسہ(str[انتہا]))
+				str[آغاز++] = str[انتہا];
+		str[آغاز] = '\0';
 	}
 	/* Handle -i */
-	if (flags & FLAG_i) {
-		for (start = end = 0; str[end]; end++)
-			if (isprint_asciionly(str[end]))
-				str[start++] = str[end];
-		str[start] = '\0';
+	اگر (flags & FLAG_i) {
+		برائے (آغاز = انتہا = 0; str[انتہا]; انتہا++)
+			اگر (isprint_asciionly(str[انتہا]))
+				str[آغاز++] = str[انتہا];
+		str[آغاز] = '\0';
 	}
 	/* Handle -f */
-	if (flags & FLAG_f)
-		for (i = 0; str[i]; i++)
-			str[i] = toupper(str[i]);
+	اگر (flags & FLAG_f)
+		برائے (i = 0; str[i]; i++)
+			str[i] = بڑا_حرف(str[i]);
 
-	return str;
+	واپس str;
 }
 
-static struct sort_key *add_key(void)
+ساکن ساخت ترتیب_دو_کلید *جوڑو_کلید(خالی)
 {
-	struct sort_key **pkey = &key_list;
-	while (*pkey)
-		pkey = &((*pkey)->next_key);
-	return *pkey = xzalloc(sizeof(struct sort_key));
+	ساخت ترتیب_دو_کلید **pkey = &کلید_list;
+	جب (*pkey)
+		pkey = &((*pkey)->اگلا_کلید);
+	واپس *pkey = xzalloc(حجم(ساخت ترتیب_دو_کلید));
 }
 
-#define GET_LINE(fp) \
+#تعریف_کرو GET_سطر(fp) \
 	((option_mask32 & FLAG_z) \
-	? bb_get_chunk_from_file(fp, NULL) \
+	? bb_get_chunk_from_file(fp, تہی) \
 	: xmalloc_fgetline(fp))
-#else
-#define GET_LINE(fp) xmalloc_fgetline(fp)
-#endif
+#ورنہ
+#تعریف_کرو GET_سطر(fp) xmalloc_fgetline(fp)
+#اگر_ختم
 
-#if ENABLE_FEATURE_SORT_BIG
-static int scale_suffix(const char *tail)
+#اگر ENABLE_FEATURE_ترتیب_دو_BIG
+ساکن صحیح scale_suffix(ثابت حرف *دم)
 {
-	static const char suffix[] ALIGN1 = "kmgtpezy";
-	const char *s;
-	int n;
+	ساکن ثابت حرف suffix[] ALIGN1 = "kmgtpezy";
+	ثابت حرف *s;
+	صحیح n;
 
-	if (!tail[0])
-		return -1;
-	s = strchr(suffix, tail[0] | 0x20);
-	if (!s)
-		return -1;
+	اگر (!دم[0])
+		واپس -1;
+	s = strchr(suffix, دم[0] | 0x20);
+	اگر (!s)
+		واپس -1;
 	n = s - suffix;
-	if (n != 0 && tail[0] >= 'a')
-		return -1; /* mg... not accepted, only MG... */
-	return n;
+	اگر (n != 0 && دم[0] >= 'a')
+		واپس -1; /* mg... not accepted, only MG... */
+	واپس n;
 }
-#endif
+#اگر_ختم
 
 /* Iterate through keys list and perform comparisons */
-static int compare_keys(const void *xarg, const void *yarg)
+ساکن صحیح compare_کلیدیں(ثابت خالی *xarg, ثابت خالی *yarg)
 {
-	int flags = option_mask32, retval = 0;
-	char *x, *y;
+	صحیح flags = option_mask32, retval = 0;
+	حرف *x, *y;
 
-#if ENABLE_FEATURE_SORT_BIG
-	struct sort_key *key;
+#اگر ENABLE_FEATURE_ترتیب_دو_BIG
+	ساخت ترتیب_دو_کلید *کلید;
 
-	for (key = key_list; !retval && key; key = key->next_key) {
-		flags = key->flags ? key->flags : option_mask32;
+	برائے (کلید = کلید_list; !retval && کلید; کلید = کلید->اگلا_کلید) {
+		flags = کلید->flags ? کلید->flags : option_mask32;
 		/* Chop out and modify key chunks, handling -dfib */
-		x = get_key(*(char **)xarg, key, flags);
-		y = get_key(*(char **)yarg, key, flags);
-#else
+		x = get_کلید(*(حرف **)xarg, کلید, flags);
+		y = get_کلید(*(حرف **)yarg, کلید, flags);
+#ورنہ
 	/* This curly bracket serves no purpose but to match the nesting
 	 * level of the for () loop we're not using */
 	{
-		x = *(char **)xarg;
-		y = *(char **)yarg;
-#endif
+		x = *(حرف **)xarg;
+		y = *(حرف **)yarg;
+#اگر_ختم
 		/* Perform actual comparison */
-		switch (flags & (FLAG_n | FLAG_g | FLAG_h | FLAG_M | FLAG_V)) {
-		default:
-			bb_simple_error_msg_and_die("unknown sort type");
-			break;
-#if defined(HAVE_STRVERSCMP) && HAVE_STRVERSCMP == 1
-		case FLAG_V:
+		انتخاب (flags & (FLAG_n | FLAG_g | FLAG_h | FLAG_M | FLAG_V)) {
+		طےشدہ:
+			bb_simple_error_پیغام_and_die("unknown sort type");
+			توڑو;
+#اگر defined(HAVE_STRVERSCMP) && HAVE_STRVERSCMP == 1
+		حالت FLAG_V:
 			retval = strverscmp(x, y);
-			break;
-#endif
+			توڑو;
+#اگر_ختم
 		/* Ascii sort */
-		case 0:
-#if ENABLE_LOCALE_SUPPORT
+		حالت 0:
+#اگر ENABLE_LOCALE_SUPPORT
 			retval = strcoll(x, y);
-#else
+#ورنہ
 			retval = strcmp(x, y);
-#endif
-			break;
-#if ENABLE_FEATURE_SORT_BIG
-		case FLAG_g:
-		case FLAG_h: {
-			char *xx, *yy;
+#اگر_ختم
+			توڑو;
+#اگر ENABLE_FEATURE_ترتیب_دو_BIG
+		حالت FLAG_g:
+		حالت FLAG_h: {
+			حرف *xx, *yy;
 //TODO: needs setlocale(LC_NUMERIC, "C")?
-			double dx = strtod(x, &xx);
-			double dy = strtod(y, &yy);
+			دوہرا dx = strtod(x, &xx);
+			دوہرا dy = strtod(y, &yy);
 			/* not numbers < NaN < -infinity < numbers < +infinity) */
-			if (x == xx)
+			اگر (x == xx)
 				retval = (y == yy ? 0 : -1);
-			else if (y == yy)
+			ورنہ اگر (y == yy)
 				retval = 1;
 			/* Check for isnan */
-			else if (dx != dx)
+			ورنہ اگر (dx != dx)
 				retval = (dy != dy) ? 0 : -1;
-			else if (dy != dy)
+			ورنہ اگر (dy != dy)
 				retval = 1;
-			else {
-				if (flags & FLAG_h) {
-					int xs = scale_suffix(xx);
-					int ys = scale_suffix(yy);
-					if (xs != ys) {
+			ورنہ {
+				اگر (flags & FLAG_h) {
+					صحیح xs = scale_suffix(xx);
+					صحیح ys = scale_suffix(yy);
+					اگر (xs != ys) {
 						retval = xs - ys;
-						break;
+						توڑو;
 					}
 				}
 				/* Check for infinity.  Could underflow, but it avoids libm. */
-				if (1.0 / dx == 0.0) {
-					if (dx < 0)
+				اگر (1.0 / dx == 0.0) {
+					اگر (dx < 0)
 						retval = (1.0 / dy == 0.0 && dy < 0) ? 0 : -1;
-					else
+					ورنہ
 						retval = (1.0 / dy == 0.0 && dy > 0) ? 0 : 1;
-				} else if (1.0 / dy == 0.0)
+				} ورنہ اگر (1.0 / dy == 0.0)
 					retval = (dy < 0) ? 1 : -1;
-				else
+				ورنہ
 					retval = (dx > dy) ? 1 : ((dx < dy) ? -1 : 0);
 			}
-			break;
+			توڑو;
 		}
-		case FLAG_M: {
-			struct tm thyme;
-			int dx;
-			char *xx, *yy;
+		حالت FLAG_M: {
+			ساخت tm thyme;
+			صحیح dx;
+			حرف *xx, *yy;
 
 			xx = strptime(skip_whitespace(x), "%b", &thyme);
 			dx = thyme.tm_mon;
 			yy = strptime(skip_whitespace(y), "%b", &thyme);
-			if (!xx)
+			اگر (!xx)
 				retval = (!yy) ? 0 : -1;
-			else if (!yy)
+			ورنہ اگر (!yy)
 				retval = 1;
-			else
+			ورنہ
 				retval = dx - thyme.tm_mon;
-			break;
+			توڑو;
 		}
 		/* Full floating point version of -n */
-		case FLAG_n: {
-			double dx = atof(x);
-			double dy = atof(y);
+		حالت FLAG_n: {
+			دوہرا dx = atof(x);
+			دوہرا dy = atof(y);
 			retval = (dx > dy) ? 1 : ((dx < dy) ? -1 : 0);
-			break;
+			توڑو;
 		}
 		} /* switch */
 		/* Free key copies. */
-		if (x != *(char **)xarg) free(x);
-		if (y != *(char **)yarg) free(y);
+		اگر (x != *(حرف **)xarg) آزاد(x);
+		اگر (y != *(حرف **)yarg) آزاد(y);
 		/* if (retval) break; - done by for () anyway */
-#else
+#ورنہ
 		/* Integer version of -n for tiny systems */
-		case FLAG_n:
+		حالت FLAG_n:
 			retval = atoi(x) - atoi(y);
-			break;
+			توڑو;
 		} /* switch */
-#endif
+#اگر_ختم
 	} /* for */
 
-	if (retval == 0) {
+	اگر (retval == 0) {
 		/* So far lines are "the same" */
 
-		if (option_mask32 & FLAG_s) {
+		اگر (option_mask32 & FLAG_s) {
 			/* "Stable sort": later line is "greater than",
 			 * IOW: do not allow qsort() to swap equal lines.
 			 */
 			uint32_t *p32;
 			uint32_t x32, y32;
-			char *line;
-			unsigned len;
+			حرف *سطر;
+			غیرعلامتی len;
 
-			line = *(char**)xarg;
-			len = (strlen(line) + 4) & (~3u);
-			p32 = (void*)(line + len);
+			سطر = *(حرف**)xarg;
+			len = (لڑی_لمبائی(سطر) + 4) & (~3u);
+			p32 = (خالی*)(سطر + len);
 			x32 = *p32;
-			line = *(char**)yarg;
-			len = (strlen(line) + 4) & (~3u);
-			p32 = (void*)(line + len);
+			سطر = *(حرف**)yarg;
+			len = (لڑی_لمبائی(سطر) + 4) & (~3u);
+			p32 = (خالی*)(سطر + len);
 			y32 = *p32;
 
 			/* If x > y, 1, else -1 */
 			retval = (x32 > y32) * 2 - 1;
 			/* Here, -r has no effect! */
-			return retval;
+			واپس retval;
 		}
-		if (!(option_mask32 & FLAG_no_tie_break)) {
+		اگر (!(option_mask32 & FLAG_no_tie_break)) {
 			/* fallback sort */
 			flags = option_mask32;
-			retval = strcmp(*(char **)xarg, *(char **)yarg);
+			retval = strcmp(*(حرف **)xarg, *(حرف **)yarg);
 		}
 	}
 
-	if (flags & FLAG_r)
-		return -retval;
+	اگر (flags & FLAG_r)
+		واپس -retval;
 
-	return retval;
+	واپس retval;
 }
 
-#if ENABLE_FEATURE_SORT_BIG
-static unsigned str2u(char **str)
+#اگر ENABLE_FEATURE_ترتیب_دو_BIG
+ساکن غیرعلامتی str2u(حرف **str)
 {
-	unsigned long lu;
-	if (!isdigit((*str)[0]))
-		bb_simple_error_msg_and_die("bad field specification");
+	غیرعلامتی طویل lu;
+	اگر (!ہندسہ_ہے((*str)[0]))
+		bb_simple_error_پیغام_and_die("bad field specification");
 	lu = strtoul(*str, str, 10);
-	if ((sizeof(long) > sizeof(int) && lu > INT_MAX) || !lu)
-		bb_simple_error_msg_and_die("bad field specification");
-	return lu;
+	اگر ((حجم(طویل) > حجم(صحیح) && lu > زیادہ_سے_زیادہ_عدد) || !lu)
+		bb_simple_error_پیغام_and_die("bad field specification");
+	واپس lu;
 }
-#endif
+#اگر_ختم
 
-int sort_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int sort_main(int argc UNUSED_PARAM, char **argv)
+صحیح ترتیب_دو_main(صحیح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحیح ترتیب_دو_main(صحیح argc غیر_مستعمل_PARAM, حرف **argv)
 {
-	char **lines;
-	char *str_ignored, *str_o, *str_t;
-	llist_t *lst_k = NULL;
-	int i;
-	int linecount;
-	unsigned opts;
-#if ENABLE_FEATURE_SORT_OPTIMIZE_MEMORY
+	حرف **سطریں;
+	حرف *str_ignored, *str_o, *str_t;
+	llist_t *lst_k = تہی;
+	صحیح i;
+	صحیح linecount;
+	غیرعلامتی opts;
+#اگر ENABLE_FEATURE_ترتیب_دو_OPTIMIZE_حافظہ
 	bool can_drop_dups;
-	size_t prev_len = 0;
-	char *prev_line = (char*) "";
+	سائز_t پچھلا_len = 0;
+	حرف *پچھلا_سطر = (حرف*) "";
 	/* Postpone optimizing if the input is small, < 16k lines:
 	 * even just free()ing duplicate lines takes time.
 	 */
-	size_t count_to_optimize_dups = 0x3fff;
-#endif
+	سائز_t گنتی_مقصد_optimize_dups = 0x3fff;
+#اگر_ختم
 
 	xfunc_error_retval = 2;
 
 	/* Parse command line options */
 	opts = getopt32(argv,
-			sort_opt_str,
+			ترتیب_دو_opt_str,
 			&str_ignored, &str_ignored, &str_o, &lst_k, &str_t
 	);
-#if ENABLE_FEATURE_SORT_OPTIMIZE_MEMORY
+#اگر ENABLE_FEATURE_ترتیب_دو_OPTIMIZE_حافظہ
 	/* Can drop dups only if -u but no "complicating" options,
 	 * IOW: if we do a full line compares. Safe options:
 	 * -o FILE Output to FILE
@@ -487,159 +487,159 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 	/* Stable sort needs every line to be uniquely allocated,
 	 * disable optimization to reuse strings:
 	 */
-	if (opts & FLAG_s)
-		count_to_optimize_dups = (size_t)-1L;
-#endif
+	اگر (opts & FLAG_s)
+		گنتی_مقصد_optimize_dups = (سائز_t)-1L;
+#اگر_ختم
 	/* global b strips leading and trailing spaces */
-	if (opts & FLAG_b)
+	اگر (opts & FLAG_b)
 		option_mask32 |= FLAG_bb;
-#if ENABLE_FEATURE_SORT_BIG
-	if (opts & FLAG_t) {
-		if (!str_t[0] || str_t[1])
-			bb_simple_error_msg_and_die("bad -t parameter");
-		key_separator = str_t[0];
+#اگر ENABLE_FEATURE_ترتیب_دو_BIG
+	اگر (opts & FLAG_t) {
+		اگر (!str_t[0] || str_t[1])
+			bb_simple_error_پیغام_and_die("bad -t parameter");
+		کلید_separator = str_t[0];
 	}
 	/* note: below this point we use option_mask32, not opts,
 	 * since that reduces register pressure and makes code smaller */
 
 	/* Parse sort key */
-	while (lst_k) {
-		enum {
+	جب (lst_k) {
+		شمار {
 			FLAG_allowed_for_k =
 				FLAG_n | /* Numeric sort */
 				FLAG_g | /* Sort using strtod() */
 				FLAG_h | /* Sort using strtod(), plus KMGT suffixes */
 				FLAG_M | /* Sort date */
 				FLAG_b | /* Ignore leading blanks */
-				FLAG_r | /* Reverse */
+				FLAG_r | /*الٹ*/
 				FLAG_d | /* Ignore !(isalnum()|isspace()) */
 				FLAG_f | /* Force uppercase */
 				FLAG_i | /* Ignore !isprint() */
 			0
 		};
-		struct sort_key *key = add_key();
-		char *str_k = llist_pop(&lst_k);
+		ساخت ترتیب_دو_کلید *کلید = جوڑو_کلید();
+		حرف *str_k = llist_نکالو(&lst_k);
 
 		i = 0; /* i==0 before comma, 1 after (-k3,6) */
-		while (*str_k) {
+		جب (*str_k) {
 			/* Start of range */
 			/* Cannot use bb_strtou - suffix can be a letter */
-			key->range[2*i] = str2u(&str_k);
-			if (*str_k == '.') {
+			کلید->range[2*i] = str2u(&str_k);
+			اگر (*str_k == '.') {
 				str_k++;
-				key->range[2*i+1] = str2u(&str_k);
+				کلید->range[2*i+1] = str2u(&str_k);
 			}
-			while (*str_k) {
-				int flag;
-				const char *idx;
+			جب (*str_k) {
+				صحیح flag;
+				ثابت حرف *idx;
 
-				if (*str_k == ',' && !i++) {
+				اگر (*str_k == ',' && !i++) {
 					str_k++;
-					break;
+					توڑو;
 				} /* no else needed: fall through to syntax error
 					because comma isn't in OPT_STR */
 				idx = strchr(OPT_STR, *str_k);
-				if (!idx)
-					bb_simple_error_msg_and_die("unknown key option");
+				اگر (!idx)
+					bb_simple_error_پیغام_and_die("unknown key option");
 				flag = 1 << (idx - OPT_STR);
-				if (flag & ~FLAG_allowed_for_k)
-					bb_simple_error_msg_and_die("unknown sort type");
+				اگر (flag & ~FLAG_allowed_for_k)
+					bb_simple_error_پیغام_and_die("unknown sort type");
 				/* b after ',' means strip _trailing_ space */
-				if (i && flag == FLAG_b)
+				اگر (i && flag == FLAG_b)
 					flag = FLAG_bb;
-				key->flags |= flag;
+				کلید->flags |= flag;
 				str_k++;
 			}
 		}
 	}
-#endif
+#اگر_ختم
 
 	/* Open input files and read data */
 	argv += optind;
-	if (!*argv)
-		*--argv = (char*)"-";
+	اگر (!*argv)
+		*--argv = (حرف*)"-";
 	linecount = 0;
-	lines = NULL;
-	do {
+	سطریں = تہی;
+	کرو {
 		/* coreutils 6.9 compat: abort on first open error,
 		 * do not continue to next file: */
 		FILE *fp = xfopen_stdin(*argv);
-		for (;;) {
-			char *line = GET_LINE(fp);
-			if (!line)
-				break;
+		برائے (;;) {
+			حرف *سطر = GET_سطر(fp);
+			اگر (!سطر)
+				توڑو;
 
-#if ENABLE_FEATURE_SORT_OPTIMIZE_MEMORY
-			if (count_to_optimize_dups != 0)
-				count_to_optimize_dups--;
-			if (count_to_optimize_dups == 0) {
-				size_t len;
-				char *new_line;
+#اگر ENABLE_FEATURE_ترتیب_دو_OPTIMIZE_حافظہ
+			اگر (گنتی_مقصد_optimize_dups != 0)
+				گنتی_مقصد_optimize_dups--;
+			اگر (گنتی_مقصد_optimize_dups == 0) {
+				سائز_t len;
+				حرف *new_سطر;
 
 				/* On kernel/linux/arch/ *.[ch] files,
 				 * this reduces memory usage by 6%.
 				 *  yes | head -99999999 | sort
 				 * goes down from 1900Mb to 380 Mb.
 				 */
-				len = strlen(line);
-				if (len <= prev_len) {
-					new_line = prev_line + (prev_len - len);
-					if (strcmp(line, new_line) == 0) {
+				len = لڑی_لمبائی(سطر);
+				اگر (len <= پچھلا_len) {
+					new_سطر = پچھلا_سطر + (پچھلا_len - len);
+					اگر (strcmp(سطر, new_سطر) == 0) {
 						/* it's a tail of the prev line */
-						if (can_drop_dups && prev_len == len) {
+						اگر (can_drop_dups && پچھلا_len == len) {
 							/* it's identical to prev line */
-							free(line);
-							continue;
+							آزاد(سطر);
+							جاری;
 						}
-						free(line);
-						line = new_line;
+						آزاد(سطر);
+						سطر = new_سطر;
 						/* continue using longer prev_line
 						 * for future tail tests.
 						 */
-						goto skip;
+						جاؤ skip;
 					}
 				}
-				prev_len = len;
-				prev_line = line;
+				پچھلا_len = len;
+				پچھلا_سطر = سطر;
  skip: ;
 			}
-#else
+#ورنہ
 //TODO: lighter version which only drops total dups if can_drop_dups == true
-#endif
-			lines = xrealloc_vector(lines, 6, linecount);
-			lines[linecount++] = line;
+#اگر_ختم
+			سطریں = xrealloc_سمتیہ(سطریں, 6, linecount);
+			سطریں[linecount++] = سطر;
 		}
 		fclose_if_not_stdin(fp);
-	} while (*++argv);
+	} جب (*++argv);
 
-#if ENABLE_FEATURE_SORT_BIG
+#اگر ENABLE_FEATURE_ترتیب_دو_BIG
 	/* If no key, perform alphabetic sort */
-	if (!key_list)
-		add_key()->range[0] = 1;
+	اگر (!کلید_list)
+		جوڑو_کلید()->range[0] = 1;
 	/* Handle -c */
-	if (option_mask32 & FLAG_c) {
-		int j = (option_mask32 & FLAG_u) ? -1 : 0;
-		for (i = 1; i < linecount; i++) {
-			if (compare_keys(&lines[i-1], &lines[i]) > j) {
+	اگر (option_mask32 & FLAG_c) {
+		صحیح j = (option_mask32 & FLAG_u) ? -1 : 0;
+		برائے (i = 1; i < linecount; i++) {
+			اگر (compare_کلیدیں(&سطریں[i-1], &سطریں[i]) > j) {
 				fprintf(stderr, "Check line %u\n", i);
-				return EXIT_FAILURE;
+				واپس EXIT_FAILURE;
 			}
 		}
-		return EXIT_SUCCESS;
+		واپس EXIT_SUCCESS;
 	}
-#endif
+#اگر_ختم
 
 	/* For stable sort, store original line position beyond terminating NUL */
-	if (option_mask32 & FLAG_s) {
-		for (i = 0; i < linecount; i++) {
+	اگر (option_mask32 & FLAG_s) {
+		برائے (i = 0; i < linecount; i++) {
 			uint32_t *p32;
-			char *line;
-			unsigned len;
+			حرف *سطر;
+			غیرعلامتی len;
 
-			line = lines[i];
-			len = (strlen(line) + 4) & (~3u);
-			lines[i] = line = xrealloc(line, len + 4);
-			p32 = (void*)(line + len);
+			سطر = سطریں[i];
+			len = (لڑی_لمبائی(سطر) + 4) & (~3u);
+			سطریں[i] = سطر = xrealloc(سطر, len + 4);
+			p32 = (خالی*)(سطر + len);
 			*p32 = i;
 		}
 		/*option_mask32 |= FLAG_no_tie_break;*/
@@ -647,37 +647,37 @@ int sort_main(int argc UNUSED_PARAM, char **argv)
 	}
 
 	/* Perform the actual sort */
-	qsort(lines, linecount, sizeof(lines[0]), compare_keys);
+	qsort(سطریں, linecount, حجم(سطریں[0]), compare_کلیدیں);
 
 	/* Handle -u */
-	if (option_mask32 & FLAG_u) {
-		int j = 0;
+	اگر (option_mask32 & FLAG_u) {
+		صحیح j = 0;
 		/* coreutils 6.3 drop lines for which only key is the same:
 		 * - disabling last-resort compare, or else compare_keys()
 		 * will be the same only for completely identical lines
 		 * - disabling -s (same reasons)
 		 */
 		option_mask32 = (option_mask32 | FLAG_no_tie_break) & (~FLAG_s);
-		for (i = 1; i < linecount; i++) {
-			if (compare_keys(&lines[j], &lines[i]) == 0)
-				free(lines[i]);
-			else
-				lines[++j] = lines[i];
+		برائے (i = 1; i < linecount; i++) {
+			اگر (compare_کلیدیں(&سطریں[j], &سطریں[i]) == 0)
+				آزاد(سطریں[i]);
+			ورنہ
+				سطریں[++j] = سطریں[i];
 		}
-		if (linecount)
+		اگر (linecount)
 			linecount = j+1;
 	}
 
 	/* Print it */
-#if ENABLE_FEATURE_SORT_BIG
+#اگر ENABLE_FEATURE_ترتیب_دو_BIG
 	/* Open output file _after_ we read all input ones */
-	if (option_mask32 & FLAG_o)
+	اگر (option_mask32 & FLAG_o)
 		xmove_fd(xopen(str_o, O_WRONLY|O_CREAT|O_TRUNC), STDOUT_FILENO);
-#endif
+#اگر_ختم
 	{
-		int ch = (option_mask32 & FLAG_z) ? '\0' : '\n';
-		for (i = 0; i < linecount; i++)
-			printf("%s%c", lines[i], ch);
+		صحیح ch = (option_mask32 & FLAG_z) ? '\0' : '\n';
+		برائے (i = 0; i < linecount; i++)
+			لکھو("%s%c", سطریں[i], ch);
 	}
 
 	fflush_stdout_and_exit_SUCCESS();

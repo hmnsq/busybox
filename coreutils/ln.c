@@ -37,29 +37,29 @@
 //usage:       "$ ls -l /tmp/ls\n"
 //usage:       "lrwxrwxrwx    1 root     root            7 Apr 12 18:39 ls -> BusyBox*\n"
 
-#include "libbb.h"
+#شامل "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-#define LN_SYMLINK          (1 << 0)
-#define LN_FORCE            (1 << 1)
-#define LN_NODEREFERENCE    (1 << 2)
-#define LN_BACKUP           (1 << 3)
-#define LN_SUFFIX           (1 << 4)
-#define LN_VERBOSE          (1 << 5)
-#define LN_LINKFILE         (1 << 6)
+#تعریف_کرو LN_SYMLINK          (1 << 0)
+#تعریف_کرو LN_FORCE            (1 << 1)
+#تعریف_کرو LN_NODEREFERENCE    (1 << 2)
+#تعریف_کرو LN_BACKUP           (1 << 3)
+#تعریف_کرو LN_SUFFIX           (1 << 4)
+#تعریف_کرو LN_VERBOSE          (1 << 5)
+#تعریف_کرو LN_LINKFILE         (1 << 6)
 
-int ln_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int ln_main(int argc, char **argv)
+صحیح ln_main(صحیح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحیح ln_main(صحیح argc, حرف **argv)
 {
-	exitcode_t status = EXIT_SUCCESS;
-	int opts;
-	char *last;
-	char *src_name;
-	char *src;
-	char *suffix = (char*)"~";
-	struct stat statbuf;
-	int (*link_func)(const char *, const char *);
+	exitcode_t حالت_2 = EXIT_SUCCESS;
+	صحیح opts;
+	حرف *آخری;
+	حرف *src_name;
+	حرف *src;
+	حرف *suffix = (حرف*)"~";
+	ساخت stat statbuf;
+	صحیح (*link_func)(ثابت حرف *, ثابت حرف *);
 
 	opts = getopt32(argv, "^" "sfnbS:vT" "\0" "-1", &suffix);
 /*
@@ -78,88 +78,88 @@ int ln_main(int argc, char **argv)
 	-r, --relative		create symbolic links relative to link location
 	-t, --target-directory=DIRECTORY	specify the DIRECTORY in which to create the links
  */
-	last = argv[argc - 1];
+	آخری = argv[argc - 1];
 	argv += optind;
 	argc -= optind;
 
-	if ((opts & LN_LINKFILE) && argc > 2) {
-		bb_simple_error_msg_and_die("-T accepts 2 args max");
+	اگر ((opts & LN_LINKFILE) && argc > 2) {
+		bb_simple_error_پیغام_and_die("-T accepts 2 args max");
 	}
 
-	if (!argv[1]) {
+	اگر (!argv[1]) {
 		/* "ln PATH/TO/FILE" -> "ln PATH/TO/FILE FILE" */
-		*--argv = last;
+		*--argv = آخری;
 		/* xstrdup is needed: "ln -s PATH/TO/FILE/" is equivalent to
 		 * "ln -s PATH/TO/FILE/ FILE", not "ln -s PATH/TO/FILE FILE"
 		 */
-		last = bb_get_last_path_component_strip(xstrdup(last));
+		آخری = bb_get_آخری_راستہ_component_strip(xstrdup(آخری));
 	}
 
-	do {
-		src_name = NULL;
-		src = last;
+	کرو {
+		src_name = تہی;
+		src = آخری;
 
-		if (is_directory(src,
+		اگر (is_directory(src,
 				/*followlinks:*/ !(opts & (LN_NODEREFERENCE|LN_LINKFILE))
 				/* Why LN_LINKFILE does not follow links:
 				 * -T/--no-target-directory implies -n/--no-dereference
 				 */
 				)
 		) {
-			if (opts & LN_LINKFILE) {
-				bb_error_msg_and_die("'%s' is a directory", src);
+			اگر (opts & LN_LINKFILE) {
+				bb_error_پیغام_and_die("'%s' is a directory", src);
 			}
 			src_name = xstrdup(*argv);
-			src = concat_path_file(src, bb_get_last_path_component_strip(src_name));
-			free(src_name);
+			src = concat_راستہ_file(src, bb_get_آخری_راستہ_component_strip(src_name));
+			آزاد(src_name);
 			src_name = src;
 		}
-		if (!(opts & LN_SYMLINK) && stat(*argv, &statbuf)) {
+		اگر (!(opts & LN_SYMLINK) && stat(*argv, &statbuf)) {
 			// coreutils: "ln dangling_symlink new_hardlink" works
-			if (lstat(*argv, &statbuf) || !S_ISLNK(statbuf.st_mode)) {
-				bb_simple_perror_msg(*argv);
-				status = EXIT_FAILURE;
-				free(src_name);
-				continue;
+			اگر (lstat(*argv, &statbuf) || !S_ISLNK(statbuf.st_منوال)) {
+				bb_simple_perror_پیغام(*argv);
+				حالت_2 = EXIT_FAILURE;
+				آزاد(src_name);
+				جاری;
 			}
 		}
 
-		if (opts & LN_BACKUP) {
-			char *backup;
+		اگر (opts & LN_BACKUP) {
+			حرف *backup;
 			backup = xasprintf("%s%s", src, suffix);
-			if (rename(src, backup) < 0 && errno != ENOENT) {
-				bb_simple_perror_msg(src);
-				status = EXIT_FAILURE;
-				free(backup);
-				continue;
+			اگر (rename(src, backup) < 0 && errno != ENOENT) {
+				bb_simple_perror_پیغام(src);
+				حالت_2 = EXIT_FAILURE;
+				آزاد(backup);
+				جاری;
 			}
-			free(backup);
+			آزاد(backup);
 			/*
 			 * When the source and dest are both hard links to the same
 			 * inode, a rename may succeed even though nothing happened.
 			 * Therefore, always unlink().
 			 */
 			unlink(src);
-		} else if (opts & LN_FORCE) {
+		} ورنہ اگر (opts & LN_FORCE) {
 			unlink(src);
 		}
 
 		link_func = link;
-		if (opts & LN_SYMLINK) {
+		اگر (opts & LN_SYMLINK) {
 			link_func = symlink;
 		}
 
-		if (opts & LN_VERBOSE) {
-			printf("'%s' -> '%s'\n", src, *argv);
+		اگر (opts & LN_VERBOSE) {
+			لکھو("'%s' -> '%s'\n", src, *argv);
 		}
 
-		if (link_func(*argv, src) != 0) {
-			bb_simple_perror_msg(src);
-			status = EXIT_FAILURE;
+		اگر (link_func(*argv, src) != 0) {
+			bb_simple_perror_پیغام(src);
+			حالت_2 = EXIT_FAILURE;
 		}
 
-		free(src_name);
-	} while ((++argv)[1]);
+		آزاد(src_name);
+	} جب ((++argv)[1]);
 
-	return status;
+	واپس حالت_2;
 }

@@ -29,30 +29,30 @@
 //usage:     "\n	-Z	Set security context"
 //usage:	)
 
-#include "libbb.h"
-#include "libcoreutils/coreutils.h"
+#شامل "libbb.h"
+#شامل "libcoreutils/coreutils.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-int mkfifo_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int mkfifo_main(int argc UNUSED_PARAM, char **argv)
+صحیح mkfifo_main(صحیح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحیح mkfifo_main(صحیح argc غیر_مستعمل_PARAM, حرف **argv)
 {
-	mode_t mode;
-	int retval = EXIT_SUCCESS;
+	منوال_t منوال;
+	صحیح retval = EXIT_SUCCESS;
 
-	mode = getopt_mk_fifo_nod(argv);
+	منوال = getopt_mk_fifo_nod(argv);
 
 	argv += optind;
-	if (!*argv) {
+	اگر (!*argv) {
 		bb_show_usage();
 	}
 
-	do {
-		if (mkfifo(*argv, mode) < 0) {
-			bb_simple_perror_msg(*argv);  /* Avoid multibyte problems. */
+	کرو {
+		اگر (mkfifo(*argv, منوال) < 0) {
+			bb_simple_perror_پیغام(*argv);  /* Avoid multibyte problems. */
 			retval = EXIT_FAILURE;
 		}
-	} while (*++argv);
+	} جب (*++argv);
 
-	return retval;
+	واپس retval;
 }

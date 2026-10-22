@@ -22,45 +22,45 @@
 //usage:       "Change scheduling priority, run PROG\n"
 //usage:     "\n	-n ADJUST	Adjust priority by ADJUST"
 
-#include "libbb.h"
+#شامل "libbb.h"
 
-int nice_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int nice_main(int argc UNUSED_PARAM, char **argv)
+صحیح nice_main(صحیح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحیح nice_main(صحیح argc غیر_مستعمل_PARAM, حرف **argv)
 {
-	int old_priority, adjustment;
+	صحیح old_ترجیح, adjustment;
 
-	old_priority = getpriority(PRIO_PROCESS, 0);
+	old_ترجیح = getpriority(PRIO_PROCESS, 0);
 
-	if (!*++argv) { /* No args, so (GNU) output current nice value. */
-		printf("%d\n", old_priority);
+	اگر (!*++argv) { /* No args, so (GNU) output current nice value. */
+		لکھو("%d\n", old_ترجیح);
 		fflush_stdout_and_exit_SUCCESS();
 	}
 
 	adjustment = 10;  /* Set default adjustment. */
 
-	if (argv[0][0] == '-') {
-		char *nnn = argv[0] + 1;
-		if (nnn[0] == 'n') { /* -n */
+	اگر (argv[0][0] == '-') {
+		حرف *nnn = argv[0] + 1;
+		اگر (nnn[0] == 'n') { /* -n */
 			nnn += 1;
-			if (!nnn[0]) { /* "-n NNN" */
+			اگر (!nnn[0]) { /* "-n NNN" */
 				nnn = *++argv;
 			}
 			/* else: "-nNNN" (w/o space) */
 		}
 		/* else: "-NNN" (NNN may be negative) - same as "-n NNN" */
 
-		if (!nnn || !argv[1]) {  /* Missing priority or PROG! */
+		اگر (!nnn || !argv[1]) {  /* Missing priority or PROG! */
 			bb_show_usage();
 		}
-		adjustment = xatoi_range(nnn, INT_MIN/2, INT_MAX/2);
+		adjustment = xatoi_range(nnn, INT_MIN/2, زیادہ_سے_زیادہ_عدد/2);
 		argv++;
 	}
 
 	{  /* Set our priority. */
-		int prio = old_priority + adjustment;
+		صحیح prio = old_ترجیح + adjustment;
 
-		if (setpriority(PRIO_PROCESS, 0, prio) < 0) {
-			bb_perror_msg_and_die("setpriority(%d)", prio);
+		اگر (setpriority(PRIO_PROCESS, 0, prio) < 0) {
+			bb_perror_پیغام_and_die("setpriority(%d)", prio);
 		}
 	}
 
