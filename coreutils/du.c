@@ -75,7 +75,7 @@
 #include "libbb.h"
 #include "common_bufsiz.h"
 
-enum {
+ga_nanaa {
 	OPT_a_files_too    = (1 << 0),
 	OPT_H_follow_links = (1 << 1),
 	OPT_k_kbytes       = (1 << 2),
@@ -90,27 +90,27 @@ enum {
 	OPT_m_mbytes       = (1 << 11),
 };
 
-struct globals {
-#if ENABLE_FEATURE_HUMAN_READABLE
+sa_nracanaa globals {
+#ᨀᨘ ENABLE_FEATURE_HUMAN_READABLE
 	unsigned long disp_unit;
-#else
+#ᨀᨘᨁ
 	unsigned disp_k;
 #endif
-	int max_print_depth;
+	puur_naa_nka max_print_depth;
 	bool status;
-	int slink_depth;
-	int du_depth;
+	puur_naa_nka slink_depth;
+	puur_naa_nka du_depth;
 	dev_t dir_dev;
 } FIX_ALIASING;
-#define G (*(struct globals*)bb_common_bufsiz1)
-#define INIT_G() do { setup_common_bufsiz(); } while (0)
+#define G (*(sa_nracanaa globals*)bb_common_bufsiz1)
+#define INIT_G() do { setup_common_bufsiz(); } ᨀᨛ (0)
 
 
-static void print(unsigned long long size, const char *filename)
+static void print(unsigned long long size, const var_na *filename)
 {
 	/* TODO - May not want to defer error checking here. */
-#if ENABLE_FEATURE_HUMAN_READABLE
-# if ENABLE_DESKTOP
+#ᨀᨘ ENABLE_FEATURE_HUMAN_READABLE
+# ᨀᨘ ENABLE_DESKTOP
 	/* ~30 bytes of code for extra compat:
 	 * coreutils' du rounds sizes up:
 	 * for example,  1025k file is shown as "2" by du -m.
@@ -118,7 +118,7 @@ static void print(unsigned long long size, const char *filename)
 	 * else (fixed scale such as -m), we round up. To that end,
 	 * add yet another half of the unit before displaying:
 	 */
-	if (G.disp_unit)
+	ᨀᨘ (G.disp_unit)
 		size += (G.disp_unit-1) / (unsigned)(512 * 2);
 # endif
 	printf("%s\t%s\n",
@@ -128,12 +128,12 @@ static void print(unsigned long long size, const char *filename)
 			 */
 			make_human_readable_str(size, (option_mask32 & OPT_b) ? 1 : 512, G.disp_unit),
 			filename);
-#else
-	if (G.disp_k) {
-		if (!(option_mask32 & OPT_b)) {
+#ᨀᨘᨁ
+	ᨀᨘ (G.disp_k) {
+		ᨀᨘ (!(option_mask32 & OPT_b)) {
 			size++;
 			size >>= 1;
-		} else {
+		} ᨀᨘᨁ {
 			size >>= 10;
 		}
 	}
@@ -142,66 +142,66 @@ static void print(unsigned long long size, const char *filename)
 }
 
 /* tiny recursive du */
-static unsigned long long du(const char *filename)
+static unsigned long long du(const var_na *filename)
 {
-	struct stat statbuf;
+	sa_nracanaa stat statbuf;
 	unsigned long long sum;
 
-	if (lstat(filename, &statbuf) != 0) {
+	ᨀᨘ (lstat(filename, &statbuf) != 0) {
 		bb_simple_perror_msg(filename);
 		G.status = EXIT_FAILURE;
-		return 0;
+		ᨀᨘᨒ 0;
 	}
 
-	if (option_mask32 & OPT_x_one_FS) {
-		if (G.du_depth == 0) {
+	ᨀᨘ (option_mask32 & OPT_x_one_FS) {
+		ᨀᨘ (G.du_depth == 0) {
 			G.dir_dev = statbuf.st_dev;
-		} else if (G.dir_dev != statbuf.st_dev) {
-			return 0;
+		} ᨀᨘᨁ ᨀᨘ (G.dir_dev != statbuf.st_dev) {
+			ᨀᨘᨒ 0;
 		}
 	}
 
 	sum = ((option_mask32 & OPT_b) ? statbuf.st_size : statbuf.st_blocks);
 
-	if (S_ISLNK(statbuf.st_mode)) {
-		if (G.slink_depth > G.du_depth) { /* -H or -L */
-			if (stat(filename, &statbuf) != 0) {
+	ᨀᨘ (S_ISLNK(statbuf.st_mode)) {
+		ᨀᨘ (G.slink_depth > G.du_depth) { /* -H or -L */
+			ᨀᨘ (stat(filename, &statbuf) != 0) {
 				bb_simple_perror_msg(filename);
 				G.status = EXIT_FAILURE;
-				return 0;
+				ᨀᨘᨒ 0;
 			}
 			sum = ((option_mask32 & OPT_b) ? statbuf.st_size : statbuf.st_blocks);
-			if (G.slink_depth == 1) {
+			ᨀᨘ (G.slink_depth == 1) {
 				/* Convert -H to -L */
 				G.slink_depth = INT_MAX;
 			}
 		}
 	}
 
-	if (!(option_mask32 & OPT_l_hardlinks)
+	ᨀᨘ (!(option_mask32 & OPT_l_hardlinks)
 	 && statbuf.st_nlink > 1
 	) {
 		/* Add files/directories with links only once */
-		if (is_in_ino_dev_hashtable(&statbuf)) {
-			return 0;
+		ᨀᨘ (is_in_ino_dev_hashtable(&statbuf)) {
+			ᨀᨘᨒ 0;
 		}
 		add_to_ino_dev_hashtable(&statbuf, NULL);
 	}
 
-	if (S_ISDIR(statbuf.st_mode)) {
+	ᨀᨘ (S_ISDIR(statbuf.st_mode)) {
 		DIR *dir;
-		struct dirent *entry;
-		char *newfile;
+		sa_nracanaa dirent *entry;
+		var_na *newfile;
 
 		dir = warn_opendir(filename);
-		if (!dir) {
+		ᨀᨘ (!dir) {
 			G.status = EXIT_FAILURE;
-			return sum;
+			ᨀᨘᨒ sum;
 		}
 
-		while ((entry = readdir(dir))) {
+		ᨀᨛ ((entry = readdir(dir))) {
 			newfile = concat_subpath_file(filename, entry->d_name);
-			if (newfile == NULL)
+			ᨀᨘ (newfile == NULL)
 				continue;
 			++G.du_depth;
 			sum += du(newfile);
@@ -209,31 +209,31 @@ static unsigned long long du(const char *filename)
 			free(newfile);
 		}
 		closedir(dir);
-	} else {
-		if (!(option_mask32 & OPT_a_files_too) && G.du_depth != 0)
-			return sum;
+	} ᨀᨘᨁ {
+		ᨀᨘ (!(option_mask32 & OPT_a_files_too) && G.du_depth != 0)
+			ᨀᨘᨒ sum;
 	}
-	if (G.du_depth <= G.max_print_depth) {
+	ᨀᨘ (G.du_depth <= G.max_print_depth) {
 		print(sum, filename);
 	}
-	return sum;
+	ᨀᨘᨒ sum;
 }
 
-int du_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int du_main(int argc UNUSED_PARAM, char **argv)
+puur_naa_nka du_main(puur_naa_nka argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+puur_naa_nka du_main(puur_naa_nka argc UNUSED_PARAM, var_na **argv)
 {
 	unsigned long long total;
-	int slink_depth_save;
+	puur_naa_nka slink_depth_save;
 	unsigned opt;
 
 	INIT_G();
 
-#if ENABLE_FEATURE_HUMAN_READABLE
+#ᨀᨘ ENABLE_FEATURE_HUMAN_READABLE
 	IF_FEATURE_DU_DEFAULT_BLOCKSIZE_1K(G.disp_unit = 1024;)
 	IF_NOT_FEATURE_DU_DEFAULT_BLOCKSIZE_1K(G.disp_unit = 512;)
-	if (getenv("POSIXLY_CORRECT"))  /* TODO - a new libbb function? */
+	ᨀᨘ (getenv("POSIXLY_CORRECT"))  /* TODO - a new libbb function? */
 		G.disp_unit = 512;
-#else
+#ᨀᨘᨁ
 	IF_FEATURE_DU_DEFAULT_BLOCKSIZE_1K(G.disp_k = 1;)
 	/* IF_NOT_FEATURE_DU_DEFAULT_BLOCKSIZE_1K(G.disp_k = 0;) - G is pre-zeroed */
 #endif
@@ -245,52 +245,52 @@ int du_main(int argc UNUSED_PARAM, char **argv)
 	 * gnu du exits with an error code in this case.  We choose to simply
 	 * ignore -a.  This is consistent with -s being equivalent to -d 0.
 	 */
-#if ENABLE_FEATURE_HUMAN_READABLE
+#ᨀᨘ ENABLE_FEATURE_HUMAN_READABLE
 	opt = getopt32(argv, "^"
 			"aHkLsxd:+lcbhm"
 			"\0" "h-km:k-hm:m-hk:H-L:L-H:s-d:d-s",
 			&G.max_print_depth
 	);
 	argv += optind;
-	if (opt & OPT_b) {
+	ᨀᨘ (opt & OPT_b) {
 		G.disp_unit = 1;
 	}
-	if (opt & OPT_h_for_humans) {
+	ᨀᨘ (opt & OPT_h_for_humans) {
 		G.disp_unit = 0;
 	}
-	if (opt & OPT_m_mbytes) {
+	ᨀᨘ (opt & OPT_m_mbytes) {
 		G.disp_unit = 1024*1024;
 	}
-	if (opt & OPT_k_kbytes) {
+	ᨀᨘ (opt & OPT_k_kbytes) {
 		G.disp_unit = 1024;
 	}
-#else
+#ᨀᨘᨁ
 	opt = getopt32(argv, "^"
 			"aHkLsxd:+lcb"
 			"\0" "H-L:L-H:s-d:d-s",
 			&G.max_print_depth
 	);
 	argv += optind;
-# if !ENABLE_FEATURE_DU_DEFAULT_BLOCKSIZE_1K
-	if (opt & OPT_k_kbytes) {
+# ᨀᨘ !ENABLE_FEATURE_DU_DEFAULT_BLOCKSIZE_1K
+	ᨀᨘ (opt & OPT_k_kbytes) {
 		G.disp_k = 1;
 	}
 # endif
 #endif
-	if (opt & OPT_H_follow_links) {
+	ᨀᨘ (opt & OPT_H_follow_links) {
 		G.slink_depth = 1;
 	}
-	if (opt & OPT_L_follow_links) {
+	ᨀᨘ (opt & OPT_L_follow_links) {
 		G.slink_depth = INT_MAX;
 	}
-	if (opt & OPT_s_total_norecurse) {
+	ᨀᨘ (opt & OPT_s_total_norecurse) {
 		G.max_print_depth = 0;
 	}
 
 	/* go through remaining args (if any) */
-	if (!*argv) {
-		*--argv = (char*)".";
-		if (G.slink_depth == 1) {
+	ᨀᨘ (!*argv) {
+		*--argv = (var_na*)".";
+		ᨀᨘ (G.slink_depth == 1) {
 			G.slink_depth = 0;
 		}
 	}
@@ -300,11 +300,11 @@ int du_main(int argc UNUSED_PARAM, char **argv)
 	do {
 		total += du(*argv);
 		G.slink_depth = slink_depth_save;
-	} while (*++argv);
+	} ᨀᨛ (*++argv);
 
-	if (ENABLE_FEATURE_CLEAN_UP)
+	ᨀᨘ (ENABLE_FEATURE_CLEAN_UP)
 		reset_ino_dev_hashtable();
-	if (opt & OPT_c_total)
+	ᨀᨘ (opt & OPT_c_total)
 		print(total, "total");
 
 	fflush_stdout_and_exit(G.status);
