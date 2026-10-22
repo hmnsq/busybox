@@ -77,18 +77,18 @@
 //usage:       "\\( and \\) or null; if \\( and \\) are not used, they return the number\n"
 //usage:       "of characters matched or 0."
 
-#include "libbb.h"
-#include "common_bufsiz.h"
-#include "xregex.h"
+#ضمن "libbb.h"
+#ضمن "common_bufsiz.h"
+#ضمن "xregex.h"
 
-#if ENABLE_EXPR_MATH_SUPPORT_64
-typedef int64_t arith_t;
+#אם ENABLE_EXPR_MATH_SUPPORT_64
+تعريفنوع int64_t arith_t;
 
 #define PF_REZ      "ll"
 #define PF_REZ_TYPE (long long)
 #define STRTOL(s, e, b) strtoll(s, e, b)
-#else
-typedef long arith_t;
+#אחרת
+تعريفنوع long arith_t;
 
 #define PF_REZ      "l"
 #define PF_REZ_TYPE (long)
@@ -98,85 +98,85 @@ typedef long arith_t;
 /* TODO: use bb_strtol[l]? It's easier to check for errors... */
 
 /* The kinds of value we can have.  */
-enum {
+تعداد {
 	INTEGER,
 	STRING
 };
 
 /* A value is.... */
-struct valinfo {
+بنية valinfo {
 	smallint type;                  /* Which kind. */
-	union {                         /* The value itself. */
+	اتحاد {                         /* The value itself. */
 		arith_t i;
-		char *s;
+		حرف *s;
 	} u;
 };
-typedef struct valinfo VALUE;
+تعريفنوع بنية valinfo VALUE;
 
 /* The arguments given to the program, minus the program name.  */
-struct globals {
-	char **args;
+بنية globals {
+	حرف **args;
 } FIX_ALIASING;
-#define G (*(struct globals*)bb_common_bufsiz1)
-#define INIT_G() do { \
+#define G (*(بنية globals*)bb_common_bufsiz1)
+#define INIT_G() עשה { \
 	setup_common_bufsiz(); \
 	/* NB: noexec applet - globals not zeroed */ \
-} while (0)
+} כלעוד (0)
 
 /* forward declarations */
-static VALUE *eval(void);
+ساكن VALUE *eval(فراغ);
 
 
 /* Return a VALUE for I.  */
 
-static VALUE *int_value(arith_t i)
+ساكن VALUE *int_value(arith_t i)
 {
 	VALUE *v;
 
-	v = xzalloc(sizeof(VALUE));
-	if (INTEGER) /* otherwise xzalloc did it already */
+	v = xzalloc(حجم(VALUE));
+	אם (INTEGER) /* otherwise xzalloc did it already */
 		v->type = INTEGER;
 	v->u.i = i;
-	return v;
+	החזר v;
 }
 
 /* Return a VALUE for S.  */
 
-static VALUE *str_value(const char *s)
+ساكن VALUE *str_value(ثابت حرف *s)
 {
 	VALUE *v;
 
-	v = xzalloc(sizeof(VALUE));
-	if (STRING) /* otherwise xzalloc did it already */
+	v = xzalloc(حجم(VALUE));
+	אם (STRING) /* otherwise xzalloc did it already */
 		v->type = STRING;
 	v->u.s = xstrdup(s);
-	return v;
+	החזר v;
 }
 
 /* Free VALUE V, including structure components.  */
 
-static void freev(VALUE *v)
+ساكن فراغ freev(VALUE *v)
 {
-	if (v->type == STRING)
-		free(v->u.s);
-	free(v);
+	אם (v->type == STRING)
+		حرر(v->u.s);
+	حرر(v);
 }
 
 /* Return nonzero if V is a null-string or zero-number.  */
 
-static int null(VALUE *v)
+ساكن صحيح null(VALUE *v)
 {
-	if (v->type == INTEGER)
-		return v->u.i == 0;
+	אם (v->type == INTEGER)
+		החזר v->u.i == 0;
 	/* STRING: */
-	return v->u.s[0] == '\0' || LONE_CHAR(v->u.s, '0');
+	החזר v->u.s[0] == '\0' || LONE_CHAR(v->u.s, '0');
 }
 
 /* Coerce V to a STRING value (can't fail).  */
 
-static void tostring(VALUE *v)
+ساكن فراغ tostring(VALUE *v)
 {
-	if (v->type == INTEGER) {
+	אם (v->type == INTEGER) {
 		v->u.s = xasprintf("%" PF_REZ "d", PF_REZ_TYPE v->u.i);
 		v->type = STRING;
 	}
@@ -184,43 +184,43 @@ static void tostring(VALUE *v)
 
 /* Coerce V to an INTEGER value.  Return 1 on success, 0 on failure.  */
 
-static bool toarith(VALUE *v)
+ساكن bool toarith(VALUE *v)
 {
-	if (v->type == STRING) {
+	אם (v->type == STRING) {
 		arith_t i;
-		char *e;
+		حرف *e;
 
 		/* Don't interpret the empty string as an integer.  */
 		/* Currently does not worry about overflow or int/long differences. */
 		i = STRTOL(v->u.s, &e, 10);
-		if ((v->u.s == e) || *e)
-			return 0;
-		free(v->u.s);
+		אם ((v->u.s == e) || *e)
+			החזר 0;
+		حرر(v->u.s);
 		v->u.i = i;
 		v->type = INTEGER;
 	}
-	return 1;
+	החזר 1;
 }
 
 /* Return str[0]+str[1] if the next token matches STR exactly.
    STR must not be NULL.  */
 
-static int nextarg(const char *str)
+ساكن صحيح nextarg(ثابت حرف *str)
 {
-	if (*G.args == NULL || strcmp(*G.args, str) != 0)
-		return 0;
-	return (unsigned char)str[0] + (unsigned char)str[1];
+	אם (*G.args == عدم || strcmp(*G.args, str) != 0)
+		החזר 0;
+	החזר (unsigned حرف)str[0] + (unsigned حرف)str[1];
 }
 
 /* The comparison operator handling functions.  */
 
-static int cmp_common(VALUE *l, VALUE *r, int op)
+ساكن صحيح cmp_common(VALUE *l, VALUE *r, صحيح op)
 {
 	arith_t ll, rr;
 
 	ll = l->u.i;
 	rr = r->u.i;
-	if (l->type == STRING || r->type == STRING) {
+	אם (l->type == STRING || r->type == STRING) {
 		tostring(l);
 		tostring(r);
 		ll = strcmp(l->u.s, r->u.s);
@@ -228,50 +228,50 @@ static int cmp_common(VALUE *l, VALUE *r, int op)
 	}
 	/* calculating ll - rr and checking the result is prone to overflows.
 	 * We'll do it differently: */
-	if (op == '<')
-		return ll < rr;
-	if (op == ('<' + '='))
-		return ll <= rr;
-	if (op == '=' || (op == '=' + '='))
-		return ll == rr;
-	if (op == '!' + '=')
-		return ll != rr;
-	if (op == '>')
-		return ll > rr;
+	אם (op == '<')
+		החזר ll < rr;
+	אם (op == ('<' + '='))
+		החזר ll <= rr;
+	אם (op == '=' || (op == '=' + '='))
+		החזר ll == rr;
+	אם (op == '!' + '=')
+		החזר ll != rr;
+	אם (op == '>')
+		החזר ll > rr;
 	/* >= */
-	return ll >= rr;
+	החזר ll >= rr;
 }
 
 /* The arithmetic operator handling functions.  */
 
-static arith_t arithmetic_common(VALUE *l, VALUE *r, int op)
+ساكن arith_t arithmetic_common(VALUE *l, VALUE *r, صحيح op)
 {
 	arith_t li, ri;
 
-	if (!toarith(l) || !toarith(r))
+	אם (!toarith(l) || !toarith(r))
 		bb_simple_error_msg_and_die("non-numeric argument");
 	li = l->u.i;
 	ri = r->u.i;
-	if (op == '+')
-		return li + ri;
-	if (op == '-')
-		return li - ri;
-	if (op == '*')
-		return li * ri;
-	if (ri == 0)
+	אם (op == '+')
+		החזר li + ri;
+	אם (op == '-')
+		החזר li - ri;
+	אם (op == '*')
+		החזר li * ri;
+	אם (ri == 0)
 		bb_simple_error_msg_and_die("division by zero");
-	if (op == '/')
-		return li / ri;
-	return li % ri;
+	אם (op == '/')
+		החזר li / ri;
+	החזר li % ri;
 }
 
 /* Do the : operator.
    SV is the VALUE for the lhs (the string),
    PV is the VALUE for the rhs (the pattern).  */
 
-static VALUE *docolon(VALUE *sv, VALUE *pv)
+ساكن VALUE *docolon(VALUE *sv, VALUE *pv)
 {
-	enum { NMATCH = 2 };
+	تعداد { NMATCH = 2 };
 	VALUE *v;
 	regex_t re_buffer;
 	regmatch_t re_regs[NMATCH];
@@ -279,117 +279,117 @@ static VALUE *docolon(VALUE *sv, VALUE *pv)
 	tostring(sv);
 	tostring(pv);
 
-	if (pv->u.s[0] == '^') {
+	אם (pv->u.s[0] == '^') {
 		bb_error_msg(
 "warning: '%s': using '^' as the first character\n"
 "of a basic regular expression is not portable; it is ignored", pv->u.s);
 	}
 
-	memset(&re_buffer, 0, sizeof(re_buffer));
-	memset(re_regs, 0, sizeof(re_regs));
+	memset(&re_buffer, 0, حجم(re_buffer));
+	memset(re_regs, 0, حجم(re_regs));
 	xregcomp(&re_buffer, pv->u.s, 0);
 
 	/* expr uses an anchored pattern match, so check that there was a
 	 * match and that the match starts at offset 0. */
-	if (regexec(&re_buffer, sv->u.s, NMATCH, re_regs, 0) != REG_NOMATCH
+	אם (regexec(&re_buffer, sv->u.s, NMATCH, re_regs, 0) != REG_NOMATCH
 	 && re_regs[0].rm_so == 0
 	) {
 		/* Were \(...\) used? */
-		if (re_buffer.re_nsub > 0 && re_regs[1].rm_so >= 0) {
+		אם (re_buffer.re_nsub > 0 && re_regs[1].rm_so >= 0) {
 			sv->u.s[re_regs[1].rm_eo] = '\0';
 			v = str_value(sv->u.s + re_regs[1].rm_so);
-		} else {
+		} אחרת {
 			v = int_value(re_regs[0].rm_eo);
 		}
-	} else {
+	} אחרת {
 		/* Match failed -- return the right kind of null.  */
-		if (re_buffer.re_nsub > 0)
+		אם (re_buffer.re_nsub > 0)
 			v = str_value("");
-		else
+		אחרת
 			v = int_value(0);
 	}
 	regfree(&re_buffer);
-	return v;
+	החזר v;
 }
 
 /* Handle bare operands and ( expr ) syntax.  */
 
-static VALUE *eval7(void)
+ساكن VALUE *eval7(فراغ)
 {
 	VALUE *v;
 
-	if (!*G.args)
+	אם (!*G.args)
 		bb_simple_error_msg_and_die("syntax error");
 
-	if (nextarg("(")) {
+	אם (nextarg("(")) {
 		G.args++;
 		v = eval();
-		if (!nextarg(")"))
+		אם (!nextarg(")"))
 			bb_simple_error_msg_and_die("syntax error");
 		G.args++;
-		return v;
+		החזר v;
 	}
 
-	if (nextarg(")"))
+	אם (nextarg(")"))
 		bb_simple_error_msg_and_die("syntax error");
 
-	return str_value(*G.args++);
+	החזר str_value(*G.args++);
 }
 
 /* Handle match, substr, index, length, and quote keywords.  */
 
-static VALUE *eval6(void)
+ساكن VALUE *eval6(فراغ)
 {
-	static const char keywords[] ALIGN1 =
+	ساكن ثابت حرف keywords[] ALIGN1 =
 		"quote\0""length\0""match\0""index\0""substr\0";
 
 	VALUE *r, *i1, *i2;
 	VALUE *l = l; /* silence gcc */
 	VALUE *v = v; /* silence gcc */
-	int key = *G.args ? index_in_strings(keywords, *G.args) + 1 : 0;
+	صحيح key = *G.args ? index_in_strings(keywords, *G.args) + 1 : 0;
 
-	if (key == 0) /* not a keyword */
-		return eval7();
+	אם (key == 0) /* not a keyword */
+		החזר eval7();
 	G.args++; /* We have a valid token, so get the next argument.  */
-	if (key == 1) { /* quote */
-		if (!*G.args)
+	אם (key == 1) { /* quote */
+		אם (!*G.args)
 			bb_simple_error_msg_and_die("syntax error");
-		return str_value(*G.args++);
+		החזר str_value(*G.args++);
 	}
-	if (key == 2) { /* length */
+	אם (key == 2) { /* length */
 		r = eval6();
 		tostring(r);
 		v = int_value(strlen(r->u.s));
 		freev(r);
-	} else
+	} אחרת
 		l = eval6();
 
-	if (key == 3) { /* match */
+	אם (key == 3) { /* match */
 		r = eval6();
 		v = docolon(l, r);
 		freev(l);
 		freev(r);
 	}
-	if (key == 4) { /* index */
+	אם (key == 4) { /* index */
 		r = eval6();
 		tostring(l);
 		tostring(r);
 		v = int_value(strcspn(l->u.s, r->u.s) + 1);
-		if (v->u.i == (arith_t) strlen(l->u.s) + 1)
+		אם (v->u.i == (arith_t) strlen(l->u.s) + 1)
 			v->u.i = 0;
 		freev(l);
 		freev(r);
 	}
-	if (key == 5) { /* substr */
+	אם (key == 5) { /* substr */
 		i1 = eval6();
 		i2 = eval6();
 		tostring(l);
-		if (!toarith(i1) || !toarith(i2)
+		אם (!toarith(i1) || !toarith(i2)
 		 || i1->u.i > (arith_t) strlen(l->u.s)
 		 || i1->u.i <= 0 || i2->u.i <= 0)
 			v = str_value("");
-		else {
-			v = xmalloc(sizeof(VALUE));
+		אחרת {
+			v = xmalloc(حجم(VALUE));
 			v->type = STRING;
 			v->u.s = xstrndup(l->u.s + i1->u.i - 1, i2->u.i);
 		}
@@ -397,18 +397,18 @@ static VALUE *eval6(void)
 		freev(i1);
 		freev(i2);
 	}
-	return v;
+	החזר v;
 }
 
 /* Handle : operator (pattern matching).
    Calls docolon to do the real work.  */
 
-static VALUE *eval5(void)
+ساكن VALUE *eval5(فراغ)
 {
 	VALUE *l, *r, *v;
 
 	l = eval6();
-	while (nextarg(":")) {
+	כלעוד (nextarg(":")) {
 		G.args++;
 		r = eval6();
 		v = docolon(l, r);
@@ -416,23 +416,23 @@ static VALUE *eval5(void)
 		freev(r);
 		l = v;
 	}
-	return l;
+	החזר l;
 }
 
 /* Handle *, /, % operators.  */
 
-static VALUE *eval4(void)
+ساكن VALUE *eval4(فراغ)
 {
 	VALUE *l, *r;
-	int op;
+	صحيح op;
 	arith_t val;
 
 	l = eval5();
-	while (1) {
+	כלעוד (1) {
 		op = nextarg("*");
-		if (!op) { op = nextarg("/");
-		 if (!op) { op = nextarg("%");
-		  if (!op) return l;
+		אם (!op) { op = nextarg("/");
+		 אם (!op) { op = nextarg("%");
+		  אם (!op) החזר l;
 		}}
 		G.args++;
 		r = eval5();
@@ -445,18 +445,18 @@ static VALUE *eval4(void)
 
 /* Handle +, - operators.  */
 
-static VALUE *eval3(void)
+ساكن VALUE *eval3(فراغ)
 {
 	VALUE *l, *r;
-	int op;
+	صحيح op;
 	arith_t val;
 
 	l = eval4();
-	while (1) {
+	כלעוד (1) {
 		op = nextarg("+");
-		if (!op) {
+		אם (!op) {
 			op = nextarg("-");
-			if (!op) return l;
+			אם (!op) החזר l;
 		}
 		G.args++;
 		r = eval4();
@@ -469,22 +469,22 @@ static VALUE *eval3(void)
 
 /* Handle comparisons.  */
 
-static VALUE *eval2(void)
+ساكن VALUE *eval2(فراغ)
 {
 	VALUE *l, *r;
-	int op;
+	صحيح op;
 	arith_t val;
 
 	l = eval3();
-	while (1) {
+	כלעוד (1) {
 		op = nextarg("<");
-		if (!op) { op = nextarg("<=");
-		 if (!op) { op = nextarg("=");
-		  if (!op) { op = nextarg("==");
-		   if (!op) { op = nextarg("!=");
-		    if (!op) { op = nextarg(">=");
-		     if (!op) { op = nextarg(">");
-		      if (!op) return l;
+		אם (!op) { op = nextarg("<=");
+		 אם (!op) { op = nextarg("=");
+		  אם (!op) { op = nextarg("==");
+		   אם (!op) { op = nextarg("!=");
+		    אם (!op) { op = nextarg(">=");
+		     אם (!op) { op = nextarg(">");
+		      אם (!op) החזר l;
 		}}}}}}
 		G.args++;
 		r = eval3();
@@ -499,45 +499,45 @@ static VALUE *eval2(void)
 
 /* Handle &.  */
 
-static VALUE *eval1(void)
+ساكن VALUE *eval1(فراغ)
 {
 	VALUE *l, *r;
 
 	l = eval2();
-	while (nextarg("&")) {
+	כלעוד (nextarg("&")) {
 		G.args++;
 		r = eval2();
-		if (null(l) || null(r)) {
+		אם (null(l) || null(r)) {
 			freev(l);
 			freev(r);
 			l = int_value(0);
-		} else
+		} אחרת
 			freev(r);
 	}
-	return l;
+	החזר l;
 }
 
 /* Handle |.  */
 
-static VALUE *eval(void)
+ساكن VALUE *eval(فراغ)
 {
 	VALUE *l, *r;
 
 	l = eval1();
-	while (nextarg("|")) {
+	כלעוד (nextarg("|")) {
 		G.args++;
 		r = eval1();
-		if (null(l)) {
+		אם (null(l)) {
 			freev(l);
 			l = r;
-		} else
+		} אחרת
 			freev(r);
 	}
-	return l;
+	החזר l;
 }
 
-int expr_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int expr_main(int argc UNUSED_PARAM, char **argv)
+صحيح expr_main(صحيح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحيح expr_main(صحيح argc UNUSED_PARAM, حرف **argv)
 {
 	VALUE *v;
 
@@ -545,15 +545,15 @@ int expr_main(int argc UNUSED_PARAM, char **argv)
 
 	xfunc_error_retval = 2; /* coreutils compat */
 	G.args = argv + 1;
-	if (*G.args == NULL) {
+	אם (*G.args == عدم) {
 		bb_simple_error_msg_and_die("too few arguments");
 	}
 	v = eval();
-	if (*G.args)
+	אם (*G.args)
 		bb_simple_error_msg_and_die("syntax error");
-	if (v->type == INTEGER)
+	אם (v->type == INTEGER)
 		printf("%" PF_REZ "d\n", PF_REZ_TYPE v->u.i);
-	else
+	אחרת
 		puts(v->u.s);
 	fflush_stdout_and_exit(null(v));
 }
