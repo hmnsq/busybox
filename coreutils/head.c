@@ -51,47 +51,47 @@
 
 /* This is a NOEXEC applet. Be very careful! */
 
-#if !ENABLE_FEATURE_FANCY_HEAD
+#nếu !ENABLE_FEATURE_FANCY_HEAD
 # define print_first_N(fp,count,bytes) print_first_N(fp,count)
 #endif
 static void
 print_first_N(FILE *fp, unsigned long count, bool count_bytes)
 {
-#if !ENABLE_FEATURE_FANCY_HEAD
-	const int count_bytes = 0;
+#nếu !ENABLE_FEATURE_FANCY_HEAD
+	const số_nguyên count_bytes = 0;
 #endif
-	while (count) {
-		int c = getc(fp);
-		if (c == EOF)
+	trong_khi (count) {
+		số_nguyên c = getc(fp);
+		nếu (c == EOF)
 			break;
-		if (count_bytes || (c == '\n'))
+		nếu (count_bytes || (c == '\n'))
 			--count;
 		putchar(c);
 	}
 }
 
-#if ENABLE_FEATURE_FANCY_HEAD
+#nếu ENABLE_FEATURE_FANCY_HEAD
 static void
 print_except_N_last_bytes(FILE *fp, unsigned count)
 {
 	unsigned char *circle = xmalloc(++count);
 	unsigned head = 0;
-	for (;;) {
-		int c;
+	cho (;;) {
+		số_nguyên c;
 		c = getc(fp);
-		if (c == EOF)
+		nếu (c == EOF)
 			goto ret;
 		circle[head++] = c;
-		if (head == count)
+		nếu (head == count)
 			break;
 	}
-	for (;;) {
-		int c;
-		if (head == count)
+	cho (;;) {
+		số_nguyên c;
+		nếu (head == count)
 			head = 0;
 		putchar(circle[head]);
 		c = getc(fp);
-		if (c == EOF)
+		nếu (c == EOF)
 			goto ret;
 		circle[head] = c;
 		head++;
@@ -105,74 +105,74 @@ print_except_N_last_lines(FILE *fp, unsigned count)
 {
 	char **circle = xzalloc((++count) * sizeof(circle[0]));
 	unsigned head = 0;
-	for (;;) {
+	cho (;;) {
 		char *c;
 		c = xmalloc_fgets(fp);
-		if (!c)
+		nếu (!c)
 			goto ret;
 		circle[head++] = c;
-		if (head == count)
+		nếu (head == count)
 			break;
 	}
-	for (;;) {
+	cho (;;) {
 		char *c;
-		if (head == count)
+		nếu (head == count)
 			head = 0;
 		fputs_stdout(circle[head]);
 		c = xmalloc_fgets(fp);
-		if (!c)
+		nếu (!c)
 			goto ret;
 		free(circle[head]);
 		circle[head++] = c;
 	}
  ret:
 	head = 0;
-	for (;;) {
+	cho (;;) {
 		free(circle[head++]);
-		if (head == count)
+		nếu (head == count)
 			break;
 	}
 	free(circle);
 }
-#else
+#không_thì
 /* Must never be called */
 void print_except_N_last_bytes(FILE *fp, unsigned count);
 void print_except_N_last_lines(FILE *fp, unsigned count);
 #endif
 
-#if !ENABLE_FEATURE_FANCY_HEAD
+#nếu !ENABLE_FEATURE_FANCY_HEAD
 # define eat_num(negative_N,p) eat_num(p)
 #endif
 static unsigned long
 eat_num(bool *negative_N, const char *p)
 {
-#if ENABLE_FEATURE_FANCY_HEAD
-	if (*p == '-') {
+#nếu ENABLE_FEATURE_FANCY_HEAD
+	nếu (*p == '-') {
 		*negative_N = 1;
 		p++;
 	}
 #endif
-	return xatoul_sfx(p, bkm_suffixes);
+	trả_về xatoul_sfx(p, bkm_suffixes);
 }
 
 static const char head_opts[] ALIGN1 =
 	"n:"
-#if ENABLE_FEATURE_FANCY_HEAD
+#nếu ENABLE_FEATURE_FANCY_HEAD
 	"c:qv"
 #endif
 	;
 
 #define header_fmt_str "\n==> %s <==\n"
 
-int head_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int head_main(int argc, char **argv)
+số_nguyên head_main(số_nguyên argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+số_nguyên head_main(số_nguyên argc, char **argv)
 {
 	unsigned long count = 10;
-#if ENABLE_FEATURE_FANCY_HEAD
-	int header_threshhold = 1;
+#nếu ENABLE_FEATURE_FANCY_HEAD
+	số_nguyên header_threshhold = 1;
 	bool count_bytes = 0;
 	bool negative_N = 0;
-#else
+#không_thì
 # define header_threshhold 1
 # define count_bytes       0
 # define negative_N        0
@@ -180,12 +180,12 @@ int head_main(int argc, char **argv)
 	FILE *fp;
 	const char *fmt;
 	char *p;
-	int opt;
-	int retval = EXIT_SUCCESS;
+	số_nguyên opt;
+	số_nguyên retval = EXIT_SUCCESS;
 
-#if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
+#nếu ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
 	/* Allow legacy syntax of an initial numeric option without -n. */
-	if (argv[1] && argv[1][0] == '-'
+	nếu (argv[1] && argv[1][0] == '-'
 	 && isdigit(argv[1][1])
 	) {
 		--argc;
@@ -196,9 +196,9 @@ int head_main(int argc, char **argv)
 #endif
 
 	/* No size benefit in converting this to getopt32 */
-	while ((opt = getopt(argc, argv, head_opts)) > 0) {
+	trong_khi ((opt = getopt(argc, argv, head_opts)) > 0) {
 		switch (opt) {
-#if ENABLE_FEATURE_FANCY_HEAD
+#nếu ENABLE_FEATURE_FANCY_HEAD
 		case 'q':
 			header_threshhold = INT_MAX;
 			break;
@@ -211,7 +211,7 @@ int head_main(int argc, char **argv)
 #endif
 		case 'n':
 			p = optarg;
-#if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
+#nếu ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_HEAD
  GET_COUNT:
 #endif
 			count = eat_num(&negative_N, p);
@@ -223,50 +223,50 @@ int head_main(int argc, char **argv)
 
 	argc -= optind;
 	argv += optind;
-	if (!*argv)
+	nếu (!*argv)
 		*--argv = (char*)"-";
 
 	fmt = header_fmt_str + 1;
-	if (argc <= header_threshhold) {
-#if ENABLE_FEATURE_FANCY_HEAD
+	nếu (argc <= header_threshhold) {
+#nếu ENABLE_FEATURE_FANCY_HEAD
 		header_threshhold = 0;
-#else
+#không_thì
 		fmt += 11; /* "" */
 #endif
 	}
-	if (negative_N) {
-		if (count >= INT_MAX / sizeof(char*))
+	nếu (negative_N) {
+		nếu (count >= INT_MAX / sizeof(char*))
 			bb_error_msg("count is too big: %lu", count);
 	}
 
 	do {
 		fp = fopen_or_warn_stdin(*argv);
-		if (fp) {
-			if (fp == stdin) {
+		nếu (fp) {
+			nếu (fp == stdin) {
 				*argv = (char *) bb_msg_standard_input;
 			}
-			if (header_threshhold) {
+			nếu (header_threshhold) {
 				printf(fmt, *argv);
 			}
-			if (negative_N) {
-				if (count_bytes) {
+			nếu (negative_N) {
+				nếu (count_bytes) {
 					print_except_N_last_bytes(fp, count);
-				} else {
+				} không_thì {
 					print_except_N_last_lines(fp, count);
 				}
-			} else {
+			} không_thì {
 				print_first_N(fp, count, count_bytes);
 			}
 			die_if_ferror_stdout();
-			if (fclose_if_not_stdin(fp)) {
+			nếu (fclose_if_not_stdin(fp)) {
 				bb_simple_perror_msg(*argv);
 				retval = EXIT_FAILURE;
 			}
-		} else {
+		} không_thì {
 			retval = EXIT_FAILURE;
 		}
 		fmt = header_fmt_str;
-	} while (*++argv);
+	} trong_khi (*++argv);
 
 	fflush_stdout_and_exit(retval);
 }

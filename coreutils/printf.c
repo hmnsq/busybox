@@ -79,18 +79,18 @@
 
 typedef void FAST_FUNC (*converter)(const char *arg, void *result);
 
-static int multiconvert(const char *arg, void *result, converter convert)
+static số_nguyên multiconvert(const char *arg, void *result, converter convert)
 {
-	if (*arg == '"' || *arg == '\'') {
+	nếu (*arg == '"' || *arg == '\'') {
 		arg = utoa((unsigned char)arg[1]);
 	}
 	errno = 0;
 	convert(arg, result);
-	if (errno) {
+	nếu (errno) {
 		bb_error_msg("invalid number '%s'", arg);
-		return 1;
+		trả_về 1;
 	}
-	return 0;
+	trả_về 0;
 }
 
 static void FAST_FUNC conv_strtoull(const char *arg, void *result)
@@ -99,7 +99,7 @@ static void FAST_FUNC conv_strtoull(const char *arg, void *result)
 	 * and probably shouldn't (other callers might require purely numeric
 	 * inputs to be allowed.
 	 */
-	if (arg[0] == '+')
+	nếu (arg[0] == '+')
 		arg++;
 	*(unsigned long long*)result = bb_strtoull(arg, NULL, 0);
 	/* both coreutils 6.10 and bash 3.2:
@@ -107,13 +107,13 @@ static void FAST_FUNC conv_strtoull(const char *arg, void *result)
 	 * fffffffffffffffe
 	 * Mimic that:
 	 */
-	if (errno) {
+	nếu (errno) {
 		*(unsigned long long*)result = bb_strtoll(arg, NULL, 0);
 	}
 }
 static void FAST_FUNC conv_strtoll(const char *arg, void *result)
 {
-	if (arg[0] == '+')
+	nếu (arg[0] == '+')
 		arg++;
 	*(long long*)result = bb_strtoll(arg, NULL, 0);
 }
@@ -124,7 +124,7 @@ static void FAST_FUNC conv_strtod(const char *arg, void *result)
 	/* What I like much less is that "-" accepted too! :( */
 //TODO: needs setlocale(LC_NUMERIC, "C")?
 	*(double*)result = strtod(arg, &end);
-	if (end[0]) {
+	nếu (end[0]) {
 		errno = ERANGE;
 		*(double*)result = 0;
 	}
@@ -134,40 +134,40 @@ static void FAST_FUNC conv_strtod(const char *arg, void *result)
 static unsigned long long my_xstrtoull(const char *arg)
 {
 	unsigned long long result;
-	if (multiconvert(arg, &result, conv_strtoull))
+	nếu (multiconvert(arg, &result, conv_strtoull))
 		result = 0;
-	return result;
+	trả_về result;
 }
 static long long my_xstrtoll(const char *arg)
 {
 	long long result;
-	if (multiconvert(arg, &result, conv_strtoll))
+	nếu (multiconvert(arg, &result, conv_strtoll))
 		result = 0;
-	return result;
+	trả_về result;
 }
 static double my_xstrtod(const char *arg)
 {
 	double result;
 	multiconvert(arg, &result, conv_strtod);
-	return result;
+	trả_về result;
 }
 
 /* Handles %b; return 1 if output is to be short-circuited by \c */
-static int print_esc_string(const char *str)
+static số_nguyên print_esc_string(const char *str)
 {
 	char c;
-	while ((c = *str) != '\0') {
+	trong_khi ((c = *str) != '\0') {
 		str++;
-		if (c == '\\') {
+		nếu (c == '\\') {
 			/* %b also accepts 4-digit octals of the form \0### */
-			if (*str == '0') {
-				if ((unsigned char)(str[1] - '0') < 8) {
+			nếu (*str == '0') {
+				nếu ((unsigned char)(str[1] - '0') < 8) {
 					/* 2nd char is 0..7: skip leading '0' */
 					str++;
 				}
 			}
-			else if (*str == 'c') {
-				return 1;
+			không_thì nếu (*str == 'c') {
+				trả_về 1;
 			}
 			{
 				/* optimization: don't force arg to be on-stack,
@@ -180,11 +180,11 @@ static int print_esc_string(const char *str)
 		putchar(c);
 	}
 
-	return 0;
+	trả_về 0;
 }
 
 static void print_direc(char *format, unsigned fmt_length,
-		int field_width, int precision,
+		số_nguyên field_width, số_nguyên precision,
 		const char *argument)
 {
 	long long llv;
@@ -197,7 +197,7 @@ static void print_direc(char *format, unsigned fmt_length,
 
 	have_prec = strstr(format, ".*");
 	have_width = strchr(format, '*');
-	if (have_width - 1 == have_prec)
+	nếu (have_width - 1 == have_prec)
 		have_width = NULL;
 
 	/* multiconvert sets errno = 0, but %s needs it cleared */
@@ -211,15 +211,15 @@ static void print_direc(char *format, unsigned fmt_length,
 	case 'i':
 		llv = my_xstrtoll(skip_whitespace(argument));
  print_long:
-		if (!have_width) {
-			if (!have_prec)
+		nếu (!have_width) {
+			nếu (!have_prec)
 				printf(format, llv);
-			else
+			không_thì
 				printf(format, precision, llv);
-		} else {
-			if (!have_prec)
+		} không_thì {
+			nếu (!have_prec)
 				printf(format, field_width, llv);
-			else
+			không_thì
 				printf(format, field_width, precision, llv);
 		}
 		break;
@@ -232,21 +232,21 @@ static void print_direc(char *format, unsigned fmt_length,
 		goto print_long;
 	case 's':
 		/* Are char* and long long the same? */
-		if (sizeof(argument) == sizeof(llv)) {
+		nếu (sizeof(argument) == sizeof(llv)) {
 			llv = (long long)(ptrdiff_t)argument;
 			goto print_long;
-		} else {
+		} không_thì {
 			/* Hope compiler will optimize it out by moving call
 			 * instruction after the ifs... */
-			if (!have_width) {
-				if (!have_prec)
+			nếu (!have_width) {
+				nếu (!have_prec)
 					printf(format, argument, /*unused:*/ argument, argument);
-				else
+				không_thì
 					printf(format, precision, argument, /*unused:*/ argument);
-			} else {
-				if (!have_prec)
+			} không_thì {
+				nếu (!have_prec)
 					printf(format, field_width, argument, /*unused:*/ argument);
-				else
+				không_thì
 					printf(format, field_width, precision, argument);
 			}
 			break;
@@ -257,15 +257,15 @@ static void print_direc(char *format, unsigned fmt_length,
 	case 'g':
 	case 'G':
 		dv = my_xstrtod(argument);
-		if (!have_width) {
-			if (!have_prec)
+		nếu (!have_width) {
+			nếu (!have_prec)
 				printf(format, dv);
-			else
+			không_thì
 				printf(format, precision, dv);
-		} else {
-			if (!have_prec)
+		} không_thì {
+			nếu (!have_prec)
 				printf(format, field_width, dv);
-			else
+			không_thì
 				printf(format, field_width, precision, dv);
 		}
 		break;
@@ -275,69 +275,69 @@ static void print_direc(char *format, unsigned fmt_length,
 }
 
 /* Handle params for "%*.*f". Negative numbers are ok (compat). */
-static int get_width_prec(const char *str)
+static số_nguyên get_width_prec(const char *str)
 {
-	int v = bb_strtoi(str, NULL, 10);
-	if (errno) {
+	số_nguyên v = bb_strtoi(str, NULL, 10);
+	nếu (errno) {
 		bb_error_msg("invalid number '%s'", str);
 		v = 0;
 	}
-	return v;
+	trả_về v;
 }
 
 /* Print the text in FORMAT, using ARGV for arguments to any '%' directives.
    Return advanced ARGV.  */
-static char **print_formatted(char *f, char **argv, int *conv_err)
+static char **print_formatted(char *f, char **argv, số_nguyên *conv_err)
 {
 	char *direc_start;      /* Start of % directive.  */
 	unsigned direc_length;  /* Length of % directive.  */
-	int field_width;        /* Arg to first '*' */
-	int precision;          /* Arg to second '*' */
+	số_nguyên field_width;        /* Arg to first '*' */
+	số_nguyên precision;          /* Arg to second '*' */
 	char **saved_argv = argv;
 
-	for (; *f; ++f) {
+	cho (; *f; ++f) {
 		switch (*f) {
 		case '%':
 			direc_start = f++;
 			direc_length = 1;
 			field_width = precision = 0;
-			if (*f == '%') {
+			nếu (*f == '%') {
 				bb_putchar('%');
 				break;
 			}
-			if (*f == 'b') {
-				if (*argv) {
-					if (print_esc_string(*argv))
-						return saved_argv; /* causes main() to exit */
+			nếu (*f == 'b') {
+				nếu (*argv) {
+					nếu (print_esc_string(*argv))
+						trả_về saved_argv; /* causes main() to exit */
 					++argv;
 				}
 				break;
 			}
-			while (*f && strchr("-+ #0", *f)) {
+			trong_khi (*f && strchr("-+ #0", *f)) {
 				++f;
 				++direc_length;
 			}
-			if (*f == '*') {
+			nếu (*f == '*') {
 				++f;
 				++direc_length;
-				if (*argv)
+				nếu (*argv)
 					field_width = get_width_prec(*argv++);
-			} else {
-				while (isdigit(*f)) {
+			} không_thì {
+				trong_khi (isdigit(*f)) {
 					++f;
 					++direc_length;
 				}
 			}
-			if (*f == '.') {
+			nếu (*f == '.') {
 				++f;
 				++direc_length;
-				if (*f == '*') {
+				nếu (*f == '*') {
 					++f;
 					++direc_length;
-					if (*argv)
+					nếu (*argv)
 						precision = get_width_prec(*argv++);
-				} else {
-					while (isdigit(*f)) {
+				} không_thì {
+					trong_khi (isdigit(*f)) {
 						++f;
 						++direc_length;
 					}
@@ -348,7 +348,7 @@ static char **print_formatted(char *f, char **argv, int *conv_err)
 			 * bash does not like "%lld", but coreutils
 			 * happily takes even "%Llllhhzhhzd"!
 			 * We are permissive like coreutils */
-			while ((*f | 0x20) == 'l' || *f == 'h' || *f == 'z') {
+			trong_khi ((*f | 0x20) == 'l' || *f == 'h' || *f == 'z') {
 				overlapping_strcpy(f, f + 1);
 			}
 			/* Add "ll" if integer modifier, then print */
@@ -356,13 +356,13 @@ static char **print_formatted(char *f, char **argv, int *conv_err)
 				static const char format_chars[] ALIGN1 = "diouxXfeEgGcs";
 				char *p = strchr(format_chars, *f);
 				/* needed - try "printf %" without it */
-				if (p == NULL || *f == '\0') {
+				nếu (p == NULL || *f == '\0') {
 					bb_error_msg("%s: invalid format", direc_start);
 					/* causes main() to exit with error */
-					return saved_argv - 1;
+					trả_về saved_argv - 1;
 				}
 				++direc_length;
-				if (p - format_chars <= 5) {
+				nếu (p - format_chars <= 5) {
 					/* it is one of "diouxX" */
 					p = xmalloc(direc_length + 3);
 					memcpy(p, direc_start, direc_length);
@@ -372,13 +372,13 @@ static char **print_formatted(char *f, char **argv, int *conv_err)
 					//bb_error_msg("<%s>", p);
 					direc_length += 2;
 					direc_start = p;
-				} else {
+				} không_thì {
 					p = NULL;
 				}
-				if (*argv) {
+				nếu (*argv) {
 					print_direc(direc_start, direc_length, field_width,
 								precision, *argv++);
-				} else {
+				} không_thì {
 					print_direc(direc_start, direc_length, field_width,
 								precision, "");
 				}
@@ -387,8 +387,8 @@ static char **print_formatted(char *f, char **argv, int *conv_err)
 			}
 			break;
 		case '\\':
-			if (*++f == 'c') {
-				return saved_argv; /* causes main() to exit */
+			nếu (*++f == 'c') {
+				trả_về saved_argv; /* causes main() to exit */
 			}
 			bb_putchar(bb_process_escape_sequence((const char **)&f));
 			f--;
@@ -398,12 +398,12 @@ static char **print_formatted(char *f, char **argv, int *conv_err)
 		}
 	}
 
-	return argv;
+	trả_về argv;
 }
 
-int printf_main(int argc UNUSED_PARAM, char **argv)
+số_nguyên printf_main(số_nguyên argc UNUSED_PARAM, char **argv)
 {
-	int conv_err;
+	số_nguyên conv_err;
 	char *format;
 	char **argv2;
 
@@ -417,8 +417,8 @@ int printf_main(int argc UNUSED_PARAM, char **argv)
 	 * to output data no matter what. So it will try later,
 	 * and possibly will clobber future output. Not good. */
 // TODO: check fcntl() & O_ACCMODE == O_WRONLY or O_RDWR?
-	if (fcntl(1, F_GETFL) == -1)
-		return 1; /* match coreutils 6.10 (sans error msg to stderr) */
+	nếu (fcntl(1, F_GETFL) == -1)
+		trả_về 1; /* match coreutils 6.10 (sans error msg to stderr) */
 	//if (dup2(1, 1) != 1) - old way
 	//	return 1;
 
@@ -427,12 +427,12 @@ int printf_main(int argc UNUSED_PARAM, char **argv)
 	 * We will mimic coreutils. */
 	argv = skip_dash_dash(argv);
 
-	if (!argv[0]) {
-		if ((ENABLE_ASH_PRINTF || ENABLE_HUSH_PRINTF)
+	nếu (!argv[0]) {
+		nếu ((ENABLE_ASH_PRINTF || ENABLE_HUSH_PRINTF)
 		 && applet_name[0] != 'p'
 		) {
 			bb_simple_error_msg("usage: printf FORMAT [ARGUMENT...]");
-			return 2; /* bash compat */
+			trả_về 2; /* bash compat */
 		}
 		bb_show_usage();
 	}
@@ -444,13 +444,13 @@ int printf_main(int argc UNUSED_PARAM, char **argv)
 	do {
 		argv = argv2;
 		argv2 = print_formatted(format, argv, &conv_err);
-	} while (argv2 > argv && *argv2);
+	} trong_khi (argv2 > argv && *argv2);
 
 	/* coreutils compat (bash doesn't do this):
 	if (*argv)
 		fprintf(stderr, "excess args ignored");
 	*/
 
-	return (argv2 < argv) /* if true, print_formatted errored out */
+	trả_về (argv2 < argv) /* if true, print_formatted errored out */
 		|| conv_err; /* print_formatted saw invalid number */
 }

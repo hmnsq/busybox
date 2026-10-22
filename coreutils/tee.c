@@ -55,8 +55,8 @@
 #include "libbb.h"
 #include "common_bufsiz.h"
 
-int tee_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int tee_main(int argc, char **argv)
+số_nguyên tee_main(số_nguyên argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+số_nguyên tee_main(số_nguyên argc, char **argv)
 {
 	const char *mode = "w\0a";
 	FILE **files;
@@ -65,12 +65,12 @@ int tee_main(int argc, char **argv)
 	char **np;
 	char retval;
 //TODO: make unconditional
-#if ENABLE_FEATURE_TEE_USE_BLOCK_IO
+#nếu ENABLE_FEATURE_TEE_USE_BLOCK_IO
 	ssize_t c;
 # define buf bb_common_bufsiz1
 	setup_common_bufsiz();
-#else
-	int c;
+#không_thì
+	số_nguyên c;
 #endif
 	retval = getopt32(argv, "ia");	/* 'a' must be 2nd */
 	argc -= optind;
@@ -78,7 +78,7 @@ int tee_main(int argc, char **argv)
 
 	mode += (retval & 2);	/* Since 'a' is the 2nd option... */
 
-	if (retval & 1) {
+	nếu (retval & 1) {
 		signal(SIGINT, SIG_IGN);
 	}
 	retval = EXIT_SUCCESS;
@@ -95,9 +95,9 @@ int tee_main(int argc, char **argv)
 
 	do {
 		*fp = stdout;
-		if (NOT_LONE_DASH(*argv)) {
+		nếu (NOT_LONE_DASH(*argv)) {
 			*fp = fopen_or_warn(*argv, mode);
-			if (*fp == NULL) {
+			nếu (*fp == NULL) {
 				retval = EXIT_FAILURE;
 				argv++;
 				continue;
@@ -108,28 +108,28 @@ int tee_main(int argc, char **argv)
 		setbuf(*fp, NULL);	/* tee must not buffer output. */
 		fp++;
 		np++;
-	} while (*argv);
+	} trong_khi (*argv);
 	/* names[0] will be filled later */
 
-#if ENABLE_FEATURE_TEE_USE_BLOCK_IO
-	while ((c = safe_read(STDIN_FILENO, buf, COMMON_BUFSIZE)) > 0) {
+#nếu ENABLE_FEATURE_TEE_USE_BLOCK_IO
+	trong_khi ((c = safe_read(STDIN_FILENO, buf, COMMON_BUFSIZE)) > 0) {
 		fp = files;
 		do
 			fwrite(buf, 1, c, *fp);
 			/* if (opt_p && fwrite() != c && !EPIPE) bb_error_msg("..."); */
-		while (*++fp);
+		trong_khi (*++fp);
 	}
-	if (c < 0) {		/* Make sure read errors are signaled. */
+	nếu (c < 0) {		/* Make sure read errors are signaled. */
 		retval = EXIT_FAILURE;
 	}
-#else
+#không_thì
 	setvbuf(stdout, NULL, _IONBF, 0);
-	while ((c = getchar()) != EOF) {
+	trong_khi ((c = getchar()) != EOF) {
 		fp = files;
 		do
 			putc(c, *fp);
 			/* if (opt_p && putc() == EOF && !EPIPE) bb_error_msg("..."); */
-		while (*++fp);
+		trong_khi (*++fp);
 	}
 #endif
 
@@ -147,7 +147,7 @@ int tee_main(int argc, char **argv)
 		/* Checking ferror should be sufficient, but we may want to fclose.
 		 * If we do, remember not to close stdin! */
 		die_if_ferror(*fp++, *np++);
-	} while (*fp);
+	} trong_khi (*fp);
 
 	fflush_stdout_and_exit(retval);
 }

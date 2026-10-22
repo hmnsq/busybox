@@ -39,12 +39,12 @@
 
 #include "libbb.h"
 
-int shred_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int shred_main(int argc UNUSED_PARAM, char **argv)
+số_nguyên shred_main(số_nguyên argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+số_nguyên shred_main(số_nguyên argc UNUSED_PARAM, char **argv)
 {
 	char *opt_s;
-	int rand_fd = rand_fd; /* for compiler */
-	int zero_fd;
+	số_nguyên rand_fd = rand_fd; /* for compiler */
+	số_nguyên zero_fd;
 	unsigned num_iter = 3;
 	unsigned opt;
 	enum {
@@ -61,51 +61,51 @@ int shred_main(int argc UNUSED_PARAM, char **argv)
 	argv += optind;
 
 	zero_fd = xopen("/dev/zero", O_RDONLY);
-	if (num_iter != 0)
+	nếu (num_iter != 0)
 		rand_fd = xopen("/dev/urandom", O_RDONLY);
 
-	for (;;) {
+	cho (;;) {
 		struct stat sb;
 		const char *fname;
 		unsigned i;
-		int fd;
+		số_nguyên fd;
 
 		fname = *argv++;
-		if (!fname)
+		nếu (!fname)
 			break;
 		fd = -1;
-		if (opt & OPT_f) {
+		nếu (opt & OPT_f) {
 			fd = open(fname, O_WRONLY);
-			if (fd < 0)
+			nếu (fd < 0)
 				chmod(fname, 0666);
 		}
-		if (fd < 0)
+		nếu (fd < 0)
 			fd = xopen(fname, O_WRONLY);
 
-		if (fstat(fd, &sb) == 0 && sb.st_size > 0) {
+		nếu (fstat(fd, &sb) == 0 && sb.st_size > 0) {
 			off_t size = sb.st_size;
 
-			if (opt & OPT_s) {
+			nếu (opt & OPT_s) {
 				size = BB_STRTOOFF(opt_s, NULL, 0); /* accepts oct/hex */
-				if (errno || size < 0) bb_show_usage();
+				nếu (errno || size < 0) bb_show_usage();
 			}
 
-			for (i = 0; i < num_iter; i++) {
+			cho (i = 0; i < num_iter; i++) {
 				bb_copyfd_size(rand_fd, fd, size);
 				fdatasync(fd);
 				xlseek(fd, 0, SEEK_SET);
 			}
-			if (opt & OPT_z) {
+			nếu (opt & OPT_z) {
 				bb_copyfd_size(zero_fd, fd, size);
 				fdatasync(fd);
 			}
 		}
-		if (opt & OPT_u) {
+		nếu (opt & OPT_u) {
 			ftruncate(fd, 0);
 			xunlink(fname);
 		}
 		xclose(fd);
 	}
 
-	return EXIT_SUCCESS;
+	trả_về EXIT_SUCCESS;
 }

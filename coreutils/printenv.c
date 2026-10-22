@@ -27,30 +27,30 @@
 
 /* This is a NOFORK applet. Be very careful! */
 
-int printenv_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int printenv_main(int argc UNUSED_PARAM, char **argv)
+số_nguyên printenv_main(số_nguyên argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+số_nguyên printenv_main(số_nguyên argc UNUSED_PARAM, char **argv)
 {
-	int exit_code = EXIT_SUCCESS;
+	số_nguyên exit_code = EXIT_SUCCESS;
 
 	/* no variables specified, show whole env */
-	if (!argv[1]) {
+	nếu (!argv[1]) {
 		char **e = environ;
 
 		/* environ can be NULL! (for example, after clearenv())
 		 * Check for that:
 		 */
-		if (e)
-			while (*e)
+		nếu (e)
+			trong_khi (*e)
 				puts(*e++);
-	} else {
+	} không_thì {
 		/* search for specified variables and print them out if found */
 		char *arg, *env;
 
-		while ((arg = *++argv) != NULL) {
+		trong_khi ((arg = *++argv) != NULL) {
 			env = getenv(arg);
-			if (env)
+			nếu (env)
 				puts(env);
-			else
+			không_thì
 				exit_code = EXIT_FAILURE;
 		}
 	}

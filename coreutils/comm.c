@@ -32,86 +32,86 @@
 #define COMM_OPT_3 (1 << 2)
 
 /* writeline outputs the input given, appropriately aligned according to class */
-static void writeline(char *line, int class)
+static void writeline(char *line, số_nguyên class)
 {
-	int flags = option_mask32;
-	if (class == 0) {
-		if (flags & COMM_OPT_1)
-			return;
-	} else if (class == 1) {
-		if (flags & COMM_OPT_2)
-			return;
-		if (!(flags & COMM_OPT_1))
+	số_nguyên flags = option_mask32;
+	nếu (class == 0) {
+		nếu (flags & COMM_OPT_1)
+			trả_về;
+	} không_thì nếu (class == 1) {
+		nếu (flags & COMM_OPT_2)
+			trả_về;
+		nếu (!(flags & COMM_OPT_1))
 			putchar('\t');
-	} else /*if (class == 2)*/ {
-		if (flags & COMM_OPT_3)
-			return;
-		if (!(flags & COMM_OPT_1))
+	} không_thì /*if (class == 2)*/ {
+		nếu (flags & COMM_OPT_3)
+			trả_về;
+		nếu (!(flags & COMM_OPT_1))
 			putchar('\t');
-		if (!(flags & COMM_OPT_2))
+		nếu (!(flags & COMM_OPT_2))
 			putchar('\t');
 	}
 	puts(line);
 }
 
-int comm_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int comm_main(int argc UNUSED_PARAM, char **argv)
+số_nguyên comm_main(số_nguyên argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+số_nguyên comm_main(số_nguyên argc UNUSED_PARAM, char **argv)
 {
 	char *thisline[2];
 	FILE *stream[2];
-	int i;
-	int order;
+	số_nguyên i;
+	số_nguyên order;
 
 	getopt32(argv, "^" "123" "\0" "=2");
 	argv += optind;
 
-	for (i = 0; i < 2; ++i) {
+	cho (i = 0; i < 2; ++i) {
 		stream[i] = xfopen_stdin(argv[i]);
 	}
 
 	order = 0;
 	thisline[1] = thisline[0] = NULL;
-	while (1) {
-		if (order <= 0) {
+	trong_khi (1) {
+		nếu (order <= 0) {
 			free(thisline[0]);
 			thisline[0] = xmalloc_fgetline(stream[0]);
 		}
-		if (order >= 0) {
+		nếu (order >= 0) {
 			free(thisline[1]);
 			thisline[1] = xmalloc_fgetline(stream[1]);
 		}
 
 		i = !thisline[0] + (!thisline[1] << 1);
-		if (i)
+		nếu (i)
 			break;
 		order = strcmp(thisline[0], thisline[1]);
 
-		if (order >= 0)
+		nếu (order >= 0)
 			writeline(thisline[1], order ? 1 : 2);
-		else
+		không_thì
 			writeline(thisline[0], 0);
 	}
 
 	/* EOF at least on one of the streams */
 	i &= 1;
-	if (thisline[i]) {
+	nếu (thisline[i]) {
 		/* stream[i] is not at EOF yet */
 		/* we did not print thisline[i] yet */
 		char *p = thisline[i];
 		writeline(p, i);
-		while (1) {
+		trong_khi (1) {
 			free(p);
 			p = xmalloc_fgetline(stream[i]);
-			if (!p)
+			nếu (!p)
 				break;
 			writeline(p, i);
 		}
 	}
 
-	if (ENABLE_FEATURE_CLEAN_UP) {
+	nếu (ENABLE_FEATURE_CLEAN_UP) {
 		fclose(stream[0]);
 		fclose(stream[1]);
 	}
 
-	return EXIT_SUCCESS;
+	trả_về EXIT_SUCCESS;
 }

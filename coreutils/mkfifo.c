@@ -34,25 +34,25 @@
 
 /* This is a NOEXEC applet. Be very careful! */
 
-int mkfifo_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int mkfifo_main(int argc UNUSED_PARAM, char **argv)
+số_nguyên mkfifo_main(số_nguyên argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+số_nguyên mkfifo_main(số_nguyên argc UNUSED_PARAM, char **argv)
 {
 	mode_t mode;
-	int retval = EXIT_SUCCESS;
+	số_nguyên retval = EXIT_SUCCESS;
 
 	mode = getopt_mk_fifo_nod(argv);
 
 	argv += optind;
-	if (!*argv) {
+	nếu (!*argv) {
 		bb_show_usage();
 	}
 
 	do {
-		if (mkfifo(*argv, mode) < 0) {
+		nếu (mkfifo(*argv, mode) < 0) {
 			bb_simple_perror_msg(*argv);  /* Avoid multibyte problems. */
 			retval = EXIT_FAILURE;
 		}
-	} while (*++argv);
+	} trong_khi (*++argv);
 
-	return retval;
+	trả_về retval;
 }

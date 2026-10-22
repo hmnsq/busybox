@@ -51,8 +51,8 @@
 
 #include "libbb.h"
 
-int env_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int env_main(int argc UNUSED_PARAM, char **argv)
+số_nguyên env_main(số_nguyên argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+số_nguyên env_main(số_nguyên argc UNUSED_PARAM, char **argv)
 {
 	unsigned opts;
 	llist_t *unset_env = NULL;
@@ -64,14 +64,14 @@ int env_main(int argc UNUSED_PARAM, char **argv)
 			, &unset_env
 	);
 	argv += optind;
-	if (argv[0] && LONE_DASH(argv[0])) {
+	nếu (argv[0] && LONE_DASH(argv[0])) {
 		opts |= 1;
 		++argv;
 	}
-	if (opts & 1) {
+	nếu (opts & 1) {
 		clearenv();
 	}
-	while (unset_env) {
+	trong_khi (unset_env) {
 		char *var = llist_pop(&unset_env);
 		/* This does not handle -uVAR=VAL
 		 * (coreutils _sets_ the variable in that case): */
@@ -81,21 +81,21 @@ int env_main(int argc UNUSED_PARAM, char **argv)
 		putenv(var);
 	}
 
-	while (*argv && (strchr(*argv, '=') != NULL)) {
-		if (putenv(*argv) < 0) {
+	trong_khi (*argv && (strchr(*argv, '=') != NULL)) {
+		nếu (putenv(*argv) < 0) {
 			bb_simple_perror_msg_and_die("putenv");
 		}
 		++argv;
 	}
 
-	if (argv[0]) {
+	nếu (argv[0]) {
 		BB_EXECVP_or_die(argv);
 	}
 
-	if (environ) { /* clearenv() may set environ == NULL! */
+	nếu (environ) { /* clearenv() may set environ == NULL! */
 		char **ep;
 		opts = (opts & 2) ? 0 : '\n';
-		for (ep = environ; *ep; ep++) {
+		cho (ep = environ; *ep; ep++) {
 			printf("%s%c", *ep, opts);
 		}
 	}

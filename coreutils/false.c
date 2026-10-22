@@ -31,8 +31,8 @@
 
 /* This is a NOFORK applet. Be very careful! */
 
-int false_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int false_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+số_nguyên false_main(số_nguyên argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+số_nguyên false_main(số_nguyên argc UNUSED_PARAM, char **argv UNUSED_PARAM)
 {
-	return EXIT_FAILURE;
+	trả_về EXIT_FAILURE;
 }

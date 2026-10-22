@@ -30,18 +30,18 @@
 //usage:#endif
 
 #include "libbb.h"
-#if ENABLE_DESKTOP
+#nếu ENABLE_DESKTOP
 /* This one provides -t (busybox's own build script needs it) */
 #include "od_bloaty.c"
-#else
+#không_thì
 
 #include "dump.h"
 
 static void
-odoffset(dumper_t *dumper, int argc, char ***argvp)
+odoffset(dumper_t *dumper, số_nguyên argc, char ***argvp)
 {
 	char *num, *p;
-	int base;
+	số_nguyên base;
 	char *end;
 
 	/*
@@ -58,69 +58,69 @@ odoffset(dumper_t *dumper, int argc, char ***argvp)
 	 */
 	p = **argvp;
 
-	if (!p) {
+	nếu (!p) {
 		/* hey someone is probably piping to us ... */
-		return;
+		trả_về;
 	}
 
-	if ((*p != '+')
+	nếu ((*p != '+')
 		&& (argc < 2
 			|| (!isdigit(p[0])
 				&& ((p[0] != 'x') || !isxdigit(p[1])))))
-		return;
+		trả_về;
 
 	base = 0;
 	/*
 	 * skip over leading '+', 'x[0-9a-fA-f]' or '0x', and
 	 * set base.
 	 */
-	if (p[0] == '+')
+	nếu (p[0] == '+')
 		++p;
-	if (p[0] == 'x' && isxdigit(p[1])) {
+	nếu (p[0] == 'x' && isxdigit(p[1])) {
 		++p;
 		base = 16;
-	} else if (p[0] == '0' && p[1] == 'x') {
+	} không_thì nếu (p[0] == '0' && p[1] == 'x') {
 		p += 2;
 		base = 16;
 	}
 
 	/* skip over the number */
-	if (base == 16)
-		for (num = p; isxdigit(*p); ++p)
+	nếu (base == 16)
+		cho (num = p; isxdigit(*p); ++p)
 			continue;
-	else
-		for (num = p; isdigit(*p); ++p)
+	không_thì
+		cho (num = p; isdigit(*p); ++p)
 			continue;
 
 	/* check for no number */
-	if (num == p)
-		return;
+	nếu (num == p)
+		trả_về;
 
 	/* if terminates with a '.', base is decimal */
-	if (*p == '.') {
-		if (base)
-			return;
+	nếu (*p == '.') {
+		nếu (base)
+			trả_về;
 		base = 10;
 	}
 
 	dumper->dump_skip = strtol(num, &end, base ? base : 8);
 
 	/* if end isn't the same as p, we got a non-octal digit */
-	if (end != p)
+	nếu (end != p)
 		dumper->dump_skip = 0;
-	else {
-		if (*p) {
-			if (*p == 'b') {
+	không_thì {
+		nếu (*p) {
+			nếu (*p == 'b') {
 				dumper->dump_skip *= 512;
 				++p;
-			} else if (*p == 'B') {
+			} không_thì nếu (*p == 'B') {
 				dumper->dump_skip *= 1024;
 				++p;
 			}
 		}
-		if (*p)
+		nếu (*p)
 			dumper->dump_skip = 0;
-		else {
+		không_thì {
 			++*argvp;
 			/*
 			 * If the offset uses a non-octal base, the base of
@@ -130,11 +130,11 @@ odoffset(dumper_t *dumper, int argc, char ***argvp)
 #define TYPE_OFFSET 7
 			{
 				char x_or_d;
-				if (base == 16) {
+				nếu (base == 16) {
 					x_or_d = 'x';
 					goto DO_X_OR_D;
 				}
-				if (base == 10) {
+				nếu (base == 10) {
 					x_or_d = 'd';
  DO_X_OR_D:
 					dumper->fshead->nextfu->fmt[TYPE_OFFSET]
@@ -174,10 +174,10 @@ static const char *const add_strings[] ALIGN_PTR = {
 	"4/4 \" %011o\""   "\"\n\"",            /* 11: O */
 	"8/2 \" %6d\""     "\"\n\"",            /* 12: s */
 	/* -I,L,l: depend on word width of the arch (what is "long"?) */
-#if ULONG_MAX > 0xffffffff
+#nếu ULONG_MAX > 0xffffffff
 	"2/8 \" %20lld\""  "\"\n\"",            /* 13: I, L, l */
 #define L_ 13
-#else
+#không_thì
 	/* 32-bit arch: -I,L,l are the same as -i */
 #define L_ 10
 #endif
@@ -192,31 +192,31 @@ static const char od_o2si[] ALIGN1 = {
 	11, 1, 8, 9, 12    /* OoXxs */
 };
 
-int od_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int od_main(int argc, char **argv)
+số_nguyên od_main(số_nguyên argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+số_nguyên od_main(số_nguyên argc, char **argv)
 {
-	int ch;
-	int first = 1;
+	số_nguyên ch;
+	số_nguyên first = 1;
 	char *p;
 	dumper_t *dumper = alloc_dumper();
 
-	while ((ch = getopt(argc, argv, od_opts)) > 0) {
-		if (ch == 'v') {
+	trong_khi ((ch = getopt(argc, argv, od_opts)) > 0) {
+		nếu (ch == 'v') {
 			dumper->dump_vflag = ALL;
-		} else if (((p = strchr(od_opts, ch)) != NULL) && (*p != '\0')) {
-			if (first) {
+		} không_thì nếu (((p = strchr(od_opts, ch)) != NULL) && (*p != '\0')) {
+			nếu (first) {
 				first = 0;
 				bb_dump_add(dumper, "\"%07.7_Ao\n\"");
 				bb_dump_add(dumper, "\"%07.7_ao\"");
-			} else {
+			} không_thì {
 				bb_dump_add(dumper, "\"       \"");
 			}
-			bb_dump_add(dumper, add_strings[(int)od_o2si[(p - od_opts)]]);
-		} else {  /* P, p, w, or other unhandled */
+			bb_dump_add(dumper, add_strings[(số_nguyên)od_o2si[(p - od_opts)]]);
+		} không_thì {  /* P, p, w, or other unhandled */
 			bb_show_usage();
 		}
 	}
-	if (!dumper->fshead) {
+	nếu (!dumper->fshead) {
 		bb_dump_add(dumper, "\"%07.7_Ao\n\"");
 		bb_dump_add(dumper, "\"%07.7_ao\"");
 		bb_dump_add(dumper, add_strings[1]); /* -o format is default */
@@ -228,7 +228,7 @@ int od_main(int argc, char **argv)
 
 	odoffset(dumper, argc, &argv);
 
-	return bb_dump_dump(dumper, argv);
+	trả_về bb_dump_dump(dumper, argv);
 }
 #endif /* !ENABLE_DESKTOP */
 

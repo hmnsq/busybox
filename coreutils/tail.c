@@ -76,42 +76,42 @@ struct globals {
 	bool exitcode;
 } FIX_ALIASING;
 #define G (*(struct globals*)bb_common_bufsiz1)
-#define INIT_G() do { setup_common_bufsiz(); } while (0)
+#define INIT_G() do { setup_common_bufsiz(); } trong_khi (0)
 
 static void tail_xprint_header(const char *fmt, const char *filename)
 {
-	if (fdprintf(STDOUT_FILENO, fmt, filename) < 0)
+	nếu (fdprintf(STDOUT_FILENO, fmt, filename) < 0)
 		bb_perror_nomsg_and_die();
 }
 
-static ssize_t tail_read(int fd, char *buf, size_t count)
+static ssize_t tail_read(số_nguyên fd, char *buf, size_t count)
 {
 	ssize_t r;
 
 	r = full_read(fd, buf, count);
-	if (r < 0) {
+	nếu (r < 0) {
 		bb_simple_perror_msg(bb_msg_read_error);
 		G.exitcode = EXIT_FAILURE;
 	}
 
-	return r;
+	trả_về r;
 }
 
 #define header_fmt_str "\n==> %s <==\n"
 
 static unsigned eat_num(const char *p)
 {
-	if (*p == '-')
+	nếu (*p == '-')
 		p++;
-	else if (*p == '+') {
+	không_thì nếu (*p == '+') {
 		p++;
 		G.from_top = 1;
 	}
-	return xatou_sfx(p, bkm_suffixes);
+	trả_về xatou_sfx(p, bkm_suffixes);
 }
 
-int tail_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int tail_main(int argc, char **argv)
+số_nguyên tail_main(số_nguyên argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+số_nguyên tail_main(số_nguyên argc, char **argv)
 {
 	unsigned count = 10;
 	unsigned sleep_period = 1;
@@ -121,17 +121,17 @@ int tail_main(int argc, char **argv)
 	size_t tailbufsize;
 	unsigned header_threshold = 1;
 	unsigned nfiles;
-	int i, opt;
+	số_nguyên i, opt;
 
-	int *fds;
+	số_nguyên *fds;
 	const char *fmt;
-	int prev_fd;
+	số_nguyên prev_fd;
 
 	INIT_G();
 
-#if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_TAIL
+#nếu ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_TAIL
 	/* Allow legacy syntax of an initial numeric option without -n. */
-	if (argv[1] && (argv[1][0] == '+' || argv[1][0] == '-')
+	nếu (argv[1] && (argv[1][0] == '+' || argv[1][0] == '-')
 	 && isdigit(argv[1][1])
 	) {
 		count = eat_num(argv[1]);
@@ -149,15 +149,15 @@ int tail_main(int argc, char **argv)
 #define FOLLOW (opt & 0x1)
 #define COUNT_BYTES (opt & 0x2)
 	//if (opt & 0x1) // -f
-	if (opt & 0x2) count = eat_num(str_c); // -c
-	if (opt & 0x4) count = eat_num(str_n); // -n
-#if ENABLE_FEATURE_FANCY_TAIL
+	nếu (opt & 0x2) count = eat_num(str_c); // -c
+	nếu (opt & 0x4) count = eat_num(str_n); // -n
+#nếu ENABLE_FEATURE_FANCY_TAIL
 	/* q: make it impossible for nfiles to be > header_threshold */
-	if (opt & 0x8) header_threshold = UINT_MAX; // -q
+	nếu (opt & 0x8) header_threshold = UINT_MAX; // -q
 	//if (opt & 0x10) // -s
-	if (opt & 0x20) header_threshold = 0; // -v
+	nếu (opt & 0x20) header_threshold = 0; // -v
 # define FOLLOW_RETRY (opt & 0x40)
-#else
+#không_thì
 # define FOLLOW_RETRY 0
 #endif
 	argc -= optind;
@@ -165,10 +165,10 @@ int tail_main(int argc, char **argv)
 
 	/* open all the files */
 	fds = xmalloc(sizeof(fds[0]) * (argc + 1));
-	if (!argv[0]) {
+	nếu (!argv[0]) {
 		struct stat statbuf;
 
-		if (fstat(STDIN_FILENO, &statbuf) == 0
+		nếu (fstat(STDIN_FILENO, &statbuf) == 0
 		 && S_ISFIFO(statbuf.st_mode)
 		) {
 			opt &= ~1; /* clear FOLLOW */
@@ -177,22 +177,22 @@ int tail_main(int argc, char **argv)
 	}
 	nfiles = i = 0;
 	do {
-		int fd = open_or_warn_stdin(argv[i]);
-		if (fd < 0 && !FOLLOW_RETRY) {
+		số_nguyên fd = open_or_warn_stdin(argv[i]);
+		nếu (fd < 0 && !FOLLOW_RETRY) {
 			G.exitcode = EXIT_FAILURE;
 			continue;
 		}
 		fds[nfiles] = fd;
 		argv[nfiles++] = argv[i];
-	} while (++i < argc);
+	} trong_khi (++i < argc);
 
-	if (!nfiles)
+	nếu (!nfiles)
 		bb_simple_error_msg_and_die("no files");
 
 	/* prepare the buffer */
 	tailbufsize = BUFSIZ;
-	if (!G.from_top && COUNT_BYTES) {
-		if (tailbufsize < count + BUFSIZ) {
+	nếu (!G.from_top && COUNT_BYTES) {
+		nếu (tailbufsize < count + BUFSIZ) {
 			tailbufsize = count + BUFSIZ;
 		}
 	}
@@ -207,54 +207,54 @@ int tail_main(int argc, char **argv)
 	i = 0;
 	do {
 		char *buf;
-		int taillen;
-		int newlines_seen;
+		số_nguyên taillen;
+		số_nguyên newlines_seen;
 		unsigned seen;
-		int nread;
-		int fd = fds[i];
+		số_nguyên nread;
+		số_nguyên fd = fds[i];
 
-		if (ENABLE_FEATURE_FANCY_TAIL && fd < 0)
+		nếu (ENABLE_FEATURE_FANCY_TAIL && fd < 0)
 			continue; /* may happen with -F */
 
-		if (nfiles > header_threshold) {
+		nếu (nfiles > header_threshold) {
 			tail_xprint_header(fmt, argv[i]);
 			fmt = header_fmt_str;
 		}
 
-		if (!G.from_top) {
+		nếu (!G.from_top) {
 			off_t current = lseek(fd, 0, SEEK_END);
-			if (current > 0) {
+			nếu (current > 0) {
 				unsigned off;
-				if (COUNT_BYTES) {
+				nếu (COUNT_BYTES) {
 				/* Optimizing count-bytes case if the file is seekable.
 				 * Beware of backing up too far.
 				 * Also we exclude files with size 0 (because of /proc/xxx) */
-					if (count == 0)
+					nếu (count == 0)
 						continue; /* showing zero bytes is easy :) */
 					current -= count;
-					if (current < 0)
+					nếu (current < 0)
 						current = 0;
 					xlseek(fd, current, SEEK_SET);
 					bb_copyfd_size(fd, STDOUT_FILENO, count);
 					continue;
 				}
-#if 1 /* This is technically incorrect for *LONG* strings, but very useful */
+#nếu 1 /* This is technically incorrect for *LONG* strings, but very useful */
 				/* Optimizing count-lines case if the file is seekable.
 				 * We assume the lines are <64k.
 				 * (Users complain that tail takes too long
 				 * on multi-gigabyte files) */
 				off = (count | 0xf); /* for small counts, be more paranoid */
-				if (off > (INT_MAX / (64*1024)))
+				nếu (off > (INT_MAX / (64*1024)))
 					off = (INT_MAX / (64*1024));
 				current -= off * (64*1024);
-				if (current < 0)
+				nếu (current < 0)
 					current = 0;
 				xlseek(fd, current, SEEK_SET);
 #endif
 			}
 		}
 
-		if (!tailbuf)
+		nếu (!tailbuf)
 			tailbuf = xmalloc(tailbufsize);
 
 		buf = tailbuf;
@@ -263,55 +263,55 @@ int tail_main(int argc, char **argv)
 		 * Used only by +N code ("start from Nth", 1-based): */
 		seen = 1;
 		newlines_seen = 0;
-		while ((nread = tail_read(fd, buf, tailbufsize - taillen)) > 0) {
-			if (G.from_top) {
-				int nwrite = nread;
-				if (seen < count) {
+		trong_khi ((nread = tail_read(fd, buf, tailbufsize - taillen)) > 0) {
+			nếu (G.from_top) {
+				số_nguyên nwrite = nread;
+				nếu (seen < count) {
 					/* We need to skip a few more bytes/lines */
-					if (COUNT_BYTES) {
+					nếu (COUNT_BYTES) {
 						nwrite -= (count - seen);
 						seen += nread;
-					} else {
+					} không_thì {
 						char *s = buf;
 						do {
 							--nwrite;
-							if (*s++ == '\n' && ++seen == count) {
+							nếu (*s++ == '\n' && ++seen == count) {
 								break;
 							}
-						} while (nwrite);
+						} trong_khi (nwrite);
 					}
 				}
-				if (nwrite > 0)
+				nếu (nwrite > 0)
 					xwrite(STDOUT_FILENO, buf + nread - nwrite, nwrite);
-			} else if (count) {
-				if (COUNT_BYTES) {
+			} không_thì nếu (count) {
+				nếu (COUNT_BYTES) {
 					taillen += nread;
-					if (taillen > (int)count) {
+					nếu (taillen > (số_nguyên)count) {
 						memmove(tailbuf, tailbuf + taillen - count, count);
 						taillen = count;
 					}
-				} else {
-					int k = nread;
-					int newlines_in_buf = 0;
+				} không_thì {
+					số_nguyên k = nread;
+					số_nguyên newlines_in_buf = 0;
 
 					do { /* count '\n' in last read */
 						k--;
-						if (buf[k] == '\n') {
+						nếu (buf[k] == '\n') {
 							newlines_in_buf++;
 						}
-					} while (k);
+					} trong_khi (k);
 
-					if (newlines_seen + newlines_in_buf < (int)count) {
+					nếu (newlines_seen + newlines_in_buf < (số_nguyên)count) {
 						newlines_seen += newlines_in_buf;
 						taillen += nread;
-					} else {
-						int extra = (buf[nread-1] != '\n');
+					} không_thì {
+						số_nguyên extra = (buf[nread-1] != '\n');
 						char *s;
 
 						k = newlines_seen + newlines_in_buf + extra - count;
 						s = tailbuf;
-						while (k) {
-							if (*s == '\n') {
+						trong_khi (k) {
+							nếu (*s == '\n') {
 								k--;
 							}
 							s++;
@@ -320,7 +320,7 @@ int tail_main(int argc, char **argv)
 						memmove(tailbuf, s, taillen);
 						newlines_seen = count - extra;
 					}
-					if (tailbufsize < (size_t)taillen + BUFSIZ) {
+					nếu (tailbufsize < (size_t)taillen + BUFSIZ) {
 						tailbufsize = taillen + BUFSIZ;
 						tailbuf = xrealloc(tailbuf, tailbufsize);
 					}
@@ -328,31 +328,31 @@ int tail_main(int argc, char **argv)
 				buf = tailbuf + taillen;
 			}
 		} /* while (tail_read() > 0) */
-		if (!G.from_top) {
+		nếu (!G.from_top) {
 			xwrite(STDOUT_FILENO, tailbuf, taillen);
 		}
-	} while (++i < nfiles);
+	} trong_khi (++i < nfiles);
 	prev_fd = fds[i-1];
 
 	tailbuf = xrealloc(tailbuf, BUFSIZ);
 
 	fmt = NULL;
 
-	if (FOLLOW) while (1) {
+	nếu (FOLLOW) trong_khi (1) {
 		sleep(sleep_period);
 
 		i = 0;
 		do {
-			int nread;
+			số_nguyên nread;
 			const char *filename = argv[i];
-			int fd = fds[i];
-			int new_fd = -1;
+			số_nguyên fd = fds[i];
+			số_nguyên new_fd = -1;
 			struct stat sbuf;
 
-			if (FOLLOW_RETRY) {
+			nếu (FOLLOW_RETRY) {
 				struct stat fsbuf;
 
-				if (fd < 0
+				nếu (fd < 0
 				 || fstat(fd, &fsbuf) < 0
 				 || stat(filename, &sbuf) < 0
 				 || fsbuf.st_dev != sbuf.st_dev
@@ -360,62 +360,62 @@ int tail_main(int argc, char **argv)
 				) {
 					/* Looks like file has been created/renamed/deleted */
 					new_fd = open(filename, O_RDONLY);
-					if (new_fd >= 0) {
+					nếu (new_fd >= 0) {
 						bb_error_msg("%s has %s; following end of new file",
 							filename, (fd < 0) ? "appeared" : "been replaced"
 						);
-						if (fd < 0) {
+						nếu (fd < 0) {
 							/* No previously open fd for this file,
 							 * start using new_fd immediately. */
 							fds[i] = fd = new_fd;
 							new_fd = -1;
 						}
-					} else if (fd >= 0) {
+					} không_thì nếu (fd >= 0) {
 						bb_perror_msg("%s has been renamed or deleted", filename);
 					}
 				}
 			}
-			if (ENABLE_FEATURE_FANCY_TAIL && fd < 0)
+			nếu (ENABLE_FEATURE_FANCY_TAIL && fd < 0)
 				continue;
-			if (nfiles > header_threshold) {
+			nếu (nfiles > header_threshold) {
 				fmt = header_fmt_str;
 			}
-			for (;;) {
+			cho (;;) {
 				/* tail -f keeps following files even if they are truncated */
 				/* /proc files report zero st_size, don't lseek them */
-				if (fstat(fd, &sbuf) == 0
+				nếu (fstat(fd, &sbuf) == 0
 				 /* && S_ISREG(sbuf.st_mode) TODO? */
 				 && sbuf.st_size > 0
 				) {
 					off_t current = lseek(fd, 0, SEEK_CUR);
-					if (sbuf.st_size < current) {
+					nếu (sbuf.st_size < current) {
 						//bb_perror_msg("%s: file truncated", filename); - says coreutils 8.32
 						xlseek(fd, 0, SEEK_SET);
 					}
 				}
 
 				nread = tail_read(fd, tailbuf, BUFSIZ);
-				if (nread <= 0) {
-					if (new_fd < 0)
+				nếu (nread <= 0) {
+					nếu (new_fd < 0)
 						break;
 					/* Switch to "tail -F"ing the new file */
 					xmove_fd(new_fd, fd);
 					new_fd = -1;
 					continue;
 				}
-				if (fmt && (fd != prev_fd)) {
+				nếu (fmt && (fd != prev_fd)) {
 					tail_xprint_header(fmt, filename);
 					fmt = NULL;
 					prev_fd = fd;
 				}
 				xwrite(STDOUT_FILENO, tailbuf, nread);
 			}
-		} while (++i < nfiles);
+		} trong_khi (++i < nfiles);
 	} /* while (1) */
 
-	if (ENABLE_FEATURE_CLEAN_UP) {
+	nếu (ENABLE_FEATURE_CLEAN_UP) {
 		free(fds);
 		free(tailbuf);
 	}
-	return G.exitcode;
+	trả_về G.exitcode;
 }

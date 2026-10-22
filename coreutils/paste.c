@@ -32,22 +32,22 @@
 
 #include "libbb.h"
 
-static void paste_files(FILE** files, int file_cnt, char* delims, int del_cnt)
+static void paste_files(FILE** files, số_nguyên file_cnt, char* delims, số_nguyên del_cnt)
 {
 	char *line;
 	char delim;
-	int active_files = file_cnt;
-	int i;
+	số_nguyên active_files = file_cnt;
+	số_nguyên i;
 
-	while (active_files > 0) {
-		int del_idx = 0;
+	trong_khi (active_files > 0) {
+		số_nguyên del_idx = 0;
 
-		for (i = 0; i < file_cnt; ++i) {
-			if (files[i] == NULL)
+		cho (i = 0; i < file_cnt; ++i) {
+			nếu (files[i] == NULL)
 				continue;
 
 			line = xmalloc_fgetline(files[i]);
-			if (!line) {
+			nếu (!line) {
 				fclose_if_not_stdin(files[i]);
 				files[i] = NULL;
 				--active_files;
@@ -56,40 +56,40 @@ static void paste_files(FILE** files, int file_cnt, char* delims, int del_cnt)
 			fputs_stdout(line);
 			free(line);
 			delim = '\n';
-			if (i != file_cnt - 1) {
+			nếu (i != file_cnt - 1) {
 				delim = delims[del_idx++];
-				if (del_idx == del_cnt)
+				nếu (del_idx == del_cnt)
 					del_idx = 0;
 			}
-			if (delim != '\0')
+			nếu (delim != '\0')
 				fputc(delim, stdout);
 		}
 	}
 }
 
-static void paste_files_separate(FILE** files, char* delims, int del_cnt)
+static void paste_files_separate(FILE** files, char* delims, số_nguyên del_cnt)
 {
 	char *line, *next_line;
 	char delim;
-	int i;
+	số_nguyên i;
 
-	for (i = 0; files[i]; ++i) {
-		int del_idx = 0;
+	cho (i = 0; files[i]; ++i) {
+		số_nguyên del_idx = 0;
 
 		line = NULL;
-		while ((next_line = xmalloc_fgetline(files[i])) != NULL) {
-			if (line) {
+		trong_khi ((next_line = xmalloc_fgetline(files[i])) != NULL) {
+			nếu (line) {
 				fputs_stdout(line);
 				free(line);
 				delim = delims[del_idx++];
-				if (del_idx == del_cnt)
+				nếu (del_idx == del_cnt)
 					del_idx = 0;
-				if (delim != '\0')
+				nếu (delim != '\0')
 					fputc(delim, stdout);
 			}
 			line = next_line;
 		}
-		if (line) {
+		nếu (line) {
 			/* coreutils adds \n even if this is a final line
 			 * of the last file and it was not \n-terminated.
 			 */
@@ -103,19 +103,19 @@ static void paste_files_separate(FILE** files, char* delims, int del_cnt)
 #define PASTE_OPT_DELIMITERS (1 << 0)
 #define PASTE_OPT_SEPARATE   (1 << 1)
 
-int paste_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int paste_main(int argc UNUSED_PARAM, char **argv)
+số_nguyên paste_main(số_nguyên argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+số_nguyên paste_main(số_nguyên argc UNUSED_PARAM, char **argv)
 {
 	char *delims = (char*)"\t";
-	int del_cnt = 1;
+	số_nguyên del_cnt = 1;
 	unsigned opt;
-	int i;
+	số_nguyên i;
 
 	opt = getopt32(argv, "d:s", &delims);
 	argv += optind;
 
-	if (opt & PASTE_OPT_DELIMITERS) {
-		if (!delims[0])
+	nếu (opt & PASTE_OPT_DELIMITERS) {
+		nếu (!delims[0])
 			bb_simple_error_msg_and_die("-d '' is not supported");
 		/* unknown mappings are not changed: "\z" -> '\\' 'z' */
 		/* trailing backslash, if any, is preserved */
@@ -123,17 +123,17 @@ int paste_main(int argc UNUSED_PARAM, char **argv)
 		/* note: handle NUL properly (do not stop at it!): try -d'\t\0\t' */
 	}
 
-	if (!argv[0])
+	nếu (!argv[0])
 		(--argv)[0] = (char*) "-";
-	for (i = 0; argv[i]; ++i) {
+	cho (i = 0; argv[i]; ++i) {
 		argv[i] = (void*) fopen_or_warn_stdin(argv[i]);
-		if (!argv[i])
+		nếu (!argv[i])
 			xfunc_die();
 	}
 
-	if (opt & PASTE_OPT_SEPARATE)
+	nếu (opt & PASTE_OPT_SEPARATE)
 		paste_files_separate((FILE**)argv, delims, del_cnt);
-	else
+	không_thì
 		paste_files((FILE**)argv, i, delims, del_cnt);
 
 	fflush_stdout_and_exit(0);
