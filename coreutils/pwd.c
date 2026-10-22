@@ -27,67 +27,67 @@
 
 #include "libbb.h"
 
-static int logical_getcwd(void)
+static puur_naa_nka logical_getcwd(void)
 {
-	struct stat st1;
-	struct stat st2;
-	char *wd;
-	char *p;
+	sa_nracanaa stat st1;
+	sa_nracanaa stat st2;
+	var_na *wd;
+	var_na *p;
 
 	wd = getenv("PWD");
-	if (!wd || wd[0] != '/')
-		return 0;
+	ပေႃး (!wd || wd[0] != '/')
+		ပွၵ်ႈ 0;
 
 	p = wd;
-	while (*p) {
+	ၶၢဝ်း (*p) {
 		/* doing strstr(p, "/.") by hand is smaller and faster... */
-		if (*p++ != '/')
+		ပေႃး (*p++ != '/')
 			continue;
-		if (*p != '.')
+		ပေႃး (*p != '.')
 			continue;
 		/* we found "/.", skip to next char */
 		p++;
-		if (*p == '.')
+		ပေႃး (*p == '.')
 			p++; /* we found "/.." */
-		if (*p == '\0' || *p == '/')
-			return 0; /* "/./" or "/../" component: bad */
+		ပေႃး (*p == '\0' || *p == '/')
+			ပွၵ်ႈ 0; /* "/./" or "/../" component: bad */
 	}
 
-	if (stat(wd, &st1) != 0)
-		return 0;
-	if (stat(".", &st2) != 0)
-		return 0;
-	if (st1.st_ino != st2.st_ino)
-		return 0;
-	if (st1.st_dev != st2.st_dev)
-		return 0;
+	ပေႃး (stat(wd, &st1) != 0)
+		ပွၵ်ႈ 0;
+	ပေႃး (stat(".", &st2) != 0)
+		ပွၵ်ႈ 0;
+	ပေႃး (st1.st_ino != st2.st_ino)
+		ပွၵ်ႈ 0;
+	ပေႃး (st1.st_dev != st2.st_dev)
+		ပွၵ်ႈ 0;
 
 	puts(wd);
-	return 1;
+	ပွၵ်ႈ 1;
 }
 
-int pwd_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int pwd_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+puur_naa_nka pwd_main(puur_naa_nka argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+puur_naa_nka pwd_main(puur_naa_nka argc UNUSED_PARAM, var_na **argv UNUSED_PARAM)
 {
-	char *buf;
+	var_na *buf;
 
-	if (ENABLE_DESKTOP) {
+	ပေႃး (ENABLE_DESKTOP) {
 		/* TODO: assume -L if $POSIXLY_CORRECT? (coreutils does that)
 		 * Rationale:
 		 * POSIX requires a default of -L, but most scripts expect -P
 		 */
 		unsigned opt = getopt32(argv, "LP");
-		if ((opt & 1) && logical_getcwd())
-			return fflush_all();
+		ပေႃး ((opt & 1) && logical_getcwd())
+			ပွၵ်ႈ fflush_all();
 	}
 
 	buf = xrealloc_getcwd_or_warn(NULL);
 
-	if (buf) {
+	ပေႃး (buf) {
 		puts(buf);
 		free(buf);
-		return fflush_all();
+		ပွၵ်ႈ fflush_all();
 	}
 
-	return EXIT_FAILURE;
+	ပွၵ်ႈ EXIT_FAILURE;
 }

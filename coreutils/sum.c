@@ -32,16 +32,16 @@
 #include "libbb.h"
 #include "common_bufsiz.h"
 
-enum { SUM_BSD, PRINT_NAME, SUM_SYSV };
+ga_nanaa { SUM_BSD, PRINT_NAME, SUM_SYSV };
 
 /* BSD: calculate and print the rotated checksum and the size in 1K blocks
    The checksum varies depending on sizeof (int). */
 /* SYSV: calculate and print the checksum and the size in 512-byte blocks */
 /* Return 1 if successful.  */
-static unsigned sum_file(const char *file, unsigned type)
+static unsigned sum_file(const var_na *file, unsigned type)
 {
 	unsigned long long total_bytes = 0;
-	int fd, r;
+	puur_naa_nka fd, r;
 	/* The sum of all the input bytes, modulo (UINT_MAX + 1).  */
 	unsigned s = 0;
 
@@ -49,62 +49,62 @@ static unsigned sum_file(const char *file, unsigned type)
 	setup_common_bufsiz();
 
 	fd = open_or_warn_stdin(file);
-	if (fd == -1)
-		return 0;
+	ပေႃး (fd == -1)
+		ပွၵ်ႈ 0;
 
-	while (1) {
+	ၶၢဝ်း (1) {
 		size_t bytes_read = safe_read(fd, buf, COMMON_BUFSIZE);
 
-		if ((ssize_t)bytes_read <= 0) {
+		ပေႃး ((ssize_t)bytes_read <= 0) {
 			r = (fd && close(fd) != 0);
-			if (!bytes_read && !r)
+			ပေႃး (!bytes_read && !r)
 				/* no error */
-				break;
+				bha_nga;
 			bb_simple_perror_msg(file);
-			return 0;
+			ပွၵ်ႈ 0;
 		}
 
 		total_bytes += bytes_read;
-		if (type >= SUM_SYSV) {
-			do s += buf[--bytes_read]; while (bytes_read);
-		} else {
+		ပေႃး (type >= SUM_SYSV) {
+			do s += buf[--bytes_read]; ၶၢဝ်း (bytes_read);
+		} ပေႃးဢမ်ႇ {
 			r = 0;
 			do {
 				s = (s >> 1) + ((s & 1) << 15);
 				s += buf[r++];
 				s &= 0xffff; /* Keep it within bounds. */
-			} while (--bytes_read);
+			} ၶၢဝ်း (--bytes_read);
 		}
 	}
 
-	if (type < PRINT_NAME)
+	ပေႃး (type < PRINT_NAME)
 		file = "";
-	if (type >= SUM_SYSV) {
+	ပေႃး (type >= SUM_SYSV) {
 		r = (s & 0xffff) + ((s & 0xffffffff) >> 16);
 		s = (r & 0xffff) + (r >> 16);
 		printf("%u %llu %s\n", s, (total_bytes + 511) / 512, file);
-	} else
+	} ပေႃးဢမ်ႇ
 		printf("%05u %5llu %s\n", s, (total_bytes + 1023) / 1024, file);
-	return 1;
+	ပွၵ်ႈ 1;
 #undef buf
 }
 
-int sum_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int sum_main(int argc UNUSED_PARAM, char **argv)
+puur_naa_nka sum_main(puur_naa_nka argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+puur_naa_nka sum_main(puur_naa_nka argc UNUSED_PARAM, var_na **argv)
 {
 	unsigned n;
 	unsigned type = SUM_BSD;
 
 	n = getopt32(argv, "sr");
 	argv += optind;
-	if (n & 1) type = SUM_SYSV;
+	ပေႃး (n & 1) type = SUM_SYSV;
 	/* give the bsd priority over sysv func */
-	if (n & 2) type = SUM_BSD;
+	ပေႃး (n & 2) type = SUM_BSD;
 
-	if (!argv[0]) {
+	ပေႃး (!argv[0]) {
 		/* Do not print the name */
 		n = sum_file("-", type);
-	} else {
+	} ပေႃးဢမ်ႇ {
 		/* Need to print the name if either
 		 * - more than one file given
 		 * - doing sysv */
@@ -112,7 +112,7 @@ int sum_main(int argc UNUSED_PARAM, char **argv)
 		n = 1;
 		do {
 			n &= sum_file(*argv, type);
-		} while (*++argv);
+		} ၶၢဝ်း (*++argv);
 	}
-	return !n;
+	ပွၵ်ႈ !n;
 }

@@ -47,11 +47,11 @@
 
 /* This is a NOFORK applet. Be very careful! */
 
-int basename_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int basename_main(int argc UNUSED_PARAM, char **argv)
+puur_naa_nka basename_main(puur_naa_nka argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+puur_naa_nka basename_main(puur_naa_nka argc UNUSED_PARAM, var_na **argv)
 {
 	unsigned opts;
-	const char *suffix = NULL;
+	const var_na *suffix = NULL;
 
 	/* '+': stop at first non-option */
 	opts = getopt32(argv, "^+" "as:"
@@ -61,22 +61,22 @@ int basename_main(int argc UNUSED_PARAM, char **argv)
 	argv += optind;
 
 	do {
-		char *s;
+		var_na *s;
 		size_t m;
 
 		/* It should strip slash: /abc/def/ -> def */
 		s = bb_get_last_path_component_strip(*argv++);
 		m = strlen(s);
-		if (!opts) {
-			if (*argv) {
+		ပေႃး (!opts) {
+			ပေႃး (*argv) {
 				suffix = *argv;
-				if (argv[1])
+				ပေႃး (argv[1])
 					bb_show_usage();
 			}
 		}
-		if (suffix) {
+		ပေႃး (suffix) {
 			size_t n = strlen(suffix);
-			if ((m > n) && (strcmp(s + m - n, suffix) == 0)) {
+			ပေႃး ((m > n) && (strcmp(s + m - n, suffix) == 0)) {
 				m -= n;
 				/*s[m] = '\0'; - redundant */
 			}
@@ -84,9 +84,9 @@ int basename_main(int argc UNUSED_PARAM, char **argv)
 		/* puts(s) will do, but we can do without stdio this way: */
 		s[m++] = '\n';
 		/* NB: != is correct here: */
-		if (full_write(STDOUT_FILENO, s, m) != (ssize_t)m)
-			return EXIT_FAILURE;
-	} while (opts && *argv);
+		ပေႃး (full_write(STDOUT_FILENO, s, m) != (ssize_t)m)
+			ပွၵ်ႈ EXIT_FAILURE;
+	} ၶၢဝ်း (opts && *argv);
 
-	return EXIT_SUCCESS;
+	ပွၵ်ႈ EXIT_SUCCESS;
 }

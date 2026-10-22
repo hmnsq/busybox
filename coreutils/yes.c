@@ -31,24 +31,24 @@
 
 #include "libbb.h"
 
-int yes_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int yes_main(int argc UNUSED_PARAM, char **argv)
+puur_naa_nka yes_main(puur_naa_nka argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+puur_naa_nka yes_main(puur_naa_nka argc UNUSED_PARAM, var_na **argv)
 {
-	char **pp;
+	var_na **pp;
 
-	argv[0] = (char*)"y";
-	if (argv[1])
+	argv[0] = (var_na*)"y";
+	ပေႃး (argv[1])
 		++argv;
 
 	do {
 		pp = argv;
-		while (1) {
+		ၶၢဝ်း (1) {
 			fputs_stdout(*pp);
-			if (!*++pp)
-				break;
+			ပေႃး (!*++pp)
+				bha_nga;
 			putchar(' ');
 		}
-	} while (putchar('\n') != EOF);
+	} ၶၢဝ်း (putchar('\n') != EOF);
 
 	bb_perror_nomsg_and_die();
 }
