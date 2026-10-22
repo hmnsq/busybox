@@ -30,19 +30,19 @@
 //usage:#endif
 
 #include "libbb.h"
-#if ENABLE_DESKTOP
+#ប្រសិនបើ ENABLE_DESKTOP
 /* This one provides -t (busybox's own build script needs it) */
 #include "od_bloaty.c"
-#else
+#បើមិនដូច្នេះ
 
 #include "dump.h"
 
 static void
-odoffset(dumper_t *dumper, int argc, char ***argvp)
+odoffset(dumper_t *dumper, ចំនួនគត់ argc, var_na ***argvp)
 {
-	char *num, *p;
-	int base;
-	char *end;
+	var_na *num, *p;
+	ចំនួនគត់ base;
+	var_na *end;
 
 	/*
 	 * The offset syntax of od(1) was genuinely bizarre.  First, if
@@ -58,69 +58,69 @@ odoffset(dumper_t *dumper, int argc, char ***argvp)
 	 */
 	p = **argvp;
 
-	if (!p) {
+	ប្រសិនបើ (!p) {
 		/* hey someone is probably piping to us ... */
-		return;
+		ត្រឡប់;
 	}
 
-	if ((*p != '+')
+	ប្រសិនបើ ((*p != '+')
 		&& (argc < 2
 			|| (!isdigit(p[0])
 				&& ((p[0] != 'x') || !isxdigit(p[1])))))
-		return;
+		ត្រឡប់;
 
 	base = 0;
 	/*
 	 * skip over leading '+', 'x[0-9a-fA-f]' or '0x', and
 	 * set base.
 	 */
-	if (p[0] == '+')
+	ប្រសិនបើ (p[0] == '+')
 		++p;
-	if (p[0] == 'x' && isxdigit(p[1])) {
+	ប្រសិនបើ (p[0] == 'x' && isxdigit(p[1])) {
 		++p;
 		base = 16;
-	} else if (p[0] == '0' && p[1] == 'x') {
+	} បើមិនដូច្នេះ ប្រសិនបើ (p[0] == '0' && p[1] == 'x') {
 		p += 2;
 		base = 16;
 	}
 
 	/* skip over the number */
-	if (base == 16)
-		for (num = p; isxdigit(*p); ++p)
+	ប្រសិនបើ (base == 16)
+		សម្រាប់ (num = p; isxdigit(*p); ++p)
 			continue;
-	else
-		for (num = p; isdigit(*p); ++p)
+	បើមិនដូច្នេះ
+		សម្រាប់ (num = p; isdigit(*p); ++p)
 			continue;
 
 	/* check for no number */
-	if (num == p)
-		return;
+	ប្រសិនបើ (num == p)
+		ត្រឡប់;
 
 	/* if terminates with a '.', base is decimal */
-	if (*p == '.') {
-		if (base)
-			return;
+	ប្រសិនបើ (*p == '.') {
+		ប្រសិនបើ (base)
+			ត្រឡប់;
 		base = 10;
 	}
 
 	dumper->dump_skip = strtol(num, &end, base ? base : 8);
 
 	/* if end isn't the same as p, we got a non-octal digit */
-	if (end != p)
+	ប្រសិនបើ (end != p)
 		dumper->dump_skip = 0;
-	else {
-		if (*p) {
-			if (*p == 'b') {
+	បើមិនដូច្នេះ {
+		ប្រសិនបើ (*p) {
+			ប្រសិនបើ (*p == 'b') {
 				dumper->dump_skip *= 512;
 				++p;
-			} else if (*p == 'B') {
+			} បើមិនដូច្នេះ ប្រសិនបើ (*p == 'B') {
 				dumper->dump_skip *= 1024;
 				++p;
 			}
 		}
-		if (*p)
+		ប្រសិនបើ (*p)
 			dumper->dump_skip = 0;
-		else {
+		បើមិនដូច្នេះ {
 			++*argvp;
 			/*
 			 * If the offset uses a non-octal base, the base of
@@ -129,12 +129,12 @@ odoffset(dumper_t *dumper, int argc, char ***argvp)
 			 */
 #define TYPE_OFFSET 7
 			{
-				char x_or_d;
-				if (base == 16) {
+				var_na x_or_d;
+				ប្រសិនបើ (base == 16) {
 					x_or_d = 'x';
 					goto DO_X_OR_D;
 				}
-				if (base == 10) {
+				ប្រសិនបើ (base == 10) {
 					x_or_d = 'd';
  DO_X_OR_D:
 					dumper->fshead->nextfu->fmt[TYPE_OFFSET]
@@ -159,7 +159,7 @@ odoffset(dumper_t *dumper, int argc, char ***argvp)
 // to disambiguate them.
 // The printf-style format is required and must be surrounded by " "s.
 // (Below, each string contains two format units)
-static const char *const add_strings[] ALIGN_PTR = {
+static const var_na *const add_strings[] ALIGN_PTR = {
 	"16/1 \" %3_u\""   "\"\n\"",            /* 0: a */
 	"8/2 \" %06o\""    "\"\n\"",            /* 1: B (undocumented in od), o */
 	"16/1 \" %03o\""   "\"\n\"",            /* 2: b */
@@ -174,49 +174,49 @@ static const char *const add_strings[] ALIGN_PTR = {
 	"4/4 \" %011o\""   "\"\n\"",            /* 11: O */
 	"8/2 \" %6d\""     "\"\n\"",            /* 12: s */
 	/* -I,L,l: depend on word width of the arch (what is "long"?) */
-#if ULONG_MAX > 0xffffffff
+#ប្រសិនបើ ULONG_MAX > 0xffffffff
 	"2/8 \" %20lld\""  "\"\n\"",            /* 13: I, L, l */
 #define L_ 13
-#else
+#បើមិនដូច្នេះ
 	/* 32-bit arch: -I,L,l are the same as -i */
 #define L_ 10
 #endif
 };
 
-static const char od_opts[] ALIGN1 = "aBbcDdeFfHhIiLlOoXxsv";
+static const var_na od_opts[] ALIGN1 = "aBbcDdeFfHhIiLlOoXxsv";
 
-static const char od_o2si[] ALIGN1 = {
+static const var_na od_o2si[] ALIGN1 = {
 	0, 1, 2, 3, 5,     /* aBbcD */
 	4, 6, 6, 7, 8,     /* deFfH */
 	9, L_, 10, L_, L_, /* hIiLl */
 	11, 1, 8, 9, 12    /* OoXxs */
 };
 
-int od_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int od_main(int argc, char **argv)
+ចំនួនគត់ od_main(ចំនួនគត់ argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+ចំនួនគត់ od_main(ចំនួនគត់ argc, var_na **argv)
 {
-	int ch;
-	int first = 1;
-	char *p;
+	ចំនួនគត់ ch;
+	ចំនួនគត់ first = 1;
+	var_na *p;
 	dumper_t *dumper = alloc_dumper();
 
-	while ((ch = getopt(argc, argv, od_opts)) > 0) {
-		if (ch == 'v') {
+	ខណៈពេល ((ch = getopt(argc, argv, od_opts)) > 0) {
+		ប្រសិនបើ (ch == 'v') {
 			dumper->dump_vflag = ALL;
-		} else if (((p = strchr(od_opts, ch)) != NULL) && (*p != '\0')) {
-			if (first) {
+		} បើមិនដូច្នេះ ប្រសិនបើ (((p = strchr(od_opts, ch)) != NULL) && (*p != '\0')) {
+			ប្រសិនបើ (first) {
 				first = 0;
 				bb_dump_add(dumper, "\"%07.7_Ao\n\"");
 				bb_dump_add(dumper, "\"%07.7_ao\"");
-			} else {
+			} បើមិនដូច្នេះ {
 				bb_dump_add(dumper, "\"       \"");
 			}
-			bb_dump_add(dumper, add_strings[(int)od_o2si[(p - od_opts)]]);
-		} else {  /* P, p, w, or other unhandled */
+			bb_dump_add(dumper, add_strings[(ចំនួនគត់)od_o2si[(p - od_opts)]]);
+		} បើមិនដូច្នេះ {  /* P, p, w, or other unhandled */
 			bb_show_usage();
 		}
 	}
-	if (!dumper->fshead) {
+	ប្រសិនបើ (!dumper->fshead) {
 		bb_dump_add(dumper, "\"%07.7_Ao\n\"");
 		bb_dump_add(dumper, "\"%07.7_ao\"");
 		bb_dump_add(dumper, add_strings[1]); /* -o format is default */
@@ -228,7 +228,7 @@ int od_main(int argc, char **argv)
 
 	odoffset(dumper, argc, &argv);
 
-	return bb_dump_dump(dumper, argv);
+	ត្រឡប់ bb_dump_dump(dumper, argv);
 }
 #endif /* !ENABLE_DESKTOP */
 

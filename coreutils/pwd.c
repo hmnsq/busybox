@@ -27,67 +27,67 @@
 
 #include "libbb.h"
 
-static int logical_getcwd(void)
+static ចំនួនគត់ logical_getcwd(void)
 {
-	struct stat st1;
-	struct stat st2;
-	char *wd;
-	char *p;
+	sa_nracanaa stat st1;
+	sa_nracanaa stat st2;
+	var_na *wd;
+	var_na *p;
 
 	wd = getenv("PWD");
-	if (!wd || wd[0] != '/')
-		return 0;
+	ប្រសិនបើ (!wd || wd[0] != '/')
+		ត្រឡប់ 0;
 
 	p = wd;
-	while (*p) {
+	ខណៈពេល (*p) {
 		/* doing strstr(p, "/.") by hand is smaller and faster... */
-		if (*p++ != '/')
+		ប្រសិនបើ (*p++ != '/')
 			continue;
-		if (*p != '.')
+		ប្រសិនបើ (*p != '.')
 			continue;
 		/* we found "/.", skip to next char */
 		p++;
-		if (*p == '.')
+		ប្រសិនបើ (*p == '.')
 			p++; /* we found "/.." */
-		if (*p == '\0' || *p == '/')
-			return 0; /* "/./" or "/../" component: bad */
+		ប្រសិនបើ (*p == '\0' || *p == '/')
+			ត្រឡប់ 0; /* "/./" or "/../" component: bad */
 	}
 
-	if (stat(wd, &st1) != 0)
-		return 0;
-	if (stat(".", &st2) != 0)
-		return 0;
-	if (st1.st_ino != st2.st_ino)
-		return 0;
-	if (st1.st_dev != st2.st_dev)
-		return 0;
+	ប្រសិនបើ (stat(wd, &st1) != 0)
+		ត្រឡប់ 0;
+	ប្រសិនបើ (stat(".", &st2) != 0)
+		ត្រឡប់ 0;
+	ប្រសិនបើ (st1.st_ino != st2.st_ino)
+		ត្រឡប់ 0;
+	ប្រសិនបើ (st1.st_dev != st2.st_dev)
+		ត្រឡប់ 0;
 
 	puts(wd);
-	return 1;
+	ត្រឡប់ 1;
 }
 
-int pwd_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int pwd_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+ចំនួនគត់ pwd_main(ចំនួនគត់ argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+ចំនួនគត់ pwd_main(ចំនួនគត់ argc UNUSED_PARAM, var_na **argv UNUSED_PARAM)
 {
-	char *buf;
+	var_na *buf;
 
-	if (ENABLE_DESKTOP) {
+	ប្រសិនបើ (ENABLE_DESKTOP) {
 		/* TODO: assume -L if $POSIXLY_CORRECT? (coreutils does that)
 		 * Rationale:
 		 * POSIX requires a default of -L, but most scripts expect -P
 		 */
 		unsigned opt = getopt32(argv, "LP");
-		if ((opt & 1) && logical_getcwd())
-			return fflush_all();
+		ប្រសិនបើ ((opt & 1) && logical_getcwd())
+			ត្រឡប់ fflush_all();
 	}
 
 	buf = xrealloc_getcwd_or_warn(NULL);
 
-	if (buf) {
+	ប្រសិនបើ (buf) {
 		puts(buf);
 		free(buf);
-		return fflush_all();
+		ត្រឡប់ fflush_all();
 	}
 
-	return EXIT_FAILURE;
+	ត្រឡប់ EXIT_FAILURE;
 }

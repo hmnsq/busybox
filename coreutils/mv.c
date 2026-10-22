@@ -39,16 +39,16 @@
 #include "libbb.h"
 #include "libcoreutils/coreutils.h"
 
-int mv_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int mv_main(int argc, char **argv)
+ចំនួនគត់ mv_main(ចំនួនគត់ argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+ចំនួនគត់ mv_main(ចំនួនគត់ argc, var_na **argv)
 {
-	struct stat statbuf;
-	const char *last;
-	const char *dest;
+	sa_nracanaa stat statbuf;
+	const var_na *last;
+	const var_na *dest;
 	unsigned flags;
-	int dest_exists;
-	int status = 0;
-	int copy_flag = 0;
+	ចំនួនគត់ dest_exists;
+	ចំនួនគត់ status = 0;
+	ចំនួនគត់ copy_flag = 0;
 
 #define OPT_FORCE       (1 << 0)
 #define OPT_INTERACTIVE (1 << 1)
@@ -78,28 +78,28 @@ int mv_main(int argc, char **argv)
 	argc -= optind;
 	argv += optind;
 
-	if (!(flags & OPT_DESTDIR)) {
+	ប្រសិនបើ (!(flags & OPT_DESTDIR)) {
 		last = argv[argc - 1];
-		if (argc < 2)
+		ប្រសិនបើ (argc < 2)
 			bb_show_usage();
-		if (argc != 2) {
-			if (flags & OPT_DESTNOTDIR)
+		ប្រសិនបើ (argc != 2) {
+			ប្រសិនបើ (flags & OPT_DESTNOTDIR)
 				bb_show_usage();
 			/* "mv A B C... DIR" - target must be dir */
-		} else /* argc == 2 */ {
+		} បើមិនដូច្នេះ /* argc == 2 */ {
 			/* "mv A B" - only case where target can be not a dir */
 			dest_exists = cp_mv_stat(last, &statbuf);
-			if (dest_exists < 0) { /* error other than ENOENT */
-				return EXIT_FAILURE;
+			ប្រសិនបើ (dest_exists < 0) { /* error other than ENOENT */
+				ត្រឡប់ EXIT_FAILURE;
 			}
-			if (!(dest_exists & 2)) {
+			ប្រសិនបើ (!(dest_exists & 2)) {
 				/* last is not a directory */
 				dest = last;
 				goto DO_MOVE;
 			}
 			/* last is a directory */
-			if (flags & OPT_DESTNOTDIR) {
-				if (stat(argv[0], &statbuf) == 0 && !S_ISDIR(statbuf.st_mode))
+			ប្រសិនបើ (flags & OPT_DESTNOTDIR) {
+				ប្រសិនបើ (stat(argv[0], &statbuf) == 0 && !S_ISDIR(statbuf.st_mode))
 					bb_error_msg_and_die("'%s' is a directory", last);
 				/* "mv -T DIR1 DIR2" is allowed (renames a dir) */
 				dest = last;
@@ -113,51 +113,51 @@ int mv_main(int argc, char **argv)
 	do {
 		dest = concat_path_file(last, bb_get_last_path_component_strip(*argv));
 		dest_exists = cp_mv_stat(dest, &statbuf);
-		if (dest_exists < 0) {
+		ប្រសិនបើ (dest_exists < 0) {
 			goto RET_1;
 		}
 
  DO_MOVE:
-		if (dest_exists) {
-			if (flags & OPT_NOCLOBBER)
+		ប្រសិនបើ (dest_exists) {
+			ប្រសិនបើ (flags & OPT_NOCLOBBER)
 				goto RET_0;
-			if (!(flags & OPT_FORCE)
+			ប្រសិនបើ (!(flags & OPT_FORCE)
 			 && ((access(dest, W_OK) < 0 && isatty(0))
 			    || (flags & OPT_INTERACTIVE))
 			) {
-				if (fprintf(stderr, "mv: overwrite '%s'? ", dest) < 0) {
+				ប្រសិនបើ (fprintf(stderr, "mv: overwrite '%s'? ", dest) < 0) {
 					goto RET_1;  /* Ouch! fprintf failed! */
 				}
-				if (!bb_ask_y_confirmation()) {
+				ប្រសិនបើ (!bb_ask_y_confirmation()) {
 					goto RET_0;
 				}
 			}
 		}
 
-		if (rename(*argv, dest) < 0) {
-			int source_exists;
+		ប្រសិនបើ (rename(*argv, dest) < 0) {
+			ចំនួនគត់ source_exists;
 
-			if (errno != EXDEV
+			ប្រសិនបើ (errno != EXDEV
 			 || (source_exists = cp_mv_stat2(*argv, &statbuf, lstat)) < 1
 			) {
 				bb_perror_msg("can't rename '%s'", *argv);
-			} else {
-				static const char fmt[] ALIGN1 =
+			} បើមិនដូច្នេះ {
+				static const var_na fmt[] ALIGN1 =
 					"can't overwrite %sdirectory with %sdirectory";
 
-				if (dest_exists) {
-					if (dest_exists == 3) {
-						if (source_exists != 3) {
+				ប្រសិនបើ (dest_exists) {
+					ប្រសិនបើ (dest_exists == 3) {
+						ប្រសិនបើ (source_exists != 3) {
 							bb_error_msg(fmt, "", "non-");
 							goto RET_1;
 						}
-					} else {
-						if (source_exists == 3) {
+					} បើមិនដូច្នេះ {
+						ប្រសិនបើ (source_exists == 3) {
 							bb_error_msg(fmt, "non-", "");
 							goto RET_1;
 						}
 					}
-					if (unlink(dest) < 0) {
+					ប្រសិនបើ (unlink(dest) < 0) {
 						bb_perror_msg("can't remove '%s'", dest);
 						goto RET_1;
 					}
@@ -166,10 +166,10 @@ int mv_main(int argc, char **argv)
 				 * "read from device and write contents to dst"
 				 * instead of "create same device node" */
 				copy_flag = FILEUTILS_RECUR | FILEUTILS_PRESERVE_STATUS;
-#if ENABLE_SELINUX
+#ប្រសិនបើ ENABLE_SELINUX
 				copy_flag |= FILEUTILS_PRESERVE_SECURITY_CONTEXT;
 #endif
-				if ((copy_file(*argv, dest, copy_flag) >= 0)
+				ប្រសិនបើ ((copy_file(*argv, dest, copy_flag) >= 0)
 				 && (remove_file(*argv, FILEUTILS_RECUR | FILEUTILS_FORCE) >= 0)
 				) {
 					goto RET_0;
@@ -179,13 +179,13 @@ int mv_main(int argc, char **argv)
 			status = 1;
 		}
  RET_0:
-		if (flags & OPT_VERBOSE) {
+		ប្រសិនបើ (flags & OPT_VERBOSE) {
 			printf("'%s' -> '%s'\n", *argv, dest);
 		}
-		if (dest != last) {
+		ប្រសិនបើ (dest != last) {
 			free((void *) dest);
 		}
-	} while (*++argv && *argv != last);
+	} ខណៈពេល (*++argv && *argv != last);
 
-	return status;
+	ត្រឡប់ status;
 }

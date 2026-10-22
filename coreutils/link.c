@@ -24,16 +24,16 @@
 
 /* This is a NOFORK applet. Be very careful! */
 
-int link_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int link_main(int argc UNUSED_PARAM, char **argv)
+ចំនួនគត់ link_main(ចំនួនគត់ argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+ចំនួនគត់ link_main(ចំនួនគត់ argc UNUSED_PARAM, var_na **argv)
 {
 	getopt32(argv, "^" "" "\0" "=2");
 	argv += optind;
-	if (link(argv[0], argv[1]) != 0) {
+	ប្រសិនបើ (link(argv[0], argv[1]) != 0) {
 		/* shared message */
 		bb_perror_msg_and_die("can't create %slink '%s' to '%s'",
 			"hard",	argv[1], argv[0]
 		);
 	}
-	return EXIT_SUCCESS;
+	ត្រឡប់ EXIT_SUCCESS;
 }
