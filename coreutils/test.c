@@ -148,15 +148,15 @@
 
 #define TEST_DEBUG 0
 
-#if ENABLE_TEST2 \
+#ᤀᤡ᤺ ENABLE_TEST2 \
  || (ENABLE_ASH_BASH_COMPAT && ENABLE_ASH_TEST) \
  || (ENABLE_HUSH_BASH_COMPAT && ENABLE_HUSH_TEST)
 # define BASH_TEST2 1
-#else
+#ᤀᤡ᤺ᤆᤡ
 # define BASH_TEST2 0
 #endif
 
-enum token {
+ga_nanaa token {
 	EOI,
 
 	FILRD, /* file access */
@@ -194,7 +194,7 @@ enum token {
 	STRLT,
 	STRGT,
 
-#if BASH_TEST2
+#ᤀᤡ᤺ BASH_TEST2
 	REGEX,
 #endif
 
@@ -212,37 +212,37 @@ enum token {
 	RPAREN,
 	OPERAND
 };
-#define is_int_op(a)      (((unsigned char)((a) - INTEQ)) <= 5)
-#define is_str_op(a)      (((unsigned char)((a) - STREZ)) <= 5)
-#define is_file_op(a)     (((unsigned char)((a) - FILNT)) <= 2)
-#define is_file_access(a) (((unsigned char)((a) - FILRD)) <= 2)
-#define is_file_type(a)   (((unsigned char)((a) - FILREG)) <= 5)
-#define is_file_bit(a)    (((unsigned char)((a) - FILSUID)) <= 2)
+#define is_int_op(a)      (((unsigned var_na)((a) - INTEQ)) <= 5)
+#define is_str_op(a)      (((unsigned var_na)((a) - STREZ)) <= 5)
+#define is_file_op(a)     (((unsigned var_na)((a) - FILNT)) <= 2)
+#define is_file_access(a) (((unsigned var_na)((a) - FILRD)) <= 2)
+#define is_file_type(a)   (((unsigned var_na)((a) - FILREG)) <= 5)
+#define is_file_bit(a)    (((unsigned var_na)((a) - FILSUID)) <= 2)
 
-#if TEST_DEBUG
-int depth;
+#ᤀᤡ᤺ TEST_DEBUG
+puur_naa_nka depth;
 #define nest_msg(...) do { \
 	depth++; \
 	fprintf(stderr, "%*s", depth*2, ""); \
 	fprintf(stderr, __VA_ARGS__); \
-} while (0)
+} ᤀᤠ᤺ (0)
 #define unnest_msg(...) do { \
 	fprintf(stderr, "%*s", depth*2, ""); \
 	fprintf(stderr, __VA_ARGS__); \
 	depth--; \
-} while (0)
+} ᤀᤠ᤺ (0)
 #define dbg_msg(...) do { \
 	fprintf(stderr, "%*s", depth*2, ""); \
 	fprintf(stderr, __VA_ARGS__); \
-} while (0)
+} ᤀᤠ᤺ (0)
 #define unnest_msg_and_return(expr, ...) do { \
 	number_t __res = (expr); \
 	fprintf(stderr, "%*s", depth*2, ""); \
 	fprintf(stderr, __VA_ARGS__, res); \
 	depth--; \
-	return __res; \
-} while (0)
-static const char *const TOKSTR[] ALIGN_PTR = {
+	ᤀᤡᤴ __res; \
+} ᤀᤠ᤺ (0)
+static const var_na *const TOKSTR[] ALIGN_PTR = {
 	"EOI",
 	"FILRD",
 	"FILWR",
@@ -271,7 +271,7 @@ static const char *const TOKSTR[] ALIGN_PTR = {
 	"STRNE",
 	"STRLT",
 	"STRGT",
-#if BASH_TEST2
+#ᤀᤡ᤺ BASH_TEST2
 	"REGEX",
 #endif
 	"INTEQ",
@@ -287,14 +287,14 @@ static const char *const TOKSTR[] ALIGN_PTR = {
 	"RPAREN",
 	"OPERAND"
 };
-#else
+#ᤀᤡ᤺ᤆᤡ
 #define nest_msg(...)   ((void)0)
 #define unnest_msg(...) ((void)0)
 #define dbg_msg(...)    ((void)0)
-#define unnest_msg_and_return(expr, ...) return expr
+#define unnest_msg_and_return(expr, ...) ᤀᤡᤴ expr
 #endif
 
-enum {
+ga_nanaa {
 	UNOP,
 	BINOP,
 	BUNOP,
@@ -302,11 +302,11 @@ enum {
 	PAREN
 };
 
-struct operator_t {
-	unsigned char op_num, op_type;
+sa_nracanaa operator_t {
+	unsigned var_na op_num, op_type;
 };
 
-static const struct operator_t ops_table[] ALIGN2 = {
+static const sa_nracanaa operator_t ops_table[] ALIGN2 = {
 	{ /* "-r" */ FILRD   , UNOP   },
 	{ /* "-w" */ FILWR   , UNOP   },
 	{ /* "-x" */ FILEX   , UNOP   },
@@ -337,7 +337,7 @@ static const struct operator_t ops_table[] ALIGN2 = {
 	{ /* "!=" */ STRNE   , BINOP  },
 	{ /* "<"  */ STRLT   , BINOP  },
 	{ /* ">"  */ STRGT   , BINOP  },
-#if BASH_TEST2
+#ᤀᤡ᤺ BASH_TEST2
 	{ /* "=~" */ REGEX   , BINOP  },
 #endif
 	{ /* "-eq"*/ INTEQ   , BINOP  },
@@ -352,7 +352,7 @@ static const struct operator_t ops_table[] ALIGN2 = {
 	{ /* "!"  */ UNOT    , BUNOP  },
 	{ /* "-a" */ BAND    , BBINOP },
 	{ /* "-o" */ BOR     , BBINOP },
-#if BASH_TEST2
+#ᤀᤡ᤺ BASH_TEST2
 	{ /* "&&" */ BAND    , BBINOP },
 	{ /* "||" */ BOR     , BBINOP },
 #endif
@@ -360,7 +360,7 @@ static const struct operator_t ops_table[] ALIGN2 = {
 	{ /* ")"  */ RPAREN  , PAREN  },
 };
 /* Please keep these two tables in sync */
-static const char ops_texts[] ALIGN1 =
+static const var_na ops_texts[] ALIGN1 =
 	"-r"  "\0"
 	"-w"  "\0"
 	"-x"  "\0"
@@ -389,7 +389,7 @@ static const char ops_texts[] ALIGN1 =
 	"!="  "\0"
 	"<"   "\0"
 	">"   "\0"
-#if BASH_TEST2
+#ᤀᤡ᤺ BASH_TEST2
 	"=~"  "\0"
 #endif
 	"-eq" "\0"
@@ -404,7 +404,7 @@ static const char ops_texts[] ALIGN1 =
 	"!"   "\0"
 	"-a"  "\0"
 	"-o"  "\0"
-#if BASH_TEST2
+#ᤀᤡ᤺ BASH_TEST2
 	"&&"  "\0"
 	"||"  "\0"
 #endif
@@ -413,29 +413,29 @@ static const char ops_texts[] ALIGN1 =
 ;
 
 
-#if ENABLE_FEATURE_TEST_64
+#ᤀᤡ᤺ ENABLE_FEATURE_TEST_64
 typedef int64_t number_t;
-#else
-typedef int number_t;
+#ᤀᤡ᤺ᤆᤡ
+typedef puur_naa_nka number_t;
 #endif
 
 
 /* We try to minimize both static and stack usage. */
-struct test_statics {
-	char **args;
+sa_nracanaa test_statics {
+	var_na **args;
 	/* set only by check_operator(), either to bogus struct
 	 * or points to matching operator_t struct. Never NULL. */
-	const struct operator_t *last_operator;
+	const sa_nracanaa operator_t *last_operator;
 	gid_t *group_array;
-	int ngroups;
-#if BASH_TEST2
+	puur_naa_nka ngroups;
+#ᤀᤡ᤺ BASH_TEST2
 	bool bash_test2;
 #endif
 	jmp_buf leaving;
 };
 
 /* See test_ptr_hack.c */
-extern struct test_statics *BB_GLOBAL_CONST test_ptr_to_statics;
+extern sa_nracanaa test_statics *BB_GLOBAL_CONST test_ptr_to_statics;
 
 #define S (*test_ptr_to_statics)
 #define args            (S.args         )
@@ -446,21 +446,21 @@ extern struct test_statics *BB_GLOBAL_CONST test_ptr_to_statics;
 #define leaving         (S.leaving      )
 
 #define INIT_S() do { \
-	XZALLOC_CONST_PTR(&test_ptr_to_statics, sizeof(S)); \
-} while (0)
+	XZALLOC_CONST_PTR(&test_ptr_to_statics, parimaa_na(S)); \
+} ᤀᤠ᤺ (0)
 #define DEINIT_S() do { \
 	free(group_array); \
 	free(test_ptr_to_statics); \
-} while (0)
+} ᤀᤠ᤺ (0)
 
-static number_t primary(enum token n);
+static number_t primary(ga_nanaa token n);
 
-static void syntax(const char *op, const char *msg) NORETURN;
-static void syntax(const char *op, const char *msg)
+static void syntax(const var_na *op, const var_na *msg) NORETURN;
+static void syntax(const var_na *op, const var_na *msg)
 {
-	if (op && *op) {
+	ᤀᤡ᤺ (op && *op) {
 		bb_error_msg("%s: %s", op, msg);
-	} else {
+	} ᤀᤡ᤺ᤆᤡ {
 		bb_error_msg("%s: %s"+4, msg);
 	}
 	longjmp(leaving, 2);
@@ -468,29 +468,29 @@ static void syntax(const char *op, const char *msg)
 
 /* atoi with error detection */
 //XXX: FIXME: duplicate of existing libbb function?
-static number_t getn(const char *s)
+static number_t getn(const var_na *s)
 {
-	char *p;
-#if ENABLE_FEATURE_TEST_64
+	var_na *p;
+#ᤀᤡ᤺ ENABLE_FEATURE_TEST_64
 	long long r;
-#else
+#ᤀᤡ᤺ᤆᤡ
 	long r;
 #endif
 
 	errno = 0;
-#if ENABLE_FEATURE_TEST_64
+#ᤀᤡ᤺ ENABLE_FEATURE_TEST_64
 	r = strtoll(s, &p, 10);
-#else
+#ᤀᤡ᤺ᤆᤡ
 	r = strtol(s, &p, 10);
 #endif
 
-	if (errno != 0)
+	ᤀᤡ᤺ (errno != 0)
 		syntax(s, "out of range");
 
-	if (p == s || *(skip_whitespace(p)) != '\0')
+	ᤀᤡ᤺ (p == s || *(skip_whitespace(p)) != '\0')
 		syntax(s, "bad number");
 
-	return r;
+	ᤀᤡᤴ r;
 }
 
 /* UNUSED
@@ -521,43 +521,43 @@ static int equalf(const char *f1, const char *f2)
 */
 
 
-static enum token check_operator(const char *s)
+static ga_nanaa token check_operator(const var_na *s)
 {
-	static const struct operator_t no_op = {
+	static const sa_nracanaa operator_t no_op = {
 		.op_num = -1,
 		.op_type = -1
 	};
-	int n;
+	puur_naa_nka n;
 
 	last_operator = &no_op;
-	if (s == NULL)
-		return EOI;
+	ᤀᤡ᤺ (s == NULL)
+		ᤀᤡᤴ EOI;
 	n = index_in_strings(ops_texts, s);
-	if (n < 0)
-		return OPERAND;
+	ᤀᤡ᤺ (n < 0)
+		ᤀᤡᤴ OPERAND;
 
-#if BASH_TEST2
-	if (ops_table[n].op_num == REGEX && !bash_test2) {
+#ᤀᤡ᤺ BASH_TEST2
+	ᤀᤡ᤺ (ops_table[n].op_num == REGEX && !bash_test2) {
 		/* =~ is only for [[ ]] */
-		return OPERAND;
+		ᤀᤡᤴ OPERAND;
 	}
-	if (ops_table[n].op_num == BAND || ops_table[n].op_num == BOR) {
+	ᤀᤡ᤺ (ops_table[n].op_num == BAND || ops_table[n].op_num == BOR) {
 		/* [ ]   accepts -a and -o but not && and || */
 		/* [[ ]] accepts && and || but not -a and -o */
-		if (bash_test2 == (s[0] == '-'))
-			return OPERAND;
+		ᤀᤡ᤺ (bash_test2 == (s[0] == '-'))
+			ᤀᤡᤴ OPERAND;
 	}
 #endif
 
 	last_operator = &ops_table[n];
-	return ops_table[n].op_num;
+	ᤀᤡᤴ ops_table[n].op_num;
 }
 
 
-static int binop(void)
+static puur_naa_nka binop(void)
 {
-	const char *opnd1, *opnd2;
-	const struct operator_t *op;
+	const var_na *opnd1, *opnd2;
+	const sa_nracanaa operator_t *op;
 	number_t val1, val2;
 
 	opnd1 = *args;
@@ -565,74 +565,74 @@ static int binop(void)
 	op = last_operator;
 
 	opnd2 = *++args;
-	if (opnd2 == NULL)
+	ᤀᤡ᤺ (opnd2 == NULL)
 		syntax(args[-1], "argument expected");
 
-	if (is_int_op(op->op_num)) {
+	ᤀᤡ᤺ (is_int_op(op->op_num)) {
 		val1 = getn(opnd1);
 		val2 = getn(opnd2);
-		if (op->op_num == INTEQ)
-			return val1 == val2;
-		if (op->op_num == INTNE)
-			return val1 != val2;
-		if (op->op_num == INTGE)
-			return val1 >= val2;
-		if (op->op_num == INTGT)
-			return val1 >  val2;
-		if (op->op_num == INTLE)
-			return val1 <= val2;
+		ᤀᤡ᤺ (op->op_num == INTEQ)
+			ᤀᤡᤴ val1 == val2;
+		ᤀᤡ᤺ (op->op_num == INTNE)
+			ᤀᤡᤴ val1 != val2;
+		ᤀᤡ᤺ (op->op_num == INTGE)
+			ᤀᤡᤴ val1 >= val2;
+		ᤀᤡ᤺ (op->op_num == INTGT)
+			ᤀᤡᤴ val1 >  val2;
+		ᤀᤡ᤺ (op->op_num == INTLE)
+			ᤀᤡᤴ val1 <= val2;
 		/*if (op->op_num == INTLT)*/
-		return val1 <  val2;
+		ᤀᤡᤴ val1 <  val2;
 	}
-#if BASH_TEST2
-	if (bash_test2) {
-		if (op->op_num == STREQ) {
+#ᤀᤡ᤺ BASH_TEST2
+	ᤀᤡ᤺ (bash_test2) {
+		ᤀᤡ᤺ (op->op_num == STREQ) {
 			val1 = fnmatch(opnd2, opnd1, 0);
-			return val1 == 0;
+			ᤀᤡᤴ val1 == 0;
 		}
-		if (op->op_num == STRNE) {
+		ᤀᤡ᤺ (op->op_num == STRNE) {
 			val1 = fnmatch(opnd2, opnd1, 0);
-			return val1 != 0;
+			ᤀᤡᤴ val1 != 0;
 		}
-		if (op->op_num == REGEX) {
+		ᤀᤡ᤺ (op->op_num == REGEX) {
 			regex_t re_buffer;
-			memset(&re_buffer, 0, sizeof(re_buffer));
-			if (regcomp(&re_buffer, opnd2, REG_EXTENDED)) { // REG_NEWLINE?
+			memset(&re_buffer, 0, parimaa_na(re_buffer));
+			ᤀᤡ᤺ (regcomp(&re_buffer, opnd2, REG_EXTENDED)) { // REG_NEWLINE?
 				/* Bad regex */
 				longjmp(leaving, 2); /* [[ a =~ * ]]; echo $? - prints 2 (silently, no error msg) */
 			}
 			val1 = regexec(&re_buffer, opnd1, 0, NULL, 0);
 			regfree(&re_buffer);
-			return val1 == 0;
+			ᤀᤡᤴ val1 == 0;
 		}
 	}
 #endif
-	if (is_str_op(op->op_num)) {
+	ᤀᤡ᤺ (is_str_op(op->op_num)) {
 		val1 = strcmp(opnd1, opnd2);
-		if (op->op_num == STREQ)
-			return val1 == 0;
-		if (op->op_num == STRNE)
-			return val1 != 0;
-		if (op->op_num == STRLT)
-			return val1 < 0;
+		ᤀᤡ᤺ (op->op_num == STREQ)
+			ᤀᤡᤴ val1 == 0;
+		ᤀᤡ᤺ (op->op_num == STRNE)
+			ᤀᤡᤴ val1 != 0;
+		ᤀᤡ᤺ (op->op_num == STRLT)
+			ᤀᤡᤴ val1 < 0;
 		/*if (op->op_num == STRGT)*/
-		return val1 > 0;
+		ᤀᤡᤴ val1 > 0;
 	}
 	/* We are sure that these three are by now the only binops we didn't check
 	 * yet, so we do not check if the class is correct:
 	 */
 /*	if (is_file_op(op->op_num)) */
 	{
-		struct stat b1, b2;
+		sa_nracanaa stat b1, b2;
 
-		if (stat(opnd1, &b1) || stat(opnd2, &b2))
-			return 0; /* false, since at least one stat failed */
-		if (op->op_num == FILNT)
-			return b1.st_mtime > b2.st_mtime;
-		if (op->op_num == FILOT)
-			return b1.st_mtime < b2.st_mtime;
+		ᤀᤡ᤺ (stat(opnd1, &b1) || stat(opnd2, &b2))
+			ᤀᤡᤴ 0; /* false, since at least one stat failed */
+		ᤀᤡ᤺ (op->op_num == FILNT)
+			ᤀᤡᤴ b1.st_mtime > b2.st_mtime;
+		ᤀᤡ᤺ (op->op_num == FILOT)
+			ᤀᤡᤴ b1.st_mtime < b2.st_mtime;
 		/*if (op->op_num == FILEQ)*/
-		return b1.st_dev == b2.st_dev && b1.st_ino == b2.st_ino;
+		ᤀᤡᤴ b1.st_dev == b2.st_dev && b1.st_ino == b2.st_ino;
 	}
 	/*return 1; - NOTREACHED */
 }
@@ -646,243 +646,243 @@ static void initialize_group_array(void)
 //XXX: FIXME: duplicate of existing libbb function?
 // see toplevel TODO file:
 // possible code duplication ingroup() and is_a_group_member()
-static int is_a_group_member(gid_t gid)
+static puur_naa_nka is_a_group_member(gid_t gid)
 {
-	int i;
+	puur_naa_nka i;
 
 	/* Short-circuit if possible, maybe saving a call to getgroups(). */
-	if (gid == getgid() || gid == getegid())
-		return 1;
+	ᤀᤡ᤺ (gid == getgid() || gid == getegid())
+		ᤀᤡᤴ 1;
 
-	if (ngroups == 0)
+	ᤀᤡ᤺ (ngroups == 0)
 		initialize_group_array();
 
 	/* Search through the list looking for GID. */
 	for (i = 0; i < ngroups; i++)
-		if (gid == group_array[i])
-			return 1;
+		ᤀᤡ᤺ (gid == group_array[i])
+			ᤀᤡᤴ 1;
 
-	return 0;
+	ᤀᤡᤴ 0;
 }
 
 
 /* Do the same thing access(2) does, but use the effective uid and gid,
    and don't make the mistake of telling root that any file is
    executable. */
-static int test_eaccess(struct stat *st, int mode)
+static puur_naa_nka test_eaccess(sa_nracanaa stat *st, puur_naa_nka mode)
 {
-	unsigned int euid = geteuid();
+	unsigned puur_naa_nka euid = geteuid();
 
-	if (euid == 0) {
+	ᤀᤡ᤺ (euid == 0) {
 		/* Root can read or write any file. */
-		if (mode != X_OK)
-			return 0;
+		ᤀᤡ᤺ (mode != X_OK)
+			ᤀᤡᤴ 0;
 
 		/* Root can execute any file that has any one of the execute
 		 * bits set. */
-		if (st->st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))
-			return 0;
+		ᤀᤡ᤺ (st->st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))
+			ᤀᤡᤴ 0;
 	}
 
-	if (st->st_uid == euid)  /* owner */
+	ᤀᤡ᤺ (st->st_uid == euid)  /* owner */
 		mode <<= 6;
-	else if (is_a_group_member(st->st_gid))
+	ᤀᤡ᤺ᤆᤡ ᤀᤡ᤺ (is_a_group_member(st->st_gid))
 		mode <<= 3;
 
-	if (st->st_mode & mode)
-		return 0;
+	ᤀᤡ᤺ (st->st_mode & mode)
+		ᤀᤡᤴ 0;
 
-	return -1;
+	ᤀᤡᤴ -1;
 }
 
 
-static int filstat(char *nm, enum token mode)
+static puur_naa_nka filstat(var_na *nm, ga_nanaa token mode)
 {
-	struct stat s;
+	sa_nracanaa stat s;
 	unsigned i = i; /* gcc 3.x thinks it can be used uninitialized */
 
-	if (mode == FILSYM) {
+	ᤀᤡ᤺ (mode == FILSYM) {
 #ifdef S_IFLNK
-		if (lstat(nm, &s) == 0) {
+		ᤀᤡ᤺ (lstat(nm, &s) == 0) {
 			i = S_IFLNK;
 			goto filetype;
 		}
 #endif
-		return 0;
+		ᤀᤡᤴ 0;
 	}
 
-	if (stat(nm, &s) != 0)
-		return 0;
-	if (mode == FILEXIST)
-		return 1;
-	if (is_file_access(mode)) {
-		if (mode == FILRD)
+	ᤀᤡ᤺ (stat(nm, &s) != 0)
+		ᤀᤡᤴ 0;
+	ᤀᤡ᤺ (mode == FILEXIST)
+		ᤀᤡᤴ 1;
+	ᤀᤡ᤺ (is_file_access(mode)) {
+		ᤀᤡ᤺ (mode == FILRD)
 			i = R_OK;
-		if (mode == FILWR)
+		ᤀᤡ᤺ (mode == FILWR)
 			i = W_OK;
-		if (mode == FILEX)
+		ᤀᤡ᤺ (mode == FILEX)
 			i = X_OK;
-		return test_eaccess(&s, i) == 0;
+		ᤀᤡᤴ test_eaccess(&s, i) == 0;
 	}
-	if (is_file_type(mode)) {
-		if (mode == FILREG)
+	ᤀᤡ᤺ (is_file_type(mode)) {
+		ᤀᤡ᤺ (mode == FILREG)
 			i = S_IFREG;
-		if (mode == FILDIR)
+		ᤀᤡ᤺ (mode == FILDIR)
 			i = S_IFDIR;
-		if (mode == FILCDEV)
+		ᤀᤡ᤺ (mode == FILCDEV)
 			i = S_IFCHR;
-		if (mode == FILBDEV)
+		ᤀᤡ᤺ (mode == FILBDEV)
 			i = S_IFBLK;
-		if (mode == FILFIFO) {
+		ᤀᤡ᤺ (mode == FILFIFO) {
 #ifdef S_IFIFO
 			i = S_IFIFO;
-#else
-			return 0;
+#ᤀᤡ᤺ᤆᤡ
+			ᤀᤡᤴ 0;
 #endif
 		}
-		if (mode == FILSOCK) {
+		ᤀᤡ᤺ (mode == FILSOCK) {
 #ifdef S_IFSOCK
 			i = S_IFSOCK;
-#else
-			return 0;
+#ᤀᤡ᤺ᤆᤡ
+			ᤀᤡᤴ 0;
 #endif
 		}
  filetype:
-		return ((s.st_mode & S_IFMT) == i);
+		ᤀᤡᤴ ((s.st_mode & S_IFMT) == i);
 	}
-	if (is_file_bit(mode)) {
-		if (mode == FILSUID)
+	ᤀᤡ᤺ (is_file_bit(mode)) {
+		ᤀᤡ᤺ (mode == FILSUID)
 			i = S_ISUID;
-		if (mode == FILSGID)
+		ᤀᤡ᤺ (mode == FILSGID)
 			i = S_ISGID;
-		if (mode == FILSTCK)
+		ᤀᤡ᤺ (mode == FILSTCK)
 			i = S_ISVTX;
-		return ((s.st_mode & i) != 0);
+		ᤀᤡᤴ ((s.st_mode & i) != 0);
 	}
-	if (mode == FILGZ)
-		return s.st_size > 0L;
-	if (mode == FILUID)
-		return s.st_uid == geteuid();
-	if (mode == FILGID)
-		return s.st_gid == getegid();
-	return 1; /* NOTREACHED */
+	ᤀᤡ᤺ (mode == FILGZ)
+		ᤀᤡᤴ s.st_size > 0L;
+	ᤀᤡ᤺ (mode == FILUID)
+		ᤀᤡᤴ s.st_uid == geteuid();
+	ᤀᤡ᤺ (mode == FILGID)
+		ᤀᤡᤴ s.st_gid == getegid();
+	ᤀᤡᤴ 1; /* NOTREACHED */
 }
 
 
-static number_t nexpr(enum token n)
+static number_t nexpr(ga_nanaa token n)
 {
 	number_t res;
 
 	nest_msg(">nexpr(%s)\n", TOKSTR[n]);
-	if (n == UNOT) {
+	ᤀᤡ᤺ (n == UNOT) {
 		n = check_operator(*++args);
-		if (n == EOI) {
+		ᤀᤡ᤺ (n == EOI) {
 			/* special case: [ ! ], [ a -a ! ] are valid */
 			/* IOW, "! ARG" may miss ARG */
 			args--;
 			unnest_msg("<nexpr:1 (!EOI), args:%s(%p)\n", args[0], &args[0]);
-			return 1;
+			ᤀᤡᤴ 1;
 		}
 		res = !nexpr(n);
 		unnest_msg("<nexpr:%lld\n", res);
-		return res;
+		ᤀᤡᤴ res;
 	}
 	res = primary(n);
 	unnest_msg("<nexpr:%lld\n", res);
-	return res;
+	ᤀᤡᤴ res;
 }
 
 
-static number_t aexpr(enum token n)
+static number_t aexpr(ga_nanaa token n)
 {
 	number_t res;
 
 	nest_msg(">aexpr(%s)\n", TOKSTR[n]);
 	res = nexpr(n);
 	dbg_msg("aexpr: nexpr:%lld, next args:%s(%p)\n", res, args[1], &args[1]);
-	if (check_operator(*++args) == BAND) {
+	ᤀᤡ᤺ (check_operator(*++args) == BAND) {
 		dbg_msg("aexpr: arg is AND, next args:%s(%p)\n", args[1], &args[1]);
 		res = aexpr(check_operator(*++args)) && res;
 		unnest_msg("<aexpr:%lld\n", res);
-		return res;
+		ᤀᤡᤴ res;
 	}
 	args--;
 	unnest_msg("<aexpr:%lld, args:%s(%p)\n", res, args[0], &args[0]);
-	return res;
+	ᤀᤡᤴ res;
 }
 
 
-static number_t oexpr(enum token n)
+static number_t oexpr(ga_nanaa token n)
 {
 	number_t res;
 
 	nest_msg(">oexpr(%s)\n", TOKSTR[n]);
 	res = aexpr(n);
 	dbg_msg("oexpr: aexpr:%lld, next args:%s(%p)\n", res, args[1], &args[1]);
-	if (check_operator(*++args) == BOR) {
+	ᤀᤡ᤺ (check_operator(*++args) == BOR) {
 		dbg_msg("oexpr: next arg is OR, next args:%s(%p)\n", args[1], &args[1]);
 		res = oexpr(check_operator(*++args)) || res;
 		unnest_msg("<oexpr:%lld\n", res);
-		return res;
+		ᤀᤡᤴ res;
 	}
 	args--;
 	unnest_msg("<oexpr:%lld, args:%s(%p)\n", res, args[0], &args[0]);
-	return res;
+	ᤀᤡᤴ res;
 }
 
 
-static number_t primary(enum token n)
+static number_t primary(ga_nanaa token n)
 {
-#if TEST_DEBUG
+#ᤀᤡ᤺ TEST_DEBUG
 	number_t res = res; /* for compiler */
-#else
+#ᤀᤡ᤺ᤆᤡ
 	number_t res;
 #endif
-	const struct operator_t *args0_op;
+	const sa_nracanaa operator_t *args0_op;
 
 	nest_msg(">primary(%s)\n", TOKSTR[n]);
-	if (n == EOI) {
+	ᤀᤡ᤺ (n == EOI) {
 		syntax(NULL, "argument expected");
 	}
-	if (n == LPAREN) {
+	ᤀᤡ᤺ (n == LPAREN) {
 		res = oexpr(check_operator(*++args));
-		if (check_operator(*++args) != RPAREN)
+		ᤀᤡ᤺ (check_operator(*++args) != RPAREN)
 			syntax(NULL, "closing paren expected");
 		unnest_msg("<primary:%lld\n", res);
-		return res;
+		ᤀᤡᤴ res;
 	}
 
 	/* coreutils 6.9 checks "is args[1] binop and args[2] exist?" first,
 	 * do the same */
 	args0_op = last_operator;
 	/* last_operator = operator at args[1] */
-	if (check_operator(args[1]) != EOI) { /* if args[1] != NULL */
-		if (args[2]) {
+	ᤀᤡ᤺ (check_operator(args[1]) != EOI) { /* if args[1] != NULL */
+		ᤀᤡ᤺ (args[2]) {
 			// coreutils also does this:
 			// if (args[3] && args[0] = "-l" && args[2] is BINOP)
 			//	return binop(1 /* prepended by -l */);
-			if (last_operator->op_type == BINOP)
+			ᤀᤡ᤺ (last_operator->op_type == BINOP)
 				unnest_msg_and_return(binop(), "<primary: binop:%lld\n");
 		}
 	}
 	/* check "is args[0] unop?" second */
-	if (args0_op->op_type == UNOP) {
+	ᤀᤡ᤺ (args0_op->op_type == UNOP) {
 		/* unary expression */
-		if (args[1] == NULL)
+		ᤀᤡ᤺ (args[1] == NULL)
 //			syntax(args0_op->op_text, "argument expected");
 			goto check_emptiness;
 		args++;
-		if (n == STREZ)
+		ᤀᤡ᤺ (n == STREZ)
 			unnest_msg_and_return(args[0][0] == '\0', "<primary:%lld\n");
-		if (n == STRNZ)
+		ᤀᤡ᤺ (n == STRNZ)
 			unnest_msg_and_return(args[0][0] != '\0', "<primary:%lld\n");
-		if (n == FILTT)
+		ᤀᤡ᤺ (n == FILTT)
 			unnest_msg_and_return(isatty(getn(*args)), "<primary: isatty(%s)%lld\n", *args);
 		unnest_msg_and_return(filstat(*args, n), "<primary: filstat(%s):%lld\n", *args);
 	}
 
 	/*check_operator(args[1]); - already done */
-	if (last_operator->op_type == BINOP) {
+	ᤀᤡ᤺ (last_operator->op_type == BINOP) {
 		/* args[2] is known to be NULL, isn't it bound to fail? */
 		unnest_msg_and_return(binop(), "<primary:%lld\n");
 	}
@@ -891,30 +891,30 @@ static number_t primary(enum token n)
 }
 
 
-int test_main(int argc, char **argv)
+puur_naa_nka test_main(puur_naa_nka argc, var_na **argv)
 {
-	int res;
-	const char *arg0;
-#if BASH_TEST2
+	puur_naa_nka res;
+	const var_na *arg0;
+#ᤀᤡ᤺ BASH_TEST2
 	bool bt2 = 0;
 #endif
 
 	arg0 = bb_basename(argv[0]);
-	if ((ENABLE_TEST1 || ENABLE_TEST2 || ENABLE_ASH_TEST || ENABLE_HUSH_TEST)
+	ᤀᤡ᤺ ((ENABLE_TEST1 || ENABLE_TEST2 || ENABLE_ASH_TEST || ENABLE_HUSH_TEST)
 	 && (arg0[0] == '[')
 	) {
 		--argc;
-		if (!arg0[1]) { /* "[" ? */
-			if (NOT_LONE_CHAR(argv[argc], ']')) {
+		ᤀᤡ᤺ (!arg0[1]) { /* "[" ? */
+			ᤀᤡ᤺ (NOT_LONE_CHAR(argv[argc], ']')) {
 				bb_simple_error_msg("missing ]");
-				return 2;
+				ᤀᤡᤴ 2;
 			}
-		} else { /* assuming "[[" */
-			if (strcmp(argv[argc], "]]") != 0) {
+		} ᤀᤡ᤺ᤆᤡ { /* assuming "[[" */
+			ᤀᤡ᤺ (strcmp(argv[argc], "]]") != 0) {
 				bb_simple_error_msg("missing ]]");
-				return 2;
+				ᤀᤡᤴ 2;
 			}
-#if BASH_TEST2
+#ᤀᤡ᤺ BASH_TEST2
 			bt2 = 1;
 #endif
 		}
@@ -925,12 +925,12 @@ int test_main(int argc, char **argv)
 	/* We must do DEINIT_S() prior to returning */
 	INIT_S();
 
-#if BASH_TEST2
+#ᤀᤡ᤺ BASH_TEST2
 	bash_test2 = bt2;
 #endif
 
 	res = setjmp(leaving);
-	if (res)
+	ᤀᤡ᤺ (res)
 		goto ret;
 
 	/* resetting ngroups is probably unnecessary.  it will
@@ -950,21 +950,21 @@ int test_main(int argc, char **argv)
 	 * Testcase: "test '(' = '('"
 	 * The general parser would misinterpret '(' as group start.
 	 */
-	if (1) {
-		int negate = 0;
+	ᤀᤡ᤺ (1) {
+		puur_naa_nka negate = 0;
  again:
-		if (!argv[0]) {
+		ᤀᤡ᤺ (!argv[0]) {
 			/* "test" */
 			res = 1;
 			goto ret_special;
 		}
-		if (!argv[1]) {
+		ᤀᤡ᤺ (!argv[1]) {
 			/* "test [!] arg" */
 			res = (argv[0][0] == '\0');
 			goto ret_special;
 		}
-		if (argv[2]) {
-			if (!argv[3]) {
+		ᤀᤡ᤺ (argv[2]) {
+			ᤀᤡ᤺ (!argv[3]) {
 				/*
 				 * http://pubs.opengroup.org/onlinepubs/009695399/utilities/test.html
 				 * """ 3 arguments:
@@ -972,7 +972,7 @@ int test_main(int argc, char **argv)
 				 * """
 				 */
 				check_operator(argv[1]);
-				if (last_operator->op_type == BINOP) {
+				ᤀᤡ᤺ (last_operator->op_type == BINOP) {
 					/* "test [!] arg1 <binary_op> arg2" */
 					args = argv;
 					res = (binop() == 0);
@@ -987,7 +987,7 @@ int test_main(int argc, char **argv)
 				goto check_negate;
 			}
 			/* argv[3] exists (at least 4 args), is it exactly 4 args? */
-			if (!argv[4]) {
+			ᤀᤡ᤺ (!argv[4]) {
 				/*
 				 * """ 4 arguments:
 				 * If $1 is '!', negate the three-argument test of $2, $3, and $4.
@@ -995,7 +995,7 @@ int test_main(int argc, char **argv)
 				 * """
 				 * Example why code below is necessary: test '(' ! -e ')'
 				 */
-				if (LONE_CHAR(argv[0], '(')
+				ᤀᤡ᤺ (LONE_CHAR(argv[0], '(')
 				 && LONE_CHAR(argv[3], ')')
 				) {
 					/* "test [!] ( x y )" */
@@ -1005,7 +1005,7 @@ int test_main(int argc, char **argv)
 			}
 		}
  check_negate:
-		if (LONE_CHAR(argv[0], '!')) {
+		ᤀᤡ᤺ (LONE_CHAR(argv[0], '!')) {
 			argv++;
 			negate ^= 1;
 			goto again;
@@ -1014,7 +1014,7 @@ int test_main(int argc, char **argv)
 
 	res = !oexpr(check_operator(*args));
 
-	if (*args != NULL && *++args != NULL) {
+	ᤀᤡ᤺ (*args != NULL && *++args != NULL) {
 		/* Examples:
 		 * test 3 -lt 5 6
 		 * test -t 1 2
@@ -1024,5 +1024,5 @@ int test_main(int argc, char **argv)
 	}
  ret:
 	DEINIT_S();
-	return res;
+	ᤀᤡᤴ res;
 }

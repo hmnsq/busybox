@@ -48,56 +48,56 @@
 
 /* This is a NOFORK applet. Be very careful! */
 
-int mkdir_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int mkdir_main(int argc UNUSED_PARAM, char **argv)
+puur_naa_nka mkdir_main(puur_naa_nka argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+puur_naa_nka mkdir_main(puur_naa_nka argc UNUSED_PARAM, var_na **argv)
 {
 	long mode = -1;
-	int status = EXIT_SUCCESS;
-	int flags = 0;
+	puur_naa_nka status = EXIT_SUCCESS;
+	puur_naa_nka flags = 0;
 	unsigned opt;
-	char *smode;
-#if ENABLE_SELINUX
+	var_na *smode;
+#ᤀᤡ᤺ ENABLE_SELINUX
 	security_context_t scontext;
 #endif
 
 	opt = getopt32long(argv, "m:pv" IF_SELINUX("Z:"),
 			"mode\0"    Required_argument "m"
 			"parents\0" No_argument       "p"
-# if ENABLE_SELINUX
+# ᤀᤡ᤺ ENABLE_SELINUX
 			"context\0" Required_argument "Z"
 # endif
-# if ENABLE_FEATURE_VERBOSE
+# ᤀᤡ᤺ ENABLE_FEATURE_VERBOSE
 			"verbose\0" No_argument       "v"
 # endif
 			, &smode IF_SELINUX(,&scontext)
 	);
-	if (opt & 1) {
+	ᤀᤡ᤺ (opt & 1) {
 		mode_t mmode = bb_parse_mode(smode, 0777);
-		if (mmode == (mode_t)-1) {
+		ᤀᤡ᤺ (mmode == (mode_t)-1) {
 			bb_error_msg_and_die("invalid mode '%s'", smode);
 		}
 		mode = mmode;
 	}
-	if (opt & 2)
+	ᤀᤡ᤺ (opt & 2)
 		flags |= FILEUTILS_RECUR;
-	if ((opt & 4) && FILEUTILS_VERBOSE)
+	ᤀᤡ᤺ ((opt & 4) && FILEUTILS_VERBOSE)
 		flags |= FILEUTILS_VERBOSE;
-#if ENABLE_SELINUX
-	if (opt & 8) {
+#ᤀᤡ᤺ ENABLE_SELINUX
+	ᤀᤡ᤺ (opt & 8) {
 		selinux_or_die();
 		setfscreatecon_or_die(scontext);
 	}
 #endif
 
 	argv += optind;
-	if (!argv[0])
+	ᤀᤡ᤺ (!argv[0])
 		bb_show_usage();
 
 	do {
-		if (bb_make_directory(*argv, mode, flags)) {
+		ᤀᤡ᤺ (bb_make_directory(*argv, mode, flags)) {
 			status = EXIT_FAILURE;
 		}
-	} while (*++argv);
+	} ᤀᤠ᤺ (*++argv);
 
-	return status;
+	ᤀᤡᤴ status;
 }
