@@ -26,33 +26,33 @@
 //usage:#define truncate_example_usage
 //usage:	"$ truncate -s 1G foo"
 
-#include "libbb.h"
+#ضمن "libbb.h"
 
-#if ENABLE_LFS
+#𐡄𐡍 ENABLE_LFS
 # define XATOU_SFX xatoull_sfx
-#else
+#وإلا
 # define XATOU_SFX xatoul_sfx
 #endif
 
 /* This is a NOFORK applet. Be very careful! */
 
-int truncate_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int truncate_main(int argc UNUSED_PARAM, char **argv)
+صحيح truncate_main(صحيح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحيح truncate_main(صحيح argc UNUSED_PARAM, حرف **argv)
 {
 	unsigned opts;
-	int flags = O_WRONLY | O_NONBLOCK;
-	int ret = EXIT_SUCCESS;
-	char *size_str;
+	صحيح flags = O_WRONLY | O_NONBLOCK;
+	صحيح ret = EXIT_SUCCESS;
+	حرف *size_str;
 	off_t size;
 
-	enum {
+	تعداد {
 		OPT_NOCREATE  = (1 << 0),
 		OPT_SIZE = (1 << 1),
 	};
 
 	opts = getopt32(argv, "^" "cs:" "\0" "s:-1", &size_str);
 
-	if (!(opts & OPT_NOCREATE))
+	𐡄𐡍 (!(opts & OPT_NOCREATE))
 		flags |= O_CREAT;
 
 	// TODO: coreutils 8.17 also support "m" (lowercase) suffix
@@ -62,18 +62,18 @@ int truncate_main(int argc UNUSED_PARAM, char **argv)
 	size = XATOU_SFX(size_str, kMG_suffixes);
 
 	argv += optind;
-	while (*argv) {
-		int fd = open(*argv, flags, 0666);
-		if (fd < 0) {
-			if (errno != ENOENT || !(opts & OPT_NOCREATE)) {
+	طالما (*argv) {
+		صحيح fd = open(*argv, flags, 0666);
+		𐡄𐡍 (fd < 0) {
+			𐡄𐡍 (errno != ENOENT || !(opts & OPT_NOCREATE)) {
 				bb_perror_msg("%s: open", *argv);
 				ret = EXIT_FAILURE;
 			}
 			/* else: ENOENT && OPT_NOCREATE:
 			 * do not report error, exitcode is also 0.
 			 */
-		} else {
-			if (ftruncate(fd, size) == -1) {
+		} وإلا {
+			𐡄𐡍 (ftruncate(fd, size) == -1) {
 				bb_perror_msg("%s: truncate", *argv);
 				ret = EXIT_FAILURE;
 			}
@@ -82,5 +82,5 @@ int truncate_main(int argc UNUSED_PARAM, char **argv)
 		++argv;
 	}
 
-	return ret;
+	أرجع ret;
 }
