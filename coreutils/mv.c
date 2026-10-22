@@ -36,19 +36,19 @@
 //usage:#define mv_example_usage
 //usage:       "$ mv /tmp/foo /bin/bar\n"
 
-#include "libbb.h"
-#include "libcoreutils/coreutils.h"
+#ضمن "libbb.h"
+#ضمن "libcoreutils/coreutils.h"
 
-int mv_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int mv_main(int argc, char **argv)
+صحيح mv_main(صحيح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحيح mv_main(صحيح argc, حرف **argv)
 {
-	struct stat statbuf;
-	const char *last;
-	const char *dest;
+	بنية stat statbuf;
+	ثابت حرف *last;
+	ثابت حرف *dest;
 	unsigned flags;
-	int dest_exists;
-	int status = 0;
-	int copy_flag = 0;
+	صحيح dest_exists;
+	صحيح status = 0;
+	صحيح copy_flag = 0;
 
 #define OPT_FORCE       (1 << 0)
 #define OPT_INTERACTIVE (1 << 1)
@@ -78,114 +78,114 @@ int mv_main(int argc, char **argv)
 	argc -= optind;
 	argv += optind;
 
-	if (!(flags & OPT_DESTDIR)) {
+	إذا (!(flags & OPT_DESTDIR)) {
 		last = argv[argc - 1];
-		if (argc < 2)
+		إذا (argc < 2)
 			bb_show_usage();
-		if (argc != 2) {
-			if (flags & OPT_DESTNOTDIR)
+		إذا (argc != 2) {
+			إذا (flags & OPT_DESTNOTDIR)
 				bb_show_usage();
 			/* "mv A B C... DIR" - target must be dir */
-		} else /* argc == 2 */ {
+		} وإلا /* argc == 2 */ {
 			/* "mv A B" - only case where target can be not a dir */
 			dest_exists = cp_mv_stat(last, &statbuf);
-			if (dest_exists < 0) { /* error other than ENOENT */
-				return EXIT_FAILURE;
+			إذا (dest_exists < 0) { /* error other than ENOENT */
+				أرجع EXIT_FAILURE;
 			}
-			if (!(dest_exists & 2)) {
+			إذا (!(dest_exists & 2)) {
 				/* last is not a directory */
 				dest = last;
-				goto DO_MOVE;
+				اذهب DO_MOVE;
 			}
 			/* last is a directory */
-			if (flags & OPT_DESTNOTDIR) {
-				if (stat(argv[0], &statbuf) == 0 && !S_ISDIR(statbuf.st_mode))
-					bb_error_msg_and_die("'%s' is a directory", last);
+			إذا (flags & OPT_DESTNOTDIR) {
+				إذا (stat(argv[0], &statbuf) == 0 && !S_ISDIR(statbuf.st_mode))
+					bb_error_پیغام_and_die("'%s' is a directory", last);
 				/* "mv -T DIR1 DIR2" is allowed (renames a dir) */
 				dest = last;
-				goto DO_MOVE;
+				اذهب DO_MOVE;
 			}
 			/* else: fall through into "do { move SRC to DIR/SRC } while" loop */
 		}
 	}
 	/* else: last is DIR from "-t DIR" */
 
-	do {
+	افعل {
 		dest = concat_path_file(last, bb_get_last_path_component_strip(*argv));
 		dest_exists = cp_mv_stat(dest, &statbuf);
-		if (dest_exists < 0) {
-			goto RET_1;
+		إذا (dest_exists < 0) {
+			اذهب RET_1;
 		}
 
  DO_MOVE:
-		if (dest_exists) {
-			if (flags & OPT_NOCLOBBER)
-				goto RET_0;
-			if (!(flags & OPT_FORCE)
+		إذا (dest_exists) {
+			إذا (flags & OPT_NOCLOBBER)
+				اذهب RET_0;
+			إذا (!(flags & OPT_FORCE)
 			 && ((access(dest, W_OK) < 0 && isatty(0))
 			    || (flags & OPT_INTERACTIVE))
 			) {
-				if (fprintf(stderr, "mv: overwrite '%s'? ", dest) < 0) {
-					goto RET_1;  /* Ouch! fprintf failed! */
+				إذا (fprintf(stderr, "mv: overwrite '%s'? ", dest) < 0) {
+					اذهب RET_1;  /* Ouch! fprintf failed! */
 				}
-				if (!bb_ask_y_confirmation()) {
-					goto RET_0;
+				إذا (!bb_ask_y_confirmation()) {
+					اذهب RET_0;
 				}
 			}
 		}
 
-		if (rename(*argv, dest) < 0) {
-			int source_exists;
+		إذا (rename(*argv, dest) < 0) {
+			صحيح source_exists;
 
-			if (errno != EXDEV
+			إذا (errno != EXDEV
 			 || (source_exists = cp_mv_stat2(*argv, &statbuf, lstat)) < 1
 			) {
-				bb_perror_msg("can't rename '%s'", *argv);
-			} else {
-				static const char fmt[] ALIGN1 =
+				bb_perror_پیغام("can't rename '%s'", *argv);
+			} وإلا {
+				ساكن ثابت حرف fmt[] ALIGN1 =
 					"can't overwrite %sdirectory with %sdirectory";
 
-				if (dest_exists) {
-					if (dest_exists == 3) {
-						if (source_exists != 3) {
-							bb_error_msg(fmt, "", "non-");
-							goto RET_1;
+				إذا (dest_exists) {
+					إذا (dest_exists == 3) {
+						إذا (source_exists != 3) {
+							bb_error_پیغام(fmt, "", "non-");
+							اذهب RET_1;
 						}
-					} else {
-						if (source_exists == 3) {
-							bb_error_msg(fmt, "non-", "");
-							goto RET_1;
+					} وإلا {
+						إذا (source_exists == 3) {
+							bb_error_پیغام(fmt, "non-", "");
+							اذهب RET_1;
 						}
 					}
-					if (unlink(dest) < 0) {
-						bb_perror_msg("can't remove '%s'", dest);
-						goto RET_1;
+					إذا (unlink(dest) < 0) {
+						bb_perror_پیغام("can't remove '%s'", dest);
+						اذهب RET_1;
 					}
 				}
 				/* FILEUTILS_RECUR also prevents nasties like
 				 * "read from device and write contents to dst"
 				 * instead of "create same device node" */
 				copy_flag = FILEUTILS_RECUR | FILEUTILS_PRESERVE_STATUS;
-#if ENABLE_SELINUX
+#إذا ENABLE_SELINUX
 				copy_flag |= FILEUTILS_PRESERVE_SECURITY_CONTEXT;
 #endif
-				if ((copy_file(*argv, dest, copy_flag) >= 0)
+				إذا ((copy_file(*argv, dest, copy_flag) >= 0)
 				 && (remove_file(*argv, FILEUTILS_RECUR | FILEUTILS_FORCE) >= 0)
 				) {
-					goto RET_0;
+					اذهب RET_0;
 				}
 			}
  RET_1:
 			status = 1;
 		}
  RET_0:
-		if (flags & OPT_VERBOSE) {
+		إذا (flags & OPT_VERBOSE) {
 			printf("'%s' -> '%s'\n", *argv, dest);
 		}
-		if (dest != last) {
-			free((void *) dest);
+		إذا (dest != last) {
+			حرر((فراغ *) dest);
 		}
-	} while (*++argv && *argv != last);
+	} طالما (*++argv && *argv != last);
 
-	return status;
+	أرجع status;
 }
