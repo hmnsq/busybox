@@ -37,17 +37,17 @@
 --remove[=HOW]		like -u but give control on HOW to delete;  See below
 */
 
-#include "libbb.h"
+#ضمن "libbb.h"
 
-int shred_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int shred_main(int argc UNUSED_PARAM, char **argv)
+صحيح shred_main(صحيح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحيح shred_main(صحيح argc UNUSED_PARAM, حرف **argv)
 {
-	char *opt_s;
-	int rand_fd = rand_fd; /* for compiler */
-	int zero_fd;
+	حرف *opt_s;
+	صحيح rand_fd = rand_fd; /* for compiler */
+	صحيح zero_fd;
 	unsigned num_iter = 3;
 	unsigned opt;
-	enum {
+	تعداد {
 		OPT_f = (1 << 0),
 		OPT_u = (1 << 1),
 		OPT_z = (1 << 2),
@@ -61,51 +61,51 @@ int shred_main(int argc UNUSED_PARAM, char **argv)
 	argv += optind;
 
 	zero_fd = xopen("/dev/zero", O_RDONLY);
-	if (num_iter != 0)
+	𐤀𐤌 (num_iter != 0)
 		rand_fd = xopen("/dev/urandom", O_RDONLY);
 
-	for (;;) {
-		struct stat sb;
-		const char *fname;
+	لكل (;;) {
+		بنية stat sb;
+		ثابت حرف *fname;
 		unsigned i;
-		int fd;
+		صحيح fd;
 
 		fname = *argv++;
-		if (!fname)
-			break;
+		𐤀𐤌 (!fname)
+			اكسر;
 		fd = -1;
-		if (opt & OPT_f) {
+		𐤀𐤌 (opt & OPT_f) {
 			fd = open(fname, O_WRONLY);
-			if (fd < 0)
+			𐤀𐤌 (fd < 0)
 				chmod(fname, 0666);
 		}
-		if (fd < 0)
+		𐤀𐤌 (fd < 0)
 			fd = xopen(fname, O_WRONLY);
 
-		if (fstat(fd, &sb) == 0 && sb.st_size > 0) {
+		𐤀𐤌 (fstat(fd, &sb) == 0 && sb.st_size > 0) {
 			off_t size = sb.st_size;
 
-			if (opt & OPT_s) {
-				size = BB_STRTOOFF(opt_s, NULL, 0); /* accepts oct/hex */
-				if (errno || size < 0) bb_show_usage();
+			𐤀𐤌 (opt & OPT_s) {
+				size = BB_STRTOOFF(opt_s, عدم, 0); /* accepts oct/hex */
+				𐤀𐤌 (errno || size < 0) bb_show_usage();
 			}
 
-			for (i = 0; i < num_iter; i++) {
+			لكل (i = 0; i < num_iter; i++) {
 				bb_copyfd_size(rand_fd, fd, size);
 				fdatasync(fd);
 				xlseek(fd, 0, SEEK_SET);
 			}
-			if (opt & OPT_z) {
+			𐤀𐤌 (opt & OPT_z) {
 				bb_copyfd_size(zero_fd, fd, size);
 				fdatasync(fd);
 			}
 		}
-		if (opt & OPT_u) {
+		𐤀𐤌 (opt & OPT_u) {
 			ftruncate(fd, 0);
 			xunlink(fname);
 		}
 		xclose(fd);
 	}
 
-	return EXIT_SUCCESS;
+	أرجع EXIT_SUCCESS;
 }

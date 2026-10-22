@@ -25,28 +25,28 @@
 //usage:#define realpath_full_usage "\n\n"
 //usage:       "Print absolute pathnames of FILEs"
 
-#include "libbb.h"
+#ضمن "libbb.h"
 
-int realpath_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int realpath_main(int argc UNUSED_PARAM, char **argv)
+صحيح realpath_main(صحيح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحيح realpath_main(صحيح argc UNUSED_PARAM, حرف **argv)
 {
-	int retval = EXIT_SUCCESS;
+	صحيح retval = EXIT_SUCCESS;
 
-	if (!*++argv) {
+	𐤀𐤌 (!*++argv) {
 		bb_show_usage();
 	}
 
-	do {
+	𐤐𐤏𐤋 {
 		/* NOFORK: only one alloc is allowed; must free */
-		char *resolved_path = xmalloc_realpath_coreutils(*argv);
-		if (resolved_path != NULL) {
+		حرف *resolved_path = xmalloc_realpath_coreutils(*argv);
+		𐤀𐤌 (resolved_path != عدم) {
 			puts(resolved_path);
-			free(resolved_path);
-		} else {
+			حرر(resolved_path);
+		} وإلا {
 			retval = EXIT_FAILURE;
 			bb_simple_perror_msg(*argv);
 		}
-	} while (*++argv);
+	} طالما (*++argv);
 
 	fflush_stdout_and_exit(retval);
 }

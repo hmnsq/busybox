@@ -28,8 +28,8 @@
 //usage:     "\n	-s	Break at spaces"
 //usage:     "\n	-w	Use WIDTH columns instead of 80"
 
-#include "libbb.h"
-#include "unicode.h"
+#ضمن "libbb.h"
+#ضمن "unicode.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
@@ -41,56 +41,56 @@
 /* Assuming the current column is COLUMN, return the column that
    printing C will move the cursor to.
    The first column is 0. */
-static int adjust_column(unsigned column, char c)
+ساكن صحيح adjust_column(unsigned column, حرف c)
 {
-	if (option_mask32 & FLAG_COUNT_BYTES)
-		return ++column;
+	𐤀𐤌 (option_mask32 & FLAG_COUNT_BYTES)
+		أرجع ++column;
 
-	if (c == '\t')
-		return column + 8 - column % 8;
+	𐤀𐤌 (c == '\t')
+		أرجع column + 8 - column % 8;
 
-	if (c == '\b') {
-		if ((int)--column < 0)
+	𐤀𐤌 (c == '\b') {
+		𐤀𐤌 ((صحيح)--column < 0)
 			column = 0;
 	}
-	else if (c == '\r')
+	وإلا 𐤀𐤌 (c == '\r')
 		column = 0;
-	else { /* just a printable char */
-		if (unicode_status != UNICODE_ON /* every byte is a new char */
+	وإلا { /* just a printable char */
+		𐤀𐤌 (unicode_status != UNICODE_ON /* every byte is a new char */
 		 || (c & 0xc0) != 0x80 /* it isn't a 2nd+ byte of a Unicode char */
 		) {
 			column++;
 		}
 	}
-	return column;
+	أرجع column;
 }
 
 /* Note that this function can write NULs, unlike fputs etc. */
-static void write2stdout(const void *buf, unsigned size)
+ساكن فراغ write2stdout(ثابت فراغ *buf, unsigned size)
 {
 	fwrite(buf, 1, size, stdout);
 }
 
-int fold_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int fold_main(int argc UNUSED_PARAM, char **argv)
+صحيح fold_main(صحيح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحيح fold_main(صحيح argc UNUSED_PARAM, حرف **argv)
 {
-	char *line_out = NULL;
-	const char *w_opt = "80";
+	حرف *line_out = عدم;
+	ثابت حرف *w_opt = "80";
 	unsigned width;
 	exitcode_t exitcode = EXIT_SUCCESS;
 
 	init_unicode();
 
-	if (ENABLE_INCLUDE_SUSv2) {
+	𐤀𐤌 (ENABLE_INCLUDE_SUSv2) {
 		/* Turn any numeric options into -w options.  */
-		int i;
-		for (i = 1; argv[i]; i++) {
-			const char *a = argv[i];
-			if (*a == '-') {
+		صحيح i;
+		لكل (i = 1; argv[i]; i++) {
+			ثابت حرف *a = argv[i];
+			𐤀𐤌 (*a == '-') {
 				a++;
-				if (*a == '-' && !a[1]) /* "--" */
-					break;
-				if (isdigit(*a))
+				𐤀𐤌 (*a == '-' && !a[1]) /* "--" */
+					اكسر;
+				𐤀𐤌 (isdigit(*a))
 					argv[i] = xasprintf("-w%s", a);
 			}
 		}
@@ -100,53 +100,53 @@ int fold_main(int argc UNUSED_PARAM, char **argv)
 	width = xatou_range(w_opt, 1, 10000);
 
 	argv += optind;
-	if (!*argv)
-		*--argv = (char*)"-";
+	𐤀𐤌 (!*argv)
+		*--argv = (حرف*)"-";
 
-	do {
+	𐤐𐤏𐤋 {
 		FILE *istream = fopen_or_warn_stdin(*argv);
-		int c;
+		صحيح c;
 		unsigned column = 0;     /* Screen column where next char will go */
 		unsigned offset_out = 0; /* Index in 'line_out' for next char */
 
-		if (istream == NULL) {
+		𐤀𐤌 (istream == عدم) {
 			exitcode = EXIT_FAILURE;
-			continue;
+			استمر;
 		}
 
-		while ((c = getc(istream)) != EOF) {
+		طالما ((c = getc(istream)) != EOF) {
 			/* We grow line_out in chunks of 0x1000 bytes */
-			if ((offset_out & 0xfff) == 0) {
+			𐤀𐤌 ((offset_out & 0xfff) == 0) {
 				line_out = xrealloc(line_out, offset_out + 0x1000);
 			}
  rescan:
 			line_out[offset_out] = c;
-			if (c == '\n') {
+			𐤀𐤌 (c == '\n') {
 				write2stdout(line_out, offset_out + 1);
 				column = offset_out = 0;
-				continue;
+				استمر;
 			}
 			column = adjust_column(column, c);
-			if (column <= width || offset_out == 0) {
+			𐤀𐤌 (column <= width || offset_out == 0) {
 				/* offset_out == 0 case happens
 				 * with small width (say, 1) and tabs.
 				 * The very first tab already goes to column 8,
 				 * but we must not wrap it */
 				offset_out++;
-				continue;
+				استمر;
 			}
 
 			/* This character would make the line too long.
 			 * Print the line plus a newline, and make this character
 			 * start the next line */
-			if (option_mask32 & FLAG_BREAK_SPACES) {
+			𐤀𐤌 (option_mask32 & FLAG_BREAK_SPACES) {
 				unsigned i;
 				unsigned logical_end;
 
 				/* Look for the last blank. */
-				for (logical_end = offset_out - 1; (int)logical_end >= 0; logical_end--) {
-					if (!isblank(line_out[logical_end]))
-						continue;
+				لكل (logical_end = offset_out - 1; (صحيح)logical_end >= 0; logical_end--) {
+					𐤀𐤌 (!isblank(line_out[logical_end]))
+						استمر;
 
 					/* Found a space or tab.
 					 * Output up to and including it, and start a new line */
@@ -158,10 +158,10 @@ int fold_main(int argc UNUSED_PARAM, char **argv)
 					 * The areas being copied here might overlap. */
 					memmove(line_out, line_out + logical_end, offset_out - logical_end);
 					offset_out -= logical_end;
-					for (column = i = 0; i < offset_out; i++) {
+					لكل (column = i = 0; i < offset_out; i++) {
 						column = adjust_column(column, line_out[i]);
 					}
-					goto rescan;
+					اذهب rescan;
 				}
 				/* No blank found, wrap will split the overlong word */
 			}
@@ -169,18 +169,18 @@ int fold_main(int argc UNUSED_PARAM, char **argv)
 			line_out[offset_out] = '\n';
 			write2stdout(line_out, offset_out + 1);
 			column = offset_out = 0;
-			goto rescan;
+			اذهب rescan;
 		} /* while (not EOF) */
 
-		if (offset_out) {
+		𐤀𐤌 (offset_out) {
 			write2stdout(line_out, offset_out);
 		}
 
-		if (fclose_if_not_stdin(istream)) {
+		𐤀𐤌 (fclose_if_not_stdin(istream)) {
 			bb_simple_perror_msg(*argv);
 			exitcode = EXIT_FAILURE;
 		}
-	} while (*++argv);
+	} طالما (*++argv);
 
 	fflush_stdout_and_exit(exitcode);
 }

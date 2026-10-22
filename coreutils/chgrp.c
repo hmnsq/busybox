@@ -46,21 +46,21 @@
 //usage:       "$ ls -l /tmp/foo\n"
 //usage:       "-r--r--r--    1 andersen root            0 Apr 12 18:25 /tmp/foo\n"
 
-#include "libbb.h"
+#ضمن "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
 
-int chgrp_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int chgrp_main(int argc, char **argv)
+صحيح chgrp_main(صحيح argc, حرف **argv) MAIN_EXTERNALLY_VISIBLE;
+صحيح chgrp_main(صحيح argc, حرف **argv)
 {
 	/* "chgrp [opts] abc file(s)" == "chown [opts] :abc file(s)" */
-	char **p = argv;
-	while (*++p) {
-		if (p[0][0] != '-') {
+	حرف **p = argv;
+	طالما (*++p) {
+		𐤀𐤌 (p[0][0] != '-') {
 			p[0] = xasprintf(":%s", p[0]);
-			break;
+			اكسر;
 		}
 	}
-	return chown_main(argc, argv);
+	أرجع chown_main(argc, argv);
 }
