@@ -43,15 +43,15 @@
 //usage:       "$ basename /foo/bar.txt .txt\n"
 //usage:       "bar"
 
-#include "libbb.h"
+#अन्तर्भाव "libbb.h"
 
 /* This is a NOFORK applet. Be very careful! */
 
-int basename_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int basename_main(int argc UNUSED_PARAM, char **argv)
+पूर्णांक basename_main(पूर्णांक argc, अक्षर **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णांक basename_main(पूर्णांक argc UNUSED_PARAM, अक्षर **argv)
 {
-	unsigned opts;
-	const char *suffix = NULL;
+	अचिन्हित opts;
+	स्थिरांक अक्षर *suffix = रिक्त;
 
 	/* '+': stop at first non-option */
 	opts = getopt32(argv, "^+" "as:"
@@ -60,23 +60,23 @@ int basename_main(int argc UNUSED_PARAM, char **argv)
 	);
 	argv += optind;
 
-	do {
-		char *s;
-		size_t m;
+	करा {
+		अक्षर *s;
+		माप_प्रकार m;
 
 		/* It should strip slash: /abc/def/ -> def */
 		s = bb_get_last_path_component_strip(*argv++);
-		m = strlen(s);
-		if (!opts) {
-			if (*argv) {
+		m = म_माप(s);
+		जर (!opts) {
+			जर (*argv) {
 				suffix = *argv;
-				if (argv[1])
+				जर (argv[1])
 					bb_show_usage();
 			}
 		}
-		if (suffix) {
-			size_t n = strlen(suffix);
-			if ((m > n) && (strcmp(s + m - n, suffix) == 0)) {
+		जर (suffix) {
+			माप_प्रकार n = म_माप(suffix);
+			जर ((m > n) && (म_भेद(s + m - n, suffix) == 0)) {
 				m -= n;
 				/*s[m] = '\0'; - redundant */
 			}
@@ -84,9 +84,9 @@ int basename_main(int argc UNUSED_PARAM, char **argv)
 		/* puts(s) will do, but we can do without stdio this way: */
 		s[m++] = '\n';
 		/* NB: != is correct here: */
-		if (full_write(STDOUT_FILENO, s, m) != (ssize_t)m)
-			return EXIT_FAILURE;
-	} while (opts && *argv);
+		जर (full_write(STDOUT_FILENO, s, m) != (ssize_t)m)
+			परत निकास_त्रुटि;
+	} पर्यंत (opts && *argv);
 
-	return EXIT_SUCCESS;
+	परत निकास_सफल;
 }

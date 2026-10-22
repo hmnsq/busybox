@@ -60,7 +60,7 @@
 //usage:       "$ echo \"Erik\\nis\\ncool\"\n"
 //usage:       "Erik\\nis\\ncool\n")
 
-#include "libbb.h"
+#अन्तर्भाव "libbb.h"
 
 /* This is a NOFORK applet. Be very careful! */
 
@@ -80,30 +80,30 @@
  * But this function is not standard.
  */
 
-int echo_main(int argc UNUSED_PARAM, char **argv)
+पूर्णांक echo_main(पूर्णांक argc UNUSED_PARAM, अक्षर **argv)
 {
-	char **pp;
-	const char *arg;
-	char *out;
-	char *buffer;
-	unsigned buflen;
-	int err;
-#if !ENABLE_FEATURE_FANCY_ECHO
-	enum {
+	अक्षर **pp;
+	स्थिरांक अक्षर *arg;
+	अक्षर *out;
+	अक्षर *buffer;
+	अचिन्हित buflen;
+	पूर्णांक err;
+#जर !ENABLE_FEATURE_FANCY_ECHO
+	गणना {
 		eflag = 0,  /* 0 -- disable escape sequences */
 		nflag = 1,  /* 1 -- print '\n' */
 	};
 
 	argv++;
-#else
-	char nflag = 1;
-	char eflag = 0;
+#अन्यथा
+	अक्षर nflag = 1;
+	अक्षर eflag = 0;
 
-	while ((arg = *++argv) != NULL) {
-		char n, e;
+	पर्यंत ((arg = *++argv) != रिक्त) {
+		अक्षर n, e;
 
-		if (arg[0] != '-')
-			break; /* not an option arg, echo it */
+		जर (arg[0] != '-')
+			थांबा; /* not an option arg, echo it */
 
 		/* If it appears that we are handling options, then make sure
 		 * that all of the options specified are actually valid.
@@ -112,17 +112,17 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
 		arg++;
 		n = nflag;
 		e = eflag;
-		do {
-			if (*arg == 'n')
+		करा {
+			जर (*arg == 'n')
 				n = 0;
-			else if (*arg == 'e')
+			अन्यथा जर (*arg == 'e')
 				e = '\\';
-			else if (*arg != 'E') {
+			अन्यथा जर (*arg != 'E') {
 				/* "-ccc" arg with one of c's invalid, echo it */
 				/* arg consisting from just "-" also handled here */
-				goto just_echo;
+				जा just_echo;
 			}
-		} while (*++arg);
+		} पर्यंत (*++arg);
 		nflag = n;
 		eflag = e;
 	}
@@ -131,32 +131,32 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
 
 	buflen = 0;
 	pp = argv;
-	while ((arg = *pp) != NULL) {
-		buflen += strlen(arg) + 1;
+	पर्यंत ((arg = *pp) != रिक्त) {
+		buflen += म_माप(arg) + 1;
 		pp++;
 	}
 	out = buffer = xmalloc(buflen + 1); /* +1 is needed for "no args" case */
 
-	while ((arg = *argv) != NULL) {
-		int c;
+	पर्यंत ((arg = *argv) != रिक्त) {
+		पूर्णांक c;
 
-		if (!eflag) {
+		जर (!eflag) {
 			/* optimization for very common case */
 			out = stpcpy(out, arg);
-		} else
-		while ((c = *arg++) != '\0') {
-			if (c == eflag) {
+		} अन्यथा
+		पर्यंत ((c = *arg++) != '\0') {
+			जर (c == eflag) {
 				/* This is an "\x" sequence */
 
-				if (*arg == 'c') {
+				जर (*arg == 'c') {
 					/* "\c" means cancel newline and
 					 * ignore all subsequent chars. */
-					goto do_write;
+					जा do_write;
 				}
 				/* Since SUSv3 mandates a first digit of 0, 4-digit octals
 				* of the form \0### are accepted. */
-				if (*arg == '0') {
-					if ((unsigned char)(arg[1] - '0') < 8) {
+				जर (*arg == '0') {
+					जर ((अचिन्हित अक्षर)(arg[1] - '0') < 8) {
 						/* 2nd char is 0..7: skip leading '0' */
 						arg++;
 					}
@@ -166,7 +166,7 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
 				{
 					/* optimization: don't force arg to be on-stack,
 					 * use another variable for that. ~30 bytes win */
-					const char *z = arg;
+					स्थिरांक अक्षर *z = arg;
 					c = bb_process_escape_sequence(&z);
 					arg = z;
 				}
@@ -174,24 +174,24 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
 			*out++ = c;
 		}
 
-		if (!*++argv)
-			break;
+		जर (!*++argv)
+			थांबा;
 		*out++ = ' ';
 	}
 
-	if (nflag) {
+	जर (nflag) {
 		*out++ = '\n';
 	}
 
  do_write:
 	/* Careful to error out on partial writes too (think ENOSPC!) */
-	errno = 0;
+	त्रुटि_सं = 0;
 	err = full_write(STDOUT_FILENO, buffer, out - buffer) != out - buffer;
-	if (err) {
-		bb_simple_perror_msg(bb_msg_write_error);
+	जर (err) {
+		bb_simple_perror_संदेश(bb_संदेश_write_error);
 	}
-	free(buffer);
-	return err;
+	मुक्त(buffer);
+	परत err;
 }
 
 /*
@@ -246,106 +246,106 @@ int echo_main(int argc UNUSED_PARAM, char **argv)
  * Using writev instead, with 'direct' conversion of argv vector.
  */
 
-int echo_main(int argc, char **argv)
+पूर्णांक echo_main(पूर्णांक argc, अक्षर **argv)
 {
-	struct iovec io[argc];
-	struct iovec *cur_io = io;
-	char *arg;
-	char *p;
-#if !ENABLE_FEATURE_FANCY_ECHO
-	enum {
+	संरचना iovec io[argc];
+	संरचना iovec *cur_io = io;
+	अक्षर *arg;
+	अक्षर *p;
+#जर !ENABLE_FEATURE_FANCY_ECHO
+	गणना {
 		eflag = '\\',
 		nflag = 1,  /* 1 -- print '\n' */
 	};
 	arg = *++argv;
-	if (!arg)
-		goto newline_ret;
-#else
-	char nflag = 1;
-	char eflag = 0;
+	जर (!arg)
+		जा newline_ret;
+#अन्यथा
+	अक्षर nflag = 1;
+	अक्षर eflag = 0;
 
-	while (1) {
+	पर्यंत (1) {
 		arg = *++argv;
-		if (!arg)
-			goto newline_ret;
-		if (*arg != '-')
-			break;
+		जर (!arg)
+			जा newline_ret;
+		जर (*arg != '-')
+			थांबा;
 
 		/* If it appears that we are handling options, then make sure
 		 * that all of the options specified are actually valid.
 		 * Otherwise, the string should just be echoed.
 		 */
 		p = arg + 1;
-		if (!*p)	/* A single '-', so echo it. */
-			goto just_echo;
+		जर (!*p)	/* A single '-', so echo it. */
+			जा just_echo;
 
-		do {
-			if (!strchr("neE", *p))
-				goto just_echo;
-		} while (*++p);
+		करा {
+			जर (!म_अक्षर("neE", *p))
+				जा just_echo;
+		} पर्यंत (*++p);
 
 		/* All of the options in this arg are valid, so handle them. */
 		p = arg + 1;
-		do {
-			if (*p == 'n')
+		करा {
+			जर (*p == 'n')
 				nflag = 0;
-			if (*p == 'e')
+			जर (*p == 'e')
 				eflag = '\\';
-		} while (*++p);
+		} पर्यंत (*++p);
 	}
  just_echo:
 #endif
 
-	while (1) {
+	पर्यंत (1) {
 		/* arg is already == *argv and isn't NULL */
-		int c;
+		पूर्णांक c;
 
 		cur_io->iov_base = p = arg;
 
-		if (!eflag) {
+		जर (!eflag) {
 			/* optimization for very common case */
-			p += strlen(arg);
-		} else while ((c = *arg++)) {
-			if (c == eflag) {
+			p += म_माप(arg);
+		} अन्यथा पर्यंत ((c = *arg++)) {
+			जर (c == eflag) {
 				/* This is an "\x" sequence */
 
-				if (*arg == 'c') {
+				जर (*arg == 'c') {
 					/* "\c" means cancel newline and
 					 * ignore all subsequent chars. */
-					cur_io->iov_len = p - (char*)cur_io->iov_base;
+					cur_io->iov_len = p - (अक्षर*)cur_io->iov_base;
 					cur_io++;
-					goto ret;
+					जा ret;
 				}
 				/* Since SUSv3 mandates a first digit of 0, 4-digit octals
 				* of the form \0### are accepted. */
-				if (*arg == '0' && (unsigned char)(arg[1] - '0') < 8) {
+				जर (*arg == '0' && (अचिन्हित अक्षर)(arg[1] - '0') < 8) {
 					arg++;
 				}
 //FIXME? we also accept non-0 starting sequences (see echo-prints-slash_41 test)
 // echo -ne '-\41-' prints "-!-". bash 5.0.17 does not (prints "-\41-").
 				/* bb_process_escape_sequence can handle nul correctly */
-				c = bb_process_escape_sequence( (void*) &arg);
+				c = bb_process_escape_sequence( (शून्य*) &arg);
 			}
 			*p++ = c;
 		}
 
 		arg = *++argv;
-		if (arg)
+		जर (arg)
 			*p++ = ' ';
-		cur_io->iov_len = p - (char*)cur_io->iov_base;
+		cur_io->iov_len = p - (अक्षर*)cur_io->iov_base;
 		cur_io++;
-		if (!arg)
-			break;
+		जर (!arg)
+			थांबा;
 	}
 
  newline_ret:
-	if (nflag) {
-		cur_io->iov_base = (char*)"\n";
+	जर (nflag) {
+		cur_io->iov_base = (अक्षर*)"\n";
 		cur_io->iov_len = 1;
 		cur_io++;
 	}
  ret:
 	/* TODO: implement and use full_writev? */
-	return writev(1, io, (cur_io - io)) >= 0;
+	परत writev(1, io, (cur_io - io)) >= 0;
 }
 #endif

@@ -49,13 +49,13 @@
 //usage:       "$ echo \"Hello world\" | cut -f 2 -d ' '\n"
 //usage:       "world\n"
 
-#include "libbb.h"
+#अन्तर्भाव "libbb.h"
 
-#if ENABLE_FEATURE_CUT_REGEX
-#include "xregex.h"
-#else
-#define regex_t int
-typedef struct { int rm_eo, rm_so; } regmatch_t;
+#जर ENABLE_FEATURE_CUT_REGEX
+#अन्तर्भाव "xregex.h"
+#अन्यथा
+#define regex_t पूर्णांक
+प्रकारव्याख्या संरचना { पूर्णांक rm_eo, rm_so; } regmatch_t;
 #define xregcomp(x, ...) *(x) = 0
 #define regexec(...)     0
 #endif
@@ -74,149 +74,149 @@ typedef struct { int rm_eo, rm_so; } regmatch_t;
 #define CUT_OPT_NOSORT_FLGS   (1 << 6)
 #define CUT_OPT_REGEX_FLGS    ((1 << 7) * ENABLE_FEATURE_CUT_REGEX)
 
-struct cut_list {
-	int startpos;
-	int endpos;
+संरचना cut_list {
+	पूर्णांक startpos;
+	पूर्णांक endpos;
 };
 
-static int cmpfunc(const void *a, const void *b)
+स्थिर पूर्णांक cmpfunc(स्थिरांक शून्य *a, स्थिरांक शून्य *b)
 {
-	return (((struct cut_list *) a)->startpos -
-			((struct cut_list *) b)->startpos);
+	परत (((संरचना cut_list *) a)->startpos -
+			((संरचना cut_list *) b)->startpos);
 }
 
-static void cut_file(FILE *file, const char *delim, const char *odelim,
-		const struct cut_list *cut_lists, unsigned nlists)
+स्थिर शून्य cut_file(खाता *file, स्थिरांक अक्षर *delim, स्थिरांक अक्षर *odelim,
+		स्थिरांक संरचना cut_list *cut_lists, अचिन्हित nlists)
 {
-	char *line;
-	unsigned linenum = 0;	/* keep these zero-based to be consistent */
+	अक्षर *ओळ;
+	अचिन्हित linenum = 0;	/* keep these zero-based to be consistent */
 	regex_t reg;
-	int spos, shoe = option_mask32 & CUT_OPT_REGEX_FLGS;
+	पूर्णांक spos, shoe = option_mask32 & CUT_OPT_REGEX_FLGS;
 
-	if (shoe) xregcomp(&reg, delim, REG_EXTENDED);
+	जर (shoe) xregcomp(&reg, delim, REG_EXTENDED);
 
 	/* go through every line in the file */
-	while ((line = xmalloc_fgetline(file)) != NULL) {
+	पर्यंत ((ओळ = xmalloc_fgetline(file)) != रिक्त) {
 
 		/* set up a list so we can keep track of what's been printed */
-		int linelen = strlen(line);
-		char *printed = xzalloc(linelen + 1);
-		char *orig_line = line;
-		unsigned cl_pos = 0;
+		पूर्णांक linelen = म_माप(ओळ);
+		अक्षर *printed = xzalloc(linelen + 1);
+		अक्षर *orig_ओळ = ओळ;
+		अचिन्हित cl_pos = 0;
 
 		/* cut based on chars/bytes XXX: only works when sizeof(char) == byte */
-		if (option_mask32 & (CUT_OPT_CHAR_FLGS | CUT_OPT_BYTE_FLGS)) {
+		जर (option_mask32 & (CUT_OPT_CHAR_FLGS | CUT_OPT_BYTE_FLGS)) {
 			/* print the chars specified in each cut list */
-			for (; cl_pos < nlists; cl_pos++) {
-				for (spos = cut_lists[cl_pos].startpos; spos < linelen;) {
-					if (!printed[spos]) {
+			साठी (; cl_pos < nlists; cl_pos++) {
+				साठी (spos = cut_lists[cl_pos].startpos; spos < linelen;) {
+					जर (!printed[spos]) {
 						printed[spos] = 'X';
-						putchar(line[spos]);
+						अक्षर_दो(ओळ[spos]);
 					}
-					if (++spos > cut_lists[cl_pos].endpos) {
-						break;
+					जर (++spos > cut_lists[cl_pos].endpos) {
+						थांबा;
 					}
 				}
 			}
-		} else if (*delim == '\n') {	/* cut by lines */
+		} अन्यथा जर (*delim == '\n') {	/* cut by lines */
 			spos = cut_lists[cl_pos].startpos;
 
 			/* get out if we have no more lists to process or if the lines
 			 * are lower than what we're interested in */
-			if (((int)linenum < spos) || (cl_pos >= nlists))
-				goto next_line;
+			जर (((पूर्णांक)linenum < spos) || (cl_pos >= nlists))
+				जा next_ओळ;
 
 			/* if the line we're looking for is lower than the one we were
 			 * passed, it means we displayed it already, so move on */
-			while (spos < (int)linenum) {
+			पर्यंत (spos < (पूर्णांक)linenum) {
 				spos++;
 				/* go to the next list if we're at the end of this one */
-				if (spos > cut_lists[cl_pos].endpos) {
+				जर (spos > cut_lists[cl_pos].endpos) {
 					cl_pos++;
 					/* get out if there's no more lists to process */
-					if (cl_pos >= nlists)
-						goto next_line;
+					जर (cl_pos >= nlists)
+						जा next_ओळ;
 					spos = cut_lists[cl_pos].startpos;
 					/* get out if the current line is lower than the one
 					 * we just became interested in */
-					if ((int)linenum < spos)
-						goto next_line;
+					जर ((पूर्णांक)linenum < spos)
+						जा next_ओळ;
 				}
 			}
 
 			/* If we made it here, it means we've found the line we're
 			 * looking for, so print it */
-			puts(line);
-			goto next_line;
-		} else {		/* cut by fields */
-			unsigned uu = 0, start = 0, end = 0, out = 0;
-			int dcount = 0;
+			माला_दो(ओळ);
+			जा next_ओळ;
+		} अन्यथा {		/* cut by fields */
+			अचिन्हित uu = 0, start = 0, end = 0, out = 0;
+			पूर्णांक dcount = 0;
 
 			/* Loop through bytes, finding next delimiter */
-			for (;;) {
+			साठी (;;) {
 				/* End of current range? */
-				if (end == linelen || dcount > cut_lists[cl_pos].endpos) {
-					if (++cl_pos >= nlists) break;
-					if (option_mask32 & CUT_OPT_NOSORT_FLGS)
+				जर (end == linelen || dcount > cut_lists[cl_pos].endpos) {
+					जर (++cl_pos >= nlists) थांबा;
+					जर (option_mask32 & CUT_OPT_NOSORT_FLGS)
 						start = dcount = uu = 0;
 					end = 0;
 				}
 				/* End of current line? */
-				if (uu == linelen) {
+				जर (uu == linelen) {
 					/* If we've seen no delimiters, check -s */
-					if (!cl_pos && !dcount && !shoe) {
-						if (option_mask32 & CUT_OPT_SUPPRESS_FLGS)
-							goto next_line;
-					} else if (dcount < cut_lists[cl_pos].startpos)
+					जर (!cl_pos && !dcount && !shoe) {
+						जर (option_mask32 & CUT_OPT_SUPPRESS_FLGS)
+							जा next_ओळ;
+					} अन्यथा जर (dcount < cut_lists[cl_pos].startpos)
 						start = linelen;
 					end = linelen;
-				} else {
+				} अन्यथा {
 					/* Find next delimiter */
-					if (shoe) {
+					जर (shoe) {
 						regmatch_t rr = {-1, -1};
 
-						if (!regexec(&reg, line+uu, 1, &rr, REG_NOTBOL|REG_NOTEOL)) {
+						जर (!regexec(&reg, ओळ+uu, 1, &rr, REG_NOTBOL|REG_NOTEOL)) {
 							end = uu + rr.rm_so;
 							uu += rr.rm_eo;
-						} else {
+						} अन्यथा {
 							uu = linelen;
-							continue;
+							सुरूठेवा;
 						}
-					} else if (line[end = uu++] != *delim)
-						continue;
+					} अन्यथा जर (ओळ[end = uu++] != *delim)
+						सुरूठेवा;
 
 					/* Got delimiter. Loop if not yet within range. */
-					if (dcount++ < cut_lists[cl_pos].startpos) {
+					जर (dcount++ < cut_lists[cl_pos].startpos) {
 						start = uu;
-						continue;
+						सुरूठेवा;
 					}
 				}
-				if (end != start || !shoe)
-					printf("%s%.*s", out++ ? odelim : "", end-start, line + start);
+				जर (end != start || !shoe)
+					म_लिखो("%s%.*s", out++ ? odelim : "", end-start, ओळ + start);
 				start = uu;
-				if (!dcount)
-					break;
+				जर (!dcount)
+					थांबा;
 			}
 		}
 		/* if we printed anything, finish with newline */
-		putchar('\n');
- next_line:
+		अक्षर_दो('\n');
+ next_ओळ:
 		linenum++;
-		free(printed);
-		free(orig_line);
+		मुक्त(printed);
+		मुक्त(orig_ओळ);
 	}
 }
 
-int cut_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int cut_main(int argc UNUSED_PARAM, char **argv)
+पूर्णांक cut_main(पूर्णांक argc, अक्षर **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णांक cut_main(पूर्णांक argc UNUSED_PARAM, अक्षर **argv)
 {
 	/* growable array holding a series of lists */
-	struct cut_list *cut_lists = NULL;
-	unsigned nlists = 0;	/* number of elements in above list */
-	char *sopt, *ltok;
-	const char *delim = NULL;
-	const char *odelim = NULL;
-	unsigned opt;
+	संरचना cut_list *cut_lists = रिक्त;
+	अचिन्हित nlists = 0;	/* number of elements in above list */
+	अक्षर *sopt, *ltok;
+	स्थिरांक अक्षर *delim = रिक्त;
+	स्थिरांक अक्षर *odelim = रिक्त;
+	अचिन्हित opt;
 
 #define ARG "bcf"IF_FEATURE_CUT_REGEX("F")
 	opt = getopt32(argv, "^"
@@ -224,25 +224,25 @@ int cut_main(int argc UNUSED_PARAM, char **argv)
 			"\0" "b--"ARG":c--"ARG":f--"ARG IF_FEATURE_CUT_REGEX("F--"ARG),
 			&sopt, &sopt, &sopt, &delim, &odelim IF_FEATURE_CUT_REGEX(, &sopt)
 	);
-	if (!delim || !*delim)
+	जर (!delim || !*delim)
 		delim = (opt & CUT_OPT_REGEX_FLGS) ? "[[:space:]]+" : "\t";
-	if (!odelim) odelim = (opt & CUT_OPT_REGEX_FLGS) ? " " : delim;
+	जर (!odelim) odelim = (opt & CUT_OPT_REGEX_FLGS) ? " " : delim;
 
 //	argc -= optind;
 	argv += optind;
-	if (!(opt & (CUT_OPT_BYTE_FLGS | CUT_OPT_CHAR_FLGS | CUT_OPT_FIELDS_FLGS | CUT_OPT_REGEX_FLGS)))
-		bb_simple_error_msg_and_die("expected a list of bytes, characters, or fields");
+	जर (!(opt & (CUT_OPT_BYTE_FLGS | CUT_OPT_CHAR_FLGS | CUT_OPT_FIELDS_FLGS | CUT_OPT_REGEX_FLGS)))
+		bb_simple_error_संदेश_and_die("expected a list of bytes, characters, or fields");
 
 	/*  non-field (char or byte) cutting has some special handling */
-	if (!(opt & (CUT_OPT_FIELDS_FLGS|CUT_OPT_REGEX_FLGS))) {
-		static const char _op_on_field[] ALIGN1 = " only when operating on fields";
+	जर (!(opt & (CUT_OPT_FIELDS_FLGS|CUT_OPT_REGEX_FLGS))) {
+		स्थिर स्थिरांक अक्षर _op_on_field[] ALIGN1 = " only when operating on fields";
 
-		if (opt & CUT_OPT_SUPPRESS_FLGS) {
-			bb_error_msg_and_die
+		जर (opt & CUT_OPT_SUPPRESS_FLGS) {
+			bb_error_संदेश_and_die
 				("suppressing non-delimited lines makes sense%s", _op_on_field);
 		}
-		if (opt & CUT_OPT_DELIM_FLGS) {
-			bb_error_msg_and_die
+		जर (opt & CUT_OPT_DELIM_FLGS) {
+			bb_error_संदेश_and_die
 				("a delimiter may be specified%s", _op_on_field);
 		}
 	}
@@ -253,41 +253,41 @@ int cut_main(int argc UNUSED_PARAM, char **argv)
 	 * more than one list can be separated by commas
 	 */
 	{
-		char *ntok;
-		int s = 0, e = 0;
+		अक्षर *ntok;
+		पूर्णांक s = 0, e = 0;
 
 		/* take apart the lists, one by one (they are separated with commas) */
-		while ((ltok = strsep(&sopt, ",")) != NULL) {
+		पर्यंत ((ltok = strsep(&sopt, ",")) != रिक्त) {
 
 			/* it's actually legal to pass an empty list */
-			if (!ltok[0])
-				continue;
+			जर (!ltok[0])
+				सुरूठेवा;
 
 			/* get the start pos */
 			ntok = strsep(&ltok, "-");
-			if (!ntok[0]) {
+			जर (!ntok[0]) {
 				s = 0;
-			} else {
+			} अन्यथा {
 				s = xatoi_positive(ntok);
 				/* account for the fact that arrays are zero based, while
 				 * the user expects the first char on the line to be char #1 */
-				if (s != 0)
+				जर (s != 0)
 					s--;
 			}
 
 			/* get the end pos */
-			if (ltok == NULL) {
+			जर (ltok == रिक्त) {
 				e = s;
-			} else if (!ltok[0]) {
-				e = INT_MAX;
-			} else {
+			} अन्यथा जर (!ltok[0]) {
+				e = पूर्णांक_उच्च;
+			} अन्यथा {
 				e = xatoi_positive(ltok);
 				/* if the user specified and end position of 0,
 				 * that means "til the end of the line" */
-				if (!*ltok)
-					e = INT_MAX;
-				else if (e < s)
-					bb_error_msg_and_die("%d<%d", e, s);
+				जर (!*ltok)
+					e = पूर्णांक_उच्च;
+				अन्यथा जर (e < s)
+					bb_error_संदेश_and_die("%d<%d", e, s);
 				e--;	/* again, arrays are zero based, lines are 1 based */
 			}
 
@@ -300,34 +300,34 @@ int cut_main(int argc UNUSED_PARAM, char **argv)
 		}
 
 		/* make sure we got some cut positions out of all that */
-		if (nlists == 0)
-			bb_simple_error_msg_and_die("missing list of positions");
+		जर (nlists == 0)
+			bb_simple_error_संदेश_and_die("missing list of positions");
 
 		/* now that the lists are parsed, we need to sort them to make life
 		 * easier on us when it comes time to print the chars / fields / lines
 		 */
-		if (!(opt & CUT_OPT_NOSORT_FLGS))
-			qsort(cut_lists, nlists, sizeof(cut_lists[0]), cmpfunc);
+		जर (!(opt & CUT_OPT_NOSORT_FLGS))
+			क्विक(cut_lists, nlists, आकार(cut_lists[0]), cmpfunc);
 	}
 
 	{
-		exitcode_t retval = EXIT_SUCCESS;
+		exitcode_t retval = निकास_सफल;
 
-		if (!*argv)
-			*--argv = (char *)"-";
+		जर (!*argv)
+			*--argv = (अक्षर *)"-";
 
-		do {
-			FILE *file = fopen_or_warn_stdin(*argv);
-			if (!file) {
-				retval = EXIT_FAILURE;
-				continue;
+		करा {
+			खाता *file = fopen_or_warn_stdin(*argv);
+			जर (!file) {
+				retval = निकास_त्रुटि;
+				सुरूठेवा;
 			}
 			cut_file(file, delim, odelim, cut_lists, nlists);
 			fclose_if_not_stdin(file);
-		} while (*++argv);
+		} पर्यंत (*++argv);
 
-		if (ENABLE_FEATURE_CLEAN_UP)
-			free(cut_lists);
+		जर (ENABLE_FEATURE_CLEAN_UP)
+			मुक्त(cut_lists);
 		fflush_stdout_and_exit(retval);
 	}
 }

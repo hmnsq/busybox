@@ -53,22 +53,22 @@
 /* BB_AUDIT SUSv3 compliant. */
 /* http://www.opengroup.org/onlinepubs/007904975/utilities/wc.html */
 
-#include "libbb.h"
-#include "unicode.h"
+#अन्तर्भाव "libbb.h"
+#अन्तर्भाव "unicode.h"
 
-#if !ENABLE_LOCALE_SUPPORT
-# undef isprint
-# undef isspace
-# define isprint(c) ((unsigned)((c) - 0x20) <= (0x7e - 0x20))
-# define isspace(c) ((c) == ' ')
+#जर !ENABLE_LOCALE_SUPPORT
+# undef है_छाप
+# undef है_खाली
+# define है_छाप(c) ((अचिन्हित)((c) - 0x20) <= (0x7e - 0x20))
+# define है_खाली(c) ((c) == ' ')
 #endif
 
-#if ENABLE_FEATURE_WC_LARGE
-# define COUNT_T unsigned long long
-# define COUNT_FMT "llu"
-#else
-# define COUNT_T unsigned
-# define COUNT_FMT "u"
+#जर ENABLE_FEATURE_WC_LARGE
+# define मोजणी_T अचिन्हित दीर्घ दीर्घ
+# define मोजणी_FMT "llu"
+#अन्यथा
+# define मोजणी_T अचिन्हित
+# define मोजणी_FMT "u"
 #endif
 
 /* We support -m even when UNICODE_SUPPORT is off,
@@ -96,131 +96,131 @@
 /* Order is important if we want to be compatible with
  * column order in "wc -cmlwL" output:
  */
-enum {
-	WC_LINES    = 0, /* -l */
-	WC_WORDS    = 1, /* -w */
+गणना {
+	WC_ओळी    = 0, /* -l */
+	WC_शब्द    = 1, /* -w */
 	WC_UNICHARS = 2, /* -m */
 	WC_BYTES    = 3, /* -c */
 	WC_LENGTH   = 4, /* -L */
-	NUM_WCS     = 5,
+	अंक_WCS     = 5,
 };
 
-int wc_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int wc_main(int argc UNUSED_PARAM, char **argv)
+पूर्णांक wc_main(पूर्णांक argc, अक्षर **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णांक wc_main(पूर्णांक argc UNUSED_PARAM, अक्षर **argv)
 {
-	const char *arg;
-	const char *start_fmt = " %9"COUNT_FMT + 1;
-	const char *fname_fmt = " %s\n";
-	COUNT_T *pcounts;
-	COUNT_T counts[NUM_WCS];
-	COUNT_T totals[NUM_WCS];
-	int num_files;
-	smallint status = EXIT_SUCCESS;
-	unsigned print_type;
+	स्थिरांक अक्षर *arg;
+	स्थिरांक अक्षर *start_fmt = " %9"मोजणी_FMT + 1;
+	स्थिरांक अक्षर *fname_fmt = " %s\n";
+	मोजणी_T *pcounts;
+	मोजणी_T counts[अंक_WCS];
+	मोजणी_T totals[अंक_WCS];
+	पूर्णांक अंक_files;
+	smallint status = निकास_सफल;
+	अचिन्हित print_type;
 
 	init_unicode();
 
 	print_type = getopt32(argv, "lwmcL");
 
-	if (print_type == 0) {
-		print_type = (1 << WC_LINES) | (1 << WC_WORDS) | (1 << WC_BYTES);
+	जर (print_type == 0) {
+		print_type = (1 << WC_ओळी) | (1 << WC_शब्द) | (1 << WC_BYTES);
 	}
 
 	argv += optind;
-	if (!argv[0]) {
-		*--argv = (char *) bb_msg_standard_input;
+	जर (!argv[0]) {
+		*--argv = (अक्षर *) bb_संदेश_standard_आदान;
 		fname_fmt = "\n";
 	}
-	if (!argv[1]) { /* zero or one filename? */
-		if (!((print_type-1) & print_type)) /* exactly one option? */
-			start_fmt = "%"COUNT_FMT;
+	जर (!argv[1]) { /* zero or one filename? */
+		जर (!((print_type-1) & print_type)) /* exactly one option? */
+			start_fmt = "%"मोजणी_FMT;
 	}
 
-	memset(totals, 0, sizeof(totals));
+	स_रखो(totals, 0, आकार(totals));
 
 	pcounts = counts;
 
-	num_files = 0;
-	while ((arg = *argv++) != NULL) {
-		FILE *fp;
-		const char *s;
-		unsigned u;
-		unsigned linepos;
+	अंक_files = 0;
+	पर्यंत ((arg = *argv++) != रिक्त) {
+		खाता *fp;
+		स्थिरांक अक्षर *s;
+		अचिन्हित u;
+		अचिन्हित linepos;
 		smallint in_word;
 
-		++num_files;
+		++अंक_files;
 		fp = fopen_or_warn_stdin(arg);
-		if (!fp) {
-			status = EXIT_FAILURE;
-			continue;
+		जर (!fp) {
+			status = निकास_त्रुटि;
+			सुरूठेवा;
 		}
 
-		memset(counts, 0, sizeof(counts));
+		स_रखो(counts, 0, आकार(counts));
 		linepos = 0;
 		in_word = 0;
 
-		while (1) {
-			int c;
+		पर्यंत (1) {
+			पूर्णांक c;
 			/* Our -w doesn't match GNU wc exactly... oh well */
 
-			c = getc(fp);
-			if (c == EOF) {
-				if (ferror(fp)) {
-					bb_simple_perror_msg(arg);
-					status = EXIT_FAILURE;
+			c = अ_लो(fp);
+			जर (c == खातापूर्ण) {
+				जर (ख_त्रुटि(fp)) {
+					bb_simple_perror_संदेश(arg);
+					status = निकास_त्रुटि;
 				}
-				goto DO_EOF;  /* Treat an EOF as '\r'. */
+				जा DO_EOF;  /* Treat an EOF as '\r'. */
 			}
 
 			/* Cater for -c and -m */
 			++counts[WC_BYTES];
-			if (unicode_status != UNICODE_ON /* every byte is a new char */
+			जर (unicode_status != UNICODE_ON /* every byte is a new char */
 			 || (c & 0xc0) != 0x80 /* it isn't a 2nd+ byte of a Unicode char */
 			) {
 				++counts[WC_UNICHARS];
 			}
 
-			if (isprint_asciionly(c)) { /* FIXME: not unicode-aware */
+			जर (isprint_asciionly(c)) { /* FIXME: not unicode-aware */
 				++linepos;
-				if (!isspace(c)) {
+				जर (!है_खाली(c)) {
 					in_word = 1;
-					continue;
+					सुरूठेवा;
 				}
-			} else if ((unsigned)(c - 9) <= 4) {
+			} अन्यथा जर ((अचिन्हित)(c - 9) <= 4) {
 				/* \t  9
 				 * \n 10
 				 * \v 11
 				 * \f 12
 				 * \r 13
 				 */
-				if (c == '\t') {
+				जर (c == '\t') {
 					linepos = (linepos | 7) + 1;
-				} else {  /* '\n', '\r', '\f', or '\v' */
+				} अन्यथा {  /* '\n', '\r', '\f', or '\v' */
  DO_EOF:
-					if (linepos > counts[WC_LENGTH]) {
+					जर (linepos > counts[WC_LENGTH]) {
 						counts[WC_LENGTH] = linepos;
 					}
-					if (c == '\n') {
-						++counts[WC_LINES];
+					जर (c == '\n') {
+						++counts[WC_ओळी];
 					}
-					if (c != '\v') {
+					जर (c != '\v') {
 						linepos = 0;
 					}
 				}
-			} else {
-				continue;
+			} अन्यथा {
+				सुरूठेवा;
 			}
 
-			counts[WC_WORDS] += in_word;
+			counts[WC_शब्द] += in_word;
 			in_word = 0;
-			if (c == EOF) {
-				break;
+			जर (c == खातापूर्ण) {
+				थांबा;
 			}
 		}
 
 		fclose_if_not_stdin(fp);
 
-		if (totals[WC_LENGTH] < counts[WC_LENGTH]) {
+		जर (totals[WC_LENGTH] < counts[WC_LENGTH]) {
 			totals[WC_LENGTH] = counts[WC_LENGTH];
 		}
 		totals[WC_LENGTH] -= counts[WC_LENGTH];
@@ -231,26 +231,26 @@ int wc_main(int argc UNUSED_PARAM, char **argv)
 		 * we won't try that hard, it will bloat us too much */
 		s = start_fmt;
 		u = 0;
-		do {
-			if (print_type & (1 << u)) {
-				printf(s, pcounts[u]);
-				s = " %9"COUNT_FMT; /* Ok... restore the leading space. */
+		करा {
+			जर (print_type & (1 << u)) {
+				म_लिखो(s, pcounts[u]);
+				s = " %9"मोजणी_FMT; /* Ok... restore the leading space. */
 			}
 			totals[u] += pcounts[u];
-		} while (++u < NUM_WCS);
-		printf(fname_fmt, arg);
+		} पर्यंत (++u < अंक_WCS);
+		म_लिखो(fname_fmt, arg);
 	}
 
 	/* If more than one file was processed, we want the totals.  To save some
 	 * space, we set the pcounts ptr to the totals array.  This has the side
 	 * effect of trashing the totals array after outputting it, but that's
 	 * irrelavent since we no longer need it. */
-	if (num_files > 1) {
-		num_files = 0;  /* Make sure we don't get here again. */
+	जर (अंक_files > 1) {
+		अंक_files = 0;  /* Make sure we don't get here again. */
 		arg = "total";
 		pcounts = totals;
 		--argv;
-		goto OUTPUT;
+		जा OUTPUT;
 	}
 
 	fflush_stdout_and_exit(status);

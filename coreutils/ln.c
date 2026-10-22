@@ -37,7 +37,7 @@
 //usage:       "$ ls -l /tmp/ls\n"
 //usage:       "lrwxrwxrwx    1 root     root            7 Apr 12 18:39 ls -> BusyBox*\n"
 
-#include "libbb.h"
+#अन्तर्भाव "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
@@ -49,17 +49,17 @@
 #define LN_VERBOSE          (1 << 5)
 #define LN_LINKFILE         (1 << 6)
 
-int ln_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int ln_main(int argc, char **argv)
+पूर्णांक ln_main(पूर्णांक argc, अक्षर **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णांक ln_main(पूर्णांक argc, अक्षर **argv)
 {
-	exitcode_t status = EXIT_SUCCESS;
-	int opts;
-	char *last;
-	char *src_name;
-	char *src;
-	char *suffix = (char*)"~";
-	struct stat statbuf;
-	int (*link_func)(const char *, const char *);
+	exitcode_t status = निकास_सफल;
+	पूर्णांक opts;
+	अक्षर *last;
+	अक्षर *src_name;
+	अक्षर *src;
+	अक्षर *suffix = (अक्षर*)"~";
+	संरचना stat statbuf;
+	पूर्णांक (*link_func)(स्थिरांक अक्षर *, स्थिरांक अक्षर *);
 
 	opts = getopt32(argv, "^" "sfnbS:vT" "\0" "-1", &suffix);
 /*
@@ -82,11 +82,11 @@ int ln_main(int argc, char **argv)
 	argv += optind;
 	argc -= optind;
 
-	if ((opts & LN_LINKFILE) && argc > 2) {
-		bb_simple_error_msg_and_die("-T accepts 2 args max");
+	जर ((opts & LN_LINKFILE) && argc > 2) {
+		bb_simple_error_संदेश_and_die("-T accepts 2 args max");
 	}
 
-	if (!argv[1]) {
+	जर (!argv[1]) {
 		/* "ln PATH/TO/FILE" -> "ln PATH/TO/FILE FILE" */
 		*--argv = last;
 		/* xstrdup is needed: "ln -s PATH/TO/FILE/" is equivalent to
@@ -95,71 +95,71 @@ int ln_main(int argc, char **argv)
 		last = bb_get_last_path_component_strip(xstrdup(last));
 	}
 
-	do {
-		src_name = NULL;
+	करा {
+		src_name = रिक्त;
 		src = last;
 
-		if (is_directory(src,
+		जर (is_directory(src,
 				/*followlinks:*/ !(opts & (LN_NODEREFERENCE|LN_LINKFILE))
 				/* Why LN_LINKFILE does not follow links:
 				 * -T/--no-target-directory implies -n/--no-dereference
 				 */
 				)
 		) {
-			if (opts & LN_LINKFILE) {
-				bb_error_msg_and_die("'%s' is a directory", src);
+			जर (opts & LN_LINKFILE) {
+				bb_error_संदेश_and_die("'%s' is a directory", src);
 			}
 			src_name = xstrdup(*argv);
 			src = concat_path_file(src, bb_get_last_path_component_strip(src_name));
-			free(src_name);
+			मुक्त(src_name);
 			src_name = src;
 		}
-		if (!(opts & LN_SYMLINK) && stat(*argv, &statbuf)) {
+		जर (!(opts & LN_SYMLINK) && stat(*argv, &statbuf)) {
 			// coreutils: "ln dangling_symlink new_hardlink" works
-			if (lstat(*argv, &statbuf) || !S_ISLNK(statbuf.st_mode)) {
-				bb_simple_perror_msg(*argv);
-				status = EXIT_FAILURE;
-				free(src_name);
-				continue;
+			जर (lstat(*argv, &statbuf) || !S_ISLNK(statbuf.st_mode)) {
+				bb_simple_perror_संदेश(*argv);
+				status = निकास_त्रुटि;
+				मुक्त(src_name);
+				सुरूठेवा;
 			}
 		}
 
-		if (opts & LN_BACKUP) {
-			char *backup;
+		जर (opts & LN_BACKUP) {
+			अक्षर *backup;
 			backup = xasprintf("%s%s", src, suffix);
-			if (rename(src, backup) < 0 && errno != ENOENT) {
-				bb_simple_perror_msg(src);
-				status = EXIT_FAILURE;
-				free(backup);
-				continue;
+			जर (नाम(src, backup) < 0 && त्रुटि_सं != ENOENT) {
+				bb_simple_perror_संदेश(src);
+				status = निकास_त्रुटि;
+				मुक्त(backup);
+				सुरूठेवा;
 			}
-			free(backup);
+			मुक्त(backup);
 			/*
 			 * When the source and dest are both hard links to the same
 			 * inode, a rename may succeed even though nothing happened.
 			 * Therefore, always unlink().
 			 */
 			unlink(src);
-		} else if (opts & LN_FORCE) {
+		} अन्यथा जर (opts & LN_FORCE) {
 			unlink(src);
 		}
 
 		link_func = link;
-		if (opts & LN_SYMLINK) {
+		जर (opts & LN_SYMLINK) {
 			link_func = symlink;
 		}
 
-		if (opts & LN_VERBOSE) {
-			printf("'%s' -> '%s'\n", src, *argv);
+		जर (opts & LN_VERBOSE) {
+			म_लिखो("'%s' -> '%s'\n", src, *argv);
 		}
 
-		if (link_func(*argv, src) != 0) {
-			bb_simple_perror_msg(src);
-			status = EXIT_FAILURE;
+		जर (link_func(*argv, src) != 0) {
+			bb_simple_perror_संदेश(src);
+			status = निकास_त्रुटि;
 		}
 
-		free(src_name);
-	} while ((++argv)[1]);
+		मुक्त(src_name);
+	} पर्यंत ((++argv)[1]);
 
-	return status;
+	परत status;
 }

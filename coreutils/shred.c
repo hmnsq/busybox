@@ -37,17 +37,17 @@
 --remove[=HOW]		like -u but give control on HOW to delete;  See below
 */
 
-#include "libbb.h"
+#अन्तर्भाव "libbb.h"
 
-int shred_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int shred_main(int argc UNUSED_PARAM, char **argv)
+पूर्णांक shred_main(पूर्णांक argc, अक्षर **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णांक shred_main(पूर्णांक argc UNUSED_PARAM, अक्षर **argv)
 {
-	char *opt_s;
-	int rand_fd = rand_fd; /* for compiler */
-	int zero_fd;
-	unsigned num_iter = 3;
-	unsigned opt;
-	enum {
+	अक्षर *opt_s;
+	पूर्णांक rand_fd = rand_fd; /* for compiler */
+	पूर्णांक zero_fd;
+	अचिन्हित अंक_iter = 3;
+	अचिन्हित opt;
+	गणना {
 		OPT_f = (1 << 0),
 		OPT_u = (1 << 1),
 		OPT_z = (1 << 2),
@@ -57,55 +57,55 @@ int shred_main(int argc UNUSED_PARAM, char **argv)
 		OPT_s = (1 << 6),
 	};
 
-	opt = getopt32(argv, "^" "fuzn:+vxs:" "\0" "-1"/*min 1 arg*/, &num_iter, &opt_s);
+	opt = getopt32(argv, "^" "fuzn:+vxs:" "\0" "-1"/*min 1 arg*/, &अंक_iter, &opt_s);
 	argv += optind;
 
 	zero_fd = xopen("/dev/zero", O_RDONLY);
-	if (num_iter != 0)
+	जर (अंक_iter != 0)
 		rand_fd = xopen("/dev/urandom", O_RDONLY);
 
-	for (;;) {
-		struct stat sb;
-		const char *fname;
-		unsigned i;
-		int fd;
+	साठी (;;) {
+		संरचना stat sb;
+		स्थिरांक अक्षर *fname;
+		अचिन्हित i;
+		पूर्णांक fd;
 
 		fname = *argv++;
-		if (!fname)
-			break;
+		जर (!fname)
+			थांबा;
 		fd = -1;
-		if (opt & OPT_f) {
-			fd = open(fname, O_WRONLY);
-			if (fd < 0)
+		जर (opt & OPT_f) {
+			fd = खोलो(fname, O_WRONLY);
+			जर (fd < 0)
 				chmod(fname, 0666);
 		}
-		if (fd < 0)
+		जर (fd < 0)
 			fd = xopen(fname, O_WRONLY);
 
-		if (fstat(fd, &sb) == 0 && sb.st_size > 0) {
+		जर (ख_स्थिति(fd, &sb) == 0 && sb.st_size > 0) {
 			off_t size = sb.st_size;
 
-			if (opt & OPT_s) {
-				size = BB_STRTOOFF(opt_s, NULL, 0); /* accepts oct/hex */
-				if (errno || size < 0) bb_show_usage();
+			जर (opt & OPT_s) {
+				size = BB_STRTOOFF(opt_s, रिक्त, 0); /* accepts oct/hex */
+				जर (त्रुटि_सं || size < 0) bb_show_usage();
 			}
 
-			for (i = 0; i < num_iter; i++) {
+			साठी (i = 0; i < अंक_iter; i++) {
 				bb_copyfd_size(rand_fd, fd, size);
 				fdatasync(fd);
-				xlseek(fd, 0, SEEK_SET);
+				xlseek(fd, 0, शुरू_से);
 			}
-			if (opt & OPT_z) {
+			जर (opt & OPT_z) {
 				bb_copyfd_size(zero_fd, fd, size);
 				fdatasync(fd);
 			}
 		}
-		if (opt & OPT_u) {
+		जर (opt & OPT_u) {
 			ftruncate(fd, 0);
 			xunlink(fname);
 		}
 		xclose(fd);
 	}
 
-	return EXIT_SUCCESS;
+	परत निकास_सफल;
 }

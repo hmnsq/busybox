@@ -31,7 +31,7 @@
 //usage:#define rmdir_example_usage
 //usage:       "# rmdir /tmp/foo\n"
 
-#include "libbb.h"
+#अन्तर्भाव "libbb.h"
 
 /* This is a NOFORK applet. Be very careful! */
 
@@ -40,12 +40,12 @@
 #define VERBOSE          ((1 << 1) * ENABLE_FEATURE_VERBOSE)
 #define IGNORE_NON_EMPTY ((1 << 2) * ENABLE_LONG_OPTS)
 
-int rmdir_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int rmdir_main(int argc UNUSED_PARAM, char **argv)
+पूर्णांक rmdir_main(पूर्णांक argc, अक्षर **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णांक rmdir_main(पूर्णांक argc UNUSED_PARAM, अक्षर **argv)
 {
-	int status = EXIT_SUCCESS;
-	int flags;
-	char *path;
+	पूर्णांक status = निकास_सफल;
+	पूर्णांक flags;
+	अक्षर *path;
 
 	flags = getopt32long(argv, "pv",
 		"parents\0"                  No_argument "p"
@@ -58,38 +58,38 @@ int rmdir_main(int argc UNUSED_PARAM, char **argv)
 	);
 	argv += optind;
 
-	if (!*argv) {
+	जर (!*argv) {
 		bb_show_usage();
 	}
 
-	do {
+	करा {
 		path = *argv;
 
-		while (1) {
-			if (flags & VERBOSE) {
-				printf("rmdir: removing directory, '%s'\n", path);
+		पर्यंत (1) {
+			जर (flags & VERBOSE) {
+				म_लिखो("rmdir: removing directory, '%s'\n", path);
 			}
 
-			if (rmdir(path) < 0) {
-#if ENABLE_LONG_OPTS
-				if ((flags & IGNORE_NON_EMPTY) && errno == ENOTEMPTY)
-					break;
+			जर (सूची_हटाओ(path) < 0) {
+#जर ENABLE_LONG_OPTS
+				जर ((flags & IGNORE_NON_EMPTY) && त्रुटि_सं == ENOTEMPTY)
+					थांबा;
 #endif
-				bb_perror_msg("'%s'", path);  /* Match gnu rmdir msg. */
-				status = EXIT_FAILURE;
-			} else if (flags & PARENTS) {
+				bb_perror_संदेश("'%s'", path);  /* Match gnu rmdir msg. */
+				status = निकास_त्रुटि;
+			} अन्यथा जर (flags & PARENTS) {
 				/* Note: path was not "" since rmdir succeeded. */
-				path = dirname(path);
+				path = स_नाम(path);
 				/* Path is now just the parent component.  Dirname
 				 * returns "." if there are no parents.
 				 */
-				if (NOT_LONE_CHAR(path, '.')) {
-					continue;
+				जर (NOT_LONE_CHAR(path, '.')) {
+					सुरूठेवा;
 				}
 			}
-			break;
+			थांबा;
 		}
-	} while (*++argv);
+	} पर्यंत (*++argv);
 
-	return status;
+	परत status;
 }
