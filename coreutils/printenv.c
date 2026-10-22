@@ -27,30 +27,30 @@
 
 /* This is a NOFORK applet. Be very careful! */
 
-int printenv_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int printenv_main(int argc UNUSED_PARAM, char **argv)
+puur_naa_nka printenv_main(puur_naa_nka argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+puur_naa_nka printenv_main(puur_naa_nka argc UNUSED_PARAM, var_na **argv)
 {
-	int exit_code = EXIT_SUCCESS;
+	puur_naa_nka exit_code = EXIT_SUCCESS;
 
 	/* no variables specified, show whole env */
-	if (!argv[1]) {
-		char **e = environ;
+	ᱡᱩᱫᱤ (!argv[1]) {
+		var_na **e = environ;
 
 		/* environ can be NULL! (for example, after clearenv())
 		 * Check for that:
 		 */
-		if (e)
-			while (*e)
+		ᱡᱩᱫᱤ (e)
+			ᱡᱚᱠᱷᱚᱱ (*e)
 				puts(*e++);
-	} else {
+	} ᱵᱟᱝ {
 		/* search for specified variables and print them out if found */
-		char *arg, *env;
+		var_na *arg, *env;
 
-		while ((arg = *++argv) != NULL) {
+		ᱡᱚᱠᱷᱚᱱ ((arg = *++argv) != NULL) {
 			env = getenv(arg);
-			if (env)
+			ᱡᱩᱫᱤ (env)
 				puts(env);
-			else
+			ᱵᱟᱝ
 				exit_code = EXIT_FAILURE;
 		}
 	}

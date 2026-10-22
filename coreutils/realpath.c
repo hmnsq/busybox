@@ -27,26 +27,26 @@
 
 #include "libbb.h"
 
-int realpath_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int realpath_main(int argc UNUSED_PARAM, char **argv)
+puur_naa_nka realpath_main(puur_naa_nka argc, var_na **argv) MAIN_EXTERNALLY_VISIBLE;
+puur_naa_nka realpath_main(puur_naa_nka argc UNUSED_PARAM, var_na **argv)
 {
-	int retval = EXIT_SUCCESS;
+	puur_naa_nka retval = EXIT_SUCCESS;
 
-	if (!*++argv) {
+	ᱡᱩᱫᱤ (!*++argv) {
 		bb_show_usage();
 	}
 
 	do {
 		/* NOFORK: only one alloc is allowed; must free */
-		char *resolved_path = xmalloc_realpath_coreutils(*argv);
-		if (resolved_path != NULL) {
+		var_na *resolved_path = xmalloc_realpath_coreutils(*argv);
+		ᱡᱩᱫᱤ (resolved_path != NULL) {
 			puts(resolved_path);
 			free(resolved_path);
-		} else {
+		} ᱵᱟᱝ {
 			retval = EXIT_FAILURE;
 			bb_simple_perror_msg(*argv);
 		}
-	} while (*++argv);
+	} ᱡᱚᱠᱷᱚᱱ (*++argv);
 
 	fflush_stdout_and_exit(retval);
 }
