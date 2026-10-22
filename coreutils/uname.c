@@ -97,20 +97,20 @@
 //usage:#define arch_full_usage "\n\n"
 //usage:       "Print system architecture"
 
-#include "libbb.h"
+#અન્તર્ભાવ "libbb.h"
 /* After libbb.h, since it needs sys/types.h on some systems */
-#include <sys/utsname.h>
+#અન્તર્ભાવ <sys/utsname.h>
 
-typedef struct {
-	struct utsname name;
-	char processor[sizeof(((struct utsname*)NULL)->machine)];
-	char platform[sizeof(((struct utsname*)NULL)->machine)];
-	char os[sizeof(CONFIG_UNAME_OSNAME)];
+પ્રકારવ્યાખ્યા સંરચના {
+	સંરચના utsname name;
+	અક્ષર processor[કદ(((સંરચના utsname*)ખાલી)->machine)];
+	અક્ષર platform[કદ(((સંરચના utsname*)ખાલી)->machine)];
+	અક્ષર os[કદ(CONFIG_UNAME_OSNAME)];
 } uname_info_t;
 
-#if ENABLE_UNAME
+#જો ENABLE_UNAME
 #define options "snrvmpioa"
-static const unsigned short utsname_offset[] = {
+સ્થિર અચલ unsigned short utsname_offset[] = {
 	offsetof(uname_info_t, name.sysname), /* -s */
 	offsetof(uname_info_t, name.nodename), /* -n */
 	offsetof(uname_info_t, name.release), /* -r */
@@ -122,17 +122,17 @@ static const unsigned short utsname_offset[] = {
 };
 #endif
 
-int uname_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int uname_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+પૂર્ણાંક uname_main(પૂર્ણાંક argc, અક્ષર **argv) MAIN_EXTERNALLY_VISIBLE;
+પૂર્ણાંક uname_main(પૂર્ણાંક argc UNUSED_PARAM, અક્ષર **argv UNUSED_PARAM)
 {
 	uname_info_t uname_info;
-	IF_UNAME(const char *unknown_str = "unknown";)
-#if ENABLE_UNAME
+	IF_UNAME(અચલ અક્ષર *unknown_str = "unknown";)
+#જો ENABLE_UNAME
 	unsigned toprint = (1 << 4); /* "arch" = "uname -m" */
 
-	if (!ENABLE_BB_ARCH || applet_name[0] == 'u') {
-# if ENABLE_LONG_OPTS
-		static const char uname_longopts[] ALIGN1 =
+	જો (!ENABLE_BB_ARCH || applet_name[0] == 'u') {
+# જો ENABLE_LONG_OPTS
+		સ્થિર અચલ અક્ષર uname_longopts[] ALIGN1 =
 			/* name, has_arg, val */
 			"all\0"               No_argument       "a"
 			"kernel-name\0"       No_argument       "s"
@@ -147,14 +147,14 @@ int uname_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
 		;
 # endif
 		toprint = getopt32long(argv, options, uname_longopts);
-		if (argv[optind]) { /* coreutils-6.9 compat */
+		જો (argv[optind]) { /* coreutils-6.9 compat */
 			bb_show_usage();
 		}
-		if (toprint & (1 << 8)) { /* -a => all opts on */
+		જો (toprint & (1 << 8)) { /* -a => all opts on */
 			toprint = (1 << 8) - 1;
 			unknown_str = ""; /* -a does not print unknown fields */
 		}
-		if (toprint == 0) { /* no opts => -s (sysname) */
+		જો (toprint == 0) { /* no opts => -s (sysname) */
 			toprint = 1;
 		}
 	} /* if "uname" */
@@ -162,30 +162,30 @@ int uname_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
 
 	uname(&uname_info.name); /* never fails */
 
-#if defined(__sparc__) && defined(__linux__)
+#જો defined(__sparc__) && defined(__linux__)
 	{
-		char *fake_sparc = getenv("FAKE_SPARC");
-		if (fake_sparc && (fake_sparc[0] | 0x20) == 'y') {
+		અક્ષર *fake_sparc = getenv("FAKE_SPARC");
+		જો (fake_sparc && (fake_sparc[0] | 0x20) == 'y') {
 			strcpy(uname_info.name.machine, "sparc");
 		}
 	}
 #endif
-	if (ENABLE_BB_ARCH && (!ENABLE_UNAME || applet_name[0] == 'a')) {
+	જો (ENABLE_BB_ARCH && (!ENABLE_UNAME || applet_name[0] == 'a')) {
 		puts(uname_info.name.machine);
-	} else {
-#if ENABLE_UNAME
+	} નહીંતર {
+#જો ENABLE_UNAME
 		/* "uname" */
-		const char *fmt;
-		const unsigned short *delta;
+		અચલ અક્ષર *fmt;
+		અચલ unsigned short *delta;
 
 		strcpy(uname_info.processor, unknown_str);
 		strcpy(uname_info.platform, unknown_str);
 		strcpy(uname_info.os, CONFIG_UNAME_OSNAME);
-# if ENABLE_FEDORA_COMPAT
+# જો ENABLE_FEDORA_COMPAT
 		/* Fedora does something like this */
 		strcpy(uname_info.processor, uname_info.name.machine);
 		strcpy(uname_info.platform, uname_info.name.machine);
-		if (uname_info.platform[0] == 'i'
+		જો (uname_info.platform[0] == 'i'
 		 && uname_info.platform[1]
 		 && uname_info.platform[2] == '8'
 		 && uname_info.platform[3] == '6'
@@ -195,16 +195,16 @@ int uname_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
 # endif
 		delta = utsname_offset;
 		fmt = " %s" + 1;
-		do {
-			if (toprint & 1) {
-				const char *p = (char *)(&uname_info) + *delta;
-				if (p[0]) {
+		કરો {
+			જો (toprint & 1) {
+				અચલ અક્ષર *p = (અક્ષર *)(&uname_info) + *delta;
+				જો (p[0]) {
 					printf(fmt, p);
 					fmt = " %s";
 				}
 			}
 			++delta;
-		} while (toprint >>= 1);
+		} જ્યારે (toprint >>= 1);
 		bb_putchar('\n');
 #endif
 	}

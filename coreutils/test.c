@@ -75,9 +75,9 @@
 //usage:       "$ echo $?\n"
 //usage:       "1\n"
 
-#include "libbb.h"
-#include <regex.h>
-#include <fnmatch.h>
+#અન્તર્ભાવ "libbb.h"
+#અન્તર્ભાવ <regex.h>
+#અન્તર્ભાવ <fnmatch.h>
 
 /* This is a NOFORK applet. Be very careful! */
 
@@ -148,15 +148,15 @@
 
 #define TEST_DEBUG 0
 
-#if ENABLE_TEST2 \
+#જો ENABLE_TEST2 \
  || (ENABLE_ASH_BASH_COMPAT && ENABLE_ASH_TEST) \
  || (ENABLE_HUSH_BASH_COMPAT && ENABLE_HUSH_TEST)
 # define BASH_TEST2 1
-#else
+#નહીંતર
 # define BASH_TEST2 0
 #endif
 
-enum token {
+ગણના token {
 	EOI,
 
 	FILRD, /* file access */
@@ -194,7 +194,7 @@ enum token {
 	STRLT,
 	STRGT,
 
-#if BASH_TEST2
+#જો BASH_TEST2
 	REGEX,
 #endif
 
@@ -212,37 +212,37 @@ enum token {
 	RPAREN,
 	OPERAND
 };
-#define is_int_op(a)      (((unsigned char)((a) - INTEQ)) <= 5)
-#define is_str_op(a)      (((unsigned char)((a) - STREZ)) <= 5)
-#define is_file_op(a)     (((unsigned char)((a) - FILNT)) <= 2)
-#define is_file_access(a) (((unsigned char)((a) - FILRD)) <= 2)
-#define is_file_type(a)   (((unsigned char)((a) - FILREG)) <= 5)
-#define is_file_bit(a)    (((unsigned char)((a) - FILSUID)) <= 2)
+#define is_int_op(a)      (((unsigned અક્ષર)((a) - INTEQ)) <= 5)
+#define is_str_op(a)      (((unsigned અક્ષર)((a) - STREZ)) <= 5)
+#define is_file_op(a)     (((unsigned અક્ષર)((a) - FILNT)) <= 2)
+#define is_file_access(a) (((unsigned અક્ષર)((a) - FILRD)) <= 2)
+#define is_file_type(a)   (((unsigned અક્ષર)((a) - FILREG)) <= 5)
+#define is_file_bit(a)    (((unsigned અક્ષર)((a) - FILSUID)) <= 2)
 
-#if TEST_DEBUG
-int depth;
-#define nest_msg(...) do { \
+#જો TEST_DEBUG
+પૂર્ણાંક depth;
+#define nest_સંદેશ(...) કરો { \
 	depth++; \
 	fprintf(stderr, "%*s", depth*2, ""); \
 	fprintf(stderr, __VA_ARGS__); \
-} while (0)
-#define unnest_msg(...) do { \
+} જ્યારે (0)
+#define unnest_સંદેશ(...) કરો { \
 	fprintf(stderr, "%*s", depth*2, ""); \
 	fprintf(stderr, __VA_ARGS__); \
 	depth--; \
-} while (0)
-#define dbg_msg(...) do { \
+} જ્યારે (0)
+#define dbg_સંદેશ(...) કરો { \
 	fprintf(stderr, "%*s", depth*2, ""); \
 	fprintf(stderr, __VA_ARGS__); \
-} while (0)
-#define unnest_msg_and_return(expr, ...) do { \
-	number_t __res = (expr); \
+} જ્યારે (0)
+#define unnest_સંદેશ_and_return(પદાવલિ, ...) કરો { \
+	સંખ્યા_t __res = (પદાવલિ); \
 	fprintf(stderr, "%*s", depth*2, ""); \
 	fprintf(stderr, __VA_ARGS__, res); \
 	depth--; \
-	return __res; \
-} while (0)
-static const char *const TOKSTR[] ALIGN_PTR = {
+	પાછા __res; \
+} જ્યારે (0)
+સ્થિર અચલ અક્ષર *અચલ TOKSTR[] ALIGN_PTR = {
 	"EOI",
 	"FILRD",
 	"FILWR",
@@ -271,7 +271,7 @@ static const char *const TOKSTR[] ALIGN_PTR = {
 	"STRNE",
 	"STRLT",
 	"STRGT",
-#if BASH_TEST2
+#જો BASH_TEST2
 	"REGEX",
 #endif
 	"INTEQ",
@@ -287,14 +287,14 @@ static const char *const TOKSTR[] ALIGN_PTR = {
 	"RPAREN",
 	"OPERAND"
 };
-#else
-#define nest_msg(...)   ((void)0)
-#define unnest_msg(...) ((void)0)
-#define dbg_msg(...)    ((void)0)
-#define unnest_msg_and_return(expr, ...) return expr
+#નહીંતર
+#define nest_સંદેશ(...)   ((શૂન્ય)0)
+#define unnest_સંદેશ(...) ((શૂન્ય)0)
+#define dbg_સંદેશ(...)    ((શૂન્ય)0)
+#define unnest_સંદેશ_and_return(પદાવલિ, ...) પાછા પદાવલિ
 #endif
 
-enum {
+ગણના {
 	UNOP,
 	BINOP,
 	BUNOP,
@@ -302,11 +302,11 @@ enum {
 	PAREN
 };
 
-struct operator_t {
-	unsigned char op_num, op_type;
+સંરચના operator_t {
+	unsigned અક્ષર op_અંક, op_type;
 };
 
-static const struct operator_t ops_table[] ALIGN2 = {
+સ્થિર અચલ સંરચના operator_t ops_table[] ALIGN2 = {
 	{ /* "-r" */ FILRD   , UNOP   },
 	{ /* "-w" */ FILWR   , UNOP   },
 	{ /* "-x" */ FILEX   , UNOP   },
@@ -337,7 +337,7 @@ static const struct operator_t ops_table[] ALIGN2 = {
 	{ /* "!=" */ STRNE   , BINOP  },
 	{ /* "<"  */ STRLT   , BINOP  },
 	{ /* ">"  */ STRGT   , BINOP  },
-#if BASH_TEST2
+#જો BASH_TEST2
 	{ /* "=~" */ REGEX   , BINOP  },
 #endif
 	{ /* "-eq"*/ INTEQ   , BINOP  },
@@ -352,7 +352,7 @@ static const struct operator_t ops_table[] ALIGN2 = {
 	{ /* "!"  */ UNOT    , BUNOP  },
 	{ /* "-a" */ BAND    , BBINOP },
 	{ /* "-o" */ BOR     , BBINOP },
-#if BASH_TEST2
+#જો BASH_TEST2
 	{ /* "&&" */ BAND    , BBINOP },
 	{ /* "||" */ BOR     , BBINOP },
 #endif
@@ -360,7 +360,7 @@ static const struct operator_t ops_table[] ALIGN2 = {
 	{ /* ")"  */ RPAREN  , PAREN  },
 };
 /* Please keep these two tables in sync */
-static const char ops_texts[] ALIGN1 =
+સ્થિર અચલ અક્ષર ops_texts[] ALIGN1 =
 	"-r"  "\0"
 	"-w"  "\0"
 	"-x"  "\0"
@@ -389,7 +389,7 @@ static const char ops_texts[] ALIGN1 =
 	"!="  "\0"
 	"<"   "\0"
 	">"   "\0"
-#if BASH_TEST2
+#જો BASH_TEST2
 	"=~"  "\0"
 #endif
 	"-eq" "\0"
@@ -404,7 +404,7 @@ static const char ops_texts[] ALIGN1 =
 	"!"   "\0"
 	"-a"  "\0"
 	"-o"  "\0"
-#if BASH_TEST2
+#જો BASH_TEST2
 	"&&"  "\0"
 	"||"  "\0"
 #endif
@@ -413,29 +413,29 @@ static const char ops_texts[] ALIGN1 =
 ;
 
 
-#if ENABLE_FEATURE_TEST_64
-typedef int64_t number_t;
-#else
-typedef int number_t;
+#જો ENABLE_FEATURE_TEST_64
+પ્રકારવ્યાખ્યા int64_t સંખ્યા_t;
+#નહીંતર
+પ્રકારવ્યાખ્યા પૂર્ણાંક સંખ્યા_t;
 #endif
 
 
 /* We try to minimize both static and stack usage. */
-struct test_statics {
-	char **args;
+સંરચના test_statics {
+	અક્ષર **args;
 	/* set only by check_operator(), either to bogus struct
 	 * or points to matching operator_t struct. Never NULL. */
-	const struct operator_t *last_operator;
+	અચલ સંરચના operator_t *last_operator;
 	gid_t *group_array;
-	int ngroups;
-#if BASH_TEST2
+	પૂર્ણાંક ngroups;
+#જો BASH_TEST2
 	bool bash_test2;
 #endif
 	jmp_buf leaving;
 };
 
 /* See test_ptr_hack.c */
-extern struct test_statics *BB_GLOBAL_CONST test_ptr_to_statics;
+બાહ્ય સંરચના test_statics *BB_GLOBAL_CONST test_ptr_to_statics;
 
 #define S (*test_ptr_to_statics)
 #define args            (S.args         )
@@ -445,52 +445,52 @@ extern struct test_statics *BB_GLOBAL_CONST test_ptr_to_statics;
 #define bash_test2      (S.bash_test2   )
 #define leaving         (S.leaving      )
 
-#define INIT_S() do { \
-	XZALLOC_CONST_PTR(&test_ptr_to_statics, sizeof(S)); \
-} while (0)
-#define DEINIT_S() do { \
-	free(group_array); \
-	free(test_ptr_to_statics); \
-} while (0)
+#define INIT_S() કરો { \
+	XZALLOC_CONST_PTR(&test_ptr_to_statics, કદ(S)); \
+} જ્યારે (0)
+#define DEINIT_S() કરો { \
+	મુક્ત(group_array); \
+	મુક્ત(test_ptr_to_statics); \
+} જ્યારે (0)
 
-static number_t primary(enum token n);
+સ્થિર સંખ્યા_t primary(ગણના token n);
 
-static void syntax(const char *op, const char *msg) NORETURN;
-static void syntax(const char *op, const char *msg)
+સ્થિર શૂન્ય syntax(અચલ અક્ષર *op, અચલ અક્ષર *સંદેશ) NORETURN;
+સ્થિર શૂન્ય syntax(અચલ અક્ષર *op, અચલ અક્ષર *સંદેશ)
 {
-	if (op && *op) {
-		bb_error_msg("%s: %s", op, msg);
-	} else {
-		bb_error_msg("%s: %s"+4, msg);
+	જો (op && *op) {
+		bb_error_સંદેશ("%s: %s", op, સંદેશ);
+	} નહીંતર {
+		bb_error_સંદેશ("%s: %s"+4, સંદેશ);
 	}
 	longjmp(leaving, 2);
 }
 
 /* atoi with error detection */
 //XXX: FIXME: duplicate of existing libbb function?
-static number_t getn(const char *s)
+સ્થિર સંખ્યા_t getn(અચલ અક્ષર *s)
 {
-	char *p;
-#if ENABLE_FEATURE_TEST_64
+	અક્ષર *p;
+#જો ENABLE_FEATURE_TEST_64
 	long long r;
-#else
+#નહીંતર
 	long r;
 #endif
 
 	errno = 0;
-#if ENABLE_FEATURE_TEST_64
+#જો ENABLE_FEATURE_TEST_64
 	r = strtoll(s, &p, 10);
-#else
+#નહીંતર
 	r = strtol(s, &p, 10);
 #endif
 
-	if (errno != 0)
+	જો (errno != 0)
 		syntax(s, "out of range");
 
-	if (p == s || *(skip_whitespace(p)) != '\0')
+	જો (p == s || *(skip_whitespace(p)) != '\0')
 		syntax(s, "bad number");
 
-	return r;
+	પાછા r;
 }
 
 /* UNUSED
@@ -521,417 +521,417 @@ static int equalf(const char *f1, const char *f2)
 */
 
 
-static enum token check_operator(const char *s)
+સ્થિર ગણના token check_operator(અચલ અક્ષર *s)
 {
-	static const struct operator_t no_op = {
-		.op_num = -1,
+	સ્થિર અચલ સંરચના operator_t no_op = {
+		.op_અંક = -1,
 		.op_type = -1
 	};
-	int n;
+	પૂર્ણાંક n;
 
 	last_operator = &no_op;
-	if (s == NULL)
-		return EOI;
+	જો (s == ખાલી)
+		પાછા EOI;
 	n = index_in_strings(ops_texts, s);
-	if (n < 0)
-		return OPERAND;
+	જો (n < 0)
+		પાછા OPERAND;
 
-#if BASH_TEST2
-	if (ops_table[n].op_num == REGEX && !bash_test2) {
+#જો BASH_TEST2
+	જો (ops_table[n].op_અંક == REGEX && !bash_test2) {
 		/* =~ is only for [[ ]] */
-		return OPERAND;
+		પાછા OPERAND;
 	}
-	if (ops_table[n].op_num == BAND || ops_table[n].op_num == BOR) {
+	જો (ops_table[n].op_અંક == BAND || ops_table[n].op_અંક == BOR) {
 		/* [ ]   accepts -a and -o but not && and || */
 		/* [[ ]] accepts && and || but not -a and -o */
-		if (bash_test2 == (s[0] == '-'))
-			return OPERAND;
+		જો (bash_test2 == (s[0] == '-'))
+			પાછા OPERAND;
 	}
 #endif
 
 	last_operator = &ops_table[n];
-	return ops_table[n].op_num;
+	પાછા ops_table[n].op_અંક;
 }
 
 
-static int binop(void)
+સ્થિર પૂર્ણાંક binop(શૂન્ય)
 {
-	const char *opnd1, *opnd2;
-	const struct operator_t *op;
-	number_t val1, val2;
+	અચલ અક્ષર *opnd1, *opnd2;
+	અચલ સંરચના operator_t *op;
+	સંખ્યા_t val1, val2;
 
 	opnd1 = *args;
 	check_operator(*++args);
 	op = last_operator;
 
 	opnd2 = *++args;
-	if (opnd2 == NULL)
+	જો (opnd2 == ખાલી)
 		syntax(args[-1], "argument expected");
 
-	if (is_int_op(op->op_num)) {
+	જો (is_int_op(op->op_અંક)) {
 		val1 = getn(opnd1);
 		val2 = getn(opnd2);
-		if (op->op_num == INTEQ)
-			return val1 == val2;
-		if (op->op_num == INTNE)
-			return val1 != val2;
-		if (op->op_num == INTGE)
-			return val1 >= val2;
-		if (op->op_num == INTGT)
-			return val1 >  val2;
-		if (op->op_num == INTLE)
-			return val1 <= val2;
+		જો (op->op_અંક == INTEQ)
+			પાછા val1 == val2;
+		જો (op->op_અંક == INTNE)
+			પાછા val1 != val2;
+		જો (op->op_અંક == INTGE)
+			પાછા val1 >= val2;
+		જો (op->op_અંક == INTGT)
+			પાછા val1 >  val2;
+		જો (op->op_અંક == INTLE)
+			પાછા val1 <= val2;
 		/*if (op->op_num == INTLT)*/
-		return val1 <  val2;
+		પાછા val1 <  val2;
 	}
-#if BASH_TEST2
-	if (bash_test2) {
-		if (op->op_num == STREQ) {
+#જો BASH_TEST2
+	જો (bash_test2) {
+		જો (op->op_અંક == STREQ) {
 			val1 = fnmatch(opnd2, opnd1, 0);
-			return val1 == 0;
+			પાછા val1 == 0;
 		}
-		if (op->op_num == STRNE) {
+		જો (op->op_અંક == STRNE) {
 			val1 = fnmatch(opnd2, opnd1, 0);
-			return val1 != 0;
+			પાછા val1 != 0;
 		}
-		if (op->op_num == REGEX) {
+		જો (op->op_અંક == REGEX) {
 			regex_t re_buffer;
-			memset(&re_buffer, 0, sizeof(re_buffer));
-			if (regcomp(&re_buffer, opnd2, REG_EXTENDED)) { // REG_NEWLINE?
+			memset(&re_buffer, 0, કદ(re_buffer));
+			જો (regcomp(&re_buffer, opnd2, REG_EXTENDED)) { // REG_NEWLINE?
 				/* Bad regex */
 				longjmp(leaving, 2); /* [[ a =~ * ]]; echo $? - prints 2 (silently, no error msg) */
 			}
-			val1 = regexec(&re_buffer, opnd1, 0, NULL, 0);
+			val1 = regexec(&re_buffer, opnd1, 0, ખાલી, 0);
 			regfree(&re_buffer);
-			return val1 == 0;
+			પાછા val1 == 0;
 		}
 	}
 #endif
-	if (is_str_op(op->op_num)) {
+	જો (is_str_op(op->op_અંક)) {
 		val1 = strcmp(opnd1, opnd2);
-		if (op->op_num == STREQ)
-			return val1 == 0;
-		if (op->op_num == STRNE)
-			return val1 != 0;
-		if (op->op_num == STRLT)
-			return val1 < 0;
+		જો (op->op_અંક == STREQ)
+			પાછા val1 == 0;
+		જો (op->op_અંક == STRNE)
+			પાછા val1 != 0;
+		જો (op->op_અંક == STRLT)
+			પાછા val1 < 0;
 		/*if (op->op_num == STRGT)*/
-		return val1 > 0;
+		પાછા val1 > 0;
 	}
 	/* We are sure that these three are by now the only binops we didn't check
 	 * yet, so we do not check if the class is correct:
 	 */
 /*	if (is_file_op(op->op_num)) */
 	{
-		struct stat b1, b2;
+		સંરચના stat b1, b2;
 
-		if (stat(opnd1, &b1) || stat(opnd2, &b2))
-			return 0; /* false, since at least one stat failed */
-		if (op->op_num == FILNT)
-			return b1.st_mtime > b2.st_mtime;
-		if (op->op_num == FILOT)
-			return b1.st_mtime < b2.st_mtime;
+		જો (stat(opnd1, &b1) || stat(opnd2, &b2))
+			પાછા 0; /* false, since at least one stat failed */
+		જો (op->op_અંક == FILNT)
+			પાછા b1.st_mtime > b2.st_mtime;
+		જો (op->op_અંક == FILOT)
+			પાછા b1.st_mtime < b2.st_mtime;
 		/*if (op->op_num == FILEQ)*/
-		return b1.st_dev == b2.st_dev && b1.st_ino == b2.st_ino;
+		પાછા b1.st_dev == b2.st_dev && b1.st_ino == b2.st_ino;
 	}
 	/*return 1; - NOTREACHED */
 }
 
-static void initialize_group_array(void)
+સ્થિર શૂન્ય initialize_group_array(શૂન્ય)
 {
-	group_array = bb_getgroups(&ngroups, NULL);
+	group_array = bb_getgroups(&ngroups, ખાલી);
 }
 
 /* Return non-zero if GID is one that we have in our groups list. */
 //XXX: FIXME: duplicate of existing libbb function?
 // see toplevel TODO file:
 // possible code duplication ingroup() and is_a_group_member()
-static int is_a_group_member(gid_t gid)
+સ્થિર પૂર્ણાંક is_a_group_member(gid_t gid)
 {
-	int i;
+	પૂર્ણાંક i;
 
 	/* Short-circuit if possible, maybe saving a call to getgroups(). */
-	if (gid == getgid() || gid == getegid())
-		return 1;
+	જો (gid == getgid() || gid == getegid())
+		પાછા 1;
 
-	if (ngroups == 0)
+	જો (ngroups == 0)
 		initialize_group_array();
 
 	/* Search through the list looking for GID. */
-	for (i = 0; i < ngroups; i++)
-		if (gid == group_array[i])
-			return 1;
+	માટે (i = 0; i < ngroups; i++)
+		જો (gid == group_array[i])
+			પાછા 1;
 
-	return 0;
+	પાછા 0;
 }
 
 
 /* Do the same thing access(2) does, but use the effective uid and gid,
    and don't make the mistake of telling root that any file is
    executable. */
-static int test_eaccess(struct stat *st, int mode)
+સ્થિર પૂર્ણાંક test_eaccess(સંરચના stat *st, પૂર્ણાંક mode)
 {
-	unsigned int euid = geteuid();
+	unsigned પૂર્ણાંક euid = geteuid();
 
-	if (euid == 0) {
+	જો (euid == 0) {
 		/* Root can read or write any file. */
-		if (mode != X_OK)
-			return 0;
+		જો (mode != X_OK)
+			પાછા 0;
 
 		/* Root can execute any file that has any one of the execute
 		 * bits set. */
-		if (st->st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))
-			return 0;
+		જો (st->st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))
+			પાછા 0;
 	}
 
-	if (st->st_uid == euid)  /* owner */
+	જો (st->st_uid == euid)  /* owner */
 		mode <<= 6;
-	else if (is_a_group_member(st->st_gid))
+	નહીંતર જો (is_a_group_member(st->st_gid))
 		mode <<= 3;
 
-	if (st->st_mode & mode)
-		return 0;
+	જો (st->st_mode & mode)
+		પાછા 0;
 
-	return -1;
+	પાછા -1;
 }
 
 
-static int filstat(char *nm, enum token mode)
+સ્થિર પૂર્ણાંક filstat(અક્ષર *nm, ગણના token mode)
 {
-	struct stat s;
+	સંરચના stat s;
 	unsigned i = i; /* gcc 3.x thinks it can be used uninitialized */
 
-	if (mode == FILSYM) {
+	જો (mode == FILSYM) {
 #ifdef S_IFLNK
-		if (lstat(nm, &s) == 0) {
+		જો (lstat(nm, &s) == 0) {
 			i = S_IFLNK;
-			goto filetype;
+			જાઓ filetype;
 		}
 #endif
-		return 0;
+		પાછા 0;
 	}
 
-	if (stat(nm, &s) != 0)
-		return 0;
-	if (mode == FILEXIST)
-		return 1;
-	if (is_file_access(mode)) {
-		if (mode == FILRD)
+	જો (stat(nm, &s) != 0)
+		પાછા 0;
+	જો (mode == FILEXIST)
+		પાછા 1;
+	જો (is_file_access(mode)) {
+		જો (mode == FILRD)
 			i = R_OK;
-		if (mode == FILWR)
+		જો (mode == FILWR)
 			i = W_OK;
-		if (mode == FILEX)
+		જો (mode == FILEX)
 			i = X_OK;
-		return test_eaccess(&s, i) == 0;
+		પાછા test_eaccess(&s, i) == 0;
 	}
-	if (is_file_type(mode)) {
-		if (mode == FILREG)
+	જો (is_file_type(mode)) {
+		જો (mode == FILREG)
 			i = S_IFREG;
-		if (mode == FILDIR)
+		જો (mode == FILDIR)
 			i = S_IFDIR;
-		if (mode == FILCDEV)
+		જો (mode == FILCDEV)
 			i = S_IFCHR;
-		if (mode == FILBDEV)
+		જો (mode == FILBDEV)
 			i = S_IFBLK;
-		if (mode == FILFIFO) {
+		જો (mode == FILFIFO) {
 #ifdef S_IFIFO
 			i = S_IFIFO;
-#else
-			return 0;
+#નહીંતર
+			પાછા 0;
 #endif
 		}
-		if (mode == FILSOCK) {
+		જો (mode == FILSOCK) {
 #ifdef S_IFSOCK
 			i = S_IFSOCK;
-#else
-			return 0;
+#નહીંતર
+			પાછા 0;
 #endif
 		}
  filetype:
-		return ((s.st_mode & S_IFMT) == i);
+		પાછા ((s.st_mode & S_IFMT) == i);
 	}
-	if (is_file_bit(mode)) {
-		if (mode == FILSUID)
+	જો (is_file_bit(mode)) {
+		જો (mode == FILSUID)
 			i = S_ISUID;
-		if (mode == FILSGID)
+		જો (mode == FILSGID)
 			i = S_ISGID;
-		if (mode == FILSTCK)
+		જો (mode == FILSTCK)
 			i = S_ISVTX;
-		return ((s.st_mode & i) != 0);
+		પાછા ((s.st_mode & i) != 0);
 	}
-	if (mode == FILGZ)
-		return s.st_size > 0L;
-	if (mode == FILUID)
-		return s.st_uid == geteuid();
-	if (mode == FILGID)
-		return s.st_gid == getegid();
-	return 1; /* NOTREACHED */
+	જો (mode == FILGZ)
+		પાછા s.st_size > 0L;
+	જો (mode == FILUID)
+		પાછા s.st_uid == geteuid();
+	જો (mode == FILGID)
+		પાછા s.st_gid == getegid();
+	પાછા 1; /* NOTREACHED */
 }
 
 
-static number_t nexpr(enum token n)
+સ્થિર સંખ્યા_t nexpr(ગણના token n)
 {
-	number_t res;
+	સંખ્યા_t res;
 
-	nest_msg(">nexpr(%s)\n", TOKSTR[n]);
-	if (n == UNOT) {
+	nest_સંદેશ(">nexpr(%s)\n", TOKSTR[n]);
+	જો (n == UNOT) {
 		n = check_operator(*++args);
-		if (n == EOI) {
+		જો (n == EOI) {
 			/* special case: [ ! ], [ a -a ! ] are valid */
 			/* IOW, "! ARG" may miss ARG */
 			args--;
-			unnest_msg("<nexpr:1 (!EOI), args:%s(%p)\n", args[0], &args[0]);
-			return 1;
+			unnest_સંદેશ("<nexpr:1 (!EOI), args:%s(%p)\n", args[0], &args[0]);
+			પાછા 1;
 		}
 		res = !nexpr(n);
-		unnest_msg("<nexpr:%lld\n", res);
-		return res;
+		unnest_સંદેશ("<nexpr:%lld\n", res);
+		પાછા res;
 	}
 	res = primary(n);
-	unnest_msg("<nexpr:%lld\n", res);
-	return res;
+	unnest_સંદેશ("<nexpr:%lld\n", res);
+	પાછા res;
 }
 
 
-static number_t aexpr(enum token n)
+સ્થિર સંખ્યા_t aexpr(ગણના token n)
 {
-	number_t res;
+	સંખ્યા_t res;
 
-	nest_msg(">aexpr(%s)\n", TOKSTR[n]);
+	nest_સંદેશ(">aexpr(%s)\n", TOKSTR[n]);
 	res = nexpr(n);
-	dbg_msg("aexpr: nexpr:%lld, next args:%s(%p)\n", res, args[1], &args[1]);
-	if (check_operator(*++args) == BAND) {
-		dbg_msg("aexpr: arg is AND, next args:%s(%p)\n", args[1], &args[1]);
+	dbg_સંદેશ("aexpr: nexpr:%lld, next args:%s(%p)\n", res, args[1], &args[1]);
+	જો (check_operator(*++args) == BAND) {
+		dbg_સંદેશ("aexpr: arg is AND, next args:%s(%p)\n", args[1], &args[1]);
 		res = aexpr(check_operator(*++args)) && res;
-		unnest_msg("<aexpr:%lld\n", res);
-		return res;
+		unnest_સંદેશ("<aexpr:%lld\n", res);
+		પાછા res;
 	}
 	args--;
-	unnest_msg("<aexpr:%lld, args:%s(%p)\n", res, args[0], &args[0]);
-	return res;
+	unnest_સંદેશ("<aexpr:%lld, args:%s(%p)\n", res, args[0], &args[0]);
+	પાછા res;
 }
 
 
-static number_t oexpr(enum token n)
+સ્થિર સંખ્યા_t oexpr(ગણના token n)
 {
-	number_t res;
+	સંખ્યા_t res;
 
-	nest_msg(">oexpr(%s)\n", TOKSTR[n]);
+	nest_સંદેશ(">oexpr(%s)\n", TOKSTR[n]);
 	res = aexpr(n);
-	dbg_msg("oexpr: aexpr:%lld, next args:%s(%p)\n", res, args[1], &args[1]);
-	if (check_operator(*++args) == BOR) {
-		dbg_msg("oexpr: next arg is OR, next args:%s(%p)\n", args[1], &args[1]);
+	dbg_સંદેશ("oexpr: aexpr:%lld, next args:%s(%p)\n", res, args[1], &args[1]);
+	જો (check_operator(*++args) == BOR) {
+		dbg_સંદેશ("oexpr: next arg is OR, next args:%s(%p)\n", args[1], &args[1]);
 		res = oexpr(check_operator(*++args)) || res;
-		unnest_msg("<oexpr:%lld\n", res);
-		return res;
+		unnest_સંદેશ("<oexpr:%lld\n", res);
+		પાછા res;
 	}
 	args--;
-	unnest_msg("<oexpr:%lld, args:%s(%p)\n", res, args[0], &args[0]);
-	return res;
+	unnest_સંદેશ("<oexpr:%lld, args:%s(%p)\n", res, args[0], &args[0]);
+	પાછા res;
 }
 
 
-static number_t primary(enum token n)
+સ્થિર સંખ્યા_t primary(ગણના token n)
 {
-#if TEST_DEBUG
-	number_t res = res; /* for compiler */
-#else
-	number_t res;
+#જો TEST_DEBUG
+	સંખ્યા_t res = res; /* for compiler */
+#નહીંતર
+	સંખ્યા_t res;
 #endif
-	const struct operator_t *args0_op;
+	અચલ સંરચના operator_t *args0_op;
 
-	nest_msg(">primary(%s)\n", TOKSTR[n]);
-	if (n == EOI) {
-		syntax(NULL, "argument expected");
+	nest_સંદેશ(">primary(%s)\n", TOKSTR[n]);
+	જો (n == EOI) {
+		syntax(ખાલી, "argument expected");
 	}
-	if (n == LPAREN) {
+	જો (n == LPAREN) {
 		res = oexpr(check_operator(*++args));
-		if (check_operator(*++args) != RPAREN)
-			syntax(NULL, "closing paren expected");
-		unnest_msg("<primary:%lld\n", res);
-		return res;
+		જો (check_operator(*++args) != RPAREN)
+			syntax(ખાલી, "closing paren expected");
+		unnest_સંદેશ("<primary:%lld\n", res);
+		પાછા res;
 	}
 
 	/* coreutils 6.9 checks "is args[1] binop and args[2] exist?" first,
 	 * do the same */
 	args0_op = last_operator;
 	/* last_operator = operator at args[1] */
-	if (check_operator(args[1]) != EOI) { /* if args[1] != NULL */
-		if (args[2]) {
+	જો (check_operator(args[1]) != EOI) { /* if args[1] != NULL */
+		જો (args[2]) {
 			// coreutils also does this:
 			// if (args[3] && args[0] = "-l" && args[2] is BINOP)
 			//	return binop(1 /* prepended by -l */);
-			if (last_operator->op_type == BINOP)
-				unnest_msg_and_return(binop(), "<primary: binop:%lld\n");
+			જો (last_operator->op_type == BINOP)
+				unnest_સંદેશ_and_return(binop(), "<primary: binop:%lld\n");
 		}
 	}
 	/* check "is args[0] unop?" second */
-	if (args0_op->op_type == UNOP) {
+	જો (args0_op->op_type == UNOP) {
 		/* unary expression */
-		if (args[1] == NULL)
+		જો (args[1] == ખાલી)
 //			syntax(args0_op->op_text, "argument expected");
-			goto check_emptiness;
+			જાઓ check_emptiness;
 		args++;
-		if (n == STREZ)
-			unnest_msg_and_return(args[0][0] == '\0', "<primary:%lld\n");
-		if (n == STRNZ)
-			unnest_msg_and_return(args[0][0] != '\0', "<primary:%lld\n");
-		if (n == FILTT)
-			unnest_msg_and_return(isatty(getn(*args)), "<primary: isatty(%s)%lld\n", *args);
-		unnest_msg_and_return(filstat(*args, n), "<primary: filstat(%s):%lld\n", *args);
+		જો (n == STREZ)
+			unnest_સંદેશ_and_return(args[0][0] == '\0', "<primary:%lld\n");
+		જો (n == STRNZ)
+			unnest_સંદેશ_and_return(args[0][0] != '\0', "<primary:%lld\n");
+		જો (n == FILTT)
+			unnest_સંદેશ_and_return(isatty(getn(*args)), "<primary: isatty(%s)%lld\n", *args);
+		unnest_સંદેશ_and_return(filstat(*args, n), "<primary: filstat(%s):%lld\n", *args);
 	}
 
 	/*check_operator(args[1]); - already done */
-	if (last_operator->op_type == BINOP) {
+	જો (last_operator->op_type == BINOP) {
 		/* args[2] is known to be NULL, isn't it bound to fail? */
-		unnest_msg_and_return(binop(), "<primary:%lld\n");
+		unnest_સંદેશ_and_return(binop(), "<primary:%lld\n");
 	}
  check_emptiness:
-	unnest_msg_and_return(args[0][0] != '\0', "<primary:%lld\n");
+	unnest_સંદેશ_and_return(args[0][0] != '\0', "<primary:%lld\n");
 }
 
 
-int test_main(int argc, char **argv)
+પૂર્ણાંક test_main(પૂર્ણાંક argc, અક્ષર **argv)
 {
-	int res;
-	const char *arg0;
-#if BASH_TEST2
+	પૂર્ણાંક res;
+	અચલ અક્ષર *arg0;
+#જો BASH_TEST2
 	bool bt2 = 0;
 #endif
 
 	arg0 = bb_basename(argv[0]);
-	if ((ENABLE_TEST1 || ENABLE_TEST2 || ENABLE_ASH_TEST || ENABLE_HUSH_TEST)
+	જો ((ENABLE_TEST1 || ENABLE_TEST2 || ENABLE_ASH_TEST || ENABLE_HUSH_TEST)
 	 && (arg0[0] == '[')
 	) {
 		--argc;
-		if (!arg0[1]) { /* "[" ? */
-			if (NOT_LONE_CHAR(argv[argc], ']')) {
-				bb_simple_error_msg("missing ]");
-				return 2;
+		જો (!arg0[1]) { /* "[" ? */
+			જો (NOT_LONE_CHAR(argv[argc], ']')) {
+				bb_simple_error_સંદેશ("missing ]");
+				પાછા 2;
 			}
-		} else { /* assuming "[[" */
-			if (strcmp(argv[argc], "]]") != 0) {
-				bb_simple_error_msg("missing ]]");
-				return 2;
+		} નહીંતર { /* assuming "[[" */
+			જો (strcmp(argv[argc], "]]") != 0) {
+				bb_simple_error_સંદેશ("missing ]]");
+				પાછા 2;
 			}
-#if BASH_TEST2
+#જો BASH_TEST2
 			bt2 = 1;
 #endif
 		}
-		argv[argc] = NULL;
+		argv[argc] = ખાલી;
 	}
 	/* argc is unused after this point */
 
 	/* We must do DEINIT_S() prior to returning */
 	INIT_S();
 
-#if BASH_TEST2
+#જો BASH_TEST2
 	bash_test2 = bt2;
 #endif
 
 	res = setjmp(leaving);
-	if (res)
-		goto ret;
+	જો (res)
+		જાઓ ret;
 
 	/* resetting ngroups is probably unnecessary.  it will
 	 * force a new call to getgroups(), which prevents using
@@ -950,21 +950,21 @@ int test_main(int argc, char **argv)
 	 * Testcase: "test '(' = '('"
 	 * The general parser would misinterpret '(' as group start.
 	 */
-	if (1) {
-		int negate = 0;
+	જો (1) {
+		પૂર્ણાંક negate = 0;
  again:
-		if (!argv[0]) {
+		જો (!argv[0]) {
 			/* "test" */
 			res = 1;
-			goto ret_special;
+			જાઓ ret_special;
 		}
-		if (!argv[1]) {
+		જો (!argv[1]) {
 			/* "test [!] arg" */
 			res = (argv[0][0] == '\0');
-			goto ret_special;
+			જાઓ ret_special;
 		}
-		if (argv[2]) {
-			if (!argv[3]) {
+		જો (argv[2]) {
+			જો (!argv[3]) {
 				/*
 				 * http://pubs.opengroup.org/onlinepubs/009695399/utilities/test.html
 				 * """ 3 arguments:
@@ -972,22 +972,22 @@ int test_main(int argc, char **argv)
 				 * """
 				 */
 				check_operator(argv[1]);
-				if (last_operator->op_type == BINOP) {
+				જો (last_operator->op_type == BINOP) {
 					/* "test [!] arg1 <binary_op> arg2" */
 					args = argv;
 					res = (binop() == 0);
  ret_special:
 					/* If there was leading "!" op... */
 					res ^= negate;
-					goto ret;
+					જાઓ ret;
 				}
 				/* """If $1 is '(' and $3 is ')', perform the unary test of $2."""
 				 * Looks like this works without additional coding.
 				 */
-				goto check_negate;
+				જાઓ check_negate;
 			}
 			/* argv[3] exists (at least 4 args), is it exactly 4 args? */
-			if (!argv[4]) {
+			જો (!argv[4]) {
 				/*
 				 * """ 4 arguments:
 				 * If $1 is '!', negate the three-argument test of $2, $3, and $4.
@@ -995,34 +995,34 @@ int test_main(int argc, char **argv)
 				 * """
 				 * Example why code below is necessary: test '(' ! -e ')'
 				 */
-				if (LONE_CHAR(argv[0], '(')
+				જો (LONE_CHAR(argv[0], '(')
 				 && LONE_CHAR(argv[3], ')')
 				) {
 					/* "test [!] ( x y )" */
-					argv[3] = NULL;
+					argv[3] = ખાલી;
 					argv++;
 				}
 			}
 		}
  check_negate:
-		if (LONE_CHAR(argv[0], '!')) {
+		જો (LONE_CHAR(argv[0], '!')) {
 			argv++;
 			negate ^= 1;
-			goto again;
+			જાઓ again;
 		}
 	}
 
 	res = !oexpr(check_operator(*args));
 
-	if (*args != NULL && *++args != NULL) {
+	જો (*args != ખાલી && *++args != ખાલી) {
 		/* Examples:
 		 * test 3 -lt 5 6
 		 * test -t 1 2
 		 */
-		bb_error_msg("%s: unknown operand", *args);
+		bb_error_સંદેશ("%s: unknown operand", *args);
 		res = 2;
 	}
  ret:
 	DEINIT_S();
-	return res;
+	પાછા res;
 }

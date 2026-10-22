@@ -43,15 +43,15 @@
 //usage:       "$ basename /foo/bar.txt .txt\n"
 //usage:       "bar"
 
-#include "libbb.h"
+#અન્તર્ભાવ "libbb.h"
 
 /* This is a NOFORK applet. Be very careful! */
 
-int basename_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int basename_main(int argc UNUSED_PARAM, char **argv)
+પૂર્ણાંક basename_main(પૂર્ણાંક argc, અક્ષર **argv) MAIN_EXTERNALLY_VISIBLE;
+પૂર્ણાંક basename_main(પૂર્ણાંક argc UNUSED_PARAM, અક્ષર **argv)
 {
 	unsigned opts;
-	const char *suffix = NULL;
+	અચલ અક્ષર *suffix = ખાલી;
 
 	/* '+': stop at first non-option */
 	opts = getopt32(argv, "^+" "as:"
@@ -60,23 +60,23 @@ int basename_main(int argc UNUSED_PARAM, char **argv)
 	);
 	argv += optind;
 
-	do {
-		char *s;
+	કરો {
+		અક્ષર *s;
 		size_t m;
 
 		/* It should strip slash: /abc/def/ -> def */
 		s = bb_get_last_path_component_strip(*argv++);
 		m = strlen(s);
-		if (!opts) {
-			if (*argv) {
+		જો (!opts) {
+			જો (*argv) {
 				suffix = *argv;
-				if (argv[1])
+				જો (argv[1])
 					bb_show_usage();
 			}
 		}
-		if (suffix) {
+		જો (suffix) {
 			size_t n = strlen(suffix);
-			if ((m > n) && (strcmp(s + m - n, suffix) == 0)) {
+			જો ((m > n) && (strcmp(s + m - n, suffix) == 0)) {
 				m -= n;
 				/*s[m] = '\0'; - redundant */
 			}
@@ -84,9 +84,9 @@ int basename_main(int argc UNUSED_PARAM, char **argv)
 		/* puts(s) will do, but we can do without stdio this way: */
 		s[m++] = '\n';
 		/* NB: != is correct here: */
-		if (full_write(STDOUT_FILENO, s, m) != (ssize_t)m)
-			return EXIT_FAILURE;
-	} while (opts && *argv);
+		જો (full_write(STDOUT_FILENO, s, m) != (ssize_t)m)
+			પાછા EXIT_FAILURE;
+	} જ્યારે (opts && *argv);
 
-	return EXIT_SUCCESS;
+	પાછા EXIT_SUCCESS;
 }

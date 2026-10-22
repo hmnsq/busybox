@@ -25,69 +25,69 @@
 //usage:       "$ pwd\n"
 //usage:       "/root\n"
 
-#include "libbb.h"
+#અન્તર્ભાવ "libbb.h"
 
-static int logical_getcwd(void)
+સ્થિર પૂર્ણાંક logical_getcwd(શૂન્ય)
 {
-	struct stat st1;
-	struct stat st2;
-	char *wd;
-	char *p;
+	સંરચના stat st1;
+	સંરચના stat st2;
+	અક્ષર *wd;
+	અક્ષર *p;
 
 	wd = getenv("PWD");
-	if (!wd || wd[0] != '/')
-		return 0;
+	જો (!wd || wd[0] != '/')
+		પાછા 0;
 
 	p = wd;
-	while (*p) {
+	જ્યારે (*p) {
 		/* doing strstr(p, "/.") by hand is smaller and faster... */
-		if (*p++ != '/')
-			continue;
-		if (*p != '.')
-			continue;
+		જો (*p++ != '/')
+			ચાલુ;
+		જો (*p != '.')
+			ચાલુ;
 		/* we found "/.", skip to next char */
 		p++;
-		if (*p == '.')
+		જો (*p == '.')
 			p++; /* we found "/.." */
-		if (*p == '\0' || *p == '/')
-			return 0; /* "/./" or "/../" component: bad */
+		જો (*p == '\0' || *p == '/')
+			પાછા 0; /* "/./" or "/../" component: bad */
 	}
 
-	if (stat(wd, &st1) != 0)
-		return 0;
-	if (stat(".", &st2) != 0)
-		return 0;
-	if (st1.st_ino != st2.st_ino)
-		return 0;
-	if (st1.st_dev != st2.st_dev)
-		return 0;
+	જો (stat(wd, &st1) != 0)
+		પાછા 0;
+	જો (stat(".", &st2) != 0)
+		પાછા 0;
+	જો (st1.st_ino != st2.st_ino)
+		પાછા 0;
+	જો (st1.st_dev != st2.st_dev)
+		પાછા 0;
 
 	puts(wd);
-	return 1;
+	પાછા 1;
 }
 
-int pwd_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int pwd_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+પૂર્ણાંક pwd_main(પૂર્ણાંક argc, અક્ષર **argv) MAIN_EXTERNALLY_VISIBLE;
+પૂર્ણાંક pwd_main(પૂર્ણાંક argc UNUSED_PARAM, અક્ષર **argv UNUSED_PARAM)
 {
-	char *buf;
+	અક્ષર *buf;
 
-	if (ENABLE_DESKTOP) {
+	જો (ENABLE_DESKTOP) {
 		/* TODO: assume -L if $POSIXLY_CORRECT? (coreutils does that)
 		 * Rationale:
 		 * POSIX requires a default of -L, but most scripts expect -P
 		 */
 		unsigned opt = getopt32(argv, "LP");
-		if ((opt & 1) && logical_getcwd())
-			return fflush_all();
+		જો ((opt & 1) && logical_getcwd())
+			પાછા fflush_all();
 	}
 
-	buf = xrealloc_getcwd_or_warn(NULL);
+	buf = xrealloc_getcwd_or_warn(ખાલી);
 
-	if (buf) {
+	જો (buf) {
 		puts(buf);
-		free(buf);
-		return fflush_all();
+		મુક્ત(buf);
+		પાછા fflush_all();
 	}
 
-	return EXIT_FAILURE;
+	પાછા EXIT_FAILURE;
 }

@@ -27,25 +27,25 @@
 //usage:#define tac_full_usage "\n\n"
 //usage:	"Concatenate FILEs and print them in reverse"
 
-#include "libbb.h"
+#અન્તર્ભાવ "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-struct lstring {
-	int size;
-	char buf[1];
+સંરચના lstring {
+	પૂર્ણાંક size;
+	અક્ષર buf[1];
 };
 
-int tac_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int tac_main(int argc UNUSED_PARAM, char **argv)
+પૂર્ણાંક tac_main(પૂર્ણાંક argc, અક્ષર **argv) MAIN_EXTERNALLY_VISIBLE;
+પૂર્ણાંક tac_main(પૂર્ણાંક argc UNUSED_PARAM, અક્ષર **argv)
 {
-	char **name;
+	અક્ષર **name;
 	FILE *f;
-	struct lstring *line = NULL;
-	llist_t *list = NULL;
-	int retval = EXIT_SUCCESS;
+	સંરચના lstring *લીટી = ખાલી;
+	llist_t *list = ખાલી;
+	પૂર્ણાંક retval = EXIT_SUCCESS;
 
-#if ENABLE_DESKTOP
+#જો ENABLE_DESKTOP
 /* tac from coreutils 6.9 supports:
        -b, --before
               attach the separator before instead of after
@@ -57,61 +57,61 @@ We support none, but at least we will complain or handle "--":
 */
 	getopt32(argv, "");
 	argv += optind;
-#else
+#નહીંતર
 	argv++;
 #endif
-	if (!*argv)
-		*--argv = (char *)"-";
+	જો (!*argv)
+		*--argv = (અક્ષર *)"-";
 	/* We will read from last file to first */
 	name = argv;
-	while (*name)
+	જ્યારે (*name)
 		name++;
 
-	do {
-		int ch, i;
+	કરો {
+		પૂર્ણાંક ch, i;
 
 		name--;
 		f = fopen_or_warn_stdin(*name);
-		if (f == NULL) {
+		જો (f == ખાલી) {
 			/* error message is printed by fopen_or_warn_stdin */
 			retval = EXIT_FAILURE;
-			continue;
+			ચાલુ;
 		}
 
 		errno = i = 0;
-		do {
+		કરો {
 			ch = fgetc(f);
-			if (ch != EOF) {
-				if (!(i & 0x7f))
+			જો (ch != EOF) {
+				જો (!(i & 0x7f))
 					/* Grow on every 128th char */
-					line = xrealloc(line, i + 0x7f + sizeof(int) + 1);
-				line->buf[i++] = ch;
+					લીટી = xrealloc(લીટી, i + 0x7f + કદ(પૂર્ણાંક) + 1);
+				લીટી->buf[i++] = ch;
 			}
-			if (ch == '\n' || (ch == EOF && i != 0)) {
-				line = xrealloc(line, i + sizeof(int));
-				line->size = i;
-				llist_add_to(&list, line);
-				line = NULL;
+			જો (ch == '\n' || (ch == EOF && i != 0)) {
+				લીટી = xrealloc(લીટી, i + કદ(પૂર્ણાંક));
+				લીટી->size = i;
+				llist_add_to(&list, લીટી);
+				લીટી = ખાલી;
 				i = 0;
 			}
-		} while (ch != EOF);
+		} જ્યારે (ch != EOF);
 		/* fgetc sets errno to ENOENT on EOF, we don't want
 		 * to warn on this non-error! */
-		if (errno && errno != ENOENT) {
-			bb_simple_perror_msg(*name);
+		જો (errno && errno != ENOENT) {
+			bb_simple_perror_સંદેશ(*name);
 			retval = EXIT_FAILURE;
 		}
-	} while (name != argv);
+	} જ્યારે (name != argv);
 
-	while (list) {
-		line = (struct lstring *)list->data;
-		xwrite(STDOUT_FILENO, line->buf, line->size);
-		if (ENABLE_FEATURE_CLEAN_UP) {
-			free(llist_pop(&list));
-		} else {
+	જ્યારે (list) {
+		લીટી = (સંરચના lstring *)list->data;
+		xwrite(STDOUT_FILENO, લીટી->buf, લીટી->size);
+		જો (ENABLE_FEATURE_CLEAN_UP) {
+			મુક્ત(llist_કાઢો(&list));
+		} નહીંતર {
 			list = list->link;
 		}
 	}
 
-	return retval;
+	પાછા retval;
 }

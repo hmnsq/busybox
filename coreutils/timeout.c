@@ -45,42 +45,42 @@
 //usage:       "Default SIG: TERM."
 //usage:       "If it still exists in KILL_SECS seconds, send KILL.\n"
 
-#include "libbb.h"
+#અન્તર્ભાવ "libbb.h"
 
-static NOINLINE int timeout_wait(duration_t timeout, pid_t pid)
+સ્થિર NOINLINE પૂર્ણાંક timeout_wait(duration_t timeout, pid_t pid)
 {
 	/* Just sleep(HUGE_NUM); kill(parent) may kill wrong process! */
-	while (1) {
-#if ENABLE_FLOAT_DURATION
-		if (timeout < 1)
+	જ્યારે (1) {
+#જો ENABLE_FLOAT_DURATION
+		જો (timeout < 1)
 			sleep_for_duration(timeout);
-		else
+		નહીંતર
 #endif
 			sleep1();
-		if (--timeout <= 0)
-			break;
-		if (kill(pid, 0)) {
+		જો (--timeout <= 0)
+			તોડો;
+		જો (kill(pid, 0)) {
 			/* process is gone */
-			return EXIT_SUCCESS;
+			પાછા EXIT_SUCCESS;
 		}
 	}
-	return EXIT_FAILURE;
+	પાછા EXIT_FAILURE;
 }
 
-int timeout_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int timeout_main(int argc UNUSED_PARAM, char **argv)
+પૂર્ણાંક timeout_main(પૂર્ણાંક argc, અક્ષર **argv) MAIN_EXTERNALLY_VISIBLE;
+પૂર્ણાંક timeout_main(પૂર્ણાંક argc UNUSED_PARAM, અક્ષર **argv)
 {
-	int signo;
-	int status;
-	int parent = 0;
+	પૂર્ણાંક signo;
+	પૂર્ણાંક status;
+	પૂર્ણાંક parent = 0;
 	duration_t timeout;
 	duration_t kill_timeout;
 	pid_t pid;
-#if !BB_MMU
-	char *sv1, *sv2;
+#જો !BB_MMU
+	અક્ષર *sv1, *sv2;
 #endif
-	const char *opt_s = "TERM";
-	char *opt_k = NULL;
+	અચલ અક્ષર *opt_s = "TERM";
+	અક્ષર *opt_k = ખાલી;
 
 	/* -p option is not documented, it is needed to support NOMMU. */
 
@@ -90,17 +90,17 @@ int timeout_main(int argc UNUSED_PARAM, char **argv)
 	/*argv += optind; - no, wait for bb_daemonize_or_rexec! */
 
 	signo = get_signum(opt_s);
-	if (signo < 0)
-		bb_error_msg_and_die("unknown signal '%s'", opt_s);
+	જો (signo < 0)
+		bb_error_સંદેશ_and_die("unknown signal '%s'", opt_s);
 
 	kill_timeout = 0;
-	if (opt_k)
+	જો (opt_k)
 		kill_timeout = parse_duration_str(opt_k);
 
-	if (!argv[optind])
+	જો (!argv[optind])
 		bb_show_usage();
 	timeout = parse_duration_str(argv[optind++]);
-	if (!argv[optind]) /* no PROG? */
+	જો (!argv[optind]) /* no PROG? */
 		bb_show_usage();
 
 	/* We want to create a grandchild which will watch
@@ -111,46 +111,46 @@ int timeout_main(int argc UNUSED_PARAM, char **argv)
 	 * making child watch parent results in programs having
 	 * unexpected children.	*/
 
-	if (parent) /* we were re-execed, already grandchild */
-		goto grandchild;
+	જો (parent) /* we were re-execed, already grandchild */
+		જાઓ grandchild;
 
-#if !BB_MMU
+#જો !BB_MMU
 	sv1 = argv[optind];
 	sv2 = argv[optind + 1];
 #endif
 	pid = xvfork();
-	if (pid == 0) {
+	જો (pid == 0) {
 		/* Child: spawn grandchild and exit */
 		parent = getppid();
-#if !BB_MMU
+#જો !BB_MMU
 		argv[optind] = xasprintf("-p%u", parent);
-		argv[optind + 1] = NULL;
+		argv[optind + 1] = ખાલી;
 #endif
 		/* NB: exits with nonzero on error: */
 		bb_daemonize_or_rexec(0, argv);
 		/* Here we are grandchild. Sleep, then kill grandparent */
  grandchild:
-		if (timeout_wait(timeout, parent) == EXIT_SUCCESS)
-			return EXIT_SUCCESS;
+		જો (timeout_wait(timeout, parent) == EXIT_SUCCESS)
+			પાછા EXIT_SUCCESS;
 		kill(parent, signo);
 
-		if (kill_timeout > 0) {
-			if (timeout_wait(kill_timeout, parent) == EXIT_SUCCESS)
-				return EXIT_SUCCESS;
+		જો (kill_timeout > 0) {
+			જો (timeout_wait(kill_timeout, parent) == EXIT_SUCCESS)
+				પાછા EXIT_SUCCESS;
 			kill(parent, SIGKILL);
 		}
 
-		return EXIT_SUCCESS;
+		પાછા EXIT_SUCCESS;
 	}
 
 	/* Parent */
 	wait(&status); /* wait for child to die */
 	/* Did intermediate [v]fork or exec fail? */
-	if (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
-		return EXIT_FAILURE;
+	જો (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
+		પાછા EXIT_FAILURE;
 	/* Ok, exec a program as requested */
 	argv += optind;
-#if !BB_MMU
+#જો !BB_MMU
 	argv[0] = sv1;
 	argv[1] = sv2;
 #endif

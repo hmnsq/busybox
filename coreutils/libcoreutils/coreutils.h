@@ -5,15 +5,15 @@
 #ifndef COREUTILS_H
 #define COREUTILS_H 1
 
-PUSH_AND_SET_FUNCTION_VISIBILITY_TO_HIDDEN
+ધકેલો_AND_SET_FUNCTION_VISIBILITY_TO_HIDDEN
 
-typedef int (*stat_func)(const char *fn, struct stat *ps);
+પ્રકારવ્યાખ્યા પૂર્ણાંક (*stat_func)(અચલ અક્ષર *fn, સંરચના stat *ps);
 
-int cp_mv_stat2(const char *fn, struct stat *fn_stat, stat_func sf) FAST_FUNC;
-int cp_mv_stat(const char *fn, struct stat *fn_stat) FAST_FUNC;
+પૂર્ણાંક cp_mv_stat2(અચલ અક્ષર *fn, સંરચના stat *fn_stat, stat_func sf) FAST_FUNC;
+પૂર્ણાંક cp_mv_stat(અચલ અક્ષર *fn, સંરચના stat *fn_stat) FAST_FUNC;
 
-mode_t getopt_mk_fifo_nod(char **argv) FAST_FUNC;
+mode_t getopt_mk_fifo_nod(અક્ષર **argv) FAST_FUNC;
 
-POP_SAVED_FUNCTION_VISIBILITY
+કાઢો_SAVED_FUNCTION_VISIBILITY
 
 #endif
