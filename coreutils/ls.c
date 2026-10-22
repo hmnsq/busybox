@@ -163,15 +163,15 @@
 //usage:     "\n	--color[={always,never,auto}]"
 //usage:	)
 
-#include "libbb.h"
-#include "common_bufsiz.h"
-#include "unicode.h"
+#ଅନ୍ତର୍ଭାଵ "libbb.h"
+#ଅନ୍ତର୍ଭାଵ "common_bufsiz.h"
+#ଅନ୍ତର୍ଭାଵ "unicode.h"
 
 
 /* This is a NOEXEC applet. Be very careful! */
 
 
-#if ENABLE_FTPD
+#ଯଦି ENABLE_FTPD
 /* ftpd uses ls, and without timestamps Mozilla won't understand
  * ftpd's LIST output.
  */
@@ -186,7 +186,7 @@
 #endif
 
 
-enum {
+ଗଣନା {
 TERMINAL_WIDTH  = 80, /* use 79 if terminal has linefold bug */
 
 SPLIT_FILE      = 0,
@@ -218,7 +218,7 @@ SPLIT_SUBDIR    = 2,
 	IF_FEATURE_HUMAN_READABLE("h")   /* 1, 27 */ \
 	IF_FEATURE_LS_WIDTH("T:w:")      /* 2, 29 */
 
-enum {
+ଗଣନା {
 	OPT_C = (1 << 0),
 	OPT_a = (1 << 1),
 	OPT_d = (1 << 2),
@@ -279,10 +279,10 @@ enum {
 /*
  * a directory entry and its stat info
  */
-struct dnode {
-	const char *name;       /* usually basename, but think "ls -l dir/file" */
-	const char *fullname;   /* full name (usable for stat etc) */
-	struct dnode *dn_next;  /* for linked list */
+ସଂରଚନା dnode {
+	ଅଚଳ ଅକ୍ଷର *name;       /* usually basename, but think "ls -l dir/file" */
+	ଅଚଳ ଅକ୍ଷର *fullname;   /* full name (usable for stat etc) */
+	ସଂରଚନା dnode *dn_next;  /* for linked list */
 	IF_SELINUX(security_context_t sid;)
 	smallint fname_allocated;
 
@@ -304,7 +304,7 @@ struct dnode {
 	/* Same names as in struct stat, but with dn_ instead of st_ pfx: */
 	mode_t    dn_mode; /* obtained with lstat OR stat, depending on -L etc */
 	off_t     dn_size;
-#if ENABLE_FEATURE_LS_TIMESTAMPS || ENABLE_FEATURE_LS_SORTFILES
+#ଯଦି ENABLE_FEATURE_LS_TIMESTAMPS || ENABLE_FEATURE_LS_SORTFILES
 	time_t    dn_time;
 #endif
 	ino_t     dn_ino;
@@ -312,40 +312,40 @@ struct dnode {
 	nlink_t   dn_nlink;
 	uid_t     dn_uid;
 	gid_t     dn_gid;
-	int       dn_rdev_maj;
-	int       dn_rdev_min;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା       dn_rdev_maj;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା       dn_rdev_min;
 //	dev_t     dn_dev;
 //	blksize_t dn_blksize;
 };
 
-struct globals {
-#if ENABLE_FEATURE_LS_COLOR
+ସଂରଚନା globals {
+#ଯଦି ENABLE_FEATURE_LS_COLOR
 	smallint show_color;
 # define G_show_color (G.show_color)
-#else
+#ଅନ୍ୟଥା
 # define G_show_color 0
 #endif
 	smallint exit_code;
 	smallint show_dirname;
-#if ENABLE_FEATURE_LS_WIDTH
+#ଯଦି ENABLE_FEATURE_LS_WIDTH
 	unsigned terminal_width;
 # define G_terminal_width (G.terminal_width)
-#else
+#ଅନ୍ୟଥା
 # define G_terminal_width TERMINAL_WIDTH
 #endif
-#if ENABLE_FEATURE_LS_TIMESTAMPS
+#ଯଦି ENABLE_FEATURE_LS_TIMESTAMPS
 	/* Do time() just once. Saves one syscall per file for "ls -l" */
 	time_t current_time_t;
 #endif
 } FIX_ALIASING;
-#define G (*(struct globals*)bb_common_bufsiz1)
-#define INIT_G() do { \
+#define G (*(ସଂରଚନା globals*)bb_common_bufsiz1)
+#define INIT_G() କର { \
 	setup_common_bufsiz(); \
 	/* we have to zero it out because of NOEXEC */ \
-	memset(&G, 0, sizeof(G)); \
+	memset(&G, 0, ଆକାର(G)); \
 	IF_FEATURE_LS_WIDTH(G_terminal_width = TERMINAL_WIDTH;) \
 	IF_FEATURE_LS_TIMESTAMPS(time(&G.current_time_t);) \
-} while (0)
+} ଯେତେବେଳେ (0)
 
 #define ESC "\033"
 
@@ -383,39 +383,39 @@ struct globals {
 	"\01\00\01\07\01\07\01\07\00\07\01\07\01\07\07\01" \
 	[TYPEINDEX(mode)])
 
-#if ENABLE_FEATURE_LS_COLOR
+#ଯଦି ENABLE_FEATURE_LS_COLOR
 /* mode of zero is interpreted as "unknown" (stat failed) */
-static char fgcolor(mode_t mode)
+ସ୍ଥିର ଅକ୍ଷର fgcolor(mode_t mode)
 {
-	if (S_ISREG(mode) && (mode & (S_IXUSR | S_IXGRP | S_IXOTH)))
-		return COLOR(0xF000);	/* File is executable ... */
-	return COLOR(mode);
+	ଯଦି (S_ISREG(mode) && (mode & (S_IXUSR | S_IXGRP | S_IXOTH)))
+		ଫେରନ୍ତୁ COLOR(0xF000);	/* File is executable ... */
+	ଫେରନ୍ତୁ COLOR(mode);
 }
-static char bold(mode_t mode)
+ସ୍ଥିର ଅକ୍ଷର bold(mode_t mode)
 {
-	if (S_ISREG(mode) && (mode & (S_IXUSR | S_IXGRP | S_IXOTH)))
-		return ATTR(0xF000);	/* File is executable ... */
-	return ATTR(mode);
-}
-#endif
-
-#if ENABLE_FEATURE_LS_FILETYPES
-static char append_char(mode_t mode)
-{
-	if (!(option_mask32 & (OPT_F|OPT_p)))
-		return '\0';
-
-	if (S_ISDIR(mode))
-		return '/';
-	if (!(option_mask32 & OPT_F))
-		return '\0';
-	if (S_ISREG(mode) && (mode & (S_IXUSR | S_IXGRP | S_IXOTH)))
-		return '*';
-	return APPCHAR(mode);
+	ଯଦି (S_ISREG(mode) && (mode & (S_IXUSR | S_IXGRP | S_IXOTH)))
+		ଫେରନ୍ତୁ ATTR(0xF000);	/* File is executable ... */
+	ଫେରନ୍ତୁ ATTR(mode);
 }
 #endif
 
-static unsigned calc_name_len(const char *name)
+#ଯଦି ENABLE_FEATURE_LS_FILETYPES
+ସ୍ଥିର ଅକ୍ଷର append_char(mode_t mode)
+{
+	ଯଦି (!(option_mask32 & (OPT_F|OPT_p)))
+		ଫେରନ୍ତୁ '\0';
+
+	ଯଦି (S_ISDIR(mode))
+		ଫେରନ୍ତୁ '/';
+	ଯଦି (!(option_mask32 & OPT_F))
+		ଫେରନ୍ତୁ '\0';
+	ଯଦି (S_ISREG(mode) && (mode & (S_IXUSR | S_IXGRP | S_IXOTH)))
+		ଫେରନ୍ତୁ '*';
+	ଫେରନ୍ତୁ APPCHAR(mode);
+}
+#endif
+
+ସ୍ଥିର unsigned calc_name_len(ଅଚଳ ଅକ୍ଷର *name)
 {
 	unsigned len;
 	uni_stat_t uni_stat;
@@ -423,18 +423,18 @@ static unsigned calc_name_len(const char *name)
 	// TODO: quote tab as \t, etc, if -Q
 	name = printable_string2(&uni_stat, name);
 
-	if (!(option_mask32 & OPT_Q)) {
-		return uni_stat.unicode_width;
+	ଯଦି (!(option_mask32 & OPT_Q)) {
+		ଫେରନ୍ତୁ uni_stat.unicode_width;
 	}
 
 	len = 2 + uni_stat.unicode_width;
-	while (*name) {
-		if (*name == '"' || *name == '\\') {
+	ଯେତେବେଳେ (*name) {
+		ଯଦି (*name == '"' || *name == '\\') {
 			len++;
 		}
 		name++;
 	}
-	return len;
+	ଫେରନ୍ତୁ len;
 }
 
 /* Return the number of used columns.
@@ -444,7 +444,7 @@ static unsigned calc_name_len(const char *name)
  * ls -b (--escape) = octal escapes (although it doesn't look like working)
  * ls -N (--literal) = not escape at all
  */
-static unsigned print_name(const char *name)
+ସ୍ଥିର unsigned print_name(ଅଚଳ ଅକ୍ଷର *name)
 {
 	unsigned len;
 	uni_stat_t uni_stat;
@@ -452,15 +452,15 @@ static unsigned print_name(const char *name)
 	// TODO: quote tab as \t, etc, if -Q
 	name = printable_string2(&uni_stat, name);
 
-	if (!(option_mask32 & OPT_Q)) {
+	ଯଦି (!(option_mask32 & OPT_Q)) {
 		fputs_stdout(name);
-		return uni_stat.unicode_width;
+		ଫେରନ୍ତୁ uni_stat.unicode_width;
 	}
 
 	len = 2 + uni_stat.unicode_width;
 	putchar('"');
-	while (*name) {
-		if (*name == '"' || *name == '\\') {
+	ଯେତେବେଳେ (*name) {
+		ଯଦି (*name == '"' || *name == '\\') {
 			putchar('\\');
 			len++;
 		}
@@ -468,117 +468,117 @@ static unsigned print_name(const char *name)
 		name++;
 	}
 	putchar('"');
-	return len;
+	ଫେରନ୍ତୁ len;
 }
 
 /* Return the number of used columns.
  * Note that only columnar output uses return value,
  * -l and -1 modes don't care.
  */
-static NOINLINE unsigned display_single(const struct dnode *dn)
+ସ୍ଥିର NOINLINE unsigned display_single(ଅଚଳ ସଂରଚନା dnode *dn)
 {
 	unsigned column = 0;
-	char *lpath;
-	int opt;
-#if ENABLE_FEATURE_LS_FILETYPES || ENABLE_FEATURE_LS_COLOR
-	struct stat statbuf;
+	ଅକ୍ଷର *lpath;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା opt;
+#ଯଦି ENABLE_FEATURE_LS_FILETYPES || ENABLE_FEATURE_LS_COLOR
+	ସଂରଚନା stat statbuf;
 #endif
-#if ENABLE_FEATURE_LS_FILETYPES
-	char append = append_char(dn->dn_mode);
+#ଯଦି ENABLE_FEATURE_LS_FILETYPES
+	ଅକ୍ଷର append = append_char(dn->dn_mode);
 #endif
 
 	opt = option_mask32;
 
 	/* Do readlink early, so that if it fails, error message
 	 * does not appear *inside* the "ls -l" line */
-	lpath = NULL;
-	if (opt & OPT_l)
-		if (S_ISLNK(dn->dn_mode))
+	lpath = ଖାଲି;
+	ଯଦି (opt & OPT_l)
+		ଯଦି (S_ISLNK(dn->dn_mode))
 			lpath = xmalloc_readlink_or_warn(dn->fullname);
 
-	if (opt & OPT_i) /* show inode# */
+	ଯଦି (opt & OPT_i) /* show inode# */
 		column += printf("%7llu ", (long long) dn->dn_ino);
-	if (opt & OPT_s) { /* show allocated blocks */
-		if (opt & OPT_h) {
+	ଯଦି (opt & OPT_s) { /* show allocated blocks */
+		ଯଦି (opt & OPT_h) {
 			column += printf("%"HUMAN_READABLE_MAX_WIDTH_STR"s ",
 				/* print size, show one fractional, use suffixes */
 				make_human_readable_str((off_t)dn->dn_blocks << 9, 1, 0)
 			);
-		} else {
+		} ଅନ୍ୟଥା {
 			column += printf("%6"OFF_FMT"u ", (off_t)(dn->dn_blocks >> 1));
 		}
 	}
-	if (opt & OPT_l) {
+	ଯଦି (opt & OPT_l) {
 		/* long listing: show mode */
-		char modestr[12];
+		ଅକ୍ଷର modestr[12];
 		column += printf("%-10s ", bb_mode_string(modestr, dn->dn_mode));
 		/* long listing: show number of links */
 		column += printf("%4lu ", (long) dn->dn_nlink);
 		/* long listing: show user/group */
-		if (opt & OPT_n) {
-			if (opt & OPT_g)
-				column += printf("%-8u ", (int) dn->dn_gid);
-			else
+		ଯଦି (opt & OPT_n) {
+			ଯଦି (opt & OPT_g)
+				column += printf("%-8u ", (ପୂର୍ଣ୍ଣସଂଖ୍ୟା) dn->dn_gid);
+			ଅନ୍ୟଥା
 				column += printf("%-8u %-8u ",
-						(int) dn->dn_uid,
-						(int) dn->dn_gid);
+						(ପୂର୍ଣ୍ଣସଂଖ୍ୟା) dn->dn_uid,
+						(ପୂର୍ଣ୍ଣସଂଖ୍ୟା) dn->dn_gid);
 		}
-#if ENABLE_FEATURE_LS_USERNAME
-		else {
-			if (opt & OPT_g) {
+#ଯଦି ENABLE_FEATURE_LS_USERNAME
+		ଅନ୍ୟଥା {
+			ଯଦି (opt & OPT_g) {
 				column += printf("%-8s ",
 					get_cached_groupname(dn->dn_gid));
-			} else {
+			} ଅନ୍ୟଥା {
 				column += printf("%-8s %-8s ",
 					get_cached_username(dn->dn_uid),
 					get_cached_groupname(dn->dn_gid));
 			}
 		}
 #endif
-#if ENABLE_SELINUX
+#ଯଦି ENABLE_SELINUX
 	}
-	if (opt & OPT_Z) {
+	ଯଦି (opt & OPT_Z) {
 		column += printf("%-32s ", dn->sid ? dn->sid : "?");
 		freecon(dn->sid);
 	}
-	if (opt & OPT_l) {
+	ଯଦି (opt & OPT_l) {
 #endif
 		/* long listing: show size */
-		if (S_ISBLK(dn->dn_mode) || S_ISCHR(dn->dn_mode)) {
+		ଯଦି (S_ISBLK(dn->dn_mode) || S_ISCHR(dn->dn_mode)) {
 			column += printf("%4u, %3u ",
 					dn->dn_rdev_maj,
 					dn->dn_rdev_min);
-		} else {
-			if (opt & OPT_h) {
+		} ଅନ୍ୟଥା {
+			ଯଦି (opt & OPT_h) {
 				column += printf("%"HUMAN_READABLE_MAX_WIDTH_STR"s ",
 					/* print size, show one fractional, use suffixes */
 					make_human_readable_str(dn->dn_size, 1, 0)
 				);
-			} else {
+			} ଅନ୍ୟଥା {
 				column += printf("%9"OFF_FMT"u ", dn->dn_size);
 			}
 		}
-#if ENABLE_FEATURE_LS_TIMESTAMPS
+#ଯଦି ENABLE_FEATURE_LS_TIMESTAMPS
 		/* long listing: show {m,c,a}time */
-		if (opt & OPT_full_time) { /* --full-time */
+		ଯଦି (opt & OPT_full_time) { /* --full-time */
 			/* coreutils 8.4 ls --full-time prints:
 			 * 2009-07-13 17:49:27.000000000 +0200
 			 * we don't show fractional seconds.
 			 */
-			char buf[sizeof("YYYY-mm-dd HH:MM:SS TIMEZONE")];
-			strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S %z",
+			ଅକ୍ଷର buf[ଆକାର("YYYY-mm-dd HH:MM:SS TIMEZONE")];
+			strftime(buf, ଆକାର(buf), "%Y-%m-%d %H:%M:%S %z",
 					localtime(&dn->dn_time));
 			column += printf("%s ", buf);
-		} else { /* ordinary time format */
+		} ଅନ୍ୟଥା { /* ordinary time format */
 			/* G.current_time_t is ~== time(NULL) */
-			char *filetime = ctime(&dn->dn_time);
+			ଅକ୍ଷର *filetime = ctime(&dn->dn_time);
 			/* filetime's format: "Wed Jun 30 21:49:08 1993\n" */
 			time_t age = G.current_time_t - dn->dn_time;
-			if (age < 3600L * 24 * 365 / 2 && age > -15 * 60) {
+			ଯଦି (age < 3600L * 24 * 365 / 2 && age > -15 * 60) {
 				/* less than 6 months old */
 				/* "mmm dd hh:mm " */
 				printf("%.12s ", filetime + 4);
-			} else {
+			} ଅନ୍ୟଥା {
 				/* "mmm dd  yyyy " */
 				/* "mmm dd yyyyy " after year 9999 :) */
 				strchr(filetime + 20, '\n')[0] = ' ';
@@ -589,72 +589,72 @@ static NOINLINE unsigned display_single(const struct dnode *dn)
 #endif
 	}
 
-#if ENABLE_FEATURE_LS_COLOR
-	if (G_show_color) {
+#ଯଦି ENABLE_FEATURE_LS_COLOR
+	ଯଦି (G_show_color) {
 		mode_t mode = dn->dn_mode_lstat;
-		if (!mode)
-			if (lstat(dn->fullname, &statbuf) == 0)
+		ଯଦି (!mode)
+			ଯଦି (lstat(dn->fullname, &statbuf) == 0)
 				mode = statbuf.st_mode;
 		printf(ESC"[%u;%um", bold(mode), fgcolor(mode));
 	}
 #endif
 	column += print_name(dn->name);
-	if (G_show_color) {
+	ଯଦି (G_show_color) {
 		printf(ESC"[m");
 	}
 
-	if (lpath) {
+	ଯଦି (lpath) {
 		printf(" -> ");
-#if ENABLE_FEATURE_LS_FILETYPES || ENABLE_FEATURE_LS_COLOR
-		if ((opt & (OPT_F|OPT_p))
+#ଯଦି ENABLE_FEATURE_LS_FILETYPES || ENABLE_FEATURE_LS_COLOR
+		ଯଦି ((opt & (OPT_F|OPT_p))
 		 || G_show_color
 		) {
 			mode_t mode = dn->dn_mode_stat;
-			if (!mode)
-				if (stat(dn->fullname, &statbuf) == 0)
+			ଯଦି (!mode)
+				ଯଦି (stat(dn->fullname, &statbuf) == 0)
 					mode = statbuf.st_mode;
-# if ENABLE_FEATURE_LS_FILETYPES
+# ଯଦି ENABLE_FEATURE_LS_FILETYPES
 			append = append_char(mode);
 # endif
-# if ENABLE_FEATURE_LS_COLOR
-			if (G_show_color) {
+# ଯଦି ENABLE_FEATURE_LS_COLOR
+			ଯଦି (G_show_color) {
 				printf(ESC"[%u;%um", bold(mode), fgcolor(mode));
 			}
 # endif
 		}
 #endif
 		column += print_name(lpath) + 4;
-		free(lpath);
-		if (G_show_color) {
+		ମୁକ୍ତ(lpath);
+		ଯଦି (G_show_color) {
 			printf(ESC"[m");
 		}
 	}
-#if ENABLE_FEATURE_LS_FILETYPES
-	if (opt & (OPT_F|OPT_p)) {
-		if (append) {
+#ଯଦି ENABLE_FEATURE_LS_FILETYPES
+	ଯଦି (opt & (OPT_F|OPT_p)) {
+		ଯଦି (append) {
 			putchar(append);
 			column++;
 		}
 	}
 #endif
 
-	return column;
+	ଫେରନ୍ତୁ column;
 }
 
-static void display_files(struct dnode **dn, unsigned nfiles)
+ସ୍ଥିର ଶୂନ୍ୟ display_files(ସଂରଚନା dnode **dn, unsigned nfiles)
 {
 	unsigned i, ncols, nrows, row, nc;
 	unsigned column;
 	unsigned nexttab;
 	unsigned column_width = 0; /* used only by coulmnal output */
 
-	if (option_mask32 & (OPT_l|OPT_1)) {
+	ଯଦି (option_mask32 & (OPT_l|OPT_1)) {
 		ncols = 1;
-	} else {
+	} ଅନ୍ୟଥା {
 		/* find the longest file name, use that as the column width */
-		for (i = 0; dn[i]; i++) {
-			int len = calc_name_len(dn[i]->name);
-			if (column_width < len)
+		ପାଇଁ (i = 0; dn[i]; i++) {
+			ପୂର୍ଣ୍ଣସଂଖ୍ୟା len = calc_name_len(dn[i]->name);
+			ଯଦି (column_width < len)
 				column_width = len;
 		}
 		column_width += 2
@@ -665,26 +665,26 @@ static void display_files(struct dnode **dn, unsigned nfiles)
 		ncols = (unsigned)G_terminal_width / column_width;
 	}
 
-	if (ncols > 1) {
+	ଯଦି (ncols > 1) {
 		nrows = nfiles / ncols;
-		if (nrows * ncols < nfiles)
+		ଯଦି (nrows * ncols < nfiles)
 			nrows++;                /* round up fractionals */
-	} else {
+	} ଅନ୍ୟଥା {
 		nrows = nfiles;
 		ncols = 1;
 	}
 
 	column = 0;
 	nexttab = 0;
-	for (row = 0; row < nrows; row++) {
-		for (nc = 0; nc < ncols; nc++) {
+	ପାଇଁ (row = 0; row < nrows; row++) {
+		ପାଇଁ (nc = 0; nc < ncols; nc++) {
 			/* reach into the array based on the column and row */
-			if (option_mask32 & OPT_x)
+			ଯଦି (option_mask32 & OPT_x)
 				i = (row * ncols) + nc;	/* display across row */
-			else
+			ଅନ୍ୟଥା
 				i = (nc * nrows) + row;	/* display by column */
-			if (i < nfiles) {
-				if (column > 0) {
+			ଯଦି (i < nfiles) {
+				ଯଦି (column > 0) {
 					nexttab -= column;
 					printf("%*s", nexttab, "");
 					column += nexttab;
@@ -701,39 +701,39 @@ static void display_files(struct dnode **dn, unsigned nfiles)
 
 /*** Dir scanning code ***/
 
-static struct dnode *my_stat(const char *fullname, const char *name, int force_follow)
+ସ୍ଥିର ସଂରଚନା dnode *my_stat(ଅଚଳ ଅକ୍ଷର *fullname, ଅଚଳ ଅକ୍ଷର *name, ପୂର୍ଣ୍ଣସଂଖ୍ୟା force_follow)
 {
-	struct stat statbuf;
-	struct dnode *cur;
+	ସଂରଚନା stat statbuf;
+	ସଂରଚନା dnode *cur;
 
-	cur = xzalloc(sizeof(*cur));
+	cur = xzalloc(ଆକାର(*cur));
 	cur->fullname = fullname;
 	cur->name = name;
 
-	if ((option_mask32 & OPT_L) || force_follow) {
-#if ENABLE_SELINUX
-		if (option_mask32 & OPT_Z) {
+	ଯଦି ((option_mask32 & OPT_L) || force_follow) {
+#ଯଦି ENABLE_SELINUX
+		ଯଦି (option_mask32 & OPT_Z) {
 			getfilecon(fullname, &cur->sid);
 		}
 #endif
-		if (stat(fullname, &statbuf)) {
-			bb_simple_perror_msg(fullname);
+		ଯଦି (stat(fullname, &statbuf)) {
+			bb_simple_perror_ସନ୍ଦେଶ(fullname);
 			G.exit_code = EXIT_FAILURE;
-			free(cur);
-			return NULL;
+			ମୁକ୍ତ(cur);
+			ଫେରନ୍ତୁ ଖାଲି;
 		}
 		cur->dn_mode_stat = statbuf.st_mode;
-	} else {
-#if ENABLE_SELINUX
-		if (option_mask32 & OPT_Z) {
+	} ଅନ୍ୟଥା {
+#ଯଦି ENABLE_SELINUX
+		ଯଦି (option_mask32 & OPT_Z) {
 			lgetfilecon(fullname, &cur->sid);
 		}
 #endif
-		if (lstat(fullname, &statbuf)) {
-			bb_simple_perror_msg(fullname);
+		ଯଦି (lstat(fullname, &statbuf)) {
+			bb_simple_perror_ସନ୍ଦେଶ(fullname);
 			G.exit_code = EXIT_FAILURE;
-			free(cur);
-			return NULL;
+			ମୁକ୍ତ(cur);
+			ଫେରନ୍ତୁ ଖାଲି;
 		}
 		cur->dn_mode_lstat = statbuf.st_mode;
 	}
@@ -741,11 +741,11 @@ static struct dnode *my_stat(const char *fullname, const char *name, int force_f
 	/* cur->dstat = statbuf: */
 	cur->dn_mode   = statbuf.st_mode  ;
 	cur->dn_size   = statbuf.st_size  ;
-#if ENABLE_FEATURE_LS_TIMESTAMPS || ENABLE_FEATURE_LS_SORTFILES
+#ଯଦି ENABLE_FEATURE_LS_TIMESTAMPS || ENABLE_FEATURE_LS_SORTFILES
 	cur->dn_time   = statbuf.st_mtime ;
-	if (option_mask32 & OPT_u)
+	ଯଦି (option_mask32 & OPT_u)
 		cur->dn_time = statbuf.st_atime;
-	if (option_mask32 & OPT_c)
+	ଯଦି (option_mask32 & OPT_c)
 		cur->dn_time = statbuf.st_ctime;
 #endif
 	cur->dn_ino    = statbuf.st_ino   ;
@@ -756,26 +756,26 @@ static struct dnode *my_stat(const char *fullname, const char *name, int force_f
 	cur->dn_rdev_maj = major(statbuf.st_rdev);
 	cur->dn_rdev_min = minor(statbuf.st_rdev);
 
-	return cur;
+	ଫେରନ୍ତୁ cur;
 }
 
-static unsigned count_dirs(struct dnode **dn, int which)
+ସ୍ଥିର unsigned ଗଣନା_dirs(ସଂରଚନା dnode **dn, ପୂର୍ଣ୍ଣସଂଖ୍ୟା which)
 {
 	unsigned dirs, all;
 
-	if (!dn)
-		return 0;
+	ଯଦି (!dn)
+		ଫେରନ୍ତୁ 0;
 
 	dirs = all = 0;
-	for (; *dn; dn++) {
-		const char *name;
+	ପାଇଁ (; *dn; dn++) {
+		ଅଚଳ ଅକ୍ଷର *name;
 
 		all++;
-		if (!S_ISDIR((*dn)->dn_mode))
-			continue;
+		ଯଦି (!S_ISDIR((*dn)->dn_mode))
+			ଜାରି;
 
 		name = (*dn)->name;
-		if (which != SPLIT_SUBDIR /* if not requested to skip . / .. */
+		ଯଦି (which != SPLIT_SUBDIR /* if not requested to skip . / .. */
 		 /* or if it's not . or .. */
 		 || name[0] != '.'
 		 || (name[1] && (name[1] != '.' || name[2]))
@@ -783,177 +783,177 @@ static unsigned count_dirs(struct dnode **dn, int which)
 			dirs++;
 		}
 	}
-	return which != SPLIT_FILE ? dirs : all - dirs;
+	ଫେରନ୍ତୁ which != SPLIT_FILE ? dirs : all - dirs;
 }
 
 /* get memory to hold an array of pointers */
-static struct dnode **dnalloc(unsigned num)
+ସ୍ଥିର ସଂରଚନା dnode **dnalloc(unsigned ଅଙ୍କ)
 {
-	if (num < 1)
-		return NULL;
+	ଯଦି (ଅଙ୍କ < 1)
+		ଫେରନ୍ତୁ ଖାଲି;
 
-	num++; /* so that we have terminating NULL */
-	return xzalloc(num * sizeof(struct dnode *));
+	ଅଙ୍କ++; /* so that we have terminating NULL */
+	ଫେରନ୍ତୁ xzalloc(ଅଙ୍କ * ଆକାର(ସଂରଚନା dnode *));
 }
 
-#if ENABLE_FEATURE_LS_RECURSIVE
-static void dfree(struct dnode **dnp)
+#ଯଦି ENABLE_FEATURE_LS_RECURSIVE
+ସ୍ଥିର ଶୂନ୍ୟ dfree(ସଂରଚନା dnode **dnp)
 {
 	unsigned i;
 
-	if (dnp == NULL)
-		return;
+	ଯଦି (dnp == ଖାଲି)
+		ଫେରନ୍ତୁ;
 
-	for (i = 0; dnp[i]; i++) {
-		struct dnode *cur = dnp[i];
-		if (cur->fname_allocated)
-			free((char*)cur->fullname);
-		free(cur);
+	ପାଇଁ (i = 0; dnp[i]; i++) {
+		ସଂରଚନା dnode *cur = dnp[i];
+		ଯଦି (cur->fname_allocated)
+			ମୁକ୍ତ((ଅକ୍ଷର*)cur->fullname);
+		ମୁକ୍ତ(cur);
 	}
-	free(dnp);
+	ମୁକ୍ତ(dnp);
 }
-#else
-#define dfree(...) ((void)0)
+#ଅନ୍ୟଥା
+#define dfree(...) ((ଶୂନ୍ୟ)0)
 #endif
 
 /* Returns NULL-terminated malloced vector of pointers (or NULL) */
-static struct dnode **splitdnarray(struct dnode **dn, int which)
+ସ୍ଥିର ସଂରଚନା dnode **splitdnarray(ସଂରଚନା dnode **dn, ପୂର୍ଣ୍ଣସଂଖ୍ୟା which)
 {
 	unsigned dncnt, d;
-	struct dnode **dnp;
+	ସଂରଚନା dnode **dnp;
 
-	if (dn == NULL)
-		return NULL;
+	ଯଦି (dn == ଖାଲି)
+		ଫେରନ୍ତୁ ଖାଲି;
 
 	/* count how many dirs or files there are */
-	dncnt = count_dirs(dn, which);
+	dncnt = ଗଣନା_dirs(dn, which);
 
 	/* allocate a file array and a dir array */
 	dnp = dnalloc(dncnt);
 
 	/* copy the entrys into the file or dir array */
-	for (d = 0; *dn; dn++) {
-		if (S_ISDIR((*dn)->dn_mode)) {
-			const char *name;
+	ପାଇଁ (d = 0; *dn; dn++) {
+		ଯଦି (S_ISDIR((*dn)->dn_mode)) {
+			ଅଚଳ ଅକ୍ଷର *name;
 
-			if (which == SPLIT_FILE)
-				continue;
+			ଯଦି (which == SPLIT_FILE)
+				ଜାରି;
 
 			name = (*dn)->name;
-			if ((which & SPLIT_DIR) /* any dir... */
+			ଯଦି ((which & SPLIT_DIR) /* any dir... */
 			/* ... or not . or .. */
 			 || name[0] != '.'
 			 || (name[1] && (name[1] != '.' || name[2]))
 			) {
 				dnp[d++] = *dn;
 			}
-		} else
-		if (which == SPLIT_FILE) {
+		} ଅନ୍ୟଥା
+		ଯଦି (which == SPLIT_FILE) {
 			dnp[d++] = *dn;
 		}
 	}
-	return dnp;
+	ଫେରନ୍ତୁ dnp;
 }
 
-#if ENABLE_FEATURE_LS_SORTFILES
-static int sortcmp(const void *a, const void *b)
+#ଯଦି ENABLE_FEATURE_LS_SORTFILES
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା sortcmp(ଅଚଳ ଶୂନ୍ୟ *a, ଅଚଳ ଶୂନ୍ୟ *b)
 {
-	struct dnode *d1 = *(struct dnode **)a;
-	struct dnode *d2 = *(struct dnode **)b;
+	ସଂରଚନା dnode *d1 = *(ସଂରଚନା dnode **)a;
+	ସଂରଚନା dnode *d2 = *(ସଂରଚନା dnode **)b;
 	unsigned opt = option_mask32;
 	off_t dif;
 
 	dif = 0; /* assume sort by name */
 	// TODO: use pre-initialized function pointer
 	// instead of branch forest
-	if (opt & OPT_dirs_first) {
+	ଯଦି (opt & OPT_dirs_first) {
 		dif = S_ISDIR(d2->dn_mode) - S_ISDIR(d1->dn_mode);
-		if (dif != 0)
-			goto maybe_invert_and_ret;
+		ଯଦି (dif != 0)
+			ଯାଅ maybe_invert_and_ret;
 	}
 
-	if (opt & OPT_S) { /* sort by size */
+	ଯଦି (opt & OPT_S) { /* sort by size */
 		dif = (d2->dn_size - d1->dn_size);
-	} else
-	if (opt & OPT_t) { /* sort by time */
+	} ଅନ୍ୟଥା
+	ଯଦି (opt & OPT_t) { /* sort by time */
 		dif = (d2->dn_time - d1->dn_time);
-	} else
-#if defined(HAVE_STRVERSCMP) && HAVE_STRVERSCMP == 1
-	if (opt & OPT_v) { /* sort by version */
+	} ଅନ୍ୟଥା
+#ଯଦି defined(HAVE_STRVERSCMP) && HAVE_STRVERSCMP == 1
+	ଯଦି (opt & OPT_v) { /* sort by version */
 		dif = strverscmp(d1->name, d2->name);
-	} else
+	} ଅନ୍ୟଥା
 #endif
-	if (opt & OPT_X) { /* sort by extension */
+	ଯଦି (opt & OPT_X) { /* sort by extension */
 		dif = strcmp(strchrnul(d1->name, '.'), strchrnul(d2->name, '.'));
 	}
-	if (dif == 0) {
+	ଯଦି (dif == 0) {
 		/* sort by name, use as tie breaker for other sorts */
-		if (ENABLE_LOCALE_SUPPORT)
+		ଯଦି (ENABLE_LOCALE_SUPPORT)
 			dif = strcoll(d1->name, d2->name);
-		else
+		ଅନ୍ୟଥା
 			dif = strcmp(d1->name, d2->name);
-	} else {
+	} ଅନ୍ୟଥା {
 		/* Make dif fit into an int */
-		if (sizeof(dif) > sizeof(int)) {
-			enum { BITS_TO_SHIFT = 8 * (sizeof(dif) - sizeof(int)) };
+		ଯଦି (ଆକାର(dif) > ଆକାର(ପୂର୍ଣ୍ଣସଂଖ୍ୟା)) {
+			ଗଣନା { BITS_TO_SHIFT = 8 * (ଆକାର(dif) - ଆକାର(ପୂର୍ଣ୍ଣସଂଖ୍ୟା)) };
 			/* shift leaving only "int" worth of bits */
 			/* (this requires dif != 0, and here it is nonzero) */
-			dif = 1 | (int)((uoff_t)dif >> BITS_TO_SHIFT);
+			dif = 1 | (ପୂର୍ଣ୍ଣସଂଖ୍ୟା)((uoff_t)dif >> BITS_TO_SHIFT);
 		}
 	}
  maybe_invert_and_ret:
-	return (opt & OPT_r) ? -(int)dif : (int)dif;
+	ଫେରନ୍ତୁ (opt & OPT_r) ? -(ପୂର୍ଣ୍ଣସଂଖ୍ୟା)dif : (ପୂର୍ଣ୍ଣସଂଖ୍ୟା)dif;
 }
 
-static void dnsort(struct dnode **dn, int size)
+ସ୍ଥିର ଶୂନ୍ୟ dnsort(ସଂରଚନା dnode **dn, ପୂର୍ଣ୍ଣସଂଖ୍ୟା size)
 {
-	qsort(dn, size, sizeof(*dn), sortcmp);
+	qsort(dn, size, ଆକାର(*dn), sortcmp);
 }
 
-static void sort_and_display_files(struct dnode **dn, unsigned nfiles)
+ସ୍ଥିର ଶୂନ୍ୟ sort_and_display_files(ସଂରଚନା dnode **dn, unsigned nfiles)
 {
 	dnsort(dn, nfiles);
 	display_files(dn, nfiles);
 }
-#else
-# define dnsort(dn, size) ((void)0)
+#ଅନ୍ୟଥା
+# define dnsort(dn, size) ((ଶୂନ୍ୟ)0)
 # define sort_and_display_files(dn, nfiles) display_files(dn, nfiles)
 #endif
 
 /* Returns NULL-terminated malloced vector of pointers (or NULL) */
-static struct dnode **scan_one_dir(const char *path, unsigned *nfiles_p)
+ସ୍ଥିର ସଂରଚନା dnode **scan_one_dir(ଅଚଳ ଅକ୍ଷର *path, unsigned *nfiles_p)
 {
-	struct dnode *dn, *cur, **dnp;
-	struct dirent *entry;
+	ସଂରଚନା dnode *dn, *cur, **dnp;
+	ସଂରଚନା dirent *entry;
 	DIR *dir;
 	unsigned i, nfiles;
 
 	*nfiles_p = 0;
 	dir = warn_opendir(path);
-	if (dir == NULL) {
+	ଯଦି (dir == ଖାଲି) {
 		G.exit_code = EXIT_FAILURE;
-		return NULL;	/* could not open the dir */
+		ଫେରନ୍ତୁ ଖାଲି;	/* could not open the dir */
 	}
-	dn = NULL;
+	dn = ଖାଲି;
 	nfiles = 0;
-	while ((entry = readdir(dir)) != NULL) {
-		char *fullname;
+	ଯେତେବେଳେ ((entry = readdir(dir)) != ଖାଲି) {
+		ଅକ୍ଷର *fullname;
 
 		/* are we going to list the file- it may be . or .. or a hidden file */
-		if (entry->d_name[0] == '.') {
-			if (!(option_mask32 & (OPT_a|OPT_A)))
-				continue; /* skip all dotfiles if no -a/-A */
-			if (!(option_mask32 & OPT_a)
+		ଯଦି (entry->d_name[0] == '.') {
+			ଯଦି (!(option_mask32 & (OPT_a|OPT_A)))
+				ଜାରି; /* skip all dotfiles if no -a/-A */
+			ଯଦି (!(option_mask32 & OPT_a)
 			 && (!entry->d_name[1] || (entry->d_name[1] == '.' && !entry->d_name[2]))
 			) {
-				continue; /* if only -A, skip . and .. but show other dotfiles */
+				ଜାରି; /* if only -A, skip . and .. but show other dotfiles */
 			}
 		}
 		fullname = concat_path_file(path, entry->d_name);
 		cur = my_stat(fullname, bb_basename(fullname), 0);
-		if (!cur) {
-			free(fullname);
-			continue;
+		ଯଦି (!cur) {
+			ମୁକ୍ତ(fullname);
+			ଜାରି;
 		}
 		cur->fname_allocated = 1;
 		cur->dn_next = dn;
@@ -962,25 +962,25 @@ static struct dnode **scan_one_dir(const char *path, unsigned *nfiles_p)
 	}
 	closedir(dir);
 
-	if (dn == NULL)
-		return NULL;
+	ଯଦି (dn == ଖାଲି)
+		ଫେରନ୍ତୁ ଖାଲି;
 
 	/* now that we know how many files there are
 	 * allocate memory for an array to hold dnode pointers
 	 */
 	*nfiles_p = nfiles;
 	dnp = dnalloc(nfiles);
-	for (i = 0; /* i < nfiles - detected via !dn below */; i++) {
+	ପାଇଁ (i = 0; /* i < nfiles - detected via !dn below */; i++) {
 		dnp[i] = dn;	/* save pointer to node in array */
 		dn = dn->dn_next;
-		if (!dn)
-			break;
+		ଯଦି (!dn)
+			ଭାଙ୍ଗ;
 	}
 
-	return dnp;
+	ଫେରନ୍ତୁ dnp;
 }
 
-#if ENABLE_DESKTOP
+#ଯଦି ENABLE_DESKTOP
 /* http://www.opengroup.org/onlinepubs/9699919799/utilities/ls.html
  * If any of the -l, -n, -s options is specified, each list
  * of files within the directory shall be preceded by a
@@ -991,11 +991,11 @@ static struct dnode **scan_one_dir(const char *path, unsigned *nfiles_p)
  * number of units.
  */
 /* by Jorgen Overgaard (jorgen AT antistaten.se) */
-static off_t calculate_blocks(struct dnode **dn)
+ସ୍ଥିର off_t calculate_blocks(ସଂରଚନା dnode **dn)
 {
 	uoff_t blocks = 1;
-	if (dn) {
-		while (*dn) {
+	ଯଦି (dn) {
+		ଯେତେବେଳେ (*dn) {
 			/* st_blocks is in 512 byte blocks */
 			blocks += (*dn)->dn_blocks;
 			dn++;
@@ -1005,53 +1005,53 @@ static off_t calculate_blocks(struct dnode **dn)
 	/* Even though standard says use 512 byte blocks, coreutils use 1k */
 	/* Actually, we round up by calculating (blocks + 1) / 2,
 	 * "+ 1" was done when we initialized blocks to 1 */
-	return blocks >> 1;
+	ଫେରନ୍ତୁ blocks >> 1;
 }
 #endif
 
-static void scan_and_display_dirs_recur(struct dnode **dn, int first)
+ସ୍ଥିର ଶୂନ୍ୟ scan_and_display_dirs_recur(ସଂରଚନା dnode **dn, ପୂର୍ଣ୍ଣସଂଖ୍ୟା first)
 {
 	unsigned nfiles;
-	struct dnode **subdnp;
+	ସଂରଚନା dnode **subdnp;
 
-	for (; *dn; dn++) {
-		if (G.show_dirname || (option_mask32 & OPT_R)) {
-			if (!first)
+	ପାଇଁ (; *dn; dn++) {
+		ଯଦି (G.show_dirname || (option_mask32 & OPT_R)) {
+			ଯଦି (!first)
 				bb_putchar('\n');
 			first = 0;
 			printf("%s:\n", (*dn)->fullname);
 		}
 		subdnp = scan_one_dir((*dn)->fullname, &nfiles);
-#if ENABLE_DESKTOP
-		if (option_mask32 & (OPT_s|OPT_l)) {
-			if (option_mask32 & OPT_h) {
+#ଯଦି ENABLE_DESKTOP
+		ଯଦି (option_mask32 & (OPT_s|OPT_l)) {
+			ଯଦି (option_mask32 & OPT_h) {
 				printf("total %-"HUMAN_READABLE_MAX_WIDTH_STR"s\n",
 					/* print size, no fractions, use suffixes */
 					make_human_readable_str(calculate_blocks(subdnp) * 1024,
 								0, 0)
 				);
-			} else {
+			} ଅନ୍ୟଥା {
 				printf("total %"OFF_FMT"u\n", calculate_blocks(subdnp));
 			}
 		}
 #endif
-		if (nfiles > 0) {
+		ଯଦି (nfiles > 0) {
 			/* list all files at this level */
 			sort_and_display_files(subdnp, nfiles);
 
-			if (ENABLE_FEATURE_LS_RECURSIVE
+			ଯଦି (ENABLE_FEATURE_LS_RECURSIVE
 			 && (option_mask32 & OPT_R)
 			) {
-				struct dnode **dnd;
+				ସଂରଚନା dnode **dnd;
 				unsigned dndirs;
 				/* recursive - list the sub-dirs */
 				dnd = splitdnarray(subdnp, SPLIT_SUBDIR);
-				dndirs = count_dirs(subdnp, SPLIT_SUBDIR);
-				if (dndirs > 0) {
+				dndirs = ଗଣନା_dirs(subdnp, SPLIT_SUBDIR);
+				ଯଦି (dndirs > 0) {
 					dnsort(dnd, dndirs);
 					scan_and_display_dirs_recur(dnd, 0);
 					/* free the array of dnode pointers to the dirs */
-					free(dnd);
+					ମୁକ୍ତ(dnd);
 				}
 			}
 			/* free the dnodes and the fullname mem */
@@ -1061,19 +1061,19 @@ static void scan_and_display_dirs_recur(struct dnode **dn, int first)
 }
 
 
-int ls_main(int argc UNUSED_PARAM, char **argv)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ls_main(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc UNUSED_PARAM, ଅକ୍ଷର **argv)
 {	/*      ^^^^^^^^^^^^^^^^^ note: if FTPD, argc can be wrong, see ftpd.c */
-	struct dnode **dnd;
-	struct dnode **dnf;
-	struct dnode **dnp;
-	struct dnode *dn;
-	struct dnode *cur;
+	ସଂରଚନା dnode **dnd;
+	ସଂରଚନା dnode **dnf;
+	ସଂରଚନା dnode **dnp;
+	ସଂରଚନା dnode *dn;
+	ସଂରଚନା dnode *cur;
 	unsigned opt;
 	unsigned nfiles;
 	unsigned dnfiles;
 	unsigned dndirs;
 	unsigned i;
-#if ENABLE_FEATURE_LS_COLOR
+#ଯଦି ENABLE_FEATURE_LS_COLOR
 	/* colored LS support by JaWi, janwillem.janssen@lxtreme.nl */
 	/* coreutils 6.10:
 	 * # ls --color=BOGUS
@@ -1084,14 +1084,14 @@ int ls_main(int argc UNUSED_PARAM, char **argv)
 	 * 'auto', 'tty', 'if-tty'
 	 * (and substrings: "--color=alwa" work too)
 	 */
-	static const char color_str[] ALIGN1 =
+	ସ୍ଥିର ଅଚଳ ଅକ୍ଷର color_str[] ALIGN1 =
 		"always\0""yes\0""force\0"
 		"auto\0""tty\0""if-tty\0";
 	/* need to initialize since --color has _an optional_ argument */
-	const char *color_opt = color_str; /* "always" */
+	ଅଚଳ ଅକ୍ଷର *color_opt = color_str; /* "always" */
 #endif
-#if ENABLE_LONG_OPTS
-	static const char ls_longopts[] ALIGN1 =
+#ଯଦି ENABLE_LONG_OPTS
+	ସ୍ଥିର ଅଚଳ ଅକ୍ଷର ls_longopts[] ALIGN1 =
 		"full-time\0" No_argument "\xff"
 		"group-directories-first\0" No_argument "\xfe"
 		IF_FEATURE_LS_COLOR("color\0" Optional_argument "\xfd")
@@ -1102,7 +1102,7 @@ int ls_main(int argc UNUSED_PARAM, char **argv)
 
 	init_unicode();
 
-#if ENABLE_FEATURE_LS_WIDTH
+#ଯଦି ENABLE_FEATURE_LS_WIDTH
 	/* obtain the terminal width */
 	G_terminal_width = get_terminal_width(STDIN_FILENO);
 	/* go one less... */
@@ -1130,50 +1130,50 @@ int ls_main(int argc UNUSED_PARAM, char **argv)
 			/* -w NUM: */
 			IF_FEATURE_LS_WIDTH(":w+")
 		, ls_longopts
-		IF_FEATURE_LS_WIDTH(, /*-T*/ NULL, /*-w*/ &G_terminal_width)
+		IF_FEATURE_LS_WIDTH(, /*-T*/ ଖାଲି, /*-w*/ &G_terminal_width)
 		IF_FEATURE_LS_COLOR(, &color_opt)
 	);
-#if 0 /* option bits debug */
-	bb_error_msg("opt:0x%08x l:%x H:%x color:%x dirs:%x", opt, OPT_l, OPT_H, OPT_color, OPT_dirs_first);
-	if (opt & OPT_c         ) bb_error_msg("-c");
-	if (opt & OPT_l         ) bb_error_msg("-l");
-	if (opt & OPT_H         ) bb_error_msg("-H");
-	if (opt & OPT_color     ) bb_error_msg("--color");
-	if (opt & OPT_dirs_first) bb_error_msg("--group-directories-first");
-	if (opt & OPT_full_time ) bb_error_msg("--full-time");
+#ଯଦି 0 /* option bits debug */
+	bb_error_ସନ୍ଦେଶ("opt:0x%08x l:%x H:%x color:%x dirs:%x", opt, OPT_l, OPT_H, OPT_color, OPT_dirs_first);
+	ଯଦି (opt & OPT_c         ) bb_error_ସନ୍ଦେଶ("-c");
+	ଯଦି (opt & OPT_l         ) bb_error_ସନ୍ଦେଶ("-l");
+	ଯଦି (opt & OPT_H         ) bb_error_ସନ୍ଦେଶ("-H");
+	ଯଦି (opt & OPT_color     ) bb_error_ସନ୍ଦେଶ("--color");
+	ଯଦି (opt & OPT_dirs_first) bb_error_ସନ୍ଦେଶ("--group-directories-first");
+	ଯଦି (opt & OPT_full_time ) bb_error_ସନ୍ଦେଶ("--full-time");
 	exit(0);
 #endif
 
-#if ENABLE_SELINUX
-	if (opt & OPT_Z) {
-		if (!is_selinux_enabled())
+#ଯଦି ENABLE_SELINUX
+	ଯଦି (opt & OPT_Z) {
+		ଯଦି (!is_selinux_enabled())
 			option_mask32 &= ~OPT_Z;
 	}
 #endif
 
-#if ENABLE_FEATURE_LS_COLOR
+#ଯଦି ENABLE_FEATURE_LS_COLOR
 	/* set G_show_color = 1/0 */
-	if (ENABLE_FEATURE_LS_COLOR_IS_DEFAULT && !is_TERM_dumb()) {
-		char *p = getenv("LS_COLORS");
+	ଯଦି (ENABLE_FEATURE_LS_COLOR_IS_DEFAULT && !is_TERM_dumb()) {
+		ଅକ୍ଷର *p = getenv("LS_COLORS");
 		/* LS_COLORS is unset, or (not empty && not "none") ? */
-		if (!p || (p[0] && strcmp(p, "none") != 0)) {
-			if (isatty(STDOUT_FILENO)) {
+		ଯଦି (!p || (p[0] && strcmp(p, "none") != 0)) {
+			ଯଦି (isatty(STDOUT_FILENO)) {
 				/* check isatty() last because it's expensive (syscall) */
 				G_show_color = 1;
 			}
 		}
 	}
-	if (opt & OPT_color) {
-		if (color_opt[0] == 'n')
+	ଯଦି (opt & OPT_color) {
+		ଯଦି (color_opt[0] == 'n')
 			G_show_color = 0;
-		else switch (index_in_substrings(color_str, color_opt)) {
-		case 3:
-		case 4:
-		case 5:
-			if (!is_TERM_dumb() && isatty(STDOUT_FILENO)) {
-		case 0:
-		case 1:
-		case 2:
+		ଅନ୍ୟଥା ବାଛ (index_in_substrings(color_str, color_opt)) {
+		ସ୍ଥିତି 3:
+		ସ୍ଥିତି 4:
+		ସ୍ଥିତି 5:
+			ଯଦି (!is_TERM_dumb() && isatty(STDOUT_FILENO)) {
+		ସ୍ଥିତି 0:
+		ସ୍ଥିତି 1:
+		ସ୍ଥିତି 2:
 				G_show_color = 1;
 			}
 		}
@@ -1181,40 +1181,40 @@ int ls_main(int argc UNUSED_PARAM, char **argv)
 #endif
 
 	/* sort out which command line options take precedence */
-	if (ENABLE_FEATURE_LS_RECURSIVE && (opt & OPT_d))
+	ଯଦି (ENABLE_FEATURE_LS_RECURSIVE && (opt & OPT_d))
 		option_mask32 &= ~OPT_R;	/* no recurse if listing only dir */
-	if (!(opt & OPT_l)) { /* not -l? */
-		if (ENABLE_FEATURE_LS_TIMESTAMPS && ENABLE_FEATURE_LS_SORTFILES) {
+	ଯଦି (!(opt & OPT_l)) { /* not -l? */
+		ଯଦି (ENABLE_FEATURE_LS_TIMESTAMPS && ENABLE_FEATURE_LS_SORTFILES) {
 			/* when to sort by time? -t[cu] sorts by time even with -l */
 			/* (this is achieved by opt_flags[] element for -t) */
 			/* without -l, bare -c or -u enable sort too */
 			/* (with -l, bare -c or -u just select which time to show) */
-			if (opt & (OPT_c|OPT_u)) {
+			ଯଦି (opt & (OPT_c|OPT_u)) {
 				option_mask32 |= OPT_t;
 			}
 		}
 	}
 
 	/* choose a display format if one was not already specified by an option */
-	if (!(option_mask32 & (OPT_l|OPT_1|OPT_x|OPT_C)))
+	ଯଦି (!(option_mask32 & (OPT_l|OPT_1|OPT_x|OPT_C)))
 		option_mask32 |= (isatty(STDOUT_FILENO) ? OPT_C : OPT_1);
 
-	if (ENABLE_FTPD && applet_name[0] == 'f') {
+	ଯଦି (ENABLE_FTPD && applet_name[0] == 'f') {
 		/* ftpd secret backdoor. dirs first are much nicer */
 		option_mask32 |= OPT_dirs_first;
 	}
 
 	argv += optind;
-	if (!argv[0])
-		*--argv = (char*)".";
+	ଯଦି (!argv[0])
+		*--argv = (ଅକ୍ଷର*)".";
 
-	if (argv[1])
+	ଯଦି (argv[1])
 		G.show_dirname = 1; /* 2 or more items? label directories */
 
 	/* stuff the command line file names into a dnode array */
-	dn = NULL;
+	dn = ଖାଲି;
 	nfiles = 0;
-	do {
+	କର {
 		cur = my_stat(*argv, *argv,
 			/* follow links on command line unless -l, -i, -s or -F: */
 			!(option_mask32 & (OPT_l|OPT_i|OPT_s|OPT_F))
@@ -1223,50 +1223,50 @@ int ls_main(int argc UNUSED_PARAM, char **argv)
 			/* ... or if -L, but my_stat always follows links if -L */
 		);
 		argv++;
-		if (!cur)
-			continue;
+		ଯଦି (!cur)
+			ଜାରି;
 		/*cur->fname_allocated = 0; - already is */
 		cur->dn_next = dn;
 		dn = cur;
 		nfiles++;
-	} while (*argv);
+	} ଯେତେବେଳେ (*argv);
 
 	/* nfiles _may_ be 0 here - try "ls doesnt_exist" */
-	if (nfiles == 0)
-		return G.exit_code;
+	ଯଦି (nfiles == 0)
+		ଫେରନ୍ତୁ G.exit_code;
 
 	/* now that we know how many files there are
 	 * allocate memory for an array to hold dnode pointers
 	 */
 	dnp = dnalloc(nfiles);
-	for (i = 0; /* i < nfiles - detected via !dn below */; i++) {
+	ପାଇଁ (i = 0; /* i < nfiles - detected via !dn below */; i++) {
 		dnp[i] = dn;	/* save pointer to node in array */
 		dn = dn->dn_next;
-		if (!dn)
-			break;
+		ଯଦି (!dn)
+			ଭାଙ୍ଗ;
 	}
 
-	if (option_mask32 & OPT_d) {
+	ଯଦି (option_mask32 & OPT_d) {
 		sort_and_display_files(dnp, nfiles);
-	} else {
+	} ଅନ୍ୟଥା {
 		dnd = splitdnarray(dnp, SPLIT_DIR);
 		dnf = splitdnarray(dnp, SPLIT_FILE);
-		dndirs = count_dirs(dnp, SPLIT_DIR);
+		dndirs = ଗଣନା_dirs(dnp, SPLIT_DIR);
 		dnfiles = nfiles - dndirs;
-		if (dnfiles > 0) {
+		ଯଦି (dnfiles > 0) {
 			sort_and_display_files(dnf, dnfiles);
-			if (ENABLE_FEATURE_CLEAN_UP)
-				free(dnf);
+			ଯଦି (ENABLE_FEATURE_CLEAN_UP)
+				ମୁକ୍ତ(dnf);
 		}
-		if (dndirs > 0) {
+		ଯଦି (dndirs > 0) {
 			dnsort(dnd, dndirs);
 			scan_and_display_dirs_recur(dnd, dnfiles == 0);
-			if (ENABLE_FEATURE_CLEAN_UP)
-				free(dnd);
+			ଯଦି (ENABLE_FEATURE_CLEAN_UP)
+				ମୁକ୍ତ(dnd);
 		}
 	}
 
-	if (ENABLE_FEATURE_CLEAN_UP)
+	ଯଦି (ENABLE_FEATURE_CLEAN_UP)
 		dfree(dnp);
-	return G.exit_code;
+	ଫେରନ୍ତୁ G.exit_code;
 }

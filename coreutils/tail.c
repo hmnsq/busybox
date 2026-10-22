@@ -68,73 +68,73 @@
 //usage:       "$ tail -n 1 /etc/resolv.conf\n"
 //usage:       "nameserver 10.0.0.1\n"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#ଅନ୍ତର୍ଭାଵ "libbb.h"
+#ଅନ୍ତର୍ଭାଵ "common_bufsiz.h"
 
-struct globals {
-	bool from_top;
+ସଂରଚନା globals {
+	bool from_ଶୀର୍ଷ;
 	bool exitcode;
 } FIX_ALIASING;
-#define G (*(struct globals*)bb_common_bufsiz1)
-#define INIT_G() do { setup_common_bufsiz(); } while (0)
+#define G (*(ସଂରଚନା globals*)bb_common_bufsiz1)
+#define INIT_G() କର { setup_common_bufsiz(); } ଯେତେବେଳେ (0)
 
-static void tail_xprint_header(const char *fmt, const char *filename)
+ସ୍ଥିର ଶୂନ୍ୟ tail_xprint_header(ଅଚଳ ଅକ୍ଷର *fmt, ଅଚଳ ଅକ୍ଷର *filename)
 {
-	if (fdprintf(STDOUT_FILENO, fmt, filename) < 0)
+	ଯଦି (fdprintf(STDOUT_FILENO, fmt, filename) < 0)
 		bb_perror_nomsg_and_die();
 }
 
-static ssize_t tail_read(int fd, char *buf, size_t count)
+ସ୍ଥିର ssize_t tail_read(ପୂର୍ଣ୍ଣସଂଖ୍ୟା fd, ଅକ୍ଷର *buf, size_t ଗଣନା_2)
 {
 	ssize_t r;
 
-	r = full_read(fd, buf, count);
-	if (r < 0) {
-		bb_simple_perror_msg(bb_msg_read_error);
+	r = full_read(fd, buf, ଗଣନା_2);
+	ଯଦି (r < 0) {
+		bb_simple_perror_ସନ୍ଦେଶ(bb_ସନ୍ଦେଶ_read_error);
 		G.exitcode = EXIT_FAILURE;
 	}
 
-	return r;
+	ଫେରନ୍ତୁ r;
 }
 
 #define header_fmt_str "\n==> %s <==\n"
 
-static unsigned eat_num(const char *p)
+ସ୍ଥିର unsigned eat_ଅଙ୍କ(ଅଚଳ ଅକ୍ଷର *p)
 {
-	if (*p == '-')
+	ଯଦି (*p == '-')
 		p++;
-	else if (*p == '+') {
+	ଅନ୍ୟଥା ଯଦି (*p == '+') {
 		p++;
-		G.from_top = 1;
+		G.from_ଶୀର୍ଷ = 1;
 	}
-	return xatou_sfx(p, bkm_suffixes);
+	ଫେରନ୍ତୁ xatou_sfx(p, bkm_suffixes);
 }
 
-int tail_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int tail_main(int argc, char **argv)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା tail_main(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc, ଅକ୍ଷର **argv) MAIN_EXTERNALLY_VISIBLE;
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା tail_main(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc, ଅକ୍ଷର **argv)
 {
-	unsigned count = 10;
+	unsigned ଗଣନା_2 = 10;
 	unsigned sleep_period = 1;
-	const char *str_c, *str_n;
+	ଅଚଳ ଅକ୍ଷର *str_c, *str_n;
 
-	char *tailbuf;
+	ଅକ୍ଷର *tailbuf;
 	size_t tailbufsize;
 	unsigned header_threshold = 1;
 	unsigned nfiles;
-	int i, opt;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା i, opt;
 
-	int *fds;
-	const char *fmt;
-	int prev_fd;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା *fds;
+	ଅଚଳ ଅକ୍ଷର *fmt;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା prev_fd;
 
 	INIT_G();
 
-#if ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_TAIL
+#ଯଦି ENABLE_INCLUDE_SUSv2 || ENABLE_FEATURE_FANCY_TAIL
 	/* Allow legacy syntax of an initial numeric option without -n. */
-	if (argv[1] && (argv[1][0] == '+' || argv[1][0] == '-')
+	ଯଦି (argv[1] && (argv[1][0] == '+' || argv[1][0] == '-')
 	 && isdigit(argv[1][1])
 	) {
-		count = eat_num(argv[1]);
+		ଗଣନା_2 = eat_ଅଙ୍କ(argv[1]);
 		argv++;
 		argc--;
 	}
@@ -147,114 +147,114 @@ int tail_main(int argc, char **argv)
 			&str_c, &str_n IF_FEATURE_FANCY_TAIL(,&sleep_period)
 	);
 #define FOLLOW (opt & 0x1)
-#define COUNT_BYTES (opt & 0x2)
+#define ଗଣନା_BYTES (opt & 0x2)
 	//if (opt & 0x1) // -f
-	if (opt & 0x2) count = eat_num(str_c); // -c
-	if (opt & 0x4) count = eat_num(str_n); // -n
-#if ENABLE_FEATURE_FANCY_TAIL
+	ଯଦି (opt & 0x2) ଗଣନା_2 = eat_ଅଙ୍କ(str_c); // -c
+	ଯଦି (opt & 0x4) ଗଣନା_2 = eat_ଅଙ୍କ(str_n); // -n
+#ଯଦି ENABLE_FEATURE_FANCY_TAIL
 	/* q: make it impossible for nfiles to be > header_threshold */
-	if (opt & 0x8) header_threshold = UINT_MAX; // -q
+	ଯଦି (opt & 0x8) header_threshold = UINT_MAX; // -q
 	//if (opt & 0x10) // -s
-	if (opt & 0x20) header_threshold = 0; // -v
+	ଯଦି (opt & 0x20) header_threshold = 0; // -v
 # define FOLLOW_RETRY (opt & 0x40)
-#else
+#ଅନ୍ୟଥା
 # define FOLLOW_RETRY 0
 #endif
 	argc -= optind;
 	argv += optind;
 
 	/* open all the files */
-	fds = xmalloc(sizeof(fds[0]) * (argc + 1));
-	if (!argv[0]) {
-		struct stat statbuf;
+	fds = xmalloc(ଆକାର(fds[0]) * (argc + 1));
+	ଯଦି (!argv[0]) {
+		ସଂରଚନା stat statbuf;
 
-		if (fstat(STDIN_FILENO, &statbuf) == 0
+		ଯଦି (fstat(STDIN_FILENO, &statbuf) == 0
 		 && S_ISFIFO(statbuf.st_mode)
 		) {
 			opt &= ~1; /* clear FOLLOW */
 		}
-		argv[0] = (char *) bb_msg_standard_input;
+		argv[0] = (ଅକ୍ଷର *) bb_ସନ୍ଦେଶ_standard_ନିବେଶ;
 	}
 	nfiles = i = 0;
-	do {
-		int fd = open_or_warn_stdin(argv[i]);
-		if (fd < 0 && !FOLLOW_RETRY) {
+	କର {
+		ପୂର୍ଣ୍ଣସଂଖ୍ୟା fd = open_or_warn_stdin(argv[i]);
+		ଯଦି (fd < 0 && !FOLLOW_RETRY) {
 			G.exitcode = EXIT_FAILURE;
-			continue;
+			ଜାରି;
 		}
 		fds[nfiles] = fd;
 		argv[nfiles++] = argv[i];
-	} while (++i < argc);
+	} ଯେତେବେଳେ (++i < argc);
 
-	if (!nfiles)
-		bb_simple_error_msg_and_die("no files");
+	ଯଦି (!nfiles)
+		bb_simple_error_ସନ୍ଦେଶ_and_die("no files");
 
 	/* prepare the buffer */
 	tailbufsize = BUFSIZ;
-	if (!G.from_top && COUNT_BYTES) {
-		if (tailbufsize < count + BUFSIZ) {
-			tailbufsize = count + BUFSIZ;
+	ଯଦି (!G.from_ଶୀର୍ଷ && ଗଣନା_BYTES) {
+		ଯଦି (tailbufsize < ଗଣନା_2 + BUFSIZ) {
+			tailbufsize = ଗଣନା_2 + BUFSIZ;
 		}
 	}
 	/* tail -c1024m REGULAR_FILE doesn't really need 1G mem block.
 	 * (In fact, it doesn't need ANY memory). So delay allocation.
 	 */
-	tailbuf = NULL;
+	tailbuf = ଖାଲି;
 
 	/* tail the files */
 
 	fmt = header_fmt_str + 1; /* skip leading newline in the header on the first output */
 	i = 0;
-	do {
-		char *buf;
-		int taillen;
-		int newlines_seen;
+	କର {
+		ଅକ୍ଷର *buf;
+		ପୂର୍ଣ୍ଣସଂଖ୍ୟା taillen;
+		ପୂର୍ଣ୍ଣସଂଖ୍ୟା newlines_seen;
 		unsigned seen;
-		int nread;
-		int fd = fds[i];
+		ପୂର୍ଣ୍ଣସଂଖ୍ୟା nread;
+		ପୂର୍ଣ୍ଣସଂଖ୍ୟା fd = fds[i];
 
-		if (ENABLE_FEATURE_FANCY_TAIL && fd < 0)
-			continue; /* may happen with -F */
+		ଯଦି (ENABLE_FEATURE_FANCY_TAIL && fd < 0)
+			ଜାରି; /* may happen with -F */
 
-		if (nfiles > header_threshold) {
+		ଯଦି (nfiles > header_threshold) {
 			tail_xprint_header(fmt, argv[i]);
 			fmt = header_fmt_str;
 		}
 
-		if (!G.from_top) {
+		ଯଦି (!G.from_ଶୀର୍ଷ) {
 			off_t current = lseek(fd, 0, SEEK_END);
-			if (current > 0) {
+			ଯଦି (current > 0) {
 				unsigned off;
-				if (COUNT_BYTES) {
+				ଯଦି (ଗଣନା_BYTES) {
 				/* Optimizing count-bytes case if the file is seekable.
 				 * Beware of backing up too far.
 				 * Also we exclude files with size 0 (because of /proc/xxx) */
-					if (count == 0)
-						continue; /* showing zero bytes is easy :) */
-					current -= count;
-					if (current < 0)
+					ଯଦି (ଗଣନା_2 == 0)
+						ଜାରି; /* showing zero bytes is easy :) */
+					current -= ଗଣନା_2;
+					ଯଦି (current < 0)
 						current = 0;
 					xlseek(fd, current, SEEK_SET);
-					bb_copyfd_size(fd, STDOUT_FILENO, count);
-					continue;
+					bb_copyfd_size(fd, STDOUT_FILENO, ଗଣନା_2);
+					ଜାରି;
 				}
-#if 1 /* This is technically incorrect for *LONG* strings, but very useful */
+#ଯଦି 1 /* This is technically incorrect for *LONG* strings, but very useful */
 				/* Optimizing count-lines case if the file is seekable.
 				 * We assume the lines are <64k.
 				 * (Users complain that tail takes too long
 				 * on multi-gigabyte files) */
-				off = (count | 0xf); /* for small counts, be more paranoid */
-				if (off > (INT_MAX / (64*1024)))
+				off = (ଗଣନା_2 | 0xf); /* for small counts, be more paranoid */
+				ଯଦି (off > (INT_MAX / (64*1024)))
 					off = (INT_MAX / (64*1024));
 				current -= off * (64*1024);
-				if (current < 0)
+				ଯଦି (current < 0)
 					current = 0;
 				xlseek(fd, current, SEEK_SET);
 #endif
 			}
 		}
 
-		if (!tailbuf)
+		ଯଦି (!tailbuf)
 			tailbuf = xmalloc(tailbufsize);
 
 		buf = tailbuf;
@@ -263,64 +263,64 @@ int tail_main(int argc, char **argv)
 		 * Used only by +N code ("start from Nth", 1-based): */
 		seen = 1;
 		newlines_seen = 0;
-		while ((nread = tail_read(fd, buf, tailbufsize - taillen)) > 0) {
-			if (G.from_top) {
-				int nwrite = nread;
-				if (seen < count) {
+		ଯେତେବେଳେ ((nread = tail_read(fd, buf, tailbufsize - taillen)) > 0) {
+			ଯଦି (G.from_ଶୀର୍ଷ) {
+				ପୂର୍ଣ୍ଣସଂଖ୍ୟା nwrite = nread;
+				ଯଦି (seen < ଗଣନା_2) {
 					/* We need to skip a few more bytes/lines */
-					if (COUNT_BYTES) {
-						nwrite -= (count - seen);
+					ଯଦି (ଗଣନା_BYTES) {
+						nwrite -= (ଗଣନା_2 - seen);
 						seen += nread;
-					} else {
-						char *s = buf;
-						do {
+					} ଅନ୍ୟଥା {
+						ଅକ୍ଷର *s = buf;
+						କର {
 							--nwrite;
-							if (*s++ == '\n' && ++seen == count) {
-								break;
+							ଯଦି (*s++ == '\n' && ++seen == ଗଣନା_2) {
+								ଭାଙ୍ଗ;
 							}
-						} while (nwrite);
+						} ଯେତେବେଳେ (nwrite);
 					}
 				}
-				if (nwrite > 0)
+				ଯଦି (nwrite > 0)
 					xwrite(STDOUT_FILENO, buf + nread - nwrite, nwrite);
-			} else if (count) {
-				if (COUNT_BYTES) {
+			} ଅନ୍ୟଥା ଯଦି (ଗଣନା_2) {
+				ଯଦି (ଗଣନା_BYTES) {
 					taillen += nread;
-					if (taillen > (int)count) {
-						memmove(tailbuf, tailbuf + taillen - count, count);
-						taillen = count;
+					ଯଦି (taillen > (ପୂର୍ଣ୍ଣସଂଖ୍ୟା)ଗଣନା_2) {
+						memmove(tailbuf, tailbuf + taillen - ଗଣନା_2, ଗଣନା_2);
+						taillen = ଗଣନା_2;
 					}
-				} else {
-					int k = nread;
-					int newlines_in_buf = 0;
+				} ଅନ୍ୟଥା {
+					ପୂର୍ଣ୍ଣସଂଖ୍ୟା k = nread;
+					ପୂର୍ଣ୍ଣସଂଖ୍ୟା newlines_in_buf = 0;
 
-					do { /* count '\n' in last read */
+					କର { /* count '\n' in last read */
 						k--;
-						if (buf[k] == '\n') {
+						ଯଦି (buf[k] == '\n') {
 							newlines_in_buf++;
 						}
-					} while (k);
+					} ଯେତେବେଳେ (k);
 
-					if (newlines_seen + newlines_in_buf < (int)count) {
+					ଯଦି (newlines_seen + newlines_in_buf < (ପୂର୍ଣ୍ଣସଂଖ୍ୟା)ଗଣନା_2) {
 						newlines_seen += newlines_in_buf;
 						taillen += nread;
-					} else {
-						int extra = (buf[nread-1] != '\n');
-						char *s;
+					} ଅନ୍ୟଥା {
+						ପୂର୍ଣ୍ଣସଂଖ୍ୟା extra = (buf[nread-1] != '\n');
+						ଅକ୍ଷର *s;
 
-						k = newlines_seen + newlines_in_buf + extra - count;
+						k = newlines_seen + newlines_in_buf + extra - ଗଣନା_2;
 						s = tailbuf;
-						while (k) {
-							if (*s == '\n') {
+						ଯେତେବେଳେ (k) {
+							ଯଦି (*s == '\n') {
 								k--;
 							}
 							s++;
 						}
 						taillen += nread - (s - tailbuf);
 						memmove(tailbuf, s, taillen);
-						newlines_seen = count - extra;
+						newlines_seen = ଗଣନା_2 - extra;
 					}
-					if (tailbufsize < (size_t)taillen + BUFSIZ) {
+					ଯଦି (tailbufsize < (size_t)taillen + BUFSIZ) {
 						tailbufsize = taillen + BUFSIZ;
 						tailbuf = xrealloc(tailbuf, tailbufsize);
 					}
@@ -328,31 +328,31 @@ int tail_main(int argc, char **argv)
 				buf = tailbuf + taillen;
 			}
 		} /* while (tail_read() > 0) */
-		if (!G.from_top) {
+		ଯଦି (!G.from_ଶୀର୍ଷ) {
 			xwrite(STDOUT_FILENO, tailbuf, taillen);
 		}
-	} while (++i < nfiles);
+	} ଯେତେବେଳେ (++i < nfiles);
 	prev_fd = fds[i-1];
 
 	tailbuf = xrealloc(tailbuf, BUFSIZ);
 
-	fmt = NULL;
+	fmt = ଖାଲି;
 
-	if (FOLLOW) while (1) {
+	ଯଦି (FOLLOW) ଯେତେବେଳେ (1) {
 		sleep(sleep_period);
 
 		i = 0;
-		do {
-			int nread;
-			const char *filename = argv[i];
-			int fd = fds[i];
-			int new_fd = -1;
-			struct stat sbuf;
+		କର {
+			ପୂର୍ଣ୍ଣସଂଖ୍ୟା nread;
+			ଅଚଳ ଅକ୍ଷର *filename = argv[i];
+			ପୂର୍ଣ୍ଣସଂଖ୍ୟା fd = fds[i];
+			ପୂର୍ଣ୍ଣସଂଖ୍ୟା new_fd = -1;
+			ସଂରଚନା stat sbuf;
 
-			if (FOLLOW_RETRY) {
-				struct stat fsbuf;
+			ଯଦି (FOLLOW_RETRY) {
+				ସଂରଚନା stat fsbuf;
 
-				if (fd < 0
+				ଯଦି (fd < 0
 				 || fstat(fd, &fsbuf) < 0
 				 || stat(filename, &sbuf) < 0
 				 || fsbuf.st_dev != sbuf.st_dev
@@ -360,62 +360,62 @@ int tail_main(int argc, char **argv)
 				) {
 					/* Looks like file has been created/renamed/deleted */
 					new_fd = open(filename, O_RDONLY);
-					if (new_fd >= 0) {
-						bb_error_msg("%s has %s; following end of new file",
+					ଯଦି (new_fd >= 0) {
+						bb_error_ସନ୍ଦେଶ("%s has %s; following end of new file",
 							filename, (fd < 0) ? "appeared" : "been replaced"
 						);
-						if (fd < 0) {
+						ଯଦି (fd < 0) {
 							/* No previously open fd for this file,
 							 * start using new_fd immediately. */
 							fds[i] = fd = new_fd;
 							new_fd = -1;
 						}
-					} else if (fd >= 0) {
-						bb_perror_msg("%s has been renamed or deleted", filename);
+					} ଅନ୍ୟଥା ଯଦି (fd >= 0) {
+						bb_perror_ସନ୍ଦେଶ("%s has been renamed or deleted", filename);
 					}
 				}
 			}
-			if (ENABLE_FEATURE_FANCY_TAIL && fd < 0)
-				continue;
-			if (nfiles > header_threshold) {
+			ଯଦି (ENABLE_FEATURE_FANCY_TAIL && fd < 0)
+				ଜାରି;
+			ଯଦି (nfiles > header_threshold) {
 				fmt = header_fmt_str;
 			}
-			for (;;) {
+			ପାଇଁ (;;) {
 				/* tail -f keeps following files even if they are truncated */
 				/* /proc files report zero st_size, don't lseek them */
-				if (fstat(fd, &sbuf) == 0
+				ଯଦି (fstat(fd, &sbuf) == 0
 				 /* && S_ISREG(sbuf.st_mode) TODO? */
 				 && sbuf.st_size > 0
 				) {
 					off_t current = lseek(fd, 0, SEEK_CUR);
-					if (sbuf.st_size < current) {
+					ଯଦି (sbuf.st_size < current) {
 						//bb_perror_msg("%s: file truncated", filename); - says coreutils 8.32
 						xlseek(fd, 0, SEEK_SET);
 					}
 				}
 
 				nread = tail_read(fd, tailbuf, BUFSIZ);
-				if (nread <= 0) {
-					if (new_fd < 0)
-						break;
+				ଯଦି (nread <= 0) {
+					ଯଦି (new_fd < 0)
+						ଭାଙ୍ଗ;
 					/* Switch to "tail -F"ing the new file */
 					xmove_fd(new_fd, fd);
 					new_fd = -1;
-					continue;
+					ଜାରି;
 				}
-				if (fmt && (fd != prev_fd)) {
+				ଯଦି (fmt && (fd != prev_fd)) {
 					tail_xprint_header(fmt, filename);
-					fmt = NULL;
+					fmt = ଖାଲି;
 					prev_fd = fd;
 				}
 				xwrite(STDOUT_FILENO, tailbuf, nread);
 			}
-		} while (++i < nfiles);
+		} ଯେତେବେଳେ (++i < nfiles);
 	} /* while (1) */
 
-	if (ENABLE_FEATURE_CLEAN_UP) {
-		free(fds);
-		free(tailbuf);
+	ଯଦି (ENABLE_FEATURE_CLEAN_UP) {
+		ମୁକ୍ତ(fds);
+		ମୁକ୍ତ(tailbuf);
 	}
-	return G.exitcode;
+	ଫେରନ୍ତୁ G.exitcode;
 }

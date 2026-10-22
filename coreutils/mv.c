@@ -36,19 +36,19 @@
 //usage:#define mv_example_usage
 //usage:       "$ mv /tmp/foo /bin/bar\n"
 
-#include "libbb.h"
-#include "libcoreutils/coreutils.h"
+#ଅନ୍ତର୍ଭାଵ "libbb.h"
+#ଅନ୍ତର୍ଭାଵ "libcoreutils/coreutils.h"
 
-int mv_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int mv_main(int argc, char **argv)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା mv_main(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc, ଅକ୍ଷର **argv) MAIN_EXTERNALLY_VISIBLE;
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା mv_main(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc, ଅକ୍ଷର **argv)
 {
-	struct stat statbuf;
-	const char *last;
-	const char *dest;
+	ସଂରଚନା stat statbuf;
+	ଅଚଳ ଅକ୍ଷର *last;
+	ଅଚଳ ଅକ୍ଷର *dest;
 	unsigned flags;
-	int dest_exists;
-	int status = 0;
-	int copy_flag = 0;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା dest_exists;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା status = 0;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା copy_flag = 0;
 
 #define OPT_FORCE       (1 << 0)
 #define OPT_INTERACTIVE (1 << 1)
@@ -78,114 +78,114 @@ int mv_main(int argc, char **argv)
 	argc -= optind;
 	argv += optind;
 
-	if (!(flags & OPT_DESTDIR)) {
+	ଯଦି (!(flags & OPT_DESTDIR)) {
 		last = argv[argc - 1];
-		if (argc < 2)
+		ଯଦି (argc < 2)
 			bb_show_usage();
-		if (argc != 2) {
-			if (flags & OPT_DESTNOTDIR)
+		ଯଦି (argc != 2) {
+			ଯଦି (flags & OPT_DESTNOTDIR)
 				bb_show_usage();
 			/* "mv A B C... DIR" - target must be dir */
-		} else /* argc == 2 */ {
+		} ଅନ୍ୟଥା /* argc == 2 */ {
 			/* "mv A B" - only case where target can be not a dir */
 			dest_exists = cp_mv_stat(last, &statbuf);
-			if (dest_exists < 0) { /* error other than ENOENT */
-				return EXIT_FAILURE;
+			ଯଦି (dest_exists < 0) { /* error other than ENOENT */
+				ଫେରନ୍ତୁ EXIT_FAILURE;
 			}
-			if (!(dest_exists & 2)) {
+			ଯଦି (!(dest_exists & 2)) {
 				/* last is not a directory */
 				dest = last;
-				goto DO_MOVE;
+				ଯାଅ DO_MOVE;
 			}
 			/* last is a directory */
-			if (flags & OPT_DESTNOTDIR) {
-				if (stat(argv[0], &statbuf) == 0 && !S_ISDIR(statbuf.st_mode))
-					bb_error_msg_and_die("'%s' is a directory", last);
+			ଯଦି (flags & OPT_DESTNOTDIR) {
+				ଯଦି (stat(argv[0], &statbuf) == 0 && !S_ISDIR(statbuf.st_mode))
+					bb_error_ସନ୍ଦେଶ_and_die("'%s' is a directory", last);
 				/* "mv -T DIR1 DIR2" is allowed (renames a dir) */
 				dest = last;
-				goto DO_MOVE;
+				ଯାଅ DO_MOVE;
 			}
 			/* else: fall through into "do { move SRC to DIR/SRC } while" loop */
 		}
 	}
 	/* else: last is DIR from "-t DIR" */
 
-	do {
+	କର {
 		dest = concat_path_file(last, bb_get_last_path_component_strip(*argv));
 		dest_exists = cp_mv_stat(dest, &statbuf);
-		if (dest_exists < 0) {
-			goto RET_1;
+		ଯଦି (dest_exists < 0) {
+			ଯାଅ RET_1;
 		}
 
  DO_MOVE:
-		if (dest_exists) {
-			if (flags & OPT_NOCLOBBER)
-				goto RET_0;
-			if (!(flags & OPT_FORCE)
+		ଯଦି (dest_exists) {
+			ଯଦି (flags & OPT_NOCLOBBER)
+				ଯାଅ RET_0;
+			ଯଦି (!(flags & OPT_FORCE)
 			 && ((access(dest, W_OK) < 0 && isatty(0))
 			    || (flags & OPT_INTERACTIVE))
 			) {
-				if (fprintf(stderr, "mv: overwrite '%s'? ", dest) < 0) {
-					goto RET_1;  /* Ouch! fprintf failed! */
+				ଯଦି (fprintf(stderr, "mv: overwrite '%s'? ", dest) < 0) {
+					ଯାଅ RET_1;  /* Ouch! fprintf failed! */
 				}
-				if (!bb_ask_y_confirmation()) {
-					goto RET_0;
+				ଯଦି (!bb_ask_y_confirmation()) {
+					ଯାଅ RET_0;
 				}
 			}
 		}
 
-		if (rename(*argv, dest) < 0) {
-			int source_exists;
+		ଯଦି (rename(*argv, dest) < 0) {
+			ପୂର୍ଣ୍ଣସଂଖ୍ୟା source_exists;
 
-			if (errno != EXDEV
+			ଯଦି (errno != EXDEV
 			 || (source_exists = cp_mv_stat2(*argv, &statbuf, lstat)) < 1
 			) {
-				bb_perror_msg("can't rename '%s'", *argv);
-			} else {
-				static const char fmt[] ALIGN1 =
+				bb_perror_ସନ୍ଦେଶ("can't rename '%s'", *argv);
+			} ଅନ୍ୟଥା {
+				ସ୍ଥିର ଅଚଳ ଅକ୍ଷର fmt[] ALIGN1 =
 					"can't overwrite %sdirectory with %sdirectory";
 
-				if (dest_exists) {
-					if (dest_exists == 3) {
-						if (source_exists != 3) {
-							bb_error_msg(fmt, "", "non-");
-							goto RET_1;
+				ଯଦି (dest_exists) {
+					ଯଦି (dest_exists == 3) {
+						ଯଦି (source_exists != 3) {
+							bb_error_ସନ୍ଦେଶ(fmt, "", "non-");
+							ଯାଅ RET_1;
 						}
-					} else {
-						if (source_exists == 3) {
-							bb_error_msg(fmt, "non-", "");
-							goto RET_1;
+					} ଅନ୍ୟଥା {
+						ଯଦି (source_exists == 3) {
+							bb_error_ସନ୍ଦେଶ(fmt, "non-", "");
+							ଯାଅ RET_1;
 						}
 					}
-					if (unlink(dest) < 0) {
-						bb_perror_msg("can't remove '%s'", dest);
-						goto RET_1;
+					ଯଦି (unlink(dest) < 0) {
+						bb_perror_ସନ୍ଦେଶ("can't remove '%s'", dest);
+						ଯାଅ RET_1;
 					}
 				}
 				/* FILEUTILS_RECUR also prevents nasties like
 				 * "read from device and write contents to dst"
 				 * instead of "create same device node" */
 				copy_flag = FILEUTILS_RECUR | FILEUTILS_PRESERVE_STATUS;
-#if ENABLE_SELINUX
+#ଯଦି ENABLE_SELINUX
 				copy_flag |= FILEUTILS_PRESERVE_SECURITY_CONTEXT;
 #endif
-				if ((copy_file(*argv, dest, copy_flag) >= 0)
+				ଯଦି ((copy_file(*argv, dest, copy_flag) >= 0)
 				 && (remove_file(*argv, FILEUTILS_RECUR | FILEUTILS_FORCE) >= 0)
 				) {
-					goto RET_0;
+					ଯାଅ RET_0;
 				}
 			}
  RET_1:
 			status = 1;
 		}
  RET_0:
-		if (flags & OPT_VERBOSE) {
+		ଯଦି (flags & OPT_VERBOSE) {
 			printf("'%s' -> '%s'\n", *argv, dest);
 		}
-		if (dest != last) {
-			free((void *) dest);
+		ଯଦି (dest != last) {
+			ମୁକ୍ତ((ଶୂନ୍ୟ *) dest);
 		}
-	} while (*++argv && *argv != last);
+	} ଯେତେବେଳେ (*++argv && *argv != last);
 
-	return status;
+	ଫେରନ୍ତୁ status;
 }

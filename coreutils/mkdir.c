@@ -44,60 +44,60 @@
 //usage:       "/tmp/foo/bar/baz: No such file or directory\n"
 //usage:       "$ mkdir -p /tmp/foo/bar/baz\n"
 
-#include "libbb.h"
+#ଅନ୍ତର୍ଭାଵ "libbb.h"
 
 /* This is a NOFORK applet. Be very careful! */
 
-int mkdir_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int mkdir_main(int argc UNUSED_PARAM, char **argv)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା mkdir_main(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc, ଅକ୍ଷର **argv) MAIN_EXTERNALLY_VISIBLE;
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା mkdir_main(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc UNUSED_PARAM, ଅକ୍ଷର **argv)
 {
 	long mode = -1;
-	int status = EXIT_SUCCESS;
-	int flags = 0;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା status = EXIT_SUCCESS;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା flags = 0;
 	unsigned opt;
-	char *smode;
-#if ENABLE_SELINUX
+	ଅକ୍ଷର *smode;
+#ଯଦି ENABLE_SELINUX
 	security_context_t scontext;
 #endif
 
 	opt = getopt32long(argv, "m:pv" IF_SELINUX("Z:"),
 			"mode\0"    Required_argument "m"
 			"parents\0" No_argument       "p"
-# if ENABLE_SELINUX
+# ଯଦି ENABLE_SELINUX
 			"context\0" Required_argument "Z"
 # endif
-# if ENABLE_FEATURE_VERBOSE
+# ଯଦି ENABLE_FEATURE_VERBOSE
 			"verbose\0" No_argument       "v"
 # endif
 			, &smode IF_SELINUX(,&scontext)
 	);
-	if (opt & 1) {
+	ଯଦି (opt & 1) {
 		mode_t mmode = bb_parse_mode(smode, 0777);
-		if (mmode == (mode_t)-1) {
-			bb_error_msg_and_die("invalid mode '%s'", smode);
+		ଯଦି (mmode == (mode_t)-1) {
+			bb_error_ସନ୍ଦେଶ_and_die("invalid mode '%s'", smode);
 		}
 		mode = mmode;
 	}
-	if (opt & 2)
+	ଯଦି (opt & 2)
 		flags |= FILEUTILS_RECUR;
-	if ((opt & 4) && FILEUTILS_VERBOSE)
+	ଯଦି ((opt & 4) && FILEUTILS_VERBOSE)
 		flags |= FILEUTILS_VERBOSE;
-#if ENABLE_SELINUX
-	if (opt & 8) {
+#ଯଦି ENABLE_SELINUX
+	ଯଦି (opt & 8) {
 		selinux_or_die();
 		setfscreatecon_or_die(scontext);
 	}
 #endif
 
 	argv += optind;
-	if (!argv[0])
+	ଯଦି (!argv[0])
 		bb_show_usage();
 
-	do {
-		if (bb_make_directory(*argv, mode, flags)) {
+	କର {
+		ଯଦି (bb_make_directory(*argv, mode, flags)) {
 			status = EXIT_FAILURE;
 		}
-	} while (*++argv);
+	} ଯେତେବେଳେ (*++argv);
 
-	return status;
+	ଫେରନ୍ତୁ status;
 }

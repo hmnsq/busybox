@@ -35,42 +35,42 @@
 //usage:#define rm_example_usage
 //usage:       "$ rm -rf /tmp/foo\n"
 
-#include "libbb.h"
+#ଅନ୍ତର୍ଭାଵ "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-int rm_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int rm_main(int argc UNUSED_PARAM, char **argv)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା rm_main(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc, ଅକ୍ଷର **argv) MAIN_EXTERNALLY_VISIBLE;
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା rm_main(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc UNUSED_PARAM, ଅକ୍ଷର **argv)
 {
-	int status = 0;
-	int flags = 0;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା status = 0;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା flags = 0;
 	unsigned opt;
 
 	opt = getopt32(argv, "^" "fiRrv" "\0" "f-i:i-f");
 	argv += optind;
-	if (opt & 1)
+	ଯଦି (opt & 1)
 		flags |= FILEUTILS_FORCE;
-	if (opt & 2)
+	ଯଦି (opt & 2)
 		flags |= FILEUTILS_INTERACTIVE;
-	if (opt & (8|4))
+	ଯଦି (opt & (8|4))
 		flags |= FILEUTILS_RECUR;
-	if ((opt & 16) && FILEUTILS_VERBOSE)
+	ଯଦି ((opt & 16) && FILEUTILS_VERBOSE)
 		flags |= FILEUTILS_VERBOSE;
 
-	if (*argv != NULL) {
-		do {
-			const char *base = bb_get_last_path_component_strip(*argv);
+	ଯଦି (*argv != ଖାଲି) {
+		କର {
+			ଅଚଳ ଅକ୍ଷର *base = bb_get_last_path_component_strip(*argv);
 
-			if (DOT_OR_DOTDOT(base)) {
-				bb_simple_error_msg("can't remove '.' or '..'");
-			} else if (remove_file(*argv, flags) >= 0) {
-				continue;
+			ଯଦି (DOT_OR_DOTDOT(base)) {
+				bb_simple_error_ସନ୍ଦେଶ("can't remove '.' or '..'");
+			} ଅନ୍ୟଥା ଯଦି (remove_file(*argv, flags) >= 0) {
+				ଜାରି;
 			}
 			status = 1;
-		} while (*++argv);
-	} else if (!(flags & FILEUTILS_FORCE)) {
+		} ଯେତେବେଳେ (*++argv);
+	} ଅନ୍ୟଥା ଯଦି (!(flags & FILEUTILS_FORCE)) {
 		bb_show_usage();
 	}
 
-	return status;
+	ଫେରନ୍ତୁ status;
 }

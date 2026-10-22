@@ -26,33 +26,33 @@
 //usage:#define truncate_example_usage
 //usage:	"$ truncate -s 1G foo"
 
-#include "libbb.h"
+#ଅନ୍ତର୍ଭାଵ "libbb.h"
 
-#if ENABLE_LFS
+#ଯଦି ENABLE_LFS
 # define XATOU_SFX xatoull_sfx
-#else
+#ଅନ୍ୟଥା
 # define XATOU_SFX xatoul_sfx
 #endif
 
 /* This is a NOFORK applet. Be very careful! */
 
-int truncate_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int truncate_main(int argc UNUSED_PARAM, char **argv)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା truncate_main(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc, ଅକ୍ଷର **argv) MAIN_EXTERNALLY_VISIBLE;
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା truncate_main(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc UNUSED_PARAM, ଅକ୍ଷର **argv)
 {
 	unsigned opts;
-	int flags = O_WRONLY | O_NONBLOCK;
-	int ret = EXIT_SUCCESS;
-	char *size_str;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା flags = O_WRONLY | O_NONBLOCK;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret = EXIT_SUCCESS;
+	ଅକ୍ଷର *size_str;
 	off_t size;
 
-	enum {
+	ଗଣନା {
 		OPT_NOCREATE  = (1 << 0),
 		OPT_SIZE = (1 << 1),
 	};
 
 	opts = getopt32(argv, "^" "cs:" "\0" "s:-1", &size_str);
 
-	if (!(opts & OPT_NOCREATE))
+	ଯଦି (!(opts & OPT_NOCREATE))
 		flags |= O_CREAT;
 
 	// TODO: coreutils 8.17 also support "m" (lowercase) suffix
@@ -62,19 +62,19 @@ int truncate_main(int argc UNUSED_PARAM, char **argv)
 	size = XATOU_SFX(size_str, kMG_suffixes);
 
 	argv += optind;
-	while (*argv) {
-		int fd = open(*argv, flags, 0666);
-		if (fd < 0) {
-			if (errno != ENOENT || !(opts & OPT_NOCREATE)) {
-				bb_perror_msg("%s: open", *argv);
+	ଯେତେବେଳେ (*argv) {
+		ପୂର୍ଣ୍ଣସଂଖ୍ୟା fd = open(*argv, flags, 0666);
+		ଯଦି (fd < 0) {
+			ଯଦି (errno != ENOENT || !(opts & OPT_NOCREATE)) {
+				bb_perror_ସନ୍ଦେଶ("%s: open", *argv);
 				ret = EXIT_FAILURE;
 			}
 			/* else: ENOENT && OPT_NOCREATE:
 			 * do not report error, exitcode is also 0.
 			 */
-		} else {
-			if (ftruncate(fd, size) == -1) {
-				bb_perror_msg("%s: truncate", *argv);
+		} ଅନ୍ୟଥା {
+			ଯଦି (ftruncate(fd, size) == -1) {
+				bb_perror_ସନ୍ଦେଶ("%s: truncate", *argv);
 				ret = EXIT_FAILURE;
 			}
 			xclose(fd);
@@ -82,5 +82,5 @@ int truncate_main(int argc UNUSED_PARAM, char **argv)
 		++argv;
 	}
 
-	return ret;
+	ଫେରନ୍ତୁ ret;
 }

@@ -26,7 +26,7 @@
 //usage:     "\n	-e	Treat ARGs as lines"
 //usage:     "\n	-i L-H	Treat numbers L-H as lines"
 
-#include "libbb.h"
+#ଅନ୍ତର୍ଭାଵ "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
@@ -42,15 +42,15 @@
  * If the required number of output lines is less than the total
  * we can stop shuffling early.
  */
-static void shuffle_lines(char **lines, unsigned numlines, unsigned outlines)
+ସ୍ଥିର ଶୂନ୍ୟ shuffle_ଧାଡ଼ିଗୁଡ଼ିକ(ଅକ୍ଷର **ଧାଡ଼ିଗୁଡ଼ିକ, unsigned numlines, unsigned outlines)
 {
 	srand(monotonic_us());
 
-	while (outlines != 0) {
-		char *tmp;
+	ଯେତେବେଳେ (outlines != 0) {
+		ଅକ୍ଷର *tmp;
 		unsigned r = rand();
 		/* RAND_MAX can be as small as 32767 */
-		if (numlines > RAND_MAX)
+		ଯଦି (numlines > RAND_MAX)
 			r ^= rand() << 15;
 		r %= numlines;
 //TODO: the above method is seriously non-uniform when numlines is very large.
@@ -59,9 +59,9 @@ static void shuffle_lines(char **lines, unsigned numlines, unsigned outlines)
 //are more likely: e.g. r=1 and r=0xf0000001 both map to 1,
 //whereas only one value, r=0xefffffff, maps to 0xefffffff.
 		numlines--;
-		tmp = lines[numlines];
-		lines[numlines] = lines[r];
-		lines[r] = tmp;
+		tmp = ଧାଡ଼ିଗୁଡ଼ିକ[numlines];
+		ଧାଡ଼ିଗୁଡ଼ିକ[numlines] = ଧାଡ଼ିଗୁଡ଼ିକ[r];
+		ଧାଡ଼ିଗୁଡ଼ିକ[r] = tmp;
 		outlines--;
 	}
 }
@@ -72,20 +72,20 @@ static void shuffle_lines(char **lines, unsigned numlines, unsigned outlines)
  */
 #define COMMON_PREFIX_HACK 0
 
-int shuf_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int shuf_main(int argc, char **argv)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା shuf_main(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc, ଅକ୍ଷର **argv) MAIN_EXTERNALLY_VISIBLE;
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା shuf_main(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc, ଅକ୍ଷର **argv)
 {
 	unsigned opts;
-	char *opt_i_str, *opt_n_str, *opt_o_str;
-	char **lines;
+	ଅକ୍ଷର *opt_i_str, *opt_n_str, *opt_o_str;
+	ଅକ୍ଷର **ଧାଡ଼ିଗୁଡ଼ିକ;
 	unsigned long long lo = lo;
 	unsigned numlines, outlines;
 	unsigned i;
-	char eol;
-#if COMMON_PREFIX_HACK
+	ଅକ୍ଷର eol;
+#ଯଦି COMMON_PREFIX_HACK
 	unsigned pfx_len = 0;
 	unsigned padding_width = padding_width;
-	const char *pfx = pfx;
+	ଅଚଳ ଅକ୍ଷର *pfx = pfx;
 #endif
 
 	opts = getopt32(argv, "^"
@@ -98,37 +98,37 @@ int shuf_main(int argc, char **argv)
 	argv += optind;
 
 	/* Prepare lines for shuffling - either: */
-	if (opts & OPT_e) {
+	ଯଦି (opts & OPT_e) {
 		/* make lines from command-line arguments */
 		numlines = argc;
-		lines = argv;
-	} else
-	if (opts & OPT_i) {
+		ଧାଡ଼ିଗୁଡ଼ିକ = argv;
+	} ଅନ୍ୟଥା
+	ଯଦି (opts & OPT_i) {
 		/* create a range of numbers */
 		unsigned long long hi;
-		char *dash;
+		ଅକ୍ଷର *dash;
 
-		if (argv[0])
+		ଯଦି (argv[0])
 			bb_show_usage();
 
 		dash = strchr(opt_i_str, '-');
-		if (!dash) {
-			bb_error_msg_and_die("bad range '%s'", opt_i_str);
+		ଯଦି (!dash) {
+			bb_error_ସନ୍ଦେଶ_and_die("bad range '%s'", opt_i_str);
 		}
 		*dash++ = '\0';
-#if COMMON_PREFIX_HACK
+#ଯଦି COMMON_PREFIX_HACK
 		{
-			const char *a = opt_i_str;
-			const char *b = dash;
+			ଅଚଳ ଅକ୍ଷର *a = opt_i_str;
+			ଅଚଳ ଅକ୍ଷର *b = dash;
 			/* Skip leading zeros (they may mask that common prefix does exist) */
-			while (*a == '0') a++;
-			while (*b == '0') b++;
+			ଯେତେବେଳେ (*a == '0') a++;
+			ଯେତେବେଳେ (*b == '0') b++;
 			/* Do we have a common prefix (long enough to bother)? */
 			padding_width = strlen(a);
-			if (padding_width > 5 && padding_width == strlen(b)) {
+			ଯଦି (padding_width > 5 && padding_width == strlen(b)) {
 				/* How long is it? */
 				pfx = a;
-				while (isdigit(*a) && *a == *b
+				ଯେତେବେଳେ (isdigit(*a) && *a == *b
 				 && a[1] /* "111111-111111" case: avoid xatoull("") */
 				) {
 					a++;
@@ -136,7 +136,7 @@ int shuf_main(int argc, char **argv)
 				}
 				pfx_len = a - pfx; /* can end up being 0 */
 				padding_width -= pfx_len;
-			} else {
+			} ଅନ୍ୟଥା {
 				/* Undo leading zero 'eating' (think "0-9") */
 				a = opt_i_str;
 				b = dash;
@@ -144,77 +144,77 @@ int shuf_main(int argc, char **argv)
 			lo = xatoull(a);
 			hi = xatoull(b);
 		}
-#else
+#ଅନ୍ୟଥା
 		lo = xatoull(opt_i_str);
 		hi = xatoull(dash);
 #endif
 		dash[-1] = '-';
-		if (hi < lo)
-			bb_error_msg_and_die("bad range '%s'", opt_i_str);
+		ଯଦି (hi < lo)
+			bb_error_ସନ୍ଦେଶ_and_die("bad range '%s'", opt_i_str);
 		hi -= lo;
-		if (sizeof(size_t) > sizeof(numlines)) {
-			if (hi >= UINT_MAX)
-				bb_error_msg_and_die("bad range '%s'", opt_i_str);
-		} else {
-			if (hi >= UINT_MAX / sizeof(lines[0]))
-				bb_error_msg_and_die("bad range '%s'", opt_i_str);
+		ଯଦି (ଆକାର(size_t) > ଆକାର(numlines)) {
+			ଯଦି (hi >= UINT_MAX)
+				bb_error_ସନ୍ଦେଶ_and_die("bad range '%s'", opt_i_str);
+		} ଅନ୍ୟଥା {
+			ଯଦି (hi >= UINT_MAX / ଆକାର(ଧାଡ଼ିଗୁଡ଼ିକ[0]))
+				bb_error_ସନ୍ଦେଶ_and_die("bad range '%s'", opt_i_str);
 		}
 
 		numlines = hi + 1;
-		lines = xmalloc((size_t)numlines * sizeof(lines[0]));
-		for (i = 0; i < numlines; i++) {
-			lines[i] = (char*)(uintptr_t)i;
+		ଧାଡ଼ିଗୁଡ଼ିକ = xmalloc((size_t)numlines * ଆକାର(ଧାଡ଼ିଗୁଡ଼ିକ[0]));
+		ପାଇଁ (i = 0; i < numlines; i++) {
+			ଧାଡ଼ିଗୁଡ଼ିକ[i] = (ଅକ୍ଷର*)(uintptr_t)i;
 		}
-	} else {
+	} ଅନ୍ୟଥା {
 		/* default - read lines from stdin or the input file */
 		FILE *fp;
-		const char *fname = "-";
+		ଅଚଳ ଅକ୍ଷର *fname = "-";
 
-		if (argv[0]) {
-			if (argv[1])
+		ଯଦି (argv[0]) {
+			ଯଦି (argv[1])
 				bb_show_usage();
 			fname = argv[0];
 		}
 
 		fp = xfopen_stdin(fname);
-		lines = NULL;
+		ଧାଡ଼ିଗୁଡ଼ିକ = ଖାଲି;
 		numlines = 0;
-		for (;;) {
-			char *line = xmalloc_fgetline(fp);
-			if (!line)
-				break;
-			lines = xrealloc_vector(lines, 6, numlines);
-			lines[numlines++] = line;
+		ପାଇଁ (;;) {
+			ଅକ୍ଷର *ଧାଡ଼ି = xmalloc_fgetline(fp);
+			ଯଦି (!ଧାଡ଼ି)
+				ଭାଙ୍ଗ;
+			ଧାଡ଼ିଗୁଡ଼ିକ = xrealloc_vector(ଧାଡ଼ିଗୁଡ଼ିକ, 6, numlines);
+			ଧାଡ଼ିଗୁଡ଼ିକ[numlines++] = ଧାଡ଼ି;
 		}
 		fclose_if_not_stdin(fp);
 	}
 
 	outlines = numlines;
-	if (opts & OPT_n) {
+	ଯଦି (opts & OPT_n) {
 		outlines = xatou(opt_n_str);
-		if (outlines > numlines)
+		ଯଦି (outlines > numlines)
 			outlines = numlines;
 	}
 
-	shuffle_lines(lines, numlines, outlines);
+	shuffle_ଧାଡ଼ିଗୁଡ଼ିକ(ଧାଡ଼ିଗୁଡ଼ିକ, numlines, outlines);
 
-	if (opts & OPT_o)
+	ଯଦି (opts & OPT_o)
 		xmove_fd(xopen(opt_o_str, O_WRONLY|O_CREAT|O_TRUNC), STDOUT_FILENO);
 
 	eol = '\n';
-	if (opts & OPT_z)
+	ଯଦି (opts & OPT_z)
 		eol = '\0';
 
-	for (i = numlines - outlines; i < numlines; i++) {
-		if (opts & OPT_i) {
-#if COMMON_PREFIX_HACK
-			if (pfx_len != 0)
-				printf("%.*s%0*llu%c", pfx_len, pfx, padding_width, lo + (uintptr_t)lines[i], eol);
-			else
+	ପାଇଁ (i = numlines - outlines; i < numlines; i++) {
+		ଯଦି (opts & OPT_i) {
+#ଯଦି COMMON_PREFIX_HACK
+			ଯଦି (pfx_len != 0)
+				printf("%.*s%0*llu%c", pfx_len, pfx, padding_width, lo + (uintptr_t)ଧାଡ଼ିଗୁଡ଼ିକ[i], eol);
+			ଅନ୍ୟଥା
 #endif
-				printf("%llu%c", lo + (uintptr_t)lines[i], eol);
-		} else
-			printf("%s%c", lines[i], eol);
+				printf("%llu%c", lo + (uintptr_t)ଧାଡ଼ିଗୁଡ଼ିକ[i], eol);
+		} ଅନ୍ୟଥା
+			printf("%s%c", ଧାଡ଼ିଗୁଡ଼ିକ[i], eol);
 	}
 
 	fflush_stdout_and_exit_SUCCESS();

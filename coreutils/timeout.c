@@ -45,42 +45,42 @@
 //usage:       "Default SIG: TERM."
 //usage:       "If it still exists in KILL_SECS seconds, send KILL.\n"
 
-#include "libbb.h"
+#ଅନ୍ତର୍ଭାଵ "libbb.h"
 
-static NOINLINE int timeout_wait(duration_t timeout, pid_t pid)
+ସ୍ଥିର NOINLINE ପୂର୍ଣ୍ଣସଂଖ୍ୟା timeout_wait(duration_t timeout, pid_t pid)
 {
 	/* Just sleep(HUGE_NUM); kill(parent) may kill wrong process! */
-	while (1) {
-#if ENABLE_FLOAT_DURATION
-		if (timeout < 1)
+	ଯେତେବେଳେ (1) {
+#ଯଦି ENABLE_FLOAT_DURATION
+		ଯଦି (timeout < 1)
 			sleep_for_duration(timeout);
-		else
+		ଅନ୍ୟଥା
 #endif
 			sleep1();
-		if (--timeout <= 0)
-			break;
-		if (kill(pid, 0)) {
+		ଯଦି (--timeout <= 0)
+			ଭାଙ୍ଗ;
+		ଯଦି (kill(pid, 0)) {
 			/* process is gone */
-			return EXIT_SUCCESS;
+			ଫେରନ୍ତୁ EXIT_SUCCESS;
 		}
 	}
-	return EXIT_FAILURE;
+	ଫେରନ୍ତୁ EXIT_FAILURE;
 }
 
-int timeout_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int timeout_main(int argc UNUSED_PARAM, char **argv)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା timeout_main(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc, ଅକ୍ଷର **argv) MAIN_EXTERNALLY_VISIBLE;
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା timeout_main(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc UNUSED_PARAM, ଅକ୍ଷର **argv)
 {
-	int signo;
-	int status;
-	int parent = 0;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା signo;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା status;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା parent = 0;
 	duration_t timeout;
 	duration_t kill_timeout;
 	pid_t pid;
-#if !BB_MMU
-	char *sv1, *sv2;
+#ଯଦି !BB_MMU
+	ଅକ୍ଷର *sv1, *sv2;
 #endif
-	const char *opt_s = "TERM";
-	char *opt_k = NULL;
+	ଅଚଳ ଅକ୍ଷର *opt_s = "TERM";
+	ଅକ୍ଷର *opt_k = ଖାଲି;
 
 	/* -p option is not documented, it is needed to support NOMMU. */
 
@@ -90,17 +90,17 @@ int timeout_main(int argc UNUSED_PARAM, char **argv)
 	/*argv += optind; - no, wait for bb_daemonize_or_rexec! */
 
 	signo = get_signum(opt_s);
-	if (signo < 0)
-		bb_error_msg_and_die("unknown signal '%s'", opt_s);
+	ଯଦି (signo < 0)
+		bb_error_ସନ୍ଦେଶ_and_die("unknown signal '%s'", opt_s);
 
 	kill_timeout = 0;
-	if (opt_k)
+	ଯଦି (opt_k)
 		kill_timeout = parse_duration_str(opt_k);
 
-	if (!argv[optind])
+	ଯଦି (!argv[optind])
 		bb_show_usage();
 	timeout = parse_duration_str(argv[optind++]);
-	if (!argv[optind]) /* no PROG? */
+	ଯଦି (!argv[optind]) /* no PROG? */
 		bb_show_usage();
 
 	/* We want to create a grandchild which will watch
@@ -111,46 +111,46 @@ int timeout_main(int argc UNUSED_PARAM, char **argv)
 	 * making child watch parent results in programs having
 	 * unexpected children.	*/
 
-	if (parent) /* we were re-execed, already grandchild */
-		goto grandchild;
+	ଯଦି (parent) /* we were re-execed, already grandchild */
+		ଯାଅ grandchild;
 
-#if !BB_MMU
+#ଯଦି !BB_MMU
 	sv1 = argv[optind];
 	sv2 = argv[optind + 1];
 #endif
 	pid = xvfork();
-	if (pid == 0) {
+	ଯଦି (pid == 0) {
 		/* Child: spawn grandchild and exit */
 		parent = getppid();
-#if !BB_MMU
+#ଯଦି !BB_MMU
 		argv[optind] = xasprintf("-p%u", parent);
-		argv[optind + 1] = NULL;
+		argv[optind + 1] = ଖାଲି;
 #endif
 		/* NB: exits with nonzero on error: */
 		bb_daemonize_or_rexec(0, argv);
 		/* Here we are grandchild. Sleep, then kill grandparent */
  grandchild:
-		if (timeout_wait(timeout, parent) == EXIT_SUCCESS)
-			return EXIT_SUCCESS;
+		ଯଦି (timeout_wait(timeout, parent) == EXIT_SUCCESS)
+			ଫେରନ୍ତୁ EXIT_SUCCESS;
 		kill(parent, signo);
 
-		if (kill_timeout > 0) {
-			if (timeout_wait(kill_timeout, parent) == EXIT_SUCCESS)
-				return EXIT_SUCCESS;
+		ଯଦି (kill_timeout > 0) {
+			ଯଦି (timeout_wait(kill_timeout, parent) == EXIT_SUCCESS)
+				ଫେରନ୍ତୁ EXIT_SUCCESS;
 			kill(parent, SIGKILL);
 		}
 
-		return EXIT_SUCCESS;
+		ଫେରନ୍ତୁ EXIT_SUCCESS;
 	}
 
 	/* Parent */
 	wait(&status); /* wait for child to die */
 	/* Did intermediate [v]fork or exec fail? */
-	if (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
-		return EXIT_FAILURE;
+	ଯଦି (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
+		ଫେରନ୍ତୁ EXIT_FAILURE;
 	/* Ok, exec a program as requested */
 	argv += optind;
-#if !BB_MMU
+#ଯଦି !BB_MMU
 	argv[0] = sv1;
 	argv[1] = sv2;
 #endif

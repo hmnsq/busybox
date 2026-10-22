@@ -59,10 +59,10 @@
 //usage:       "$ sleep 1d 3h 22m 8s\n"
 //usage:       "[98528 second delay results]\n")
 
-#include "libbb.h"
+#ଅନ୍ତର୍ଭାଵ "libbb.h"
 
-int sleep_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int sleep_main(int argc UNUSED_PARAM, char **argv)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା sleep_main(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc, ଅକ୍ଷର **argv) MAIN_EXTERNALLY_VISIBLE;
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା sleep_main(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc UNUSED_PARAM, ଅକ୍ଷର **argv)
 {
 	duration_t duration;
 
@@ -73,31 +73,31 @@ int sleep_main(int argc UNUSED_PARAM, char **argv)
 	 * + applet_name can be the name of the shell
 	 */
 	argv = skip_dash_dash(argv);
-	if (!argv[0]) {
+	ଯଦି (!argv[0]) {
 		/* Without this, bare "sleep" in ash shows _ash_ --help */
 		/* (ash can be the "sh" applet as well, so check 2nd char) */
-		if (ENABLE_ASH_SLEEP && applet_name[1] != 'l') {
-			bb_simple_error_msg("sleep: missing operand");
-			return EXIT_FAILURE;
+		ଯଦି (ENABLE_ASH_SLEEP && applet_name[1] != 'l') {
+			bb_simple_error_ସନ୍ଦେଶ("sleep: missing operand");
+			ଫେରନ୍ତୁ EXIT_FAILURE;
 		}
 		bb_show_usage();
 	}
 
 	/* GNU sleep accepts "inf", "INF", "infinity" and "INFINITY" */
-	if (strncasecmp(argv[0], "inf", 3) == 0)
-		for (;;)
+	ଯଦି (strncasecmp(argv[0], "inf", 3) == 0)
+		ପାଇଁ (;;)
 			sleep(INT_MAX);
 
 //FIXME: in ash, "sleep 123qwerty" as a builtin aborts the shell
-#if ENABLE_FEATURE_FANCY_SLEEP
+#ଯଦି ENABLE_FEATURE_FANCY_SLEEP
 	duration = 0;
-	do {
+	କର {
 		duration += parse_duration_str(*argv);
-	} while (*++argv);
+	} ଯେତେବେଳେ (*++argv);
 	sleep_for_duration(duration);
-#else /* simple */
+#ଅନ୍ୟଥା /* simple */
 	duration = xatou(*argv);
 	sleep(duration);
 #endif
-	return EXIT_SUCCESS;
+	ଫେରନ୍ତୁ EXIT_SUCCESS;
 }

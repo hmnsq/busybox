@@ -53,22 +53,22 @@
 /* BB_AUDIT SUSv3 compliant. */
 /* http://www.opengroup.org/onlinepubs/007904975/utilities/wc.html */
 
-#include "libbb.h"
-#include "unicode.h"
+#ଅନ୍ତର୍ଭାଵ "libbb.h"
+#ଅନ୍ତର୍ଭାଵ "unicode.h"
 
-#if !ENABLE_LOCALE_SUPPORT
+#ଯଦି !ENABLE_LOCALE_SUPPORT
 # undef isprint
 # undef isspace
 # define isprint(c) ((unsigned)((c) - 0x20) <= (0x7e - 0x20))
 # define isspace(c) ((c) == ' ')
 #endif
 
-#if ENABLE_FEATURE_WC_LARGE
-# define COUNT_T unsigned long long
-# define COUNT_FMT "llu"
-#else
-# define COUNT_T unsigned
-# define COUNT_FMT "u"
+#ଯଦି ENABLE_FEATURE_WC_LARGE
+# define ଗଣନା_T unsigned long long
+# define ଗଣନା_FMT "llu"
+#ଅନ୍ୟଥା
+# define ଗଣନା_T unsigned
+# define ଗଣନା_FMT "u"
 #endif
 
 /* We support -m even when UNICODE_SUPPORT is off,
@@ -96,25 +96,25 @@
 /* Order is important if we want to be compatible with
  * column order in "wc -cmlwL" output:
  */
-enum {
-	WC_LINES    = 0, /* -l */
-	WC_WORDS    = 1, /* -w */
+ଗଣନା {
+	WC_ଧାଡ଼ିଗୁଡ଼ିକ    = 0, /* -l */
+	WC_ଶବ୍ଦଗୁଡ଼ିକ    = 1, /* -w */
 	WC_UNICHARS = 2, /* -m */
 	WC_BYTES    = 3, /* -c */
 	WC_LENGTH   = 4, /* -L */
-	NUM_WCS     = 5,
+	ଅଙ୍କ_WCS     = 5,
 };
 
-int wc_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int wc_main(int argc UNUSED_PARAM, char **argv)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା wc_main(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc, ଅକ୍ଷର **argv) MAIN_EXTERNALLY_VISIBLE;
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା wc_main(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc UNUSED_PARAM, ଅକ୍ଷର **argv)
 {
-	const char *arg;
-	const char *start_fmt = " %9"COUNT_FMT + 1;
-	const char *fname_fmt = " %s\n";
-	COUNT_T *pcounts;
-	COUNT_T counts[NUM_WCS];
-	COUNT_T totals[NUM_WCS];
-	int num_files;
+	ଅଚଳ ଅକ୍ଷର *arg;
+	ଅଚଳ ଅକ୍ଷର *start_fmt = " %9"ଗଣନା_FMT + 1;
+	ଅଚଳ ଅକ୍ଷର *fname_fmt = " %s\n";
+	ଗଣନା_T *pcounts;
+	ଗଣନା_T counts[ଅଙ୍କ_WCS];
+	ଗଣନା_T totals[ଅଙ୍କ_WCS];
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଅଙ୍କ_files;
 	smallint status = EXIT_SUCCESS;
 	unsigned print_type;
 
@@ -122,105 +122,105 @@ int wc_main(int argc UNUSED_PARAM, char **argv)
 
 	print_type = getopt32(argv, "lwmcL");
 
-	if (print_type == 0) {
-		print_type = (1 << WC_LINES) | (1 << WC_WORDS) | (1 << WC_BYTES);
+	ଯଦି (print_type == 0) {
+		print_type = (1 << WC_ଧାଡ଼ିଗୁଡ଼ିକ) | (1 << WC_ଶବ୍ଦଗୁଡ଼ିକ) | (1 << WC_BYTES);
 	}
 
 	argv += optind;
-	if (!argv[0]) {
-		*--argv = (char *) bb_msg_standard_input;
+	ଯଦି (!argv[0]) {
+		*--argv = (ଅକ୍ଷର *) bb_ସନ୍ଦେଶ_standard_ନିବେଶ;
 		fname_fmt = "\n";
 	}
-	if (!argv[1]) { /* zero or one filename? */
-		if (!((print_type-1) & print_type)) /* exactly one option? */
-			start_fmt = "%"COUNT_FMT;
+	ଯଦି (!argv[1]) { /* zero or one filename? */
+		ଯଦି (!((print_type-1) & print_type)) /* exactly one option? */
+			start_fmt = "%"ଗଣନା_FMT;
 	}
 
-	memset(totals, 0, sizeof(totals));
+	memset(totals, 0, ଆକାର(totals));
 
 	pcounts = counts;
 
-	num_files = 0;
-	while ((arg = *argv++) != NULL) {
+	ଅଙ୍କ_files = 0;
+	ଯେତେବେଳେ ((arg = *argv++) != ଖାଲି) {
 		FILE *fp;
-		const char *s;
+		ଅଚଳ ଅକ୍ଷର *s;
 		unsigned u;
 		unsigned linepos;
 		smallint in_word;
 
-		++num_files;
+		++ଅଙ୍କ_files;
 		fp = fopen_or_warn_stdin(arg);
-		if (!fp) {
+		ଯଦି (!fp) {
 			status = EXIT_FAILURE;
-			continue;
+			ଜାରି;
 		}
 
-		memset(counts, 0, sizeof(counts));
+		memset(counts, 0, ଆକାର(counts));
 		linepos = 0;
 		in_word = 0;
 
-		while (1) {
-			int c;
+		ଯେତେବେଳେ (1) {
+			ପୂର୍ଣ୍ଣସଂଖ୍ୟା c;
 			/* Our -w doesn't match GNU wc exactly... oh well */
 
 			c = getc(fp);
-			if (c == EOF) {
-				if (ferror(fp)) {
-					bb_simple_perror_msg(arg);
+			ଯଦି (c == EOF) {
+				ଯଦି (ferror(fp)) {
+					bb_simple_perror_ସନ୍ଦେଶ(arg);
 					status = EXIT_FAILURE;
 				}
-				goto DO_EOF;  /* Treat an EOF as '\r'. */
+				ଯାଅ DO_EOF;  /* Treat an EOF as '\r'. */
 			}
 
 			/* Cater for -c and -m */
 			++counts[WC_BYTES];
-			if (unicode_status != UNICODE_ON /* every byte is a new char */
+			ଯଦି (unicode_status != UNICODE_ON /* every byte is a new char */
 			 || (c & 0xc0) != 0x80 /* it isn't a 2nd+ byte of a Unicode char */
 			) {
 				++counts[WC_UNICHARS];
 			}
 
-			if (isprint_asciionly(c)) { /* FIXME: not unicode-aware */
+			ଯଦି (isprint_asciionly(c)) { /* FIXME: not unicode-aware */
 				++linepos;
-				if (!isspace(c)) {
+				ଯଦି (!isspace(c)) {
 					in_word = 1;
-					continue;
+					ଜାରି;
 				}
-			} else if ((unsigned)(c - 9) <= 4) {
+			} ଅନ୍ୟଥା ଯଦି ((unsigned)(c - 9) <= 4) {
 				/* \t  9
 				 * \n 10
 				 * \v 11
 				 * \f 12
 				 * \r 13
 				 */
-				if (c == '\t') {
+				ଯଦି (c == '\t') {
 					linepos = (linepos | 7) + 1;
-				} else {  /* '\n', '\r', '\f', or '\v' */
+				} ଅନ୍ୟଥା {  /* '\n', '\r', '\f', or '\v' */
  DO_EOF:
-					if (linepos > counts[WC_LENGTH]) {
+					ଯଦି (linepos > counts[WC_LENGTH]) {
 						counts[WC_LENGTH] = linepos;
 					}
-					if (c == '\n') {
-						++counts[WC_LINES];
+					ଯଦି (c == '\n') {
+						++counts[WC_ଧାଡ଼ିଗୁଡ଼ିକ];
 					}
-					if (c != '\v') {
+					ଯଦି (c != '\v') {
 						linepos = 0;
 					}
 				}
-			} else {
-				continue;
+			} ଅନ୍ୟଥା {
+				ଜାରି;
 			}
 
-			counts[WC_WORDS] += in_word;
+			counts[WC_ଶବ୍ଦଗୁଡ଼ିକ] += in_word;
 			in_word = 0;
-			if (c == EOF) {
-				break;
+			ଯଦି (c == EOF) {
+				ଭାଙ୍ଗ;
 			}
 		}
 
 		fclose_if_not_stdin(fp);
 
-		if (totals[WC_LENGTH] < counts[WC_LENGTH]) {
+		ଯଦି (totals[WC_LENGTH] < counts[WC_LENGTH]) {
 			totals[WC_LENGTH] = counts[WC_LENGTH];
 		}
 		totals[WC_LENGTH] -= counts[WC_LENGTH];
@@ -231,13 +231,13 @@ int wc_main(int argc UNUSED_PARAM, char **argv)
 		 * we won't try that hard, it will bloat us too much */
 		s = start_fmt;
 		u = 0;
-		do {
-			if (print_type & (1 << u)) {
+		କର {
+			ଯଦି (print_type & (1 << u)) {
 				printf(s, pcounts[u]);
-				s = " %9"COUNT_FMT; /* Ok... restore the leading space. */
+				s = " %9"ଗଣନା_FMT; /* Ok... restore the leading space. */
 			}
 			totals[u] += pcounts[u];
-		} while (++u < NUM_WCS);
+		} ଯେତେବେଳେ (++u < ଅଙ୍କ_WCS);
 		printf(fname_fmt, arg);
 	}
 
@@ -245,12 +245,12 @@ int wc_main(int argc UNUSED_PARAM, char **argv)
 	 * space, we set the pcounts ptr to the totals array.  This has the side
 	 * effect of trashing the totals array after outputting it, but that's
 	 * irrelavent since we no longer need it. */
-	if (num_files > 1) {
-		num_files = 0;  /* Make sure we don't get here again. */
+	ଯଦି (ଅଙ୍କ_files > 1) {
+		ଅଙ୍କ_files = 0;  /* Make sure we don't get here again. */
 		arg = "total";
 		pcounts = totals;
 		--argv;
-		goto OUTPUT;
+		ଯାଅ OUTPUT;
 	}
 
 	fflush_stdout_and_exit(status);

@@ -39,68 +39,68 @@
 //usage:     "\n	-f	Sync filesystems underlying FILEs"
 //usage:    )
 
-#include "libbb.h"
+#ଅନ୍ତର୍ଭାଵ "libbb.h"
 
 /* This is a NOFORK applet. Be very careful! */
 
-#if ENABLE_FEATURE_SYNC_FANCY || ENABLE_FSYNC
-static int sync_common(int opts, char **argv)
+#ଯଦି ENABLE_FEATURE_SYNC_FANCY || ENABLE_FSYNC
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା sync_common(ପୂର୍ଣ୍ଣସଂଖ୍ୟା opts, ଅକ୍ଷର **argv)
 {
-	int ret;
-	enum {
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret;
+	ଗଣନା {
 		OPT_DATASYNC = (1 << 0),
 		OPT_SYNCFS   = (1 << 1),
 	};
 
 	ret = EXIT_SUCCESS;
-	do {
+	କର {
 		/* GNU "sync FILE" uses O_NONBLOCK open */
-		int fd = open_or_warn(*argv, /*O_NOATIME |*/ O_NOCTTY | O_RDONLY | O_NONBLOCK);
+		ପୂର୍ଣ୍ଣସଂଖ୍ୟା fd = open_or_warn(*argv, /*O_NOATIME |*/ O_NOCTTY | O_RDONLY | O_NONBLOCK);
 		/* open(NOATIME) can only be used by owner or root, don't use NOATIME here */
 
-		if (fd < 0) {
+		ଯଦି (fd < 0) {
 			ret = EXIT_FAILURE;
-			goto next;
+			ଯାଅ next;
 		}
-# if ENABLE_FEATURE_SYNC_FANCY
-		if (opts & OPT_SYNCFS) {
+# ଯଦି ENABLE_FEATURE_SYNC_FANCY
+		ଯଦି (opts & OPT_SYNCFS) {
 			/*
 			 * syncfs is documented to only fail with EBADF,
 			 * which can't happen here. So, no error checks.
 			 */
 			syncfs(fd);
-		} else
+		} ଅନ୍ୟଥା
 # endif
-		if (((opts & OPT_DATASYNC) ? fdatasync(fd) : fsync(fd)) != 0) {
-			bb_simple_perror_msg(*argv);
+		ଯଦି (((opts & OPT_DATASYNC) ? fdatasync(fd) : fsync(fd)) != 0) {
+			bb_simple_perror_ସନ୍ଦେଶ(*argv);
 			ret = EXIT_FAILURE;
 		}
 		close(fd);
  next:
 		argv++;
-	} while (*argv);
+	} ଯେତେବେଳେ (*argv);
 
-	return ret;
+	ଫେରନ୍ତୁ ret;
 }
 #endif
 
-#if ENABLE_SYNC
-int sync_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int sync_main(int argc UNUSED_PARAM, char **argv IF_NOT_DESKTOP(UNUSED_PARAM))
+#ଯଦି ENABLE_SYNC
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା sync_main(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc, ଅକ୍ଷର **argv) MAIN_EXTERNALLY_VISIBLE;
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା sync_main(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc UNUSED_PARAM, ଅକ୍ଷର **argv IF_NOT_DESKTOP(UNUSED_PARAM))
 {
-# if !ENABLE_FEATURE_SYNC_FANCY
+# ଯଦି !ENABLE_FEATURE_SYNC_FANCY
 	/* coreutils-6.9 compat */
 	bb_warn_ignoring_args(argv[1]);
 	sync();
-	return EXIT_SUCCESS;
-# else
+	ଫେରନ୍ତୁ EXIT_SUCCESS;
+# ଅନ୍ୟଥା
 	unsigned opts = getopt32(argv, "^" "df" "\0" "d--f:f--d");
 	argv += optind;
-	if (!argv[0]) {
+	ଯଦି (!argv[0]) {
 		sync();
-		return EXIT_SUCCESS;
+		ଫେରନ୍ତୁ EXIT_SUCCESS;
 	}
-	return sync_common(opts, argv);
+	ଫେରନ୍ତୁ sync_common(opts, argv);
 # endif
 }
 #endif
@@ -129,12 +129,12 @@ int sync_main(int argc UNUSED_PARAM, char **argv IF_NOT_DESKTOP(UNUSED_PARAM))
 //usage:       "Write all buffered blocks in FILEs to disk\n"
 //usage:     "\n	-d	Avoid syncing metadata"
 
-#if ENABLE_FSYNC
-int fsync_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int fsync_main(int argc UNUSED_PARAM, char **argv)
+#ଯଦି ENABLE_FSYNC
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା fsync_main(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc, ଅକ୍ଷର **argv) MAIN_EXTERNALLY_VISIBLE;
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା fsync_main(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc UNUSED_PARAM, ଅକ୍ଷର **argv)
 {
-	int opts = getopt32(argv, "^" "d" "\0" "-1"/*min 1 arg*/);
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା opts = getopt32(argv, "^" "d" "\0" "-1"/*min 1 arg*/);
 	argv += optind;
-	return sync_common(opts, argv);
+	ଫେରନ୍ତୁ sync_common(opts, argv);
 }
 #endif

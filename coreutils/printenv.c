@@ -23,34 +23,34 @@
 //usage:       "Print environment VARIABLEs.\n"
 //usage:       "If no VARIABLE specified, print all."
 
-#include "libbb.h"
+#ଅନ୍ତର୍ଭାଵ "libbb.h"
 
 /* This is a NOFORK applet. Be very careful! */
 
-int printenv_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int printenv_main(int argc UNUSED_PARAM, char **argv)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା printenv_main(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc, ଅକ୍ଷର **argv) MAIN_EXTERNALLY_VISIBLE;
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା printenv_main(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc UNUSED_PARAM, ଅକ୍ଷର **argv)
 {
-	int exit_code = EXIT_SUCCESS;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା exit_code = EXIT_SUCCESS;
 
 	/* no variables specified, show whole env */
-	if (!argv[1]) {
-		char **e = environ;
+	ଯଦି (!argv[1]) {
+		ଅକ୍ଷର **e = environ;
 
 		/* environ can be NULL! (for example, after clearenv())
 		 * Check for that:
 		 */
-		if (e)
-			while (*e)
+		ଯଦି (e)
+			ଯେତେବେଳେ (*e)
 				puts(*e++);
-	} else {
+	} ଅନ୍ୟଥା {
 		/* search for specified variables and print them out if found */
-		char *arg, *env;
+		ଅକ୍ଷର *arg, *env;
 
-		while ((arg = *++argv) != NULL) {
+		ଯେତେବେଳେ ((arg = *++argv) != ଖାଲି) {
 			env = getenv(arg);
-			if (env)
+			ଯଦି (env)
 				puts(env);
-			else
+			ଅନ୍ୟଥା
 				exit_code = EXIT_FAILURE;
 		}
 	}

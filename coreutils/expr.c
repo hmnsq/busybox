@@ -77,18 +77,18 @@
 //usage:       "\\( and \\) or null; if \\( and \\) are not used, they return the number\n"
 //usage:       "of characters matched or 0."
 
-#include "libbb.h"
-#include "common_bufsiz.h"
-#include "xregex.h"
+#ଅନ୍ତର୍ଭାଵ "libbb.h"
+#ଅନ୍ତର୍ଭାଵ "common_bufsiz.h"
+#ଅନ୍ତର୍ଭାଵ "xregex.h"
 
-#if ENABLE_EXPR_MATH_SUPPORT_64
-typedef int64_t arith_t;
+#ଯଦି ENABLE_ପଦସମଷ୍ଟି_MATH_SUPPORT_64
+ପ୍ରକାରବ୍ୟାଖ୍ୟା int64_t arith_t;
 
 #define PF_REZ      "ll"
 #define PF_REZ_TYPE (long long)
 #define STRTOL(s, e, b) strtoll(s, e, b)
-#else
-typedef long arith_t;
+#ଅନ୍ୟଥା
+ପ୍ରକାରବ୍ୟାଖ୍ୟା long arith_t;
 
 #define PF_REZ      "l"
 #define PF_REZ_TYPE (long)
@@ -98,85 +98,85 @@ typedef long arith_t;
 /* TODO: use bb_strtol[l]? It's easier to check for errors... */
 
 /* The kinds of value we can have.  */
-enum {
+ଗଣନା {
 	INTEGER,
 	STRING
 };
 
 /* A value is.... */
-struct valinfo {
+ସଂରଚନା valinfo {
 	smallint type;                  /* Which kind. */
-	union {                         /* The value itself. */
+	ସଂଘ {                         /* The value itself. */
 		arith_t i;
-		char *s;
+		ଅକ୍ଷର *s;
 	} u;
 };
-typedef struct valinfo VALUE;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା valinfo ମୂଲ୍ୟ;
 
 /* The arguments given to the program, minus the program name.  */
-struct globals {
-	char **args;
+ସଂରଚନା globals {
+	ଅକ୍ଷର **args;
 } FIX_ALIASING;
-#define G (*(struct globals*)bb_common_bufsiz1)
-#define INIT_G() do { \
+#define G (*(ସଂରଚନା globals*)bb_common_bufsiz1)
+#define INIT_G() କର { \
 	setup_common_bufsiz(); \
 	/* NB: noexec applet - globals not zeroed */ \
-} while (0)
+} ଯେତେବେଳେ (0)
 
 /* forward declarations */
-static VALUE *eval(void);
+ସ୍ଥିର ମୂଲ୍ୟ *eval(ଶୂନ୍ୟ);
 
 
 /* Return a VALUE for I.  */
 
-static VALUE *int_value(arith_t i)
+ସ୍ଥିର ମୂଲ୍ୟ *int_ମୂଲ୍ୟ(arith_t i)
 {
-	VALUE *v;
+	ମୂଲ୍ୟ *v;
 
-	v = xzalloc(sizeof(VALUE));
-	if (INTEGER) /* otherwise xzalloc did it already */
+	v = xzalloc(ଆକାର(ମୂଲ୍ୟ));
+	ଯଦି (INTEGER) /* otherwise xzalloc did it already */
 		v->type = INTEGER;
 	v->u.i = i;
-	return v;
+	ଫେରନ୍ତୁ v;
 }
 
 /* Return a VALUE for S.  */
 
-static VALUE *str_value(const char *s)
+ସ୍ଥିର ମୂଲ୍ୟ *str_ମୂଲ୍ୟ(ଅଚଳ ଅକ୍ଷର *s)
 {
-	VALUE *v;
+	ମୂଲ୍ୟ *v;
 
-	v = xzalloc(sizeof(VALUE));
-	if (STRING) /* otherwise xzalloc did it already */
+	v = xzalloc(ଆକାର(ମୂଲ୍ୟ));
+	ଯଦି (STRING) /* otherwise xzalloc did it already */
 		v->type = STRING;
 	v->u.s = xstrdup(s);
-	return v;
+	ଫେରନ୍ତୁ v;
 }
 
 /* Free VALUE V, including structure components.  */
 
-static void freev(VALUE *v)
+ସ୍ଥିର ଶୂନ୍ୟ freev(ମୂଲ୍ୟ *v)
 {
-	if (v->type == STRING)
-		free(v->u.s);
-	free(v);
+	ଯଦି (v->type == STRING)
+		ମୁକ୍ତ(v->u.s);
+	ମୁକ୍ତ(v);
 }
 
 /* Return nonzero if V is a null-string or zero-number.  */
 
-static int null(VALUE *v)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା null(ମୂଲ୍ୟ *v)
 {
-	if (v->type == INTEGER)
-		return v->u.i == 0;
+	ଯଦି (v->type == INTEGER)
+		ଫେରନ୍ତୁ v->u.i == 0;
 	/* STRING: */
-	return v->u.s[0] == '\0' || LONE_CHAR(v->u.s, '0');
+	ଫେରନ୍ତୁ v->u.s[0] == '\0' || LONE_CHAR(v->u.s, '0');
 }
 
 /* Coerce V to a STRING value (can't fail).  */
 
-static void tostring(VALUE *v)
+ସ୍ଥିର ଶୂନ୍ୟ tostring(ମୂଲ୍ୟ *v)
 {
-	if (v->type == INTEGER) {
+	ଯଦି (v->type == INTEGER) {
 		v->u.s = xasprintf("%" PF_REZ "d", PF_REZ_TYPE v->u.i);
 		v->type = STRING;
 	}
@@ -184,43 +184,43 @@ static void tostring(VALUE *v)
 
 /* Coerce V to an INTEGER value.  Return 1 on success, 0 on failure.  */
 
-static bool toarith(VALUE *v)
+ସ୍ଥିର bool toarith(ମୂଲ୍ୟ *v)
 {
-	if (v->type == STRING) {
+	ଯଦି (v->type == STRING) {
 		arith_t i;
-		char *e;
+		ଅକ୍ଷର *e;
 
 		/* Don't interpret the empty string as an integer.  */
 		/* Currently does not worry about overflow or int/long differences. */
 		i = STRTOL(v->u.s, &e, 10);
-		if ((v->u.s == e) || *e)
-			return 0;
-		free(v->u.s);
+		ଯଦି ((v->u.s == e) || *e)
+			ଫେରନ୍ତୁ 0;
+		ମୁକ୍ତ(v->u.s);
 		v->u.i = i;
 		v->type = INTEGER;
 	}
-	return 1;
+	ଫେରନ୍ତୁ 1;
 }
 
 /* Return str[0]+str[1] if the next token matches STR exactly.
    STR must not be NULL.  */
 
-static int nextarg(const char *str)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା nextarg(ଅଚଳ ଅକ୍ଷର *str)
 {
-	if (*G.args == NULL || strcmp(*G.args, str) != 0)
-		return 0;
-	return (unsigned char)str[0] + (unsigned char)str[1];
+	ଯଦି (*G.args == ଖାଲି || strcmp(*G.args, str) != 0)
+		ଫେରନ୍ତୁ 0;
+	ଫେରନ୍ତୁ (unsigned ଅକ୍ଷର)str[0] + (unsigned ଅକ୍ଷର)str[1];
 }
 
 /* The comparison operator handling functions.  */
 
-static int cmp_common(VALUE *l, VALUE *r, int op)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା cmp_common(ମୂଲ୍ୟ *l, ମୂଲ୍ୟ *r, ପୂର୍ଣ୍ଣସଂଖ୍ୟା op)
 {
 	arith_t ll, rr;
 
 	ll = l->u.i;
 	rr = r->u.i;
-	if (l->type == STRING || r->type == STRING) {
+	ଯଦି (l->type == STRING || r->type == STRING) {
 		tostring(l);
 		tostring(r);
 		ll = strcmp(l->u.s, r->u.s);
@@ -228,168 +228,168 @@ static int cmp_common(VALUE *l, VALUE *r, int op)
 	}
 	/* calculating ll - rr and checking the result is prone to overflows.
 	 * We'll do it differently: */
-	if (op == '<')
-		return ll < rr;
-	if (op == ('<' + '='))
-		return ll <= rr;
-	if (op == '=' || (op == '=' + '='))
-		return ll == rr;
-	if (op == '!' + '=')
-		return ll != rr;
-	if (op == '>')
-		return ll > rr;
+	ଯଦି (op == '<')
+		ଫେରନ୍ତୁ ll < rr;
+	ଯଦି (op == ('<' + '='))
+		ଫେରନ୍ତୁ ll <= rr;
+	ଯଦି (op == '=' || (op == '=' + '='))
+		ଫେରନ୍ତୁ ll == rr;
+	ଯଦି (op == '!' + '=')
+		ଫେରନ୍ତୁ ll != rr;
+	ଯଦି (op == '>')
+		ଫେରନ୍ତୁ ll > rr;
 	/* >= */
-	return ll >= rr;
+	ଫେରନ୍ତୁ ll >= rr;
 }
 
 /* The arithmetic operator handling functions.  */
 
-static arith_t arithmetic_common(VALUE *l, VALUE *r, int op)
+ସ୍ଥିର arith_t arithmetic_common(ମୂଲ୍ୟ *l, ମୂଲ୍ୟ *r, ପୂର୍ଣ୍ଣସଂଖ୍ୟା op)
 {
 	arith_t li, ri;
 
-	if (!toarith(l) || !toarith(r))
-		bb_simple_error_msg_and_die("non-numeric argument");
+	ଯଦି (!toarith(l) || !toarith(r))
+		bb_simple_error_ସନ୍ଦେଶ_and_die("non-numeric argument");
 	li = l->u.i;
 	ri = r->u.i;
-	if (op == '+')
-		return li + ri;
-	if (op == '-')
-		return li - ri;
-	if (op == '*')
-		return li * ri;
-	if (ri == 0)
-		bb_simple_error_msg_and_die("division by zero");
-	if (op == '/')
-		return li / ri;
-	return li % ri;
+	ଯଦି (op == '+')
+		ଫେରନ୍ତୁ li + ri;
+	ଯଦି (op == '-')
+		ଫେରନ୍ତୁ li - ri;
+	ଯଦି (op == '*')
+		ଫେରନ୍ତୁ li * ri;
+	ଯଦି (ri == 0)
+		bb_simple_error_ସନ୍ଦେଶ_and_die("division by zero");
+	ଯଦି (op == '/')
+		ଫେରନ୍ତୁ li / ri;
+	ଫେରନ୍ତୁ li % ri;
 }
 
 /* Do the : operator.
    SV is the VALUE for the lhs (the string),
    PV is the VALUE for the rhs (the pattern).  */
 
-static VALUE *docolon(VALUE *sv, VALUE *pv)
+ସ୍ଥିର ମୂଲ୍ୟ *docolon(ମୂଲ୍ୟ *sv, ମୂଲ୍ୟ *pv)
 {
-	enum { NMATCH = 2 };
-	VALUE *v;
+	ଗଣନା { NMATCH = 2 };
+	ମୂଲ୍ୟ *v;
 	regex_t re_buffer;
 	regmatch_t re_regs[NMATCH];
 
 	tostring(sv);
 	tostring(pv);
 
-	if (pv->u.s[0] == '^') {
-		bb_error_msg(
+	ଯଦି (pv->u.s[0] == '^') {
+		bb_error_ସନ୍ଦେଶ(
 "warning: '%s': using '^' as the first character\n"
 "of a basic regular expression is not portable; it is ignored", pv->u.s);
 	}
 
-	memset(&re_buffer, 0, sizeof(re_buffer));
-	memset(re_regs, 0, sizeof(re_regs));
+	memset(&re_buffer, 0, ଆକାର(re_buffer));
+	memset(re_regs, 0, ଆକାର(re_regs));
 	xregcomp(&re_buffer, pv->u.s, 0);
 
 	/* expr uses an anchored pattern match, so check that there was a
 	 * match and that the match starts at offset 0. */
-	if (regexec(&re_buffer, sv->u.s, NMATCH, re_regs, 0) != REG_NOMATCH
+	ଯଦି (regexec(&re_buffer, sv->u.s, NMATCH, re_regs, 0) != REG_NOMATCH
 	 && re_regs[0].rm_so == 0
 	) {
 		/* Were \(...\) used? */
-		if (re_buffer.re_nsub > 0 && re_regs[1].rm_so >= 0) {
+		ଯଦି (re_buffer.re_nsub > 0 && re_regs[1].rm_so >= 0) {
 			sv->u.s[re_regs[1].rm_eo] = '\0';
-			v = str_value(sv->u.s + re_regs[1].rm_so);
-		} else {
-			v = int_value(re_regs[0].rm_eo);
+			v = str_ମୂଲ୍ୟ(sv->u.s + re_regs[1].rm_so);
+		} ଅନ୍ୟଥା {
+			v = int_ମୂଲ୍ୟ(re_regs[0].rm_eo);
 		}
-	} else {
+	} ଅନ୍ୟଥା {
 		/* Match failed -- return the right kind of null.  */
-		if (re_buffer.re_nsub > 0)
-			v = str_value("");
-		else
-			v = int_value(0);
+		ଯଦି (re_buffer.re_nsub > 0)
+			v = str_ମୂଲ୍ୟ("");
+		ଅନ୍ୟଥା
+			v = int_ମୂଲ୍ୟ(0);
 	}
 	regfree(&re_buffer);
-	return v;
+	ଫେରନ୍ତୁ v;
 }
 
 /* Handle bare operands and ( expr ) syntax.  */
 
-static VALUE *eval7(void)
+ସ୍ଥିର ମୂଲ୍ୟ *eval7(ଶୂନ୍ୟ)
 {
-	VALUE *v;
+	ମୂଲ୍ୟ *v;
 
-	if (!*G.args)
-		bb_simple_error_msg_and_die("syntax error");
+	ଯଦି (!*G.args)
+		bb_simple_error_ସନ୍ଦେଶ_and_die("syntax error");
 
-	if (nextarg("(")) {
+	ଯଦି (nextarg("(")) {
 		G.args++;
 		v = eval();
-		if (!nextarg(")"))
-			bb_simple_error_msg_and_die("syntax error");
+		ଯଦି (!nextarg(")"))
+			bb_simple_error_ସନ୍ଦେଶ_and_die("syntax error");
 		G.args++;
-		return v;
+		ଫେରନ୍ତୁ v;
 	}
 
-	if (nextarg(")"))
-		bb_simple_error_msg_and_die("syntax error");
+	ଯଦି (nextarg(")"))
+		bb_simple_error_ସନ୍ଦେଶ_and_die("syntax error");
 
-	return str_value(*G.args++);
+	ଫେରନ୍ତୁ str_ମୂଲ୍ୟ(*G.args++);
 }
 
 /* Handle match, substr, index, length, and quote keywords.  */
 
-static VALUE *eval6(void)
+ସ୍ଥିର ମୂଲ୍ୟ *eval6(ଶୂନ୍ୟ)
 {
-	static const char keywords[] ALIGN1 =
+	ସ୍ଥିର ଅଚଳ ଅକ୍ଷର keywords[] ALIGN1 =
 		"quote\0""length\0""match\0""index\0""substr\0";
 
-	VALUE *r, *i1, *i2;
-	VALUE *l = l; /* silence gcc */
-	VALUE *v = v; /* silence gcc */
-	int key = *G.args ? index_in_strings(keywords, *G.args) + 1 : 0;
+	ମୂଲ୍ୟ *r, *i1, *i2;
+	ମୂଲ୍ୟ *l = l; /* silence gcc */
+	ମୂଲ୍ୟ *v = v; /* silence gcc */
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଚାବି = *G.args ? index_in_strings(keywords, *G.args) + 1 : 0;
 
-	if (key == 0) /* not a keyword */
-		return eval7();
+	ଯଦି (ଚାବି == 0) /* not a keyword */
+		ଫେରନ୍ତୁ eval7();
 	G.args++; /* We have a valid token, so get the next argument.  */
-	if (key == 1) { /* quote */
-		if (!*G.args)
-			bb_simple_error_msg_and_die("syntax error");
-		return str_value(*G.args++);
+	ଯଦି (ଚାବି == 1) { /* quote */
+		ଯଦି (!*G.args)
+			bb_simple_error_ସନ୍ଦେଶ_and_die("syntax error");
+		ଫେରନ୍ତୁ str_ମୂଲ୍ୟ(*G.args++);
 	}
-	if (key == 2) { /* length */
+	ଯଦି (ଚାବି == 2) { /* length */
 		r = eval6();
 		tostring(r);
-		v = int_value(strlen(r->u.s));
+		v = int_ମୂଲ୍ୟ(strlen(r->u.s));
 		freev(r);
-	} else
+	} ଅନ୍ୟଥା
 		l = eval6();
 
-	if (key == 3) { /* match */
+	ଯଦି (ଚାବି == 3) { /* match */
 		r = eval6();
 		v = docolon(l, r);
 		freev(l);
 		freev(r);
 	}
-	if (key == 4) { /* index */
+	ଯଦି (ଚାବି == 4) { /* index */
 		r = eval6();
 		tostring(l);
 		tostring(r);
-		v = int_value(strcspn(l->u.s, r->u.s) + 1);
-		if (v->u.i == (arith_t) strlen(l->u.s) + 1)
+		v = int_ମୂଲ୍ୟ(strcspn(l->u.s, r->u.s) + 1);
+		ଯଦି (v->u.i == (arith_t) strlen(l->u.s) + 1)
 			v->u.i = 0;
 		freev(l);
 		freev(r);
 	}
-	if (key == 5) { /* substr */
+	ଯଦି (ଚାବି == 5) { /* substr */
 		i1 = eval6();
 		i2 = eval6();
 		tostring(l);
-		if (!toarith(i1) || !toarith(i2)
+		ଯଦି (!toarith(i1) || !toarith(i2)
 		 || i1->u.i > (arith_t) strlen(l->u.s)
 		 || i1->u.i <= 0 || i2->u.i <= 0)
-			v = str_value("");
-		else {
-			v = xmalloc(sizeof(VALUE));
+			v = str_ମୂଲ୍ୟ("");
+		ଅନ୍ୟଥା {
+			v = xmalloc(ଆକାର(ମୂଲ୍ୟ));
 			v->type = STRING;
 			v->u.s = xstrndup(l->u.s + i1->u.i - 1, i2->u.i);
 		}
@@ -397,18 +397,18 @@ static VALUE *eval6(void)
 		freev(i1);
 		freev(i2);
 	}
-	return v;
+	ଫେରନ୍ତୁ v;
 }
 
 /* Handle : operator (pattern matching).
    Calls docolon to do the real work.  */
 
-static VALUE *eval5(void)
+ସ୍ଥିର ମୂଲ୍ୟ *eval5(ଶୂନ୍ୟ)
 {
-	VALUE *l, *r, *v;
+	ମୂଲ୍ୟ *l, *r, *v;
 
 	l = eval6();
-	while (nextarg(":")) {
+	ଯେତେବେଳେ (nextarg(":")) {
 		G.args++;
 		r = eval6();
 		v = docolon(l, r);
@@ -416,75 +416,75 @@ static VALUE *eval5(void)
 		freev(r);
 		l = v;
 	}
-	return l;
+	ଫେରନ୍ତୁ l;
 }
 
 /* Handle *, /, % operators.  */
 
-static VALUE *eval4(void)
+ସ୍ଥିର ମୂଲ୍ୟ *eval4(ଶୂନ୍ୟ)
 {
-	VALUE *l, *r;
-	int op;
+	ମୂଲ୍ୟ *l, *r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା op;
 	arith_t val;
 
 	l = eval5();
-	while (1) {
+	ଯେତେବେଳେ (1) {
 		op = nextarg("*");
-		if (!op) { op = nextarg("/");
-		 if (!op) { op = nextarg("%");
-		  if (!op) return l;
+		ଯଦି (!op) { op = nextarg("/");
+		 ଯଦି (!op) { op = nextarg("%");
+		  ଯଦି (!op) ଫେରନ୍ତୁ l;
 		}}
 		G.args++;
 		r = eval5();
 		val = arithmetic_common(l, r, op);
 		freev(l);
 		freev(r);
-		l = int_value(val);
+		l = int_ମୂଲ୍ୟ(val);
 	}
 }
 
 /* Handle +, - operators.  */
 
-static VALUE *eval3(void)
+ସ୍ଥିର ମୂଲ୍ୟ *eval3(ଶୂନ୍ୟ)
 {
-	VALUE *l, *r;
-	int op;
+	ମୂଲ୍ୟ *l, *r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା op;
 	arith_t val;
 
 	l = eval4();
-	while (1) {
+	ଯେତେବେଳେ (1) {
 		op = nextarg("+");
-		if (!op) {
+		ଯଦି (!op) {
 			op = nextarg("-");
-			if (!op) return l;
+			ଯଦି (!op) ଫେରନ୍ତୁ l;
 		}
 		G.args++;
 		r = eval4();
 		val = arithmetic_common(l, r, op);
 		freev(l);
 		freev(r);
-		l = int_value(val);
+		l = int_ମୂଲ୍ୟ(val);
 	}
 }
 
 /* Handle comparisons.  */
 
-static VALUE *eval2(void)
+ସ୍ଥିର ମୂଲ୍ୟ *eval2(ଶୂନ୍ୟ)
 {
-	VALUE *l, *r;
-	int op;
+	ମୂଲ୍ୟ *l, *r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା op;
 	arith_t val;
 
 	l = eval3();
-	while (1) {
+	ଯେତେବେଳେ (1) {
 		op = nextarg("<");
-		if (!op) { op = nextarg("<=");
-		 if (!op) { op = nextarg("=");
-		  if (!op) { op = nextarg("==");
-		   if (!op) { op = nextarg("!=");
-		    if (!op) { op = nextarg(">=");
-		     if (!op) { op = nextarg(">");
-		      if (!op) return l;
+		ଯଦି (!op) { op = nextarg("<=");
+		 ଯଦି (!op) { op = nextarg("=");
+		  ଯଦି (!op) { op = nextarg("==");
+		   ଯଦି (!op) { op = nextarg("!=");
+		    ଯଦି (!op) { op = nextarg(">=");
+		     ଯଦି (!op) { op = nextarg(">");
+		      ଯଦି (!op) ଫେରନ୍ତୁ l;
 		}}}}}}
 		G.args++;
 		r = eval3();
@@ -493,67 +493,67 @@ static VALUE *eval2(void)
 		val = cmp_common(l, r, op);
 		freev(l);
 		freev(r);
-		l = int_value(val);
+		l = int_ମୂଲ୍ୟ(val);
 	}
 }
 
 /* Handle &.  */
 
-static VALUE *eval1(void)
+ସ୍ଥିର ମୂଲ୍ୟ *eval1(ଶୂନ୍ୟ)
 {
-	VALUE *l, *r;
+	ମୂଲ୍ୟ *l, *r;
 
 	l = eval2();
-	while (nextarg("&")) {
+	ଯେତେବେଳେ (nextarg("&")) {
 		G.args++;
 		r = eval2();
-		if (null(l) || null(r)) {
+		ଯଦି (null(l) || null(r)) {
 			freev(l);
 			freev(r);
-			l = int_value(0);
-		} else
+			l = int_ମୂଲ୍ୟ(0);
+		} ଅନ୍ୟଥା
 			freev(r);
 	}
-	return l;
+	ଫେରନ୍ତୁ l;
 }
 
 /* Handle |.  */
 
-static VALUE *eval(void)
+ସ୍ଥିର ମୂଲ୍ୟ *eval(ଶୂନ୍ୟ)
 {
-	VALUE *l, *r;
+	ମୂଲ୍ୟ *l, *r;
 
 	l = eval1();
-	while (nextarg("|")) {
+	ଯେତେବେଳେ (nextarg("|")) {
 		G.args++;
 		r = eval1();
-		if (null(l)) {
+		ଯଦି (null(l)) {
 			freev(l);
 			l = r;
-		} else
+		} ଅନ୍ୟଥା
 			freev(r);
 	}
-	return l;
+	ଫେରନ୍ତୁ l;
 }
 
-int expr_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int expr_main(int argc UNUSED_PARAM, char **argv)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ପଦସମଷ୍ଟି_main(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc, ଅକ୍ଷର **argv) MAIN_EXTERNALLY_VISIBLE;
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ପଦସମଷ୍ଟି_main(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc UNUSED_PARAM, ଅକ୍ଷର **argv)
 {
-	VALUE *v;
+	ମୂଲ୍ୟ *v;
 
 	INIT_G();
 
 	xfunc_error_retval = 2; /* coreutils compat */
 	G.args = argv + 1;
-	if (*G.args == NULL) {
-		bb_simple_error_msg_and_die("too few arguments");
+	ଯଦି (*G.args == ଖାଲି) {
+		bb_simple_error_ସନ୍ଦେଶ_and_die("too few arguments");
 	}
 	v = eval();
-	if (*G.args)
-		bb_simple_error_msg_and_die("syntax error");
-	if (v->type == INTEGER)
+	ଯଦି (*G.args)
+		bb_simple_error_ସନ୍ଦେଶ_and_die("syntax error");
+	ଯଦି (v->type == INTEGER)
 		printf("%" PF_REZ "d\n", PF_REZ_TYPE v->u.i);
-	else
+	ଅନ୍ୟଥା
 		puts(v->u.s);
 	fflush_stdout_and_exit(null(v));
 }
