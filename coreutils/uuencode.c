@@ -30,53 +30,53 @@
 //usage:       "$ uudecode busybox busybox > busybox.uu\n"
 //usage:       "$\n"
 
-#include "libbb.h"
+#अन्तर्भाव "libbb.h"
 
-enum {
+गणना {
 	SRC_BUF_SIZE = 15*3,  /* This *MUST* be a multiple of 3 */
 	DST_BUF_SIZE = 4 * ((SRC_BUF_SIZE + 2) / 3),
 };
 
-int uuencode_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int uuencode_main(int argc UNUSED_PARAM, char **argv)
+पूर्णाङ्क uuencode_main(पूर्णाङ्क argc, वर्ण **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णाङ्क uuencode_main(पूर्णाङ्क argc UNUSED_PARAM, वर्ण **argv)
 {
-	struct stat stat_buf;
-	int src_fd = STDIN_FILENO;
-	const char *tbl;
+	संरचना stat stat_buf;
+	पूर्णाङ्क src_fd = STDIN_FILENO;
+	ध्रुव वर्ण *tbl;
 	mode_t mode;
-	char src_buf[SRC_BUF_SIZE];
-	char dst_buf[DST_BUF_SIZE + 1];
+	वर्ण src_buf[SRC_BUF_SIZE];
+	वर्ण dst_buf[DST_BUF_SIZE + 1];
 
 	tbl = bb_uuenc_tbl_std;
 	mode = 0666 & ~umask(0666);
-	if (getopt32(argv, "^" "m" "\0" "-1:?2"/*must have 1 or 2 args*/)) {
+	यदि (getopt32(argv, "^" "m" "\0" "-1:?2"/*must have 1 or 2 args*/)) {
 		tbl = bb_uuenc_tbl_base64;
 	}
 	argv += optind;
-	if (argv[1]) {
+	यदि (argv[1]) {
 		src_fd = xopen(argv[0], O_RDONLY);
-		fstat(src_fd, &stat_buf);
+		ख_स्थिति(src_fd, &stat_buf);
 		mode = stat_buf.st_mode & (S_IRWXU | S_IRWXG | S_IRWXO);
 		argv++;
 	}
 
-	printf("begin%s %o %s", tbl == bb_uuenc_tbl_std ? "" : "-base64", mode, *argv);
-	while (1) {
-		size_t size = full_read(src_fd, src_buf, SRC_BUF_SIZE);
-		if (!size)
-			break;
-		if ((ssize_t)size < 0)
-			bb_simple_perror_msg_and_die(bb_msg_read_error);
+	म_लिखो("begin%s %o %s", tbl == bb_uuenc_tbl_std ? "" : "-base64", mode, *argv);
+	यावत् (1) {
+		माप_प्रकार size = full_read(src_fd, src_buf, SRC_BUF_SIZE);
+		यदि (!size)
+			भङ्ग;
+		यदि ((ssize_t)size < 0)
+			bb_simple_perror_संदेश_and_die(bb_संदेश_read_error);
 		/* Encode the buffer we just read in */
 		bb_uuencode(dst_buf, src_buf, size, tbl);
 		bb_putchar('\n');
-		if (tbl == bb_uuenc_tbl_std) {
+		यदि (tbl == bb_uuenc_tbl_std) {
 			bb_putchar(tbl[size]);
 		}
-		fflush(stdout);
+		ख_साफ(मानक_निकास);
 		xwrite(STDOUT_FILENO, dst_buf, 4 * ((size + 2) / 3));
 	}
-	printf(tbl == bb_uuenc_tbl_std ? "\n`\nend\n" : "\n====\n");
+	म_लिखो(tbl == bb_uuenc_tbl_std ? "\n`\nend\n" : "\n====\n");
 
 	fflush_stdout_and_exit_SUCCESS();
 }

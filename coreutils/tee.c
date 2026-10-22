@@ -52,25 +52,25 @@
 //	-p	diagnose errors writing to non pipes
 // ^^^^ this should set SIGPIPE to SIG_IGN. EPIPE is ignored (same as "warn-nopipe")
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#अन्तर्भाव "libbb.h"
+#अन्तर्भाव "common_bufsiz.h"
 
-int tee_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int tee_main(int argc, char **argv)
+पूर्णाङ्क tee_main(पूर्णाङ्क argc, वर्ण **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णाङ्क tee_main(पूर्णाङ्क argc, वर्ण **argv)
 {
-	const char *mode = "w\0a";
-	FILE **files;
-	FILE **fp;
-	char **names;
-	char **np;
-	char retval;
+	ध्रुव वर्ण *mode = "w\0a";
+	खाता **files;
+	खाता **fp;
+	वर्ण **names;
+	वर्ण **np;
+	वर्ण retval;
 //TODO: make unconditional
-#if ENABLE_FEATURE_TEE_USE_BLOCK_IO
+#यदि ENABLE_FEATURE_TEE_USE_BLOCK_IO
 	ssize_t c;
 # define buf bb_common_bufsiz1
 	setup_common_bufsiz();
-#else
-	int c;
+#अन्यथा
+	पूर्णाङ्क c;
 #endif
 	retval = getopt32(argv, "ia");	/* 'a' must be 2nd */
 	argc -= optind;
@@ -78,58 +78,58 @@ int tee_main(int argc, char **argv)
 
 	mode += (retval & 2);	/* Since 'a' is the 2nd option... */
 
-	if (retval & 1) {
-		signal(SIGINT, SIG_IGN);
+	यदि (retval & 1) {
+		सङ्केत(संक_विघ्न, संक_छोड़ो);
 	}
-	retval = EXIT_SUCCESS;
+	retval = निकास_सफल;
 	/* if (opt_p || opt_output_error)
 		signal(SIGPIPE, SIG_IGN);
 	 */
 
 	/* Allocate an array of FILE *'s, with one extra for a sentinel. */
-	fp = files = xzalloc(sizeof(FILE *) * (argc + 2));
+	fp = files = xzalloc(परिमाण(खाता *) * (argc + 2));
 	np = names = argv - 1;
 
-	files[0] = stdout;
-	goto GOT_NEW_FILE;
+	files[0] = मानक_निकास;
+	गच्छ GOT_NEW_FILE;
 
-	do {
-		*fp = stdout;
-		if (NOT_LONE_DASH(*argv)) {
+	कुरु {
+		*fp = मानक_निकास;
+		यदि (NOT_LONE_DASH(*argv)) {
 			*fp = fopen_or_warn(*argv, mode);
-			if (*fp == NULL) {
-				retval = EXIT_FAILURE;
+			यदि (*fp == रिक्त) {
+				retval = निकास_त्रुटि;
 				argv++;
-				continue;
+				अनुवर्त;
 			}
 		}
 		*np = *argv++;
  GOT_NEW_FILE:
-		setbuf(*fp, NULL);	/* tee must not buffer output. */
+		रखो_बफ(*fp, रिक्त);	/* tee must not buffer output. */
 		fp++;
 		np++;
-	} while (*argv);
+	} यावत् (*argv);
 	/* names[0] will be filled later */
 
-#if ENABLE_FEATURE_TEE_USE_BLOCK_IO
-	while ((c = safe_read(STDIN_FILENO, buf, COMMON_BUFSIZE)) > 0) {
+#यदि ENABLE_FEATURE_TEE_USE_BLOCK_IO
+	यावत् ((c = safe_read(STDIN_FILENO, buf, COMMON_BUFSIZE)) > 0) {
 		fp = files;
-		do
-			fwrite(buf, 1, c, *fp);
+		कुरु
+			ख_डालो(buf, 1, c, *fp);
 			/* if (opt_p && fwrite() != c && !EPIPE) bb_error_msg("..."); */
-		while (*++fp);
+		यावत् (*++fp);
 	}
-	if (c < 0) {		/* Make sure read errors are signaled. */
-		retval = EXIT_FAILURE;
+	यदि (c < 0) {		/* Make sure read errors are signaled. */
+		retval = निकास_त्रुटि;
 	}
-#else
-	setvbuf(stdout, NULL, _IONBF, 0);
-	while ((c = getchar()) != EOF) {
+#अन्यथा
+	रखो_भबफ(मानक_निकास, रिक्त, _IONBF, 0);
+	यावत् ((c = अक्षर_लो()) != खातापूर्ण) {
 		fp = files;
-		do
-			putc(c, *fp);
+		कुरु
+			अ_दो(c, *fp);
 			/* if (opt_p && putc() == EOF && !EPIPE) bb_error_msg("..."); */
-		while (*++fp);
+		यावत् (*++fp);
 	}
 #endif
 
@@ -141,13 +141,13 @@ int tee_main(int argc, char **argv)
 	 * is unnecessary here. */
 	np = names;
 	fp = files;
-	names[0] = (char *) bb_msg_standard_input;
-	files[0] = stdin;
-	do {	/* Now check for input and output errors. */
+	names[0] = (वर्ण *) bb_संदेश_standard_निवेश;
+	files[0] = मानक_निवेश;
+	कुरु {	/* Now check for input and output errors. */
 		/* Checking ferror should be sufficient, but we may want to fclose.
 		 * If we do, remember not to close stdin! */
 		die_if_ferror(*fp++, *np++);
-	} while (*fp);
+	} यावत् (*fp);
 
 	fflush_stdout_and_exit(retval);
 }
