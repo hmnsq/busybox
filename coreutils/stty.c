@@ -34,11 +34,11 @@
  * are done on the specified device, or stdin if none was specified.
  */
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#अन्तर्भाव "libbb.h"
+#अन्तर्भाव "common_bufsiz.h"
 
 #ifndef _POSIX_VDISABLE
-# define _POSIX_VDISABLE ((unsigned char) 0)
+# define _POSIX_VDISABLE ((unsigned वर्ण) 0)
 #endif
 
 #define Control(c) ((c) & 0x1f)
@@ -70,66 +70,66 @@
 #ifndef CSUSP
 # define CSUSP Control('z')
 #endif
-#if defined(VEOL2) && !defined(CEOL2)
+#जइ defined(VEOL2) && !defined(CEOL2)
 # define CEOL2 _POSIX_VDISABLE
 #endif
 /* glibc-2.12.1 uses only VSWTC name */
-#if defined(VSWTC) && !defined(VSWTCH)
+#जइ defined(VSWTC) && !defined(VSWTCH)
 # define VSWTCH VSWTC
 #endif
 /* ISC renamed swtch to susp for termios, but we'll accept either name */
-#if defined(VSUSP) && !defined(VSWTCH)
+#जइ defined(VSUSP) && !defined(VSWTCH)
 # define VSWTCH VSUSP
 # define CSWTCH CSUSP
 #endif
-#if defined(VSWTCH) && !defined(CSWTCH)
+#जइ defined(VSWTCH) && !defined(CSWTCH)
 # define CSWTCH _POSIX_VDISABLE
 #endif
 
 /* SunOS 5.3 loses (^Z doesn't work) if 'swtch' is the same as 'susp'.
    So the default is to disable 'swtch.'  */
-#if defined(__sparc__) && defined(__svr4__)
+#जइ defined(__sparc__) && defined(__svr4__)
 # undef CSWTCH
 # define CSWTCH _POSIX_VDISABLE
 #endif
 
-#if defined(VWERSE) && !defined(VWERASE)       /* AIX-3.2.5 */
+#जइ defined(VWERSE) && !defined(VWERASE)       /* AIX-3.2.5 */
 # define VWERASE VWERSE
 #endif
-#if defined(VDSUSP) && !defined(CDSUSP)
+#जइ defined(VDSUSP) && !defined(CDSUSP)
 # define CDSUSP Control('y')
 #endif
-#if !defined(VREPRINT) && defined(VRPRNT)       /* Irix 4.0.5 */
+#जइ !defined(VREPRINT) && defined(VRPRNT)       /* Irix 4.0.5 */
 # define VREPRINT VRPRNT
 #endif
-#if defined(VREPRINT) && !defined(CRPRNT)
+#जइ defined(VREPRINT) && !defined(CRPRNT)
 # define CRPRNT Control('r')
 #endif
-#if defined(VWERASE) && !defined(CWERASE)
+#जइ defined(VWERASE) && !defined(CWERASE)
 # define CWERASE Control('w')
 #endif
-#if defined(VLNEXT) && !defined(CLNEXT)
+#जइ defined(VLNEXT) && !defined(CLNEXT)
 # define CLNEXT Control('v')
 #endif
-#if defined(VDISCARD) && !defined(VFLUSHO)
+#जइ defined(VDISCARD) && !defined(VFLUSHO)
 # define VFLUSHO VDISCARD
 #endif
-#if defined(VFLUSH) && !defined(VFLUSHO)        /* Ultrix 4.2 */
+#जइ defined(VFLUSH) && !defined(VFLUSHO)        /* Ultrix 4.2 */
 # define VFLUSHO VFLUSH
 #endif
-#if defined(CTLECH) && !defined(ECHOCTL)        /* Ultrix 4.3 */
+#जइ defined(CTLECH) && !defined(ECHOCTL)        /* Ultrix 4.3 */
 # define ECHOCTL CTLECH
 #endif
-#if defined(TCTLECH) && !defined(ECHOCTL)       /* Ultrix 4.2 */
+#जइ defined(TCTLECH) && !defined(ECHOCTL)       /* Ultrix 4.2 */
 # define ECHOCTL TCTLECH
 #endif
-#if defined(CRTKIL) && !defined(ECHOKE)         /* Ultrix 4.2 and 4.3 */
+#जइ defined(CRTKIL) && !defined(ECHOKE)         /* Ultrix 4.2 and 4.3 */
 # define ECHOKE CRTKIL
 #endif
-#if defined(VFLUSHO) && !defined(CFLUSHO)
+#जइ defined(VFLUSHO) && !defined(CFLUSHO)
 # define CFLUSHO Control('o')
 #endif
-#if defined(VSTATUS) && !defined(CSTATUS)
+#जइ defined(VSTATUS) && !defined(CSTATUS)
 # define CSTATUS Control('t')
 #endif
 
@@ -247,26 +247,26 @@
 #endif
 
 /* Which speeds to set */
-enum speed_setting {
-	input_speed, output_speed, both_speeds
+गणना speed_setting {
+	निवेशः_speed, output_speed, both_speeds
 };
 
 /* Which member(s) of 'struct termios' a mode uses */
-enum {
-	control, input, output, local, combination
+गणना {
+	control, निवेशः, output, local, combination
 };
-static tcflag_t *get_ptr_to_tcflag(unsigned type, const struct termios *mode)
+स्थिर tcflag_t *get_ptr_to_tcflag(unsigned type, ध्रुव संरचना termios *mode)
 {
-	static const uint8_t tcflag_offsets[] ALIGN1 = {
-		offsetof(struct termios, c_cflag), /* control */
-		offsetof(struct termios, c_iflag), /* input */
-		offsetof(struct termios, c_oflag), /* output */
-		offsetof(struct termios, c_lflag)  /* local */
+	स्थिर ध्रुव uint8_t tcflag_offsets[] ALIGN1 = {
+		offsetof(संरचना termios, c_cflag), /* control */
+		offsetof(संरचना termios, c_iflag), /*निवेशः*/
+		offsetof(संरचना termios, c_oflag), /* output */
+		offsetof(संरचना termios, c_lflag)  /* local */
 	};
-	if (type <= local) {
-		return (tcflag_t*) (((char*)mode) + tcflag_offsets[type]);
+	जइ (type <= local) {
+		प्रत्यागम (tcflag_t*) (((वर्ण*)mode) + tcflag_offsets[type]);
 	}
-	return NULL;
+	प्रत्यागम रिक्त;
 }
 
 /* Flags for 'struct mode_info' */
@@ -279,22 +279,22 @@ static tcflag_t *get_ptr_to_tcflag(unsigned type, const struct termios *mode)
 /* Each mode.
  * This structure should be kept as small as humanly possible.
  */
-struct mode_info {
-	const uint8_t type;           /* Which structure element to change    */
-	const uint8_t flags;          /* Setting and display options          */
+संरचना mode_info {
+	ध्रुव uint8_t type;           /* Which structure element to change    */
+	ध्रुव uint8_t flags;          /* Setting and display options          */
 	/* only these values are ever used, so... */
-#if   (CSIZE | NLDLY | CRDLY | TABDLY | BSDLY | VTDLY | FFDLY) < 0x100
-	const uint8_t mask;
-#elif (CSIZE | NLDLY | CRDLY | TABDLY | BSDLY | VTDLY | FFDLY) < 0x10000
-	const uint16_t mask;
-#else
-	const tcflag_t mask;          /* Other bits to turn off for this mode */
+#जइ   (CSIZE | NLDLY | CRDLY | TABDLY | BSDLY | VTDLY | FFDLY) < 0x100
+	ध्रुव uint8_t mask;
+#नोचेद्यदि (CSIZE | NLDLY | CRDLY | TABDLY | BSDLY | VTDLY | FFDLY) < 0x10000
+	ध्रुव uint16_t mask;
+#अण्णहा
+	ध्रुव tcflag_t mask;          /* Other bits to turn off for this mode */
 #endif
 	/* was using short here, but ppc32 was unhappy */
-	const tcflag_t bits;          /* Bits to set for this mode            */
+	ध्रुव tcflag_t bits;          /* Bits to set for this mode            */
 };
 
-enum {
+गणना {
 	/* Must match mode_name[] and mode_info[] order! */
 	IDX_evenp = 0,
 	IDX_parity,
@@ -309,13 +309,13 @@ enum {
 	IDX_cbreak,
 	IDX_crt,
 	IDX_dec,
-#if IXANY
+#जइ IXANY
 	IDX_decctlq,
 #endif
-#if TABDLY || OXTABS
+#जइ TABDLY || OXTABS
 	IDX_tabs,
 #endif
-#if XCASE && IUCLC && OLCUC
+#जइ XCASE && IUCLC && OLCUC
 	IDX_lcase,
 	IDX_LCASE,
 #endif
@@ -324,7 +324,7 @@ enum {
 #define MI_ENTRY(N,T,F,B,M) N "\0"
 
 /* Mode names given on command line */
-static const char mode_name[] ALIGN1 =
+स्थिर ध्रुव वर्ण mode_name[] ALIGN1 =
 	MI_ENTRY("evenp",    combination, REV        | OMIT, 0,          0 )
 	MI_ENTRY("parity",   combination, REV        | OMIT, 0,          0 )
 	MI_ENTRY("oddp",     combination, REV        | OMIT, 0,          0 )
@@ -338,19 +338,19 @@ static const char mode_name[] ALIGN1 =
 	MI_ENTRY("cbreak",   combination, REV        | OMIT, 0,          0 )
 	MI_ENTRY("crt",      combination, OMIT,              0,          0 )
 	MI_ENTRY("dec",      combination, OMIT,              0,          0 )
-#if IXANY
+#जइ IXANY
 	MI_ENTRY("decctlq",  combination, REV        | OMIT, 0,          0 )
 #endif
-#if TABDLY || OXTABS
+#जइ TABDLY || OXTABS
 	MI_ENTRY("tabs",     combination, REV        | OMIT, 0,          0 )
 #endif
-#if XCASE && IUCLC && OLCUC
+#जइ XCASE && IUCLC && OLCUC
 	MI_ENTRY("lcase",    combination, REV        | OMIT, 0,          0 )
 	MI_ENTRY("LCASE",    combination, REV        | OMIT, 0,          0 )
 #endif
 	MI_ENTRY("parenb",   control,     REV,               PARENB,     0 )
 	MI_ENTRY("parodd",   control,     REV,               PARODD,     0 )
-#if CMSPAR
+#जइ CMSPAR
 	MI_ENTRY("cmspar",   control,     REV,               CMSPAR,     0 )
 #endif
 	MI_ENTRY("cs5",      control,     0,                 CS5,     CSIZE)
@@ -362,96 +362,96 @@ static const char mode_name[] ALIGN1 =
 	MI_ENTRY("cstopb",   control,     REV,               CSTOPB,     0 )
 	MI_ENTRY("cread",    control,     SANE_SET   | REV,  CREAD,      0 )
 	MI_ENTRY("clocal",   control,     REV,               CLOCAL,     0 )
-#if CRTSCTS
+#जइ CRTSCTS
 	MI_ENTRY("crtscts",  control,     REV,               CRTSCTS,    0 )
 #endif
-	MI_ENTRY("ignbrk",   input,       SANE_UNSET | REV,  IGNBRK,     0 )
-	MI_ENTRY("brkint",   input,       SANE_SET   | REV,  BRKINT,     0 )
-	MI_ENTRY("ignpar",   input,       REV,               IGNPAR,     0 )
-	MI_ENTRY("parmrk",   input,       REV,               PARMRK,     0 )
-	MI_ENTRY("inpck",    input,       REV,               INPCK,      0 )
-	MI_ENTRY("istrip",   input,       REV,               ISTRIP,     0 )
-	MI_ENTRY("inlcr",    input,       SANE_UNSET | REV,  INLCR,      0 )
-	MI_ENTRY("igncr",    input,       SANE_UNSET | REV,  IGNCR,      0 )
-	MI_ENTRY("icrnl",    input,       SANE_SET   | REV,  ICRNL,      0 )
-	MI_ENTRY("ixon",     input,       REV,               IXON,       0 )
-	MI_ENTRY("ixoff",    input,       SANE_UNSET | REV,  IXOFF,      0 )
-	MI_ENTRY("tandem",   input,       OMIT       | REV,  IXOFF,      0 )
-#if IUCLC
-	MI_ENTRY("iuclc",    input,       SANE_UNSET | REV,  IUCLC,      0 )
+	MI_ENTRY("ignbrk",   निवेशः,       SANE_UNSET | REV,  IGNBRK,     0 )
+	MI_ENTRY("brkint",   निवेशः,       SANE_SET   | REV,  BRKINT,     0 )
+	MI_ENTRY("ignpar",   निवेशः,       REV,               IGNPAR,     0 )
+	MI_ENTRY("parmrk",   निवेशः,       REV,               PARMRK,     0 )
+	MI_ENTRY("inpck",    निवेशः,       REV,               INPCK,      0 )
+	MI_ENTRY("istrip",   निवेशः,       REV,               ISTRIP,     0 )
+	MI_ENTRY("inlcr",    निवेशः,       SANE_UNSET | REV,  INLCR,      0 )
+	MI_ENTRY("igncr",    निवेशः,       SANE_UNSET | REV,  IGNCR,      0 )
+	MI_ENTRY("icrnl",    निवेशः,       SANE_SET   | REV,  ICRNL,      0 )
+	MI_ENTRY("ixon",     निवेशः,       REV,               IXON,       0 )
+	MI_ENTRY("ixoff",    निवेशः,       SANE_UNSET | REV,  IXOFF,      0 )
+	MI_ENTRY("tandem",   निवेशः,       OMIT       | REV,  IXOFF,      0 )
+#जइ IUCLC
+	MI_ENTRY("iuclc",    निवेशः,       SANE_UNSET | REV,  IUCLC,      0 )
 #endif
-#if IXANY
-	MI_ENTRY("ixany",    input,       SANE_UNSET | REV,  IXANY,      0 )
+#जइ IXANY
+	MI_ENTRY("ixany",    निवेशः,       SANE_UNSET | REV,  IXANY,      0 )
 #endif
-#if IMAXBEL
-	MI_ENTRY("imaxbel",  input,       SANE_SET   | REV,  IMAXBEL,    0 )
+#जइ IMAXBEL
+	MI_ENTRY("imaxbel",  निवेशः,       SANE_SET   | REV,  IMAXBEL,    0 )
 #endif
-#if IUTF8
-	MI_ENTRY("iutf8",    input,       SANE_UNSET | REV,  IUTF8,      0 )
+#जइ IUTF8
+	MI_ENTRY("iutf8",    निवेशः,       SANE_UNSET | REV,  IUTF8,      0 )
 #endif
 	MI_ENTRY("opost",    output,      SANE_SET   | REV,  OPOST,      0 )
-#if OLCUC
+#जइ OLCUC
 	MI_ENTRY("olcuc",    output,      SANE_UNSET | REV,  OLCUC,      0 )
 #endif
-#if OCRNL
+#जइ OCRNL
 	MI_ENTRY("ocrnl",    output,      SANE_UNSET | REV,  OCRNL,      0 )
 #endif
-#if ONLCR
+#जइ ONLCR
 	MI_ENTRY("onlcr",    output,      SANE_SET   | REV,  ONLCR,      0 )
 #endif
-#if ONOCR
+#जइ ONOCR
 	MI_ENTRY("onocr",    output,      SANE_UNSET | REV,  ONOCR,      0 )
 #endif
-#if ONLRET
+#जइ ONLRET
 	MI_ENTRY("onlret",   output,      SANE_UNSET | REV,  ONLRET,     0 )
 #endif
-#if OFILL
+#जइ OFILL
 	MI_ENTRY("ofill",    output,      SANE_UNSET | REV,  OFILL,      0 )
 #endif
-#if OFDEL
+#जइ OFDEL
 	MI_ENTRY("ofdel",    output,      SANE_UNSET | REV,  OFDEL,      0 )
 #endif
-#if NLDLY
+#जइ NLDLY
 	MI_ENTRY("nl1",      output,      SANE_UNSET,        NL1,     NLDLY)
 	MI_ENTRY("nl0",      output,      SANE_SET,          NL0,     NLDLY)
 #endif
-#if CRDLY
+#जइ CRDLY
 	MI_ENTRY("cr3",      output,      SANE_UNSET,        CR3,     CRDLY)
 	MI_ENTRY("cr2",      output,      SANE_UNSET,        CR2,     CRDLY)
 	MI_ENTRY("cr1",      output,      SANE_UNSET,        CR1,     CRDLY)
 	MI_ENTRY("cr0",      output,      SANE_SET,          CR0,     CRDLY)
 #endif
 
-#if TABDLY
+#जइ TABDLY
 	MI_ENTRY("tab3",     output,      SANE_UNSET,        TAB3,   TABDLY)
-# if TAB2
+# जइ TAB2
 	MI_ENTRY("tab2",     output,      SANE_UNSET,        TAB2,   TABDLY)
 # endif
-# if TAB1
+# जइ TAB1
 	MI_ENTRY("tab1",     output,      SANE_UNSET,        TAB1,   TABDLY)
 # endif
 	MI_ENTRY("tab0",     output,      SANE_SET,          TAB0,   TABDLY)
-#else
-# if OXTABS
+#अण्णहा
+# जइ OXTABS
 	MI_ENTRY("tab3",     output,      SANE_UNSET,        OXTABS,     0 )
 # endif
 #endif
 
-#if BSDLY
+#जइ BSDLY
 	MI_ENTRY("bs1",      output,      SANE_UNSET,        BS1,     BSDLY)
 	MI_ENTRY("bs0",      output,      SANE_SET,          BS0,     BSDLY)
 #endif
-#if VTDLY
+#जइ VTDLY
 	MI_ENTRY("vt1",      output,      SANE_UNSET,        VT1,     VTDLY)
 	MI_ENTRY("vt0",      output,      SANE_SET,          VT0,     VTDLY)
 #endif
-#if FFDLY
+#जइ FFDLY
 	MI_ENTRY("ff1",      output,      SANE_UNSET,        FF1,     FFDLY)
 	MI_ENTRY("ff0",      output,      SANE_SET,          FF0,     FFDLY)
 #endif
 	MI_ENTRY("isig",     local,       SANE_SET   | REV,  ISIG,       0 )
 	MI_ENTRY("icanon",   local,       SANE_SET   | REV,  ICANON,     0 )
-#if IEXTEN
+#जइ IEXTEN
 	MI_ENTRY("iexten",   local,       SANE_SET   | REV,  IEXTEN,     0 )
 #endif
 	MI_ENTRY("echo",     local,       SANE_SET   | REV,  ECHO,       0 )
@@ -460,21 +460,21 @@ static const char mode_name[] ALIGN1 =
 	MI_ENTRY("echok",    local,       SANE_SET   | REV,  ECHOK,      0 )
 	MI_ENTRY("echonl",   local,       SANE_UNSET | REV,  ECHONL,     0 )
 	MI_ENTRY("noflsh",   local,       SANE_UNSET | REV,  NOFLSH,     0 )
-#if XCASE
+#जइ XCASE
 	MI_ENTRY("xcase",    local,       SANE_UNSET | REV,  XCASE,      0 )
 #endif
-#if TOSTOP
+#जइ TOSTOP
 	MI_ENTRY("tostop",   local,       SANE_UNSET | REV,  TOSTOP,     0 )
 #endif
-#if ECHOPRT
+#जइ ECHOPRT
 	MI_ENTRY("echoprt",  local,       SANE_UNSET | REV,  ECHOPRT,    0 )
 	MI_ENTRY("prterase", local,       OMIT       | REV,  ECHOPRT,    0 )
 #endif
-#if ECHOCTL
+#जइ ECHOCTL
 	MI_ENTRY("echoctl",  local,       SANE_SET   | REV,  ECHOCTL,    0 )
 	MI_ENTRY("ctlecho",  local,       OMIT       | REV,  ECHOCTL,    0 )
 #endif
-#if ECHOKE
+#जइ ECHOKE
 	MI_ENTRY("echoke",   local,       SANE_SET   | REV,  ECHOKE,     0 )
 	MI_ENTRY("crtkill",  local,       OMIT       | REV,  ECHOKE,     0 )
 #endif
@@ -487,7 +487,7 @@ static const char mode_name[] ALIGN1 =
 #undef MI_ENTRY
 #define MI_ENTRY(N,T,F,B,M) { T, F, M, B },
 
-static const struct mode_info mode_info[] ALIGN4 = {
+स्थिर ध्रुव संरचना mode_info mode_info[] ALIGN4 = {
 	/* This should be verbatim cut-n-paste copy of the above MI_ENTRYs */
 	MI_ENTRY("evenp",    combination, REV        | OMIT, 0,          0 )
 	MI_ENTRY("parity",   combination, REV        | OMIT, 0,          0 )
@@ -502,19 +502,19 @@ static const struct mode_info mode_info[] ALIGN4 = {
 	MI_ENTRY("cbreak",   combination, REV        | OMIT, 0,          0 )
 	MI_ENTRY("crt",      combination, OMIT,              0,          0 )
 	MI_ENTRY("dec",      combination, OMIT,              0,          0 )
-#if IXANY
+#जइ IXANY
 	MI_ENTRY("decctlq",  combination, REV        | OMIT, 0,          0 )
 #endif
-#if TABDLY || OXTABS
+#जइ TABDLY || OXTABS
 	MI_ENTRY("tabs",     combination, REV        | OMIT, 0,          0 )
 #endif
-#if XCASE && IUCLC && OLCUC
+#जइ XCASE && IUCLC && OLCUC
 	MI_ENTRY("lcase",    combination, REV        | OMIT, 0,          0 )
 	MI_ENTRY("LCASE",    combination, REV        | OMIT, 0,          0 )
 #endif
 	MI_ENTRY("parenb",   control,     REV,               PARENB,     0 )
 	MI_ENTRY("parodd",   control,     REV,               PARODD,     0 )
-#if CMSPAR
+#जइ CMSPAR
 	MI_ENTRY("cmspar",   control,     REV,               CMSPAR,     0 )
 #endif
 	MI_ENTRY("cs5",      control,     0,                 CS5,     CSIZE)
@@ -526,96 +526,96 @@ static const struct mode_info mode_info[] ALIGN4 = {
 	MI_ENTRY("cstopb",   control,     REV,               CSTOPB,     0 )
 	MI_ENTRY("cread",    control,     SANE_SET   | REV,  CREAD,      0 )
 	MI_ENTRY("clocal",   control,     REV,               CLOCAL,     0 )
-#if CRTSCTS
+#जइ CRTSCTS
 	MI_ENTRY("crtscts",  control,     REV,               CRTSCTS,    0 )
 #endif
-	MI_ENTRY("ignbrk",   input,       SANE_UNSET | REV,  IGNBRK,     0 )
-	MI_ENTRY("brkint",   input,       SANE_SET   | REV,  BRKINT,     0 )
-	MI_ENTRY("ignpar",   input,       REV,               IGNPAR,     0 )
-	MI_ENTRY("parmrk",   input,       REV,               PARMRK,     0 )
-	MI_ENTRY("inpck",    input,       REV,               INPCK,      0 )
-	MI_ENTRY("istrip",   input,       REV,               ISTRIP,     0 )
-	MI_ENTRY("inlcr",    input,       SANE_UNSET | REV,  INLCR,      0 )
-	MI_ENTRY("igncr",    input,       SANE_UNSET | REV,  IGNCR,      0 )
-	MI_ENTRY("icrnl",    input,       SANE_SET   | REV,  ICRNL,      0 )
-	MI_ENTRY("ixon",     input,       REV,               IXON,       0 )
-	MI_ENTRY("ixoff",    input,       SANE_UNSET | REV,  IXOFF,      0 )
-	MI_ENTRY("tandem",   input,       OMIT       | REV,  IXOFF,      0 )
-#if IUCLC
-	MI_ENTRY("iuclc",    input,       SANE_UNSET | REV,  IUCLC,      0 )
+	MI_ENTRY("ignbrk",   निवेशः,       SANE_UNSET | REV,  IGNBRK,     0 )
+	MI_ENTRY("brkint",   निवेशः,       SANE_SET   | REV,  BRKINT,     0 )
+	MI_ENTRY("ignpar",   निवेशः,       REV,               IGNPAR,     0 )
+	MI_ENTRY("parmrk",   निवेशः,       REV,               PARMRK,     0 )
+	MI_ENTRY("inpck",    निवेशः,       REV,               INPCK,      0 )
+	MI_ENTRY("istrip",   निवेशः,       REV,               ISTRIP,     0 )
+	MI_ENTRY("inlcr",    निवेशः,       SANE_UNSET | REV,  INLCR,      0 )
+	MI_ENTRY("igncr",    निवेशः,       SANE_UNSET | REV,  IGNCR,      0 )
+	MI_ENTRY("icrnl",    निवेशः,       SANE_SET   | REV,  ICRNL,      0 )
+	MI_ENTRY("ixon",     निवेशः,       REV,               IXON,       0 )
+	MI_ENTRY("ixoff",    निवेशः,       SANE_UNSET | REV,  IXOFF,      0 )
+	MI_ENTRY("tandem",   निवेशः,       OMIT       | REV,  IXOFF,      0 )
+#जइ IUCLC
+	MI_ENTRY("iuclc",    निवेशः,       SANE_UNSET | REV,  IUCLC,      0 )
 #endif
-#if IXANY
-	MI_ENTRY("ixany",    input,       SANE_UNSET | REV,  IXANY,      0 )
+#जइ IXANY
+	MI_ENTRY("ixany",    निवेशः,       SANE_UNSET | REV,  IXANY,      0 )
 #endif
-#if IMAXBEL
-	MI_ENTRY("imaxbel",  input,       SANE_SET   | REV,  IMAXBEL,    0 )
+#जइ IMAXBEL
+	MI_ENTRY("imaxbel",  निवेशः,       SANE_SET   | REV,  IMAXBEL,    0 )
 #endif
-#if IUTF8
-	MI_ENTRY("iutf8",    input,       SANE_UNSET | REV,  IUTF8,      0 )
+#जइ IUTF8
+	MI_ENTRY("iutf8",    निवेशः,       SANE_UNSET | REV,  IUTF8,      0 )
 #endif
 	MI_ENTRY("opost",    output,      SANE_SET   | REV,  OPOST,      0 )
-#if OLCUC
+#जइ OLCUC
 	MI_ENTRY("olcuc",    output,      SANE_UNSET | REV,  OLCUC,      0 )
 #endif
-#if OCRNL
+#जइ OCRNL
 	MI_ENTRY("ocrnl",    output,      SANE_UNSET | REV,  OCRNL,      0 )
 #endif
-#if ONLCR
+#जइ ONLCR
 	MI_ENTRY("onlcr",    output,      SANE_SET   | REV,  ONLCR,      0 )
 #endif
-#if ONOCR
+#जइ ONOCR
 	MI_ENTRY("onocr",    output,      SANE_UNSET | REV,  ONOCR,      0 )
 #endif
-#if ONLRET
+#जइ ONLRET
 	MI_ENTRY("onlret",   output,      SANE_UNSET | REV,  ONLRET,     0 )
 #endif
-#if OFILL
+#जइ OFILL
 	MI_ENTRY("ofill",    output,      SANE_UNSET | REV,  OFILL,      0 )
 #endif
-#if OFDEL
+#जइ OFDEL
 	MI_ENTRY("ofdel",    output,      SANE_UNSET | REV,  OFDEL,      0 )
 #endif
-#if NLDLY
+#जइ NLDLY
 	MI_ENTRY("nl1",      output,      SANE_UNSET,        NL1,     NLDLY)
 	MI_ENTRY("nl0",      output,      SANE_SET,          NL0,     NLDLY)
 #endif
-#if CRDLY
+#जइ CRDLY
 	MI_ENTRY("cr3",      output,      SANE_UNSET,        CR3,     CRDLY)
 	MI_ENTRY("cr2",      output,      SANE_UNSET,        CR2,     CRDLY)
 	MI_ENTRY("cr1",      output,      SANE_UNSET,        CR1,     CRDLY)
 	MI_ENTRY("cr0",      output,      SANE_SET,          CR0,     CRDLY)
 #endif
 
-#if TABDLY
+#जइ TABDLY
 	MI_ENTRY("tab3",     output,      SANE_UNSET,        TAB3,   TABDLY)
-# if TAB2
+# जइ TAB2
 	MI_ENTRY("tab2",     output,      SANE_UNSET,        TAB2,   TABDLY)
 # endif
-# if TAB1
+# जइ TAB1
 	MI_ENTRY("tab1",     output,      SANE_UNSET,        TAB1,   TABDLY)
 # endif
 	MI_ENTRY("tab0",     output,      SANE_SET,          TAB0,   TABDLY)
-#else
-# if OXTABS
+#अण्णहा
+# जइ OXTABS
 	MI_ENTRY("tab3",     output,      SANE_UNSET,        OXTABS,     0 )
 # endif
 #endif
 
-#if BSDLY
+#जइ BSDLY
 	MI_ENTRY("bs1",      output,      SANE_UNSET,        BS1,     BSDLY)
 	MI_ENTRY("bs0",      output,      SANE_SET,          BS0,     BSDLY)
 #endif
-#if VTDLY
+#जइ VTDLY
 	MI_ENTRY("vt1",      output,      SANE_UNSET,        VT1,     VTDLY)
 	MI_ENTRY("vt0",      output,      SANE_SET,          VT0,     VTDLY)
 #endif
-#if FFDLY
+#जइ FFDLY
 	MI_ENTRY("ff1",      output,      SANE_UNSET,        FF1,     FFDLY)
 	MI_ENTRY("ff0",      output,      SANE_SET,          FF0,     FFDLY)
 #endif
 	MI_ENTRY("isig",     local,       SANE_SET   | REV,  ISIG,       0 )
 	MI_ENTRY("icanon",   local,       SANE_SET   | REV,  ICANON,     0 )
-#if IEXTEN
+#जइ IEXTEN
 	MI_ENTRY("iexten",   local,       SANE_SET   | REV,  IEXTEN,     0 )
 #endif
 	MI_ENTRY("echo",     local,       SANE_SET   | REV,  ECHO,       0 )
@@ -624,21 +624,21 @@ static const struct mode_info mode_info[] ALIGN4 = {
 	MI_ENTRY("echok",    local,       SANE_SET   | REV,  ECHOK,      0 )
 	MI_ENTRY("echonl",   local,       SANE_UNSET | REV,  ECHONL,     0 )
 	MI_ENTRY("noflsh",   local,       SANE_UNSET | REV,  NOFLSH,     0 )
-#if XCASE
+#जइ XCASE
 	MI_ENTRY("xcase",    local,       SANE_UNSET | REV,  XCASE,      0 )
 #endif
-#if TOSTOP
+#जइ TOSTOP
 	MI_ENTRY("tostop",   local,       SANE_UNSET | REV,  TOSTOP,     0 )
 #endif
-#if ECHOPRT
+#जइ ECHOPRT
 	MI_ENTRY("echoprt",  local,       SANE_UNSET | REV,  ECHOPRT,    0 )
 	MI_ENTRY("prterase", local,       OMIT       | REV,  ECHOPRT,    0 )
 #endif
-#if ECHOCTL
+#जइ ECHOCTL
 	MI_ENTRY("echoctl",  local,       SANE_SET   | REV,  ECHOCTL,    0 )
 	MI_ENTRY("ctlecho",  local,       OMIT       | REV,  ECHOCTL,    0 )
 #endif
-#if ECHOKE
+#जइ ECHOKE
 	MI_ENTRY("echoke",   local,       SANE_SET   | REV,  ECHOKE,     0 )
 	MI_ENTRY("crtkill",  local,       OMIT       | REV,  ECHOKE,     0 )
 #endif
@@ -648,18 +648,18 @@ static const struct mode_info mode_info[] ALIGN4 = {
 #endif
 };
 
-enum {
-	NUM_mode_info = ARRAY_SIZE(mode_info)
+गणना {
+	अङ्कः_mode_info = ARRAY_SIZE(mode_info)
 };
 
 
 /* Control characters */
-struct control_info {
-	const uint8_t saneval;  /* Value to set for 'stty sane' */
-	const uint8_t offset;   /* Offset in c_cc */
+संरचना control_info {
+	ध्रुव uint8_t saneval;  /* Value to set for 'stty sane' */
+	ध्रुव uint8_t offset;   /* Offset in c_cc */
 };
 
-enum {
+गणना {
 	/* Must match control_name[] and control_info[] order! */
 	CIDX_intr = 0,
 	CIDX_quit,
@@ -667,31 +667,31 @@ enum {
 	CIDX_kill,
 	CIDX_eof,
 	CIDX_eol,
-#if VEOL2
+#जइ VEOL2
 	CIDX_eol2,
 #endif
-#if VSWTCH
+#जइ VSWTCH
 	CIDX_swtch,
 #endif
 	CIDX_start,
 	CIDX_stop,
 	CIDX_susp,
-#if VDSUSP
+#जइ VDSUSP
 	CIDX_dsusp,
 #endif
-#if VREPRINT
+#जइ VREPRINT
 	CIDX_rprnt,
 #endif
-#if VWERASE
+#जइ VWERASE
 	CIDX_werase,
 #endif
-#if VLNEXT
+#जइ VLNEXT
 	CIDX_lnext,
 #endif
-#if VFLUSHO
+#जइ VFLUSHO
 	CIDX_flush,
 #endif
-#if VSTATUS
+#जइ VSTATUS
 	CIDX_status,
 #endif
 	CIDX_min,
@@ -701,38 +701,38 @@ enum {
 #define CI_ENTRY(n,s,o) n "\0"
 
 /* Name given on command line */
-static const char control_name[] ALIGN1 =
+स्थिर ध्रुव वर्ण control_name[] ALIGN1 =
 	CI_ENTRY("intr",     CINTR,   VINTR   )
 	CI_ENTRY("quit",     CQUIT,   VQUIT   )
 	CI_ENTRY("erase",    CERASE,  VERASE  )
 	CI_ENTRY("kill",     CKILL,   VKILL   )
 	CI_ENTRY("eof",      CEOF,    VEOF    )
 	CI_ENTRY("eol",      CEOL,    VEOL    )
-#if VEOL2
+#जइ VEOL2
 	CI_ENTRY("eol2",     CEOL2,   VEOL2   )
 #endif
-#if VSWTCH
+#जइ VSWTCH
 	CI_ENTRY("swtch",    CSWTCH,  VSWTCH  )
 #endif
 	CI_ENTRY("start",    CSTART,  VSTART  )
 	CI_ENTRY("stop",     CSTOP,   VSTOP   )
 	CI_ENTRY("susp",     CSUSP,   VSUSP   )
-#if VDSUSP
+#जइ VDSUSP
 	CI_ENTRY("dsusp",    CDSUSP,  VDSUSP  )
 #endif
-#if VREPRINT
+#जइ VREPRINT
 	CI_ENTRY("rprnt",    CRPRNT,  VREPRINT)
 #endif
-#if VWERASE
+#जइ VWERASE
 	CI_ENTRY("werase",   CWERASE, VWERASE )
 #endif
-#if VLNEXT
+#जइ VLNEXT
 	CI_ENTRY("lnext",    CLNEXT,  VLNEXT  )
 #endif
-#if VFLUSHO
+#जइ VFLUSHO
 	CI_ENTRY("flush",    CFLUSHO, VFLUSHO )
 #endif
-#if VSTATUS
+#जइ VSTATUS
 	CI_ENTRY("status",   CSTATUS, VSTATUS )
 #endif
 	/* These must be last because of the display routines */
@@ -743,7 +743,7 @@ static const char control_name[] ALIGN1 =
 #undef CI_ENTRY
 #define CI_ENTRY(n,s,o) { s, o },
 
-static const struct control_info control_info[] ALIGN2 = {
+स्थिर ध्रुव संरचना control_info control_info[] ALIGN2 = {
 	/* This should be verbatim cut-n-paste copy of the above CI_ENTRYs */
 	CI_ENTRY("intr",     CINTR,   VINTR   )
 	CI_ENTRY("quit",     CQUIT,   VQUIT   )
@@ -751,31 +751,31 @@ static const struct control_info control_info[] ALIGN2 = {
 	CI_ENTRY("kill",     CKILL,   VKILL   )
 	CI_ENTRY("eof",      CEOF,    VEOF    )
 	CI_ENTRY("eol",      CEOL,    VEOL    )
-#if VEOL2
+#जइ VEOL2
 	CI_ENTRY("eol2",     CEOL2,   VEOL2   )
 #endif
-#if VSWTCH
+#जइ VSWTCH
 	CI_ENTRY("swtch",    CSWTCH,  VSWTCH  )
 #endif
 	CI_ENTRY("start",    CSTART,  VSTART  )
 	CI_ENTRY("stop",     CSTOP,   VSTOP   )
 	CI_ENTRY("susp",     CSUSP,   VSUSP   )
-#if VDSUSP
+#जइ VDSUSP
 	CI_ENTRY("dsusp",    CDSUSP,  VDSUSP  )
 #endif
-#if VREPRINT
+#जइ VREPRINT
 	CI_ENTRY("rprnt",    CRPRNT,  VREPRINT)
 #endif
-#if VWERASE
+#जइ VWERASE
 	CI_ENTRY("werase",   CWERASE, VWERASE )
 #endif
-#if VLNEXT
+#जइ VLNEXT
 	CI_ENTRY("lnext",    CLNEXT,  VLNEXT  )
 #endif
-#if VFLUSHO
+#जइ VFLUSHO
 	CI_ENTRY("flush",    CFLUSHO, VFLUSHO )
 #endif
-#if VSTATUS
+#जइ VSTATUS
 	CI_ENTRY("status",   CSTATUS, VSTATUS )
 #endif
 	/* These must be last because of the display routines */
@@ -783,150 +783,150 @@ static const struct control_info control_info[] ALIGN2 = {
 	CI_ENTRY("time",     0,       VTIME   )
 };
 
-enum {
-	NUM_control_info = ARRAY_SIZE(control_info)
+गणना {
+	अङ्कः_control_info = ARRAY_SIZE(control_info)
 };
 
 
-struct globals {
-	const char *device_name;
+संरचना globals {
+	ध्रुव वर्ण *device_name;
 	/* The width of the screen, for output wrapping */
 	unsigned max_col;
 	/* Current position, to know when to wrap */
 	unsigned current_col;
 } FIX_ALIASING;
-#define G (*(struct globals*)bb_common_bufsiz1)
-#define INIT_G() do { \
+#define G (*(संरचना globals*)bb_common_bufsiz1)
+#define INIT_G() करेहि { \
 	setup_common_bufsiz(); \
-	G.device_name = bb_msg_standard_input; \
+	G.device_name = bb_सन्देशः_standard_निवेशः; \
 	G.max_col = 80; \
 	G.current_col = 0; /* we are noexec, must clear */ \
-} while (0)
+} जाव (0)
 
-static void set_speed_or_die(enum speed_setting type, const char *arg,
-					struct termios *mode)
+स्थिर शून्य set_speed_or_die(गणना speed_setting type, ध्रुव वर्ण *arg,
+					संरचना termios *mode)
 {
 	speed_t baud;
 
-	baud = tty_value_to_baud(xatou(arg));
+	baud = tty_मानम्_to_baud(xatou(arg));
 
-	if (type != output_speed) {     /* either input or both */
+	जइ (type != output_speed) {     /* either input or both */
 		cfsetispeed(mode, baud);
 	}
-	if (type != input_speed) {      /* either output or both */
+	जइ (type != निवेशः_speed) {      /* either output or both */
 		cfsetospeed(mode, baud);
 	}
 }
 
-static NORETURN void perror_on_device_and_die(const char *fmt)
+स्थिर NORETURN शून्य perror_on_device_and_die(ध्रुव वर्ण *fmt)
 {
-	bb_perror_msg_and_die(fmt, G.device_name);
+	bb_perror_सन्देशः_and_die(fmt, G.device_name);
 }
 
-static void perror_on_device(const char *fmt)
+स्थिर शून्य perror_on_device(ध्रुव वर्ण *fmt)
 {
-	bb_perror_msg(fmt, G.device_name);
+	bb_perror_सन्देशः(fmt, G.device_name);
 }
 
 /* Print format string MESSAGE and optional args.
    Wrap to next line first if it won't fit.
    Print a space first unless MESSAGE will start a new line */
-static void wrapf(const char *message, ...)
+स्थिर शून्य wrapf(ध्रुव वर्ण *message, ...)
 {
-	char buf[128];
+	वर्ण buf[128];
 	va_list args;
 	unsigned buflen;
 
 	va_start(args, message);
-	buflen = vsnprintf(buf, sizeof(buf), message, args);
+	buflen = vsnprintf(buf, परिमाण(buf), message, args);
 	va_end(args);
 	/* We seem to be called only with suitable lengths, but check if
 	   somebody failed to adhere to this assumption just to be sure.  */
-	if (!buflen || buflen >= sizeof(buf)) return;
+	जइ (!buflen || buflen >= परिमाण(buf)) प्रत्यागम;
 
-	if (G.current_col > 0) {
+	जइ (G.current_col > 0) {
 		G.current_col++;
-		if (buf[0] != '\n') {
-			if (G.current_col + buflen >= G.max_col) {
+		जइ (buf[0] != '\n') {
+			जइ (G.current_col + buflen >= G.max_col) {
 				G.current_col = 0;
 				bb_putchar('\n');
-			} else {
+			} अण्णहा {
 				bb_putchar(' ');
 			}
 		}
 	}
 	fputs_stdout(buf);
 	G.current_col += buflen;
-	if (buf[buflen-1] == '\n')
+	जइ (buf[buflen-1] == '\n')
 		G.current_col = 0;
 }
 
-static void newline(void)
+स्थिर शून्य newline(शून्य)
 {
-	if (G.current_col != 0)
+	जइ (G.current_col != 0)
 		wrapf("\n");
 }
 
 #ifdef TIOCGWINSZ
-static void set_window_size(int rows, int cols)
+स्थिर शून्य set_window_size(पूर्णाङ्क rows, पूर्णाङ्क cols)
 {
-	struct winsize win = { 0, 0, 0, 0 };
+	संरचना winsize win = { 0, 0, 0, 0 };
 
-	if (ioctl(STDIN_FILENO, TIOCGWINSZ, &win)) {
-		if (errno != EINVAL) {
-			goto bail;
+	जइ (ioctl(STDIN_FILENO, TIOCGWINSZ, &win)) {
+		जइ (errno != EINVAL) {
+			गच्छ bail;
 		}
-		memset(&win, 0, sizeof(win));
+		memset(&win, 0, परिमाण(win));
 	}
 
-	if (rows >= 0)
+	जइ (rows >= 0)
 		win.ws_row = rows;
-	if (cols >= 0)
+	जइ (cols >= 0)
 		win.ws_col = cols;
 
-	if (ioctl(STDIN_FILENO, TIOCSWINSZ, (char *) &win))
+	जइ (ioctl(STDIN_FILENO, TIOCSWINSZ, (वर्ण *) &win))
 bail:
 		perror_on_device("%s");
 }
 #endif
 
-static void display_window_size(int fancy)
+स्थिर शून्य display_window_size(पूर्णाङ्क fancy)
 {
-	const char *fmt_str = "%s\0%s: no size information for this device";
+	ध्रुव वर्ण *fmt_str = "%s\0%s: no size information for this device";
 	unsigned width, height;
 
-	if (get_terminal_width_height(STDIN_FILENO, &width, &height)) {
-		if ((errno != EINVAL) || ((fmt_str += 2), !fancy)) {
+	जइ (get_terminal_width_height(STDIN_FILENO, &width, &height)) {
+		जइ ((errno != EINVAL) || ((fmt_str += 2), !fancy)) {
 			perror_on_device(fmt_str);
 		}
-	} else {
+	} अण्णहा {
 		wrapf(fancy ? "rows %u; columns %u;" : "%u %u\n",
 				height, width);
 	}
 }
 
-static const struct suffix_mult stty_suffixes[] ALIGN_SUFFIX = {
+स्थिर ध्रुव संरचना suffix_mult stty_suffixes[] ALIGN_SUFFIX = {
 	{ "b",  512 },
 	{ "k", 1024 },
 	{ "B", 1024 },
 	{ "", 0 }
 };
 
-static const struct mode_info *find_mode(const char *name)
+स्थिर ध्रुव संरचना mode_info *find_mode(ध्रुव वर्ण *name)
 {
-	int i = index_in_strings(mode_name, name);
-	return i >= 0 ? &mode_info[i] : NULL;
+	पूर्णाङ्क i = index_in_strings(mode_name, name);
+	प्रत्यागम i >= 0 ? &mode_info[i] : रिक्त;
 }
 
-static const struct control_info *find_control(const char *name)
+स्थिर ध्रुव संरचना control_info *find_control(ध्रुव वर्ण *name)
 {
-	int i = index_in_strings(control_name, name);
-	return i >= 0 ? &control_info[i] : NULL;
+	पूर्णाङ्क i = index_in_strings(control_name, name);
+	प्रत्यागम i >= 0 ? &control_info[i] : रिक्त;
 }
 
-enum {
+गणना {
 	param_need_arg = 0x80,
-	param_line    = 1 | 0x80,
+	param_पङ्क्तिः    = 1 | 0x80,
 	param_rows    = 2 | 0x80,
 	param_cols    = 3 | 0x80,
 	param_columns = 4 | 0x80,
@@ -936,9 +936,9 @@ enum {
 	param_ospeed  = 8 | 0x80,
 };
 
-static int find_param(const char *name)
+स्थिर पूर्णाङ्क find_param(ध्रुव वर्ण *name)
 {
-	static const char params[] ALIGN1 =
+	स्थिर ध्रुव वर्ण params[] ALIGN1 =
 		"line\0"    /* 1 */
 		"rows\0"    /* 2 */
 		"cols\0"    /* 3 */
@@ -947,134 +947,134 @@ static int find_param(const char *name)
 		"speed\0"   /* 6 */
 		"ispeed\0"
 		"ospeed\0";
-	int i = index_in_strings(params, name) + 1;
-	if (i == 0)
-		return 0;
-	if (i != 5 && i != 6)
+	पूर्णाङ्क i = index_in_strings(params, name) + 1;
+	जइ (i == 0)
+		प्रत्यागम 0;
+	जइ (i != 5 && i != 6)
 		i |= 0x80;
-	return i;
+	प्रत्यागम i;
 }
 
-static int recover_mode(const char *arg, struct termios *mode)
+स्थिर पूर्णाङ्क recover_mode(ध्रुव वर्ण *arg, संरचना termios *mode)
 {
-	int i, n;
+	पूर्णाङ्क i, n;
 	unsigned chr;
 	unsigned long iflag, oflag, cflag, lflag;
 
 	/* Scan into temporaries since it is too much trouble to figure out
 	   the right format for 'tcflag_t' */
-	if (sscanf(arg, "%lx:%lx:%lx:%lx%n",
+	जइ (sscanf(arg, "%lx:%lx:%lx:%lx%n",
 			   &iflag, &oflag, &cflag, &lflag, &n) != 4)
-		return 0;
+		प्रत्यागम 0;
 	mode->c_iflag = iflag;
 	mode->c_oflag = oflag;
 	mode->c_cflag = cflag;
 	mode->c_lflag = lflag;
 	arg += n;
-	for (i = 0; i < NCCS; ++i) {
-		if (sscanf(arg, ":%x%n", &chr, &n) != 1)
-			return 0;
+	प्रति (i = 0; i < NCCS; ++i) {
+		जइ (sscanf(arg, ":%x%n", &chr, &n) != 1)
+			प्रत्यागम 0;
 		mode->c_cc[i] = chr;
 		arg += n;
 	}
 
 	/* Fail if there are too many fields */
-	if (*arg != '\0')
-		return 0;
+	जइ (*arg != '\0')
+		प्रत्यागम 0;
 
-	return 1;
+	प्रत्यागम 1;
 }
 
-static void display_recoverable(const struct termios *mode,
-				int UNUSED_PARAM dummy)
+स्थिर शून्य display_recoverable(ध्रुव संरचना termios *mode,
+				पूर्णाङ्क UNUSED_PARAM dummy)
 {
-	int i;
+	पूर्णाङ्क i;
 	printf("%lx:%lx:%lx:%lx",
 		   (unsigned long) mode->c_iflag, (unsigned long) mode->c_oflag,
 		   (unsigned long) mode->c_cflag, (unsigned long) mode->c_lflag);
-	for (i = 0; i < NCCS; ++i)
-		printf(":%x", (unsigned int) mode->c_cc[i]);
+	प्रति (i = 0; i < NCCS; ++i)
+		printf(":%x", (unsigned पूर्णाङ्क) mode->c_cc[i]);
 	bb_putchar('\n');
 }
 
-static void display_speed(const struct termios *mode, int fancy)
+स्थिर शून्य display_speed(ध्रुव संरचना termios *mode, पूर्णाङ्क fancy)
 {
 	//____________________ 01234567 8 9
-	const char *fmt_str = "%lu %lu\n\0ispeed %lu baud; ospeed %lu baud;";
+	ध्रुव वर्ण *fmt_str = "%lu %lu\n\0ispeed %lu baud; ospeed %lu baud;";
 	unsigned long ispeed, ospeed;
 
 	ispeed = cfgetispeed(mode);
 	ospeed = cfgetospeed(mode);
-	if (ispeed == 0 || ispeed == ospeed) {
+	जइ (ispeed == 0 || ispeed == ospeed) {
 		ispeed = ospeed;                /* in case ispeed was 0 */
 		//________ 0123 4 5 6 7 8 9
 		fmt_str = "%lu\n\0\0\0\0\0speed %lu baud;";
 	}
-	if (fancy) fmt_str += 9;
-	wrapf(fmt_str, tty_baud_to_value(ispeed), tty_baud_to_value(ospeed));
+	जइ (fancy) fmt_str += 9;
+	wrapf(fmt_str, tty_baud_to_मानम्(ispeed), tty_baud_to_मानम्(ospeed));
 }
 
-static void do_display(const struct termios *mode, int all)
+स्थिर शून्य do_display(ध्रुव संरचना termios *mode, पूर्णाङ्क all)
 {
-	int i;
+	पूर्णाङ्क i;
 	tcflag_t *bitsp;
 	unsigned long mask;
-	int prev_type = control;
+	पूर्णाङ्क prev_type = control;
 
 	display_speed(mode, 1);
-	if (all)
+	जइ (all)
 		display_window_size(1);
 #ifdef __linux__
-	wrapf("line = %u;\n", mode->c_line);
-#else
+	wrapf("line = %u;\n", mode->c_पङ्क्तिः);
+#अण्णहा
 	newline();
 #endif
 
-	for (i = 0; i != CIDX_min; ++i) {
-		char ch;
-		char buf10[10];
+	प्रति (i = 0; i != CIDX_min; ++i) {
+		वर्ण ch;
+		वर्ण buf10[10];
 
 		/* If swtch is the same as susp, don't print both */
-#if VSWTCH == VSUSP
-		if (i == CIDX_swtch)
-			continue;
+#जइ VSWTCH == VSUSP
+		जइ (i == CIDX_swtch)
+			अनुवर्त;
 #endif
 		/* If eof uses the same slot as min, only print whichever applies */
-#if VEOF == VMIN
-		if (!(mode->c_lflag & ICANON)
+#जइ VEOF == VMIN
+		जइ (!(mode->c_lflag & ICANON)
 		 && (i == CIDX_eof || i == CIDX_eol)
 		) {
-			continue;
+			अनुवर्त;
 		}
 #endif
 		ch = mode->c_cc[control_info[i].offset];
-		if (ch == _POSIX_VDISABLE)
+		जइ (ch == _POSIX_VDISABLE)
 			strcpy(buf10, "<undef>");
-		else
+		अण्णहा
 			visible(ch, buf10, 0);
 		wrapf("%s = %s;", nth_string(control_name, i), buf10);
 	}
-#if VEOF == VMIN
-	if ((mode->c_lflag & ICANON) == 0)
+#जइ VEOF == VMIN
+	जइ ((mode->c_lflag & ICANON) == 0)
 #endif
 		wrapf("min = %u; time = %u;", mode->c_cc[VMIN], mode->c_cc[VTIME]);
 	newline();
 
-	for (i = 0; i < NUM_mode_info; ++i) {
-		if (mode_info[i].flags & OMIT)
-			continue;
-		if (mode_info[i].type != prev_type) {
+	प्रति (i = 0; i < अङ्कः_mode_info; ++i) {
+		जइ (mode_info[i].flags & OMIT)
+			अनुवर्त;
+		जइ (mode_info[i].type != prev_type) {
 			newline();
 			prev_type = mode_info[i].type;
 		}
 
 		bitsp = get_ptr_to_tcflag(mode_info[i].type, mode);
 		mask = mode_info[i].mask ? mode_info[i].mask : mode_info[i].bits;
-		if ((*bitsp & mask) == mode_info[i].bits) {
-			if (all || (mode_info[i].flags & SANE_UNSET))
+		जइ ((*bitsp & mask) == mode_info[i].bits) {
+			जइ (all || (mode_info[i].flags & SANE_UNSET))
 				wrapf("-%s"+1, nth_string(mode_name, i));
-		} else {
-			if ((all && mode_info[i].flags & REV)
+		} अण्णहा {
+			जइ ((all && mode_info[i].flags & REV)
 			 || (!all && (mode_info[i].flags & (SANE_SET | REV)) == (SANE_SET | REV))
 			) {
 				wrapf("-%s", nth_string(mode_name, i));
@@ -1084,112 +1084,112 @@ static void do_display(const struct termios *mode, int all)
 	newline();
 }
 
-static void sane_mode(struct termios *mode)
+स्थिर शून्य sane_mode(संरचना termios *mode)
 {
-	int i;
+	पूर्णाङ्क i;
 
-	for (i = 0; i < NUM_control_info; ++i) {
-#if VMIN == VEOF
-		if (i == CIDX_min)
-			break;
+	प्रति (i = 0; i < अङ्कः_control_info; ++i) {
+#जइ VMIN == VEOF
+		जइ (i == CIDX_min)
+			भङ्ग;
 #endif
 		mode->c_cc[control_info[i].offset] = control_info[i].saneval;
 	}
 
-	for (i = 0; i < NUM_mode_info; ++i) {
+	प्रति (i = 0; i < अङ्कः_mode_info; ++i) {
 		tcflag_t val;
 		tcflag_t *bitsp = get_ptr_to_tcflag(mode_info[i].type, mode);
 
-		if (!bitsp)
-			continue;
+		जइ (!bitsp)
+			अनुवर्त;
 		val = *bitsp & ~((unsigned long)mode_info[i].mask);
-		if (mode_info[i].flags & SANE_SET) {
+		जइ (mode_info[i].flags & SANE_SET) {
 			*bitsp = val | mode_info[i].bits;
-		} else
-		if (mode_info[i].flags & SANE_UNSET) {
+		} अण्णहा
+		जइ (mode_info[i].flags & SANE_UNSET) {
 			*bitsp = val & ~mode_info[i].bits;
 		}
 	}
 }
 
-static void set_mode(const struct mode_info *info, int reversed,
-					struct termios *mode)
+स्थिर शून्य set_mode(ध्रुव संरचना mode_info *info, पूर्णाङ्क reversed,
+					संरचना termios *mode)
 {
 	tcflag_t *bitsp;
 
 	bitsp = get_ptr_to_tcflag(info->type, mode);
 
-	if (bitsp) {
+	जइ (bitsp) {
 		tcflag_t val = *bitsp & ~info->mask;
-		if (reversed)
+		जइ (reversed)
 			*bitsp = val & ~info->bits;
-		else
+		अण्णहा
 			*bitsp = val | info->bits;
-		return;
+		प्रत्यागम;
 	}
 
 	/* !bitsp - it's a "combination" mode */
-	if (info == &mode_info[IDX_evenp] || info == &mode_info[IDX_parity]) {
-		if (reversed)
+	जइ (info == &mode_info[IDX_evenp] || info == &mode_info[IDX_parity]) {
+		जइ (reversed)
 			mode->c_cflag = (mode->c_cflag & ~PARENB & ~CSIZE) | CS8;
-		else
+		अण्णहा
 			mode->c_cflag = (mode->c_cflag & ~PARODD & ~CSIZE) | PARENB | CS7;
-	} else if (info == &mode_info[IDX_oddp]) {
-		if (reversed)
+	} अण्णहा जइ (info == &mode_info[IDX_oddp]) {
+		जइ (reversed)
 			mode->c_cflag = (mode->c_cflag & ~PARENB & ~CSIZE) | CS8;
-		else
+		अण्णहा
 			mode->c_cflag = (mode->c_cflag & ~CSIZE) | CS7 | PARODD | PARENB;
-	} else if (info == &mode_info[IDX_nl]) {
-		if (reversed) {
+	} अण्णहा जइ (info == &mode_info[IDX_nl]) {
+		जइ (reversed) {
 			mode->c_iflag = (mode->c_iflag | ICRNL) & ~INLCR & ~IGNCR;
 			mode->c_oflag = (mode->c_oflag | ONLCR) & ~OCRNL & ~ONLRET;
-		} else {
+		} अण्णहा {
 			mode->c_iflag = mode->c_iflag & ~ICRNL;
-			if (ONLCR) mode->c_oflag = mode->c_oflag & ~ONLCR;
+			जइ (ONLCR) mode->c_oflag = mode->c_oflag & ~ONLCR;
 		}
-	} else if (info == &mode_info[IDX_ek]) {
+	} अण्णहा जइ (info == &mode_info[IDX_ek]) {
 		mode->c_cc[VERASE] = CERASE;
 		mode->c_cc[VKILL] = CKILL;
-	} else if (info == &mode_info[IDX_sane]) {
+	} अण्णहा जइ (info == &mode_info[IDX_sane]) {
 		sane_mode(mode);
-	} else if (info == &mode_info[IDX_cbreak]) {
-		if (reversed)
+	} अण्णहा जइ (info == &mode_info[IDX_cbreak]) {
+		जइ (reversed)
 			mode->c_lflag |= ICANON;
-		else
+		अण्णहा
 			mode->c_lflag &= ~ICANON;
-	} else if (info == &mode_info[IDX_pass8]) {
-		if (reversed) {
+	} अण्णहा जइ (info == &mode_info[IDX_pass8]) {
+		जइ (reversed) {
 			mode->c_cflag = (mode->c_cflag & ~CSIZE) | CS7 | PARENB;
 			mode->c_iflag |= ISTRIP;
-		} else {
+		} अण्णहा {
 			mode->c_cflag = (mode->c_cflag & ~PARENB & ~CSIZE) | CS8;
 			mode->c_iflag &= ~ISTRIP;
 		}
-	} else if (info == &mode_info[IDX_litout]) {
-		if (reversed) {
+	} अण्णहा जइ (info == &mode_info[IDX_litout]) {
+		जइ (reversed) {
 			mode->c_cflag = (mode->c_cflag & ~CSIZE) | CS7 | PARENB;
 			mode->c_iflag |= ISTRIP;
 			mode->c_oflag |= OPOST;
-		} else {
+		} अण्णहा {
 			mode->c_cflag = (mode->c_cflag & ~PARENB & ~CSIZE) | CS8;
 			mode->c_iflag &= ~ISTRIP;
 			mode->c_oflag &= ~OPOST;
 		}
-	} else if (info == &mode_info[IDX_raw] || info == &mode_info[IDX_cooked]) {
-		if ((info == &mode_info[IDX_raw] && reversed)
+	} अण्णहा जइ (info == &mode_info[IDX_raw] || info == &mode_info[IDX_cooked]) {
+		जइ ((info == &mode_info[IDX_raw] && reversed)
 		 || (info == &mode_info[IDX_cooked] && !reversed)
 		) {
 			/* Cooked mode */
 			mode->c_iflag |= BRKINT | IGNPAR | ISTRIP | ICRNL | IXON;
 			mode->c_oflag |= OPOST;
 			mode->c_lflag |= ISIG | ICANON;
-#if VMIN == VEOF
+#जइ VMIN == VEOF
 			mode->c_cc[VEOF] = CEOF;
 #endif
-#if VTIME == VEOL
+#जइ VTIME == VEOL
 			mode->c_cc[VEOL] = CEOL;
 #endif
-		} else {
+		} अण्णहा {
 			/* Raw mode */
 			mode->c_iflag = 0;
 			mode->c_oflag &= ~OPOST;
@@ -1198,72 +1198,72 @@ static void set_mode(const struct mode_info *info, int reversed,
 			mode->c_cc[VTIME] = 0;
 		}
 	}
-#if IXANY
-	else if (info == &mode_info[IDX_decctlq]) {
-		if (reversed)
+#जइ IXANY
+	अण्णहा जइ (info == &mode_info[IDX_decctlq]) {
+		जइ (reversed)
 			mode->c_iflag |= IXANY;
-		else
+		अण्णहा
 			mode->c_iflag &= ~IXANY;
 	}
 #endif
-#if TABDLY
-	else if (info == &mode_info[IDX_tabs]) {
-		if (reversed)
+#जइ TABDLY
+	अण्णहा जइ (info == &mode_info[IDX_tabs]) {
+		जइ (reversed)
 			mode->c_oflag = (mode->c_oflag & ~TABDLY) | TAB3;
-		else
+		अण्णहा
 			mode->c_oflag = (mode->c_oflag & ~TABDLY) | TAB0;
 	}
 #endif
-#if OXTABS
-	else if (info == &mode_info[IDX_tabs]) {
-		if (reversed)
+#जइ OXTABS
+	अण्णहा जइ (info == &mode_info[IDX_tabs]) {
+		जइ (reversed)
 			mode->c_oflag |= OXTABS;
-		else
+		अण्णहा
 			mode->c_oflag &= ~OXTABS;
 	}
 #endif
-#if XCASE && IUCLC && OLCUC
-	else if (info==&mode_info[IDX_lcase] || info==&mode_info[IDX_LCASE]) {
-		if (reversed) {
+#जइ XCASE && IUCLC && OLCUC
+	अण्णहा जइ (info==&mode_info[IDX_lcase] || info==&mode_info[IDX_LCASE]) {
+		जइ (reversed) {
 			mode->c_lflag &= ~XCASE;
 			mode->c_iflag &= ~IUCLC;
 			mode->c_oflag &= ~OLCUC;
-		} else {
+		} अण्णहा {
 			mode->c_lflag |= XCASE;
 			mode->c_iflag |= IUCLC;
 			mode->c_oflag |= OLCUC;
 		}
 	}
 #endif
-	else if (info == &mode_info[IDX_crt]) {
+	अण्णहा जइ (info == &mode_info[IDX_crt]) {
 		mode->c_lflag |= ECHOE | ECHOCTL | ECHOKE;
-	} else if (info == &mode_info[IDX_dec]) {
+	} अण्णहा जइ (info == &mode_info[IDX_dec]) {
 		mode->c_cc[VINTR] = 3; /* ^C */
 		mode->c_cc[VERASE] = 127; /* DEL */
 		mode->c_cc[VKILL] = 21; /* ^U */
 		mode->c_lflag |= ECHOE | ECHOCTL | ECHOKE;
-		if (IXANY) mode->c_iflag &= ~IXANY;
+		जइ (IXANY) mode->c_iflag &= ~IXANY;
 	}
 }
 
-static void set_control_char_or_die(const struct control_info *info,
-			const char *arg, struct termios *mode)
+स्थिर शून्य set_control_char_or_die(ध्रुव संरचना control_info *info,
+			ध्रुव वर्ण *arg, संरचना termios *mode)
 {
-	unsigned char value;
+	unsigned वर्ण मानम्_2;
 
-	if (info == &control_info[CIDX_min] || info == &control_info[CIDX_time])
-		value = xatoul_range_sfx(arg, 0, 0xff, stty_suffixes);
-	else if (arg[0] == '\0' || arg[1] == '\0')
-		value = arg[0];
-	else if (strcmp(arg, "^-") == 0 || strcmp(arg, "undef") == 0)
-		value = _POSIX_VDISABLE;
-	else if (arg[0] == '^') { /* Ignore any trailing junk (^Cjunk) */
-		value = arg[1] & 0x1f; /* Non-letters get weird results */
-		if (arg[1] == '?')
-			value = 127;
-	} else
-		value = xatoul_range_sfx(arg, 0, 0xff, stty_suffixes);
-	mode->c_cc[info->offset] = value;
+	जइ (info == &control_info[CIDX_min] || info == &control_info[CIDX_time])
+		मानम्_2 = xatoul_range_sfx(arg, 0, 0xff, stty_suffixes);
+	अण्णहा जइ (arg[0] == '\0' || arg[1] == '\0')
+		मानम्_2 = arg[0];
+	अण्णहा जइ (strcmp(arg, "^-") == 0 || strcmp(arg, "undef") == 0)
+		मानम्_2 = _POSIX_VDISABLE;
+	अण्णहा जइ (arg[0] == '^') { /* Ignore any trailing junk (^Cjunk) */
+		मानम्_2 = arg[1] & 0x1f; /* Non-letters get weird results */
+		जइ (arg[1] == '?')
+			मानम्_2 = 127;
+	} अण्णहा
+		मानम्_2 = xatoul_range_sfx(arg, 0, 0xff, stty_suffixes);
+	mode->c_cc[info->offset] = मानम्_2;
 }
 
 #define STTY_require_set_attr   (1 << 0)
@@ -1272,15 +1272,15 @@ static void set_control_char_or_die(const struct control_info *info,
 #define STTY_recoverable_output (1 << 3)
 #define STTY_noargs             (1 << 4)
 
-int stty_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int stty_main(int argc UNUSED_PARAM, char **argv)
+पूर्णाङ्क stty_main(पूर्णाङ्क argc, वर्ण **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णाङ्क stty_main(पूर्णाङ्क argc UNUSED_PARAM, वर्ण **argv)
 {
-	struct termios mode;
-	void (*output_func)(const struct termios *, int);
-	const char *file_name = NULL;
-	int display_all = 0;
-	int stty_state;
-	int k;
+	संरचना termios mode;
+	शून्य (*output_func)(ध्रुव संरचना termios *, पूर्णाङ्क);
+	ध्रुव वर्ण *file_name = रिक्त;
+	पूर्णाङ्क display_all = 0;
+	पूर्णाङ्क stty_state;
+	पूर्णाङ्क k;
 
 	INIT_G();
 
@@ -1289,133 +1289,133 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 
 	/* First pass: only parse/verify command line params */
 	k = 0;
-	while (argv[++k]) {
-		const struct mode_info *mp;
-		const struct control_info *cp;
-		const char *arg = argv[k];
-		const char *argnext = argv[k+1];
-		int param;
+	जाव (argv[++k]) {
+		ध्रुव संरचना mode_info *mp;
+		ध्रुव संरचना control_info *cp;
+		ध्रुव वर्ण *arg = argv[k];
+		ध्रुव वर्ण *argnext = argv[k+1];
+		पूर्णाङ्क param;
 
-		if (arg[0] == '-') {
-			int i;
+		जइ (arg[0] == '-') {
+			पूर्णाङ्क i;
 			mp = find_mode(arg+1);
-			if (mp) {
-				if (!(mp->flags & REV))
-					goto invalid_argument;
+			जइ (mp) {
+				जइ (!(mp->flags & REV))
+					गच्छ invalid_argument;
 				stty_state &= ~STTY_noargs;
-				continue;
+				अनुवर्त;
 			}
 			/* It is an option - parse it */
 			i = 0;
-			while (arg[++i]) {
-				switch (arg[i]) {
-				case 'a':
+			जाव (arg[++i]) {
+				विकल्प (arg[i]) {
+				पक्ष 'a':
 					stty_state |= STTY_verbose_output;
 					output_func = do_display;
 					display_all = 1;
-					break;
-				case 'g':
+					भङ्ग;
+				पक्ष 'g':
 					stty_state |= STTY_recoverable_output;
 					output_func = display_recoverable;
-					break;
-				case 'F':
-					if (file_name)
-						bb_simple_error_msg_and_die("only one device may be specified");
+					भङ्ग;
+				पक्ष 'F':
+					जइ (file_name)
+						bb_simple_error_सन्देशः_and_die("only one device may be specified");
 					file_name = &arg[i+1]; /* "-Fdevice" ? */
-					if (!file_name[0]) { /* nope, "-F device" */
-						int p = k+1; /* argv[p] is argnext */
+					जइ (!file_name[0]) { /* nope, "-F device" */
+						पूर्णाङ्क p = k+1; /* argv[p] is argnext */
 						file_name = argnext;
-						if (!file_name)
-							bb_error_msg_and_die(bb_msg_requires_arg, "-F");
+						जइ (!file_name)
+							bb_error_सन्देशः_and_die(bb_सन्देशः_requires_arg, "-F");
 						/* remove -F param from arg[vc] */
-						while (argv[p]) {
+						जाव (argv[p]) {
 							argv[p] = argv[p+1];
 							++p;
 						}
 					}
-					goto end_option;
-				default:
-					goto invalid_argument;
+					गच्छ end_option;
+				स्वभाव:
+					गच्छ invalid_argument;
 				}
 			}
  end_option:
-			continue;
+			अनुवर्त;
 		}
 
 		mp = find_mode(arg);
-		if (mp) {
+		जइ (mp) {
 			stty_state &= ~STTY_noargs;
-			continue;
+			अनुवर्त;
 		}
 
 		cp = find_control(arg);
-		if (cp) {
-			if (!argnext)
-				bb_error_msg_and_die(bb_msg_requires_arg, arg);
+		जइ (cp) {
+			जइ (!argnext)
+				bb_error_सन्देशः_and_die(bb_सन्देशः_requires_arg, arg);
 			/* called for the side effect of xfunc death only */
 			set_control_char_or_die(cp, argnext, &mode);
 			stty_state &= ~STTY_noargs;
 			++k;
-			continue;
+			अनुवर्त;
 		}
 
 		param = find_param(arg);
-		if (param & param_need_arg) {
-			if (!argnext)
-				bb_error_msg_and_die(bb_msg_requires_arg, arg);
+		जइ (param & param_need_arg) {
+			जइ (!argnext)
+				bb_error_सन्देशः_and_die(bb_सन्देशः_requires_arg, arg);
 			++k;
 		}
 
-		switch (param) {
+		विकल्प (param) {
 #ifdef __linux__
-		case param_line:
+		पक्ष param_पङ्क्तिः:
 # ifndef TIOCGWINSZ
 			xatoul_range_sfx(argnext, 1, INT_MAX, stty_suffixes);
-			break;
+			भङ्ग;
 # endif /* else fall-through */
 #endif
 #ifdef TIOCGWINSZ
-		case param_rows:
-		case param_cols:
-		case param_columns:
+		पक्ष param_rows:
+		पक्ष param_cols:
+		पक्ष param_columns:
 			xatoul_range_sfx(argnext, 1, INT_MAX, stty_suffixes);
-			break;
-		case param_size:
+			भङ्ग;
+		पक्ष param_size:
 #endif
-		case param_speed:
-			break;
-		case param_ispeed:
+		पक्ष param_speed:
+			भङ्ग;
+		पक्ष param_ispeed:
 			/* called for the side effect of xfunc death only */
-			set_speed_or_die(input_speed, argnext, &mode);
-			break;
-		case param_ospeed:
+			set_speed_or_die(निवेशः_speed, argnext, &mode);
+			भङ्ग;
+		पक्ष param_ospeed:
 			/* called for the side effect of xfunc death only */
 			set_speed_or_die(output_speed, argnext, &mode);
-			break;
-		default:
-			if (recover_mode(arg, &mode) == 1) break;
-			if (tty_value_to_baud(xatou(arg)) != (speed_t) -1) break;
+			भङ्ग;
+		स्वभाव:
+			जइ (recover_mode(arg, &mode) == 1) भङ्ग;
+			जइ (tty_मानम्_to_baud(xatou(arg)) != (speed_t) -1) भङ्ग;
  invalid_argument:
-			bb_error_msg_and_die("invalid argument '%s'", arg);
+			bb_error_सन्देशः_and_die("invalid argument '%s'", arg);
 		}
 		stty_state &= ~STTY_noargs;
 	}
 
 	/* Specifying both -a and -g is an error */
-	if ((stty_state & (STTY_verbose_output | STTY_recoverable_output)) ==
+	जइ ((stty_state & (STTY_verbose_output | STTY_recoverable_output)) ==
 		(STTY_verbose_output | STTY_recoverable_output)
 	) {
-		bb_simple_error_msg_and_die("-a and -g are mutually exclusive");
+		bb_simple_error_सन्देशः_and_die("-a and -g are mutually exclusive");
 	}
 	/* Specifying -a or -g with non-options is an error */
-	if ((stty_state & (STTY_verbose_output | STTY_recoverable_output))
+	जइ ((stty_state & (STTY_verbose_output | STTY_recoverable_output))
 	 && !(stty_state & STTY_noargs)
 	) {
-		bb_simple_error_msg_and_die("modes may not be set when -a or -g is used");
+		bb_simple_error_सन्देशः_and_die("modes may not be set when -a or -g is used");
 	}
 
 	/* Now it is safe to start doing things */
-	if (file_name) {
+	जइ (file_name) {
 		G.device_name = file_name;
 		xmove_fd(xopen_nonblocking(G.device_name), STDIN_FILENO);
 		ndelay_off(STDIN_FILENO);
@@ -1423,89 +1423,89 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 
 	/* Initialize to all zeroes so there is no risk memcmp will report a
 	   spurious difference in an uninitialized portion of the structure */
-	memset(&mode, 0, sizeof(mode));
-	if (tcgetattr(STDIN_FILENO, &mode))
+	memset(&mode, 0, परिमाण(mode));
+	जइ (tcgetattr(STDIN_FILENO, &mode))
 		perror_on_device_and_die("%s");
 
-	if (stty_state & (STTY_verbose_output | STTY_recoverable_output | STTY_noargs)) {
+	जइ (stty_state & (STTY_verbose_output | STTY_recoverable_output | STTY_noargs)) {
 		G.max_col = get_terminal_width(STDOUT_FILENO);
 		output_func(&mode, display_all);
-		return EXIT_SUCCESS;
+		प्रत्यागम EXIT_SUCCESS;
 	}
 
 	/* Second pass: perform actions */
 	k = 0;
-	while (argv[++k]) {
-		const struct mode_info *mp;
-		const struct control_info *cp;
-		const char *arg = argv[k];
-		const char *argnext = argv[k+1];
-		int param;
+	जाव (argv[++k]) {
+		ध्रुव संरचना mode_info *mp;
+		ध्रुव संरचना control_info *cp;
+		ध्रुव वर्ण *arg = argv[k];
+		ध्रुव वर्ण *argnext = argv[k+1];
+		पूर्णाङ्क param;
 
-		if (arg[0] == '-') {
+		जइ (arg[0] == '-') {
 			mp = find_mode(arg+1);
-			if (mp) {
+			जइ (mp) {
 				set_mode(mp, 1 /* reversed */, &mode);
 				stty_state |= STTY_require_set_attr;
 			}
 			/* It is an option - already parsed. Skip it */
-			continue;
+			अनुवर्त;
 		}
 
 		mp = find_mode(arg);
-		if (mp) {
+		जइ (mp) {
 			set_mode(mp, 0 /* non-reversed */, &mode);
 			stty_state |= STTY_require_set_attr;
-			continue;
+			अनुवर्त;
 		}
 
 		cp = find_control(arg);
-		if (cp) {
+		जइ (cp) {
 			++k;
 			set_control_char_or_die(cp, argnext, &mode);
 			stty_state |= STTY_require_set_attr;
-			continue;
+			अनुवर्त;
 		}
 
 		param = find_param(arg);
-		if (param & param_need_arg) {
+		जइ (param & param_need_arg) {
 			++k;
 		}
 
-		switch (param) {
+		विकल्प (param) {
 #ifdef __linux__
-		case param_line:
-			mode.c_line = xatoul_sfx(argnext, stty_suffixes);
+		पक्ष param_पङ्क्तिः:
+			mode.c_पङ्क्तिः = xatoul_sfx(argnext, stty_suffixes);
 			stty_state |= STTY_require_set_attr;
-			break;
+			भङ्ग;
 #endif
 #ifdef TIOCGWINSZ
-		case param_cols:
-		case param_columns:
+		पक्ष param_cols:
+		पक्ष param_columns:
 			set_window_size(-1, xatoul_sfx(argnext, stty_suffixes));
-			break;
-		case param_size:
+			भङ्ग;
+		पक्ष param_size:
 			display_window_size(0);
-			break;
-		case param_rows:
+			भङ्ग;
+		पक्ष param_rows:
 			set_window_size(xatoul_sfx(argnext, stty_suffixes), -1);
-			break;
+			भङ्ग;
 #endif
-		case param_speed:
+		पक्ष param_speed:
 			display_speed(&mode, 0);
-			break;
-		case param_ispeed:
-			set_speed_or_die(input_speed, argnext, &mode);
+			भङ्ग;
+		पक्ष param_ispeed:
+			set_speed_or_die(निवेशः_speed, argnext, &mode);
 			stty_state |= (STTY_require_set_attr | STTY_speed_was_set);
-			break;
-		case param_ospeed:
+			भङ्ग;
+		पक्ष param_ospeed:
 			set_speed_or_die(output_speed, argnext, &mode);
 			stty_state |= (STTY_require_set_attr | STTY_speed_was_set);
-			break;
-		default:
-			if (recover_mode(arg, &mode) == 1)
+			भङ्ग;
+		स्वभाव:
+			जइ (recover_mode(arg, &mode) == 1)
 				stty_state |= STTY_require_set_attr;
-			else /* true: if (tty_value_to_baud(xatou(arg)) != (speed_t) -1) */{
+			अण्णहा /* true: if (tty_value_to_baud(xatou(arg)) != (speed_t) -1) */{
 				set_speed_or_die(both_speeds, arg, &mode);
 				stty_state |= (STTY_require_set_attr | STTY_speed_was_set);
 			} /* else - impossible (caught in the first pass):
@@ -1513,10 +1513,10 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 		}
 	}
 
-	if (stty_state & STTY_require_set_attr) {
-		struct termios new_mode;
+	जइ (stty_state & STTY_require_set_attr) {
+		संरचना termios new_mode;
 
-		if (tcsetattr(STDIN_FILENO, TCSADRAIN, &mode))
+		जइ (tcsetattr(STDIN_FILENO, TCSADRAIN, &mode))
 			perror_on_device_and_die("%s");
 
 		/* POSIX (according to Zlotnick's book) tcsetattr returns zero if
@@ -1528,17 +1528,17 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 
 		/* Initialize to all zeroes so there is no risk memcmp will report a
 		   spurious difference in an uninitialized portion of the structure */
-		memset(&new_mode, 0, sizeof(new_mode));
-		if (tcgetattr(STDIN_FILENO, &new_mode))
+		memset(&new_mode, 0, परिमाण(new_mode));
+		जइ (tcgetattr(STDIN_FILENO, &new_mode))
 			perror_on_device_and_die("%s");
 
-		if (memcmp(&mode, &new_mode, sizeof(mode)) != 0) {
+		जइ (memcmp(&mode, &new_mode, परिमाण(mode)) != 0) {
 /*
  * I think the below chunk is not necessary on Linux.
  * If you are deleting it, also delete STTY_speed_was_set bit -
  * it is only ever checked here.
  */
-#if 0 /* was "if CIBAUD" */
+#जइ 0 /* was "if CIBAUD" */
 			/* SunOS 4.1.3 (at least) has the problem that after this sequence,
 			   tcgetattr (&m1); tcsetattr (&m1); tcgetattr (&m2);
 			   sometimes (m1 != m2).  The only difference is in the four bits
@@ -1549,12 +1549,12 @@ int stty_main(int argc UNUSED_PARAM, char **argv)
 			   error for a true failure to set the baud rate */
 
 			new_mode.c_cflag &= (~CIBAUD);
-			if ((stty_state & STTY_speed_was_set)
-			 || memcmp(&mode, &new_mode, sizeof(mode)) != 0)
+			जइ ((stty_state & STTY_speed_was_set)
+			 || memcmp(&mode, &new_mode, परिमाण(mode)) != 0)
 #endif
 				perror_on_device_and_die("%s: cannot perform all requested operations");
 		}
 	}
 
-	return EXIT_SUCCESS;
+	प्रत्यागम EXIT_SUCCESS;
 }

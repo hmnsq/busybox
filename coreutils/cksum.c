@@ -27,80 +27,80 @@
 //usage:#define cksum_full_usage "\n\n"
 //usage:       "Calculate CRC32 checksum of FILEs"
 
-#include "libbb.h"
-#include "common_bufsiz.h"
+#अन्तर्भाव "libbb.h"
+#अन्तर्भाव "common_bufsiz.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
 #define IS_CKSUM (ENABLE_CKSUM && (!ENABLE_CRC32 || applet_name[1] == 'k'))
 #define IS_CRC32 (ENABLE_CRC32 && (!ENABLE_CKSUM || applet_name[1] == 'r'))
 
-int cksum_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int cksum_main(int argc UNUSED_PARAM, char **argv)
+पूर्णाङ्क cksum_main(पूर्णाङ्क argc, वर्ण **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णाङ्क cksum_main(पूर्णाङ्क argc UNUSED_PARAM, वर्ण **argv)
 {
-	uint32_t *crc32_table = crc32_filltable(NULL, IS_CKSUM);
+	uint32_t *crc32_table = crc32_filltable(रिक्त, IS_CKSUM);
 	exitcode_t exit_code = EXIT_SUCCESS;
 
-#if ENABLE_DESKTOP
+#जइ ENABLE_DESKTOP
 	getopt32(argv, ""); /* cksum coreutils 6.9 compat */
 	argv += optind;
-#else
+#अण्णहा
 	argv++;
 #endif
 
 	setup_common_bufsiz();
-	do {
+	करेहि {
 		uint32_t crc;
 		IF_CKSUM(off_t filesize;)
-		const char *fname = *argv ? *argv : bb_msg_standard_input;
-		int fd = open_or_warn_stdin(fname);
+		ध्रुव वर्ण *fname = *argv ? *argv : bb_सन्देशः_standard_निवेशः;
+		पूर्णाङ्क fd = open_or_warn_stdin(fname);
 
-		if (fd < 0) {
+		जइ (fd < 0) {
 			exit_code = EXIT_FAILURE;
-			continue;
+			अनुवर्त;
 		}
 
 		crc = IS_CKSUM ? 0 : 0xffffffff;
 		IF_CKSUM(filesize = 0;)
 #define read_buf bb_common_bufsiz1
-		for (;;) {
-			int bytes_read = safe_read(fd, read_buf, COMMON_BUFSIZE);
-			if (bytes_read < 0)
-				bb_simple_perror_msg_and_die(fname);
-			if (bytes_read > 0) {
+		प्रति (;;) {
+			पूर्णाङ्क bytes_read = safe_read(fd, read_buf, COMMON_BUFSIZE);
+			जइ (bytes_read < 0)
+				bb_simple_perror_सन्देशः_and_die(fname);
+			जइ (bytes_read > 0) {
 				IF_CKSUM(filesize += bytes_read;)
-			} else {
+			} अण्णहा {
 				IF_CKSUM(uoff_t t;)
 
 				close(fd);
-				if (IS_CRC32)
-					break;
-#if ENABLE_CKSUM
+				जइ (IS_CRC32)
+					भङ्ग;
+#जइ ENABLE_CKSUM
 				fd = -1; /* break flag */
 				/* Checksum filesize bytes, LSB first */
 				t = filesize;
 				/*bytes_read = 0; - already is */
-				while (t != 0) {
+				जाव (t != 0) {
 					read_buf[bytes_read++] = (uint8_t)t;
 					t >>= 8;
 				}
 #endif
 			}
 			crc = (IS_CKSUM ? crc32_block_endian1 : crc32_block_endian0)(crc, read_buf, bytes_read, crc32_table);
-			if (ENABLE_CKSUM && fd < 0)
-				break;
+			जइ (ENABLE_CKSUM && fd < 0)
+				भङ्ग;
 		}
 
 		crc = ~crc;
-#if ENABLE_CKSUM
-		if (IS_CKSUM)
+#जइ ENABLE_CKSUM
+		जइ (IS_CKSUM)
 			printf((*argv ? "%u %"OFF_FMT"u %s\n" : "%u %"OFF_FMT"u\n"),
 				(unsigned)crc, filesize, *argv);
-		else
+		अण्णहा
 #endif
 			printf((*argv ? "%08x %s\n" : "%08x\n"),
 				(unsigned)crc, *argv);
-	} while (*argv && *++argv);
+	} जाव (*argv && *++argv);
 
 	fflush_stdout_and_exit(exit_code);
 }

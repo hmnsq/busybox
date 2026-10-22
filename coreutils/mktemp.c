@@ -58,15 +58,15 @@
 //usage:       "$ ls -la /tmp/temp.mWiLjM\n"
 //usage:       "-rw-------    1 andersen andersen        0 Apr 25 17:10 /tmp/temp.mWiLjM\n"
 
-#include "libbb.h"
+#अन्तर्भाव "libbb.h"
 
-int mktemp_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int mktemp_main(int argc UNUSED_PARAM, char **argv)
+पूर्णाङ्क mktemp_main(पूर्णाङ्क argc, वर्ण **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णाङ्क mktemp_main(पूर्णाङ्क argc UNUSED_PARAM, वर्ण **argv)
 {
-	const char *path;
-	char *chp;
+	ध्रुव वर्ण *path;
+	वर्ण *chp;
 	unsigned opts;
-	enum {
+	गणना {
 		OPT_d = 1 << 0,
 		OPT_q = 1 << 1,
 		OPT_t = 1 << 2,
@@ -76,10 +76,10 @@ int mktemp_main(int argc UNUSED_PARAM, char **argv)
 	};
 
 	path = getenv("TMPDIR");
-	if (!path || path[0] == '\0')
+	जइ (!path || path[0] == '\0')
 		path = "/tmp";
 
-#if ENABLE_LONG_OPTS
+#जइ ENABLE_LONG_OPTS
 	opts = getopt32long(argv, "^"
 		"dqtp:u"
 		"\0"
@@ -90,44 +90,44 @@ int mktemp_main(int argc UNUSED_PARAM, char **argv)
 		"tmpdir\0"    Optional_argument "\xff"
 		, &path, &path
 	);
-#else
+#अण्णहा
 	opts = getopt32(argv, "^" "dqtp:u" "\0" "?1"/*1 arg max*/, &path);
 #endif
 
 	chp = argv[optind];
-	if (!chp) {
+	जइ (!chp) {
 		/* GNU coreutils 8.4:
 		 * bare "mktemp" -> "mktemp -t tmp.XXXXXX"
 		 */
 		chp = xstrdup("tmp.XXXXXX");
 		opts |= OPT_t;
 	}
-#if 0
+#जइ 0
 	/* Don't allow directory separator in template */
-	if ((opts & OPT_t) && bb_basename(chp) != chp) {
+	जइ ((opts & OPT_t) && bb_basename(chp) != chp) {
 		errno = EINVAL;
-		goto error;
+		गच्छ error;
 	}
 #endif
-	if (opts & (OPT_t|OPT_p|OPT_tmpdir))
+	जइ (opts & (OPT_t|OPT_p|OPT_tmpdir))
 		chp = concat_path_file(path, chp);
 
-	if (opts & OPT_u) {
+	जइ (opts & OPT_u) {
 		chp = mktemp(chp);
-		if (chp[0] == '\0')
-			goto error;
-	} else if (opts & OPT_d) {
-		if (mkdtemp(chp) == NULL)
-			goto error;
-	} else {
-		if (mkstemp(chp) < 0)
-			goto error;
+		जइ (chp[0] == '\0')
+			गच्छ error;
+	} अण्णहा जइ (opts & OPT_d) {
+		जइ (mkdtemp(chp) == रिक्त)
+			गच्छ error;
+	} अण्णहा {
+		जइ (mkstemp(chp) < 0)
+			गच्छ error;
 	}
 	puts(chp);
-	return EXIT_SUCCESS;
+	प्रत्यागम EXIT_SUCCESS;
  error:
-	if (opts & OPT_q)
-		return EXIT_FAILURE;
+	जइ (opts & OPT_q)
+		प्रत्यागम EXIT_FAILURE;
 	/* don't use chp as it gets mangled in case of error */
 	bb_perror_nomsg_and_die();
 }

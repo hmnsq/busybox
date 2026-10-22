@@ -25,69 +25,69 @@
 //usage:       "$ pwd\n"
 //usage:       "/root\n"
 
-#include "libbb.h"
+#अन्तर्भाव "libbb.h"
 
-static int logical_getcwd(void)
+स्थिर पूर्णाङ्क logical_getcwd(शून्य)
 {
-	struct stat st1;
-	struct stat st2;
-	char *wd;
-	char *p;
+	संरचना stat st1;
+	संरचना stat st2;
+	वर्ण *wd;
+	वर्ण *p;
 
 	wd = getenv("PWD");
-	if (!wd || wd[0] != '/')
-		return 0;
+	जइ (!wd || wd[0] != '/')
+		प्रत्यागम 0;
 
 	p = wd;
-	while (*p) {
+	जाव (*p) {
 		/* doing strstr(p, "/.") by hand is smaller and faster... */
-		if (*p++ != '/')
-			continue;
-		if (*p != '.')
-			continue;
+		जइ (*p++ != '/')
+			अनुवर्त;
+		जइ (*p != '.')
+			अनुवर्त;
 		/* we found "/.", skip to next char */
 		p++;
-		if (*p == '.')
+		जइ (*p == '.')
 			p++; /* we found "/.." */
-		if (*p == '\0' || *p == '/')
-			return 0; /* "/./" or "/../" component: bad */
+		जइ (*p == '\0' || *p == '/')
+			प्रत्यागम 0; /* "/./" or "/../" component: bad */
 	}
 
-	if (stat(wd, &st1) != 0)
-		return 0;
-	if (stat(".", &st2) != 0)
-		return 0;
-	if (st1.st_ino != st2.st_ino)
-		return 0;
-	if (st1.st_dev != st2.st_dev)
-		return 0;
+	जइ (stat(wd, &st1) != 0)
+		प्रत्यागम 0;
+	जइ (stat(".", &st2) != 0)
+		प्रत्यागम 0;
+	जइ (st1.st_ino != st2.st_ino)
+		प्रत्यागम 0;
+	जइ (st1.st_dev != st2.st_dev)
+		प्रत्यागम 0;
 
 	puts(wd);
-	return 1;
+	प्रत्यागम 1;
 }
 
-int pwd_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int pwd_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+पूर्णाङ्क pwd_main(पूर्णाङ्क argc, वर्ण **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णाङ्क pwd_main(पूर्णाङ्क argc UNUSED_PARAM, वर्ण **argv UNUSED_PARAM)
 {
-	char *buf;
+	वर्ण *buf;
 
-	if (ENABLE_DESKTOP) {
+	जइ (ENABLE_DESKTOP) {
 		/* TODO: assume -L if $POSIXLY_CORRECT? (coreutils does that)
 		 * Rationale:
 		 * POSIX requires a default of -L, but most scripts expect -P
 		 */
 		unsigned opt = getopt32(argv, "LP");
-		if ((opt & 1) && logical_getcwd())
-			return fflush_all();
+		जइ ((opt & 1) && logical_getcwd())
+			प्रत्यागम fflush_all();
 	}
 
-	buf = xrealloc_getcwd_or_warn(NULL);
+	buf = xrealloc_getcwd_or_warn(रिक्त);
 
-	if (buf) {
+	जइ (buf) {
 		puts(buf);
-		free(buf);
-		return fflush_all();
+		मुक्त(buf);
+		प्रत्यागम fflush_all();
 	}
 
-	return EXIT_FAILURE;
+	प्रत्यागम EXIT_FAILURE;
 }

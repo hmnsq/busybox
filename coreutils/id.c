@@ -58,58 +58,58 @@
 //usage:       "$ groups\n"
 //usage:       "andersen lp dialout cdrom floppy\n"
 
-#include "libbb.h"
+#अन्तर्भाव "libbb.h"
 
 /* This is a NOEXEC applet. Be very careful! */
 
-#if !ENABLE_USE_BB_PWD_GRP
-#if defined(__UCLIBC__) && UCLIBC_VERSION < KERNEL_VERSION(0, 9, 30)
+#जइ !ENABLE_USE_BB_PWD_GRP
+#जइ defined(__UCLIBC__) && UCLIBC_VERSION < KERNEL_VERSION(0, 9, 30)
 #error "Sorry, you need at least uClibc version 0.9.30 for id applet to build"
 #endif
 #endif
 
-enum {
+गणना {
 	PRINT_REAL      = (1 << 0),
-	NAME_NOT_NUMBER = (1 << 1),
+	NAME_NOT_सङ्ख्या = (1 << 1),
 	JUST_USER       = (1 << 2),
 	JUST_GROUP      = (1 << 3),
 	JUST_ALL_GROUPS = (1 << 4),
-#if ENABLE_SELINUX
+#जइ ENABLE_SELINUX
 	JUST_CONTEXT    = (1 << 5),
 #endif
 };
 
-static int print_common(unsigned id, const char *name, const char *prefix)
+स्थिर पूर्णाङ्क print_common(unsigned id, ध्रुव वर्ण *name, ध्रुव वर्ण *prefix)
 {
-	if (prefix) {
+	जइ (prefix) {
 		printf("%s", prefix);
 	}
-	if (!(option_mask32 & NAME_NOT_NUMBER) || !name) {
+	जइ (!(option_mask32 & NAME_NOT_सङ्ख्या) || !name) {
 		printf("%u", id);
 	}
-	if (!option_mask32 || (option_mask32 & NAME_NOT_NUMBER)) {
-		if (name) {
+	जइ (!option_mask32 || (option_mask32 & NAME_NOT_सङ्ख्या)) {
+		जइ (name) {
 			printf(option_mask32 ? "%s" : "(%s)", name);
-		} else {
+		} अण्णहा {
 			/* Don't set error status flag in default mode */
-			if (option_mask32) {
-				if (ENABLE_DESKTOP)
-					bb_error_msg("unknown ID %u", id);
-				return EXIT_FAILURE;
+			जइ (option_mask32) {
+				जइ (ENABLE_DESKTOP)
+					bb_error_सन्देशः("unknown ID %u", id);
+				प्रत्यागम EXIT_FAILURE;
 			}
 		}
 	}
-	return EXIT_SUCCESS;
+	प्रत्यागम EXIT_SUCCESS;
 }
 
-static int print_group(gid_t id, const char *prefix)
+स्थिर पूर्णाङ्क print_group(gid_t id, ध्रुव वर्ण *prefix)
 {
-	return print_common(id, gid2group(id), prefix);
+	प्रत्यागम print_common(id, gid2group(id), prefix);
 }
 
-static int print_user(uid_t id, const char *prefix)
+स्थिर पूर्णाङ्क print_user(uid_t id, ध्रुव वर्ण *prefix)
 {
-	return print_common(id, uid2uname(id), prefix);
+	प्रत्यागम print_common(id, uid2uname(id), prefix);
 }
 
 /* On error set *n < 0 and return >= 0
@@ -117,57 +117,57 @@ static int print_user(uid_t id, const char *prefix)
  * (ok to trash groups[] in both cases)
  * Otherwise fill in groups[] and return >= 0
  */
-static int get_groups(const char *username, gid_t rgid, gid_t *groups, int *n)
+स्थिर पूर्णाङ्क get_groups(ध्रुव वर्ण *username, gid_t rgid, gid_t *groups, पूर्णाङ्क *n)
 {
-	int m;
+	पूर्णाङ्क m;
 
-	if (username) {
+	जइ (username) {
 		/* If the user is a member of more than
 		 * *n groups, then -1 is returned. Otherwise >= 0.
 		 * (and no defined way of detecting errors?!) */
 		m = getgrouplist(username, rgid, groups, n);
 		/* I guess *n < 0 might indicate error. Anyway,
 		 * malloc'ing -1 bytes won't be good, so: */
-		if (*n < 0)
-			return 0;
-		return m;
+		जइ (*n < 0)
+			प्रत्यागम 0;
+		प्रत्यागम m;
 	}
 
 	*n = getgroups(*n, groups);
-	if (*n >= 0)
-		return *n;
+	जइ (*n >= 0)
+		प्रत्यागम *n;
 	/* Error */
-	if (errno == EINVAL) /* *n is too small? */
+	जइ (errno == EINVAL) /* *n is too small? */
 		*n = getgroups(0, groups); /* get needed *n */
 	/* if *n >= 0, return -1 (got new *n), else return 0 (error): */
-	return -(*n >= 0);
+	प्रत्यागम -(*n >= 0);
 }
 
-int id_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int id_main(int argc UNUSED_PARAM, char **argv)
+पूर्णाङ्क id_main(पूर्णाङ्क argc, वर्ण **argv) MAIN_EXTERNALLY_VISIBLE;
+पूर्णाङ्क id_main(पूर्णाङ्क argc UNUSED_PARAM, वर्ण **argv)
 {
 	uid_t ruid;
 	gid_t rgid;
 	uid_t euid;
 	gid_t egid;
 	unsigned opt;
-	int i;
-	int status = EXIT_SUCCESS;
-	const char *prefix;
-	const char *username;
-#if ENABLE_SELINUX
-	security_context_t scontext = NULL;
+	पूर्णाङ्क i;
+	पूर्णाङ्क status = EXIT_SUCCESS;
+	ध्रुव वर्ण *prefix;
+	ध्रुव वर्ण *username;
+#जइ ENABLE_SELINUX
+	security_context_t scontext = रिक्त;
 #endif
 
-	if (ENABLE_GROUPS && (!ENABLE_ID || applet_name[0] == 'g')) {
+	जइ (ENABLE_GROUPS && (!ENABLE_ID || applet_name[0] == 'g')) {
 		/* TODO: coreutils groups prepend "USER : " prefix,
 		 * and accept many usernames. Example:
 		 * # groups root root
 		 * root : root
 		 * root : root
 		 */
-		opt = option_mask32 = getopt32(argv, "") | JUST_ALL_GROUPS | NAME_NOT_NUMBER;
-	} else {
+		opt = option_mask32 = getopt32(argv, "") | JUST_ALL_GROUPS | NAME_NOT_सङ्ख्या;
+	} अण्णहा {
 		/* Don't allow -n -r -nr -ug -rug -nug -rnug -uZ -gZ -GZ*/
 		/* Don't allow more than one username */
 		opt = getopt32(argv, "^"
@@ -179,11 +179,11 @@ int id_main(int argc UNUSED_PARAM, char **argv)
 	}
 
 	username = argv[optind];
-	if (username) {
-		struct passwd *p = xgetpwnam(username);
+	जइ (username) {
+		संरचना passwd *p = xgetpwnam(username);
 		euid = ruid = p->pw_uid;
 		egid = rgid = p->pw_gid;
-	} else {
+	} अण्णहा {
 		egid = getegid();
 		rgid = getgid();
 		euid = geteuid();
@@ -192,76 +192,76 @@ int id_main(int argc UNUSED_PARAM, char **argv)
 	/* JUST_ALL_GROUPS ignores -r PRINT_REAL flag even if man page for */
 	/* id says: print the real ID instead of the effective ID, with -ugG */
 	/* in fact in this case egid is always printed if egid != rgid */
-	if (!opt || (opt & JUST_ALL_GROUPS)) {
+	जइ (!opt || (opt & JUST_ALL_GROUPS)) {
 		gid_t *groups;
-		int n;
+		पूर्णाङ्क n;
 
-		if (!opt) {
+		जइ (!opt) {
 			/* Default Mode */
 			status |= print_user(ruid, "uid=");
 			status |= print_group(rgid, " gid=");
-			if (euid != ruid)
+			जइ (euid != ruid)
 				status |= print_user(euid, " euid=");
-			if (egid != rgid)
+			जइ (egid != rgid)
 				status |= print_group(egid, " egid=");
-		} else {
+		} अण्णहा {
 			/* JUST_ALL_GROUPS */
-			status |= print_group(rgid, NULL);
-			if (egid != rgid)
+			status |= print_group(rgid, रिक्त);
+			जइ (egid != rgid)
 				status |= print_group(egid, " ");
 		}
 		/* We are supplying largish buffer, trying
 		 * to not run get_groups() twice. That might be slow
 		 * ("user database in remote SQL server" case) */
-		groups = xmalloc(64 * sizeof(groups[0]));
+		groups = xmalloc(64 * परिमाण(groups[0]));
 		n = 64;
-		if (get_groups(username, rgid, groups, &n) < 0) {
+		जइ (get_groups(username, rgid, groups, &n) < 0) {
 			/* Need bigger buffer after all */
-			groups = xrealloc(groups, n * sizeof(groups[0]));
+			groups = xrealloc(groups, n * परिमाण(groups[0]));
 			get_groups(username, rgid, groups, &n);
 		}
-		if (n > 0) {
+		जइ (n > 0) {
 			/* Print the list */
 			prefix = " groups=";
-			for (i = 0; i < n; i++) {
-				if (opt && (groups[i] == rgid || groups[i] == egid))
-					continue;
+			प्रति (i = 0; i < n; i++) {
+				जइ (opt && (groups[i] == rgid || groups[i] == egid))
+					अनुवर्त;
 				status |= print_group(groups[i], opt ? " " : prefix);
 				prefix = ",";
 			}
-		} else if (n < 0) { /* error in get_groups() */
-			if (ENABLE_DESKTOP)
-				bb_simple_error_msg_and_die("can't get groups");
-			return EXIT_FAILURE;
+		} अण्णहा जइ (n < 0) { /* error in get_groups() */
+			जइ (ENABLE_DESKTOP)
+				bb_simple_error_सन्देशः_and_die("can't get groups");
+			प्रत्यागम EXIT_FAILURE;
 		}
-		if (ENABLE_FEATURE_CLEAN_UP)
-			free(groups);
-#if ENABLE_SELINUX
-		if (is_selinux_enabled()) {
-			if (getcon(&scontext) == 0)
+		जइ (ENABLE_FEATURE_CLEAN_UP)
+			मुक्त(groups);
+#जइ ENABLE_SELINUX
+		जइ (is_selinux_enabled()) {
+			जइ (getcon(&scontext) == 0)
 				printf(" context=%s", scontext);
 		}
 #endif
-	} else if (opt & PRINT_REAL) {
+	} अण्णहा जइ (opt & PRINT_REAL) {
 		euid = ruid;
 		egid = rgid;
 	}
 
-	if (opt & JUST_USER)
-		status |= print_user(euid, NULL);
-	else if (opt & JUST_GROUP)
-		status |= print_group(egid, NULL);
-#if ENABLE_SELINUX
-	else if (opt & JUST_CONTEXT) {
+	जइ (opt & JUST_USER)
+		status |= print_user(euid, रिक्त);
+	अण्णहा जइ (opt & JUST_GROUP)
+		status |= print_group(egid, रिक्त);
+#जइ ENABLE_SELINUX
+	अण्णहा जइ (opt & JUST_CONTEXT) {
 		selinux_or_die();
-		if (username || getcon(&scontext)) {
-			bb_error_msg_and_die("can't get process context%s",
+		जइ (username || getcon(&scontext)) {
+			bb_error_सन्देशः_and_die("can't get process context%s",
 				username ? " for a different user" : "");
 		}
 		fputs_stdout(scontext);
 	}
 	/* freecon(NULL) seems to be harmless */
-	if (ENABLE_FEATURE_CLEAN_UP)
+	जइ (ENABLE_FEATURE_CLEAN_UP)
 		freecon(scontext);
 #endif
 	bb_putchar('\n');
